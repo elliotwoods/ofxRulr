@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{55a0c96a-0ffa-4e33-8c35-9f7ac130ba55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion">
+      <UniqueIdentifier>{aa6fb2ff-0b56-48fa-a8b1-4be2795edf6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Utils">
+      <UniqueIdentifier>{17332ddf-f69f-43e9-bdd8-04af49737c64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Device">
+      <UniqueIdentifier>{b90f753f-45b7-4a46-a2fe-c83f26b96ebc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\ofxDigitalEmulsion.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Device\Camera.h">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Device\Base.h">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Device\World.h">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Device\Projector.h">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Utils\Set.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\Device\Camera.cpp">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Device\Projector.cpp">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Device\World.cpp">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
