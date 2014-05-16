@@ -9,8 +9,10 @@ namespace ofxDigitalEmulsion {
 	namespace Device {
 		class Base : public ofxCvGui::Widgets::IInspectable {
 		public:
-			virtual string getTypeName() const;
+			virtual string getTypeName() const = 0;
 			virtual void populate(ofxCvGui::ElementGroupPtr) { }
+
+			virtual void update() { }
 		};
 	}
 }

@@ -26,6 +26,5 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		ofxCvGui::Builder gui;
-		SimpleGrabber<Device::VideoInputDevice> grabber;
 		ofxDigitalEmulsion::Device::World world;
 };

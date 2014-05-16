@@ -6,13 +6,14 @@
 
 namespace ofxDigitalEmulsion {
 	namespace Device {
-		class World : Utils::Set<Device::Base> {
+		class World : public Utils::Set<Device::Base> {
 		public:
 			template<typename DeviceType>
 			shared_ptr<DeviceType> add() {
 				auto device = shared_ptr<DeviceType>(new DeviceType());
 				this->push_back(device);
 				return device;
+				return shared_ptr<DeviceType>();
 			}
 
 			shared_ptr<Camera> addCamera();

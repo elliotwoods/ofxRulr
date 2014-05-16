@@ -75,17 +75,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\Device\Base.h" />
-    <ClInclude Include="..\src\Device\Camera.h" />
-    <ClInclude Include="..\src\Device\Projector.h" />
-    <ClInclude Include="..\src\Device\World.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
-    <ClInclude Include="..\src\Utils\Set.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Base.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Camera.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Projector.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\World.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Device\Camera.cpp" />
-    <ClCompile Include="..\src\Device\Projector.cpp" />
-    <ClCompile Include="..\src\Device\World.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\Camera.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\Projector.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

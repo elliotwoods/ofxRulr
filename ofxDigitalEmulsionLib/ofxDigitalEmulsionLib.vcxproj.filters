@@ -18,30 +18,30 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Device\Camera.h">
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Camera.h">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Device\Base.h">
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Projector.h">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Device\World.h">
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\World.h">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Device\Projector.h">
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Base.h">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Utils\Set.h">
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Device\Camera.cpp">
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\Projector.cpp">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Device\Projector.cpp">
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\World.cpp">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Device\World.cpp">
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\Camera.cpp">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,18 +2,22 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+	auto cameraDevice = DevicePtr(new Device::VideoInputDevice(2304, 1536, 2.0f));
+	auto camera = this->world.addCamera();
+	camera->setDevice(cameraDevice);
 
 	this->gui.init();
 	this->gui.addInspector();
+	auto cameraPanel = this->gui.add(* camera->getGrabber(), "Camera");
 
-	this->grabber.open(0);
-	this->grabber.startCapture();
+	cameraPanel->onMouseReleased += [this, camera] (MouseArguments &) {
+		inspect(* camera);
+	};
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	this->grabber.update();
+	this->world.update();
 }
 
 //--------------------------------------------------------------
