@@ -27,4 +27,8 @@ class ofApp : public ofBaseApp{
 
 		ofxCvGui::Builder gui;
 		ofxDigitalEmulsion::Device::World world;
+
+		shared_ptr<Panels::BaseImage> cameraPanel;
+		ofParameter<bool> showGraph;
+		ofMesh graph;
 };

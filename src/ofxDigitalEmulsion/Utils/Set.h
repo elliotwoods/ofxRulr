@@ -10,8 +10,8 @@ namespace ofxDigitalEmulsion {
 			shared_ptr<T> get()  {
 				for(auto item : * this) {
 					auto castItem = dynamic_pointer_cast<T>(item);
-					if (cast != NULL) {
-						return cast;
+					if (castItem != NULL) {
+						return castItem;
 					}
 				}
 				ofLogError("ofxDigitalEmulsion") << "Item of type [" << T().getTypeName() << "] could not be found in Set<" << typeid(BaseType).name() << ">";

@@ -21,10 +21,12 @@ namespace ofxDigitalEmulsion {
 			ofParameter<float> exposure;
 			ofParameter<float> gain;
 			ofParameter<float> focus;
+			ofParameter<float> sharpness;
 
 			void exposureCallback(float &);
 			void gainCallback(float &);
 			void focusCallback(float &);
+			void sharpnessCallback(float &);
 		};
 	}
 }
