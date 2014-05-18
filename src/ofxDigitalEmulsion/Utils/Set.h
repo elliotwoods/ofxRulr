@@ -23,6 +23,10 @@ namespace ofxDigitalEmulsion {
 					item->update();
 				}
 			}
+
+			void add(shared_ptr<BaseType> item) {
+				this->push_back(item);
+			}
 		};
 	}
 }

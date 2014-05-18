@@ -35,11 +35,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
+    <Import Project="..\..\ofxCv\ofxCvLib\ofxCv.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
+    <Import Project="..\..\ofxCv\ofxCvLib\ofxCv.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -76,16 +78,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Base.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Camera.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Projector.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\World.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Calibrator\Base.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Camera.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Projector.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\World.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\Camera.cpp" />
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\Projector.cpp" />
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\World.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

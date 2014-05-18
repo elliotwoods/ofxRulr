@@ -10,39 +10,54 @@
     <Filter Include="src\ofxDigitalEmulsion\Utils">
       <UniqueIdentifier>{17332ddf-f69f-43e9-bdd8-04af49737c64}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxDigitalEmulsion\Device">
+    <Filter Include="src\ofxDigitalEmulsion\Item">
       <UniqueIdentifier>{b90f753f-45b7-4a46-a2fe-c83f26b96ebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Calibrator">
+      <UniqueIdentifier>{b72e1980-a6ce-42c7-b044-94fa88356e3a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Camera.h">
-      <Filter>src\ofxDigitalEmulsion\Device</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Projector.h">
-      <Filter>src\ofxDigitalEmulsion\Device</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\World.h">
-      <Filter>src\ofxDigitalEmulsion\Device</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\Base.h">
-      <Filter>src\ofxDigitalEmulsion\Device</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\World.h">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Camera.h">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.h">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Projector.h">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Calibrator\Base.h">
+      <Filter>src\ofxDigitalEmulsion\Calibrator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\Projector.cpp">
-      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\World.cpp">
-      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\Camera.cpp">
-      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

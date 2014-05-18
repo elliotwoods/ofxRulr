@@ -7,7 +7,7 @@ void ofApp::setup(){
 	this->showGraph.set("Show graph", true);
 
 	auto cameraDevice = DevicePtr(new Device::VideoInputDevice(1920, 1080, 30.0f));
-	auto camera = this->world.addCamera();
+	auto camera = this->world.add(Item::Camera::make());
 	camera->setDevice(cameraDevice);
 
 	this->gui.init();

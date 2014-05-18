@@ -1,5 +1,6 @@
 #pragma once
 
-#include "ofxDigitalEmulsion/Device/Camera.h"
-#include "ofxDigitalEmulsion/Device/Projector.h"
-#include "ofxDigitalEmulsion/Device/World.h"
+#include "ofxDigitalEmulsion/Item/Camera.h"
+#include "ofxDigitalEmulsion/Item/Projector.h"
+#include "ofxDigitalEmulsion/Item/World.h"
+#include "ofxDigitalEmulsion/Item/Checkerboard.h"

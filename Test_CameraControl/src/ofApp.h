@@ -6,6 +6,7 @@
 #include "ofxDigitalEmulsion.h"
 
 using namespace ofxMachineVision;
+using namespace ofxDigitalEmulsion;
 using namespace ofxCvGui;
 
 class ofApp : public ofBaseApp{
