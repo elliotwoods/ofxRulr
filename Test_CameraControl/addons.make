@@ -1,0 +1,7 @@
+ofxGrabCam
+ofxCvGui2
+ofxLiquidEvent
+ofxUVC
+ofxRay
+ofxMachineVision
+ofxDigitalEmulsion
