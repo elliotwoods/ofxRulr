@@ -5,13 +5,11 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>EBEBD488-2BFD-4868-B8DA-E3C03D98B339</string>
+	<string>CDD9BF03-4EAC-42F4-B8AA-A74248D3897D</string>
 	<key>IDESourceControlProjectName</key>
-	<string>Test_CameraControl</string>
+	<string>Sketch_ChessboardCamera</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>05650726-E23A-4FF0-803F-C95A60AE5277</key>
-		<string>ssh://github.com/elliotwoods/ofxRay.git</string>
 		<key>14F19F20-000A-447B-A4BC-8F6AFACCE555</key>
 		<string>ssh://github.com/elliotwoods/ofxCv.git</string>
 		<key>2B1EEB58-58D6-47D3-BD27-06E62670FB4C</key>
@@ -24,27 +22,19 @@
 		<string>ssh://github.com/elliotwoods/ofxMachineVision.git</string>
 		<key>9494E1A1-C539-49A3-8B1A-3D5929AAD148</key>
 		<string>https://github.com/elliotwoods/ofxAssets</string>
-		<key>9F4EB477-A508-4433-ABF9-5D65C1E5E307</key>
-		<string>ssh://github.com/elliotwoods/ofxGraycode.git</string>
 		<key>AA49D5A9-7CA8-4ECC-829A-88B1E9FF33FF</key>
 		<string>ssh://github.com/elliotwoods/ofxCvGui2.git</string>
 		<key>B7D6925B-91E6-4356-B694-3061E6515D47</key>
 		<string>https://github.com/elliotwoods/ofxGrabCam</string>
-		<key>BF13F576-8AC7-4F87-9205-39A4109E8A1F</key>
-		<string>ssh://github.com/elliotwoods/ofxNonLinearFit.git</string>
-		<key>D634392F-1BFD-4FF2-8CBC-1B013B187F04</key>
-		<string>ssh://github.com/elliotwoods/ofxTriangulate.git</string>
 		<key>D8DA5EFD-E707-4566-854A-18F873F38ECC</key>
 		<string>https://github.com/elliotwoods/ofxLiquidEvent.git</string>
 		<key>E02DAB75-8FD8-4F11-AE0E-001F88F9C90F</key>
 		<string>https://github.com/atduskgreg/ofxUVC.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>addons/ofxDigitalEmulsion/Test_CameraControl/Test_CameraControl.xcodeproj/project.xcworkspace</string>
+	<string>addons/ofxDigitalEmulsion/Sketch_ChessboardCamera/Sketch_ChessboardCamera.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>05650726-E23A-4FF0-803F-C95A60AE5277</key>
-		<string>../../../../ofxRay</string>
 		<key>14F19F20-000A-447B-A4BC-8F6AFACCE555</key>
 		<string>../../../../ofxCv</string>
 		<key>2B1EEB58-58D6-47D3-BD27-06E62670FB4C</key>
@@ -57,16 +47,10 @@
 		<string>../../../../ofxMachineVision</string>
 		<key>9494E1A1-C539-49A3-8B1A-3D5929AAD148</key>
 		<string>../../../../ofxAssets</string>
-		<key>9F4EB477-A508-4433-ABF9-5D65C1E5E307</key>
-		<string>../../../../ofxGraycode</string>
 		<key>AA49D5A9-7CA8-4ECC-829A-88B1E9FF33FF</key>
 		<string>../../../../ofxCvGui2</string>
 		<key>B7D6925B-91E6-4356-B694-3061E6515D47</key>
 		<string>../../../../ofxGrabCam</string>
-		<key>BF13F576-8AC7-4F87-9205-39A4109E8A1F</key>
-		<string>../../../../ofxNonLinearFit</string>
-		<key>D634392F-1BFD-4FF2-8CBC-1B013B187F04</key>
-		<string>../../../../ofxTriangulate</string>
 		<key>D8DA5EFD-E707-4566-854A-18F873F38ECC</key>
 		<string>../../../../ofxLiquidEvent</string>
 		<key>E02DAB75-8FD8-4F11-AE0E-001F88F9C90F</key>
@@ -124,14 +108,6 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>9F4EB477-A508-4433-ABF9-5D65C1E5E307</string>
-			<key>IDESourceControlWCCName</key>
-			<string>ofxGraycode</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>684BA89B-D4B9-44D1-8108-51618367B69E</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxJSON</string>
@@ -151,30 +127,6 @@
 			<string>757A4E1D-62CB-40E1-A0E8-961B1AC52458</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxMachineVision</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>BF13F576-8AC7-4F87-9205-39A4109E8A1F</string>
-			<key>IDESourceControlWCCName</key>
-			<string>ofxNonLinearFit</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>05650726-E23A-4FF0-803F-C95A60AE5277</string>
-			<key>IDESourceControlWCCName</key>
-			<string>ofxRay</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>D634392F-1BFD-4FF2-8CBC-1B013B187F04</string>
-			<key>IDESourceControlWCCName</key>
-			<string>ofxTriangulate</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
