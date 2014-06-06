@@ -7,7 +7,6 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		class Camera : public Base {
 		public:
-			OFXDIGITALEMULSION_MAKE_ELEMENT_SIMPLE(Camera)
 			Camera();
 			string getTypeName() const;
 			void update();

@@ -16,6 +16,9 @@
     <Filter Include="src\ofxDigitalEmulsion\Calibrator">
       <UniqueIdentifier>{b72e1980-a6ce-42c7-b044-94fa88356e3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Graph">
+      <UniqueIdentifier>{56d0aaa9-8e7c-43a3-a62c-da89973f07e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
@@ -42,6 +45,15 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Calibrator\CameraIntrinsics.h">
+      <Filter>src\ofxDigitalEmulsion\Calibrator</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Calibrator\Base.h">
       <Filter>src\ofxDigitalEmulsion\Calibrator</Filter>
     </ClInclude>
@@ -58,6 +70,12 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Calibrator\CameraIntrinsis.cpp">
+      <Filter>src\ofxDigitalEmulsion\Calibrator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,12 +5,17 @@ void ofApp::setup(){
 	ofSetWindowShape(1280, 720/2);
 
 	auto cameraDevice = ofxMachineVision::DevicePtr(new ofxMachineVision::Device::VideoInputDevice(1920, 1080, 30.0f));
-	auto camera = Item::Camera::make();
-	this->world.add(camera);
+	auto camera = MAKE(Item::Camera);
 	camera->setDevice(cameraDevice);
 
-	auto checkerboard = Item::Checkerboard::make();
+	auto checkerboard = MAKE(Item::Checkerboard);
+
+	this->world.add(camera);
 	this->world.add(checkerboard);
+
+	auto calibrator = MAKE(Calibrator::CameraIntrinsics);
+	calibrator->connect(checkerboard);
+	calibrator->connect(camera);
 	
 	this->gui.init();
 	this->cameraPanel = this->gui.add(* camera->getGrabber(), "Camera");

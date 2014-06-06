@@ -79,6 +79,9 @@
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Calibrator\Base.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Calibrator\CameraIntrinsics.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Camera.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.h" />
@@ -88,6 +91,8 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Calibrator\CameraIntrinsis.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
