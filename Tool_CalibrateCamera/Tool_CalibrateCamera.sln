@@ -10,7 +10,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxDigitalEmulsionLib", "..
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxMachineVisionLib", "..\..\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj", "{CD4455E0-0454-4C3C-BB42-9D15D16A34DD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvLib", "..\..\ofxCv\ofxCvLib\ofxCvLib.vcxproj", "{FAA73572-FD12-41FA-8FBE-CB47482D2D87}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvMinLib", "..\..\ofxCvMin\ofxCvMinLib\ofxCvMinLib.vcxproj", "{FAA73572-FD12-41FA-8FBE-CB47482D2D87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

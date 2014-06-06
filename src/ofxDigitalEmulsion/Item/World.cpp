@@ -2,22 +2,26 @@
 
 #include "ofxCvGui.h"
 
+using namespace ofxCvGui;
+
 namespace ofxDigitalEmulsion {
 	namespace Item {
 		//-----------
-		void World::setupGui(ofxCvGui::Controller & controller) {
+		void World::setupGui(Controller & controller) {
 			for(auto node : *this) {
 				auto nodeView = node->getView();
 				controller.add(nodeView);
 
-				nodeView->onMouse += [node] (ofxCvGui::MouseArguments & mouse) {
-					if (mouse.isLocalPressed()) {
-						ofxCvGui::inspect(* node);
+				nodeView->onMouse += [node] (MouseArguments & mouse) {
+					if (mouse.isLocalPressed() && mouse.button == 0) {
+						if (!ofxCvGui::isBeingInspected(* node)) {
+							ofxCvGui::inspect(* node);
+						}
 					}
 				};
 
-				nodeView->onDraw += [node] (ofxCvGui::DrawArguments & drawArgs) {
-					if (ofxCvGui::isBeingInspected(* node)) {
+				nodeView->onDraw += [node] (DrawArguments & drawArgs) {
+					if (isBeingInspected(* node)) {
 						ofPushStyle();
 						ofSetColor(255);
 						ofSetLineWidth(3.0f);
@@ -29,6 +33,12 @@ namespace ofxDigitalEmulsion {
 			}
 			auto inspector = ofxCvGui::Builder::makeInspector();
 			controller.add(inspector);
+			
+			Panels::Inspector::onClear += [] (ElementGroupPtr inspector) {
+				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
+					return ofGetFrameRate();
+				}, true));
+			};
 		}
 	}
 }

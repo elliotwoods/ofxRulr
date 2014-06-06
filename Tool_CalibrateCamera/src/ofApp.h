@@ -28,6 +28,4 @@ class ofApp : public ofBaseApp{
 
 		ofxCvGui::Builder gui;
 		ofxDigitalEmulsion::Item::World world;
-
-		shared_ptr<Panels::BaseImage> cameraPanel;
 };

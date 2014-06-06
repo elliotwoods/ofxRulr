@@ -2,8 +2,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	ofSetWindowShape(1280, 720/2);
-
 	auto cameraDevice = MAKE(ofxMachineVision::Device::VideoInputDevice, 1920, 1080, 30.0f);
 	auto camera = MAKE(Item::Camera);
 	camera->setDevice(cameraDevice);

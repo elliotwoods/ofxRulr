@@ -13,8 +13,9 @@ namespace ofxDigitalEmulsion {
 		class BasePin {
 		public:
 			BasePin(string name);
-			virtual string getType() = 0;
-			virtual string getName() const;
+			virtual string getTypeName() = 0;
+			virtual string getNodeTypeName() = 0;
+			string getName() const;
 		private:
 			const string name;
 		};
@@ -23,13 +24,16 @@ namespace ofxDigitalEmulsion {
 		class Pin : public BasePin {
 		public:
 			Pin(string name) : BasePin(name) { }
-			Pin() : BasePin(this->getType()) { }
+			Pin() : BasePin(this->getNodeTypeName()) { }
 
-			string getType() override { return NodeType().getTypeName(); }
+			string getTypeName() override { return string("Pin::") + this->getNodeTypeName(); }
+			string getNodeTypeName() override { return NodeType().getTypeName(); }
 			void connect(shared_ptr<NodeType> node) {
 				this->connection = node;
 			}
-			shared_ptr<NodeType> getConnection();
+			shared_ptr<NodeType> getConnection() {
+				return connection;
+			}
 		protected:
 			shared_ptr<NodeType> connection;
 		};

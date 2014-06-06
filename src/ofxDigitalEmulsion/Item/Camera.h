@@ -10,7 +10,7 @@ namespace ofxDigitalEmulsion {
 			Camera();
 			string getTypeName() const;
 			void update();
-			void populate(ofxCvGui::ElementGroupPtr);
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 			ofxCvGui::PanelPtr getView() override;
 
 			void setDevice(ofxMachineVision::DevicePtr, int deviceIndex = 0);

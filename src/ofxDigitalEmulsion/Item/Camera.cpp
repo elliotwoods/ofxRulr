@@ -33,7 +33,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Camera::populate(ElementGroupPtr inspector) {
+		void Camera::populateInspector(ElementGroupPtr inspector) {
 			inspector->add(Widgets::Title::make("Camera", Widgets::Title::Level::H2));
 
 			inspector->add(Widgets::LiveValueHistory::make("Framerate [Hz]", [this] () {
