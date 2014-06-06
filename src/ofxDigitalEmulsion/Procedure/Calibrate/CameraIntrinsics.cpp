@@ -19,7 +19,7 @@ namespace ofxDigitalEmulsion {
 				this->inputPins.push_back(MAKE(Pin<Item::Checkerboard>));
 				this->inputPins.push_back(MAKE(Pin<Item::Camera>));
 
-				this->enableFinder.set("Find chessboards in image", false);
+				this->enableFinder.set("Run chessboard finder", false);
 
 				this->error = 0.0f;
 			}
@@ -42,7 +42,9 @@ namespace ofxDigitalEmulsion {
 					auto camera = cameraPin->getConnection();
 					if (camera) {
 						auto grabber = camera->getGrabber();
-						this->grayscale.draw(drawArgs.localBounds);
+						if (this->grayscale.isAllocated()) {
+							this->grayscale.draw(drawArgs.localBounds);
+						}
 
 						ofPushMatrix();
 						ofScale(drawArgs.localBounds.getWidth() / grabber->getWidth(), drawArgs.localBounds.getHeight() / grabber->getHeight());
@@ -57,7 +59,7 @@ namespace ofxDigitalEmulsion {
 						int boardIndex = 0;
 						ofColor boardColor(200, 100, 100);
 						for(auto & board : this->accumulatedCorners) {
-							boardColor.setHue(boardIndex * 30 % 360);
+							boardColor.setHue(boardIndex++ * 30 % 360);
 							ofSetColor(boardColor);
 							for(auto & corner : board) {
 								ofCircle(corner, 3.0f);
@@ -127,11 +129,14 @@ namespace ofxDigitalEmulsion {
 					return (float) this->currentCorners.size();
 				}, true));
 				inspector->add(Widgets::Button::make("Add image to calibration set", [this] () {
-					this->accumulatedCorners.push_back(currentCorners);
+					if (currentCorners.size() > 0) {
+						this->accumulatedCorners.push_back(currentCorners);
+					}
 				}));
 				inspector->add(Widgets::Button::make("Clear calibration set", [this] () {
 					this->accumulatedCorners.clear();
 				}));
+				inspector->add(Widgets::Spacer::make());
 				inspector->add(Widgets::LiveValue<int>::make("Calibration set count", [this] () {
 					return (int) accumulatedCorners.size();
 				}));
@@ -152,11 +157,16 @@ namespace ofxDigitalEmulsion {
 					auto objectPointsSet = vector<vector<Point3f>>(this->accumulatedCorners.size(), checkerboard->getObjectPoints());
 					auto cameraResolution = cv::Size(camera->getGrabber()->getWidth(), camera->getGrabber()->getHeight());
 
-					Mat CameraMatrix, DistortionMatrix;
-					Mat Rotations, Translations;
+					Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
+					Mat distortionCoefficients = Mat::zeros(8, 1, CV_64F);
+
+					vector<Mat> Rotations, Translations;
 					try {
-						auto error = cv::calibrateCamera(objectPointsSet, this->accumulatedCorners, cameraResolution, CameraMatrix, DistortionMatrix, Rotations, Translations);
-					} catch (std::exception e) {
+						vector<vector<Point2f>> accumulatedCornersCv = toCv(this->accumulatedCorners);
+						auto flags = CV_CALIB_FIX_K6 | CV_CALIB_FIX_K5;
+						this->error = cv::calibrateCamera(objectPointsSet, accumulatedCornersCv, cameraResolution, cameraMatrix, distortionCoefficients, Rotations, Translations, flags);
+						camera->setCalibration(cameraMatrix, distortionCoefficients);
+					} catch (cv::Exception e) {
 						ofSystemAlertDialog(e.what());
 					}
 				}
