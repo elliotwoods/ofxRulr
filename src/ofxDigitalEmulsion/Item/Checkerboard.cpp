@@ -1,5 +1,6 @@
 #include "Checkerboard.h"
 #include "../../../addons/ofxCvGui2/src/ofxCvGui.h"
+#include "ofxCvMin.h"
 
 using namespace ofxCvGui;
 
@@ -20,7 +21,7 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void addSlider(ofParameter<float> & parameter, ElementGroupPtr inspector) {
 			auto slider = Widgets::Slider::make(parameter);
-			slider->setIntValidator();
+			slider->addIntValidator();
 			inspector->add(slider);
 		}
 
@@ -31,6 +32,20 @@ namespace ofxDigitalEmulsion {
 			addSlider(this->sizeX, inspector);
 			addSlider(this->sizeY, inspector);
 			addSlider(this->spacing, inspector);
+		}
+
+		//----------
+		ofxCvGui::PanelPtr Checkerboard::getView() {
+			auto view = MAKE(ofxCvGui::Panels::World);
+			view->onDrawWorld += [this] (ofCamera &) {
+				ofxCv::makeCheckerboardMesh(this->getSize(), this->spacing).drawFaces();
+			};
+			return view;
+		}
+
+		//----------
+		cv::Size Checkerboard::getSize() {
+			return cv::Size(this->sizeX, this->sizeY);
 		}
 	}
 }

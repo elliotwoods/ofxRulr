@@ -50,6 +50,22 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		ofxCvGui::PanelPtr Camera::getView() {
+			auto view = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference(), this->getTypeName());
+			
+			view->onDraw += [this] (ofxCvGui::DrawArguments &) {
+				stringstream status;
+				status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
+				status << endl;
+				status << this->getGrabber()->getDeviceSpecification().toString() << endl;
+			
+				ofDrawBitmapStringHighlight(status.str(), 20, 80, ofColor(0x46), ofColor::white);
+			};
+
+			return view;
+		}
+
+		//----------
 		void Camera::setDevice(DevicePtr device, int deviceIndex) {
 			this->grabber = shared_ptr<Grabber::Simple>(new Grabber::Simple(device));
 			this->grabber->open(deviceIndex);

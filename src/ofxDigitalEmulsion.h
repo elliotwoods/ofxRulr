@@ -5,4 +5,4 @@
 #include "ofxDigitalEmulsion/Item/World.h"
 #include "ofxDigitalEmulsion/Item/Checkerboard.h"
 
-#include "ofxDigitalEmulsion/Calibrator/CameraIntrinsics.h"
+#include "ofxDigitalEmulsion/Procedure/Calibrate/CameraIntrinsics.h"

@@ -1,13 +1,12 @@
 #pragma once
 
+#include "../Item/Base.h"
 #include "../Graph/Node.h"
-
-#include "ofParameter.h"
 
 using namespace std;
 
 namespace ofxDigitalEmulsion {
-	namespace Item {
+	namespace Procedure {
 		class Base : public Graph::Node {
 		public:
 		};

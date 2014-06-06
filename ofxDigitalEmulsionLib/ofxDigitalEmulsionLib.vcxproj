@@ -35,13 +35,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
-    <Import Project="..\..\ofxCv\ofxCvLib\ofxCv.props" />
+    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
-    <Import Project="..\..\ofxCv\ofxCvLib\ofxCv.props" />
+    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -78,8 +78,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Calibrator\Base.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Calibrator\CameraIntrinsics.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h" />
@@ -87,16 +85,20 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Projector.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\World.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Base.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Calibrator\CameraIntrinsis.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

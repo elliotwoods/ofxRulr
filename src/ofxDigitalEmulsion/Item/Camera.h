@@ -11,6 +11,7 @@ namespace ofxDigitalEmulsion {
 			string getTypeName() const;
 			void update();
 			void populate(ofxCvGui::ElementGroupPtr);
+			ofxCvGui::PanelPtr getView() override;
 
 			void setDevice(ofxMachineVision::DevicePtr, int deviceIndex = 0);
 			shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();

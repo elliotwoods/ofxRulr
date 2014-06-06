@@ -1,21 +1,15 @@
 #pragma once
 
-#include "Camera.h"
-#include "Projector.h"
 #include "../Utils/Set.h"
+#include "../Graph/Node.h"
+
+#include "ofxCvGui/Controller.h"
 
 namespace ofxDigitalEmulsion {
 	namespace Item {
-		class World : public Utils::Set<Item::Base> {
+		class World : public Utils::Set<Graph::Node> {
 		public:
-			template<typename DeviceType>
-			shared_ptr<DeviceType> makeAndAdd() {
-				auto device = shared_ptr<DeviceType>(new DeviceType());
-				this->push_back(device);
-
-				return device;
-				return shared_ptr<DeviceType>();
-			}
+			void setupGui(ofxCvGui::Controller &);
 		};
 	}
 }
