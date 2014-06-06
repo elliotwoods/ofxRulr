@@ -5,25 +5,23 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>CDD9BF03-4EAC-42F4-B8AA-A74248D3897D</string>
+	<string>5B6CFD39-4160-4127-BE80-07870CF18731</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Sketch_ChessboardCamera</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>14F19F20-000A-447B-A4BC-8F6AFACCE555</key>
-		<string>ssh://github.com/elliotwoods/ofxCv.git</string>
 		<key>2B1EEB58-58D6-47D3-BD27-06E62670FB4C</key>
 		<string>https://github.com/elliotwoods/ofxDigitalEmulsion</string>
-		<key>45367BEF-63AD-4BD6-B0C1-B00920488742</key>
-		<string>ssh://github.com/elliotwoods/openFrameworks.git</string>
-		<key>684BA89B-D4B9-44D1-8108-51618367B69E</key>
-		<string>https://github.com/jefftimesten/ofxJSON.git</string>
+		<key>5562196A-12D5-4F9A-B655-9ED27AA29040</key>
+		<string>ssh://github.com/elliotwoods/ofxCvMin.git</string>
 		<key>757A4E1D-62CB-40E1-A0E8-961B1AC52458</key>
 		<string>ssh://github.com/elliotwoods/ofxMachineVision.git</string>
 		<key>9494E1A1-C539-49A3-8B1A-3D5929AAD148</key>
 		<string>https://github.com/elliotwoods/ofxAssets</string>
 		<key>AA49D5A9-7CA8-4ECC-829A-88B1E9FF33FF</key>
 		<string>ssh://github.com/elliotwoods/ofxCvGui2.git</string>
+		<key>B72FE13E-8C83-4322-98CF-8F60096742E5</key>
+		<string>ssh://github.com/elliotwoods/openFrameworks.git</string>
 		<key>B7D6925B-91E6-4356-B694-3061E6515D47</key>
 		<string>https://github.com/elliotwoods/ofxGrabCam</string>
 		<key>D8DA5EFD-E707-4566-854A-18F873F38ECC</key>
@@ -35,20 +33,18 @@
 	<string>addons/ofxDigitalEmulsion/Sketch_ChessboardCamera/Sketch_ChessboardCamera.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>14F19F20-000A-447B-A4BC-8F6AFACCE555</key>
-		<string>../../../../ofxCv</string>
 		<key>2B1EEB58-58D6-47D3-BD27-06E62670FB4C</key>
 		<string>../../..</string>
-		<key>45367BEF-63AD-4BD6-B0C1-B00920488742</key>
-		<string>../../../../..</string>
-		<key>684BA89B-D4B9-44D1-8108-51618367B69E</key>
-		<string>../../../../ofxJSON</string>
+		<key>5562196A-12D5-4F9A-B655-9ED27AA29040</key>
+		<string>../../../../ofxCvMin</string>
 		<key>757A4E1D-62CB-40E1-A0E8-961B1AC52458</key>
 		<string>../../../../ofxMachineVision</string>
 		<key>9494E1A1-C539-49A3-8B1A-3D5929AAD148</key>
 		<string>../../../../ofxAssets</string>
 		<key>AA49D5A9-7CA8-4ECC-829A-88B1E9FF33FF</key>
 		<string>../../../../ofxCvGui2</string>
+		<key>B72FE13E-8C83-4322-98CF-8F60096742E5</key>
+		<string>../../../../..</string>
 		<key>B7D6925B-91E6-4356-B694-3061E6515D47</key>
 		<string>../../../../ofxGrabCam</string>
 		<key>D8DA5EFD-E707-4566-854A-18F873F38ECC</key>
@@ -61,7 +57,7 @@
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>45367BEF-63AD-4BD6-B0C1-B00920488742</string>
+	<string>B72FE13E-8C83-4322-98CF-8F60096742E5</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -76,17 +72,17 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>14F19F20-000A-447B-A4BC-8F6AFACCE555</string>
+			<string>AA49D5A9-7CA8-4ECC-829A-88B1E9FF33FF</string>
 			<key>IDESourceControlWCCName</key>
-			<string>ofxCv</string>
+			<string>ofxCvGui2</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>AA49D5A9-7CA8-4ECC-829A-88B1E9FF33FF</string>
+			<string>5562196A-12D5-4F9A-B655-9ED27AA29040</string>
 			<key>IDESourceControlWCCName</key>
-			<string>ofxCvGui2</string>
+			<string>ofxCvMin</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -103,14 +99,6 @@
 			<string>B7D6925B-91E6-4356-B694-3061E6515D47</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxGrabCam</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>684BA89B-D4B9-44D1-8108-51618367B69E</string>
-			<key>IDESourceControlWCCName</key>
-			<string>ofxJSON</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -140,7 +128,7 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>45367BEF-63AD-4BD6-B0C1-B00920488742</string>
+			<string>B72FE13E-8C83-4322-98CF-8F60096742E5</string>
 			<key>IDESourceControlWCCName</key>
 			<string>openFrameworks</string>
 		</dict>

@@ -1,9 +1,14 @@
 #pragma once
 
 #include "ofxCvGui.h"
+#include "ofxCvMin.h"
 #include "ofxMachineVision.h"
 
 #include "ofMain.h"
+
+using namespace ofxCv;
+using namespace cv;
+using namespace ofxCvGui;
 
 class ofApp : public ofBaseApp{
 
@@ -24,4 +29,10 @@ public:
 	
 	ofxCvGui::Builder gui;
 	ofxMachineVision::Webcam camera;
+	
+	ofParameter<float> sizeWidth, sizeHeight;
+	Mat grayscaleImage;
+	vector<ofVec2f> currentCorners;
+	
+	vector<vector<ofVec2f>> corners;
 };

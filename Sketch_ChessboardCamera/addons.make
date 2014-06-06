@@ -1,9 +1,4 @@
-ofxOpenCv
-ofxGrabCam
-ofxCv
 ofxCvGui2
-ofxLiquidEvent
 ofxUVC
-ofxJSON
 ofxMachineVision
-ofxAssets
+ofxCvMin
