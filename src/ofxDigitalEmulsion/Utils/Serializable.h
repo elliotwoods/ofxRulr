@@ -13,7 +13,7 @@ namespace ofxDigitalEmulsion {
 			virtual void serialize(Json::Value &) = 0;
 			virtual void deserialize(Json::Value &) = 0;
 
-			void save(std::string filename = "") const;
+			void save(std::string filename = "");
 			void load(std::string filename = "");
 			std::string getDefaultFilename() const;
 		protected:

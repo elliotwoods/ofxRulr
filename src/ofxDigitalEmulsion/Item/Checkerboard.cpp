@@ -80,7 +80,10 @@ namespace ofxDigitalEmulsion {
 			addSlider(this->sizeY, inspector)->onValueChange += sliderCallback;
 			inspector->add(Widgets::Title::make("NB : The chessboard size is defined by the amount of inner corners", Widgets::Title::Level::H3));
 			inspector->add(Widgets::Spacer::make());
-			addSlider(this->spacing, inspector)->onValueChange += sliderCallback;
+			
+			auto spacingSlider = Widgets::Slider::make(this->spacing);
+			spacingSlider->onValueChange += sliderCallback;
+			inspector->add(spacingSlider);
 		}
 
 		//----------

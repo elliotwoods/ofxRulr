@@ -46,11 +46,26 @@ namespace ofxDigitalEmulsion {
 
 						ofPushMatrix();
 						ofScale(drawArgs.localBounds.getWidth() / grabber->getWidth(), drawArgs.localBounds.getHeight() / grabber->getHeight());
-						ofxCv::drawCorners(this->currentCorners);
-						ofPopMatrix();
-					}
 
-					for(auto & board : this->accumulatedCorners) {
+						//draw current corners
+						ofxCv::drawCorners(this->currentCorners);
+						
+						//draw past corners
+						ofPushStyle();
+						ofFill();
+						ofSetLineWidth(0.0f);
+						int boardIndex = 0;
+						ofColor boardColor(200, 100, 100);
+						for(auto & board : this->accumulatedCorners) {
+							boardColor.setHue(boardIndex * 30 % 360);
+							ofSetColor(boardColor);
+							for(auto & corner : board) {
+								ofCircle(corner, 3.0f);
+							}
+						}
+						ofPopStyle();
+
+						ofPopMatrix();
 					}
 				};
 				return view;

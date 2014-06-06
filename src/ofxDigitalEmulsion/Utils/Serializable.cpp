@@ -14,7 +14,10 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Serializable::deserialize(ofParameter<float> & parameter, Json::Value & json) {
-			parameter.set(json[parameter.getName()].asFloat());
+			const auto name = parameter.getName();
+			if (json[name].isNumeric()) {
+				parameter.set(json[name].asFloat());
+			}
 		}
 
 		//----------
