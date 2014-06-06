@@ -20,6 +20,8 @@ namespace ofxDigitalEmulsion {
 				this->inputPins.push_back(MAKE(Pin<Item::Camera>));
 
 				this->enableFinder.set("Find chessboards in image", false);
+
+				this->error = 0.0f;
 			}
 
 			//----------
@@ -30,27 +32,6 @@ namespace ofxDigitalEmulsion {
 			//----------
 			PinSet CameraIntrinsics::getInputPins() {
 				return this->inputPins;
-			}
-
-			//----------
-			void CameraIntrinsics::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
-				inspector->add(Widgets::Title::make(this->getTypeName(), Widgets::Title::Level::H2));
-				inspector->add(Widgets::Toggle::make(this->enableFinder));
-				inspector->add(Widgets::LiveValueHistory::make("Corners found", [this] () {
-					return (float) this->currentCorners.size();
-				}, true));
-				inspector->add(Widgets::Button::make("Add image to calibration set", [this] () {
-					this->accumulatedCorners.push_back(currentCorners);
-				}));
-				inspector->add(Widgets::Button::make("Clear calibration set", [this] () {
-					this->accumulatedCorners.clear();
-				}));
-				inspector->add(Widgets::LiveValue<int>::make("Calibration set count", [this] () {
-					return (int) accumulatedCorners.size();
-				}));
-				inspector->add(Widgets::Button::make("Calibrate", [this] () {
-					this->calibrate();
-				}));
 			}
 
 			//----------
@@ -67,6 +48,9 @@ namespace ofxDigitalEmulsion {
 						ofScale(drawArgs.localBounds.getWidth() / grabber->getWidth(), drawArgs.localBounds.getHeight() / grabber->getHeight());
 						ofxCv::drawCorners(this->currentCorners);
 						ofPopMatrix();
+					}
+
+					for(auto & board : this->accumulatedCorners) {
 					}
 				};
 				return view;
@@ -99,8 +83,68 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void CameraIntrinsics::calibrate() {
+			void CameraIntrinsics::serialize(Json::Value & json) {
+				for(int i=0; i<this->accumulatedCorners.size(); i++) {
+					for(int j=0; j<this->accumulatedCorners[i].size(); j++) {
+						json[i][j]["x"] = accumulatedCorners[i][j].x;
+						json[i][j]["y"] = accumulatedCorners[i][j].y;
+					}
+				}
+			}
 
+			//----------
+			void CameraIntrinsics::deserialize(Json::Value & json) {
+				this->accumulatedCorners.clear();
+
+				for(auto & jsonBoard : json) {
+					auto board = vector<ofVec2f>();
+					for(auto & jsonCorner : jsonBoard) {
+						board.push_back(ofVec2f(jsonCorner["x"].asFloat(), jsonCorner["y"].asFloat()));
+					}
+					this->accumulatedCorners.push_back(board);
+				}
+			}
+
+			//----------
+			void CameraIntrinsics::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+				inspector->add(Widgets::Toggle::make(this->enableFinder));
+				inspector->add(Widgets::LiveValueHistory::make("Corners found", [this] () {
+					return (float) this->currentCorners.size();
+				}, true));
+				inspector->add(Widgets::Button::make("Add image to calibration set", [this] () {
+					this->accumulatedCorners.push_back(currentCorners);
+				}));
+				inspector->add(Widgets::Button::make("Clear calibration set", [this] () {
+					this->accumulatedCorners.clear();
+				}));
+				inspector->add(Widgets::LiveValue<int>::make("Calibration set count", [this] () {
+					return (int) accumulatedCorners.size();
+				}));
+				inspector->add(Widgets::Button::make("Calibrate", [this] () {
+					this->calibrate();
+				}));
+				inspector->add(Widgets::LiveValue<float>::make("Reprojection error [px]", [this] () {
+					return this->error;
+				}));
+			}
+
+			//----------
+			void CameraIntrinsics::calibrate() {
+				auto camera = this->getInput<Item::Camera>();
+				auto checkerboard = this->getInput<Item::Checkerboard>();
+
+				if (camera && checkerboard) {
+					auto objectPointsSet = vector<vector<Point3f>>(this->accumulatedCorners.size(), checkerboard->getObjectPoints());
+					auto cameraResolution = cv::Size(camera->getGrabber()->getWidth(), camera->getGrabber()->getHeight());
+
+					Mat CameraMatrix, DistortionMatrix;
+					Mat Rotations, Translations;
+					try {
+						auto error = cv::calibrateCamera(objectPointsSet, this->accumulatedCorners, cameraResolution, CameraMatrix, DistortionMatrix, Rotations, Translations);
+					} catch (std::exception e) {
+						ofSystemAlertDialog(e.what());
+					}
+				}
 			}
 		}
 	}

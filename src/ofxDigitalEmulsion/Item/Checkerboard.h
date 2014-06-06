@@ -9,11 +9,15 @@ namespace ofxDigitalEmulsion {
 		public:
 			Checkerboard();
 			string getTypeName() const override;
-			void populateInspector(ofxCvGui::ElementGroupPtr) override;
 			ofxCvGui::PanelPtr getView();
 
-			cv::Size getSize();
+			void serialize(Json::Value &) override;
+			void deserialize(Json::Value &) override;
+
+			cv::Size getSize() const;
+			vector<cv::Point3f> getObjectPoints() const;
 		protected:
+			void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 			void updatePreviewMesh();
 
 			ofParameter<float> sizeX, sizeY;

@@ -10,6 +10,8 @@ namespace ofxDigitalEmulsion {
 		class World : public Utils::Set<Graph::Node> {
 		public:
 			void setupGui(ofxCvGui::Controller &);
+			void loadAll();
+			void saveAll() const;
 		};
 	}
 }

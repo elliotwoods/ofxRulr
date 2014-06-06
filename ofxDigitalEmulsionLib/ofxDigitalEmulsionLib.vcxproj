@@ -108,6 +108,7 @@
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp" />
     <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp" />
@@ -115,6 +116,7 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalarray.inl" />

@@ -161,6 +161,12 @@
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_reader.cpp">
       <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl">

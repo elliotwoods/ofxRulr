@@ -6,13 +6,14 @@
 
 #include "../../../addons/ofxCvGui2/src/ofxCvGui/Widgets/IInspectable.h"
 
+#include <string>
+
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		class Node : public ofxCvGui::Widgets::IInspectable, public Utils::Serializable {
 		public:
-			virtual string getTypeName() const = 0;
-			virtual PinSet getInputPins() { return PinSet(); }
-			virtual void populateInspector(ofxCvGui::ElementGroupPtr) override { }
+			virtual PinSet getInputPins();
+			void populateInspector(ofxCvGui::ElementGroupPtr) override;
 			virtual ofxCvGui::PanelPtr getView() = 0;
 			virtual void update() { }
 
@@ -35,6 +36,8 @@ namespace ofxDigitalEmulsion {
 					return shared_ptr<NodeType>();
 				}
 			}
+		protected:
+			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
 		};
 	}
 }

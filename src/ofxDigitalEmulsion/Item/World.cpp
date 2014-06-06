@@ -40,5 +40,19 @@ namespace ofxDigitalEmulsion {
 				}, true));
 			};
 		}
+
+		//-----------
+		void World::saveAll() const {
+			for(auto node : * this) {
+				node->save(node->getDefaultFilename());
+			}
+		}
+
+		//-----------
+		void World::loadAll() {
+			for(auto node : * this) {
+				node->load(node->getDefaultFilename());
+			}
+		}
 	}
 }

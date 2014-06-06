@@ -28,21 +28,6 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Checkerboard::populateInspector(ElementGroupPtr inspector) {
-			inspector->add(Widgets::Title::make("Checkerboard", Widgets::Title::Level::H2));
-
-			auto sliderCallback = [this] (ofParameter<float> &) {
-				this->updatePreviewMesh();
-			};
-			
-			addSlider(this->sizeX, inspector)->onValueChange += sliderCallback;
-			addSlider(this->sizeY, inspector)->onValueChange += sliderCallback;
-			inspector->add(Widgets::Title::make("NB : The chessboard size is defined by the amount of inner corners", Widgets::Title::Level::H3));
-			inspector->add(Widgets::Spacer::make());
-			addSlider(this->spacing, inspector)->onValueChange += sliderCallback;
-		}
-
-		//----------
 		ofxCvGui::PanelPtr Checkerboard::getView() {
 			auto view = MAKE(ofxCvGui::Panels::World);
 			view->onDrawWorld += [this] (ofCamera &) {
@@ -60,8 +45,42 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		cv::Size Checkerboard::getSize() {
+		void Checkerboard::serialize(Json::Value & json) {
+			Utils::Serializable::serialize(this->sizeX, json);
+			Utils::Serializable::serialize(this->sizeY, json);
+			Utils::Serializable::serialize(this->spacing, json);
+		}
+
+		//----------
+		void Checkerboard::deserialize(Json::Value & json) {
+			Utils::Serializable::deserialize(this->sizeX, json);
+			Utils::Serializable::deserialize(this->sizeY, json);
+			Utils::Serializable::deserialize(this->spacing, json);
+
+			this->updatePreviewMesh();
+		}
+
+		//----------
+		cv::Size Checkerboard::getSize() const {
 			return cv::Size(this->sizeX, this->sizeY);
+		}
+
+		//----------
+		vector<cv::Point3f> Checkerboard::getObjectPoints() const {
+			return ofxCv::makeCheckerboardPoints(this->getSize(), this->spacing);
+		}
+
+		//----------
+		void Checkerboard::populateInspector2(ElementGroupPtr inspector) {
+			auto sliderCallback = [this] (ofParameter<float> &) {
+				this->updatePreviewMesh();
+			};
+			
+			addSlider(this->sizeX, inspector)->onValueChange += sliderCallback;
+			addSlider(this->sizeY, inspector)->onValueChange += sliderCallback;
+			inspector->add(Widgets::Title::make("NB : The chessboard size is defined by the amount of inner corners", Widgets::Title::Level::H3));
+			inspector->add(Widgets::Spacer::make());
+			addSlider(this->spacing, inspector)->onValueChange += sliderCallback;
 		}
 
 		//----------

@@ -20,6 +20,7 @@ void ofApp::setup(){
 	
 	this->gui.init();
 	this->world.setupGui(this->gui.getController());
+	this->world.loadAll();
 }
 
 //--------------------------------------------------------------

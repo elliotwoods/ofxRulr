@@ -10,23 +10,27 @@ namespace ofxDigitalEmulsion {
 			Camera();
 			string getTypeName() const;
 			void update();
-			void populateInspector(ofxCvGui::ElementGroupPtr);
 			ofxCvGui::PanelPtr getView() override;
+
+			void serialize(Json::Value &) override;
+			void deserialize(Json::Value &) override;
 
 			void setDevice(ofxMachineVision::DevicePtr, int deviceIndex = 0);
 			shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
 		protected:
+			void populateInspector2(ofxCvGui::ElementGroupPtr);
+
+			void exposureCallback(float &);
+			void gainCallback(float &);
+			void focusCallback(float &);
+			void sharpnessCallback(float &);
+
 			shared_ptr<ofxMachineVision::Grabber::Simple> grabber;
 
 			ofParameter<float> exposure;
 			ofParameter<float> gain;
 			ofParameter<float> focus;
 			ofParameter<float> sharpness;
-
-			void exposureCallback(float &);
-			void gainCallback(float &);
-			void focusCallback(float &);
-			void sharpnessCallback(float &);
 		};
 	}
 }

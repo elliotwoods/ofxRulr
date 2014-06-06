@@ -33,23 +33,6 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Camera::populateInspector(ElementGroupPtr inspector) {
-			inspector->add(Widgets::Title::make("Camera", Widgets::Title::Level::H2));
-
-			inspector->add(Widgets::LiveValueHistory::make("Framerate [Hz]", [this] () {
-				if (this->grabber) {
-					return this->grabber->getFps();
-				} else {
-					return 0.0f;
-				}
-			}, true));
-			inspector->add(Widgets::Slider::make(this->exposure));
-			inspector->add(Widgets::Slider::make(this->gain));
-			inspector->add(Widgets::Slider::make(this->focus));
-			inspector->add(Widgets::Slider::make(this->sharpness));
-		}
-
-		//----------
 		ofxCvGui::PanelPtr Camera::getView() {
 			auto view = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference(), this->getTypeName());
 			
@@ -66,6 +49,27 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void Camera::serialize(Json::Value & json) {
+			Utils::Serializable::serialize(this->exposure, json);
+			Utils::Serializable::serialize(this->gain, json);
+			Utils::Serializable::serialize(this->focus, json);
+			Utils::Serializable::serialize(this->sharpness, json);
+		}
+
+		//----------
+		void Camera::deserialize(Json::Value & json) {
+			Utils::Serializable::deserialize(this->exposure, json);
+			Utils::Serializable::deserialize(this->gain, json);
+			Utils::Serializable::deserialize(this->focus, json);
+			Utils::Serializable::deserialize(this->sharpness, json);
+			
+			this->grabber->setExposure(this->exposure);
+			this->grabber->setGain(this->gain);
+			this->grabber->setFocus(this->focus);
+			this->grabber->setSharpness(this->sharpness);
+		}
+
+		//----------
 		void Camera::setDevice(DevicePtr device, int deviceIndex) {
 			this->grabber = shared_ptr<Grabber::Simple>(new Grabber::Simple(device));
 			this->grabber->open(deviceIndex);
@@ -79,6 +83,21 @@ namespace ofxDigitalEmulsion {
 		//----------
 		shared_ptr<Grabber::Simple> Camera::getGrabber() {
 			return this->grabber;
+		}
+
+		//----------
+		void Camera::populateInspector2(ElementGroupPtr inspector) {
+			inspector->add(Widgets::LiveValueHistory::make("Framerate [Hz]", [this] () {
+				if (this->grabber) {
+					return this->grabber->getFps();
+				} else {
+					return 0.0f;
+				}
+			}, true));
+			inspector->add(Widgets::Slider::make(this->exposure));
+			inspector->add(Widgets::Slider::make(this->gain));
+			inspector->add(Widgets::Slider::make(this->focus));
+			inspector->add(Widgets::Slider::make(this->sharpness));
 		}
 
 		//----------
