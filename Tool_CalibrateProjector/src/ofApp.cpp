@@ -2,21 +2,21 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	ofSetWindowTitle("Camera-Projector correspondences scan");
+	ofSetWindowTitle("Projector Intrinsics and Extrinsics calibration");
 
 	auto cameraDevice = MAKE(ofxMachineVision::Device::VideoInputDevice, 1920, 1080, 30.0f);
 	auto camera = MAKE(Item::Camera);
 	camera->setDevice(cameraDevice);
 
-	auto projector = MAKE(Item::Projector);
+	auto checkerboard = MAKE(Item::Checkerboard);
 
-	auto scan = MAKE(Procedure::Scan::Graycode);
-
-	scan->connect(camera);
-	scan->connect(projector);
+	auto calibrator = MAKE(Procedure::Calibrate::CameraIntrinsics);
+	calibrator->connect(checkerboard);
+	calibrator->connect(camera);
 	
 	this->world.add(camera);
-	this->world.add(scan);
+	this->world.add(checkerboard);
+	this->world.add(calibrator);
 	
 	this->gui.init();
 	this->world.setupGui(this->gui.getController());

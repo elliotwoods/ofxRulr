@@ -126,6 +126,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.h">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
@@ -166,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.cpp">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

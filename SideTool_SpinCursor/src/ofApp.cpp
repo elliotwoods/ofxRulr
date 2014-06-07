@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "ofAppGLFWWindow.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -21,6 +22,14 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::sendWithCursor(string address) {
+	auto window = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
+	if (window) {
+		ofClear(0);
+		glfwSwapBuffers(window->getGLFWWindow());
+		glFlush();
+		ofSleepMillis(500);
+	}
+
 	auto cursor = ofVec2f(ofGetMouseX(), ofGetMouseY());
 	cursor /= ofVec2f(ofGetWidth(), ofGetHeight());
 	cursor *= 2.0f;
