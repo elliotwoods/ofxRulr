@@ -1,0 +1,6 @@
+ofxOsc
+ofxGrabCam
+ofxCvGui2
+ofxLiquidEvent
+ofxJSON
+ofxAssets
