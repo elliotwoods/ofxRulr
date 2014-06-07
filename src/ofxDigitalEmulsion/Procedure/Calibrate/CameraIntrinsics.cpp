@@ -90,6 +90,7 @@ namespace ofxDigitalEmulsion {
 						cv::cvtColor(toCv(grabber->getPixelsRef()), toCv(this->grayscale), CV_RGB2GRAY);
 						this->grayscale.update();
 						this->currentCorners.clear();
+						ofxCvGui::Utils::drawProcessingNotice("Finding chessboard...");
 						findChessboardCornersPreTest(toCv(this->grayscale), checkerboard->getSize(), toCv(this->currentCorners));
 					} catch (std::exception e) {
 						ofLogWarning() << e.what();
@@ -165,7 +166,7 @@ namespace ofxDigitalEmulsion {
 						vector<vector<Point2f>> accumulatedCornersCv = toCv(this->accumulatedCorners);
 						auto flags = CV_CALIB_FIX_K6 | CV_CALIB_FIX_K5;
 						this->error = cv::calibrateCamera(objectPointsSet, accumulatedCornersCv, cameraResolution, cameraMatrix, distortionCoefficients, Rotations, Translations, flags);
-						camera->setCalibration(cameraMatrix, distortionCoefficients);
+						camera->setIntrinsics(cameraMatrix, distortionCoefficients);
 					} catch (cv::Exception e) {
 						ofSystemAlertDialog(e.msg);
 					}

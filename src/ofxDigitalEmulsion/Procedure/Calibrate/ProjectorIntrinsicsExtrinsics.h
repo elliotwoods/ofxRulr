@@ -26,12 +26,19 @@ namespace ofxDigitalEmulsion {
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 
 				void addPoint(float x, float y, int projectorWidth, int projectorHeight);
+				void calibrate();
 
 				Graph::PinSet inputPins;
 
 				ofxOscReceiver oscServer;
 
 				vector<Correspondence> correspondences;
+
+				ofSoundPlayer failSound, successSound;
+				float lastSeenSuccess;
+				float lastSeenFail;
+
+				float error;
 			};
 		}
 	}

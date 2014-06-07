@@ -116,6 +116,9 @@
     <ProjectReference Include="..\..\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj">
       <Project>{cd4455e0-0454-4c3c-bb42-9d15d16a34dd}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\ofxRay\ofxRayLib\ofxRayLib.vcxproj">
+      <Project>{048e1ec4-64fe-4aac-b524-1bd56a1fc726}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\ofxDigitalEmulsionLib\ofxDigitalEmulsionLib.vcxproj">
       <Project>{3e918808-adee-4b04-9042-25f795280bad}</Project>
     </ProjectReference>

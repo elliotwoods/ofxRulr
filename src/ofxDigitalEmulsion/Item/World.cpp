@@ -68,6 +68,7 @@ namespace ofxDigitalEmulsion {
 				return * World::gui;
 			} else {
 				OFXDIGITALEMULSION_FATAL << "No gui attached yet";
+				return * (ofxCvGui::Controller *) 0;
 			}
 		}
 	}

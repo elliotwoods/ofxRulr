@@ -24,6 +24,14 @@ namespace ofxDigitalEmulsion {
 				this->inputPins.add(MAKE(Pin<Item::Checkerboard>));
 
 				this->oscServer.setup(4005);
+
+				this->lastSeenFail = -10.0f;
+				this->lastSeenSuccess = -10.0f;
+
+				failSound.loadSound("fail.mp3");
+				successSound.loadSound("success.mp3");
+
+				this->error = 0.0f;
 			}
 
 			//----------
@@ -39,12 +47,41 @@ namespace ofxDigitalEmulsion {
 			//----------
 			ofxCvGui::PanelPtr ProjectorIntrinsicsExtrinsics::getView() {
 				auto view = MAKE(Panels::World);
+				view->getCamera().rotate(180.0f, 1.0f, 0.0f, 0.0f); // OpenCV world is upside down
+				view->getCamera().rotate(180.0f, 0.0f, 1.0f, 0.0f); // OpenCV world is upside down
 				view->onDrawWorld += [this] (ofCamera &) {
 					for(auto & correspondence : this->correspondences) {
 						ofPushMatrix();
 						ofTranslate(correspondence.world);
 						ofDrawAxis(0.05f);
 						ofPopMatrix();
+					}
+
+					auto projector = this->getInput<Item::Projector>();
+					if (projector) {
+						projector->drawWorld();
+					}
+
+					auto camera = this->getInput<Item::Camera>();
+					if (camera) {
+						camera->drawWorld();
+					}
+				};
+				const auto flashDuration = 2.0f;
+				view->onDraw += [this, flashDuration] (DrawArguments & drawArgs) {
+					if (ofGetElapsedTimef() - this->lastSeenSuccess < flashDuration) {
+						ofPushStyle();
+						ofFill();
+						ofSetColor(0, 255, 0, ofMap(ofGetElapsedTimef(), this->lastSeenSuccess, this->lastSeenSuccess + flashDuration, 255, 0.0f, true));
+						ofRect(drawArgs.localBounds);
+						ofPopStyle();
+					}
+					if (ofGetElapsedTimef() - this->lastSeenFail < flashDuration) {
+						ofPushStyle();
+						ofFill();
+						ofSetColor(255, 0, 0, ofMap(ofGetElapsedTimef(), this->lastSeenFail, this->lastSeenFail + flashDuration, 255, 0.0f, true));
+						ofRect(drawArgs.localBounds);
+						ofPopStyle();
 					}
 				};
 				return view;
@@ -54,12 +91,15 @@ namespace ofxDigitalEmulsion {
 			void ProjectorIntrinsicsExtrinsics::update() {
 				bool processedThisFrame = false;
 				while(this->oscServer.hasWaitingMessages()) {
+					ofxOscMessage msg;
 					if (!processedThisFrame) {
-						ofxOscMessage msg;
 						oscServer.getNextMessage(& msg);
 						if (msg.getAddress() == "/cursor" && msg.getNumArgs() >= 4) {
 							this->addPoint(msg.getArgAsFloat(0), msg.getArgAsFloat(1), msg.getArgAsFloat(2), msg.getArgAsFloat(3));
 						}
+					} else {
+						//clear all the messages out if we've already added this frame
+						oscServer.getNextMessage(& msg);
 					}
 					processedThisFrame = true;
 				}
@@ -72,11 +112,11 @@ namespace ofxDigitalEmulsion {
 					auto & jsonCorrespondence = json[i];
 					auto & jsonWorld = jsonCorrespondence["world"];
 					for(int j=0; j<3; j++) {
-						jsonWorld[j] = correspondence.world[i];
+						jsonWorld[j] = correspondence.world[j];
 					}
 					auto & jsonProjector = jsonCorrespondence["projector"];
 					for(int j=0; j<2; j++) {
-						jsonProjector[j] = correspondence.projector[i];
+						jsonProjector[j] = correspondence.projector[j];
 					}
 				}
 			}
@@ -88,12 +128,13 @@ namespace ofxDigitalEmulsion {
 					auto & jsonWorld = jsonCorrespondence["world"];
 					Correspondence correspondence;
 					for(int j=0; j<3; j++) {
-						correspondence.world[i] = jsonWorld[j];
+						correspondence.world[j] = jsonWorld[j].asFloat();
 					}
 					auto & jsonProjector = jsonCorrespondence["projector"];
 					for(int j=0; j<2; j++) {
-						correspondence.projector[i] = jsonProjector[j];
+						correspondence.projector[j] = jsonProjector[j].asFloat();
 					}
+					this->correspondences.push_back(correspondence);
 				}
 			}
 
@@ -105,6 +146,14 @@ namespace ofxDigitalEmulsion {
 				inspector->add(Widgets::Button::make("Clear correspondences", [this] () {
 					this->correspondences.clear();
 				}));
+				auto calibrateButton = Widgets::Button::make("Calibrate", [this] () {
+					this->calibrate();
+				});
+				calibrateButton->setHeight(100.0f);
+				inspector->add(calibrateButton);
+				inspector->add(Widgets::LiveValue<float>::make("Reprojection error [px]", [this] () {
+					return this->error;
+				}));
 			}
 
 			//----------
@@ -114,13 +163,13 @@ namespace ofxDigitalEmulsion {
 				auto checkerboard = this->getInput<Item::Checkerboard>();
 
 				try {
-					if (! camera) {
+					if (!camera) {
 						throw(Utils::Exception("No camera attached"));
 					}
-					if (! projector) {
+					if (!projector) {
 						throw(Utils::Exception("No projector attached"));
 					}
-					if (! checkerboard) {
+					if (!checkerboard) {
 						throw(Utils::Exception("No checkerboard attached"));
 					}
 					if (projectorWidth != projector->getWidth() || projectorHeight != projector->getHeight()) {
@@ -129,10 +178,9 @@ namespace ofxDigitalEmulsion {
 						throw(Utils::Exception(message.str()));
 					}
 
-					cv::Mat grayscale;
-					cv::cvtColor(toCv(camera->getGrabber()->getPixelsRef()), grayscale, CV_RGB2GRAY);
 					vector<cv::Point2f> corners;
-					cv::findChessboardCorners(grayscale, checkerboard->getSize(), corners);
+					ofxCvGui::Utils::drawProcessingNotice("Finding chessboard...");
+					ofxCv::findChessboardCornersPreTest(toCv(camera->getGrabber()->getPixelsRef()), checkerboard->getSize(), corners, 1024);
 					if (corners.empty()) {
 						throw(Utils::Exception("No checkerboard found in image"));
 					}
@@ -142,7 +190,61 @@ namespace ofxDigitalEmulsion {
 
 					Correspondence newCorrespondence = {ofVec3f(translation.at<double>(0), translation.at<double>(1), translation.at<double>(2)), ofVec2f(projectorX, projectorY)};
 					this->correspondences.push_back(newCorrespondence);
+					this->lastSeenSuccess = ofGetElapsedTimef();
+					this->successSound.play();
+				} catch (const std::exception & e) {
+					try {
+						const auto & cvException = dynamic_cast<const cv::Exception &>(e);
+						OFXDIGITALEMULSION_ERROR << cvException.msg;
+					} catch (std::bad_cast) {
+						OFXDIGITALEMULSION_ERROR << e.what();
+					}
+					this->lastSeenFail = ofGetElapsedTimef();
+					this->failSound.play();
+				}
+			}
 
+			//----------
+			void ProjectorIntrinsicsExtrinsics::calibrate() {
+				auto camera = this->getInput<Item::Camera>();
+				auto projector = this->getInput<Item::Projector>();
+				try {
+					if (! camera) {
+						throw(Utils::Exception("No camera attached"));
+					}
+					if (! projector) {
+						throw(Utils::Exception("No projector attached"));
+					}
+
+					vector<Point2f> imagePoints;
+					vector<Point3f> worldPoints;
+
+					for(const auto & correspondence : this->correspondences) {
+						auto projectorPoint = toCv(correspondence.projector);
+						projectorPoint.x = ofMap(projectorPoint.x, -1.0f, +1.0f, 0.0f, projector->getWidth());
+						projectorPoint.y = ofMap(projectorPoint.y, +1.0f, -1.0f, 0.0f, projector->getHeight());
+						imagePoints.push_back(projectorPoint);
+						worldPoints.push_back(toCv(correspondence.world));
+					}
+
+					Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
+					cameraMatrix.at<double>(0,0) = projector->getWidth() * 1.4f; // default at 1.4 : 1.0f throw ratio
+					cameraMatrix.at<double>(1,1) = projector->getHeight() * 1.4f;
+					cameraMatrix.at<double>(0,2) = projector->getWidth() / 2.0f;
+					cameraMatrix.at<double>(1,2) = projector->getHeight() * 0.90f; // default at 40% lens offset
+
+					Mat distortionCoefficients = Mat::zeros(5, 1, CV_64F);
+
+					vector<Mat> rotations, translations;
+
+					int flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_ZERO_TANGENT_DIST;
+
+					this->error = cv::calibrateCamera(vector<vector<Point3f>>(1, worldPoints), vector<vector<Point2f>>(1, imagePoints), cv::Size(projector->getWidth(), projector->getHeight()), cameraMatrix, distortionCoefficients, rotations, translations, flags);
+					cout << "camera " << cameraMatrix << endl;
+					cout << "distortion " << distortionCoefficients << endl;
+
+					projector->setExtrinsics(rotations[0], translations[0]);
+					projector->setIntrinsics(cameraMatrix);
 				} catch (const std::exception & e) {
 					try {
 						const auto & cvException = dynamic_cast<const cv::Exception &>(e);

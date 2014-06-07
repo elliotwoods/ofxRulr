@@ -17,7 +17,7 @@ namespace ofxDigitalEmulsion {
 				void update() override;
 
 				void serialize(Json::Value &) override;
-				void deserialize(Json::Value &) override;
+				void deserialize(const Json::Value &) override;
 
 				bool isReady();
 				void runScan();

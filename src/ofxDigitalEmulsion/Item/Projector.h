@@ -2,10 +2,14 @@
 
 #include "Base.h"
 
+#include "ofxCvMin.h"
+#include "ofxRay.h"
+
 namespace ofxDigitalEmulsion {
 	namespace Item {
 		class Projector : public Base {
 		public:
+			Projector();
 			string getTypeName() const;
 			ofxCvGui::PanelPtr getView() override;
 
@@ -14,9 +18,15 @@ namespace ofxDigitalEmulsion {
 
 			float getWidth();
 			float getHeight();
+
+			void setIntrinsics(cv::Mat cameraMatrix);
+			void setExtrinsics(cv::Mat rotation, cv::Mat translation);
+
+			void drawWorld();
 		protected:
-			int width, height;
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
+
+			ofxRay::Projector projector;
 		};
 	}
 }

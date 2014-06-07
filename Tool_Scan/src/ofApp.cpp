@@ -16,6 +16,7 @@ void ofApp::setup(){
 	scan->connect(projector);
 	
 	this->world.add(camera);
+	this->world.add(projector);
 	this->world.add(scan);
 	
 	this->gui.init();

@@ -63,7 +63,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void Graycode::deserialize(Json::Value & json) {
+			void Graycode::deserialize(const Json::Value & json) {
 				Utils::Serializable::deserialize(this->threshold, json);
 				Utils::Serializable::deserialize(this->delay, json);
 				this->decoder.setThreshold(this->threshold);
@@ -129,14 +129,14 @@ namespace ofxDigitalEmulsion {
 					this->preview.clear();
 				}));
 				inspector->add(Widgets::Button::make("Save ofxGraycode::DataSet...", [this] () { 
-					this->decoder.saveDataSet();
-				}));
-				inspector->add(Widgets::Button::make("Load ofxGraycode::DataSet...", [this] () { 
 					if (this->decoder.hasData()) {
 						this->decoder.saveDataSet();
 					} else {
 						ofSystemAlertDialog("No data to save yet. Have you scanned?");
 					}
+				}));
+				inspector->add(Widgets::Button::make("Load ofxGraycode::DataSet...", [this] () { 
+					this->decoder.loadDataSet();
 				}));
 
 				inspector->add(Widgets::Title::make("Decoder", Widgets::Title::Level::H2));

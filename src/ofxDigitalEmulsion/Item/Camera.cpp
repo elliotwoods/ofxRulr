@@ -39,6 +39,8 @@ namespace ofxDigitalEmulsion {
 		void Camera::update() {
 			CHECK_GRABBER
 			this->grabber->update();
+
+			this->updateRayCamera();
 		}
 
 		//----------
@@ -120,16 +122,16 @@ namespace ofxDigitalEmulsion {
 		
 		//----------
 		float Camera::getWidth() {
-			return this->getGrabber()->getWidth();
+			return this->rayCamera.getWidth();
 		}
 
 		//----------
 		float Camera::getHeight() {
-			return this->getGrabber()->getHeight();
+			return this->rayCamera.getHeight();
 		}
 
 		//----------
-		void Camera::setCalibration(cv::Mat cameraMatrix, cv::Mat distortionCoefficients) {
+		void Camera::setIntrinsics(cv::Mat cameraMatrix, cv::Mat distortionCoefficients) {
 			this->focalLengthX = cameraMatrix.at<double>(0, 0);
 			this->focalLengthY = cameraMatrix.at<double>(1, 1);
 			this->principalPointX = cameraMatrix.at<double>(0, 2);
@@ -156,6 +158,11 @@ namespace ofxDigitalEmulsion {
 				distortionCoefficients.at<double>(i) = this->distortion[i];
 			}
 			return distortionCoefficients;
+		}
+
+		//----------
+		void Camera::drawWorld() {
+			this->rayCamera.draw();
 		}
 
 		//----------
@@ -186,6 +193,15 @@ namespace ofxDigitalEmulsion {
 			for(int i=0; i<OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT; i++) {
 				inspector->add(Widgets::Slider::make(this->distortion[i]));
 			}
+		}
+
+		//----------
+		void Camera::updateRayCamera() {
+			if (this->grabber) {
+				this->rayCamera.setWidth(this->grabber->getWidth());
+				this->rayCamera.setHeight(this->grabber->getHeight());
+			}
+			this->rayCamera.setProjection(ofxCv::makeProjectionMatrix(this->getCameraMatrix(), cv::Size(this->getWidth(), this->getHeight())));
 		}
 
 		//----------

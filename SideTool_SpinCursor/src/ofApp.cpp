@@ -43,6 +43,8 @@ void ofApp::sendWithCursor(string address) {
 	m.addFloatArg(ofGetWidth());
 	m.addFloatArg(ofGetHeight());
 	osc.sendMessage(m);
+
+	ofSleepMillis(100);
 }
 
 //--------------------------------------------------------------
