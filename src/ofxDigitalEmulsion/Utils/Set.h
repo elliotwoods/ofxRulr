@@ -1,10 +1,12 @@
 #pragma once
 
+#include <memory>
+#include "ofLog.h"
+
 namespace ofxDigitalEmulsion {
 	namespace Utils {
 		template<typename BaseType>
 		class Set : public vector<shared_ptr<BaseType> > {
-		public:
 		public:
 			template<typename T>
 			shared_ptr<T> get()  {

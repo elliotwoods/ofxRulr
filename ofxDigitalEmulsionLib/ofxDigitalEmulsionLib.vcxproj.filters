@@ -13,8 +13,41 @@
     <Filter Include="src\ofxDigitalEmulsion\Item">
       <UniqueIdentifier>{b90f753f-45b7-4a46-a2fe-c83f26b96ebc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxDigitalEmulsion\Calibrator">
+    <Filter Include="src\ofxDigitalEmulsion\Procedure">
       <UniqueIdentifier>{b72e1980-a6ce-42c7-b044-94fa88356e3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Procedure\Calibrate">
+      <UniqueIdentifier>{ccb6d760-ebbf-4f4f-a0ed-362f831ae68a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Graph">
+      <UniqueIdentifier>{56d0aaa9-8e7c-43a3-a62c-da89973f07e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Procedure\Scan">
+      <UniqueIdentifier>{b0a1afc4-7ed0-4aae-872a-d6099d4f3878}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons">
+      <UniqueIdentifier>{18befd45-9be7-4d96-a897-46ba0a012ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJSON">
+      <UniqueIdentifier>{80fd9678-9d1b-4f01-ab71-6bdbd84d4c67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJSON\src">
+      <UniqueIdentifier>{cbf9a635-527f-4794-97d7-cde1617599d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJSON\libs">
+      <UniqueIdentifier>{990825c1-5f61-4571-a7fa-f8044569c94a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJSON\libs\jsoncpp">
+      <UniqueIdentifier>{b7037236-75ad-4952-937f-09e04e5beaff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJSON\libs\jsoncpp\src">
+      <UniqueIdentifier>{543cbb4b-8f96-4695-9e66-190a2ad9a550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJSON\libs\jsoncpp\include">
+      <UniqueIdentifier>{7d9517fd-bc31-4b30-9fd3-2aa9ef909077}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJSON\libs\jsoncpp\include\json">
+      <UniqueIdentifier>{c3e30439-3d91-4430-b867-2fc51c562bb6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,8 +75,56 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Calibrator\Base.h">
-      <Filter>src\ofxDigitalEmulsion\Calibrator</Filter>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Base.h">
+      <Filter>src\ofxDigitalEmulsion\Procedure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.h">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.h">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Scan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\src\ofxJSONElement.h">
+      <Filter>addons\ofxJSON\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_batchallocator.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_tool.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\reader.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\value.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\writer.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\autolink.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\config.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\features.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\forwards.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\json.h">
+      <Filter>addons\ofxJSON\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -59,5 +140,46 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.cpp">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Scan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp">
+      <Filter>addons\ofxJSON\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp">
+      <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp">
+      <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_reader.cpp">
+      <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl">
+      <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
+    </None>
+    <None Include="..\..\ofxJSON\libs\jsoncpp\src\sconscript">
+      <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
+    </None>
+    <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalarray.inl">
+      <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
+    </None>
+    <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalmap.inl">
+      <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
+    </None>
   </ItemGroup>
 </Project>
