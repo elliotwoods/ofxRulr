@@ -78,7 +78,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Camera::deserialize(Json::Value & json) {
+		void Camera::deserialize(const Json::Value & json) {
 			auto & jsonSettings = json["settings"];
 			Utils::Serializable::deserialize(this->exposure, jsonSettings);
 			Utils::Serializable::deserialize(this->gain, jsonSettings);

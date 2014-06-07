@@ -10,11 +10,12 @@ namespace ofxDigitalEmulsion {
 			ofxCvGui::PanelPtr getView() override;
 
 			void serialize(Json::Value &) override;
-			void deserialize(Json::Value &) override;
+			void deserialize(const Json::Value &) override;
 
 			float getWidth();
 			float getHeight();
 		protected:
+			int width, height;
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
 		};
 	}

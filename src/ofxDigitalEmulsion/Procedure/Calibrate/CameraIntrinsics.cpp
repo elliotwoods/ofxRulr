@@ -110,7 +110,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void CameraIntrinsics::deserialize(Json::Value & json) {
+			void CameraIntrinsics::deserialize(const Json::Value & json) {
 				this->accumulatedCorners.clear();
 
 				for(auto & jsonBoard : json) {

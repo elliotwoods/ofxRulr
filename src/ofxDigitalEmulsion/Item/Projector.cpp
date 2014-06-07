@@ -7,6 +7,8 @@ namespace ofxDigitalEmulsion {
 		//----------
 		string Projector::getTypeName() const {
 			return "Projector";
+			this->width = 1024;
+			this->height = 768;
 		}
 			
 		//----------
@@ -17,20 +19,24 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Projector::serialize(Json::Value & json) {
+			json["width"] = this->width;
+			json["height"] = this->height;
 		}
 
 		//----------
-		void Projector::deserialize(Json::Value & json) {
+		void Projector::deserialize(const Json::Value & json) {
+			this->width = json["width"].asInt();
+			this->height = json["height"].asInt();
 		}
 
 		//----------
 		float Projector::getWidth() {
-			return 1024;
+			return (float) this->width;
 		}
 
 		//----------
 		float Projector::getHeight() {
-			return 768;
+			return (float) this->height;
 		}
 			
 		//----------

@@ -20,8 +20,8 @@ namespace ofxDigitalEmulsion {
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
-				void serialize(Json::Value &);
-				void deserialize(Json::Value &);
+				void serialize(Json::Value &) override;
+				void deserialize(const Json::Value &) override;
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 

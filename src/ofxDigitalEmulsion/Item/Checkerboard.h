@@ -12,7 +12,7 @@ namespace ofxDigitalEmulsion {
 			ofxCvGui::PanelPtr getView();
 
 			void serialize(Json::Value &) override;
-			void deserialize(Json::Value &) override;
+			void deserialize(const Json::Value &) override;
 
 			cv::Size getSize() const;
 			vector<cv::Point3f> getObjectPoints() const;

@@ -67,10 +67,34 @@ namespace ofxDigitalEmulsion {
 			
 			//----------
 			void ProjectorIntrinsicsExtrinsics::serialize(Json::Value & json) {
+				for(int i=0; i<this->correspondences.size(); i++) {
+					const auto & correspondence = this->correspondences[i];
+					auto & jsonCorrespondence = json[i];
+					auto & jsonWorld = jsonCorrespondence["world"];
+					for(int j=0; j<3; j++) {
+						jsonWorld[j] = correspondence.world[i];
+					}
+					auto & jsonProjector = jsonCorrespondence["projector"];
+					for(int j=0; j<2; j++) {
+						jsonProjector[j] = correspondence.projector[i];
+					}
+				}
 			}
 
 			//----------
-			void ProjectorIntrinsicsExtrinsics::deserialize(Json::Value & json) {
+			void ProjectorIntrinsicsExtrinsics::deserialize(const Json::Value & json) {
+				this->correspondences.clear();
+				for(auto & jsonCorrespondence : json) {
+					auto & jsonWorld = jsonCorrespondence["world"];
+					Correspondence correspondence;
+					for(int j=0; j<3; j++) {
+						correspondence.world[i] = jsonWorld[j];
+					}
+					auto & jsonProjector = jsonCorrespondence["projector"];
+					for(int j=0; j<2; j++) {
+						correspondence.projector[i] = jsonProjector[j];
+					}
+				}
 			}
 
 			//----------

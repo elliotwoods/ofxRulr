@@ -17,7 +17,7 @@ namespace ofxDigitalEmulsion {
 			ofxCvGui::PanelPtr getView() override;
 
 			void serialize(Json::Value &) override;
-			void deserialize(Json::Value &) override;
+			void deserialize(const Json::Value &) override;
 
 			void setDevice(ofxMachineVision::DevicePtr, int deviceIndex = 0);
 			shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();

@@ -52,7 +52,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Checkerboard::deserialize(Json::Value & json) {
+		void Checkerboard::deserialize(const Json::Value & json) {
 			Utils::Serializable::deserialize(this->sizeX, json);
 			Utils::Serializable::deserialize(this->sizeY, json);
 			Utils::Serializable::deserialize(this->spacing, json);
