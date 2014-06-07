@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;..\..\..\addons\ofxDigitalEmulsion\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;..\..\..\addons\ofxDigitalEmulsion\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

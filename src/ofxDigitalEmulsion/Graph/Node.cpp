@@ -20,6 +20,12 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Button::make("Load", [this] () {
 				this->load(this->getDefaultFilename());
 			}));
+//cancel this out in vs2012 until system dialogs are fixed on vs2012
+#ifndef TARGET_WIN32
+			inspector->add(Widgets::Button::make("Load from...", [this] () {
+				this->load();
+			}));
+#endif
 			inspector->add(Widgets::Spacer::make());
 
 			this->populateInspector2(inspector);

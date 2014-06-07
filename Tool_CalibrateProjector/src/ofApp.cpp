@@ -8,13 +8,17 @@ void ofApp::setup(){
 	auto camera = MAKE(Item::Camera);
 	camera->setDevice(cameraDevice);
 
+	auto projector = MAKE(Item::Projector);
+
 	auto checkerboard = MAKE(Item::Checkerboard);
 
-	auto calibrator = MAKE(Procedure::Calibrate::CameraIntrinsics);
+	auto calibrator = MAKE(Procedure::Calibrate::ProjectorIntrinsicsExtrinsics);
 	calibrator->connect(checkerboard);
 	calibrator->connect(camera);
+	calibrator->connect(projector);
 	
 	this->world.add(camera);
+	this->world.add(projector);
 	this->world.add(checkerboard);
 	this->world.add(calibrator);
 	

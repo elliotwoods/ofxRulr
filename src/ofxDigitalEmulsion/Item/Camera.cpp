@@ -3,6 +3,7 @@
 
 using namespace ofxCvGui;
 using namespace ofxMachineVision;
+using namespace cv;
 
 #define CHECK_GRABBER if(!this->grabber) return;
 
@@ -50,7 +51,7 @@ namespace ofxDigitalEmulsion {
 				status << endl;
 				status << this->getGrabber()->getDeviceSpecification().toString() << endl;
 			
-				ofDrawBitmapStringHighlight(status.str(), 20, 80, ofColor(0x46), ofColor::white);
+				ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
 			};
 
 			return view;
@@ -136,6 +137,25 @@ namespace ofxDigitalEmulsion {
 			for(int i=0; i<OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT; i++) {
 				this->distortion[i] = distortionCoefficients.at<double>(i);
 			}
+		}
+
+		//----------
+		Mat Camera::getCameraMatrix() const {
+			Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
+			cameraMatrix.at<double>(0, 0) = this->focalLengthX;
+			cameraMatrix.at<double>(1, 1) = this->focalLengthY;
+			cameraMatrix.at<double>(0, 2) = this->principalPointX;
+			cameraMatrix.at<double>(1, 2) = this->principalPointY;
+			return cameraMatrix;
+		}
+
+		//----------
+		Mat Camera::getDistortionCoefficients() const {
+			Mat distortionCoefficients = Mat::zeros(8, 1, CV_64F);
+			for(int i=0; i<OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT; i++) {
+				distortionCoefficients.at<double>(i) = this->distortion[i];
+			}
+			return distortionCoefficients;
 		}
 
 		//----------

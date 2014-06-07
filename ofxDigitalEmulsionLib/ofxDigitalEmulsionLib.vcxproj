@@ -55,7 +55,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -68,7 +69,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -88,6 +90,26 @@
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_batchallocator.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_tool.h" />
     <ClInclude Include="..\..\ofxJSON\src\ofxJSONElement.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\PacketListener.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\TimerListener.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\UdpSocket.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\MessageMappingOscPacketListener.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscException.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscHostEndianness.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscPacketListener.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.h" />
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.h" />
+    <ClInclude Include="..\..\ofxOsc\src\ofxOsc.h" />
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscArg.h" />
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscBundle.h" />
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscMessage.h" />
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscParameterSync.h" />
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscReceiver.h" />
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscSender.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h" />
@@ -101,6 +123,7 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Exception.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
   </ItemGroup>
@@ -109,6 +132,18 @@
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp" />
     <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp" />
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp" />
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtilsWin.cpp" />
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\UdpSocketWin.cpp" />
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.cpp" />
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.cpp" />
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.cpp" />
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp" />
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscBundle.cpp" />
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscMessage.cpp" />
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscParameterSync.cpp" />
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscReceiver.cpp" />
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
@@ -118,6 +153,7 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Exception.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp" />
   </ItemGroup>
   <ItemGroup>

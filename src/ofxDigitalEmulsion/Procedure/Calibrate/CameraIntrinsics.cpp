@@ -167,7 +167,7 @@ namespace ofxDigitalEmulsion {
 						this->error = cv::calibrateCamera(objectPointsSet, accumulatedCornersCv, cameraResolution, cameraMatrix, distortionCoefficients, Rotations, Translations, flags);
 						camera->setCalibration(cameraMatrix, distortionCoefficients);
 					} catch (cv::Exception e) {
-						ofSystemAlertDialog(e.what());
+						ofSystemAlertDialog(e.msg);
 					}
 				}
 			}

@@ -26,6 +26,9 @@ namespace ofxDigitalEmulsion {
 			float getHeight();
 
 			void setCalibration(cv::Mat cameraMatrix, cv::Mat distortionCoefficients);
+
+			cv::Mat getCameraMatrix() const;
+			cv::Mat getDistortionCoefficients() const;
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
 

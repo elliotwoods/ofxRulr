@@ -2,12 +2,18 @@
 
 #include "../Base.h"
 #include "ofxCvMin.h"
+#include "ofxOsc.h"
 
 namespace ofxDigitalEmulsion {
 	namespace Procedure {
 		namespace Calibrate {
 			class ProjectorIntrinsicsExtrinsics : public Base {
 			public:
+				struct Correspondence {
+					ofVec3f world;
+					ofVec2f projector;
+				};
+
 				ProjectorIntrinsicsExtrinsics();
 				string getTypeName() const override;
 				Graph::PinSet getInputPins() override;
@@ -18,7 +24,14 @@ namespace ofxDigitalEmulsion {
 				void deserialize(Json::Value &);
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+
+				void addPoint(float x, float y, int projectorWidth, int projectorHeight);
+
 				Graph::PinSet inputPins;
+
+				ofxOscReceiver oscServer;
+
+				vector<Correspondence> correspondences;
 			};
 		}
 	}
