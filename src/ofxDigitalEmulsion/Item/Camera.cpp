@@ -116,6 +116,16 @@ namespace ofxDigitalEmulsion {
 		shared_ptr<Grabber::Simple> Camera::getGrabber() {
 			return this->grabber;
 		}
+		
+		//----------
+		float Camera::getWidth() {
+			return this->getGrabber()->getWidth();
+		}
+
+		//----------
+		float Camera::getHeight() {
+			return this->getGrabber()->getHeight();
+		}
 
 		//----------
 		void Camera::setCalibration(cv::Mat cameraMatrix, cv::Mat distortionCoefficients) {

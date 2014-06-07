@@ -22,6 +22,9 @@ namespace ofxDigitalEmulsion {
 			void setDevice(ofxMachineVision::DevicePtr, int deviceIndex = 0);
 			shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
 
+			float getWidth();
+			float getHeight();
+
 			void setCalibration(cv::Mat cameraMatrix, cv::Mat distortionCoefficients);
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr);

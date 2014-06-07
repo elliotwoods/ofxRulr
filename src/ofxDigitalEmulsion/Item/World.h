@@ -12,6 +12,9 @@ namespace ofxDigitalEmulsion {
 			void setupGui(ofxCvGui::Controller &);
 			void loadAll();
 			void saveAll() const;
+			static ofxCvGui::Controller & getGuiController();
+		protected:
+			static ofxCvGui::Controller * gui;
 		};
 	}
 }

@@ -6,3 +6,4 @@
 #include "ofxDigitalEmulsion/Item/Checkerboard.h"
 
 #include "ofxDigitalEmulsion/Procedure/Calibrate/CameraIntrinsics.h"
+#include "ofxDigitalEmulsion/Procedure/Scan/Graycode.h"

@@ -7,6 +7,9 @@ using namespace ofxCvGui;
 namespace ofxDigitalEmulsion {
 	namespace Item {
 		//-----------
+		ofxCvGui::Controller * World::gui = 0;
+
+		//-----------
 		void World::setupGui(Controller & controller) {
 			for(auto node : *this) {
 				auto nodeView = node->getView();
@@ -30,6 +33,8 @@ namespace ofxDigitalEmulsion {
 						ofPopStyle();
 					}
 				};
+
+				nodeView->setCaption(node->getTypeName());
 			}
 			auto inspector = ofxCvGui::Builder::makeInspector();
 			controller.add(inspector);
@@ -39,6 +44,8 @@ namespace ofxDigitalEmulsion {
 					return ofGetFrameRate();
 				}, true));
 			};
+
+			World::gui = & controller;
 		}
 
 		//-----------
@@ -52,6 +59,15 @@ namespace ofxDigitalEmulsion {
 		void World::loadAll() {
 			for(auto node : * this) {
 				node->load(node->getDefaultFilename());
+			}
+		}
+
+		//-----------
+		ofxCvGui::Controller & World::getGuiController() {
+			if (World::gui) {
+				return * World::gui;
+			} else {
+				OFXDIGITALEMULSION_FATAL << "No gui attached yet";
 			}
 		}
 	}

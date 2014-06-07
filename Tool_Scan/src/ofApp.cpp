@@ -2,28 +2,25 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetWindowTitle("Camera Intrinsics calibration");
+
 	auto cameraDevice = MAKE(ofxMachineVision::Device::VideoInputDevice, 1920, 1080, 30.0f);
 	auto camera = MAKE(Item::Camera);
 	camera->setDevice(cameraDevice);
 
-	auto checkerboard = MAKE(Item::Checkerboard);
+	auto projector = MAKE(Item::Projector);
 
-	auto calibrator = MAKE(Procedure::Calibrate::CameraIntrinsics);
-	calibrator->connect(checkerboard);
-	calibrator->connect(camera);
+	auto scan = MAKE(Procedure::Scan::Graycode);
+
+	scan->connect(camera);
+	scan->connect(projector);
 	
 	this->world.add(camera);
-	this->world.add(checkerboard);
-	this->world.add(calibrator);
+	this->world.add(scan);
 	
 	this->gui.init();
 	this->world.setupGui(this->gui.getController());
-	
-	Panels::Inspector::onClear += [] (ElementGroupPtr inspector) {
-		inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
-			return ofGetFrameRate();
-		}, true));
-	};
+	this->world.loadAll();
 }
 
 //--------------------------------------------------------------

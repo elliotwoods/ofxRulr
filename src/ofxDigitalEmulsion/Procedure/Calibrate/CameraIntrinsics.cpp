@@ -47,7 +47,7 @@ namespace ofxDigitalEmulsion {
 						}
 
 						ofPushMatrix();
-						ofScale(drawArgs.localBounds.getWidth() / grabber->getWidth(), drawArgs.localBounds.getHeight() / grabber->getHeight());
+						ofScale(drawArgs.localBounds.getWidth() / camera->getWidth(), drawArgs.localBounds.getHeight() / camera->getHeight());
 
 						//draw current corners
 						ofxCv::drawCorners(this->currentCorners);
@@ -84,8 +84,8 @@ namespace ofxDigitalEmulsion {
 						if (! grabber->getPixelsRef().isAllocated()) {
 							throw(std::exception());
 						}
-						if (this->grayscale.getWidth() != grabber->getWidth() || this->grayscale.getHeight() != grabber->getHeight()) {
-							this->grayscale.allocate(grabber->getWidth(), grabber->getHeight(), OF_IMAGE_GRAYSCALE);
+						if (this->grayscale.getWidth() != camera->getWidth() || this->grayscale.getHeight() != camera->getHeight()) {
+							this->grayscale.allocate(camera->getWidth(), camera->getHeight(), OF_IMAGE_GRAYSCALE);
 						}
 						cv::cvtColor(toCv(grabber->getPixelsRef()), toCv(this->grayscale), CV_RGB2GRAY);
 						this->grayscale.update();
@@ -155,7 +155,7 @@ namespace ofxDigitalEmulsion {
 
 				if (camera && checkerboard) {
 					auto objectPointsSet = vector<vector<Point3f>>(this->accumulatedCorners.size(), checkerboard->getObjectPoints());
-					auto cameraResolution = cv::Size(camera->getGrabber()->getWidth(), camera->getGrabber()->getHeight());
+					auto cameraResolution = cv::Size(camera->getWidth(), camera->getHeight());
 
 					Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
 					Mat distortionCoefficients = Mat::zeros(8, 1, CV_64F);
