@@ -22,11 +22,24 @@ namespace ofxDigitalEmulsion {
 			void setIntrinsics(cv::Mat cameraMatrix);
 			void setExtrinsics(cv::Mat rotation, cv::Mat translation);
 
+			cv::Mat getCameraMatrix() const;
+
+			const ofxRay::Projector & getRayProjector() const;
 			void drawWorld();
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
 
+			void rebuildProjector();
+			void projectorParameterCallback(float &);
+
 			ofxRay::Projector projector;
+
+			ofParameter<float> resolutionWidth, resolutionHeight;
+			ofParameter<float> throwRatioX, throwRatioY;
+			ofParameter<float> lensOffsetX, lensOffsetY;
+
+			ofParameter<float> translationX, translationY, translationZ;
+			ofParameter<float> rotationX, rotationY, rotationZ;
 		};
 	}
 }

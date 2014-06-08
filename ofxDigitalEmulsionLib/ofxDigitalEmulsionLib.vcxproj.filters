@@ -73,6 +73,12 @@
     <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
       <UniqueIdentifier>{81018c19-8a2b-4713-8e94-01cd7fb28e99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxTriangulate">
+      <UniqueIdentifier>{721289e2-b8bc-4d7a-81f4-62f6f39826be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxTriangulate\src">
+      <UniqueIdentifier>{8e952249-e6ff-4fe8-afcd-1a78c4c2643c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
@@ -216,6 +222,12 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Exception.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.h">
+      <Filter>src\ofxDigitalEmulsion\Procedure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h">
+      <Filter>addons\ofxTriangulate\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
@@ -298,6 +310,12 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Exception.cpp">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.cpp">
+      <Filter>src\ofxDigitalEmulsion\Procedure</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp">
+      <Filter>addons\ofxTriangulate\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

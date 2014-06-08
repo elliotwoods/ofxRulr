@@ -161,6 +161,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		const ofxRay::Camera & Camera::getRayCamera() const {
+			return this->rayCamera;
+		}
+		
+		//----------
 		void Camera::drawWorld() {
 			this->rayCamera.draw();
 		}
@@ -189,7 +194,7 @@ namespace ofxDigitalEmulsion {
 			
 			inspector->add(Widgets::Spacer::make());
 
-			inspector->add(Widgets::Title::make("Camera matrix", Widgets::Title::Level::H3));
+			inspector->add(Widgets::Title::make("Distortion coefficients", Widgets::Title::Level::H3));
 			for(int i=0; i<OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT; i++) {
 				inspector->add(Widgets::Slider::make(this->distortion[i]));
 			}

@@ -1,5 +1,7 @@
 #include "Node.h"
 
+#include "../Utils/Exception.h"
+
 #include "ofxCvGui.h"
 
 using namespace ofxCvGui;
@@ -7,7 +9,7 @@ using namespace ofxCvGui;
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		//----------
-		PinSet Node::getInputPins() {
+		PinSet Node::getInputPins() const {
 			return PinSet();
 		}
 
@@ -29,6 +31,18 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Spacer::make());
 
 			this->populateInspector2(inspector);
+		}
+
+		//----------
+		void Node::throwIfMissingAConnection() const {
+			const auto inputPins = this->getInputPins();
+			for(auto & inputPin : inputPins) {
+				if (!inputPin->isConnected()) {
+					stringstream message;
+					message << "Node [" << this->getTypeName() << "] is missing connection [" << inputPin->getName() << "]";
+					throw(Utils::Exception(message.str()));
+				}
+			}
 		}
 	}
 }

@@ -16,17 +16,18 @@ namespace ofxDigitalEmulsion {
 
 				ProjectorIntrinsicsExtrinsics();
 				string getTypeName() const override;
-				Graph::PinSet getInputPins() override;
+				Graph::PinSet getInputPins() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
 				void serialize(Json::Value &) override;
 				void deserialize(const Json::Value &) override;
+
+				void calibrate();
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 
 				void addPoint(float x, float y, int projectorWidth, int projectorHeight);
-				void calibrate();
 
 				Graph::PinSet inputPins;
 
@@ -39,6 +40,8 @@ namespace ofxDigitalEmulsion {
 				float lastSeenFail;
 
 				float error;
+
+				ofParameter<bool> fixAspectRatio;
 			};
 		}
 	}

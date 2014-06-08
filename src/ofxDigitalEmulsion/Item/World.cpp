@@ -43,6 +43,7 @@ namespace ofxDigitalEmulsion {
 				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));
+				inspector->add(Widgets::Spacer::make());
 			};
 
 			World::gui = & controller;

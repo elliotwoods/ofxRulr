@@ -12,7 +12,7 @@ namespace ofxDigitalEmulsion {
 			public:
 				Graycode();
 				string getTypeName() const override;
-				Graph::PinSet getInputPins() override;
+				Graph::PinSet getInputPins() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
@@ -21,8 +21,10 @@ namespace ofxDigitalEmulsion {
 
 				bool isReady();
 				void runScan();
+
+				const ofxGraycode::DataSet & getDataSet() const;
 			protected:
-				void populateInspector2(ofxCvGui::ElementGroupPtr);
+				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				void switchIfLookingAtDirtyView();
 
 				Graph::PinSet inputPins;

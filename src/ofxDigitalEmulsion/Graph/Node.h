@@ -12,7 +12,7 @@ namespace ofxDigitalEmulsion {
 	namespace Graph {
 		class Node : public ofxCvGui::Widgets::IInspectable, public Utils::Serializable {
 		public:
-			virtual PinSet getInputPins();
+			virtual PinSet getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr) override;
 			virtual ofxCvGui::PanelPtr getView() = 0;
 			virtual void update() { }
@@ -36,6 +36,8 @@ namespace ofxDigitalEmulsion {
 					return shared_ptr<NodeType>();
 				}
 			}
+
+			void throwIfMissingAConnection() const;
 		protected:
 			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
 		};

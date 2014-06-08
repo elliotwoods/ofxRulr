@@ -30,7 +30,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			PinSet CameraIntrinsics::getInputPins() {
+			PinSet CameraIntrinsics::getInputPins() const {
 				return this->inputPins;
 			}
 
@@ -90,7 +90,6 @@ namespace ofxDigitalEmulsion {
 						cv::cvtColor(toCv(grabber->getPixelsRef()), toCv(this->grayscale), CV_RGB2GRAY);
 						this->grayscale.update();
 						this->currentCorners.clear();
-						ofxCvGui::Utils::drawProcessingNotice("Finding chessboard...");
 						findChessboardCornersPreTest(toCv(this->grayscale), checkerboard->getSize(), toCv(this->currentCorners));
 					} catch (std::exception e) {
 						ofLogWarning() << e.what();
@@ -137,10 +136,12 @@ namespace ofxDigitalEmulsion {
 				inspector->add(Widgets::Button::make("Clear calibration set", [this] () {
 					this->accumulatedCorners.clear();
 				}));
-				inspector->add(Widgets::Spacer::make());
 				inspector->add(Widgets::LiveValue<int>::make("Calibration set count", [this] () {
 					return (int) accumulatedCorners.size();
 				}));
+
+				inspector->add(Widgets::Spacer::make());
+
 				inspector->add(Widgets::Button::make("Calibrate", [this] () {
 					this->calibrate();
 				}));

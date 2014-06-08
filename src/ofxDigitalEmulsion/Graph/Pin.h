@@ -16,6 +16,7 @@ namespace ofxDigitalEmulsion {
 			virtual string getTypeName() = 0;
 			virtual string getNodeTypeName() = 0;
 			string getName() const;
+			virtual bool isConnected() const = 0;
 		private:
 			const string name;
 		};
@@ -33,6 +34,9 @@ namespace ofxDigitalEmulsion {
 			}
 			shared_ptr<NodeType> getConnection() {
 				return connection;
+			}
+			bool isConnected() const override {
+				return (bool) this->connection;
 			}
 		protected:
 			shared_ptr<NodeType> connection;

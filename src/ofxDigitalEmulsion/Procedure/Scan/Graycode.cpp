@@ -1,9 +1,10 @@
 #include "Graycode.h"
 
-#include "ofxCvGui.h"
-
 #include "../../Item/Camera.h"
 #include "../../Item/Projector.h"
+#include "../../Utils/Exception.h"
+
+#include "ofxCvGui.h"
 
 #include "ofAppGLFWWindow.h"
 
@@ -32,7 +33,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			Graph::PinSet Graycode::getInputPins() {
+			Graph::PinSet Graycode::getInputPins() const {
 				return this->inputPins;
 			}
 			
@@ -77,51 +78,77 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void Graycode::runScan() {
 				auto window = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
-				if (window && this->isReady()) {
-					ofSetFullscreen(true);
-					ofHideCursor();
+				if (!window) {
+					throw(Utils::Exception("Can't find GLFW window, can't go fullscreen"));
+				}
+				auto camera = this->getInput<Item::Camera>();
+				if (!camera) {
+					throw(Utils::Exception("No camera attached"));
+				}
+				auto projector = this->getInput<Item::Projector>();
+				if (!projector) {
+					throw(Utils::Exception("No projector attached"));
+				}
+				if (!this->payload.isAllocated()) {
+					throw(Utils::Exception("Payload is not allocated"));
+				}
 
-					auto screenWidth = ofGetScreenWidth();
-					auto screenHeight = ofGetScreenHeight();
-					ofLogNotice("ofxDigitalEmulsion::Graycode") << "Sending on screen with resolution [" << screenWidth << "x" << screenHeight << "]";
+				ofSetFullscreen(true);
+				ofHideCursor();
 
-					ofPushView();
-					ofViewport(0.0f, 0.0f, screenWidth, screenHeight);
-					ofSetupScreenOrtho(screenWidth, screenHeight);
+				auto screenWidth = ofGetScreenWidth();
+				auto screenHeight = ofGetScreenHeight();
+				ofLogNotice("ofxDigitalEmulsion::Graycode") << "Sending on screen with resolution [" << screenWidth << "x" << screenHeight << "]";
 
-					auto grabber = this->getInput<Item::Camera>()->getGrabber();
+				ofPushView();
+				ofViewport(0.0f, 0.0f, screenWidth, screenHeight);
+				ofSetupScreenOrtho(screenWidth, screenHeight);
 
-					this->encoder.reset();
-					this->decoder.reset();
-					this->decoder.setThreshold(this->threshold);
-					this->message.clear();
+				auto grabber = camera->getGrabber();
+
+				this->encoder.reset();
+				this->decoder.reset();
+				this->decoder.setThreshold(this->threshold);
+				this->message.clear();
 					
-					while (this->encoder >> this->message) {
-						this->message.draw(0,0);
-						glfwSwapBuffers(window->getGLFWWindow());
-						glFlush();
+				while (this->encoder >> this->message) {
+					this->message.draw(0,0);
+					glfwSwapBuffers(window->getGLFWWindow());
+					glFlush();
 
-						auto startWait = ofGetElapsedTimeMillis();
-						while(ofGetElapsedTimeMillis() - startWait < this->delay) {
-							ofSleepMillis(1);
-							grabber->update();
-						}
-
-						this->decoder << grabber->getPixelsRef();
+					auto startWait = ofGetElapsedTimeMillis();
+					while(ofGetElapsedTimeMillis() - startWait < this->delay) {
+						ofSleepMillis(1);
+						grabber->update();
 					}
 
-					ofPopView();
+					this->decoder << grabber->getPixelsRef();
+				}
 
-					ofShowCursor();
-					ofSetFullscreen(false);
+				ofPopView();
 
-					this->switchIfLookingAtDirtyView();
+				ofShowCursor();
+				ofSetFullscreen(false);
+
+				this->switchIfLookingAtDirtyView();
+			}
+			
+			//----------
+			const ofxGraycode::DataSet & Graycode::getDataSet() const {
+				if (!this->decoder.hasData()) {
+					throw(Utils::Exception("Can't get DataSet from Graycode node, no data available"));
 				}
 			}
 			
 			//----------
 			void Graycode::populateInspector2(ElementGroupPtr inspector) {
-				auto scanButton = Widgets::Button::make("SCAN", [this] () { this->runScan(); }, OF_KEY_RETURN);
+				auto scanButton = Widgets::Button::make("SCAN", [this] () {
+					try {
+						this->runScan();
+					} catch (std::exception e) {
+						ofSystemAlertDialog(e.what());
+					}
+				}, OF_KEY_RETURN);
 				scanButton->setHeight(100.0f);
 				inspector->add(scanButton);
 				inspector->add(Widgets::Button::make("Clear", [this] () { 
