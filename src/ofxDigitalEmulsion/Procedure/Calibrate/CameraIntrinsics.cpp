@@ -21,7 +21,8 @@ namespace ofxDigitalEmulsion {
 				this->inputPins.push_back(MAKE(Pin<Item::Camera>));
 
 				this->enableFinder.set("Run chessboard finder", false);
-			
+				this->error.set("Reprojection error", 0.0f, 0.0f, std::numeric_limits<float>::max());
+
 				failSound.loadSound("fail.mp3");
 				successSound.loadSound("success.mp3");
 
@@ -111,6 +112,7 @@ namespace ofxDigitalEmulsion {
 						json[i][j]["y"] = accumulatedCorners[i][j].y;
 					}
 				}
+				Utils::Serializable::serialize(this->error, json);
 			}
 
 			//----------
@@ -124,6 +126,7 @@ namespace ofxDigitalEmulsion {
 					}
 					this->accumulatedCorners.push_back(board);
 				}
+				Utils::Serializable::deserialize(this->error, json);
 			}
 
 			//----------

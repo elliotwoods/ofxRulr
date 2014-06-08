@@ -28,7 +28,7 @@ namespace ofxDigitalEmulsion {
 
 				vector<ofVec2f> currentCorners;
 				vector<vector<ofVec2f>> accumulatedCorners;
-				float error;
+				ofParameter<float> error;
 			};
 		}
 	}
