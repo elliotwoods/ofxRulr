@@ -134,10 +134,16 @@ namespace ofxDigitalEmulsion {
 			}
 			
 			//----------
+			ofxGraycode::Decoder & Graycode::getDecoder() {
+				return this->decoder;
+			}
+
+			//----------
 			const ofxGraycode::DataSet & Graycode::getDataSet() const {
 				if (!this->decoder.hasData()) {
 					throw(Utils::Exception("Can't get DataSet from Graycode node, no data available"));
 				}
+				return this->decoder.getDataSet();
 			}
 			
 			//----------

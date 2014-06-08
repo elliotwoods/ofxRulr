@@ -22,6 +22,7 @@ namespace ofxDigitalEmulsion {
 				bool isReady();
 				void runScan();
 
+				ofxGraycode::Decoder & getDecoder();
 				const ofxGraycode::DataSet & getDataSet() const;
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;

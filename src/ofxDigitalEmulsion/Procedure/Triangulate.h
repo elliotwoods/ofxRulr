@@ -27,6 +27,7 @@ namespace ofxDigitalEmulsion {
 			ofParameter<float> maxLength;
 			ofParameter<bool> giveColor;
 			ofParameter<bool> giveTexCoords;
+			ofParameter<float> drawPointSize;
 		};
 	}
 }

@@ -20,8 +20,7 @@ namespace ofxDigitalEmulsion {
 			this->maxLength.set("Maximum length disparity [m]", 0.05f, 0.0f, 10.0f);
 			this->giveColor.set("Give color", true);
 			this->giveTexCoords.set("Give texture coordinates", true);
-
-
+			this->drawPointSize.set("Point size for draw", 1.0f, 1.0f, 10.0f);
 		}
 
 		//----------
@@ -40,15 +39,26 @@ namespace ofxDigitalEmulsion {
 			view->getCamera().rotate(180.0f, 0.0f, 0.0f, 1.0f);
 			view->getCamera().lookAt(ofVec3f(0,0,1), ofVec3f(0,-1,0));
 			view->onDrawWorld += [this] (ofCamera &) {
-				this->mesh.draw();
+				glPushAttrib(GL_POINT_BIT);
+				glPointSize(this->drawPointSize);
+				this->mesh.drawVertices();
+				glPopAttrib();
+
+				auto graycode = this->getInput<Scan::Graycode>();
 
 				auto camera = this->getInput<Item::Camera>();
 				if (camera) {
 					camera->drawWorld();
+					if (graycode) {
+						camera->getRayCamera().drawOnNearPlane(graycode->getDecoder().getProjectorInCamera());
+					}
 				}
 				auto projector = this->getInput<Item::Projector>();
 				if (projector) {
 					projector->drawWorld();
+					if (graycode) {
+						projector->getRayProjector().drawOnNearPlane(graycode->getDecoder().getCameraInProjector());
+					}
 				}
 			};
 			return view;			
@@ -56,7 +66,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Triangulate::serialize(Json::Value & json) {
-
+			
 		}
 
 		//----------
@@ -74,6 +84,7 @@ namespace ofxDigitalEmulsion {
 
 			const auto & dataSet = graycode->getDataSet();
 
+			ofxCvGui::Utils::drawProcessingNotice("Triangulating..");
 			ofxTriangulate::Triangulate(dataSet, camera->getRayCamera(), projector->getRayProjector(), this->mesh, this->maxLength, this->giveColor, this->giveTexCoords);
 		}
 
@@ -89,6 +100,7 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Slider::make(this->maxLength));
 			inspector->add(Widgets::Toggle::make(this->giveColor));
 			inspector->add(Widgets::Toggle::make(this->giveTexCoords));
+			inspector->add(Widgets::Slider::make(this->drawPointSize));
 		}
 	}
 }

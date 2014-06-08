@@ -66,6 +66,13 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::serialize(this->throwRatioY, json);
 			Utils::Serializable::serialize(this->lensOffsetX, json);
 			Utils::Serializable::serialize(this->lensOffsetY, json);
+
+			Utils::Serializable::serialize(this->translationX, json);
+			Utils::Serializable::serialize(this->translationY, json);
+			Utils::Serializable::serialize(this->translationZ, json);
+			Utils::Serializable::serialize(this->rotationX, json);
+			Utils::Serializable::serialize(this->rotationY, json);
+			Utils::Serializable::serialize(this->rotationZ, json);
 		}
 
 		//----------
@@ -76,6 +83,13 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::deserialize(this->throwRatioY, json);
 			Utils::Serializable::deserialize(this->lensOffsetX, json);
 			Utils::Serializable::deserialize(this->lensOffsetY, json);
+
+			Utils::Serializable::deserialize(this->translationX, json);
+			Utils::Serializable::deserialize(this->translationY, json);
+			Utils::Serializable::deserialize(this->translationZ, json);
+			Utils::Serializable::deserialize(this->rotationX, json);
+			Utils::Serializable::deserialize(this->rotationY, json);
+			Utils::Serializable::deserialize(this->rotationZ, json);
 
 			this->rebuildProjector();
 		}
@@ -175,6 +189,9 @@ namespace ofxDigitalEmulsion {
 			projection(3,3) = 0.0f;
 			projection.postMultTranslate(-this->lensOffsetX, -this->lensOffsetY, 0.0f);
 			this->projector.setProjection(projection);
+
+			this->projector.setWidth(this->getWidth());
+			this->projector.setHeight(this->getHeight());
 		}
 
 		//----------
