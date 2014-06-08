@@ -24,6 +24,8 @@ namespace ofxDigitalEmulsion {
 				ofParameter<bool> enableFinder;
 				ofImage grayscale;
 
+				ofSoundPlayer failSound, successSound;
+
 				vector<ofVec2f> currentCorners;
 				vector<vector<ofVec2f>> accumulatedCorners;
 				float error;

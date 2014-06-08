@@ -21,6 +21,9 @@ namespace ofxDigitalEmulsion {
 				this->inputPins.push_back(MAKE(Pin<Item::Camera>));
 
 				this->enableFinder.set("Run chessboard finder", false);
+			
+				failSound.loadSound("fail.mp3");
+				successSound.loadSound("success.mp3");
 
 				this->error = 0.0f;
 			}
@@ -133,7 +136,10 @@ namespace ofxDigitalEmulsion {
 					return (float) this->currentCorners.size();
 				}, true));
 				inspector->add(Widgets::Button::make("Add board to calibration set", [this] () {
-					if (currentCorners.size() > 0) {
+					if (this->currentCorners.empty()) {
+						this->failSound.play();
+					} else {
+						this->successSound.play();
 						this->accumulatedCorners.push_back(currentCorners);
 					}
 				}, ' '));

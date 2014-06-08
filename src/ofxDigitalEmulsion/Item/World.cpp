@@ -54,10 +54,15 @@ namespace ofxDigitalEmulsion {
 			auto inspector = ofxCvGui::Builder::makeInspector();
 			rootGroup->add(inspector);
 
-			Panels::Inspector::onClear += [] (ElementGroupPtr inspector) {
+			Panels::Inspector::onClear += [this] (ElementGroupPtr inspector) {
 				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));
+				inspector->add(Widgets::Button::make("Save all Nodes", [this] () {
+					for(auto node : * this) {
+						node->save(node->getDefaultFilename());
+					}
+				}));
 				inspector->add(Widgets::Spacer::make());
 			};
 

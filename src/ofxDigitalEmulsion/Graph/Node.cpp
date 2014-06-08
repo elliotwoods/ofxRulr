@@ -16,10 +16,10 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Node::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(Widgets::Title::make(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H2));
-			inspector->add(Widgets::Button::make("Save", [this] () {
+			inspector->add(Widgets::Button::make("Save Node", [this] () {
 				this->save(this->getDefaultFilename());
 			}));
-			inspector->add(Widgets::Button::make("Load", [this] () {
+			inspector->add(Widgets::Button::make("Load Node", [this] () {
 				this->load(this->getDefaultFilename());
 			}));
 //cancel this out in vs2012 until system dialogs are fixed on vs2012
