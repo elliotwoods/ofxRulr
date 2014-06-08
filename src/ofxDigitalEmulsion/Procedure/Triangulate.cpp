@@ -90,13 +90,15 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Triangulate::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
-			inspector->add(Widgets::Button::make("Triangulate", [this] () {
+			auto triangulateButton = Widgets::Button::make("Triangulate", [this] () {
 				try {
 					this->triangulate();
 				} catch (std::exception e) {
 					ofSystemAlertDialog(e.what());
 				}
-			}));
+			}, OF_KEY_RETURN);
+			triangulateButton->setHeight(100.0f);
+			inspector->add(triangulateButton);
 			inspector->add(Widgets::Slider::make(this->maxLength));
 			inspector->add(Widgets::Toggle::make(this->giveColor));
 			inspector->add(Widgets::Toggle::make(this->giveTexCoords));

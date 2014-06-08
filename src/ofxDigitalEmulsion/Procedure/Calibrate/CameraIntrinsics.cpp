@@ -3,6 +3,7 @@
 #include "../../Item/Checkerboard.h"
 #include "../../Item/Camera.h"
 
+#include "ofConstants.h"
 #include "ofxCvGui.h"
 
 using namespace ofxDigitalEmulsion::Graph;
@@ -125,26 +126,28 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void CameraIntrinsics::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Toggle::make(this->enableFinder));
-				inspector->add(Widgets::LiveValueHistory::make("Corners found", [this] () {
+				inspector->add(Widgets::LiveValue<int>::make("Calibration set count", [this] () {
+					return (int) accumulatedCorners.size();
+				}));
+				inspector->add(Widgets::LiveValueHistory::make("Corners found in current image", [this] () {
 					return (float) this->currentCorners.size();
 				}, true));
-				inspector->add(Widgets::Button::make("Add image to calibration set", [this] () {
+				inspector->add(Widgets::Button::make("Add board to calibration set", [this] () {
 					if (currentCorners.size() > 0) {
 						this->accumulatedCorners.push_back(currentCorners);
 					}
-				}));
+				}, ' '));
 				inspector->add(Widgets::Button::make("Clear calibration set", [this] () {
 					this->accumulatedCorners.clear();
-				}));
-				inspector->add(Widgets::LiveValue<int>::make("Calibration set count", [this] () {
-					return (int) accumulatedCorners.size();
 				}));
 
 				inspector->add(Widgets::Spacer::make());
 
-				inspector->add(Widgets::Button::make("Calibrate", [this] () {
+				auto calibrateButton = Widgets::Button::make("Calibrate", [this] () {
 					this->calibrate();
-				}));
+				}, OF_KEY_RETURN);
+				calibrateButton->setHeight(100.0f);
+				inspector->add(calibrateButton);
 				inspector->add(Widgets::LiveValue<float>::make("Reprojection error [px]", [this] () {
 					return this->error;
 				}));

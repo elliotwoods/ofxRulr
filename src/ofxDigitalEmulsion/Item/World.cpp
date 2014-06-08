@@ -11,9 +11,23 @@ namespace ofxDigitalEmulsion {
 
 		//-----------
 		void World::setupGui(Controller & controller) {
+			auto rootGroup = dynamic_pointer_cast<ofxCvGui::Panels::Groups::Grid>(controller.getRootGroup());
+			if (rootGroup) {
+				rootGroup->onBoundsChange += [rootGroup] (ofxCvGui::BoundsChangeArguments &) {
+					const float inspectorWidth = 300.0f;
+					vector<float> widths;
+					widths.push_back(ofGetWindowWidth() - inspectorWidth);
+					widths.push_back(inspectorWidth);
+					rootGroup->setWidths(widths);
+				};
+			}
+
+			auto gridGroup = MAKE(ofxCvGui::Panels::Groups::Grid);
+			rootGroup->add(gridGroup);
+
 			for(auto node : *this) {
 				auto nodeView = node->getView();
-				controller.add(nodeView);
+				gridGroup->add(nodeView);
 
 				nodeView->onMouse += [node] (MouseArguments & mouse) {
 					if (mouse.isLocalPressed() && mouse.button == 0) {
@@ -36,9 +50,10 @@ namespace ofxDigitalEmulsion {
 
 				nodeView->setCaption(node->getTypeName());
 			}
+
 			auto inspector = ofxCvGui::Builder::makeInspector();
-			controller.add(inspector);
-			
+			rootGroup->add(inspector);
+
 			Panels::Inspector::onClear += [] (ElementGroupPtr inspector) {
 				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
 					return ofGetFrameRate();
