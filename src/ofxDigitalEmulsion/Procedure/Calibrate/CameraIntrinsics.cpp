@@ -106,10 +106,11 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void CameraIntrinsics::serialize(Json::Value & json) {
+				auto & jsonCorners = json["corners"];
 				for(int i=0; i<this->accumulatedCorners.size(); i++) {
 					for(int j=0; j<this->accumulatedCorners[i].size(); j++) {
-						json[i][j]["x"] = accumulatedCorners[i][j].x;
-						json[i][j]["y"] = accumulatedCorners[i][j].y;
+						jsonCorners[i][j]["x"] = accumulatedCorners[i][j].x;
+						jsonCorners[i][j]["y"] = accumulatedCorners[i][j].y;
 					}
 				}
 				Utils::Serializable::serialize(this->error, json);
@@ -118,8 +119,9 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void CameraIntrinsics::deserialize(const Json::Value & json) {
 				this->accumulatedCorners.clear();
-
-				for(auto & jsonBoard : json) {
+				
+				auto & jsonBoards = json["corners"];
+				for(auto & jsonBoard : jsonBoards) {
 					auto board = vector<ofVec2f>();
 					for(auto & jsonCorner : jsonBoard) {
 						board.push_back(ofVec2f(jsonCorner["x"].asFloat(), jsonCorner["y"].asFloat()));

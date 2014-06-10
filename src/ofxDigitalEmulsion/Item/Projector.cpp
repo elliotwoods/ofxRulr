@@ -8,13 +8,13 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
 		Projector::Projector() {
-			this->projector.setWidth(1024);
-			this->projector.setHeight(768);
+			this->projector.setWidth(1280);
+			this->projector.setHeight(800);
 			this->projector.setDefaultNear(0.05f);
 			this->projector.setDefaultFar(2.0f);
 
-			this->resolutionWidth.set("Resolution width", 1024.0f, 1.0f, 8 * 1024.0f);
-			this->resolutionHeight.set("Resolution height", 768.0f, 1.0f, 8 * 1024.0f);
+			this->resolutionWidth.set("Resolution width", 1024.0f, 1.0f, 8 * 1280.0f);
+			this->resolutionHeight.set("Resolution height", 768.0f, 1.0f, 8 * 800.0f);
 			this->throwRatioX.set("Throw ratio X", 1.4f, 0.01f, 10.0f);
 			this->throwRatioY.set("Throw ratio Y", 1.4f, 0.01f, 10.0f);
 			this->lensOffsetX.set("Lens offset X", 0.0f, -2.0f, 2.0f);
@@ -99,12 +99,11 @@ namespace ofxDigitalEmulsion {
 		//----------
 		float Projector::getWidth() {
 			return this->resolutionWidth;
-			return this->resolutionHeight;
 		}
 
 		//----------
 		float Projector::getHeight() {
-			return (float) this->projector.getHeight();
+			return this->resolutionHeight;
 		}
 
 		//----------
