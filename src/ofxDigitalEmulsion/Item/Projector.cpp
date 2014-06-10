@@ -8,8 +8,6 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
 		Projector::Projector() {
-			this->projector.setWidth(1280);
-			this->projector.setHeight(800);
 			this->projector.setDefaultNear(0.05f);
 			this->projector.setDefaultFar(2.0f);
 

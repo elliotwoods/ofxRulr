@@ -7,9 +7,23 @@ void ofApp::setup2(){
 	
 	ofSetWindowTitle("Digital Emulsion Toolkit v0.1");
 
+	int cameraDeviceIndex = 0;
+	try {
+		ofFile input;
+		input.open(ofToDataPath("tempSettings.json", true), ofFile::ReadOnly, false);
+		string jsonRaw = input.readToBuffer().getText();
+		
+		Json::Reader reader;
+		Json::Value json;
+		reader.parse(jsonRaw, json);
+		cameraDeviceIndex = json["cameraDeviceIndex"].asInt();
+	} catch (std::exception e) {
+		ofLogError() << e.what();
+	}
+	
 	auto cameraDevice = MAKE(ofxMachineVision::Device::Webcam, 1920, 1080, 30.0f);
 	auto camera = MAKE(Item::Camera);
-	camera->setDevice(cameraDevice, 1);
+	camera->setDevice(cameraDevice, cameraDeviceIndex);
 
 	auto projector = MAKE(Item::Projector);
 

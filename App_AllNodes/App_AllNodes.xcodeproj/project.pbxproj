@@ -30,7 +30,6 @@
 		39119cbb82bf8341392ff5cae27bbf7f /* UVCCameraControl.m in Sources */ = {isa = PBXBuildFile; fileRef = d78adda555c8f6724e9ad29290a80a75 /* UVCCameraControl.m */; };
 		3a115b040a8bc8afa6ca29b7318d41c8 /* Pixels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04f667eb54a014494f5b9edffe69d36a /* Pixels.cpp */; };
 		3d6b2812db6ba48d500d2d37955e125d /* PixelsVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74fd5053fc1891aa742dffb5c27903a9 /* PixelsVector.cpp */; };
-		3eb9131fd793b3749abac878a8aca606 /* ofxWatermark.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 194d31d99f7424e82f55f5812ec7b9d9 /* ofxWatermark.cpp */; };
 		3ec04c0deabe7d52836d0287a0dac586 /* Element.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 043c0bccc7eb2386ff4b4090f3df154e /* Element.cpp */; };
 		418c3578156cf63dc51204e33cc89218 /* Constants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82790603418f6c59835ee990880d21a3 /* Constants.cpp */; };
 		43a07a845fb9cfff6104eb5c572b6c22 /* Serializable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = a5065ae900ab5acef11add931e13d8ed /* Serializable.cpp */; };
@@ -211,7 +210,6 @@
 		15a1ce14e32f9d3318a327ae31ad1499 /* Builder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Builder.h; path = ../../../addons/ofxCvGui2/src/ofxCvGui/Builder.h; sourceTree = SOURCE_ROOT; };
 		18080cdf4fa86bc9a50d18c3821910c5 /* Controller.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Controller.cpp; path = ../../../addons/ofxCvGui2/src/ofxCvGui/Controller.cpp; sourceTree = SOURCE_ROOT; };
 		181c5d40046386bc77c5fce7f7de6062 /* operations.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = operations.hpp; path = ../../../addons/ofxCvMin/libs/opencv/include/opencv2/core/operations.hpp; sourceTree = SOURCE_ROOT; };
-		194d31d99f7424e82f55f5812ec7b9d9 /* ofxWatermark.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxWatermark.cpp; path = ../../../addons/ofxWatermark/src/ofxWatermark.cpp; sourceTree = SOURCE_ROOT; };
 		1a8cb7930d2d2e71d63dcd5543ef8382 /* static_check.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = static_check.hpp; path = ../../../addons/ofxCvMin/libs/opencv/include/opencv2/gpu/device/static_check.hpp; sourceTree = SOURCE_ROOT; };
 		1af23904f3848a6f1e44fa09ec694a3b /* Button.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Button.cpp; path = ../../../addons/ofxCvGui2/src/ofxCvGui/Widgets/Button.cpp; sourceTree = SOURCE_ROOT; };
 		1b7ee87fa0a6769c766ed7370fc78a33 /* Types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Types.h; path = ../../../addons/ofxMachineVision/src/ofxMachineVision/Device/Types.h; sourceTree = SOURCE_ROOT; };
@@ -277,7 +275,6 @@
 		40b82369bcfa1638d3b51ebf76b6b9b6 /* Base.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Base.h; path = ../../../addons/ofxCvGui2/src/ofxCvGui/Panels/Base.h; sourceTree = SOURCE_ROOT; };
 		40eef09b8de8e46d6cc96c51e8f44eb2 /* Graycode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Graycode.cpp; path = ../../../addons/ofxDigitalEmulsion/src/ofxDigitalEmulsion/Procedure/Scan/Graycode.cpp; sourceTree = SOURCE_ROOT; };
 		411825d206fefba451c69368c12a1283 /* ofxGrabCam.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxGrabCam.h; path = ../../../addons/ofxGrabCam/src/ofxGrabCam.h; sourceTree = SOURCE_ROOT; };
-		411c01f7c92a3b306964e7c12f7ee8bb /* ofxWatermark.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxWatermark.h; path = ../../../addons/ofxWatermark/src/ofxWatermark.h; sourceTree = SOURCE_ROOT; };
 		4194eb4b28986803ea37dfd228207e81 /* gpu.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = gpu.hpp; path = ../../../addons/ofxCvMin/libs/opencv/include/opencv2/gpu/gpu.hpp; sourceTree = SOURCE_ROOT; };
 		41bb3a7484667a1bd82aada0fa4ee295 /* gpu_perf.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = gpu_perf.hpp; path = ../../../addons/ofxCvMin/libs/opencv/include/opencv2/ts/gpu_perf.hpp; sourceTree = SOURCE_ROOT; };
 		42649478ba3f7d157cacc6c5506e5c44 /* Projector.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Projector.cpp; path = ../../../addons/ofxDigitalEmulsion/src/ofxDigitalEmulsion/Item/Projector.cpp; sourceTree = SOURCE_ROOT; };
@@ -750,14 +747,6 @@
 			name = opencv;
 			sourceTree = "<group>";
 		};
-		28541283afc148c28c3052cb7f93a0bb /* ofxWatermark */ = {
-			isa = PBXGroup;
-			children = (
-				4790f76805929a69535a6a3185c2e6b1 /* src */,
-			);
-			name = ofxWatermark;
-			sourceTree = "<group>";
-		};
 		2865daef86b1907a704ca70bc58ce980 /* ofxJSON */ = {
 			isa = PBXGroup;
 			children = (
@@ -891,15 +880,6 @@
 				c5f6f8cd2c6fe5414354f8d934e50c80 /* Widgets */,
 			);
 			name = ofxCvGui;
-			sourceTree = "<group>";
-		};
-		4790f76805929a69535a6a3185c2e6b1 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				194d31d99f7424e82f55f5812ec7b9d9 /* ofxWatermark.cpp */,
-				411c01f7c92a3b306964e7c12f7ee8bb /* ofxWatermark.h */,
-			);
-			name = src;
 			sourceTree = "<group>";
 		};
 		4abfe28a634048287dc60e922c48c20a /* flann */ = {
@@ -1335,7 +1315,6 @@
 				cf1b72478a403c7607813dc585037854 /* ofxLiquidEvent */,
 				b7efd4f425cb31459c9d5364010db48e /* ofxTriangulate */,
 				f5b54e39cf589ca1e5c94c02a9894e86 /* ofxUVC */,
-				28541283afc148c28c3052cb7f93a0bb /* ofxWatermark */,
 				dbacf916a5ae1a9c008d779665875a43 /* ofxGraycode */,
 				2865daef86b1907a704ca70bc58ce980 /* ofxJSON */,
 				c882b4798a3582410d94bac0c85f0513 /* ofxRay */,
@@ -2035,7 +2014,6 @@
 				b35e68197805320d89a1e8d938829f46 /* ofxTriangulate.cpp in Sources */,
 				9baec2935795c61674f508dd410b8b46 /* ofxUVC.mm in Sources */,
 				39119cbb82bf8341392ff5cae27bbf7f /* UVCCameraControl.m in Sources */,
-				3eb9131fd793b3749abac878a8aca606 /* ofxWatermark.cpp in Sources */,
 				2b9b9aa0489d6e1ed0533aa6e572ca83 /* Dataset.cpp in Sources */,
 				18448fee9f66e945d6ce898532a110fb /* Payload.cpp in Sources */,
 				eb8cdd4bc0916313b602ed6140c8c873 /* ProjectorPixel.cpp in Sources */,

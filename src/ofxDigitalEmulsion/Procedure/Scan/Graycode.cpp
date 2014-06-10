@@ -106,6 +106,7 @@ namespace ofxDigitalEmulsion {
 
 				auto grabber = camera->getGrabber();
 
+				this->payload.init(projector->getWidth(), projector->getHeight());
 				this->encoder.reset();
 				this->decoder.reset();
 				this->decoder.setThreshold(this->threshold);
@@ -164,6 +165,7 @@ namespace ofxDigitalEmulsion {
 				inspector->add(Widgets::Button::make("Save ofxGraycode::DataSet...", [this] () { 
 					if (this->decoder.hasData()) {
 						this->decoder.saveDataSet();
+						this->decoder.savePreviews();
 					} else {
 						ofSystemAlertDialog("No data to save yet. Have you scanned?");
 					}
