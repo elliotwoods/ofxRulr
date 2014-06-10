@@ -13,14 +13,42 @@ namespace ofxDigitalEmulsion {
 	namespace Procedure {
 		//----------
 		Triangulate::Triangulate() {
-			this->inputPins.push_back(MAKE(Graph::Pin<Item::Camera>));
-			this->inputPins.push_back(MAKE(Graph::Pin<Item::Projector>));
-			this->inputPins.push_back(MAKE(Graph::Pin<Scan::Graycode>));
+			auto cameraPin = MAKE(Graph::Pin<Item::Camera>);
+			auto projectorPin = MAKE(Graph::Pin<Item::Projector>);
+			auto graycodePin = MAKE(Graph::Pin<Scan::Graycode>);
+			
+			this->inputPins.push_back(cameraPin);
+			this->inputPins.push_back(projectorPin);
+			this->inputPins.push_back(graycodePin);
 
 			this->maxLength.set("Maximum length disparity [m]", 0.05f, 0.0f, 10.0f);
 			this->giveColor.set("Give color", true);
 			this->giveTexCoords.set("Give texture coordinates", true);
 			this->drawPointSize.set("Point size for draw", 1.0f, 1.0f, 10.0f);
+			this->drawDebugRays.set("Draw debug rays", false);
+			
+			
+			cameraPin->onNewConnection += [this] (shared_ptr<Item::Camera> & cameraNode) {
+				cameraNode->getView()->onMouse.removeListeners(this);
+				cameraNode->getView()->onMouse.addListener([this, cameraNode] (MouseArguments & mouseArgs) {
+					if (mouseArgs.isLocal() && (mouseArgs.action == MouseArguments::Action::Pressed || mouseArgs.action == MouseArguments::Action::Dragged)) {
+						this->cameraRay = cameraNode->getRayCamera().castPixel(mouseArgs.localNormalised * ofVec2f(cameraNode->getWidth(), cameraNode->getHeight()));
+						this->intersectRay = this->cameraRay.intersect(this->projectorRay);
+						this->intersectRay.color = ofColor(255);
+					}
+				}, this);
+			};
+			
+			projectorPin->onNewConnection += [this] (shared_ptr<Item::Projector> & projectorNode) {
+				projectorNode->getView()->onMouse.removeListeners(this);
+				projectorNode->getView()->onMouse.addListener([this, projectorNode] (MouseArguments & mouseArgs) {
+					if (mouseArgs.isLocal() && (mouseArgs.action == MouseArguments::Action::Pressed || mouseArgs.action == MouseArguments::Action::Dragged)) {
+						this->projectorRay = projectorNode->getRayProjector().castPixel(mouseArgs.localNormalised * ofVec2f(projectorNode->getWidth(), projectorNode->getHeight()));
+						this->intersectRay = this->cameraRay.intersect(this->projectorRay);
+						this->intersectRay.color = ofColor(255);
+					}
+				}, this);
+			};
 		}
 
 		//----------
@@ -39,27 +67,7 @@ namespace ofxDigitalEmulsion {
 			view->getCamera().rotate(180.0f, 0.0f, 0.0f, 1.0f);
 			view->getCamera().lookAt(ofVec3f(0,0,1), ofVec3f(0,-1,0));
 			view->onDrawWorld += [this] (ofCamera &) {
-				glPushAttrib(GL_POINT_BIT);
-				glPointSize(this->drawPointSize);
-				this->mesh.drawVertices();
-				glPopAttrib();
-
-				auto graycode = this->getInput<Scan::Graycode>();
-
-				auto camera = this->getInput<Item::Camera>();
-				if (camera) {
-					camera->drawWorld();
-					if (graycode) {
-						camera->getRayCamera().drawOnNearPlane(graycode->getDecoder().getProjectorInCamera());
-					}
-				}
-				auto projector = this->getInput<Item::Projector>();
-				if (projector) {
-					projector->drawWorld();
-					if (graycode) {
-						projector->getRayProjector().drawOnNearPlane(graycode->getDecoder().getCameraInProjector());
-					}
-				}
+				this->drawWorld();
 			};
 			return view;			
 		}
@@ -103,6 +111,39 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Toggle::make(this->giveColor));
 			inspector->add(Widgets::Toggle::make(this->giveTexCoords));
 			inspector->add(Widgets::Slider::make(this->drawPointSize));
+			inspector->add(Widgets::Spacer::make());
+			inspector->add(Widgets::Toggle::make(this->drawDebugRays));
+		}
+		
+		//----------
+		void Triangulate::drawWorld() {
+			glPushAttrib(GL_POINT_BIT);
+			glPointSize(this->drawPointSize);
+			this->mesh.drawVertices();
+			glPopAttrib();
+			
+			auto graycode = this->getInput<Scan::Graycode>();
+			
+			auto camera = this->getInput<Item::Camera>();
+			if (camera) {
+				camera->drawWorld();
+				if (graycode) {
+					camera->getRayCamera().drawOnNearPlane(graycode->getDecoder().getProjectorInCamera());
+				}
+			}
+			auto projector = this->getInput<Item::Projector>();
+			if (projector) {
+				projector->drawWorld();
+				if (graycode) {
+					projector->getRayProjector().drawOnNearPlane(graycode->getDecoder().getCameraInProjector());
+				}
+			}
+			
+			if (this->drawDebugRays) {
+				this->cameraRay.draw();
+				this->projectorRay.draw();
+				this->intersectRay.draw();
+			}
 		}
 	}
 }

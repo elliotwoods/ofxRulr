@@ -11,6 +11,7 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
 		Camera::Camera() {
+			this->showSpecification.set("Show specification", true);
 			this->exposure.set("Exposure", 500.0f, 0.0f, 1000.0f);
 			this->gain.set("Gain", 0.5f, 0.0f, 1.0f);
 			this->focus.set("Focus ", 0.5f, 0.0f, 1.0f);
@@ -45,18 +46,10 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		ofxCvGui::PanelPtr Camera::getView() {
-			auto view = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference(), this->getTypeName());
-			
-			view->onDraw += [this] (ofxCvGui::DrawArguments &) {
-				stringstream status;
-				status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
-				status << endl;
-				status << this->getGrabber()->getDeviceSpecification().toString() << endl;
-			
-				ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
-			};
-
-			return view;
+			if (!this->view) {
+				OFXDIGITALEMULSION_FATAL << "You must set a device on the ofxDigitalEmulsion::Camera before you can call getView";
+			}
+			return this->view;
 		}
 
 		//----------
@@ -113,6 +106,19 @@ namespace ofxDigitalEmulsion {
 			this->grabber->setGain(this->gain);
 			this->grabber->setFocus(this->focus);
 			this->grabber->setSharpness(this->sharpness);
+			
+			auto view = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference(), this->getTypeName());
+			view->onDraw += [this] (ofxCvGui::DrawArguments &) {
+				if (this->showSpecification) {
+					stringstream status;
+					status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
+					status << endl;
+					status << this->getGrabber()->getDeviceSpecification().toString() << endl;
+					
+					ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
+				}
+			};
+			this->view = view;
 		}
 
 		//----------
@@ -179,6 +185,7 @@ namespace ofxDigitalEmulsion {
 					return 0.0f;
 				}
 			}, true));
+			inspector->add(Widgets::Toggle::make(this->showSpecification));
 			inspector->add(Widgets::Slider::make(this->exposure));
 			inspector->add(Widgets::Slider::make(this->gain));
 			inspector->add(Widgets::Slider::make(this->focus));

@@ -41,9 +41,12 @@ namespace ofxDigitalEmulsion {
 			void gainCallback(float &);
 			void focusCallback(float &);
 			void sharpnessCallback(float &);
+			
+			ofxCvGui::PanelPtr view;
 
 			shared_ptr<ofxMachineVision::Grabber::Simple> grabber;
 
+			ofParameter<bool> showSpecification;
 			ofParameter<float> exposure;
 			ofParameter<float> gain;
 			ofParameter<float> focus;

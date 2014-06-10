@@ -1,12 +1,15 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup(){
-	ofSetWindowTitle("Triangulate scan data");
+void ofApp::setup2(){
+	splashScreen.init("splashScreen.png");
+	splashScreen.begin();
+	
+	ofSetWindowTitle("Digital Emulsion Toolkit v0.1");
 
-	auto cameraDevice = MAKE(ofxMachineVision::Device::VideoInputDevice, 1920, 1080, 30.0f);
+	auto cameraDevice = MAKE(ofxMachineVision::Device::Webcam, 1920, 1080, 30.0f);
 	auto camera = MAKE(Item::Camera);
-	camera->setDevice(cameraDevice);
+	camera->setDevice(cameraDevice, 1);
 
 	auto projector = MAKE(Item::Projector);
 
@@ -15,7 +18,7 @@ void ofApp::setup(){
 	auto cameraCalibrate = MAKE(Procedure::Calibrate::CameraIntrinsics);
 	cameraCalibrate->connect(camera);
 	cameraCalibrate->connect(checkerboard);
-	
+
 	auto projectorCalibrate = MAKE(Procedure::Calibrate::ProjectorIntrinsicsExtrinsics);
 	projectorCalibrate->connect(projector);
 	projectorCalibrate->connect(camera);
@@ -24,7 +27,7 @@ void ofApp::setup(){
 	auto graycode = MAKE(Procedure::Scan::Graycode);
 	graycode->connect(camera);
 	graycode->connect(projector);
-	
+
 	auto triangulate = MAKE(Procedure::Triangulate);
 	triangulate->connect(camera);
 	triangulate->connect(projector);
@@ -41,9 +44,8 @@ void ofApp::setup(){
 	this->gui.init();
 	this->world.setupGui(this->gui.getController());
 	this->world.loadAll();
-
-	//start with having the camera selected
-	ofxCvGui::inspect(* camera);
+	
+	this->splashScreen.end();
 }
 
 //--------------------------------------------------------------
@@ -53,7 +55,9 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+	if (ofGetFrameNum() == 1) {
+		this->setup2();
+	}
 }
 
 //--------------------------------------------------------------

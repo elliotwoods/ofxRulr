@@ -4,6 +4,8 @@
 
 #include "ofxCvGui/Panels/World.h"
 
+#include "../../../addons/ofxRay/src/ofxRay.h"
+
 namespace ofxDigitalEmulsion {
 	namespace Procedure {
 		class Triangulate : public Base {
@@ -19,15 +21,20 @@ namespace ofxDigitalEmulsion {
 			void triangulate();
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr) override;
-
+			void drawWorld();
+			
 			Graph::PinSet inputPins;
 
 			ofMesh mesh;
+			
+			ofxRay::Ray cameraRay, projectorRay, intersectRay;
 
 			ofParameter<float> maxLength;
 			ofParameter<bool> giveColor;
 			ofParameter<bool> giveTexCoords;
 			ofParameter<float> drawPointSize;
+			
+			ofParameter<bool> drawDebugRays;
 		};
 	}
 }

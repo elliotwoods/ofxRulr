@@ -1,5 +1,7 @@
 #include "World.h"
 
+#include "../Utils/Exception.h"
+
 #include "ofxCvGui.h"
 
 using namespace ofxCvGui;
@@ -67,6 +69,10 @@ namespace ofxDigitalEmulsion {
 			};
 
 			World::gui = & controller;
+			
+			if (!this->empty()) {
+				ofxCvGui::inspect(* this->front());
+			}
 		}
 
 		//-----------
@@ -88,8 +94,7 @@ namespace ofxDigitalEmulsion {
 			if (World::gui) {
 				return * World::gui;
 			} else {
-				OFXDIGITALEMULSION_FATAL << "No gui attached yet";
-				return * (ofxCvGui::Controller *) 0;
+				throw(Utils::Exception("No gui attached yet"));
 			}
 		}
 	}

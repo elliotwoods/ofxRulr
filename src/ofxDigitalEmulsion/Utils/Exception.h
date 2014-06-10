@@ -8,7 +8,7 @@ namespace ofxDigitalEmulsion {
 		class Exception : public std::exception {
 		public:
 			Exception(const std::string message);
-			const char * what() const override;
+			const char * what() const throw() override;
 		protected:
 			const std::string message;
 		};

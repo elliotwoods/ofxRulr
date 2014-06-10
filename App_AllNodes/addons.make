@@ -1,0 +1,14 @@
+ofxOsc
+ofxGrabCam
+ofxCvGui2
+ofxLiquidEvent
+ofxTriangulate
+ofxUVC
+ofxWatermark
+ofxGraycode
+ofxJSON
+ofxRay
+ofxMachineVision
+ofxAssets
+ofxDigitalEmulsion
+ofxCvMin

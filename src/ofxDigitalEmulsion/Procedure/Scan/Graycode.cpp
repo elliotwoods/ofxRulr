@@ -173,6 +173,9 @@ namespace ofxDigitalEmulsion {
 				}));
 
 				inspector->add(Widgets::Title::make("Decoder", Widgets::Title::Level::H2));
+				inspector->add(Widgets::LiveValue<string>::make("Has data", [this] () {
+					return this->decoder.hasData() ? "True" : "False";
+				}));
 				inspector->add(Widgets::Slider::make(this->delay));
 				auto thresholdSlider = Widgets::Slider::make(this->threshold);
 				thresholdSlider->addIntValidator();

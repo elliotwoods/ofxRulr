@@ -34,7 +34,9 @@ namespace ofxDigitalEmulsion {
 				this->previewMesh.draw();
 			};
 			view->setGridEnabled(false);
+#ifdef USE_OFXGRABCAM
 			view->getCamera().setCursorDraw(true, this->spacing / 5.0f);
+#endif
 
 			auto & camera = view->getCamera();
 			auto distance = this->spacing * MAX(this->sizeX, this->sizeY);

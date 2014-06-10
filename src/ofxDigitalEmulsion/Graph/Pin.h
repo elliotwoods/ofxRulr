@@ -2,6 +2,8 @@
 
 #include "../Utils/Set.h"
 
+#include "../../../addons/ofxLiquidEvent/src/ofxLiquidEvent.h"
+
 #include <string>
 #include <memory>
 #include <vector>
@@ -31,6 +33,7 @@ namespace ofxDigitalEmulsion {
 			string getNodeTypeName() override { return NodeType().getTypeName(); }
 			void connect(shared_ptr<NodeType> node) {
 				this->connection = node;
+				this->onNewConnection(node);
 			}
 			shared_ptr<NodeType> getConnection() {
 				return connection;
@@ -38,6 +41,8 @@ namespace ofxDigitalEmulsion {
 			bool isConnected() const override {
 				return (bool) this->connection;
 			}
+			
+			ofxLiquidEvent<shared_ptr<NodeType> > onNewConnection;
 		protected:
 			shared_ptr<NodeType> connection;
 		};

@@ -40,6 +40,14 @@ namespace ofxDigitalEmulsion {
 			this->rotationZ.addListener(this, &Projector::projectorParameterCallback);
 
 			this->rebuildProjector();
+			
+			auto view = MAKE(Panels::World);
+			view->getCamera().rotate(180.0f, 0.0f, 0.0f, 1.0f);
+			view->getCamera().lookAt(ofVec3f(0,0,1), ofVec3f(0,-1,0));
+			view->onDrawWorld += [this] (ofCamera &) {
+				this->drawWorld();
+			};
+			this->view = view;
 		}
 
 		//----------
@@ -49,13 +57,7 @@ namespace ofxDigitalEmulsion {
 			
 		//----------
 		PanelPtr Projector::getView() {
-			auto view = MAKE(Panels::World);
-			view->getCamera().rotate(180.0f, 0.0f, 0.0f, 1.0f);
-			view->getCamera().lookAt(ofVec3f(0,0,1), ofVec3f(0,-1,0));
-			view->onDrawWorld += [this] (ofCamera &) {
-				this->drawWorld();
-			};
-			return view;
+			return this->view;
 		}
 
 		//----------

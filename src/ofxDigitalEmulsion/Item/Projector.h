@@ -31,6 +31,8 @@ namespace ofxDigitalEmulsion {
 
 			void rebuildProjector();
 			void projectorParameterCallback(float &);
+			
+			ofxCvGui::PanelPtr view;
 
 			ofxRay::Projector projector;
 
