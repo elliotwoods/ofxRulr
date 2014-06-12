@@ -114,13 +114,13 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Button::make("Save ofMesh...", [this] () {
 				auto result = ofSystemSaveDialog("mesh.ply", "Save mesh as PLY");
 				if (result.bSuccess) {
-					this->mesh.save(result.fileName);
+					this->mesh.save(result.filePath);
 				}
 			}));
 			inspector->add(Widgets::Button::make("Save binary mesh...", [this] () {
 				auto result = ofSystemSaveDialog("mesh.bin", "Save mesh as PLY");
 				if (result.bSuccess) {
-					ofstream save(ofToDataPath(result.fileName).c_str(), ios::binary);
+					ofstream save(ofToDataPath(result.filePath).c_str(), ios::binary);
 					if (!save.is_open()) {
 						ofLogError("ofxDigitalEmulsion::Triangulate") << "save failed to open file " << result.fileName;
 						return;
