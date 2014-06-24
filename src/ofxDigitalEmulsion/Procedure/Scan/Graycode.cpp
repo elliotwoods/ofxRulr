@@ -77,10 +77,8 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void Graycode::runScan() {
-				auto window = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
-				if (!window) {
-					throw(Utils::Exception("Can't find GLFW window, can't go fullscreen"));
-				}
+				auto window = glfwGetCurrentContext();
+				
 				auto camera = this->getInput<Item::Camera>();
 				if (!camera) {
 					throw(Utils::Exception("No camera attached"));
@@ -114,7 +112,7 @@ namespace ofxDigitalEmulsion {
 					
 				while (this->encoder >> this->message) {
 					this->message.draw(0,0);
-					glfwSwapBuffers(window->getGLFWWindow());
+					glfwSwapBuffers(window);
 					glFlush();
 
 					auto startWait = ofGetElapsedTimeMillis();

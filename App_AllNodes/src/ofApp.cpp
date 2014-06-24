@@ -1,5 +1,7 @@
 #include "ofApp.h"
 
+using namespace ofxAssets;
+
 //--------------------------------------------------------------
 void ofApp::setup2(){
 	splashScreen.init("splashScreen.png");
@@ -60,6 +62,7 @@ void ofApp::setup2(){
 	this->world.loadAll();
 	
 	this->splashScreen.end();
+	
 }
 
 //--------------------------------------------------------------
@@ -69,7 +72,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	if (ofGetFrameNum() == 1) {
+	if (ofGetFrameNum() == 2) {
 		this->setup2();
 	}
 }

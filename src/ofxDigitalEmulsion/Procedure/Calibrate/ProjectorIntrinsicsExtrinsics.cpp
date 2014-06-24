@@ -183,23 +183,25 @@ namespace ofxDigitalEmulsion {
 					worldPoints.push_back(toCv(correspondence.world));
 				}
 
+				//we have to intitialise a basic camera matrix for it to start with (this will get changed by the function call calibrateCamera
 				Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
 				cameraMatrix.at<double>(0,0) = projector->getWidth() * 1.4f; // default at 1.4 : 1.0f throw ratio
 				cameraMatrix.at<double>(1,1) = projector->getHeight() * 1.4f;
 				cameraMatrix.at<double>(0,2) = projector->getWidth() / 2.0f;
 				cameraMatrix.at<double>(1,2) = projector->getHeight() * 0.90f; // default at 40% lens offset
 
+				//same again for distortion
 				Mat distortionCoefficients = Mat::zeros(5, 1, CV_64F);
 
 				vector<Mat> rotations, translations;
 
-				int flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_ZERO_TANGENT_DIST;
+				int flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST | CV_CALIB_USE_INTRINSIC_GUESS;
 				if (this->fixAspectRatio) {
 					flags |= CV_CALIB_FIX_ASPECT_RATIO;
 				}
 
 				this->error = cv::calibrateCamera(vector<vector<Point3f>>(1, worldPoints), vector<vector<Point2f>>(1, imagePoints), cv::Size(projector->getWidth(), projector->getHeight()), cameraMatrix, distortionCoefficients, rotations, translations, flags);
-
+				
 				projector->setExtrinsics(rotations[0], translations[0]);
 				projector->setIntrinsics(cameraMatrix);
 			}

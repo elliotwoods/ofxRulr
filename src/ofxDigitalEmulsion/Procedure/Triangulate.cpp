@@ -27,7 +27,6 @@ namespace ofxDigitalEmulsion {
 			this->drawPointSize.set("Point size for draw", 1.0f, 1.0f, 10.0f);
 			this->drawDebugRays.set("Draw debug rays", false);
 			
-			
 			cameraPin->onNewConnection += [this] (shared_ptr<Item::Camera> & cameraNode) {
 				cameraNode->getView()->onMouse.removeListeners(this);
 				cameraNode->getView()->onMouse.addListener([this, cameraNode] (MouseArguments & mouseArgs) {
