@@ -4,17 +4,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool_Triangulate", "Tool_Ca
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openframeworksLib", "..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj", "{5837595D-ACA9-485C-8E76-729040CE4B0B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvGuiLib", "..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGuiLib.vcxproj", "{6F0DDB4F-4014-4433-919B-9D956C034BAD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvGuiLib", "..\..\..\addons\ofxCvGui2\ofxCvGuiLib\ofxCvGuiLib.vcxproj", "{6F0DDB4F-4014-4433-919B-9D956C034BAD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxDigitalEmulsionLib", "..\ofxDigitalEmulsionLib\ofxDigitalEmulsionLib.vcxproj", "{3E918808-ADEE-4B04-9042-25F795280BAD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxDigitalEmulsionLib", "..\..\..\addons\ofxDigitalEmulsion\ofxDigitalEmulsionLib\ofxDigitalEmulsionLib.vcxproj", "{3E918808-ADEE-4B04-9042-25F795280BAD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxMachineVisionLib", "..\..\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj", "{CD4455E0-0454-4C3C-BB42-9D15D16A34DD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxMachineVisionLib", "..\..\..\addons\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj", "{CD4455E0-0454-4C3C-BB42-9D15D16A34DD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvMinLib", "..\..\ofxCvMin\ofxCvMinLib\ofxCvMinLib.vcxproj", "{FAA73572-FD12-41FA-8FBE-CB47482D2D87}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvMinLib", "..\..\..\addons\ofxCvMin\ofxCvMinLib\ofxCvMinLib.vcxproj", "{FAA73572-FD12-41FA-8FBE-CB47482D2D87}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxRayLib", "..\..\ofxRay\ofxRayLib\ofxRayLib.vcxproj", "{048E1EC4-64FE-4AAC-B524-1BD56A1FC726}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxRayLib", "..\..\..\addons\ofxRay\ofxRayLib\ofxRayLib.vcxproj", "{048E1EC4-64FE-4AAC-B524-1BD56A1FC726}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxGraycodeLib", "..\..\ofxGraycode\ofxGraycodeLib\ofxGraycodeLib.vcxproj", "{BA65A9DD-2BE2-4FF8-A9C6-6AC6624CDDC3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxGraycodeLib", "..\..\..\addons\ofxGraycode\ofxGraycodeLib\ofxGraycodeLib.vcxproj", "{BA65A9DD-2BE2-4FF8-A9C6-6AC6624CDDC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
