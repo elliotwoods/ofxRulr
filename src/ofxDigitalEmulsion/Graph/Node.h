@@ -21,7 +21,8 @@ namespace ofxDigitalEmulsion {
 				auto inputPin = this->getInputPins().get<Pin<NodeType>>();
 				if (inputPin) {
 					inputPin->connect(node);
-					this->onConnect(inputPin);
+					int dummy = 0;
+					this->onConnect(dummy);
 				} else {
 					OFXDIGITALEMULSION_ERROR << "Couldn't connect node of type '" << NodeType().getTypeName() << "' to node '" << this->getTypeName() << "'. No matching pin found.";
 				}
@@ -39,7 +40,7 @@ namespace ofxDigitalEmulsion {
 
 			void throwIfMissingAConnection() const;
 
-			ofxLiquidEvent<shared_ptr<Graph::BasePin>> onConnect;
+			ofxLiquidEvent<int> onConnect;
 		protected:
 			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
 		};
