@@ -47,6 +47,8 @@ namespace ofxDigitalEmulsion {
 			shared_ptr<ofxMachineVision::Grabber::Simple> grabber;
 
 			ofParameter<bool> showSpecification;
+			ofParameter<bool> showFocusLine;
+
 			ofParameter<float> exposure;
 			ofParameter<float> gain;
 			ofParameter<float> focus;
@@ -57,6 +59,8 @@ namespace ofxDigitalEmulsion {
 			ofParameter<float> distortion[4];
 
 			ofxRay::Camera rayCamera;
+
+			ofMesh focusLineGraph;
 		};
 	}
 }

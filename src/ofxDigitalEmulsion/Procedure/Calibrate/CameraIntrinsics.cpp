@@ -92,7 +92,11 @@ namespace ofxDigitalEmulsion {
 						if (this->grayscale.getWidth() != camera->getWidth() || this->grayscale.getHeight() != camera->getHeight()) {
 							this->grayscale.allocate(camera->getWidth(), camera->getHeight(), OF_IMAGE_GRAYSCALE);
 						}
-						cv::cvtColor(toCv(grabber->getPixelsRef()), toCv(this->grayscale), CV_RGB2GRAY);
+						if (grabber->getPixelsRef().getNumChannels() != 1) {
+							cv::cvtColor(toCv(grabber->getPixelsRef()), toCv(this->grayscale), CV_RGB2GRAY);
+						} else {
+							this->grayscale = grabber->getPixelsRef();
+						}
 						this->grayscale.update();
 						this->currentCorners.clear();
 						findChessboardCornersPreTest(toCv(this->grayscale), checkerboard->getSize(), toCv(this->currentCorners));

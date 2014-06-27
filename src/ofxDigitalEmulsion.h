@@ -9,3 +9,5 @@
 #include "ofxDigitalEmulsion/Procedure/Calibrate/ProjectorIntrinsicsExtrinsics.h"
 #include "ofxDigitalEmulsion/Procedure/Scan/Graycode.h"
 #include "ofxDigitalEmulsion/Procedure/Triangulate.h"
+
+#include "ofxDigitalEmulsion/Utils/Exception.h"

@@ -29,28 +29,30 @@ namespace ofxDigitalEmulsion {
 
 			for(auto node : *this) {
 				auto nodeView = node->getView();
-				gridGroup->add(nodeView);
+				if (nodeView) {
+					gridGroup->add(nodeView);
 
-				nodeView->onMouse += [node] (MouseArguments & mouse) {
-					if (mouse.isLocalPressed() && mouse.button == 0) {
-						if (!ofxCvGui::isBeingInspected(* node)) {
-							ofxCvGui::inspect(* node);
+					nodeView->onMouse += [node] (MouseArguments & mouse) {
+						if (mouse.isLocalPressed() && mouse.button == 0) {
+							if (!ofxCvGui::isBeingInspected(* node)) {
+								ofxCvGui::inspect(* node);
+							}
 						}
-					}
-				};
+					};
 
-				nodeView->onDraw += [node] (DrawArguments & drawArgs) {
-					if (isBeingInspected(* node)) {
-						ofPushStyle();
-						ofSetColor(255);
-						ofSetLineWidth(3.0f);
-						ofNoFill();
-						ofRect(drawArgs.localBounds);
-						ofPopStyle();
-					}
-				};
+					nodeView->onDraw += [node] (DrawArguments & drawArgs) {
+						if (isBeingInspected(* node)) {
+							ofPushStyle();
+							ofSetColor(255);
+							ofSetLineWidth(3.0f);
+							ofNoFill();
+							ofRect(drawArgs.localBounds);
+							ofPopStyle();
+						}
+					};
 
-				nodeView->setCaption(node->getTypeName());
+					nodeView->setCaption(node->getTypeName());
+				}
 			}
 
 			auto inspector = ofxCvGui::Builder::makeInspector();

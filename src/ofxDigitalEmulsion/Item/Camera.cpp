@@ -12,7 +12,8 @@ namespace ofxDigitalEmulsion {
 		//----------
 		Camera::Camera() {
 			this->showSpecification.set("Show specification", true);
-			this->exposure.set("Exposure", 500.0f, 0.0f, 1000.0f);
+			this->showFocusLine.set("Show focus line", true);
+			this->exposure.set("Exposure [us]", 500.0f, 0.0f, 1000000.0f);
 			this->gain.set("Gain", 0.5f, 0.0f, 1.0f);
 			this->focus.set("Focus ", 0.5f, 0.0f, 1.0f);
 			this->sharpness.set("Sharpness", 0.5f, 0.0f, 1.0f);
@@ -22,7 +23,7 @@ namespace ofxDigitalEmulsion {
 			this->principalPointX.set("Center Of Projection X", 512.0f, -4000.0f, 4000.0f);
 			this->principalPointY.set("Center Of Projection Y", 512.0f, -4000.0f, 4000.0f);
 			for(int i=0; i<OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT; i++) {
-				this->distortion[i].set("Distortion K" + ofToString(i + 1), 0.0f, -100.0f, 100.0f);
+				this->distortion[i].set("Distortion K" + ofToString(i + 1), 0.0f, -1000.0f, 1000.0f);
 			}
 
 			this->exposure.addListener(this, & Camera::exposureCallback);
@@ -42,6 +43,20 @@ namespace ofxDigitalEmulsion {
 			this->grabber->update();
 
 			this->updateRayCamera();
+
+			if (this->showFocusLine) {
+				if (this->grabber->isFrameNew()) {
+					auto pixels = this->grabber->getPixelsRef();
+					auto middleRow = pixels.getPixels() + pixels.getWidth() * pixels.getNumChannels() * pixels.getHeight() / 2;
+
+					this->focusLineGraph.clear();
+					this->focusLineGraph.setMode(OF_PRIMITIVE_LINE_STRIP);
+					for(int i=0; i<pixels.getWidth(); i++) {
+						this->focusLineGraph.addVertex(ofVec3f(i, *middleRow, 0));
+						middleRow += pixels.getNumChannels();
+					}
+				}
+			}
 		}
 
 		//----------
@@ -118,6 +133,28 @@ namespace ofxDigitalEmulsion {
 					ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
 				}
 			};
+			view->onDrawCropped += [this] (Panels::BaseImage::DrawCroppedArguments & args) {
+				if (this->showFocusLine) {
+					ofPushMatrix();
+					ofPushStyle();
+
+					ofTranslate(0, args.size.y / 2.0f);
+					ofSetColor(100, 255, 100);
+					ofLine(0,0, args.size.x, 0);
+			
+					ofTranslate(0, +128);
+					ofScale(1.0f, -1.0f);
+					ofSetColor(0, 0, 0);
+					ofSetLineWidth(2.0f);
+					this->focusLineGraph.draw();
+					ofSetLineWidth(1.0f);
+					ofSetColor(255, 100, 100);
+					this->focusLineGraph.draw();
+
+					ofPopStyle();
+					ofPopMatrix();
+				}
+			};
 			this->view = view;
 		}
 
@@ -186,10 +223,21 @@ namespace ofxDigitalEmulsion {
 				}
 			}, true));
 			inspector->add(Widgets::Toggle::make(this->showSpecification));
-			inspector->add(Widgets::Slider::make(this->exposure));
-			inspector->add(Widgets::Slider::make(this->gain));
-			inspector->add(Widgets::Slider::make(this->focus));
-			inspector->add(Widgets::Slider::make(this->sharpness));
+			inspector->add(Widgets::Toggle::make(this->showFocusLine));
+			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Exposure)) {
+				auto exposureSlider = Widgets::Slider::make(this->exposure);
+				exposureSlider->addIntValidator();
+				inspector->add(exposureSlider);
+			}
+			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Gain)) {
+				inspector->add(Widgets::Slider::make(this->gain));
+			}
+			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Focus)) {
+				inspector->add(Widgets::Slider::make(this->focus));
+			}
+			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Sharpness)) {
+				inspector->add(Widgets::Slider::make(this->sharpness));
+			}
 			
 			inspector->add(Widgets::Spacer::make());
 			
@@ -198,6 +246,9 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Slider::make(this->focalLengthY));
 			inspector->add(Widgets::Slider::make(this->principalPointX));
 			inspector->add(Widgets::Slider::make(this->principalPointY));
+			inspector->add(Widgets::LiveValue<float>::make("Throw ratio X", [this] () {
+				return this->rayCamera.getThrowRatio();
+			}));
 			
 			inspector->add(Widgets::Spacer::make());
 

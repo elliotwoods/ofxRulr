@@ -17,7 +17,11 @@ namespace ofxDigitalEmulsion {
 		void Node::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(Widgets::Title::make(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H2));
 			inspector->add(Widgets::Button::make("Save Node", [this] () {
-				this->save(this->getDefaultFilename());
+				try {
+					this->save(this->getDefaultFilename());
+				} catch (Utils::Exception e) {
+					ofSystemAlertDialog(e.what());
+				}
 			}));
 			inspector->add(Widgets::Button::make("Load Node", [this] () {
 				this->load(this->getDefaultFilename());
@@ -25,7 +29,11 @@ namespace ofxDigitalEmulsion {
 //cancel this out in vs2012 until system dialogs are fixed on vs2012
 #ifndef TARGET_WIN32
 			inspector->add(Widgets::Button::make("Load from...", [this] () {
-				this->load();
+				try {
+					this->load();
+				} catch (Utils::Exception e) {
+					ofSystemAlertDialog(e.what());
+				}
 			}));
 #endif
 			inspector->add(Widgets::Spacer::make());
