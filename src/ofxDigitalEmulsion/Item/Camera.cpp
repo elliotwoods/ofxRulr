@@ -11,7 +11,7 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
 		Camera::Camera() {
-			this->showSpecification.set("Show specification", true);
+			this->showSpecification.set("Show specification", false);
 			this->showFocusLine.set("Show focus line", true);
 			this->exposure.set("Exposure [us]", 500.0f, 0.0f, 1000000.0f);
 			this->gain.set("Gain", 0.5f, 0.0f, 1.0f);
