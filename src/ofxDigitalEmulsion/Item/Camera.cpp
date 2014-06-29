@@ -85,6 +85,10 @@ namespace ofxDigitalEmulsion {
 			for(int i=0; i<OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT; i++) {
 				Utils::Serializable::serialize(this->distortion[i], jsonDistortion);
 			}
+
+			auto & jsonResolution = json["resolution"];
+			jsonResolution["width"] = this->getWidth();
+			jsonResolution["height"] = this->getHeight();
 		}
 
 		//----------
