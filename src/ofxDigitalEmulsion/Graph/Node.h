@@ -29,7 +29,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			template<typename NodeType>
-			shared_ptr<NodeType> getInput() {
+			shared_ptr<NodeType> getInput() const {
 				auto pin = this->getInputPins().get<Pin<NodeType>>();
 				if (pin) {
 					return pin->getConnection();

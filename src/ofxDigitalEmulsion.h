@@ -11,3 +11,4 @@
 #include "ofxDigitalEmulsion/Procedure/Triangulate.h"
 
 #include "ofxDigitalEmulsion/Utils/Exception.h"
+#include "ofxDigitalEmulsion/Utils/Utils.h"

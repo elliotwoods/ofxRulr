@@ -228,6 +228,9 @@
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h">
       <Filter>addons\ofxTriangulate\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Utils.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
@@ -316,6 +319,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp">
       <Filter>addons\ofxTriangulate\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Utils.cpp">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

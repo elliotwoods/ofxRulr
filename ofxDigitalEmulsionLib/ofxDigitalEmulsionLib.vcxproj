@@ -203,6 +203,7 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Exception.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_reader.cpp" />
@@ -234,6 +235,7 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Exception.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalarray.inl" />
