@@ -3,6 +3,8 @@
 #include "../../Item/Checkerboard.h"
 #include "../../Item/Camera.h"
 
+#include "../../Utils/Utils.h"
+
 #include "ofConstants.h"
 #include "ofxCvGui.h"
 
@@ -22,9 +24,6 @@ namespace ofxDigitalEmulsion {
 
 				this->enableFinder.set("Run chessboard finder", false);
 				this->error.set("Reprojection error", 0.0f, 0.0f, std::numeric_limits<float>::max());
-
-				failSound.loadSound("fail.mp3");
-				successSound.loadSound("success.mp3");
 
 				this->error = 0.0f;
 			}
@@ -146,9 +145,10 @@ namespace ofxDigitalEmulsion {
 				}, true));
 				inspector->add(Widgets::Button::make("Add board to calibration set", [this] () {
 					if (this->currentCorners.empty()) {
-						this->failSound.play();
-					} else {
-						this->successSound.play();
+						Utils::playFailSound();
+					}
+					else {
+						Utils::playSuccessSound();
 						this->accumulatedCorners.push_back(currentCorners);
 					}
 				}, ' '));

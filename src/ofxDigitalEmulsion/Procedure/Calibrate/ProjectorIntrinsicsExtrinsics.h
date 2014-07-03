@@ -35,7 +35,6 @@ namespace ofxDigitalEmulsion {
 
 				vector<Correspondence> correspondences;
 
-				ofSoundPlayer failSound, successSound;
 				float lastSeenSuccess;
 				float lastSeenFail;
 

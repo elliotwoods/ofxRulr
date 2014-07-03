@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ofSoundPlayer.h"
+
 namespace ofxDigitalEmulsion {
 	namespace Utils {
 		class Assets{

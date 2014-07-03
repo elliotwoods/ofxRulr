@@ -5,6 +5,7 @@
 #include "../../Item/Projector.h"
 
 #include "../../Utils/Exception.h"
+#include "../../Utils/Utils.h"
 
 #include "ofxCvGui.h"
 
@@ -26,9 +27,6 @@ namespace ofxDigitalEmulsion {
 				this->oscServer.setup(4005);
 
 				this->fixAspectRatio.set("Fix aspect ratio", false);
-			
-				failSound.loadSound("fail.mp3");
-				successSound.loadSound("success.mp3");
 
 				this->lastSeenFail = -10.0f;
 				this->lastSeenSuccess = -10.0f;
@@ -233,7 +231,7 @@ namespace ofxDigitalEmulsion {
 					Correspondence newCorrespondence = {ofVec3f(translation.at<double>(0), translation.at<double>(1), translation.at<double>(2)), ofVec2f(projectorX, projectorY)};
 					this->correspondences.push_back(newCorrespondence);
 					this->lastSeenSuccess = ofGetElapsedTimef();
-					this->successSound.play();
+					Utils::playSuccessSound();
 				} catch (const std::exception & e) {
 					try {
 						const auto & cvException = dynamic_cast<const cv::Exception &>(e);
@@ -242,7 +240,7 @@ namespace ofxDigitalEmulsion {
 						OFXDIGITALEMULSION_ERROR << e.what();
 					}
 					this->lastSeenFail = ofGetElapsedTimef();
-					this->failSound.play();
+					Utils::playFailSound();
 				}
 			}
 		}
