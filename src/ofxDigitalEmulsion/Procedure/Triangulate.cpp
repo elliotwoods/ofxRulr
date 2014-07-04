@@ -83,7 +83,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Triangulate::triangulate() {
-			this->throwIfMissingAConnection();
+			this->throwIfMissingAnyConnection();
 			
 			auto camera = this->getInput<Item::Camera>();
 			auto projector = this->getInput<Item::Projector>();

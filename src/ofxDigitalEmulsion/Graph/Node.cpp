@@ -60,7 +60,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Node::throwIfMissingAConnection() const {
+		void Node::throwIfMissingAnyConnection() const {
 			const auto inputPins = this->getInputPins();
 			for(auto & inputPin : inputPins) {
 				if (!inputPin->isConnected()) {

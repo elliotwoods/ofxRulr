@@ -166,7 +166,7 @@ namespace ofxDigitalEmulsion {
 			
 			//----------
 			void ProjectorIntrinsicsExtrinsics::calibrate() {
-				this->throwIfMissingAConnection();
+				this->throwIfMissingAnyConnection();
 				auto camera = this->getInput<Item::Camera>();
 				auto projector = this->getInput<Item::Projector>();
 
@@ -211,7 +211,7 @@ namespace ofxDigitalEmulsion {
 				auto checkerboard = this->getInput<Item::Checkerboard>();
 
 				try {
-					this->throwIfMissingAConnection();
+					this->throwIfMissingAnyConnection();
 					if (projectorWidth != projector->getWidth() || projectorHeight != projector->getHeight()) {
 						stringstream message;
 						message << "Resolution of cursor screen app [" << projectorWidth << "x" << projectorHeight << "] does not match Projector object that we are calibrating [" << projector->getWidth() << "x" << projector->getHeight() << "]";

@@ -41,7 +41,15 @@ namespace ofxDigitalEmulsion {
 				}
 			}
 
-			void throwIfMissingAConnection() const;
+			template<typename NodeType>
+			void throwIfMissingAConnection() const {
+				if (!this->getInput<NodeType>()) {
+					stringstream message;
+					message << "Node [" << this->getTypeName() << "] is missing a connection to [" << NodeType().getTypeName() << "]";
+					throw(Utils::Exception(message.str()));
+				}
+			}
+			void throwIfMissingAnyConnection() const;
 
 			ofxLiquidEvent<int> onConnect;
 		protected:
