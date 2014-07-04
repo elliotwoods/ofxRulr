@@ -21,6 +21,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		string Serializable::getName() const {
+			return this->getTypeName();
+		}
+
+		//----------
 		void Serializable::save(string filename) {
 			if (filename == "") {
 				auto result = ofSystemSaveDialog(this->getDefaultFilename(), "Save " + this->getTypeName());
@@ -66,7 +71,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		string Serializable::getDefaultFilename() const {
-			return this->getTypeName() + ".json";
+			return this->getName() + ".json";
 		}
 	}
 }

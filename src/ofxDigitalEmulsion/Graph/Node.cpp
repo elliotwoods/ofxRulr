@@ -14,6 +14,24 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		string Node::getName() const {
+			if (this->name.empty()) {
+				return this->getTypeName();
+			} else {
+				return this->name;
+			}
+		}
+
+		//----------
+		void Node::setName(const string name) {
+			this->name = name;
+			auto view = this->getView();
+			if (view) {
+				view->setCaption(this->name);
+			}
+		}
+
+		//----------
 		void Node::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(Widgets::Title::make(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H2));
 			inspector->add(Widgets::Button::make("Save Node", [this] () {

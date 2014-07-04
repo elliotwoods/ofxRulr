@@ -51,7 +51,7 @@ namespace ofxDigitalEmulsion {
 						}
 					};
 
-					nodeView->setCaption(node->getTypeName());
+					nodeView->setCaption(node->getName());
 				}
 			}
 

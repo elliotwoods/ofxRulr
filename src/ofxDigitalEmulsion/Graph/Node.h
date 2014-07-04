@@ -11,6 +11,9 @@ namespace ofxDigitalEmulsion {
 	namespace Graph {
 		class Node : public ofxCvGui::Widgets::IInspectable, public Utils::Serializable {
 		public:
+			string getName() const override;
+			void setName(const string);
+
 			virtual PinSet getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr) override;
 			virtual ofxCvGui::PanelPtr getView() = 0;
@@ -43,6 +46,7 @@ namespace ofxDigitalEmulsion {
 			ofxLiquidEvent<int> onConnect;
 		protected:
 			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
+			string name;
 		};
 	}
 }

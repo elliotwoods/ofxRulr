@@ -10,6 +10,7 @@ namespace ofxDigitalEmulsion {
 		class Serializable {
 		public:
 			virtual std::string getTypeName() const = 0;
+			virtual std::string getName() const;
 			virtual void serialize(Json::Value &) = 0;
 			virtual void deserialize(const Json::Value &) = 0;
 
