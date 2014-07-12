@@ -96,18 +96,18 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void HomographyFromGraycode::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
-				auto fitButton = MAKE(ofxCvGui::Widgets::Button, "Fit", [this]() {
+				auto findHomographyButton = MAKE(ofxCvGui::Widgets::Button, "Find Homography", [this]() {
 					try {
-						this->fit();
+						this->findHomography();
 					}
 					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 				}, OF_KEY_RETURN);
-				fitButton->setHeight(100.0f);
-				inspector->add(fitButton);
+				findHomographyButton->setHeight(100.0f);
+				inspector->add(findHomographyButton);
 			}
 
 			//----------
-			void HomographyFromGraycode::fit() {
+			void HomographyFromGraycode::findHomography() {
 				this->throwIfMissingAnyConnection();
 
 				auto graycodeNode = this->getInput<Scan::Graycode>();
@@ -133,6 +133,11 @@ namespace ofxDigitalEmulsion {
 					result.at<double>(0, 1), result.at<double>(1, 1), 0.0, result.at<double>(2, 1),
 					0.0, 0.0, 1.0, 0.0,
 					result.at<double>(0, 2), result.at<double>(1, 2), 0.0, result.at<double>(2, 2));
+			}
+
+			//----------
+			void HomographyFromGraycode::findDistortionCoefficients() {
+
 			}
 		}
 	}
