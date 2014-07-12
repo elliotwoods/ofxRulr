@@ -100,7 +100,8 @@ namespace ofxDigitalEmulsion {
 			auto triangulateButton = Widgets::Button::make("Triangulate", [this] () {
 				try {
 					this->triangulate();
-				} catch (std::exception e) {
+				}
+				catch (std::exception e) {
 					ofSystemAlertDialog(e.what());
 				}
 			}, OF_KEY_RETURN);

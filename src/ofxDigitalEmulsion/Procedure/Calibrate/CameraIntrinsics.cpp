@@ -99,7 +99,8 @@ namespace ofxDigitalEmulsion {
 						this->grayscale.update();
 						this->currentCorners.clear();
 						findChessboardCornersPreTest(toCv(this->grayscale), checkerboard->getSize(), toCv(this->currentCorners));
-					} catch (std::exception e) {
+					}
+					catch (std::exception e) {
 						ofLogWarning() << e.what();
 					}
 				} else {

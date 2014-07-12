@@ -2,6 +2,8 @@
 
 #include "../Base.h"
 
+#include "ofxCvGui/Panels/Image.h"
+
 namespace ofxDigitalEmulsion {
 	namespace Procedure {
 		namespace Calibrate {
@@ -14,16 +16,17 @@ namespace ofxDigitalEmulsion {
 
 				void serialize(Json::Value &) override;
 				void deserialize(const Json::Value &) override;
-
+				void update() override;
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				void fit();
 
 				Graph::PinSet inputPins;
-				ofxCvGui::PanelPtr view;
+				shared_ptr<ofxCvGui::Panels::Image> view;
 
 				ofMatrix4x4 cameraToProjector;
 				ofMesh grid;
+				ofImage dummy;
 			};
 		}
 	}

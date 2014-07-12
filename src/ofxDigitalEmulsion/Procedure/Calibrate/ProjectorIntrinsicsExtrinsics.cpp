@@ -148,14 +148,8 @@ namespace ofxDigitalEmulsion {
 				auto calibrateButton = Widgets::Button::make("Calibrate", [this] () {
 					try {
 						this->calibrate();
-					} catch (const std::exception & e) {
-						try {
-							const auto & cvException = dynamic_cast<const cv::Exception &>(e);
-							ofSystemAlertDialog(cvException.msg);
-						} catch (std::bad_cast) {
-							ofSystemAlertDialog(e.what());
-						}
 					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 				});
 				calibrateButton->setHeight(100.0f);
 				inspector->add(calibrateButton);

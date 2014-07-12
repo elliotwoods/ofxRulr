@@ -51,6 +51,7 @@ namespace ofxDigitalEmulsion {
 						payload.init(projector->getWidth(), projector->getHeight());
 						encoder.init(payload);
 						decoder.init(payload);
+						this->load(this->getDefaultFilename());
 					}
 				}
 
@@ -61,10 +62,14 @@ namespace ofxDigitalEmulsion {
 			void Graycode::serialize(Json::Value & json) {
 				Utils::Serializable::serialize(this->threshold, json);
 				Utils::Serializable::serialize(this->delay, json);
+				auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
+				this->decoder.saveDataSet(filename);
 			}
 
 			//----------
 			void Graycode::deserialize(const Json::Value & json) {
+				auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
+				this->decoder.loadDataSet(filename);
 				Utils::Serializable::deserialize(this->threshold, json);
 				Utils::Serializable::deserialize(this->delay, json);
 				this->decoder.setThreshold(this->threshold);
@@ -150,9 +155,8 @@ namespace ofxDigitalEmulsion {
 				auto scanButton = Widgets::Button::make("SCAN", [this] () {
 					try {
 						this->runScan();
-					} catch (std::exception e) {
-						ofSystemAlertDialog(e.what());
-					}
+					} 
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 				}, OF_KEY_RETURN);
 				scanButton->setHeight(100.0f);
 				inspector->add(scanButton);

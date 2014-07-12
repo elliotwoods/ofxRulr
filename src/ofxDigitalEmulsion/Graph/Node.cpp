@@ -37,9 +37,8 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Button::make("Save Node", [this] () {
 				try {
 					this->save(this->getDefaultFilename());
-				} catch (Utils::Exception e) {
-					ofSystemAlertDialog(e.what());
 				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
 			inspector->add(Widgets::Button::make("Load Node", [this] () {
 				this->load(this->getDefaultFilename());
@@ -49,9 +48,8 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Button::make("Load from...", [this] () {
 				try {
 					this->load();
-				} catch (Utils::Exception e) {
-					ofSystemAlertDialog(e.what());
 				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
 #endif
 			inspector->add(Widgets::Spacer::make());
