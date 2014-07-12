@@ -231,6 +231,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Utils.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.h">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
@@ -322,6 +325,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Utils.cpp">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.cpp">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

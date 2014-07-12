@@ -196,6 +196,7 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\World.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.cpp" />

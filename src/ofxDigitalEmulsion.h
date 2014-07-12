@@ -7,6 +7,7 @@
 
 #include "ofxDigitalEmulsion/Procedure/Calibrate/CameraIntrinsics.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/ProjectorIntrinsicsExtrinsics.h"
+#include "ofxDigitalEmulsion/Procedure/Calibrate/HomographyFromGraycode.h"
 #include "ofxDigitalEmulsion/Procedure/Scan/Graycode.h"
 #include "ofxDigitalEmulsion/Procedure/Triangulate.h"
 
