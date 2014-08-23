@@ -7,11 +7,14 @@ namespace ofxDigitalEmulsion {
 		class Assets{
 		public:
 			Assets();
+			static Assets & X();
+
 			ofSoundPlayer failSound;
 			ofSoundPlayer successSound;
+
+			static Assets * singleton;
 		};
 
-		extern Assets assetRegister;
 		void playSuccessSound();
 		void playFailSound();
 	}

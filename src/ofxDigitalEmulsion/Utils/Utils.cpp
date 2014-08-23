@@ -3,7 +3,7 @@
 namespace ofxDigitalEmulsion {
 	namespace Utils {
 		//----------
-		Assets assetRegister = Assets();
+		Assets * Assets::singleton = nullptr;
 
 		//----------
 		Assets::Assets() {
@@ -12,9 +12,17 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		Assets & Assets::X() {
+			if (!Assets::singleton) {
+				Assets::singleton = new Assets();
+			}
+			return * Assets::singleton;
+		}
+ 
+		//----------
 		void playSuccessSound() {
 			try {
-				assetRegister.successSound.play();
+				Assets::X().successSound.play();
 			} catch (...) {
 				ofLogWarning("ofxDigitalEmulsion") << "Failed to play success sound";
 			}
@@ -23,7 +31,7 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void playFailSound() {
 			try {
-				assetRegister.failSound.play();
+				Assets::X().failSound.play();
 			} catch (...) {
 				ofLogWarning("ofxDigitalEmulsion") << "Failed to play fail sound";
 			}
