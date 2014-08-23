@@ -26,6 +26,7 @@ namespace ofxDigitalEmulsion {
 
 			auto gridGroup = MAKE(ofxCvGui::Panels::Groups::Grid);
 			rootGroup->add(gridGroup);
+			this->guiGrid = gridGroup;
 
 			for(auto node : *this) {
 				auto nodeView = node->getView();
@@ -98,6 +99,11 @@ namespace ofxDigitalEmulsion {
 			} else {
 				throw(Utils::Exception("No gui attached yet"));
 			}
+		}
+
+		//----------
+		ofxCvGui::PanelGroupPtr World::getGuiGrid() {
+			return this->guiGrid;
 		}
 	}
 }

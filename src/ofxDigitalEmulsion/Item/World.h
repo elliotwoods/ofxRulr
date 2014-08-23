@@ -13,8 +13,10 @@ namespace ofxDigitalEmulsion {
 			void loadAll();
 			void saveAll() const;
 			static ofxCvGui::Controller & getGuiController();
+			ofxCvGui::PanelGroupPtr getGuiGrid();
 		protected:
 			static ofxCvGui::Controller * gui;
+			ofxCvGui::PanelGroupPtr guiGrid;
 		};
 	}
 }

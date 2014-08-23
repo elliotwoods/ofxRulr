@@ -3,10 +3,13 @@
 #include "../../Utils/Exception.h"
 
 #include "../Scan/Graycode.h"
+#include "../../Item/Camera.h"
 #include "ofxCvMin.h"
 
 #include "ofxCvGui/Panels/Image.h"
 #include "ofxCvGui/Widgets/Button.h"
+
+#include "ofxNonLinearFit.h"
 
 using namespace ofxCvGui;
 using namespace ofxCv;
@@ -47,6 +50,8 @@ namespace ofxDigitalEmulsion {
 					}
 				};
 				this->view = view;
+
+				this->doubleExportSize.set("Double size of exported images", false);
 			}
 
 			//----------
@@ -73,6 +78,42 @@ namespace ofxDigitalEmulsion {
 						jsonCameraToProjectorRow[i] = this->cameraToProjector(i, j);
 					}
 				}
+
+				try {
+					throwIfMissingAnyConnection();
+					auto graycodeNode = this->getInput<Scan::Graycode>();
+					auto & dataSet = graycodeNode->getDecoder().getDataSet();
+					if (!dataSet.getHasData()) {
+						throw(new Utils::Exception("No [ofxGraycode::DataSet] loaded"));
+					}
+					auto normalisedToCamera = ofMatrix4x4::newTranslationMatrix(1.0f, -1.0f, 1.0f) * 
+						ofMatrix4x4::newScaleMatrix(0.5f, -0.5f, 1.0f) *
+						ofMatrix4x4::newScaleMatrix(dataSet.getWidth(), dataSet.getHeight(), 1.0f);
+					auto normaliseToProjector = ofMatrix4x4::newTranslationMatrix(1.0f, -1.0f, 1.0f) *
+						ofMatrix4x4::newScaleMatrix(0.5f, -0.5f, 1.0f) *
+						ofMatrix4x4::newScaleMatrix(dataSet.getPayloadWidth(), dataSet.getPayloadHeight(), 1.0f);
+						;
+
+					auto cameraNormalisedToProjectorNormalised = normalisedToCamera * this->cameraToProjector * normaliseToProjector.getInverse();
+					auto projectorNormalisedToCameraNormalised = cameraNormalisedToProjectorNormalised.getInverse();
+
+					auto & jsonCameraToProjectorNormalised = json["cameraNormalisedToProjectorNormalised"];
+					auto & jsonProjectorToCameraNormalised = json["projectorNormalisedToCameraNormalised"];
+					for (int j = 0; j < 4; j++) {
+						auto & jsonCameraToProjectorNormalisedRow = jsonCameraToProjectorNormalised[j];
+						auto & jsonProjectorToCameraNormalisedRow = jsonProjectorToCameraNormalised[j];
+						for (int i = 0; i < 4; i++) {
+							jsonCameraToProjectorNormalisedRow[i] = cameraNormalisedToProjectorNormalised(i, j);
+							jsonProjectorToCameraNormalisedRow[i] = projectorNormalisedToCameraNormalised(i, j);
+						}
+					}
+				}
+				catch (...)
+				{
+
+				}
+
+				Utils::Serializable::serialize(this->doubleExportSize, json);
 			}
 
 			//----------
@@ -84,6 +125,8 @@ namespace ofxDigitalEmulsion {
 						this->cameraToProjector(i, j) = jsonCameraToProjectorRow[i].asFloat();
 					}
 				}
+
+				Utils::Serializable::deserialize(this->doubleExportSize, json);
 			}
 
 			//----------
@@ -92,18 +135,6 @@ namespace ofxDigitalEmulsion {
 				if (graycodeNode) {
 					this->view->setImage(graycodeNode->getDecoder().getProjectorInCamera());
 				}
-			}
-
-			//----------
-			void HomographyFromGraycode::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
-				auto findHomographyButton = MAKE(ofxCvGui::Widgets::Button, "Find Homography", [this]() {
-					try {
-						this->findHomography();
-					}
-					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
-				}, OF_KEY_RETURN);
-				findHomographyButton->setHeight(100.0f);
-				inspector->add(findHomographyButton);
 			}
 
 			//----------
@@ -137,7 +168,131 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void HomographyFromGraycode::findDistortionCoefficients() {
+				struct DataPoint {
+				};
 
+				class Model : public ofxNonLinearFit::Models::Base<DataPoint, Model> {
+				public:
+					cv::Mat distortionCoefficients;
+					cv::Mat homography;
+
+					const vector<ofVec2f> & cameraDistorted;
+					vector<ofVec2f> cameraUndistorted;
+					const vector<ofVec2f> & projector;
+
+					Model(const vector<ofVec2f> & cameraDistorted, const vector<ofVec2f> & projector) :
+					cameraDistorted(cameraDistorted), projector(projector) {
+
+					}
+
+					unsigned int getParameterCount() const override {
+						return OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT;
+					}
+
+					double getResidual(DataPoint point) const override {
+						return 0.0f;
+					}
+
+					void evaluate(DataPoint &) const override {
+						//do nothing
+					}
+
+					void cacheModel() {
+						/*which camera matrix?
+						cv::undistortPoints(toCv(this->cameraDistorted), toCv(this->cameraUndistorted), )
+						undistort the points
+						fit a homography
+						*/
+					}
+				};
+			}
+
+			//----------
+			void HomographyFromGraycode::exportMappingImage(string filename) const {
+				this->throwIfMissingAnyConnection();
+
+				auto graycodeNode = this->getInput<Scan::Graycode>();
+				auto & dataSet = graycodeNode->getDataSet();
+				if (!dataSet.getHasData()) {
+					throw(ofxDigitalEmulsion::Utils::Exception("No data loaded for [ofxGraycode::DataSet]"));
+				}
+
+				if (this->cameraToProjector.isIdentity()) {
+					throw(ofxDigitalEmulsion::Utils::Exception("No mapping has been found yet, so can't save"));
+				}
+
+				string filePath;
+				if (filename == "") {
+					auto filenameBase = ofFilePath::removeExt(dataSet.getFilename());
+					auto result = ofSystemSaveDialog(filenameBase + "-cameraToProjector.exr", "Save mapping image");
+					if (!result.bSuccess) {
+						return;
+					}
+					filePath = result.filePath;
+				}
+				else {
+					filePath = filename;
+				}
+
+				auto mappingGrid = this->grid;
+				mappingGrid.clearColors();
+				for (auto vertex : mappingGrid.getVertices()) {
+					ofFloatColor color;
+					(ofVec3f&)color = vertex;
+					color.a = 1.0f;
+					mappingGrid.addColor(color);
+				}
+
+				auto factor = this->doubleExportSize ? 2.0f : 1.0f;
+				
+				//note that these settings can fail with older versions of openFrameworks,
+				// where ofGLUtils.cpp lacks GL_RGBA32F from the ofGetImageTypeFromGLType function
+				ofFbo mappingImage;
+				ofFbo::Settings settings;
+				settings.width = dataSet.getPayloadWidth() * factor;
+				settings.height = dataSet.getPayloadHeight() * factor;
+				settings.internalformat = GL_RGBA32F;
+				settings.numColorbuffers = 1;
+				mappingImage.allocate(settings);
+
+				mappingImage.begin();
+				ofClear(0, 0);
+				
+				ofScale(factor, factor, 1.0f);
+
+				ofMultMatrix(this->cameraToProjector);
+				ofScale(dataSet.getWidth(), dataSet.getHeight());
+				ofPushStyle();
+				mappingGrid.drawFaces();
+				ofPopStyle();
+				ofPopMatrix();
+
+				mappingImage.end();
+
+				ofFloatPixels pixels;
+				mappingImage.readToPixels(pixels);
+
+				ofSaveImage(pixels, filePath);
+			}
+
+			//----------
+			void HomographyFromGraycode::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+				auto findHomographyButton = MAKE(ofxCvGui::Widgets::Button, "Find Homography", [this]() {
+					try {
+						this->findHomography();
+					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
+				}, OF_KEY_RETURN);
+				findHomographyButton->setHeight(100.0f);
+				inspector->add(findHomographyButton);
+
+				inspector->add(MAKE(ofxCvGui::Widgets::Button, "Export mapping image and matrix...", [this]() {
+					try {
+						this->exportMappingImage();
+					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
+				}));
+				inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->doubleExportSize));
 			}
 		}
 	}

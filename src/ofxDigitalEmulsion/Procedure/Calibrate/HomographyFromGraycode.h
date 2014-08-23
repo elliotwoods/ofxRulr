@@ -17,10 +17,12 @@ namespace ofxDigitalEmulsion {
 				void serialize(Json::Value &) override;
 				void deserialize(const Json::Value &) override;
 				void update() override;
-			protected:
-				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+				
 				void findHomography();
 				void findDistortionCoefficients();
+				void exportMappingImage(string filename = "") const;
+			protected:
+				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 
 				Graph::PinSet inputPins;
 				shared_ptr<ofxCvGui::Panels::Image> view;
@@ -28,6 +30,8 @@ namespace ofxDigitalEmulsion {
 				ofMatrix4x4 cameraToProjector;
 				ofMesh grid;
 				ofImage dummy;
+
+				ofParameter<bool> doubleExportSize;
 			};
 		}
 	}

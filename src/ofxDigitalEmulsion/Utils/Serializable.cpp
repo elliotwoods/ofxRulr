@@ -13,11 +13,21 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void Serializable::serialize(const ofParameter<bool> & parameter, Json::Value & json) {
+			json[parameter.getName()] = parameter.get();
+		}
+
+		//----------
 		void Serializable::deserialize(ofParameter<float> & parameter, const Json::Value & json) {
 			const auto name = parameter.getName();
 			if (json[name].isNumeric()) {
 				parameter.set(json[name].asFloat());
 			}
+		}
+
+		//----------
+		void Serializable::deserialize(ofParameter<bool> & parameter, const Json::Value & json) {
+			parameter.set(json[parameter.getName()].asBool()); 
 		}
 
 		//----------

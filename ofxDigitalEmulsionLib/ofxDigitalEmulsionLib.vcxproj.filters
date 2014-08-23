@@ -79,6 +79,18 @@
     <Filter Include="addons\ofxTriangulate\src">
       <UniqueIdentifier>{8e952249-e6ff-4fe8-afcd-1a78c4c2643c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxNonLinearFit">
+      <UniqueIdentifier>{61604660-fb7a-4bb4-8d56-c4e9195af151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNonLinearFit\src">
+      <UniqueIdentifier>{9e6da5b3-9995-4a09-a9a1-4ccf77980cf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNonLinearFit\src\ofxNonLinearFit">
+      <UniqueIdentifier>{311d8f34-c54e-47ea-a9f2-1f238f872808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNonLinearFit\src\ofxNonLinearFit\Models">
+      <UniqueIdentifier>{11a611df-65dc-4cf3-8637-4ea5e68bd441}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
@@ -234,6 +246,24 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.h">
       <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit.h">
+      <Filter>addons\ofxNonLinearFit\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Algorithm.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Fit.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Utils.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\Base.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
@@ -329,6 +359,12 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.cpp">
       <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Algorithm.cpp">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl">
@@ -343,5 +379,6 @@
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalmap.inl">
       <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
     </None>
+    <None Include="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
   </ItemGroup>
 </Project>
