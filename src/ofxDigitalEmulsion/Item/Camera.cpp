@@ -127,7 +127,7 @@ namespace ofxDigitalEmulsion {
 			this->grabber->setSharpness(this->sharpness);
 			
 			auto view = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference(), this->getTypeName());
-			view->onDraw += [this] (ofxCvGui::DrawArguments &) {
+			view->onDraw += [this] (ofxCvGui::DrawArguments & args) {
 				if (this->showSpecification) {
 					stringstream status;
 					status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
@@ -136,6 +136,16 @@ namespace ofxDigitalEmulsion {
 					
 					ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
 				}
+
+				ofPushStyle();
+				ofSetLineWidth(1);
+				ofSetColor(255);
+				ofPushMatrix();
+				ofTranslate(args.localBounds.width / 2.0f, args.localBounds.height / 2.0f);
+				ofLine(-10, 0, 10, 0);
+				ofLine(0, -10, 0, 10);
+				ofPopMatrix();
+				ofPopStyle();
 			};
 			view->onDrawCropped += [this] (Panels::BaseImage::DrawCroppedArguments & args) {
 				if (this->showFocusLine) {

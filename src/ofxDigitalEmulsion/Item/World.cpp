@@ -86,8 +86,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//-----------
-		void World::loadAll() {
+		void World::loadAll(bool printDebug) {
 			for(auto node : * this) {
+				if (printDebug) {
+					ofLogNotice("ofxDigitalEmulsion") << "Loading node [" << node->getName() << "]";
+				}
 				node->load(node->getDefaultFilename());
 			}
 		}

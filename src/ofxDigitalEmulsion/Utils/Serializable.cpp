@@ -27,7 +27,10 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Serializable::deserialize(ofParameter<bool> & parameter, const Json::Value & json) {
-			parameter.set(json[parameter.getName()].asBool()); 
+			const auto name = parameter.getName();
+			if (json[name].isBool()) {
+				parameter.set(json[parameter.getName()].asBool());
+			}
 		}
 
 		//----------
