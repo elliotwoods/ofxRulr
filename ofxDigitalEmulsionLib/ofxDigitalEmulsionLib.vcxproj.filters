@@ -97,6 +97,15 @@
     <Filter Include="src\ofxDigitalEmulsion\External\Item">
       <UniqueIdentifier>{bba5b19d-b6b6-44d5-9c8c-eea90ab1519c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Device">
+      <UniqueIdentifier>{6d63dd77-671d-4a6e-9685-d51a1f0ee20b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External\Procedure">
+      <UniqueIdentifier>{92fbb9fe-9834-414a-9267-6bb47974e588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External\Procedure\Calibrate">
+      <UniqueIdentifier>{a8346909-c657-4b12-abae-6e888ce4925f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
@@ -273,6 +282,12 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.h">
       <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.h">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
@@ -376,6 +391,12 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp">
       <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.cpp">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
