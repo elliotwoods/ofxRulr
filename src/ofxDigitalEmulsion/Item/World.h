@@ -9,7 +9,7 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		class World : public Utils::Set<Graph::Node> {
 		public:
-			void setupGui(ofxCvGui::Controller &);
+			void init(ofxCvGui::Controller &);
 			void loadAll(bool printDebug = false);
 			void saveAll() const;
 			static ofxCvGui::Controller & getGuiController();

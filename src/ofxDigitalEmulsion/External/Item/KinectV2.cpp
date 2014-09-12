@@ -1,5 +1,6 @@
 #include "KinectV2.h"
-#include "ofxCvGui.h"
+
+#include "ofxCvGui/Panels/World.h"
 
 using namespace ofxCvGui;
 
@@ -12,12 +13,14 @@ namespace ofxDigitalEmulsion {
 				this->drawWorld();
 			};
 			this->view = view;
+		}
 
+		//----------
+		void KinectV2::init() {
 			this->device = MAKE(ofxKinectForWindows2::Device);
 			this->device->open();
 			this->device->initDepthSource();
 			this->device->initColorSource();
-			this->device->initBodySource();
 		}
 
 		//----------

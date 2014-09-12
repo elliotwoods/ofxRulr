@@ -12,7 +12,10 @@ namespace ofxDigitalEmulsion {
 		ofxCvGui::Controller * World::gui = 0;
 
 		//-----------
-		void World::setupGui(Controller & controller) {
+		void World::init(Controller & controller) {
+			for (auto node : *this) {
+				node->init();
+			}
 			auto rootGroup = dynamic_pointer_cast<ofxCvGui::Panels::Groups::Grid>(controller.getRootGroup());
 			if (rootGroup) {
 				rootGroup->onBoundsChange += [rootGroup] (ofxCvGui::BoundsChangeArguments &) {

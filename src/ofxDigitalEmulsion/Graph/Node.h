@@ -11,6 +11,8 @@ namespace ofxDigitalEmulsion {
 	namespace Graph {
 		class Node : public ofxCvGui::Widgets::IInspectable, public Utils::Serializable {
 		public:
+			virtual void init() { };
+
 			string getName() const override;
 			void setName(const string);
 

@@ -370,7 +370,7 @@ namespace ofxDigitalEmulsion {
 		void ProjectorOutput::calculateSplit() {
 			if (!this->window) {
 				if (this->monitors && this->monitorSelection < this->monitorCount) {
-					glfwGetVideoMode(this->monitors[this->monitorSelection]);
+					this->videoMode = glfwGetVideoMode(this->monitors[this->monitorSelection]);
 				}
 			}
 			if (this->videoMode) {

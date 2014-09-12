@@ -7,7 +7,13 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			class ProjectorFromKinectV2 : public ofxDigitalEmulsion::Procedure::Base {
 			public:
+				struct Correspondence {
+					ofVec3f world;
+					ofVec2f projector;
+				};
+
 				ProjectorFromKinectV2();
+				void init() override;
 				string getTypeName() const override;
 				Graph::PinSet getInputPins() const override;
 				ofxCvGui::PanelPtr getView() override;
@@ -17,6 +23,7 @@ namespace ofxDigitalEmulsion {
 				void deserialize(const Json::Value &) override;
 
 				void addCapture();
+				void calibrate();
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				void drawWorld();
@@ -28,6 +35,9 @@ namespace ofxDigitalEmulsion {
 				ofParameter<float> checkerboardCornersY;
 				ofParameter<float> checkerboardPositionX;
 				ofParameter<float> checkerboardPositionY;
+				ofParameter<float> checkerboardBrightness;
+
+				vector<Correspondence> correspondences;
 			};
 		}
 	}

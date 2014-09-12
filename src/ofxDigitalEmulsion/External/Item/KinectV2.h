@@ -9,6 +9,7 @@ namespace ofxDigitalEmulsion {
 		class KinectV2 : public ofxDigitalEmulsion::Item::Base {
 		public:
 			KinectV2();
+			void init() override;
 			string getTypeName() const override;
 			void update() override;
 			ofxCvGui::PanelPtr getView() override;
