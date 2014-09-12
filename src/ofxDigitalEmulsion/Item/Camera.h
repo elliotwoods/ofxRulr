@@ -13,8 +13,8 @@ namespace ofxDigitalEmulsion {
 		class Camera : public Base {
 		public:
 			Camera();
-			string getTypeName() const;
-			void update();
+			string getTypeName() const override;
+			void update() override;
 			ofxCvGui::PanelPtr getView() override;
 
 			void serialize(Json::Value &) override;

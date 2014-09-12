@@ -91,6 +91,12 @@
     <Filter Include="addons\ofxNonLinearFit\src\ofxNonLinearFit\Models">
       <UniqueIdentifier>{11a611df-65dc-4cf3-8637-4ea5e68bd441}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External">
+      <UniqueIdentifier>{317e8331-2208-446c-8271-848a4c3071d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External\Item">
+      <UniqueIdentifier>{bba5b19d-b6b6-44d5-9c8c-eea90ab1519c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
@@ -264,6 +270,9 @@
     <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.h">
       <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.h">
+      <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
@@ -364,6 +373,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp">
       <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp">
+      <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
