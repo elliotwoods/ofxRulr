@@ -36,8 +36,11 @@ namespace ofxDigitalEmulsion {
 				ofParameter<float> checkerboardPositionX;
 				ofParameter<float> checkerboardPositionY;
 				ofParameter<float> checkerboardBrightness;
+				
+				ofParameter<float> initialLensOffset;
 
 				vector<Correspondence> correspondences;
+				float error;
 			};
 		}
 	}

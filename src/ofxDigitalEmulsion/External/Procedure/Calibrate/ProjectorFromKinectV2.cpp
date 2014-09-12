@@ -12,6 +12,7 @@
 
 #include "ofxCvGui/Widgets/Slider.h"
 #include "ofxCvGui/Widgets/Button.h"
+#include "ofxCvGui/Widgets/LiveValue.h"
 
 #include "ofxCvMin.h"
 
@@ -27,6 +28,7 @@ namespace ofxDigitalEmulsion {
 			//----------
 			ProjectorFromKinectV2::ProjectorFromKinectV2() {
 				this->inputPins.push_back(MAKE(Pin<Item::KinectV2>));
+				this->inputPins.push_back(MAKE(Pin<Item::Projector>));
 				this->inputPins.push_back(MAKE(Pin<Device::ProjectorOutput>));
 
 				this->checkerboardScale.set("Checkerboard Scale", 0.2f, 0.01f, 1.0f);
@@ -35,6 +37,9 @@ namespace ofxDigitalEmulsion {
 				this->checkerboardPositionX.set("Checkerboard Position X", 0, -1, 1);
 				this->checkerboardPositionY.set("Checkerboard Position Y", 0, -1, 1);
 				this->checkerboardBrightness.set("Checkerboard Brightness", 0.5, 0, 1);
+				this->initialLensOffset.set("Initial Lens Offset", 0.5f, -1.0f, 1.0f);
+
+				this->error = 0.0f;
 			}
 
 			//----------
@@ -102,6 +107,7 @@ namespace ofxDigitalEmulsion {
 				ofxDigitalEmulsion::Utils::Serializable::serialize(this->checkerboardPositionX, json);
 				ofxDigitalEmulsion::Utils::Serializable::serialize(this->checkerboardPositionY, json);
 				ofxDigitalEmulsion::Utils::Serializable::serialize(this->checkerboardBrightness, json);
+				ofxDigitalEmulsion::Utils::Serializable::serialize(this->initialLensOffset, json);
 
 				auto & jsonCorrespondences = json["correspondences"];
 				int index = 0;
@@ -114,6 +120,8 @@ namespace ofxDigitalEmulsion {
 						jsonCorrespondence["projector"][i] = correspondence.projector[i];
 					}
 				}
+
+				json["error"] = this->error;
 			}
 
 			//----------
@@ -124,6 +132,7 @@ namespace ofxDigitalEmulsion {
 				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->checkerboardPositionX, json);
 				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->checkerboardPositionY, json);
 				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->checkerboardBrightness, json);
+				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->initialLensOffset, json);
 
 				this->correspondences.clear();
 				auto & jsonCorrespondences = json["correspondences"];
@@ -137,6 +146,8 @@ namespace ofxDigitalEmulsion {
 					}
 					this->correspondences.push_back(correspondence);
 				}
+
+				this->error = json["error"].asFloat();
 			}
 
 			//----------
@@ -155,15 +166,16 @@ namespace ofxDigitalEmulsion {
 					auto cameraToWorldPointer = (ofVec3f*) cameraToWorldMap.getPixels();
 					auto cameraWidth = cameraToWorldMap.getWidth();
 					auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), this->checkerboardScale, true));
-					for (auto checkerboardCorner : checkerboardCorners) {
-						checkerboardCorner += ofVec3f(this->checkerboardPositionX, this->checkerboardPositionY, 0.0f);
-					}
 					int pointIndex = 0;
 					for (auto cameraPoint : cameraPoints) {
 						Correspondence correspondence;
 
 						correspondence.world = cameraToWorldPointer[(int) cameraPoint.x + (int) cameraPoint.y * cameraWidth];
-						correspondence.projector = (ofVec2f)checkerboardCorners[pointIndex];
+						correspondence.projector = (ofVec2f)checkerboardCorners[pointIndex] + ofVec2f(this->checkerboardPositionX, this->checkerboardPositionY);
+
+						if (correspondence.world.z < 0.5f) {
+							continue;
+						}
 						this->correspondences.push_back(correspondence);
 						pointIndex++;
 					}
@@ -176,6 +188,21 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void ProjectorFromKinectV2::calibrate() {
 				this->throwIfMissingAnyConnection();
+
+				vector<ofVec3f> worldPoints;
+				vector<ofVec2f> projectorPoints;
+
+				for (auto correpondence : this->correspondences) {
+					worldPoints.push_back(correpondence.world);
+					projectorPoints.push_back(correpondence.projector * ofVec2f(1,-1));
+				}
+				cv::Mat cameraMatrix, rotation, translation;
+				this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
+					worldPoints, projectorPoints,
+					this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight(),
+					this->initialLensOffset);
+				this->getInput<Item::Projector>()->setExtrinsics(rotation, translation);
+				this->getInput<Item::Projector>()->setIntrinsics(cameraMatrix);
 			}
 
 			//----------
@@ -204,6 +231,11 @@ namespace ofxDigitalEmulsion {
 				addButton->setHeight(100.0f);
 				inspector->add(addButton);
 
+				inspector->add(MAKE(ofxCvGui::Widgets::Button, "Clear correspondences", [this]() {
+					this->correspondences.clear();
+				}));
+
+				inspector->add(MAKE(ofxCvGui::Widgets::Slider, this->initialLensOffset));
 				auto calibrateButton = MAKE(ofxCvGui::Widgets::Button, "Calibrate", [this]() {
 					try {
 						this->calibrate();
@@ -212,6 +244,9 @@ namespace ofxDigitalEmulsion {
 				}, OF_KEY_RETURN);
 				calibrateButton->setHeight(100.0f);
 				inspector->add(calibrateButton);
+				inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<float>, "Reprojection error", [this]() {
+					return this->error;
+				}));
 			}
 
 			//----------

@@ -190,8 +190,8 @@ namespace ofxDigitalEmulsion {
 				inspector->add(thresholdSlider);
 
 				inspector->add(Widgets::Title::make("Payload", Widgets::Title::Level::H2));
-				inspector->add(Widgets::LiveValue<float>::make("Width", [this] () { return this->payload.getWidth(); }));
-				inspector->add(Widgets::LiveValue<float>::make("Height", [this] () { return this->payload.getHeight(); }));
+				inspector->add(Widgets::LiveValue<unsigned int>::make("Width", [this] () { return this->payload.getWidth(); }));
+				inspector->add(Widgets::LiveValue<unsigned int>::make("Height", [this]() { return this->payload.getHeight(); }));
 
 				inspector->add(Widgets::Spacer::make());
 				inspector->add(Widgets::Title::make("Views", Widgets::Title::Level::H2));
