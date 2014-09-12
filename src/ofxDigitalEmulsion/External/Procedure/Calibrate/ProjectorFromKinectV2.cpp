@@ -53,7 +53,22 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void ProjectorFromKinectV2::update() {
+				auto projectorOutput = this->getInput<Device::ProjectorOutput>();
+				if (projectorOutput) {
+					if (projectorOutput->isWindowOpen()) {
+						projectorOutput->getFbo().begin();
+						ofSetMatrixMode(ofMatrixMode::OF_MATRIX_PROJECTION);
+						ofLoadIdentityMatrix();
+						ofSetMatrixMode(ofMatrixMode::OF_MATRIX_MODELVIEW);
+						ofLoadIdentityMatrix();
 
+						auto checkboardMesh = ofxCv::makeCheckerboardMesh(cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), this->checkerboardScale);
+						ofTranslate(this->checkerboardPositionX, this->checkerboardPositionY);
+						checkboardMesh.draw();
+
+						projectorOutput->getFbo().end();
+					}
+				}
 			}
 
 			//----------
@@ -116,7 +131,10 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void ProjectorFromKinectV2::drawWorld() {
-
+				auto kinect = this->getInput<Item::KinectV2>();
+				if (kinect) {
+					kinect->getDevice()->drawPrettyMesh();
+				}
 			}
 		}
 	}

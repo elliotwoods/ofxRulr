@@ -43,7 +43,7 @@ namespace ofxDigitalEmulsion {
 						else {
 							args.localBounds.getHeight();
 						}
-						buttonHeight = ofClamp(height, 0.0f, args.localBounds.getHeight() - 20);
+						buttonHeight = ofClamp(buttonHeight, 0.0f, args.localBounds.getHeight() - 20);
 						if (buttonHeight > maxButtonHeight) {
 							maxButtonHeight = buttonHeight;
 						}
@@ -173,6 +173,10 @@ namespace ofxDigitalEmulsion {
 				selectButton->onMouseReleased += [this, i](ofxCvGui::MouseArguments & args) {
 					if (args.isLocal()) {
 						this->monitorSelection = i;
+						this->calculateSplit();
+						if (this->window) {
+							this->createWindow();
+						}
 					}
 				};
 				this->view->getElementGroup()->add(selectButton);
@@ -325,6 +329,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		bool ProjectorOutput::isWindowOpen() const {
+			return this->window;
+		}
+
+		//----------
 		void ProjectorOutput::createWindow() {
 			this->destroyWindow();
 
@@ -359,7 +368,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void ProjectorOutput::calculateSplit() {
-			if (!this->videoMode) {
+			if (!this->window) {
 				if (this->monitors && this->monitorSelection < this->monitorCount) {
 					glfwGetVideoMode(this->monitors[this->monitorSelection]);
 				}

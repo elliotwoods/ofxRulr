@@ -27,6 +27,7 @@ namespace ofxDigitalEmulsion {
 			void applyNormalisedSplitViewTransform() const;
 
 			void setWindowOpen(bool);
+			bool isWindowOpen() const;
 		protected:
 			void refreshMonitors();
 			void createWindow();
