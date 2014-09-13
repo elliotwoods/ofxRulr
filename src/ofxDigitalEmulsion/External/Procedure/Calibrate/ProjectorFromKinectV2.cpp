@@ -51,7 +51,22 @@ namespace ofxDigitalEmulsion {
 				};
 				view->add(worldView);
 				auto colorSource = this->getInput<Item::KinectV2>()->getDevice()->getColorSource();
-				view->add(MAKE(ofxCvGui::Panels::Draws, colorSource->getTextureReference()));
+				auto colorView = MAKE(ofxCvGui::Panels::Draws, colorSource->getTextureReference());
+				colorView->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
+					ofPolyline previewLine;
+					if (!this->previewCornerFinds.empty()) {
+						ofCircle(this->previewCornerFinds.front(), 10.0f);
+						for (const auto & previewCornerFind : this->previewCornerFinds) {
+							previewLine.addVertex(previewCornerFind);
+						}
+					}
+					ofPushStyle();
+					ofSetColor(255, 0, 0);
+					previewLine.draw();
+					ofPopStyle();
+				};
+				view->add(colorView);
+
 				this->view = view;
 			}
 
@@ -156,10 +171,23 @@ namespace ofxDigitalEmulsion {
 
 				auto kinectNode = this->getInput<Item::KinectV2>();
 				auto kinectDevice = kinectNode->getDevice();
-				auto colorImage = ofxCv::toCv(kinectDevice->getColorSource()->getPixelsRef());
+				auto colorPixels = kinectDevice->getColorSource()->getPixelsRef();
+				auto colorImage = ofxCv::toCv(colorPixels);
+
+				//flip the camera image
+				cv::flip(colorImage, colorImage, 1);
 
 				vector<ofVec2f> cameraPoints;
 				bool success = ofxCv::findChessboardCornersPreTest(colorImage, cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), toCv(cameraPoints));
+
+				//flip the results back again
+				int colorWidth = colorPixels.getWidth();
+				for (auto & cameraPoint : cameraPoints) {
+					cameraPoint.x = colorWidth - cameraPoint.x - 1;
+				}
+
+				this->previewCornerFinds.clear();
+
 				if (success) {
 					ofxDigitalEmulsion::Utils::playSuccessSound();
 					auto cameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
@@ -168,15 +196,17 @@ namespace ofxDigitalEmulsion {
 					auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), this->checkerboardScale, true));
 					int pointIndex = 0;
 					for (auto cameraPoint : cameraPoints) {
+						this->previewCornerFinds.push_back(cameraPoint); 
+						
 						Correspondence correspondence;
 
 						correspondence.world = cameraToWorldPointer[(int) cameraPoint.x + (int) cameraPoint.y * cameraWidth];
 						correspondence.projector = (ofVec2f)checkerboardCorners[pointIndex] + ofVec2f(this->checkerboardPositionX, this->checkerboardPositionY);
 
-						if (correspondence.world.z < 0.5f) {
-							continue;
+						if (correspondence.world.z > 0.5f) {
+							this->correspondences.push_back(correspondence);
 						}
-						this->correspondences.push_back(correspondence);
+
 						pointIndex++;
 					}
 				}
@@ -194,7 +224,7 @@ namespace ofxDigitalEmulsion {
 
 				for (auto correpondence : this->correspondences) {
 					worldPoints.push_back(correpondence.world);
-					projectorPoints.push_back(correpondence.projector * ofVec2f(1,-1));
+					projectorPoints.push_back(correpondence.projector * ofVec2f(1,+1));
 				}
 				cv::Mat cameraMatrix, rotation, translation;
 				this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,

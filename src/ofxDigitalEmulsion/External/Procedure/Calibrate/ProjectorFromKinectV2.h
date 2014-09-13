@@ -40,6 +40,7 @@ namespace ofxDigitalEmulsion {
 				ofParameter<float> initialLensOffset;
 
 				vector<Correspondence> correspondences;
+				vector<ofVec2f> previewCornerFinds;
 				float error;
 			};
 		}
