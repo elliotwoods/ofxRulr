@@ -206,11 +206,12 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Summary.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\World.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Camera.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Projector.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\World.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.h" />
@@ -248,10 +249,11 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Summary.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.cpp" />

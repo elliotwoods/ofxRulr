@@ -36,9 +36,9 @@ namespace ofxDigitalEmulsion {
 						//it's a monitor
 						auto buttonWidth = blockWidth - 20;
 						float buttonHeight;
-						if (this->monitors && index < this->monitorCount) {
-							const GLFWvidmode * monitorVideoMode = glfwGetVideoMode(this->monitors[index]);
-							buttonHeight = buttonWidth * (float)monitorVideoMode->height / (float)monitorVideoMode->width;
+						if (index < this->cachedOutputs.size()) {
+							auto output = cachedOutputs[index];
+							buttonHeight = buttonWidth * (float)output.height / (float)output.width;
 						}
 						else {
 							args.localBounds.getHeight();
@@ -111,10 +111,14 @@ namespace ofxDigitalEmulsion {
 		void ProjectorOutput::refreshMonitors() {
 			this->monitors = glfwGetMonitors(&this->monitorCount);
 
+			this->cachedOutputs.clear();
+
 			this->view->getElementGroup()->clear();
 			for (int i = 0; i<this->monitorCount; i++) {
 				auto selectButton = MAKE(ofxCvGui::Element);
-				selectButton->onDraw += [this, i, selectButton](ofxCvGui::DrawArguments & args) {
+				auto monitor = this->monitors[i];
+				auto name = glfwGetMonitorName(monitor);
+				selectButton->onDraw += [this, i, selectButton, name](ofxCvGui::DrawArguments & args) {
 					bool selected = this->monitorSelection == i;
 
 					//modified from ofxCvGui::Widgets::Toggle::draw()
@@ -163,7 +167,7 @@ namespace ofxDigitalEmulsion {
 					}
 
 					ofSetColor(255);
-					string caption = "Output " + ofToString(i);
+					string caption = string(name);
 					const auto textBounds = font.getStringBoundingBox(caption, 0, 0);
 					font.drawString(caption, (int)((selectButton->getWidth() - textBounds.width) / 2.0f), (int)((selectButton->getHeight() + textBounds.height) / 2.0f));
 
@@ -180,6 +184,14 @@ namespace ofxDigitalEmulsion {
 					}
 				};
 				this->view->getElementGroup()->add(selectButton);
+
+				Output cachedOutput;
+				auto videoMode = glfwGetVideoMode(monitor);
+				cachedOutput.width = videoMode->width;
+				cachedOutput.height = videoMode->height;
+				cachedOutput.name = name;
+				cachedOutput.monitor = monitor;
+				this->cachedOutputs.push_back(cachedOutput);
 			}
 			this->view->getElementGroup()->addBlank()->onDraw += [this](ofxCvGui::DrawArguments & args) {
 				this->fbo.draw(args.localBounds);

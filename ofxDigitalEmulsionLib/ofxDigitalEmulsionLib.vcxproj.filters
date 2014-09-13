@@ -114,9 +114,6 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\World.h">
-      <Filter>src\ofxDigitalEmulsion\Item</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClInclude>
@@ -288,11 +285,14 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h">
       <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\World.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Summary.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
-      <Filter>src\ofxDigitalEmulsion\Item</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClCompile>
@@ -397,6 +397,12 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp">
       <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Summary.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

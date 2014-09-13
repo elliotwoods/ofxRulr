@@ -136,16 +136,6 @@ namespace ofxDigitalEmulsion {
 					
 					ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
 				}
-
-				ofPushStyle();
-				ofSetLineWidth(1);
-				ofSetColor(255);
-				ofPushMatrix();
-				ofTranslate(args.localBounds.width / 2.0f, args.localBounds.height / 2.0f);
-				ofLine(-10, 0, 10, 0);
-				ofLine(0, -10, 0, 10);
-				ofPopMatrix();
-				ofPopStyle();
 			};
 			view->onDrawCropped += [this] (Panels::BaseImage::DrawCroppedArguments & args) {
 				if (this->showFocusLine) {
@@ -168,6 +158,17 @@ namespace ofxDigitalEmulsion {
 					ofPopStyle();
 					ofPopMatrix();
 				}
+
+				//crosshair
+				ofPushStyle();
+				ofSetLineWidth(1);
+				ofSetColor(255);
+				ofPushMatrix();
+				ofTranslate(args.size.x / 2.0f, args.size.y / 2.0f);
+				ofLine(-10, 0, 10, 0);
+				ofLine(0, -10, 0, 10);
+				ofPopMatrix();
+				ofPopStyle();
 			};
 			this->view = view;
 		}
@@ -225,6 +226,7 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Camera::drawWorld() {
 			this->rayCamera.draw();
+			ofDrawBitmapString(this->getName(), this->rayCamera.getPosition());
 		}
 
 		//----------
@@ -251,6 +253,11 @@ namespace ofxDigitalEmulsion {
 			}
 			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Sharpness)) {
 				inspector->add(Widgets::Slider::make(this->sharpness));
+			}
+			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_OneShot)) {
+				inspector->add(MAKE(Widgets::Button, "Take Photo", [this]() {
+					this->getGrabber()->singleShot();
+				}));
 			}
 			
 			inspector->add(Widgets::Spacer::make());

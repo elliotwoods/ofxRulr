@@ -32,7 +32,7 @@ namespace ofxDigitalEmulsion {
 			cv::Mat getDistortionCoefficients() const;
 
 			const ofxRay::Camera & getRayCamera() const;
-			void drawWorld();
+			void drawWorld() override;
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
 			void updateRayCamera();

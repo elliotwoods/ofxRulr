@@ -1,8 +1,9 @@
 #pragma once
 
+#include "ofxDigitalEmulsion/Graph/World.h"
+
 #include "ofxDigitalEmulsion/Item/Camera.h"
 #include "ofxDigitalEmulsion/Item/Projector.h"
-#include "ofxDigitalEmulsion/Item/World.h"
 #include "ofxDigitalEmulsion/Item/Checkerboard.h"
 
 #include "ofxDigitalEmulsion/Device/ProjectorOutput.h"

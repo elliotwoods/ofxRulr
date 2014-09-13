@@ -49,6 +49,9 @@ namespace ofxDigitalEmulsion {
 				worldView->onDrawWorld += [this](ofCamera &) {
 					this->drawWorld();
 				};
+				auto & camera = worldView->getCamera();
+				camera.setPosition(-1, -1, 0);
+				camera.lookAt(ofVec3f(0, 0, 3));
 				view->add(worldView);
 				auto colorSource = this->getInput<Item::KinectV2>()->getDevice()->getColorSource();
 				auto colorView = MAKE(ofxCvGui::Panels::Draws, colorSource->getTextureReference());
@@ -223,8 +226,8 @@ namespace ofxDigitalEmulsion {
 				vector<ofVec2f> projectorPoints;
 
 				for (auto correpondence : this->correspondences) {
-					worldPoints.push_back(correpondence.world);
-					projectorPoints.push_back(correpondence.projector * ofVec2f(1,+1));
+					worldPoints.push_back(correpondence.world * ofVec3f(-1,1,-1));
+					projectorPoints.push_back(correpondence.projector * ofVec2f(1,1));
 				}
 				cv::Mat cameraMatrix, rotation, translation;
 				this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
@@ -282,6 +285,8 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void ProjectorFromKinectV2::drawWorld() {
 				auto kinect = this->getInput<Item::KinectV2>();
+				auto projector = this->getInput<Item::Projector>();
+
 				if (kinect) {
 					ofPushStyle();
 					ofSetColor(100);
@@ -302,6 +307,11 @@ namespace ofxDigitalEmulsion {
 				glPointSize(10.0f);
 				preview.drawVertices();
 				glPopAttrib();
+
+
+				if (projector) {
+					projector->drawWorld();
+				}
 			}
 		}
 	}

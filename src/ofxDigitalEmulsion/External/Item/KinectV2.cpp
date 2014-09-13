@@ -21,6 +21,7 @@ namespace ofxDigitalEmulsion {
 			this->device->open();
 			this->device->initDepthSource();
 			this->device->initColorSource();
+			this->device->initBodySource();
 		}
 
 		//----------
@@ -53,7 +54,7 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void KinectV2::drawWorld() {
 			if (this->device) {
-				this->device->drawPrettyMesh();
+				this->device->drawWorld();
 			}
 		}
 

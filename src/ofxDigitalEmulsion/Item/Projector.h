@@ -25,7 +25,7 @@ namespace ofxDigitalEmulsion {
 			cv::Mat getCameraMatrix() const;
 
 			const ofxRay::Projector & getRayProjector() const;
-			void drawWorld();
+			void drawWorld() override;
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
 

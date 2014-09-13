@@ -9,6 +9,13 @@ namespace ofxDigitalEmulsion {
 	namespace Device {
 		class ProjectorOutput : public ofxDigitalEmulsion::Graph::Node {
 		public:
+			struct Output {
+				string name;
+				int width;
+				int height;
+				GLFWmonitor * monitor;
+			};
+
 			ProjectorOutput();
 			string getTypeName() const override;
 			void serialize(Json::Value &) override;
@@ -54,6 +61,7 @@ namespace ofxDigitalEmulsion {
 
 			ofFbo fbo;
 			float width, height;
+			vector<Output> cachedOutputs;
 		};
 
 		class MonitorEventChangeListener {

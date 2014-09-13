@@ -6,7 +6,7 @@
 #include "ofxCvGui/Controller.h"
 
 namespace ofxDigitalEmulsion {
-	namespace Item {
+	namespace Graph {
 		class World : public Utils::Set<Graph::Node> {
 		public:
 			void init(ofxCvGui::Controller &);

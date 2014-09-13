@@ -1,5 +1,7 @@
 #include "World.h"
 
+#include "Summary.h"
+
 #include "../Utils/Exception.h"
 
 #include "ofxCvGui.h"
@@ -7,12 +9,14 @@
 using namespace ofxCvGui;
 
 namespace ofxDigitalEmulsion {
-	namespace Item {
+	namespace Graph {
 		//-----------
 		ofxCvGui::Controller * World::gui = 0;
 
 		//-----------
 		void World::init(Controller & controller) {
+			this->add(MAKE(Summary, *this));
+
 			for (auto node : *this) {
 				node->init();
 			}
