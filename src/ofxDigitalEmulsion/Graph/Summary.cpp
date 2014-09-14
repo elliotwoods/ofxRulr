@@ -17,6 +17,9 @@ namespace ofxDigitalEmulsion {
 					}
 				}
 			};
+
+			this->showCursor.set("Show Cursor");
+			this->showGrid.set("Show Grid");
 		}
 
 		//----------
