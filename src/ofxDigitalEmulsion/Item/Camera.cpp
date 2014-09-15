@@ -26,6 +26,13 @@ namespace ofxDigitalEmulsion {
 				this->distortion[i].set("Distortion K" + ofToString(i + 1), 0.0f, -1000.0f, 1000.0f);
 			}
 
+			this->translationX.set("Translation X", 0.0f, -100.0f, 100.0f);
+			this->translationY.set("Translation Y", 0.0f, -100.0f, 100.0f);
+			this->translationZ.set("Translation Z", 0.0f, -100.0f, 100.0f);
+			this->rotationX.set("Rotation X", 0.0f, -360.0f, 360.0f);
+			this->rotationY.set("Rotation Y", 0.0f, -360.0f, 360.0f);
+			this->rotationZ.set("Rotation Z", 0.0f, -360.0f, 360.0f);
+
 			this->exposure.addListener(this, & Camera::exposureCallback);
 			this->gain.addListener(this, & Camera::gainCallback);
 			this->focus.addListener(this, & Camera::focusCallback);
@@ -218,13 +225,13 @@ namespace ofxDigitalEmulsion {
 			const auto rotationMatrix = ofxCv::makeMatrix(rotation, cv::Mat::zeros(3, 1, CV_64F));
 			const auto rotationEuler = rotationMatrix.getRotate().getEuler();
 
-			this->translationX = translation.at<double>(0);
-			this->translationY = translation.at<double>(1);
-			this->translationZ = translation.at<double>(2);
+			this->translationX = (float) translation.at<double>(0);
+			this->translationY = (float) translation.at<double>(1);
+			this->translationZ = (float) translation.at<double>(2);
 
-			this->rotationX = rotationEuler.x;
-			this->rotationY = rotationEuler.y;
-			this->rotationZ = rotationEuler.z;
+			this->rotationX = (float) rotationEuler.x;
+			this->rotationY = (float) rotationEuler.y;
+			this->rotationZ = (float) rotationEuler.z;
 			//this->rebuildProjector();
 		}
 
@@ -327,8 +334,10 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Camera::updateRayCamera() {
 			if (this->grabber) {
-				this->rayCamera.setWidth(this->grabber->getWidth());
-				this->rayCamera.setHeight(this->grabber->getHeight());
+				if (this->grabber->getWidth() != 0 && this->grabber->getHeight() != 0) {
+					this->rayCamera.setWidth(this->grabber->getWidth());
+					this->rayCamera.setHeight(this->grabber->getHeight());
+				}
 			}
 			this->rayCamera.setProjection(ofxCv::makeProjectionMatrix(this->getCameraMatrix(), cv::Size(this->getWidth(), this->getHeight())));
 

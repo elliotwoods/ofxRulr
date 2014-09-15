@@ -236,6 +236,17 @@ namespace ofxDigitalEmulsion {
 					this->initialLensOffset);
 				this->getInput<Item::Projector>()->setExtrinsics(rotation, translation);
 				this->getInput<Item::Projector>()->setIntrinsics(cameraMatrix);
+
+				auto viewMatrix = ofxCv::makeMatrix(rotation, translation);
+				auto projectionMatrix = ofxCv::makeProjectionMatrix(cameraMatrix, cv::Size(this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight()));
+
+				ofstream file;
+				file.open(ofToDataPath(this->getName() + "View.mat").c_str(), ios::out | ios::binary);
+				file.write((char*)viewMatrix.getPtr(), sizeof(float)* 16);
+				file.close();
+				file.open(ofToDataPath(this->getName() + "Projection.mat").c_str(), ios::out | ios::binary);
+				file.write((char*)projectionMatrix.getPtr(), sizeof(float)* 16);
+				file.close();
 			}
 
 			//----------

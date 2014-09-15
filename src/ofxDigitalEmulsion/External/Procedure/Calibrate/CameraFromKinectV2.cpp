@@ -159,6 +159,8 @@ namespace ofxDigitalEmulsion {
 				auto checkerboardSize = checkerboardNode->getSize();
 				auto checkerboardObjectPoints = checkerboardNode->getObjectPoints();
 
+				cv::cvtColor(cameraColorImage, cameraColorImage, CV_RGB2GRAY);
+
 				//---
 				//find the points in kinect space
 				//---
@@ -204,7 +206,7 @@ namespace ofxDigitalEmulsion {
 				this->previewCornerFindsKinect.clear();
 				this->previewCornerFindsCamera.clear();
 
-				if (foundInKinect && foundInCamera && cameraPoints.size() == kinectCameraPoints.size()) {
+				if (foundInKinect && foundInCamera) {
 					ofxDigitalEmulsion::Utils::playSuccessSound();
 					auto kinectCameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
 					auto kinectCameraToWorldPointer = (ofVec3f*)kinectCameraToWorldMap.getPixels();
@@ -229,10 +231,9 @@ namespace ofxDigitalEmulsion {
 
 						pointIndex++;
 					}
-				}
-				else {
+				} else {
 					ofxDigitalEmulsion::Utils::playFailSound();
-					OFXDIGITALEMULSION_ERROR << "Chesboard found in kinect [" << (foundInKinect ? "X" : " ") << "], camera [" << (foundInKinect ? "X" : " ") << "]";
+					OFXDIGITALEMULSION_ERROR << "Chesboard found in kinect [" << (foundInKinect ? "X" : " ") << "], camera [" << (foundInCamera ? "X" : " ") << "]";
 				}
 			}
 
@@ -244,16 +245,28 @@ namespace ofxDigitalEmulsion {
 				vector<ofVec2f> projectorPoints;
 
 				for (auto correpondence : this->correspondences) {
-					worldPoints.push_back(correpondence.world * ofVec3f(-1, 1, -1));
-					projectorPoints.push_back(correpondence.camera * ofVec2f(1, 1));
+					worldPoints.push_back(correpondence.world * ofVec3f(1, 1, 1));
+					projectorPoints.push_back(correpondence.camera * ofVec2f(1, -1));
 				}
 				cv::Mat cameraMatrix, rotation, translation;
+				
 				this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
 					worldPoints, projectorPoints,
 					this->getInput<Item::Camera>()->getWidth(), this->getInput<Item::Camera>()->getHeight(),
-					0.0f);
+					0.0f, 1.0f);
 				this->getInput<Item::Camera>()->setExtrinsics(rotation, translation);
 				this->getInput<Item::Camera>()->setIntrinsics(cameraMatrix, Mat::zeros(5, 1, CV_64F));
+
+				auto viewMatrix = ofxCv::makeMatrix(rotation, translation);
+				auto projectionMatrix = ofxCv::makeProjectionMatrix(cameraMatrix, cv::Size(this->getInput<Item::Camera>()->getWidth(), this->getInput<Item::Camera>()->getHeight()));
+
+				ofstream file;
+				file.open(ofToDataPath(this->getName() + "View.mat").c_str(), ios::out | ios::binary);
+				file.write((char*)viewMatrix.getPtr(), sizeof(float)* 16);
+				file.close();
+				file.open(ofToDataPath(this->getName() + "Projection.mat").c_str(), ios::out | ios::binary);
+				file.write((char*)projectionMatrix.getPtr(), sizeof(float)* 16);
+				file.close();
 			}
 
 			//----------

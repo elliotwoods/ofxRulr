@@ -1,6 +1,6 @@
 #include "Summary.h"
 
-#include "ofxDigitalEmulsion/Item/Base.h";
+#include "ofxDigitalEmulsion/Item/Base.h"
 #include "ofxCvGui/Widgets/Toggle.h"
 
 namespace ofxDigitalEmulsion {
