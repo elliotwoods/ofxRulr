@@ -21,6 +21,7 @@ namespace ofxDigitalEmulsion {
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				void findHomography();
 				void findDistortionCoefficients();
+				void saveMappingImage() const;
 
 				Graph::PinSet inputPins;
 				shared_ptr<ofxCvGui::Panels::Image> view;

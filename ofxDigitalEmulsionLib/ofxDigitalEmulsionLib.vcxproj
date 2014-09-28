@@ -58,6 +58,7 @@
     <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
+    <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -65,6 +66,7 @@
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug64.props" />
+    <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -72,6 +74,7 @@
     <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
+    <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -79,6 +82,7 @@
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease64.props" />
+    <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -165,6 +169,12 @@
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_batchallocator.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_tool.h" />
     <ClInclude Include="..\..\ofxJSON\src\ofxJSONElement.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Algorithm.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Fit.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\Base.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Utils.h" />
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h" />
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h" />
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\PacketListener.h" />
@@ -211,6 +221,8 @@
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp" />
     <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp" />
+    <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Algorithm.cpp" />
+    <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp" />
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp" />
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtilsWin.cpp" />
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\UdpSocketWin.cpp" />
@@ -244,6 +256,7 @@
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalmap.inl" />
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl" />
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\sconscript" />
+    <None Include="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,10 +3,13 @@
 #include "../../Utils/Exception.h"
 
 #include "../Scan/Graycode.h"
+#include "../../Item/Camera.h"
 #include "ofxCvMin.h"
 
 #include "ofxCvGui/Panels/Image.h"
 #include "ofxCvGui/Widgets/Button.h"
+
+#include "ofxNonLinearFit.h"
 
 using namespace ofxCvGui;
 using namespace ofxCv;
@@ -104,6 +107,13 @@ namespace ofxDigitalEmulsion {
 				}, OF_KEY_RETURN);
 				findHomographyButton->setHeight(100.0f);
 				inspector->add(findHomographyButton);
+
+				inspector->add(MAKE(ofxCvGui::Widgets::Button, "Export mapping image...", [this]() {
+					try {
+						this->saveMappingImage();
+					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
+				}));
 			}
 
 			//----------
@@ -137,7 +147,92 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void HomographyFromGraycode::findDistortionCoefficients() {
+				struct DataPoint {
+				};
 
+				class Model : public ofxNonLinearFit::Models::Base<DataPoint, Model> {
+				public:
+					cv::Mat distortionCoefficients;
+					cv::Mat homography;
+
+					const vector<ofVec2f> & cameraDistorted;
+					vector<ofVec2f> cameraUndistorted;
+					const vector<ofVec2f> & projector;
+
+					Model(const vector<ofVec2f> & cameraDistorted, const vector<ofVec2f> & projector) :
+					cameraDistorted(cameraDistorted), projector(projector) {
+
+					}
+
+					unsigned int getParameterCount() const override {
+						return OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT;
+					}
+
+					double getResidual(DataPoint point) const override {
+						return 0.0f;
+					}
+
+					void evaluate(DataPoint &) const override {
+						//do nothing
+					}
+
+					void cacheModel() {
+						/*which camera matrix?
+						cv::undistortPoints(toCv(this->cameraDistorted), toCv(this->cameraUndistorted), )
+						undistort the points
+						fit a homography
+						*/
+					}
+				};
+			}
+
+			//----------
+			void HomographyFromGraycode::saveMappingImage() const {
+				this->throwIfMissingAnyConnection();
+
+				auto graycodeNode = this->getInput<Scan::Graycode>();
+				auto & dataSet = graycodeNode->getDataSet();
+				if (!dataSet.getHasData()) {
+					throw(ofxDigitalEmulsion::Utils::Exception("No data loaded for [ofxGraycode::DataSet]"));
+				}
+
+				if (this->cameraToProjector.isIdentity()) {
+					throw(ofxDigitalEmulsion::Utils::Exception("No mapping has been found yet, so can't save"));
+				}
+
+				auto result = ofSystemSaveDialog("cameraToProjector.exr", "Save mapping image");
+				if (!result.bSuccess) {
+					return;
+				}
+
+				auto mappingGrid = this->grid;
+				mappingGrid.clearColors();
+				for (auto vertex : mappingGrid.getVertices()) {
+					ofFloatColor color;
+					(ofVec3f&)color = vertex;
+					color.a = 1.0f;
+					mappingGrid.addColor(color);
+				}
+
+				ofFbo mappingImage;
+				mappingImage.allocate(dataSet.getPayloadWidth(), dataSet.getPayloadHeight(), GL_RGBA32F);
+				mappingImage.begin();
+				ofClear(0, 0);
+				
+				ofMultMatrix(this->cameraToProjector);
+				ofScale(dataSet.getWidth(), dataSet.getHeight());
+				ofPushStyle();
+				mappingGrid.drawFaces();
+				ofPopStyle();
+				ofPopMatrix();
+
+				mappingImage.end();
+
+				ofFloatPixels pixels;
+				pixels.allocate(dataSet.getPayloadWidth(), dataSet.getPayloadHeight(), OF_IMAGE_COLOR_ALPHA);
+				mappingImage.readToPixels(pixels);
+
+				ofSaveImage(pixels, result.filePath);
 			}
 		}
 	}
