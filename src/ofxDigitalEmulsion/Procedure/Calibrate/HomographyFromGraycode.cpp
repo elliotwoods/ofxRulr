@@ -50,6 +50,8 @@ namespace ofxDigitalEmulsion {
 					}
 				};
 				this->view = view;
+
+				this->doubleExportSize.set("Double size of exported images", false);
 			}
 
 			//----------
@@ -76,6 +78,42 @@ namespace ofxDigitalEmulsion {
 						jsonCameraToProjectorRow[i] = this->cameraToProjector(i, j);
 					}
 				}
+
+				try {
+					throwIfMissingAnyConnection();
+					auto graycodeNode = this->getInput<Scan::Graycode>();
+					auto & dataSet = graycodeNode->getDecoder().getDataSet();
+					if (!dataSet.getHasData()) {
+						throw(new Utils::Exception("No [ofxGraycode::DataSet] loaded"));
+					}
+					auto normalisedToCamera = ofMatrix4x4::newTranslationMatrix(1.0f, -1.0f, 1.0f) * 
+						ofMatrix4x4::newScaleMatrix(0.5f, -0.5f, 1.0f) *
+						ofMatrix4x4::newScaleMatrix(dataSet.getWidth(), dataSet.getHeight(), 1.0f);
+					auto normaliseToProjector = ofMatrix4x4::newTranslationMatrix(1.0f, -1.0f, 1.0f) *
+						ofMatrix4x4::newScaleMatrix(0.5f, -0.5f, 1.0f) *
+						ofMatrix4x4::newScaleMatrix(dataSet.getPayloadWidth(), dataSet.getPayloadHeight(), 1.0f);
+						;
+
+					auto cameraNormalisedToProjectorNormalised = normalisedToCamera * this->cameraToProjector * normaliseToProjector.getInverse();
+					auto projectorNormalisedToCameraNormalised = cameraNormalisedToProjectorNormalised.getInverse();
+
+					auto & jsonCameraToProjectorNormalised = json["cameraNormalisedToProjectorNormalised"];
+					auto & jsonProjectorToCameraNormalised = json["projectorNormalisedToCameraNormalised"];
+					for (int j = 0; j < 4; j++) {
+						auto & jsonCameraToProjectorNormalisedRow = jsonCameraToProjectorNormalised[j];
+						auto & jsonProjectorToCameraNormalisedRow = jsonProjectorToCameraNormalised[j];
+						for (int i = 0; i < 4; i++) {
+							jsonCameraToProjectorNormalisedRow[i] = cameraNormalisedToProjectorNormalised(i, j);
+							jsonProjectorToCameraNormalisedRow[i] = projectorNormalisedToCameraNormalised(i, j);
+						}
+					}
+				}
+				catch (...)
+				{
+
+				}
+
+				Utils::Serializable::serialize(this->doubleExportSize, json);
 			}
 
 			//----------
@@ -87,6 +125,8 @@ namespace ofxDigitalEmulsion {
 						this->cameraToProjector(i, j) = jsonCameraToProjectorRow[i].asFloat();
 					}
 				}
+
+				Utils::Serializable::deserialize(this->doubleExportSize, json);
 			}
 
 			//----------
@@ -95,25 +135,6 @@ namespace ofxDigitalEmulsion {
 				if (graycodeNode) {
 					this->view->setImage(graycodeNode->getDecoder().getProjectorInCamera());
 				}
-			}
-
-			//----------
-			void HomographyFromGraycode::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
-				auto findHomographyButton = MAKE(ofxCvGui::Widgets::Button, "Find Homography", [this]() {
-					try {
-						this->findHomography();
-					}
-					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
-				}, OF_KEY_RETURN);
-				findHomographyButton->setHeight(100.0f);
-				inspector->add(findHomographyButton);
-
-				inspector->add(MAKE(ofxCvGui::Widgets::Button, "Export mapping image...", [this]() {
-					try {
-						this->saveMappingImage();
-					}
-					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
-				}));
 			}
 
 			//----------
@@ -187,7 +208,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void HomographyFromGraycode::saveMappingImage() const {
+			void HomographyFromGraycode::exportMappingImage(string filename) const {
 				this->throwIfMissingAnyConnection();
 
 				auto graycodeNode = this->getInput<Scan::Graycode>();
@@ -200,9 +221,17 @@ namespace ofxDigitalEmulsion {
 					throw(ofxDigitalEmulsion::Utils::Exception("No mapping has been found yet, so can't save"));
 				}
 
-				auto result = ofSystemSaveDialog("cameraToProjector.exr", "Save mapping image");
-				if (!result.bSuccess) {
-					return;
+				string filePath;
+				if (filename == "") {
+					auto filenameBase = ofFilePath::removeExt(dataSet.getFilename());
+					auto result = ofSystemSaveDialog(filenameBase + "-cameraToProjector.exr", "Save mapping image");
+					if (!result.bSuccess) {
+						return;
+					}
+					filePath = result.filePath;
+				}
+				else {
+					filePath = filename;
 				}
 
 				auto mappingGrid = this->grid;
@@ -214,11 +243,23 @@ namespace ofxDigitalEmulsion {
 					mappingGrid.addColor(color);
 				}
 
+				auto factor = this->doubleExportSize ? 2.0f : 1.0f;
+				
+				//note that these settings can fail with older versions of openFrameworks,
+				// where ofGLUtils.cpp lacks GL_RGBA32F from the ofGetImageTypeFromGLType function
 				ofFbo mappingImage;
-				mappingImage.allocate(dataSet.getPayloadWidth(), dataSet.getPayloadHeight(), GL_RGBA32F);
+				ofFbo::Settings settings;
+				settings.width = dataSet.getPayloadWidth() * factor;
+				settings.height = dataSet.getPayloadHeight() * factor;
+				settings.internalformat = GL_RGBA32F;
+				settings.numColorbuffers = 1;
+				mappingImage.allocate(settings);
+
 				mappingImage.begin();
 				ofClear(0, 0);
 				
+				ofScale(factor, factor, 1.0f);
+
 				ofMultMatrix(this->cameraToProjector);
 				ofScale(dataSet.getWidth(), dataSet.getHeight());
 				ofPushStyle();
@@ -229,10 +270,29 @@ namespace ofxDigitalEmulsion {
 				mappingImage.end();
 
 				ofFloatPixels pixels;
-				pixels.allocate(dataSet.getPayloadWidth(), dataSet.getPayloadHeight(), OF_IMAGE_COLOR_ALPHA);
 				mappingImage.readToPixels(pixels);
 
-				ofSaveImage(pixels, result.filePath);
+				ofSaveImage(pixels, filePath);
+			}
+
+			//----------
+			void HomographyFromGraycode::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+				auto findHomographyButton = MAKE(ofxCvGui::Widgets::Button, "Find Homography", [this]() {
+					try {
+						this->findHomography();
+					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
+				}, OF_KEY_RETURN);
+				findHomographyButton->setHeight(100.0f);
+				inspector->add(findHomographyButton);
+
+				inspector->add(MAKE(ofxCvGui::Widgets::Button, "Export mapping image and matrix...", [this]() {
+					try {
+						this->exportMappingImage();
+					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
+				}));
+				inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->doubleExportSize));
 			}
 		}
 	}

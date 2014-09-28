@@ -6,15 +6,17 @@
 #include "ofxCvGui/Controller.h"
 
 namespace ofxDigitalEmulsion {
-	namespace Item {
+	namespace Graph {
 		class World : public Utils::Set<Graph::Node> {
 		public:
-			void setupGui(ofxCvGui::Controller &);
-			void loadAll();
+			void init(ofxCvGui::Controller &);
+			void loadAll(bool printDebug = false);
 			void saveAll() const;
 			static ofxCvGui::Controller & getGuiController();
+			ofxCvGui::PanelGroupPtr getGuiGrid();
 		protected:
 			static ofxCvGui::Controller * gui;
+			ofxCvGui::PanelGroupPtr guiGrid;
 		};
 	}
 }

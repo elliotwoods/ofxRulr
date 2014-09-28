@@ -1,5 +1,7 @@
 #include "World.h"
 
+#include "Summary.h"
+
 #include "../Utils/Exception.h"
 
 #include "ofxCvGui.h"
@@ -7,12 +9,17 @@
 using namespace ofxCvGui;
 
 namespace ofxDigitalEmulsion {
-	namespace Item {
+	namespace Graph {
 		//-----------
 		ofxCvGui::Controller * World::gui = 0;
 
 		//-----------
-		void World::setupGui(Controller & controller) {
+		void World::init(Controller & controller) {
+			this->add(MAKE(Summary, *this));
+
+			for (auto node : *this) {
+				node->init();
+			}
 			auto rootGroup = dynamic_pointer_cast<ofxCvGui::Panels::Groups::Grid>(controller.getRootGroup());
 			if (rootGroup) {
 				rootGroup->onBoundsChange += [rootGroup] (ofxCvGui::BoundsChangeArguments &) {
@@ -26,6 +33,7 @@ namespace ofxDigitalEmulsion {
 
 			auto gridGroup = MAKE(ofxCvGui::Panels::Groups::Grid);
 			rootGroup->add(gridGroup);
+			this->guiGrid = gridGroup;
 
 			for(auto node : *this) {
 				auto nodeView = node->getView();
@@ -85,8 +93,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//-----------
-		void World::loadAll() {
+		void World::loadAll(bool printDebug) {
 			for(auto node : * this) {
+				if (printDebug) {
+					ofLogNotice("ofxDigitalEmulsion") << "Loading node [" << node->getName() << "]";
+				}
 				node->load(node->getDefaultFilename());
 			}
 		}
@@ -98,6 +109,11 @@ namespace ofxDigitalEmulsion {
 			} else {
 				throw(Utils::Exception("No gui attached yet"));
 			}
+		}
+
+		//----------
+		ofxCvGui::PanelGroupPtr World::getGuiGrid() {
+			return this->guiGrid;
 		}
 	}
 }

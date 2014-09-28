@@ -13,8 +13,8 @@ namespace ofxDigitalEmulsion {
 		class Camera : public Base {
 		public:
 			Camera();
-			string getTypeName() const;
-			void update();
+			string getTypeName() const override;
+			void update() override;
 			ofxCvGui::PanelPtr getView() override;
 
 			void serialize(Json::Value &) override;
@@ -27,12 +27,15 @@ namespace ofxDigitalEmulsion {
 			float getHeight();
 
 			void setIntrinsics(cv::Mat cameraMatrix, cv::Mat distortionCoefficients);
+			void setExtrinsics(cv::Mat rotation, cv::Mat translation);
 
 			cv::Mat getCameraMatrix() const;
 			cv::Mat getDistortionCoefficients() const;
 
 			const ofxRay::Camera & getRayCamera() const;
-			void drawWorld();
+			void drawWorld() override;
+
+			ofPixels getFreshFrame();
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
 			void updateRayCamera();
@@ -57,6 +60,9 @@ namespace ofxDigitalEmulsion {
 			ofParameter<float> focalLengthX, focalLengthY;
 			ofParameter<float> principalPointX, principalPointY;
 			ofParameter<float> distortion[4];
+
+			ofParameter<float> translationX, translationY, translationZ;
+			ofParameter<float> rotationX, rotationY, rotationZ;
 
 			ofxRay::Camera rayCamera;
 

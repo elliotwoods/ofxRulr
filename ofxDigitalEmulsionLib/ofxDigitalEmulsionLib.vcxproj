@@ -59,6 +59,7 @@
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit.props" />
+    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -67,6 +68,7 @@
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug64.props" />
     <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
+    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -75,6 +77,7 @@
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit.props" />
+    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -83,6 +86,7 @@
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease64.props" />
     <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
+    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -197,13 +201,18 @@
     <ClInclude Include="..\..\ofxOsc\src\ofxOscSender.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Summary.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\World.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Camera.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Projector.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\World.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.h" />
@@ -236,12 +245,17 @@
     <ClCompile Include="..\..\ofxOsc\src\ofxOscReceiver.cpp" />
     <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Summary.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.cpp" />

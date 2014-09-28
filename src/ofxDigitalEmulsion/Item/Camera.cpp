@@ -18,13 +18,20 @@ namespace ofxDigitalEmulsion {
 			this->focus.set("Focus ", 0.5f, 0.0f, 1.0f);
 			this->sharpness.set("Sharpness", 0.5f, 0.0f, 1.0f);
 
-			this->focalLengthX.set("Focal Length X", 1024.0f, 1.0f, 10000.0f);
-			this->focalLengthY.set("Focal Length Y", 1024.0f, 1.0f, 10000.0f);
-			this->principalPointX.set("Center Of Projection X", 512.0f, -4000.0f, 4000.0f);
-			this->principalPointY.set("Center Of Projection Y", 512.0f, -4000.0f, 4000.0f);
+			this->focalLengthX.set("Focal Length X", 1024.0f, 1.0f, 50000.0f);
+			this->focalLengthY.set("Focal Length Y", 1024.0f, 1.0f, 50000.0f);
+			this->principalPointX.set("Center Of Projection X", 512.0f, -10000.0f, 10000.0f);
+			this->principalPointY.set("Center Of Projection Y", 512.0f, -10000.0f, 10000.0f);
 			for(int i=0; i<OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT; i++) {
 				this->distortion[i].set("Distortion K" + ofToString(i + 1), 0.0f, -1000.0f, 1000.0f);
 			}
+
+			this->translationX.set("Translation X", 0.0f, -100.0f, 100.0f);
+			this->translationY.set("Translation Y", 0.0f, -100.0f, 100.0f);
+			this->translationZ.set("Translation Z", 0.0f, -100.0f, 100.0f);
+			this->rotationX.set("Rotation X", 0.0f, -360.0f, 360.0f);
+			this->rotationY.set("Rotation Y", 0.0f, -360.0f, 360.0f);
+			this->rotationZ.set("Rotation Z", 0.0f, -360.0f, 360.0f);
 
 			this->exposure.addListener(this, & Camera::exposureCallback);
 			this->gain.addListener(this, & Camera::gainCallback);
@@ -86,6 +93,13 @@ namespace ofxDigitalEmulsion {
 				Utils::Serializable::serialize(this->distortion[i], jsonDistortion);
 			}
 
+			Utils::Serializable::serialize(this->translationX, json);
+			Utils::Serializable::serialize(this->translationY, json);
+			Utils::Serializable::serialize(this->translationZ, json);
+			Utils::Serializable::serialize(this->rotationX, json);
+			Utils::Serializable::serialize(this->rotationY, json);
+			Utils::Serializable::serialize(this->rotationZ, json);
+
 			auto & jsonResolution = json["resolution"];
 			jsonResolution["width"] = this->getWidth();
 			jsonResolution["height"] = this->getHeight();
@@ -110,6 +124,13 @@ namespace ofxDigitalEmulsion {
 				Utils::Serializable::deserialize(this->distortion[i], jsonDistortion);
 			}
 
+			Utils::Serializable::deserialize(this->translationX, json);
+			Utils::Serializable::deserialize(this->translationY, json);
+			Utils::Serializable::deserialize(this->translationZ, json);
+			Utils::Serializable::deserialize(this->rotationX, json);
+			Utils::Serializable::deserialize(this->rotationY, json);
+			Utils::Serializable::deserialize(this->rotationZ, json);
+
 			this->grabber->setExposure(this->exposure);
 			this->grabber->setGain(this->gain);
 			this->grabber->setFocus(this->focus);
@@ -127,7 +148,7 @@ namespace ofxDigitalEmulsion {
 			this->grabber->setSharpness(this->sharpness);
 			
 			auto view = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference(), this->getTypeName());
-			view->onDraw += [this] (ofxCvGui::DrawArguments &) {
+			view->onDraw += [this] (ofxCvGui::DrawArguments & args) {
 				if (this->showSpecification) {
 					stringstream status;
 					status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
@@ -158,6 +179,17 @@ namespace ofxDigitalEmulsion {
 					ofPopStyle();
 					ofPopMatrix();
 				}
+
+				//crosshair
+				ofPushStyle();
+				ofSetLineWidth(1);
+				ofSetColor(255);
+				ofPushMatrix();
+				ofTranslate(args.size.x / 2.0f, args.size.y / 2.0f);
+				ofLine(-10, 0, 10, 0);
+				ofLine(0, -10, 0, 10);
+				ofPopMatrix();
+				ofPopStyle();
 			};
 			this->view = view;
 		}
@@ -189,6 +221,21 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void Camera::setExtrinsics(cv::Mat rotation, cv::Mat translation) {
+			const auto rotationMatrix = ofxCv::makeMatrix(rotation, cv::Mat::zeros(3, 1, CV_64F));
+			const auto rotationEuler = rotationMatrix.getRotate().getEuler();
+
+			this->translationX = (float) translation.at<double>(0);
+			this->translationY = (float) translation.at<double>(1);
+			this->translationZ = (float) translation.at<double>(2);
+
+			this->rotationX = (float) rotationEuler.x;
+			this->rotationY = (float) rotationEuler.y;
+			this->rotationZ = (float) rotationEuler.z;
+			//this->rebuildProjector();
+		}
+
+		//----------
 		Mat Camera::getCameraMatrix() const {
 			Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
 			cameraMatrix.at<double>(0, 0) = this->focalLengthX;
@@ -215,6 +262,16 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Camera::drawWorld() {
 			this->rayCamera.draw();
+			ofDrawBitmapString(this->getName(), this->rayCamera.getPosition());
+		}
+
+		//----------
+		ofPixels Camera::getFreshFrame() {
+			if (!this->grabber) {
+				return ofPixels();
+			} else {
+				return this->grabber->getFreshFrame()->getPixelsRef();
+			}
 		}
 
 		//----------
@@ -242,6 +299,11 @@ namespace ofxDigitalEmulsion {
 			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Sharpness)) {
 				inspector->add(Widgets::Slider::make(this->sharpness));
 			}
+			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_OneShot)) {
+				inspector->add(MAKE(Widgets::Button, "Take Photo", [this]() {
+					this->getGrabber()->singleShot();
+				}));
+			}
 			
 			inspector->add(Widgets::Spacer::make());
 			
@@ -260,15 +322,32 @@ namespace ofxDigitalEmulsion {
 			for(int i=0; i<OFXDIGITALEMULSION_CAMERA_DISTORTION_COEFFICIENT_COUNT; i++) {
 				inspector->add(Widgets::Slider::make(this->distortion[i]));
 			}
+
+			inspector->add(Widgets::Slider::make(this->translationX));
+			inspector->add(Widgets::Slider::make(this->translationY));
+			inspector->add(Widgets::Slider::make(this->translationZ));
+			inspector->add(Widgets::Slider::make(this->rotationX));
+			inspector->add(Widgets::Slider::make(this->rotationY));
+			inspector->add(Widgets::Slider::make(this->rotationZ));
 		}
 
 		//----------
 		void Camera::updateRayCamera() {
 			if (this->grabber) {
-				this->rayCamera.setWidth(this->grabber->getWidth());
-				this->rayCamera.setHeight(this->grabber->getHeight());
+				if (this->grabber->getWidth() != 0 && this->grabber->getHeight() != 0) {
+					this->rayCamera.setWidth(this->grabber->getWidth());
+					this->rayCamera.setHeight(this->grabber->getHeight());
+				}
 			}
 			this->rayCamera.setProjection(ofxCv::makeProjectionMatrix(this->getCameraMatrix(), cv::Size(this->getWidth(), this->getHeight())));
+
+			ofQuaternion rotation;
+			auto rotationQuat = ofQuaternion(this->rotationX, ofVec3f(1, 0, 0), this->rotationZ, ofVec3f(0, 0, 1), this->rotationY, ofVec3f(0, 1, 0));
+			ofMatrix4x4 pose = ofMatrix4x4(rotationQuat);
+			pose(3, 0) = this->translationX;
+			pose(3, 1) = this->translationY;
+			pose(3, 2) = this->translationZ;
+			this->rayCamera.setView(pose);
 		}
 
 		//----------

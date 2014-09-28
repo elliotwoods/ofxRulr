@@ -147,6 +147,7 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Projector::drawWorld() {
 			this->projector.draw();
+			ofDrawBitmapString(this->getName(), this->projector.getPosition());
 		}
 			
 		//----------
