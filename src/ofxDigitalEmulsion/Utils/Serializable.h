@@ -18,8 +18,10 @@ namespace ofxDigitalEmulsion {
 			void load(std::string filename = "");
 			std::string getDefaultFilename() const;
 		
+			static void serialize(const ofParameter<int> &, Json::Value &);
 			static void serialize(const ofParameter<float> &, Json::Value &);
 			static void serialize(const ofParameter<bool> &, Json::Value &);
+			static void deserialize(ofParameter<int> &, const Json::Value &);
 			static void deserialize(ofParameter<float> &, const Json::Value &);
 			static void deserialize(ofParameter<bool> &, const Json::Value &);
 		};

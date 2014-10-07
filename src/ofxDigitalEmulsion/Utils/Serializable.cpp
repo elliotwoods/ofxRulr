@@ -8,6 +8,11 @@ using namespace std;
 namespace ofxDigitalEmulsion {
 	namespace Utils {
 		//----------
+		void Serializable::serialize(const ofParameter<int> & parameter, Json::Value & json) {
+			json[parameter.getName()] = parameter.get();
+		}
+
+		//----------
 		void Serializable::serialize(const ofParameter<float> & parameter, Json::Value & json) {
 			json[parameter.getName()] = parameter.get();
 		}
@@ -15,6 +20,14 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Serializable::serialize(const ofParameter<bool> & parameter, Json::Value & json) {
 			json[parameter.getName()] = parameter.get();
+		}
+
+		//----------
+		void Serializable::deserialize(ofParameter<int> & parameter, const Json::Value & json) {
+			const auto name = parameter.getName();
+			if (json[name].isNumeric()) {
+				parameter.set(json[name].asInt());
+			}
 		}
 
 		//----------
