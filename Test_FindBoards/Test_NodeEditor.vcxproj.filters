@@ -46,9 +46,6 @@
     <ClCompile Include="..\..\..\addons\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp">
       <Filter>addons\ofxNonLinearFit\ofxNonLinearFit\Models</Filter>
     </ClCompile>
-    <ClCompile Include="src\Nodes\GraphEditor.cpp">
-      <Filter>src\Nodes</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -95,9 +92,6 @@
     </Filter>
     <Filter Include="addons\ofxNonLinearFit\ofxNonLinearFit\Models">
       <UniqueIdentifier>{69574dfd-f430-48ec-8919-f47d9d7a7881}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Nodes">
-      <UniqueIdentifier>{94ac2661-242c-4b7e-bd4f-7c66d464bd0e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -157,9 +151,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxNonLinearFit\src\ofxNonLinearFit\Models\Base.h">
       <Filter>addons\ofxNonLinearFit\ofxNonLinearFit\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Nodes\GraphEditor.h">
-      <Filter>src\Nodes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

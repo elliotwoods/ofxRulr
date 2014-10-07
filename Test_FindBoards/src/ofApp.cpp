@@ -13,10 +13,12 @@ void ofApp::setup2(){
 	auto cameraNode = MAKE(Item::Camera);
 	this->world.add(cameraNode);
 
-	auto checkerboardNode = MAKE(Item::Checkerboard);
-	this->world.add(checkerboardNode);
+	auto boardNode = MAKE(Item::Board);
+	this->world.add(boardNode);
 
 	auto cameraCalibrateNode = MAKE(Procedure::Calibrate::CameraIntrinsics);
+	cameraCalibrateNode->connect(cameraNode);
+	cameraCalibrateNode->connect(boardNode);
 	this->world.add(cameraCalibrateNode);
 
 	this->gui.init();

@@ -1,6 +1,7 @@
 #include "Checkerboard.h"
 #include "../../../addons/ofxCvGui2/src/ofxCvGui.h"
 #include "ofxCvMin.h"
+#include "../Utils/Gui.h"
 
 using namespace ofxCvGui;
 
@@ -17,14 +18,6 @@ namespace ofxDigitalEmulsion {
 		//----------
 		string Checkerboard::getTypeName() const {
 			return "Checkerboard";
-		}
-
-		//----------
-		shared_ptr<ofxCvGui::Widgets::Slider> addSlider(ofParameter<float> & parameter, ElementGroupPtr inspector) {
-			auto slider = Widgets::Slider::make(parameter);
-			slider->addIntValidator();
-			inspector->add(slider);
-			return slider;
 		}
 
 		//----------
@@ -78,9 +71,9 @@ namespace ofxDigitalEmulsion {
 				this->updatePreviewMesh();
 			};
 			
-			addSlider(this->sizeX, inspector)->onValueChange += sliderCallback;
-			addSlider(this->sizeY, inspector)->onValueChange += sliderCallback;
-			inspector->add(Widgets::Title::make("NB : The chessboard size is defined by the amount of inner corners", Widgets::Title::Level::H3));
+			Utils::Gui::addIntSlider(this->sizeX, inspector)->onValueChange += sliderCallback;
+			Utils::Gui::addIntSlider(this->sizeY, inspector)->onValueChange += sliderCallback;
+			inspector->add(Widgets::Title::make("NB : Checkerboard size is\n counted by number of\n inner corners", Widgets::Title::Level::H3));
 			inspector->add(Widgets::Spacer::make());
 			
 			auto spacingSlider = Widgets::Slider::make(this->spacing);
