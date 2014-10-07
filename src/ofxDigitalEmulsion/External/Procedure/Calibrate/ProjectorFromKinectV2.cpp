@@ -80,11 +80,6 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			Graph::PinSet ProjectorFromKinectV2::getInputPins() const {
-				return this->inputPins;
-			}
-
-			//----------
 			ofxCvGui::PanelPtr ProjectorFromKinectV2::getView() {
 				return view;
 			}

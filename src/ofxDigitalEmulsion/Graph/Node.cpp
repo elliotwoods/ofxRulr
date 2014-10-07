@@ -9,11 +9,6 @@ using namespace ofxCvGui;
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		//----------
-		PinSet Node::getInputPins() const {
-			return PinSet();
-		}
-
-		//----------
 		string Node::getName() const {
 			if (this->name.empty()) {
 				return this->getTypeName();
@@ -32,7 +27,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		PinSet getInputPins() const {
+		PinSet Node::getInputPins() const {
 			return this->inputPins;
 		}
 
@@ -80,7 +75,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Node::dropInput(shared_ptr<BasePin> pin) {
+		void Node::removeInput(shared_ptr<BasePin> pin) {
 			this->inputPins.remove(pin);
 		}
 

@@ -31,7 +31,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			void remove(shared_ptr<BaseType> item) {
-				auto it = find(item, this->begin(), this->end);
+				auto it = find(this->begin(), this->end(), item);
 				if (it != this->end()) {
 					this->erase(it);
 				}

@@ -91,11 +91,6 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			Graph::PinSet CameraFromKinectV2::getInputPins() const {
-				return this->inputPins;
-			}
-
-			//----------
 			ofxCvGui::PanelPtr CameraFromKinectV2::getView() {
 				return view;
 			}

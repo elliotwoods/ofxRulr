@@ -294,6 +294,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.h">
       <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Board.h">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -409,6 +412,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp">
       <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Board.cpp">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

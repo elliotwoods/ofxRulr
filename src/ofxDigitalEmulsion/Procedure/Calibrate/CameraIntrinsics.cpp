@@ -37,8 +37,7 @@ namespace ofxDigitalEmulsion {
 			ofxCvGui::PanelPtr CameraIntrinsics::getView() {
 				auto view = MAKE(ofxCvGui::Panels::Base);
 				view->onDraw += [this] (DrawArguments & drawArgs) {
-					auto cameraPin = this->getInputPins().get<Pin<Item::Camera>>();
-					auto camera = cameraPin->getConnection();
+					auto camera = this->getInput<Item::Camera>();
 					if (camera) {
 						auto grabber = camera->getGrabber();
 						if (this->grayscale.isAllocated()) {

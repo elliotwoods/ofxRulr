@@ -26,7 +26,6 @@ namespace ofxDigitalEmulsion {
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				void drawWorld();
-				Graph::PinSet inputPins;
 				ofxCvGui::PanelPtr view;
 
 				ofParameter<float> checkerboardScale;

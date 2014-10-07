@@ -19,7 +19,6 @@ namespace ofxDigitalEmulsion {
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				void calibrate();
 
-				Graph::PinSet inputPins;
 				ofParameter<bool> enableFinder;
 				ofImage grayscale;
 

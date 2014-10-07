@@ -9,7 +9,6 @@ public:
 	EDSDK();
 	void init() override;
 	string getTypeName() const override;
-	ofxDigitalEmulsion::Graph::PinSet getInputPins() const override;
 	void serialize(Json::Value &) override { };
 	void deserialize(const Json::Value &) override { };
 
