@@ -52,6 +52,15 @@ namespace ofxDigitalEmulsion {
 				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
 #endif
+			for (auto inputPin : this->getInputPins()) {
+				inspector->add(Widgets::Indicator::make(inputPin->getName(), [inputPin]() {
+					if (inputPin->isConnected()) {
+						return Widgets::Indicator::Status::Good;
+					} else {
+						return Widgets::Indicator::Status::Clear;
+					}
+				}));
+			}
 			inspector->add(Widgets::Spacer::make());
 
 			this->populateInspector2(inspector);
