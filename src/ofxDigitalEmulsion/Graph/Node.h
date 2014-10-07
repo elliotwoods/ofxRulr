@@ -3,6 +3,7 @@
 #include "Pin.h"
 #include "../Utils/Constants.h"
 #include "../Utils/Serializable.h"
+#include "../Utils/Exception.h"
 
 #include "../../../addons/ofxCvGui2/src/ofxCvGui/Widgets/IInspectable.h"
 #include <string>
