@@ -250,21 +250,28 @@ namespace ofxDigitalEmulsion {
 				}
 				cv::Mat cameraMatrix, rotation, translation;
 				
+				int flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST | CV_CALIB_USE_INTRINSIC_GUESS;
+				flags |= CV_CALIB_FIX_PRINCIPAL_POINT | CV_CALIB_FIX_ASPECT_RATIO;
+				
+				auto width = this->getInput<Item::Camera>()->getWidth();
+				auto height = this->getInput<Item::Camera>()->getHeight();
+
 				this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
 					worldPoints, projectorPoints,
-					this->getInput<Item::Camera>()->getWidth(), this->getInput<Item::Camera>()->getHeight(),
-					0.0f, 1.0f);
+					width, height,
+					0.0f, 1.0f, false, flags);
 				this->getInput<Item::Camera>()->setExtrinsics(rotation, translation);
 				this->getInput<Item::Camera>()->setIntrinsics(cameraMatrix, Mat::zeros(5, 1, CV_64F));
 
 				auto viewMatrix = ofxCv::makeMatrix(rotation, translation);
-				auto projectionMatrix = ofxCv::makeProjectionMatrix(cameraMatrix, cv::Size(this->getInput<Item::Camera>()->getWidth(), this->getInput<Item::Camera>()->getHeight()));
+				auto projectionMatrix = ofxCv::makeProjectionMatrix(cameraMatrix, cv::Size(width, height));
 
+				const auto cameraName = this->getInput<Item::Camera>()->getName();
 				ofstream file;
-				file.open(ofToDataPath(this->getName() + "View.mat").c_str(), ios::out | ios::binary);
+				file.open(ofToDataPath(cameraName + "View.mat").c_str(), ios::out | ios::binary);
 				file.write((char*)viewMatrix.getPtr(), sizeof(float)* 16);
 				file.close();
-				file.open(ofToDataPath(this->getName() + "Projection.mat").c_str(), ios::out | ios::binary);
+				file.open(ofToDataPath(cameraName + "Projection.mat").c_str(), ios::out | ios::binary);
 				file.write((char*)projectionMatrix.getPtr(), sizeof(float)* 16);
 				file.close();
 			}

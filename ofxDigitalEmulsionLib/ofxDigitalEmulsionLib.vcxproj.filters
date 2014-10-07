@@ -424,6 +424,5 @@
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalmap.inl">
       <Filter>addons\ofxJSON\libs\jsoncpp\src</Filter>
     </None>
-    <None Include="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
   </ItemGroup>
 </Project>

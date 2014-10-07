@@ -270,7 +270,6 @@
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalmap.inl" />
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl" />
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\sconscript" />
-    <None Include="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
