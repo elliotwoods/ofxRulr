@@ -32,6 +32,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		PinSet getInputPins() const {
+			return this->inputPins;
+		}
+
+		//----------
 		void Node::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(Widgets::Title::make(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H2));
 			inspector->add(Widgets::Button::make("Save Node", [this] () {
@@ -67,6 +72,21 @@ namespace ofxDigitalEmulsion {
 					throw(Utils::Exception(message.str()));
 				}
 			}
+		}
+
+		//----------
+		void Node::addInput(shared_ptr<BasePin> pin) {
+			this->inputPins.add(pin);
+		}
+
+		//----------
+		void Node::dropInput(shared_ptr<BasePin> pin) {
+			this->inputPins.remove(pin);
+		}
+
+		//----------
+		void Node::clearInputs() {
+			this->inputPins.clear();
 		}
 	}
 }

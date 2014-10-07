@@ -18,8 +18,8 @@ namespace ofxDigitalEmulsion {
 				}
 			};
 
-			this->showCursor.set("Show Cursor");
-			this->showGrid.set("Show Grid");
+			this->showCursor.set("Show Cursor", false);
+			this->showGrid.set("Show Grid", false);
 		}
 
 		//----------

@@ -29,8 +29,6 @@ namespace ofxDigitalEmulsion {
 
 				void addPoint(float x, float y, int projectorWidth, int projectorHeight);
 
-				Graph::PinSet inputPins;
-
 				ofxOscReceiver oscServer;
 
 				vector<Correspondence> correspondences;

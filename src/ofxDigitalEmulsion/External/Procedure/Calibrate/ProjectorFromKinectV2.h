@@ -15,7 +15,6 @@ namespace ofxDigitalEmulsion {
 				ProjectorFromKinectV2();
 				void init() override;
 				string getTypeName() const override;
-				Graph::PinSet getInputPins() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
@@ -38,6 +37,7 @@ namespace ofxDigitalEmulsion {
 				ofParameter<float> checkerboardBrightness;
 				
 				ofParameter<float> initialLensOffset;
+				ofParameter<bool> trimOutliers;
 
 				vector<Correspondence> correspondences;
 				vector<ofVec2f> previewCornerFinds;

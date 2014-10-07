@@ -19,8 +19,8 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			CameraIntrinsics::CameraIntrinsics() {
-				this->inputPins.push_back(MAKE(Pin<Item::Checkerboard>));
-				this->inputPins.push_back(MAKE(Pin<Item::Camera>));
+				this->addInput(MAKE(Pin<Item::Checkerboard>));
+				this->addInput(MAKE(Pin<Item::Camera>));
 
 				this->enableFinder.set("Run chessboard finder", false);
 				this->error.set("Reprojection error", 0.0f, 0.0f, std::numeric_limits<float>::max());
@@ -31,11 +31,6 @@ namespace ofxDigitalEmulsion {
 			//----------
 			string CameraIntrinsics::getTypeName() const {
 				return "CameraIntrinsics";
-			}
-
-			//----------
-			PinSet CameraIntrinsics::getInputPins() const {
-				return this->inputPins;
 			}
 
 			//----------

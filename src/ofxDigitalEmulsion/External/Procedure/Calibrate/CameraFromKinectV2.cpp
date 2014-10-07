@@ -28,9 +28,9 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			CameraFromKinectV2::CameraFromKinectV2() {
-				this->inputPins.push_back(MAKE(Pin<Item::KinectV2>));
-				this->inputPins.push_back(MAKE(Pin<Item::Camera>));
-				this->inputPins.push_back(MAKE(Pin<Item::Checkerboard>));
+				this->addInput(MAKE(Pin<Item::KinectV2>));
+				this->addInput(MAKE(Pin<Item::Camera>));
+				this->addInput(MAKE(Pin<Item::Checkerboard>));
 
 				this->usePreTest.set("Pre Test at low resolution", true);
 

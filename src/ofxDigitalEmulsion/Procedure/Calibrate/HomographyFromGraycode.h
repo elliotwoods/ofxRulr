@@ -11,7 +11,6 @@ namespace ofxDigitalEmulsion {
 			public:
 				HomographyFromGraycode();
 				string getTypeName() const override;
-				Graph::PinSet getInputPins() const override;
 				ofxCvGui::PanelPtr getView() override;
 
 				void serialize(Json::Value &) override;
@@ -24,7 +23,6 @@ namespace ofxDigitalEmulsion {
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 
-				Graph::PinSet inputPins;
 				shared_ptr<ofxCvGui::Panels::Image> view;
 
 				ofMatrix4x4 cameraToProjector;

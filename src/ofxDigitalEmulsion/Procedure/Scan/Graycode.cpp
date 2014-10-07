@@ -16,8 +16,8 @@ namespace ofxDigitalEmulsion {
 		namespace Scan {
 			//---------
 			Graycode::Graycode() {
-				this->inputPins.push_back(MAKE(Pin<Item::Camera>));
-				this->inputPins.push_back(MAKE(Pin<Item::Projector>));
+				this->addInput(MAKE(Pin<Item::Camera>));
+				this->addInput(MAKE(Pin<Item::Projector>));
 
 				this->threshold.set("Threshold", 10.0f, 0.0f, 255.0f);
 				this->delay.set("Capture delay [ms]", 200.0f, 0.0f, 2000.0f);
@@ -32,11 +32,6 @@ namespace ofxDigitalEmulsion {
 				return "Graycode";
 			}
 
-			//----------
-			Graph::PinSet Graycode::getInputPins() const {
-				return this->inputPins;
-			}
-			
 			//----------
 			PanelPtr Graycode::getView() {
 				return this->view;

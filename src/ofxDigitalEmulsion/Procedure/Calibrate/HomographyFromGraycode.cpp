@@ -23,7 +23,7 @@ namespace ofxDigitalEmulsion {
 				for (auto & vertex : grid.getVertices()) {
 					vertex += ofVec3f(0.5f, 0.5f, 0.0f);
 				}
-				this->inputPins.push_back(MAKE(Graph::Pin<Scan::Graycode>));
+				this->addInput(MAKE(Graph::Pin<Scan::Graycode>));
 				auto view = MAKE(ofxCvGui::Panels::Image, this->dummy);
 				view->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
 					try {
@@ -57,11 +57,6 @@ namespace ofxDigitalEmulsion {
 			//----------
 			string HomographyFromGraycode::getTypeName() const {
 				return "HomographyFromGraycode";
-			}
-
-			//----------
-			Graph::PinSet HomographyFromGraycode::getInputPins() const {
-				return this->inputPins;
 			}
 
 			//----------

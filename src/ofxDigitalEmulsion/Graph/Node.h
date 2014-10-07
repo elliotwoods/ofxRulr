@@ -16,7 +16,7 @@ namespace ofxDigitalEmulsion {
 			string getName() const override;
 			void setName(const string);
 
-			virtual PinSet getInputPins() const;
+			PinSet getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr) override;
 			virtual ofxCvGui::PanelPtr getView() = 0;
 			virtual void update() { }
@@ -55,8 +55,14 @@ namespace ofxDigitalEmulsion {
 
 			ofxLiquidEvent<int> onConnect;
 		protected:
+			void addInput(shared_ptr<BasePin>);
+			void removeInput(shared_ptr<BasePin>);
+			void clearInputs();
+
 			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
 			string name;
+		private:
+			PinSet inputPins;
 		};
 	}
 }

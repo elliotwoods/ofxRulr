@@ -10,7 +10,6 @@ namespace ofxDigitalEmulsion {
 			public:
 				CameraIntrinsics();
 				string getTypeName() const override;
-				Graph::PinSet getInputPins() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 

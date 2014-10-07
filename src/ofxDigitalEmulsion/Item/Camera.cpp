@@ -131,10 +131,19 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::deserialize(this->rotationY, json);
 			Utils::Serializable::deserialize(this->rotationZ, json);
 
-			this->grabber->setExposure(this->exposure);
-			this->grabber->setGain(this->gain);
-			this->grabber->setFocus(this->focus);
-			this->grabber->setSharpness(this->sharpness);
+			auto deviceOpen = false;
+			if (this->grabber) {
+				this->grabber->setExposure(this->exposure);
+				this->grabber->setGain(this->gain);
+				this->grabber->setFocus(this->focus);
+				this->grabber->setSharpness(this->sharpness);
+				deviceOpen = this->grabber->getIsDeviceOpen();
+			}
+			if (!deviceOpen) {
+				auto & jsonResolution = json["resolution"];
+				this->rayCamera.setWidth(jsonResolution["width"].asFloat());
+				this->rayCamera.setHeight(jsonResolution["height"].asFloat());
+			}
 		}
 
 		//----------
@@ -285,24 +294,28 @@ namespace ofxDigitalEmulsion {
 			}, true));
 			inspector->add(Widgets::Toggle::make(this->showSpecification));
 			inspector->add(Widgets::Toggle::make(this->showFocusLine));
-			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Exposure)) {
-				auto exposureSlider = Widgets::Slider::make(this->exposure);
-				exposureSlider->addIntValidator();
-				inspector->add(exposureSlider);
-			}
-			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Gain)) {
-				inspector->add(Widgets::Slider::make(this->gain));
-			}
-			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Focus)) {
-				inspector->add(Widgets::Slider::make(this->focus));
-			}
-			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Sharpness)) {
-				inspector->add(Widgets::Slider::make(this->sharpness));
-			}
-			if (this->getGrabber()->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_OneShot)) {
-				inspector->add(MAKE(Widgets::Button, "Take Photo", [this]() {
-					this->getGrabber()->singleShot();
-				}));
+
+			auto grabber = this->getGrabber();
+			if (grabber) {
+				if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Exposure)) {
+					auto exposureSlider = Widgets::Slider::make(this->exposure);
+					exposureSlider->addIntValidator();
+					inspector->add(exposureSlider);
+				}
+				if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Gain)) {
+					inspector->add(Widgets::Slider::make(this->gain));
+				}
+				if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Focus)) {
+					inspector->add(Widgets::Slider::make(this->focus));
+				}
+				if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Sharpness)) {
+					inspector->add(Widgets::Slider::make(this->sharpness));
+				}
+				if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_OneShot)) {
+					inspector->add(MAKE(Widgets::Button, "Take Photo", [this]() {
+						this->getGrabber()->singleShot();
+					}));
+				}
 			}
 			
 			inspector->add(Widgets::Spacer::make());

@@ -27,9 +27,9 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			ProjectorFromKinectV2::ProjectorFromKinectV2() {
-				this->inputPins.push_back(MAKE(Pin<Item::KinectV2>));
-				this->inputPins.push_back(MAKE(Pin<Item::Projector>));
-				this->inputPins.push_back(MAKE(Pin<Device::ProjectorOutput>));
+				this->addInput(MAKE(Pin<Item::KinectV2>));
+				this->addInput(MAKE(Pin<Item::Projector>));
+				this->addInput(MAKE(Pin<Device::ProjectorOutput>));
 
 				this->checkerboardScale.set("Checkerboard Scale", 0.2f, 0.01f, 1.0f);
 				this->checkerboardCornersX.set("Checkerboard Corners X", 5, 1, 10);
@@ -38,6 +38,7 @@ namespace ofxDigitalEmulsion {
 				this->checkerboardPositionY.set("Checkerboard Position Y", 0, -1, 1);
 				this->checkerboardBrightness.set("Checkerboard Brightness", 0.5, 0, 1);
 				this->initialLensOffset.set("Initial Lens Offset", 0.5f, -1.0f, 1.0f);
+				this->trimOutliers.set("Trim Outliers", false);
 
 				this->error = 0.0f;
 			}
@@ -93,6 +94,13 @@ namespace ofxDigitalEmulsion {
 				auto projectorOutput = this->getInput<Device::ProjectorOutput>();
 				if (projectorOutput) {
 					if (projectorOutput->isWindowOpen()) {
+
+						auto projectorNode = this->getInput<Item::Projector>();
+						if (projectorNode) {
+							projectorNode->setWidth(projectorOutput->getWidth());
+							projectorNode->setHeight(projectorOutput->getHeight());
+						}
+
 						projectorOutput->getFbo().begin();
 						ofSetMatrixMode(ofMatrixMode::OF_MATRIX_PROJECTION);
 						ofLoadIdentityMatrix();
@@ -126,6 +134,7 @@ namespace ofxDigitalEmulsion {
 				ofxDigitalEmulsion::Utils::Serializable::serialize(this->checkerboardPositionY, json);
 				ofxDigitalEmulsion::Utils::Serializable::serialize(this->checkerboardBrightness, json);
 				ofxDigitalEmulsion::Utils::Serializable::serialize(this->initialLensOffset, json);
+				ofxDigitalEmulsion::Utils::Serializable::serialize(this->trimOutliers, json);
 
 				auto & jsonCorrespondences = json["correspondences"];
 				int index = 0;
@@ -151,6 +160,7 @@ namespace ofxDigitalEmulsion {
 				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->checkerboardPositionY, json);
 				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->checkerboardBrightness, json);
 				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->initialLensOffset, json);
+				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->trimOutliers, json);
 
 				this->correspondences.clear();
 				auto & jsonCorrespondences = json["correspondences"];
@@ -233,7 +243,7 @@ namespace ofxDigitalEmulsion {
 				this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
 					worldPoints, projectorPoints,
 					this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight(),
-					this->initialLensOffset);
+					this->initialLensOffset, 1.4f, this->trimOutliers);
 				this->getInput<Item::Projector>()->setExtrinsics(rotation, translation);
 				this->getInput<Item::Projector>()->setIntrinsics(cameraMatrix);
 
@@ -241,10 +251,11 @@ namespace ofxDigitalEmulsion {
 				auto projectionMatrix = ofxCv::makeProjectionMatrix(cameraMatrix, cv::Size(this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight()));
 
 				ofstream file;
-				file.open(ofToDataPath(this->getName() + "View.mat").c_str(), ios::out | ios::binary);
+				auto projectorName = this->getInput<Item::Projector>()->getName();
+				file.open(ofToDataPath(projectorName + "View.mat").c_str(), ios::out | ios::binary);
 				file.write((char*)viewMatrix.getPtr(), sizeof(float)* 16);
 				file.close();
-				file.open(ofToDataPath(this->getName() + "Projection.mat").c_str(), ios::out | ios::binary);
+				file.open(ofToDataPath(projectorName + "Projection.mat").c_str(), ios::out | ios::binary);
 				file.write((char*)projectionMatrix.getPtr(), sizeof(float)* 16);
 				file.close();
 			}
@@ -280,6 +291,7 @@ namespace ofxDigitalEmulsion {
 				}));
 
 				inspector->add(MAKE(ofxCvGui::Widgets::Slider, this->initialLensOffset));
+				inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->trimOutliers));
 				auto calibrateButton = MAKE(ofxCvGui::Widgets::Button, "Calibrate", [this]() {
 					try {
 						this->calibrate();

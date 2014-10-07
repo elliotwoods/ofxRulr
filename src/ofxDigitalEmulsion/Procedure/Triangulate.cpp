@@ -17,9 +17,9 @@ namespace ofxDigitalEmulsion {
 			auto projectorPin = MAKE(Graph::Pin<Item::Projector>);
 			auto graycodePin = MAKE(Graph::Pin<Scan::Graycode>);
 			
-			this->inputPins.push_back(cameraPin);
-			this->inputPins.push_back(projectorPin);
-			this->inputPins.push_back(graycodePin);
+			this->addInput(cameraPin);
+			this->addInput(projectorPin);
+			this->addInput(graycodePin);
 
 			this->maxLength.set("Maximum length disparity [m]", 0.05f, 0.0f, 10.0f);
 			this->giveColor.set("Give color", true);
@@ -53,11 +53,6 @@ namespace ofxDigitalEmulsion {
 		//----------
 		string Triangulate::getTypeName() const {
 			return "Triangulate";
-		}
-
-		//----------
-		Graph::PinSet Triangulate::getInputPins() const {
-			return this->inputPins;
 		}
 
 		//----------

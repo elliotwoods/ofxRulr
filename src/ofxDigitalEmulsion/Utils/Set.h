@@ -29,6 +29,16 @@ namespace ofxDigitalEmulsion {
 			void add(shared_ptr<BaseType> item) {
 				this->push_back(item);
 			}
+
+			void remove(shared_ptr<BaseType> item) {
+				auto it = find(item, this->begin(), this->end);
+				if (it != this->end()) {
+					this->erase(it);
+				}
+				else {
+					ofLogError("ofxDigitalEmulsion") << "Pin of [" << item << "] could not be found in Set<" << typeid(BaseType).name() << "> and therefore could not be removed.";
+				}
+			}
 		};
 	}
 }

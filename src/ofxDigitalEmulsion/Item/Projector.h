@@ -16,8 +16,10 @@ namespace ofxDigitalEmulsion {
 			void serialize(Json::Value &) override;
 			void deserialize(const Json::Value &) override;
 
-			float getWidth();
-			float getHeight();
+			float getWidth() const;
+			float getHeight() const;
+			void setWidth(float);
+			void setHeight(float);
 
 			void setIntrinsics(cv::Mat cameraMatrix);
 			void setExtrinsics(cv::Mat rotation, cv::Mat translation);

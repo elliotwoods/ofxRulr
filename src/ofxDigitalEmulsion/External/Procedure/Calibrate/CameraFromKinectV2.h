@@ -15,7 +15,6 @@ namespace ofxDigitalEmulsion {
 				CameraFromKinectV2();
 				void init() override;
 				string getTypeName() const override;
-				Graph::PinSet getInputPins() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
@@ -27,7 +26,6 @@ namespace ofxDigitalEmulsion {
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				void drawWorld();
-				Graph::PinSet inputPins;
 				ofxCvGui::PanelPtr view;
 
 				ofParameter<bool> usePreTest;

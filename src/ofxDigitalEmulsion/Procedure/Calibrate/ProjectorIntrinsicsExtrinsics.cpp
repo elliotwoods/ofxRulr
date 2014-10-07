@@ -20,9 +20,9 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			ProjectorIntrinsicsExtrinsics::ProjectorIntrinsicsExtrinsics() {
-				this->inputPins.add(MAKE(Pin<Item::Camera>));
-				this->inputPins.add(MAKE(Pin<Item::Projector>));
-				this->inputPins.add(MAKE(Pin<Item::Checkerboard>));
+				this->addInput(MAKE(Pin<Item::Camera>));
+				this->addInput(MAKE(Pin<Item::Projector>));
+				this->addInput(MAKE(Pin<Item::Checkerboard>));
 
 				this->oscServer.setup(4005);
 
@@ -36,11 +36,6 @@ namespace ofxDigitalEmulsion {
 			//----------
 			string ProjectorIntrinsicsExtrinsics::getTypeName() const {
 				return "ProjectorIntrinsicsExtrinsics";
-			}
-
-			//----------
-			Graph::PinSet ProjectorIntrinsicsExtrinsics::getInputPins() const {
-				return this->inputPins;
 			}
 
 			//----------
