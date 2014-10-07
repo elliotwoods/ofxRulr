@@ -210,6 +210,7 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Summary.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\World.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Board.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Camera.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Projector.h" />
@@ -221,6 +222,7 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Exception.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Gui.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Utils.h" />
@@ -253,6 +255,7 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Summary.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Board.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
@@ -262,6 +265,7 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Exception.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Gui.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Utils.cpp" />
   </ItemGroup>

@@ -297,6 +297,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Board.h">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Gui.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -415,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Board.cpp">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Gui.cpp">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

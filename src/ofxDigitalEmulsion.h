@@ -5,6 +5,7 @@
 #include "ofxDigitalEmulsion/Item/Camera.h"
 #include "ofxDigitalEmulsion/Item/Projector.h"
 #include "ofxDigitalEmulsion/Item/Checkerboard.h"
+#include "ofxDigitalEmulsion/Item/Board.h"
 
 #include "ofxDigitalEmulsion/Device/ProjectorOutput.h"
 
@@ -15,4 +16,5 @@
 #include "ofxDigitalEmulsion/Procedure/Triangulate.h"
 
 #include "ofxDigitalEmulsion/Utils/Exception.h"
+#include "ofxDigitalEmulsion/Utils/Gui.h"
 #include "ofxDigitalEmulsion/Utils/Utils.h"
