@@ -11,6 +11,7 @@ void ofApp::setup2(){
 	splashScreen.begin(0.0f);
 	
 	auto cameraNode = MAKE(Item::Camera);
+	cameraNode->setDevice(MAKE(ofxUeye::Device));
 	this->world.add(cameraNode);
 
 	auto boardNode = MAKE(Item::Board);

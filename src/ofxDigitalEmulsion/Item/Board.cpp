@@ -34,8 +34,10 @@ namespace ofxDigitalEmulsion {
 
 			auto & camera = view->getCamera();
 			auto distance = this->spacing * MAX(this->sizeX, this->sizeY);
-			camera.setPosition(-distance, distance, -distance);
-			camera.lookAt(ofVec3f());
+			camera.setPosition(0, 0, -distance);
+			camera.lookAt(ofVec3f(), ofVec3f(0, -1, 0));
+			camera.setNearClip(distance / 100.0f);
+			camera.setFarClip(distance * 100.0f);
 
 			return view;
 		}
@@ -59,13 +61,30 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		ofxCv::BoardType Board::getBoardType() const {
+			switch (this->boardType) {
+			case 0:
+				return ofxCv::BoardType::Checkerboard;
+			case 1:
+				return ofxCv::BoardType::AsymmetricCircles;
+			default:
+				return ofxCv::BoardType::Checkerboard;
+			}
+		}
+
+		//----------
 		cv::Size Board::getSize() const {
 			return cv::Size(this->sizeX, this->sizeY);
 		}
 
 		//----------
 		vector<cv::Point3f> Board::getObjectPoints() const {
-			return ofxCv::makeCheckerboardPoints(this->getSize(), this->spacing);
+			return ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->spacing);
+		}
+
+		//----------
+		bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results) const {
+			return ofxCv::findBoard(image, this->getBoardType(), this->getSize(), results);
 		}
 
 		//----------
@@ -77,6 +96,11 @@ namespace ofxDigitalEmulsion {
 			auto typeChooser = Widgets::MultipleChoice::make("Board type");
 			typeChooser->addOption("Checkerboard");
 			typeChooser->addOption("Circles");
+			typeChooser->setSelection(this->boardType);
+			typeChooser->onSelectionChange += [this](const int & selectionIndex) {
+				this->boardType = selectionIndex;
+				this->updatePreviewMesh();
+			};
 			inspector->add(typeChooser);
 
 			Utils::Gui::addIntSlider(this->sizeX, inspector)->onValueChange += sliderCallback;
@@ -91,8 +115,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Board::updatePreviewMesh() {
-			if (this->)
-			//this->previewMesh = ofxCv::makeBoardMesh(this->getSize(), this->spacing);
+			this->previewMesh = ofxCv::makeBoardMesh(this->getBoardType(), this->getSize(), this->spacing, true);
 		}
 	}
 }

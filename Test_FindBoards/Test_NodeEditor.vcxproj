@@ -136,7 +136,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxDigitalEmulsion\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxUeye\libs\ueye\include;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxDigitalEmulsion\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -174,7 +174,7 @@
       <PreprocessorDefinitions>__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxDigitalEmulsion\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxUeye\libs\ueye\include;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxDigitalEmulsion\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -256,6 +256,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
       <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxUeye\ofxUeyeLib\ofxUeyeLib.vcxproj">
+      <Project>{8d6b518c-d891-4907-8bc1-3232914bab97}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

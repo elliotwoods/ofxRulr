@@ -9,6 +9,8 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
 		Checkerboard::Checkerboard() {
+			ofLogWarning("ofxDigitalEmulsion::Item::Checkerboard") << "Checkerboard is deprecated, check out Board instead";
+
 			this->sizeX.set("Size X", 9.0f, 2.0f, 20.0f);
 			this->sizeY.set("Size Y", 5.0f, 2.0f, 20.0f);
 			this->spacing.set("Spacing [m]", 0.025f, 0.001f, 1.0f);
