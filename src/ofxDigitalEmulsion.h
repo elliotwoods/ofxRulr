@@ -4,7 +4,7 @@
 
 #include "ofxDigitalEmulsion/Item/Camera.h"
 #include "ofxDigitalEmulsion/Item/Projector.h"
-#include "ofxDigitalEmulsion/Item/Checkerboard.h"
+//#include "ofxDigitalEmulsion/Item/Checkerboard.h" <-- deprecated
 #include "ofxDigitalEmulsion/Item/Board.h"
 
 #include "ofxDigitalEmulsion/Device/ProjectorOutput.h"

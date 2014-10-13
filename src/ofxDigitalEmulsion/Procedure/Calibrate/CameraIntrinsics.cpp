@@ -95,9 +95,7 @@ namespace ofxDigitalEmulsion {
 
 						board->findBoard(toCv(this->grayscale), toCv(this->currentCorners));
 					}
-					catch (std::exception e) {
-						ofLogWarning() << e.what();
-					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ERROR
 				} else {
 					this->currentCorners.clear();
 				}
