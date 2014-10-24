@@ -83,8 +83,9 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results) const {
-			return ofxCv::findBoard(image, this->getBoardType(), this->getSize(), results);
+		bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results, bool useOptimisers) const {
+			auto size = this->getSize();
+			return ofxCv::findBoard(image, this->getBoardType(), size, results, useOptimisers);
 		}
 
 		//----------

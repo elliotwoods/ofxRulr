@@ -18,7 +18,7 @@ namespace ofxDigitalEmulsion {
 			cv::Size getSize() const;
 			vector<cv::Point3f> getObjectPoints() const;
 
-			bool findBoard(cv::Mat, vector<cv::Point2f> & result) const;
+			bool findBoard(cv::Mat, vector<cv::Point2f> & result, bool useOptimisers = true) const;
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 			void updatePreviewMesh();
