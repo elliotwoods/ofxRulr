@@ -40,6 +40,58 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void Camera::init() {
+			if (!this->grabber) {
+				throw(ofxDigitalEmulsion::Utils::Exception("Cannot initialise [Camera] node, no camera device has been set."));
+			}
+			auto view = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference(), this->getTypeName());
+			view->onDraw += [this](ofxCvGui::DrawArguments & args) {
+				if (this->showSpecification) {
+					stringstream status;
+					status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
+					status << endl;
+					status << this->getGrabber()->getDeviceSpecification().toString() << endl;
+
+					ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
+				}
+			};
+			view->onDrawCropped += [this](Panels::BaseImage::DrawCroppedArguments & args) {
+				if (this->showFocusLine) {
+					ofPushMatrix();
+					ofPushStyle();
+
+					ofTranslate(0, args.size.y / 2.0f);
+					ofSetColor(100, 255, 100);
+					ofLine(0, 0, args.size.x, 0);
+
+					ofTranslate(0, +128);
+					ofScale(1.0f, -1.0f);
+					ofSetColor(0, 0, 0);
+					ofSetLineWidth(2.0f);
+					this->focusLineGraph.draw();
+					ofSetLineWidth(1.0f);
+					ofSetColor(255, 100, 100);
+					this->focusLineGraph.draw();
+
+					ofPopStyle();
+					ofPopMatrix();
+				}
+
+				//crosshair
+				ofPushStyle();
+				ofSetLineWidth(1);
+				ofSetColor(255);
+				ofPushMatrix();
+				ofTranslate(args.size.x / 2.0f, args.size.y / 2.0f);
+				ofLine(-10, 0, 10, 0);
+				ofLine(0, -10, 0, 10);
+				ofPopMatrix();
+				ofPopStyle();
+			};
+			this->view = view;
+		}
+
+		//----------
 		string Camera::getTypeName() const {
 			return "Camera";
 		}
@@ -155,52 +207,6 @@ namespace ofxDigitalEmulsion {
 			this->grabber->setGain(this->gain);
 			this->grabber->setFocus(this->focus);
 			this->grabber->setSharpness(this->sharpness);
-			
-			auto view = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference(), this->getTypeName());
-			view->onDraw += [this] (ofxCvGui::DrawArguments & args) {
-				if (this->showSpecification) {
-					stringstream status;
-					status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
-					status << endl;
-					status << this->getGrabber()->getDeviceSpecification().toString() << endl;
-					
-					ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
-				}
-			};
-			view->onDrawCropped += [this] (Panels::BaseImage::DrawCroppedArguments & args) {
-				if (this->showFocusLine) {
-					ofPushMatrix();
-					ofPushStyle();
-
-					ofTranslate(0, args.size.y / 2.0f);
-					ofSetColor(100, 255, 100);
-					ofLine(0,0, args.size.x, 0);
-			
-					ofTranslate(0, +128);
-					ofScale(1.0f, -1.0f);
-					ofSetColor(0, 0, 0);
-					ofSetLineWidth(2.0f);
-					this->focusLineGraph.draw();
-					ofSetLineWidth(1.0f);
-					ofSetColor(255, 100, 100);
-					this->focusLineGraph.draw();
-
-					ofPopStyle();
-					ofPopMatrix();
-				}
-
-				//crosshair
-				ofPushStyle();
-				ofSetLineWidth(1);
-				ofSetColor(255);
-				ofPushMatrix();
-				ofTranslate(args.size.x / 2.0f, args.size.y / 2.0f);
-				ofLine(-10, 0, 10, 0);
-				ofLine(0, -10, 0, 10);
-				ofPopMatrix();
-				ofPopStyle();
-			};
-			this->view = view;
 		}
 
 		//----------
