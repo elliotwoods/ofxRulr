@@ -205,8 +205,9 @@
     <ClCompile Include="..\..\..\addons\ofxPolyfit\src\ofxPolyFit.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPolyfit\src\ofxPolyPlane.cpp" />
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp" />
+    <ClCompile Include="src\Graph\Patch\Instance.cpp" />
+    <ClCompile Include="src\Graph\Patch\NodeHost.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Nodes\GraphEditor.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -228,7 +229,9 @@
     <ClInclude Include="..\..\..\addons\ofxPolyfit\src\ofxPolyFit.h" />
     <ClInclude Include="..\..\..\addons\ofxPolyfit\src\ofxPolyPlane.h" />
     <ClInclude Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.h" />
-    <ClInclude Include="src\Nodes\GraphEditor.h" />
+    <ClInclude Include="src\Graph\Patch\Instance.h" />
+    <ClInclude Include="src\Graph\Patch\LinkHost.h" />
+    <ClInclude Include="src\Graph\Patch\NodeHost.h" />
     <ClInclude Include="src\ofApp.h" />
   </ItemGroup>
   <ItemGroup>

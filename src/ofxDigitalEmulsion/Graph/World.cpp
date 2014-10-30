@@ -5,6 +5,7 @@
 #include "../Utils/Exception.h"
 
 #include "ofxCvGui.h"
+#include "ofxAssets.h"
 
 using namespace ofxCvGui;
 
@@ -15,11 +16,30 @@ namespace ofxDigitalEmulsion {
 
 		//-----------
 		void World::init(Controller & controller) {
+			ofxAssets::AssetRegister.addAddon("ofxDigitalEmulsion");
+
 			this->add(MAKE(Summary, *this));
 
+			set<shared_ptr<Node>> failedNodes;
+
 			for (auto node : *this) {
-				node->init();
+				bool initSuccess = false;
+				try
+				{
+					node->init();
+					initSuccess = true;
+				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
+
+				if (!initSuccess) {
+					failedNodes.insert(node);
+				}
 			}
+
+			for (auto failedNode : failedNodes) {
+				this->remove(failedNode);
+			}
+
 			auto rootGroup = dynamic_pointer_cast<ofxCvGui::Panels::Groups::Grid>(controller.getRootGroup());
 			if (rootGroup) {
 				//set widths before the rearrangement happens

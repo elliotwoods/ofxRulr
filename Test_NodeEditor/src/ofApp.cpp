@@ -10,14 +10,17 @@ void ofApp::setup2(){
 	splashScreen.init("splashScreen.png");
 	splashScreen.begin(0.0f);
 	
-	auto cameraNode = MAKE(Item::Camera);
-	this->world.add(cameraNode);
+	//auto cameraNode = MAKE(Item::Camera);
+	//this->world.add(cameraNode);
 
-	auto checkerboardNode = MAKE(Item::Checkerboard);
-	this->world.add(checkerboardNode);
+	//auto boardNode = MAKE(Item::Board);
+	//this->world.add(boardNode);
 
-	auto cameraCalibrateNode = MAKE(Procedure::Calibrate::CameraIntrinsics);
-	this->world.add(cameraCalibrateNode);
+	//auto cameraCalibrateNode = MAKE(Procedure::Calibrate::CameraIntrinsics);
+	//this->world.add(cameraCalibrateNode);
+
+	auto patchInstance = MAKE(ofxDigitalEmulsion::Graph::Patch::Instance);
+	this->world.add(patchInstance);
 
 	this->gui.init();
 	this->world.init(this->gui.getController());
