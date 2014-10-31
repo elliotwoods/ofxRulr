@@ -4,7 +4,6 @@
 #include "ofxCvGui.h"
 #include "ofxMachineVision.h"
 #include "ofxDigitalEmulsion.h"
-#include "ofxSplashScreen.h"
 
 using namespace ofxMachineVision;
 using namespace ofxDigitalEmulsion;
@@ -13,7 +12,7 @@ using namespace ofxCvGui;
 class ofApp : public ofBaseApp{
 
 	public:
-		void setup2();
+		void setup();
 		void update();
 		void draw();
 
@@ -29,5 +28,4 @@ class ofApp : public ofBaseApp{
 
 		ofxCvGui::Builder gui;
 		ofxDigitalEmulsion::Graph::World world;
-		ofxSplashScreen splashScreen;
 };

@@ -1,5 +1,5 @@
 #include "Board.h"
-#include "../../../addons/ofxCvGui2/src/ofxCvGui.h"
+#include "../../../addons/ofxCvGui/src/ofxCvGui.h"
 #include "ofxCvMin.h"
 #include "../Utils/Gui.h"
 

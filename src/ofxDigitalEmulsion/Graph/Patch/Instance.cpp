@@ -31,9 +31,9 @@ namespace ofxDigitalEmulsion {
 					}
 				};
 
-				this->getCanvasElementGroup()->onDraw += [this](ofxCvGui::DrawArguments & args) {
+				this->getCanvasElementGroup()->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
 					this->drawGridLines();
-				};
+				}, -1, this);
 
 				this->onBoundsChange += [this, addButton](ofxCvGui::BoundsChangeArguments & args) {
 					addButton->setBounds(ofRectangle(100, 100, 100, 100));

@@ -1,34 +1,10 @@
 #include "ofApp.h"
 
-using namespace ofxAssets;
-
 //--------------------------------------------------------------
-void ofApp::setup2(){
-	ofSetWindowTitle("Digital Emulsion Toolkit v0.1");
-	ofSetCircleResolution(120);
-	
-	AssetRegister.addAddon("ofxDigitalEmulsion");
-	splashScreen.init(image("ofxDigitalEmulsion::SplashScreen"));
-	splashScreen.begin(0.0f);
-	
-	//auto cameraNode = MAKE(Item::Camera);
-	//this->world.add(cameraNode);
-
-	//auto boardNode = MAKE(Item::Board);
-	//this->world.add(boardNode);
-
-	//auto cameraCalibrateNode = MAKE(Procedure::Calibrate::CameraIntrinsics);
-	//this->world.add(cameraCalibrateNode);
-
-	auto patchInstance = MAKE(ofxDigitalEmulsion::Graph::Patch::Instance);
-	this->world.add(patchInstance);
-
+void ofApp::setup(){
 	this->gui.init();
 	this->world.init(this->gui.getController());
 	this->world.loadAll();
-	
-	this->splashScreen.end();
-	
 }
 
 //--------------------------------------------------------------
@@ -38,9 +14,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	if (ofGetFrameNum() == 2) {
-		this->setup2();
-	}
+
 }
 
 //--------------------------------------------------------------

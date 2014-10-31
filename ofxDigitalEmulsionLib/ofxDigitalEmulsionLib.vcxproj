@@ -55,7 +55,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
-    <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
+    <Import Project="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit.props" />
@@ -63,7 +63,7 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
+    <Import Project="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug64.props" />
@@ -73,7 +73,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
-    <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
+    <Import Project="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit.props" />
@@ -81,7 +81,7 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
+    <Import Project="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease64.props" />

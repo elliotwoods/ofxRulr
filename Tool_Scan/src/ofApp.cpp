@@ -20,7 +20,7 @@ void ofApp::setup(){
 	this->world.add(scan);
 	
 	this->gui.init();
-	this->world.setupGui(this->gui.getController());
+	this->world.init(this->gui.getController());
 	this->world.loadAll();
 }
 

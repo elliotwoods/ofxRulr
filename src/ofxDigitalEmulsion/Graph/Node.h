@@ -5,7 +5,7 @@
 #include "../Utils/Serializable.h"
 #include "../Utils/Exception.h"
 
-#include "../../../addons/ofxCvGui2/src/ofxCvGui/Widgets/IInspectable.h"
+#include "../../../addons/ofxCvGui/src/ofxCvGui/Widgets/IInspectable.h"
 #include <string>
 
 namespace ofxDigitalEmulsion {

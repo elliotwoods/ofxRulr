@@ -27,5 +27,5 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		ofxCvGui::Builder gui;
-		ofxDigitalEmulsion::Item::World world;
+		ofxDigitalEmulsion::Graph::World world;
 };
