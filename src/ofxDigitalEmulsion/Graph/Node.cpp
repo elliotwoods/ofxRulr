@@ -9,8 +9,26 @@ using namespace ofxCvGui;
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		//----------
+		string Node::getName() const {
+			if (this->name.empty()) {
+				return this->getTypeName();
+			} else {
+				return this->name;
+			}
+		}
+
+		//----------
+		void Node::setName(const string name) {
+			this->name = name;
+			auto view = this->getView();
+			if (view) {
+				view->setCaption(this->name);
+			}
+		}
+
+		//----------
 		PinSet Node::getInputPins() const {
-			return PinSet();
+			return this->inputPins;
 		}
 
 		//----------
@@ -19,9 +37,8 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Button::make("Save Node", [this] () {
 				try {
 					this->save(this->getDefaultFilename());
-				} catch (Utils::Exception e) {
-					ofSystemAlertDialog(e.what());
 				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
 			inspector->add(Widgets::Button::make("Load Node", [this] () {
 				this->load(this->getDefaultFilename());
@@ -31,18 +48,22 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Button::make("Load from...", [this] () {
 				try {
 					this->load();
-				} catch (Utils::Exception e) {
-					ofSystemAlertDialog(e.what());
 				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
 #endif
+			for (auto inputPin : this->getInputPins()) {
+				inspector->add(Widgets::Indicator::make(inputPin->getName(), [inputPin]() {
+					return (Widgets::Indicator::Status) inputPin->isConnected();
+				}));
+			}
 			inspector->add(Widgets::Spacer::make());
 
 			this->populateInspector2(inspector);
 		}
 
 		//----------
-		void Node::throwIfMissingAConnection() const {
+		void Node::throwIfMissingAnyConnection() const {
 			const auto inputPins = this->getInputPins();
 			for(auto & inputPin : inputPins) {
 				if (!inputPin->isConnected()) {
@@ -51,6 +72,21 @@ namespace ofxDigitalEmulsion {
 					throw(Utils::Exception(message.str()));
 				}
 			}
+		}
+
+		//----------
+		void Node::addInput(shared_ptr<BasePin> pin) {
+			this->inputPins.add(pin);
+		}
+
+		//----------
+		void Node::removeInput(shared_ptr<BasePin> pin) {
+			this->inputPins.remove(pin);
+		}
+
+		//----------
+		void Node::clearInputs() {
+			this->inputPins.clear();
 		}
 	}
 }

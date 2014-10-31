@@ -16,7 +16,6 @@ namespace ofxDigitalEmulsion {
 
 				ProjectorIntrinsicsExtrinsics();
 				string getTypeName() const override;
-				Graph::PinSet getInputPins() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
@@ -29,13 +28,10 @@ namespace ofxDigitalEmulsion {
 
 				void addPoint(float x, float y, int projectorWidth, int projectorHeight);
 
-				Graph::PinSet inputPins;
-
 				ofxOscReceiver oscServer;
 
 				vector<Correspondence> correspondences;
 
-				ofSoundPlayer failSound, successSound;
 				float lastSeenSuccess;
 				float lastSeenFail;
 

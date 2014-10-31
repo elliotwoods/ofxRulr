@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <string>
+#include "opencv2/core/core.hpp"
 
 namespace ofxDigitalEmulsion {
 	namespace Utils {
@@ -14,3 +15,14 @@ namespace ofxDigitalEmulsion {
 		};
 	}
 }
+
+#define OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT \
+	catch(ofxDigitalEmulsion::Utils::Exception e) { ofSystemAlertDialog(e.what()); } \
+	catch (cv::Exception e) { ofSystemAlertDialog(e.what()); } \
+	catch (std::exception e) { ofSystemAlertDialog(e.what()); }
+
+#define OFXDIGITALEMULSION_CATCH_ALL_TO_ERROR \
+	catch (ofxDigitalEmulsion::Utils::Exception e) { ofLogError("ofxDigitalEmulsion") << e.what(); } \
+	catch (cv::Exception e) { ofLogError("ofxDigitalEmulsion") << e.what(); } \
+	catch (std::exception e) { ofLogError("ofxDigitalEmulsion") << e.what(); }
+

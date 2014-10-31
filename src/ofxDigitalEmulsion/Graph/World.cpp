@@ -1,31 +1,60 @@
 #include "World.h"
 
+#include "Summary.h"
+
 #include "../Utils/Exception.h"
+#include "../Utils/Initialiser.h"
 
 #include "ofxCvGui.h"
 
 using namespace ofxCvGui;
 
 namespace ofxDigitalEmulsion {
-	namespace Item {
+	namespace Graph {
 		//-----------
 		ofxCvGui::Controller * World::gui = 0;
 
 		//-----------
-		void World::setupGui(Controller & controller) {
+		void World::init(Controller & controller) {
+			Utils::initialiser.checkInitialised();
+
+			this->add(MAKE(Summary, *this));
+
+			set<shared_ptr<Node>> failedNodes;
+
+			for (auto node : *this) {
+				bool initSuccess = false;
+				try
+				{
+					node->init();
+					initSuccess = true;
+				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
+
+				if (!initSuccess) {
+					failedNodes.insert(node);
+				}
+			}
+
+			for (auto failedNode : failedNodes) {
+				this->remove(failedNode);
+			}
+
 			auto rootGroup = dynamic_pointer_cast<ofxCvGui::Panels::Groups::Grid>(controller.getRootGroup());
 			if (rootGroup) {
-				rootGroup->onBoundsChange += [rootGroup] (ofxCvGui::BoundsChangeArguments &) {
+				//set widths before the rearrangement happens
+				rootGroup->onBoundsChange.addListener([rootGroup] (ofxCvGui::BoundsChangeArguments & args) {
 					const float inspectorWidth = 300.0f;
 					vector<float> widths;
-					widths.push_back(ofGetWindowWidth() - inspectorWidth);
+					widths.push_back(args.bounds.getWidth() - inspectorWidth);
 					widths.push_back(inspectorWidth);
 					rootGroup->setWidths(widths);
-				};
+				}, -1, this);
 			}
 
 			auto gridGroup = MAKE(ofxCvGui::Panels::Groups::Grid);
 			rootGroup->add(gridGroup);
+			this->guiGrid = gridGroup;
 
 			for(auto node : *this) {
 				auto nodeView = node->getView();
@@ -51,7 +80,7 @@ namespace ofxDigitalEmulsion {
 						}
 					};
 
-					nodeView->setCaption(node->getTypeName());
+					nodeView->setCaption(node->getName());
 				}
 			}
 
@@ -85,8 +114,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//-----------
-		void World::loadAll() {
+		void World::loadAll(bool printDebug) {
 			for(auto node : * this) {
+				if (printDebug) {
+					ofLogNotice("ofxDigitalEmulsion") << "Loading node [" << node->getName() << "]";
+				}
 				node->load(node->getDefaultFilename());
 			}
 		}
@@ -98,6 +130,11 @@ namespace ofxDigitalEmulsion {
 			} else {
 				throw(Utils::Exception("No gui attached yet"));
 			}
+		}
+
+		//----------
+		ofxCvGui::PanelGroupPtr World::getGuiGrid() {
+			return this->guiGrid;
 		}
 	}
 }

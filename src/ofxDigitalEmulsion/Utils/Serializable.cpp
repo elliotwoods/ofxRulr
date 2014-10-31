@@ -8,8 +8,26 @@ using namespace std;
 namespace ofxDigitalEmulsion {
 	namespace Utils {
 		//----------
+		void Serializable::serialize(const ofParameter<int> & parameter, Json::Value & json) {
+			json[parameter.getName()] = parameter.get();
+		}
+
+		//----------
 		void Serializable::serialize(const ofParameter<float> & parameter, Json::Value & json) {
 			json[parameter.getName()] = parameter.get();
+		}
+
+		//----------
+		void Serializable::serialize(const ofParameter<bool> & parameter, Json::Value & json) {
+			json[parameter.getName()] = parameter.get();
+		}
+
+		//----------
+		void Serializable::deserialize(ofParameter<int> & parameter, const Json::Value & json) {
+			const auto name = parameter.getName();
+			if (json[name].isNumeric()) {
+				parameter.set(json[name].asInt());
+			}
 		}
 
 		//----------
@@ -18,6 +36,19 @@ namespace ofxDigitalEmulsion {
 			if (json[name].isNumeric()) {
 				parameter.set(json[name].asFloat());
 			}
+		}
+
+		//----------
+		void Serializable::deserialize(ofParameter<bool> & parameter, const Json::Value & json) {
+			const auto name = parameter.getName();
+			if (json[name].isBool()) {
+				parameter.set(json[parameter.getName()].asBool());
+			}
+		}
+
+		//----------
+		string Serializable::getName() const {
+			return this->getTypeName();
 		}
 
 		//----------
@@ -66,7 +97,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		string Serializable::getDefaultFilename() const {
-			return this->getTypeName() + ".json";
+			return this->getName() + ".json";
 		}
 	}
 }

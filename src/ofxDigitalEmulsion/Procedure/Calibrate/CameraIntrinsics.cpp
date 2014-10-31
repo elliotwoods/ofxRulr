@@ -1,7 +1,9 @@
 #include "CameraIntrinsics.h"
 
-#include "../../Item/Checkerboard.h"
+#include "../../Item/Board.h"
 #include "../../Item/Camera.h"
+
+#include "../../Utils/Utils.h"
 
 #include "ofConstants.h"
 #include "ofxCvGui.h"
@@ -17,14 +19,11 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			CameraIntrinsics::CameraIntrinsics() {
-				this->inputPins.push_back(MAKE(Pin<Item::Checkerboard>));
-				this->inputPins.push_back(MAKE(Pin<Item::Camera>));
+				this->addInput(MAKE(Pin<Item::Board>));
+				this->addInput(MAKE(Pin<Item::Camera>));
 
-				this->enableFinder.set("Run chessboard finder", false);
+				this->enableFinder.set("Run board finder", false);
 				this->error.set("Reprojection error", 0.0f, 0.0f, std::numeric_limits<float>::max());
-
-				failSound.loadSound("fail.mp3");
-				successSound.loadSound("success.mp3");
 
 				this->error = 0.0f;
 			}
@@ -35,16 +34,10 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			PinSet CameraIntrinsics::getInputPins() const {
-				return this->inputPins;
-			}
-
-			//----------
 			ofxCvGui::PanelPtr CameraIntrinsics::getView() {
 				auto view = MAKE(ofxCvGui::Panels::Base);
 				view->onDraw += [this] (DrawArguments & drawArgs) {
-					auto cameraPin = this->getInputPins().get<Pin<Item::Camera>>();
-					auto camera = cameraPin->getConnection();
+					auto camera = this->getInput<Item::Camera>();
 					if (camera) {
 						auto grabber = camera->getGrabber();
 						if (this->grayscale.isAllocated()) {
@@ -81,13 +74,13 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void CameraIntrinsics::update() {
 				auto camera = this->getInput<Item::Camera>();
-				auto checkerboard = this->getInput<Item::Checkerboard>();
+				auto board = this->getInput<Item::Board>();
 
-				if (this->enableFinder && camera && checkerboard) {
+				if (this->enableFinder && camera && board) {
 					try {
 						auto grabber = camera->getGrabber();
 						if (! grabber->getPixelsRef().isAllocated()) {
-							throw(std::exception());
+							throw(Utils::Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));
 						}
 						if (this->grayscale.getWidth() != camera->getWidth() || this->grayscale.getHeight() != camera->getHeight()) {
 							this->grayscale.allocate(camera->getWidth(), camera->getHeight(), OF_IMAGE_GRAYSCALE);
@@ -99,10 +92,10 @@ namespace ofxDigitalEmulsion {
 						}
 						this->grayscale.update();
 						this->currentCorners.clear();
-						findChessboardCornersPreTest(toCv(this->grayscale), checkerboard->getSize(), toCv(this->currentCorners));
-					} catch (std::exception e) {
-						ofLogWarning() << e.what();
+
+						board->findBoard(toCv(this->grayscale), toCv(this->currentCorners));
 					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ERROR
 				} else {
 					this->currentCorners.clear();
 				}
@@ -138,17 +131,18 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void CameraIntrinsics::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Toggle::make(this->enableFinder));
+				inspector->add(Widgets::Indicator::make("Points found", [this]() {
+					return (Widgets::Indicator::Status) !this->currentCorners.empty();
+				}));
 				inspector->add(Widgets::LiveValue<int>::make("Calibration set count", [this] () {
 					return (int) accumulatedCorners.size();
 				}));
-				inspector->add(Widgets::LiveValueHistory::make("Corners found in current image", [this] () {
-					return (float) this->currentCorners.size();
-				}, true));
 				inspector->add(Widgets::Button::make("Add board to calibration set", [this] () {
 					if (this->currentCorners.empty()) {
-						this->failSound.play();
-					} else {
-						this->successSound.play();
+						Utils::playFailSound();
+					}
+					else {
+						Utils::playSuccessSound();
 						this->accumulatedCorners.push_back(currentCorners);
 					}
 				}, ' '));
@@ -171,10 +165,10 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void CameraIntrinsics::calibrate() {
 				auto camera = this->getInput<Item::Camera>();
-				auto checkerboard = this->getInput<Item::Checkerboard>();
+				auto board = this->getInput<Item::Board>();
 
-				if (camera && checkerboard) {
-					auto objectPointsSet = vector<vector<Point3f>>(this->accumulatedCorners.size(), checkerboard->getObjectPoints());
+				if (camera && board) {
+					auto objectPointsSet = vector<vector<Point3f>>(this->accumulatedCorners.size(), board->getObjectPoints());
 					auto cameraResolution = cv::Size(camera->getWidth(), camera->getHeight());
 
 					Mat cameraMatrix = Mat::eye(3, 3, CV_64F);

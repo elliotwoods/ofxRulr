@@ -1,13 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -18,13 +26,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -37,6 +58,17 @@
     <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
+    <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit.props" />
+    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
+    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
+    <Import Project="..\ofxDigitalEmulsion.props" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug64.props" />
+    <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
+    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -44,13 +76,31 @@
     <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\ofxDigitalEmulsion.props" />
+    <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit.props" />
+    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\ofxCvGui2\ofxCvGuiLib\ofxCvGui.props" />
+    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
+    <Import Project="..\ofxDigitalEmulsion.props" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease64.props" />
+    <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit64.props" />
+    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.lib</TargetExt>
     <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.lib</TargetExt>
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -65,6 +115,22 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__x86_64__;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -82,6 +148,25 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__x86_64__;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\autolink.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\config.h" />
@@ -94,6 +179,12 @@
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_batchallocator.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_tool.h" />
     <ClInclude Include="..\..\ofxJSON\src\ofxJSONElement.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Algorithm.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Fit.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\Base.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.h" />
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Utils.h" />
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h" />
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h" />
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\PacketListener.h" />
@@ -116,28 +207,44 @@
     <ClInclude Include="..\..\ofxOsc\src\ofxOscSender.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Factory.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\Instance.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\LinkHost.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\NodeHost.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Summary.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\World.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Board.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Camera.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Projector.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\World.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Exception.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Gui.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_reader.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp" />
     <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp" />
+    <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Algorithm.cpp" />
+    <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp" />
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp" />
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtilsWin.cpp" />
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\UdpSocketWin.cpp" />
@@ -151,18 +258,31 @@
     <ClCompile Include="..\..\ofxOsc\src\ofxOscReceiver.cpp" />
     <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Factory.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Patch\Instance.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Patch\NodeHost.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Summary.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Board.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Exception.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Gui.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalarray.inl" />

@@ -12,7 +12,6 @@ namespace ofxDigitalEmulsion {
 		public:
 			Triangulate();
 			string getTypeName() const override;
-			Graph::PinSet getInputPins() const override;
 			ofxCvGui::PanelPtr getView() override;
 
 			void serialize(Json::Value &) override;
@@ -23,8 +22,6 @@ namespace ofxDigitalEmulsion {
 			void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 			void drawWorld();
 			
-			Graph::PinSet inputPins;
-
 			ofMesh mesh;
 			
 			ofxRay::Ray cameraRay, projectorRay, intersectRay;

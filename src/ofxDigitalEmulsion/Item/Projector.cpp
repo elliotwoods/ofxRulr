@@ -95,13 +95,23 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		float Projector::getWidth() {
+		float Projector::getWidth() const {
 			return this->resolutionWidth;
 		}
 
 		//----------
-		float Projector::getHeight() {
+		float Projector::getHeight() const {
 			return this->resolutionHeight;
+		}
+
+		//----------
+		void Projector::setWidth(float width) {
+			this->resolutionWidth = width;
+		}
+
+		//----------
+		void Projector::setHeight(float height) {
+			this->resolutionWidth = height;
 		}
 
 		//----------
@@ -147,6 +157,7 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Projector::drawWorld() {
 			this->projector.draw();
+			ofDrawBitmapString(this->getName(), this->projector.getPosition());
 		}
 			
 		//----------

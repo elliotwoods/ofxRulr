@@ -5,6 +5,7 @@
 #include "../../Item/Projector.h"
 
 #include "../../Utils/Exception.h"
+#include "../../Utils/Utils.h"
 
 #include "ofxCvGui.h"
 
@@ -19,16 +20,13 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			ProjectorIntrinsicsExtrinsics::ProjectorIntrinsicsExtrinsics() {
-				this->inputPins.add(MAKE(Pin<Item::Camera>));
-				this->inputPins.add(MAKE(Pin<Item::Projector>));
-				this->inputPins.add(MAKE(Pin<Item::Checkerboard>));
+				this->addInput(MAKE(Pin<Item::Camera>));
+				this->addInput(MAKE(Pin<Item::Projector>));
+				this->addInput(MAKE(Pin<Item::Checkerboard>));
 
 				this->oscServer.setup(4005);
 
 				this->fixAspectRatio.set("Fix aspect ratio", false);
-			
-				failSound.loadSound("fail.mp3");
-				successSound.loadSound("success.mp3");
 
 				this->lastSeenFail = -10.0f;
 				this->lastSeenSuccess = -10.0f;
@@ -38,11 +36,6 @@ namespace ofxDigitalEmulsion {
 			//----------
 			string ProjectorIntrinsicsExtrinsics::getTypeName() const {
 				return "ProjectorIntrinsicsExtrinsics";
-			}
-
-			//----------
-			Graph::PinSet ProjectorIntrinsicsExtrinsics::getInputPins() const {
-				return this->inputPins;
 			}
 
 			//----------
@@ -150,14 +143,8 @@ namespace ofxDigitalEmulsion {
 				auto calibrateButton = Widgets::Button::make("Calibrate", [this] () {
 					try {
 						this->calibrate();
-					} catch (const std::exception & e) {
-						try {
-							const auto & cvException = dynamic_cast<const cv::Exception &>(e);
-							ofSystemAlertDialog(cvException.msg);
-						} catch (std::bad_cast) {
-							ofSystemAlertDialog(e.what());
-						}
 					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 				});
 				calibrateButton->setHeight(100.0f);
 				inspector->add(calibrateButton);
@@ -168,7 +155,7 @@ namespace ofxDigitalEmulsion {
 			
 			//----------
 			void ProjectorIntrinsicsExtrinsics::calibrate() {
-				this->throwIfMissingAConnection();
+				this->throwIfMissingAnyConnection();
 				auto camera = this->getInput<Item::Camera>();
 				auto projector = this->getInput<Item::Projector>();
 
@@ -213,7 +200,7 @@ namespace ofxDigitalEmulsion {
 				auto checkerboard = this->getInput<Item::Checkerboard>();
 
 				try {
-					this->throwIfMissingAConnection();
+					this->throwIfMissingAnyConnection();
 					if (projectorWidth != projector->getWidth() || projectorHeight != projector->getHeight()) {
 						stringstream message;
 						message << "Resolution of cursor screen app [" << projectorWidth << "x" << projectorHeight << "] does not match Projector object that we are calibrating [" << projector->getWidth() << "x" << projector->getHeight() << "]";
@@ -233,7 +220,7 @@ namespace ofxDigitalEmulsion {
 					Correspondence newCorrespondence = {ofVec3f(translation.at<double>(0), translation.at<double>(1), translation.at<double>(2)), ofVec2f(projectorX, projectorY)};
 					this->correspondences.push_back(newCorrespondence);
 					this->lastSeenSuccess = ofGetElapsedTimef();
-					this->successSound.play();
+					Utils::playSuccessSound();
 				} catch (const std::exception & e) {
 					try {
 						const auto & cvException = dynamic_cast<const cv::Exception &>(e);
@@ -242,7 +229,7 @@ namespace ofxDigitalEmulsion {
 						OFXDIGITALEMULSION_ERROR << e.what();
 					}
 					this->lastSeenFail = ofGetElapsedTimef();
-					this->failSound.play();
+					Utils::playFailSound();
 				}
 			}
 		}

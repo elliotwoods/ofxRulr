@@ -79,6 +79,36 @@
     <Filter Include="addons\ofxTriangulate\src">
       <UniqueIdentifier>{8e952249-e6ff-4fe8-afcd-1a78c4c2643c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxNonLinearFit">
+      <UniqueIdentifier>{61604660-fb7a-4bb4-8d56-c4e9195af151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNonLinearFit\src">
+      <UniqueIdentifier>{9e6da5b3-9995-4a09-a9a1-4ccf77980cf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNonLinearFit\src\ofxNonLinearFit">
+      <UniqueIdentifier>{311d8f34-c54e-47ea-a9f2-1f238f872808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxNonLinearFit\src\ofxNonLinearFit\Models">
+      <UniqueIdentifier>{11a611df-65dc-4cf3-8637-4ea5e68bd441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External">
+      <UniqueIdentifier>{317e8331-2208-446c-8271-848a4c3071d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External\Item">
+      <UniqueIdentifier>{bba5b19d-b6b6-44d5-9c8c-eea90ab1519c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Device">
+      <UniqueIdentifier>{6d63dd77-671d-4a6e-9685-d51a1f0ee20b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External\Procedure">
+      <UniqueIdentifier>{92fbb9fe-9834-414a-9267-6bb47974e588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External\Procedure\Calibrate">
+      <UniqueIdentifier>{a8346909-c657-4b12-abae-6e888ce4925f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Graph\Patch">
+      <UniqueIdentifier>{1db3640d-a382-45ec-987e-c5d183314537}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
@@ -86,9 +116,6 @@
     </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\World.h">
-      <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
@@ -228,11 +255,71 @@
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h">
       <Filter>addons\ofxTriangulate\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Utils.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.h">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit.h">
+      <Filter>addons\ofxNonLinearFit\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Algorithm.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Fit.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Utils.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\Base.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.h">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.h">
+      <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.h">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\World.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Summary.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.h">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Board.h">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Gui.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\LinkHost.h">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\NodeHost.h">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\Instance.h">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Factory.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\World.cpp">
-      <Filter>src\ofxDigitalEmulsion\Item</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClCompile>
@@ -316,6 +403,54 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp">
       <Filter>addons\ofxTriangulate\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Utils.cpp">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.cpp">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Algorithm.cpp">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp">
+      <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp">
+      <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.cpp">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Summary.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Board.cpp">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Gui.cpp">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Patch\NodeHost.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Patch\Instance.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.cpp">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Factory.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

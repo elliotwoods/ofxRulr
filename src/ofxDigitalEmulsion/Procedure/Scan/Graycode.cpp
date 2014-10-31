@@ -16,8 +16,8 @@ namespace ofxDigitalEmulsion {
 		namespace Scan {
 			//---------
 			Graycode::Graycode() {
-				this->inputPins.push_back(MAKE(Pin<Item::Camera>));
-				this->inputPins.push_back(MAKE(Pin<Item::Projector>));
+				this->addInput(MAKE(Pin<Item::Camera>));
+				this->addInput(MAKE(Pin<Item::Projector>));
 
 				this->threshold.set("Threshold", 10.0f, 0.0f, 255.0f);
 				this->delay.set("Capture delay [ms]", 200.0f, 0.0f, 2000.0f);
@@ -33,11 +33,6 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			Graph::PinSet Graycode::getInputPins() const {
-				return this->inputPins;
-			}
-			
-			//----------
 			PanelPtr Graycode::getView() {
 				return this->view;
 			}
@@ -51,6 +46,7 @@ namespace ofxDigitalEmulsion {
 						payload.init(projector->getWidth(), projector->getHeight());
 						encoder.init(payload);
 						decoder.init(payload);
+						this->load(this->getDefaultFilename());
 					}
 				}
 
@@ -61,10 +57,14 @@ namespace ofxDigitalEmulsion {
 			void Graycode::serialize(Json::Value & json) {
 				Utils::Serializable::serialize(this->threshold, json);
 				Utils::Serializable::serialize(this->delay, json);
+				auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
+				this->decoder.saveDataSet(filename);
 			}
 
 			//----------
 			void Graycode::deserialize(const Json::Value & json) {
+				auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
+				this->decoder.loadDataSet(filename);
 				Utils::Serializable::deserialize(this->threshold, json);
 				Utils::Serializable::deserialize(this->delay, json);
 				this->decoder.setThreshold(this->threshold);
@@ -150,9 +150,8 @@ namespace ofxDigitalEmulsion {
 				auto scanButton = Widgets::Button::make("SCAN", [this] () {
 					try {
 						this->runScan();
-					} catch (std::exception e) {
-						ofSystemAlertDialog(e.what());
-					}
+					} 
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 				}, OF_KEY_RETURN);
 				scanButton->setHeight(100.0f);
 				inspector->add(scanButton);
@@ -186,8 +185,8 @@ namespace ofxDigitalEmulsion {
 				inspector->add(thresholdSlider);
 
 				inspector->add(Widgets::Title::make("Payload", Widgets::Title::Level::H2));
-				inspector->add(Widgets::LiveValue<float>::make("Width", [this] () { return this->payload.getWidth(); }));
-				inspector->add(Widgets::LiveValue<float>::make("Height", [this] () { return this->payload.getHeight(); }));
+				inspector->add(Widgets::LiveValue<unsigned int>::make("Width", [this] () { return this->payload.getWidth(); }));
+				inspector->add(Widgets::LiveValue<unsigned int>::make("Height", [this]() { return this->payload.getHeight(); }));
 
 				inspector->add(Widgets::Spacer::make());
 				inspector->add(Widgets::Title::make("Views", Widgets::Title::Level::H2));

@@ -17,9 +17,9 @@ namespace ofxDigitalEmulsion {
 			auto projectorPin = MAKE(Graph::Pin<Item::Projector>);
 			auto graycodePin = MAKE(Graph::Pin<Scan::Graycode>);
 			
-			this->inputPins.push_back(cameraPin);
-			this->inputPins.push_back(projectorPin);
-			this->inputPins.push_back(graycodePin);
+			this->addInput(cameraPin);
+			this->addInput(projectorPin);
+			this->addInput(graycodePin);
 
 			this->maxLength.set("Maximum length disparity [m]", 0.05f, 0.0f, 10.0f);
 			this->giveColor.set("Give color", true);
@@ -56,11 +56,6 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		Graph::PinSet Triangulate::getInputPins() const {
-			return this->inputPins;
-		}
-
-		//----------
 		ofxCvGui::PanelPtr Triangulate::getView() {
 			auto view = MAKE(Panels::World);
 			view->getCamera().rotate(180.0f, 0.0f, 0.0f, 1.0f);
@@ -83,7 +78,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Triangulate::triangulate() {
-			this->throwIfMissingAConnection();
+			this->throwIfMissingAnyConnection();
 			
 			auto camera = this->getInput<Item::Camera>();
 			auto projector = this->getInput<Item::Projector>();
@@ -100,7 +95,8 @@ namespace ofxDigitalEmulsion {
 			auto triangulateButton = Widgets::Button::make("Triangulate", [this] () {
 				try {
 					this->triangulate();
-				} catch (std::exception e) {
+				}
+				catch (std::exception e) {
 					ofSystemAlertDialog(e.what());
 				}
 			}, OF_KEY_RETURN);

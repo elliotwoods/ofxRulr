@@ -16,8 +16,10 @@ namespace ofxDigitalEmulsion {
 			void serialize(Json::Value &) override;
 			void deserialize(const Json::Value &) override;
 
-			float getWidth();
-			float getHeight();
+			float getWidth() const;
+			float getHeight() const;
+			void setWidth(float);
+			void setHeight(float);
 
 			void setIntrinsics(cv::Mat cameraMatrix);
 			void setExtrinsics(cv::Mat rotation, cv::Mat translation);
@@ -25,7 +27,7 @@ namespace ofxDigitalEmulsion {
 			cv::Mat getCameraMatrix() const;
 
 			const ofxRay::Projector & getRayProjector() const;
-			void drawWorld();
+			void drawWorld() override;
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
 

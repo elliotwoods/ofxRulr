@@ -10,7 +10,6 @@ namespace ofxDigitalEmulsion {
 			public:
 				CameraIntrinsics();
 				string getTypeName() const override;
-				Graph::PinSet getInputPins() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
@@ -20,11 +19,8 @@ namespace ofxDigitalEmulsion {
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				void calibrate();
 
-				Graph::PinSet inputPins;
 				ofParameter<bool> enableFinder;
 				ofImage grayscale;
-
-				ofSoundPlayer failSound, successSound;
 
 				vector<ofVec2f> currentCorners;
 				vector<vector<ofVec2f>> accumulatedCorners;
