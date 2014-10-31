@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Graph/Node.h"
+#include "../Graph/Factory.h"
 
 #include "ofParameter.h"
 

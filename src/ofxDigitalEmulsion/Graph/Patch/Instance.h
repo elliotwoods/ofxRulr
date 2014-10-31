@@ -4,6 +4,7 @@
 #include "LinkHost.h"
 
 #include "ofxDigitalEmulsion/Graph/Node.h"
+#include "ofxDigitalEmulsion/Graph/Factory.h"
 #include "ofxCvGui/Panels/ElementCanvas.h"
 
 namespace ofxDigitalEmulsion {
@@ -11,10 +12,14 @@ namespace ofxDigitalEmulsion {
 		namespace Patch {
 			class Instance : public Graph::Node {
 			public:
+				typedef map<NodeHost::Index, shared_ptr<NodeHost> > NodeHostSet;
+				typedef map<LinkHost::Index, shared_ptr<LinkHost> > LinkHostSet;
+
 				class View : public ofxCvGui::Panels::ElementCanvas {
 				public:
 					View(Instance &);
 					//const shared_ptr<ofxCvGui::Panels::Base> findScreen(const ofVec2f & xy, ofRectangle & currentPanelBounds) override;
+					void resync();
 				protected:
 					void drawGridLines();
 					Instance & patchInstance;
@@ -29,12 +34,18 @@ namespace ofxDigitalEmulsion {
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
+				const NodeHostSet & getNodeHosts() const;
+				const LinkHostSet & getLinkHosts() const;
+
+				void addNode(NodeHost::Index index, shared_ptr<Node>);
+				void addNewNode(shared_ptr<BaseFactory>);
 				void addDebug();
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+				NodeHost::Index getNextFreeNodeHostIndex() const;
 
-				map<NodeHost::Index, shared_ptr<NodeHost> > nodes;
-				map<Link::Index, shared_ptr<Link> > links;
+				NodeHostSet nodeHosts;
+				LinkHostSet linkHosts;
 				shared_ptr<View> view;
 			};
 		}

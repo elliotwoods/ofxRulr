@@ -3,9 +3,9 @@
 #include "Summary.h"
 
 #include "../Utils/Exception.h"
+#include "../Utils/Initialiser.h"
 
 #include "ofxCvGui.h"
-#include "ofxAssets.h"
 
 using namespace ofxCvGui;
 
@@ -16,7 +16,7 @@ namespace ofxDigitalEmulsion {
 
 		//-----------
 		void World::init(Controller & controller) {
-			ofxAssets::AssetRegister.addAddon("ofxDigitalEmulsion");
+			Utils::initialiser.checkInitialised();
 
 			this->add(MAKE(Summary, *this));
 

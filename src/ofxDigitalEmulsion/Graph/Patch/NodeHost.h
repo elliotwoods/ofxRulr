@@ -8,11 +8,11 @@ namespace ofxDigitalEmulsion {
 			/***
 			Possesses the node
 			*/
-			class NodeHost : ofxCvGui::Element {
+			class NodeHost : public ofxCvGui::Element {
 			public:
 				typedef unsigned int Index;
 
-				NodeHost();
+				NodeHost(shared_ptr<Node>);
 				shared_ptr<Node> getNodeInstance();
 			protected:
 				shared_ptr<Node> node;

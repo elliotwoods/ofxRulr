@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxDigitalEmulsion/Graph/World.h"
+#include "ofxDigitalEmulsion/Graph/Factory.h"
 
 #include "ofxDigitalEmulsion/Item/Camera.h"
 #include "ofxDigitalEmulsion/Item/Projector.h"
@@ -14,6 +15,8 @@
 #include "ofxDigitalEmulsion/Procedure/Calibrate/HomographyFromGraycode.h"
 #include "ofxDigitalEmulsion/Procedure/Scan/Graycode.h"
 #include "ofxDigitalEmulsion/Procedure/Triangulate.h"
+
+#include "ofxDigitalEmulsion/Graph/Patch/Instance.h"
 
 #include "ofxDigitalEmulsion/Utils/Exception.h"
 #include "ofxDigitalEmulsion/Utils/Gui.h"

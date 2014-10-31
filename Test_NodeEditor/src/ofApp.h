@@ -7,8 +7,6 @@
 #include "ofxSplashScreen.h"
 #include "ofxUeye.h"
 
-#include "Graph/Patch/Instance.h"
-
 using namespace ofxMachineVision;
 using namespace ofxDigitalEmulsion;
 using namespace ofxCvGui;

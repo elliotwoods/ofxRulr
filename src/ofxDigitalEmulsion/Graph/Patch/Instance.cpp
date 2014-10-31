@@ -1,5 +1,6 @@
 #include "Instance.h"
 #include "ofxAssets.h"
+#include "ofSystemUtils.h"
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
@@ -22,7 +23,11 @@ namespace ofxDigitalEmulsion {
 				};
 				addButton->onMouse += [this, addButton](ofxCvGui::MouseArguments & args) {
 					if (args.action == ofxCvGui::MouseArguments::Action::Released) {
-						this->patchInstance.addDebug();
+						try
+						{
+							this->patchInstance.addDebug();
+						}
+						OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 					}
 				};
 
@@ -35,6 +40,21 @@ namespace ofxDigitalEmulsion {
 				};
 			}
 			
+			//----------
+			void Instance::View::resync() {
+				this->canvasElements->clear();
+				
+				const auto & nodeHosts = this->patchInstance.getNodeHosts();
+				for (const auto & it : nodeHosts) {
+					this->canvasElements->add(it.second);
+				}
+
+				const auto & linkHosts = this->patchInstance.getLinkHosts();
+				for (const auto & it : linkHosts) {
+					this->canvasElements->add(it.second);
+				}
+			}
+
 			//----------
 			void Instance::View::drawGridLines() {
 				ofPushStyle();
@@ -131,15 +151,54 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void Instance::addDebug() {
+			const Instance::NodeHostSet & Instance::getNodeHosts() const {
+				return this->nodeHosts;
+			}
 
-				make a new node and host and put it in the patch
+			//----------
+			const Instance::LinkHostSet & Instance::getLinkHosts() const {
+				return this->linkHosts;
+			}
+
+			//----------
+			void Instance::addNode(NodeHost::Index index, shared_ptr<Node> node) {
+				auto nodeHost = make_shared<NodeHost>(node);
+				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
+				this->view->resync();
+			}
+
+			//----------
+			void Instance::addNewNode(shared_ptr<BaseFactory> factory) {
+				this->addNode(this->getNextFreeNodeHostIndex(), factory->make());
+			}
+
+			//----------
+			void Instance::addDebug() {
+				auto & factoryRegister = FactoryRegister::X();
+				if (factoryRegister.empty()) {
+					throw(Utils::Exception("FactoryRegister has no entires"));
+				}
+				else {
+					auto firstFactory = factoryRegister.begin();
+					this->addNewNode(firstFactory->second);
+				}
 			}
 
 			//----------
 			void Instance::populateInspector2(ofxCvGui::ElementGroupPtr) {
 
 			}
+
+			//----------
+			NodeHost::Index Instance::getNextFreeNodeHostIndex() const {
+				if (this->nodeHosts.empty()) {
+					return 0;
+				}
+				else {
+					return this->nodeHosts.rbegin()->first + 1;
+				}
+			}
+
 		}
 	}
 }

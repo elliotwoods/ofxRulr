@@ -5,7 +5,7 @@
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		namespace Patch {
-			class Link {
+			class LinkHost : public ofxCvGui::Element {
 			public:
 				typedef unsigned int Index;
 			protected:

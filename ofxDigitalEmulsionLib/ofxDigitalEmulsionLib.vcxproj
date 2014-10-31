@@ -212,6 +212,10 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Factory.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\Instance.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\LinkHost.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\NodeHost.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Summary.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\World.h" />
@@ -229,6 +233,7 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Exception.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Gui.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Utils.h" />
@@ -257,7 +262,10 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Factory.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Patch\Instance.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Patch\NodeHost.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Summary.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp" />
@@ -272,6 +280,7 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Exception.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Gui.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Utils.cpp" />
   </ItemGroup>

@@ -46,12 +46,6 @@
     <ClCompile Include="..\..\..\addons\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp">
       <Filter>addons\ofxNonLinearFit\ofxNonLinearFit\Models</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graph\Patch\Instance.cpp">
-      <Filter>src\Graph\Patch</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graph\Patch\NodeHost.cpp">
-      <Filter>src\Graph\Patch</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -98,12 +92,6 @@
     </Filter>
     <Filter Include="addons\ofxNonLinearFit\ofxNonLinearFit\Models">
       <UniqueIdentifier>{69574dfd-f430-48ec-8919-f47d9d7a7881}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Graph">
-      <UniqueIdentifier>{94ac2661-242c-4b7e-bd4f-7c66d464bd0e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Graph\Patch">
-      <UniqueIdentifier>{d48269eb-0ed7-48ba-9aba-2070a58e4d72}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -163,15 +151,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxNonLinearFit\src\ofxNonLinearFit\Models\Base.h">
       <Filter>addons\ofxNonLinearFit\ofxNonLinearFit\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graph\Patch\Instance.h">
-      <Filter>src\Graph\Patch</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graph\Patch\NodeHost.h">
-      <Filter>src\Graph\Patch</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graph\Patch\LinkHost.h">
-      <Filter>src\Graph\Patch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

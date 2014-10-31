@@ -106,6 +106,9 @@
     <Filter Include="src\ofxDigitalEmulsion\External\Procedure\Calibrate">
       <UniqueIdentifier>{a8346909-c657-4b12-abae-6e888ce4925f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Graph\Patch">
+      <UniqueIdentifier>{1db3640d-a382-45ec-987e-c5d183314537}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
@@ -300,6 +303,21 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Gui.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\LinkHost.h">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\NodeHost.h">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Patch\Instance.h">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Factory.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -421,6 +439,18 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Gui.cpp">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Patch\NodeHost.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Patch\Instance.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph\Patch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.cpp">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Factory.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
