@@ -21,6 +21,7 @@ namespace ofxDigitalEmulsion {
 
 				ofxCvGui::PanelPtr nodeView;
 				ofxCvGui::ElementGroupPtr elements;
+				ofxCvGui::ElementGroupPtr inputPins;
 			};
 		}
 	}

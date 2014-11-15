@@ -52,8 +52,26 @@ namespace ofxDigitalEmulsion {
 				};
 				this->elements->add(resizeHandle);
 
+				this->elements->onBoundsChange += [deleteButton, resizeHandle](ofxCvGui::BoundsChangeArguments & args) {
+					deleteButton->setBounds(ofRectangle(args.bounds.getWidth() - 32 - 4, 4, 32, 32));
+					resizeHandle->setBounds(ofRectangle(args.bounds.getWidth() - 32 - 4, args.bounds.getHeight() - 32 - 4, 32, 32));
+				};
+
+				this->inputPins = make_shared<ofxCvGui::ElementGroup>();
+				for (auto inputPin : node->getInputPins()) {
+					this->inputPins->add(inputPin);
+				};
+				this->inputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
+					int y = 0;
+					for (auto inputPin : this->getNodeInstance()->getInputPins()) {
+						inputPin->setBounds(ofRectangle(0, y, 100, 20));
+						y += 20;
+					}
+				};
+
 				this->nodeView->addListenersToParent(this);
 				this->elements->addListenersToParent(this, true);
+				this->inputPins->addListenersToParent(this);
 
 				this->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
 					ofPushStyle();
@@ -87,16 +105,7 @@ namespace ofxDigitalEmulsion {
 					viewBounds.y += 2;
 					viewBounds.height -= 4;
 					this->nodeView->setBounds(viewBounds);
-
-					deleteButton->setBounds(ofRectangle(this->getWidth() - 32 - 4, 4, 32, 32));
-					resizeHandle->setBounds(ofRectangle(this->getWidth() - 32 - 4, this->getHeight() - 32 - 4, 32, 32));
-					
-					auto node = this->getNodeInstance();
-					auto inputPins = node->getInputPins();
-					int pinIndex = 0;
-					for (auto inputPin : inputPins) {
-						inputPin->setBounds(ofRectangle(0, 20 + 20 * pinIndex, 100, 20));
-					}
+					this->inputPins->setBounds(ofRectangle(2, 10, 100 - 4, this->getHeight() - 20));
 				};
 
 				this->onMouse += [this](ofxCvGui::MouseArguments & args) {
