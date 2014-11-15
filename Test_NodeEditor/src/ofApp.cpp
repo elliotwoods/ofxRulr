@@ -20,7 +20,7 @@ void ofApp::setup2(){
 	//auto cameraCalibrateNode = MAKE(Procedure::Calibrate::CameraIntrinsics);
 	//this->world.add(cameraCalibrateNode);
 
-	auto patchInstance = MAKE(ofxDigitalEmulsion::Graph::Patch::Instance);
+	auto patchInstance = MAKE(ofxDigitalEmulsion::Graph::Editor::Patch);
 	this->world.add(patchInstance);
 
 	this->gui.init();

@@ -25,7 +25,9 @@ namespace ofxDigitalEmulsion {
 			}
 
 			shared_ptr<NodeType> makeTyped() {
-				return make_shared<NodeType>();
+				auto node = make_shared<NodeType>();
+				node->init();
+				return node;
 			}
 		};
 

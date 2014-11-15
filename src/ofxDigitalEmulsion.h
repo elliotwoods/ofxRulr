@@ -16,7 +16,7 @@
 #include "ofxDigitalEmulsion/Procedure/Scan/Graycode.h"
 #include "ofxDigitalEmulsion/Procedure/Triangulate.h"
 
-#include "ofxDigitalEmulsion/Graph/Patch/Instance.h"
+#include "ofxDigitalEmulsion/Graph/Editor/Patch.h"
 
 #include "ofxDigitalEmulsion/Utils/Exception.h"
 #include "ofxDigitalEmulsion/Utils/Gui.h"

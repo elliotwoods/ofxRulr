@@ -27,7 +27,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		PinSet Node::getInputPins() const {
+		const PinSet & Node::getInputPins() const {
 			return this->inputPins;
 		}
 

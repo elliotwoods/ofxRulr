@@ -9,7 +9,7 @@ namespace ofxDigitalEmulsion {
 		class Set : public vector<shared_ptr<BaseType> > {
 		public:
 			template<typename T>
-			shared_ptr<T> get()  {
+			shared_ptr<T> get()  const {
 				for(auto item : * this) {
 					auto castItem = dynamic_pointer_cast<T>(item);
 					if (castItem != NULL) {

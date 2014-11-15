@@ -3,6 +3,7 @@
 #include "../Utils/Set.h"
 
 #include "../../../addons/ofxLiquidEvent/src/ofxLiquidEvent.h"
+#include "../../../addons/ofxCvGui/src/ofxCvGui/Element.h"
 
 #include <string>
 #include <memory>
@@ -12,7 +13,7 @@ using namespace std;
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
-		class BasePin {
+		class BasePin : public ofxCvGui::Element {
 		public:
 			BasePin(string name);
 			virtual string getTypeName() = 0;

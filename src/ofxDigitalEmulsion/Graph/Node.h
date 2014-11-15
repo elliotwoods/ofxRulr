@@ -17,7 +17,7 @@ namespace ofxDigitalEmulsion {
 			string getName() const override;
 			void setName(const string);
 
-			PinSet getInputPins() const;
+			const PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr) override;
 			virtual ofxCvGui::PanelPtr getView() = 0;
 			virtual void update() { }
