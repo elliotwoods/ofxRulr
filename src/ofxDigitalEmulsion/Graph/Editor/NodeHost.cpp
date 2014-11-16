@@ -43,7 +43,7 @@ namespace ofxDigitalEmulsion {
 					ofPopStyle();
 				};
 				resizeHandle->onMouse += [this, resizeHandle](ofxCvGui::MouseArguments & args) {
-					if (args.action == ofxCvGui::MouseArguments::Action::Dragged) {
+					if (args.isDragging(resizeHandle.get())) {
 						auto newBounds = this->getBounds();
 						newBounds.width += args.movement.x;
 						newBounds.height += args.movement.y;
@@ -69,15 +69,18 @@ namespace ofxDigitalEmulsion {
 					}
 				};
 
-				this->nodeView->addListenersToParent(this);
-				this->elements->addListenersToParent(this, true);
-				this->inputPins->addListenersToParent(this);
-
-				this->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
+				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					ofPushStyle();
 
-					//background for node
+					//shadow for node
 					ofFill();
+					ofSetColor(0, 100);
+					ofPushMatrix();
+					ofTranslate(5, 5);
+					ofRectRounded(this->getLocalBounds(), 10.0f);
+					ofPopMatrix();
+
+					//background for node
 					ofSetColor(100);
 					ofRectRounded(this->getLocalBounds(), 10.0f);
 
@@ -85,7 +88,7 @@ namespace ofxDigitalEmulsion {
 					ofSetColor(30);
 					ofRect(this->nodeView->getBounds());
 					ofPopStyle();
-				}, -1, this);
+				};
 
 				this->onBoundsChange += [this, deleteButton, resizeHandle](ofxCvGui::BoundsChangeArguments & args) {
 					const int minWidth = 200 + 200;
@@ -112,13 +115,23 @@ namespace ofxDigitalEmulsion {
 					//if didn't click anything inside, we'll have the click ourselves
 					args.takeMousePress(this);
 
-					if (args.action == ofxCvGui::MouseArguments::Action::Dragged && args.getOwner() == this) {
+					if (args.isDragging(this)) {
 						auto newBounds = this->getBounds();
 						newBounds.x += args.movement.x;
 						newBounds.y += args.movement.y;
+						if (newBounds.x < 0) {
+							newBounds.x = 0;
+						}
+						if (newBounds.y < 0) {
+							newBounds.y = 0;
+						}
 						this->setBounds(newBounds);
 					}
 				};
+
+				this->nodeView->addListenersToParent(this);
+				this->elements->addListenersToParent(this, true);
+				this->inputPins->addListenersToParent(this);
 
 				this->setBounds(ofRectangle(600, 300, 200, 200));
 			}
