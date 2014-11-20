@@ -214,6 +214,7 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\Patch.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\LinkHost.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeHost.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\PinView.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Factory.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h" />
@@ -262,8 +263,10 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\LinkHost.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\Patch.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeHost.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\PinView.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Factory.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />

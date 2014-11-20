@@ -20,7 +20,9 @@ namespace ofxDigitalEmulsion {
 					View(Patch &);
 					//const shared_ptr<ofxCvGui::Panels::Base> findScreen(const ofVec2f & xy, ofRectangle & currentPanelBounds) override;
 					void resync();
+					shared_ptr<NodeHost> getNodeHostUnderCursor(const ofVec2f & cursorInCanvas);
 				protected:
+					ofVec2f lastCursorPositionInCanvas;
 					void drawGridLines();
 					Patch & patchInstance;
 				};
@@ -34,19 +36,29 @@ namespace ofxDigitalEmulsion {
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
+				void rebuildLinkHosts();
+
 				const NodeHostSet & getNodeHosts() const;
 				const LinkHostSet & getLinkHosts() const;
 
 				void addNode(NodeHost::Index index, shared_ptr<Node>);
 				void addNewNode(shared_ptr<BaseFactory>);
 				void addDebug();
+
+				shared_ptr<TemporaryLinkHost> getNewLink() const;
+				shared_ptr<NodeHost> findNodeHost(shared_ptr<Node>) const;
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				NodeHost::Index getNextFreeNodeHostIndex() const;
+				LinkHost::Index getNextFreeLinkHostIndex() const;
+				void callbackBeginMakeConnection(shared_ptr<NodeHost> targetNodeHost, shared_ptr<BasePin> targetPin);
+				void callbackReleaseMakeConnection();
 
 				NodeHostSet nodeHosts;
 				LinkHostSet linkHosts;
 				shared_ptr<View> view;
+
+				shared_ptr<TemporaryLinkHost> newLink;
 			};
 		}
 	}

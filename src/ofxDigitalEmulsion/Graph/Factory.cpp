@@ -22,8 +22,8 @@ namespace ofxDigitalEmulsion {
 				auto factoryRegister = new FactoryRegister();
 				FactoryRegister::singleton = factoryRegister;
 
-				//factoryRegister->add(make_shared<Factory<Item::Board>>());
-				//factoryRegister->add(make_shared<Factory<Item::Camera>>());
+				factoryRegister->add(make_shared<Factory<Item::Board>>());
+				factoryRegister->add(make_shared<Factory<Item::Camera>>());
 				//factoryRegister->add(make_shared<Factory<Item::Projector>>());
 				//factoryRegister->add(make_shared<Factory<Device::ProjectorOutput>>());
 				factoryRegister->add(make_shared<Factory<Procedure::Calibrate::CameraIntrinsics>>());

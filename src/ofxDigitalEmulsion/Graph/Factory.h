@@ -41,7 +41,7 @@ namespace ofxDigitalEmulsion {
 			template<typename NodeType>
 			shared_ptr<Factory<NodeType>> get() {
 				auto untypedFactory = this->get(NodeType().getTypeName());
-				auto typedFactory = dynamic_cast<Factory<NodeType>>(untypedFactory);
+				auto typedFactory = dynamic_pointer_cast<Factory<NodeType>>(untypedFactory);
 				return typedFactory;
 			}
 

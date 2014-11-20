@@ -61,13 +61,13 @@ namespace ofxDigitalEmulsion {
 				if (nodeView) {
 					gridGroup->add(nodeView);
 
-					nodeView->onMouse.addListener([node] (MouseArguments & mouse) {
-						if (mouse.takeMousePress(node.get()) && mouse.button == 0) {
-							if (!ofxCvGui::isBeingInspected(* node)) {
-								ofxCvGui::inspect(* node);
+					nodeView->onMouse += [node] (MouseArguments & mouse) {
+						if (mouse.action == ofxCvGui::MouseArguments::Action::Pressed) {
+							if (!ofxCvGui::isBeingInspected(*node)) {
+								ofxCvGui::inspect(*node);
 							}
 						}
-					}, -1, this);
+					};
 
 					nodeView->onDraw += [node] (DrawArguments & drawArgs) {
 						if (isBeingInspected(* node)) {

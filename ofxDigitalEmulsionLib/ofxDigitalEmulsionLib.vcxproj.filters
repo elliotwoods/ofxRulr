@@ -318,6 +318,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\Patch.h">
       <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\PinView.h">
+      <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -450,6 +453,12 @@
       <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\Patch.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\LinkHost.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\PinView.cpp">
       <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
     </ClCompile>
   </ItemGroup>
