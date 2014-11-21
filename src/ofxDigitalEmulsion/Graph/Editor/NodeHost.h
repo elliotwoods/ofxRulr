@@ -20,7 +20,7 @@ namespace ofxDigitalEmulsion {
 				ofVec2f getOutputPinPositionGlobal() const;
 
 				ofxLiquidEvent<const shared_ptr<BasePin>> onBeginMakeConnection;
-				ofxLiquidEvent<const shared_ptr<BasePin>> onReleaseMakeConnection;
+				ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
 			protected:
 				ofVec2f getOutputPinPosition() const;
 				shared_ptr<Node> node;

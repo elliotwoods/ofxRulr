@@ -21,6 +21,7 @@ namespace ofxDigitalEmulsion {
 			virtual string getTypeName() = 0;
 			virtual string getNodeTypeName() = 0;
 			virtual void connect(shared_ptr<Node> node) = 0;
+			virtual void resetConnection() = 0;
 			virtual bool isConnected() const = 0;
 			virtual bool checkSupports(shared_ptr<Node>) const = 0;
 			virtual shared_ptr<Node> getConnectionUntyped() const = 0;
@@ -29,7 +30,7 @@ namespace ofxDigitalEmulsion {
 			ofVec2f getPinHeadPosition() const;
 
 			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
-			ofxLiquidEvent<ofEventArgs> onReleaseMakeConnection;
+			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
 		protected:
 			shared_ptr<Editor::PinView> pinView;
 		private:
@@ -54,29 +55,32 @@ namespace ofxDigitalEmulsion {
 				this->connection = node;
 				this->onNewConnection(node);
 			}
-			void connect(shared_ptr<Node> node) {
+			void connect(shared_ptr<Node> node) override {
 				auto castNode = dynamic_pointer_cast<NodeType>(node);
 				if (!castNode) {
 					throw(ofxDigitalEmulsion::Utils::Exception("Cannot connect Pin of type [" + this->getNodeTypeName() + "] to Node of type [" + node->getTypeName() + "]"));
 				}
 				this->connect(castNode);
 			}
+			void resetConnection() override {
+				this->connection.reset();
+			}
 			shared_ptr<NodeType> getConnection() {
-				return this->connection;
+				return this->connection.lock();
 			}
 			bool isConnected() const override {
-				return (bool) this->connection;
+				return !this->connection.expired();
 			}
 			bool checkSupports(shared_ptr<Node> node) const override {
 				return (bool)dynamic_pointer_cast<NodeType>(node);
 			}
 			shared_ptr<Node> getConnectionUntyped() const override {
-				return this->connection;
+				return this->connection.lock();
 			}
 			
 			ofxLiquidEvent<shared_ptr<NodeType> > onNewConnection;
 		protected:
-			shared_ptr<NodeType> connection;
+			weak_ptr<NodeType> connection;
 		};
 
 		typedef Utils::Set<BasePin> PinSet;

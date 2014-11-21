@@ -1,5 +1,6 @@
 #include "NodeHost.h"
 #include "ofxAssets.h"
+#include "ofxCvGui.h"
 
 using namespace ofxAssets;
 
@@ -67,8 +68,8 @@ namespace ofxDigitalEmulsion {
 					inputPin->onBeginMakeConnection += [this, inputPin](ofEventArgs &) {
 						this->onBeginMakeConnection(inputPin);
 					};
-					inputPin->onReleaseMakeConnection += [this, inputPin](ofEventArgs &) {
-						this->onReleaseMakeConnection(inputPin);
+					inputPin->onReleaseMakeConnection += [this, inputPin](ofxCvGui::MouseArguments & args) {
+						this->onReleaseMakeConnection(args);
 					};
 				};
 				this->inputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
@@ -126,9 +127,6 @@ namespace ofxDigitalEmulsion {
 				};
 
 				this->onMouse += [this](ofxCvGui::MouseArguments & args) {
-					//if didn't click anything inside, we'll have the click ourselves
-					args.takeMousePress(this);
-
 					if (args.isDragging(this)) {
 						auto newBounds = this->getBounds();
 						newBounds.x += args.movement.x;
@@ -140,6 +138,14 @@ namespace ofxDigitalEmulsion {
 							newBounds.y = 0;
 						}
 						this->setBounds(newBounds);
+					}
+					
+					//if no children took the mouse press, then we'll have it to block it going down
+					args.takeMousePress(this);
+
+					if (args.action == ofxCvGui::MouseArguments::Pressed) {
+						// mouse went down somewhere inside this element (regardless of where it's taken)
+						ofxCvGui::inspect(this->getNodeInstance());
 					}
 				};
 

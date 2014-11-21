@@ -28,13 +28,18 @@ namespace ofxDigitalEmulsion {
 			};
 			this->onMouse += [this](ofxCvGui::MouseArguments & args) {
 				if (args.takeMousePress(this)) {
-					ofEventArgs dummyArgs;
-					this->onBeginMakeConnection(dummyArgs);
-					this->globalElementPosition = args.global - args.local;
+					if (args.button == 0) {
+						ofEventArgs dummyArgs;
+						this->onBeginMakeConnection(dummyArgs);
+						this->globalElementPosition = args.global - args.local;
+					}
+					else if (args.button == 2) {
+						this->resetConnection();
+					}
+					
 				}
 				else if (args.action == ofxCvGui::MouseArguments::Action::Released) {
-					ofEventArgs dummyArgs;
-					this->onReleaseMakeConnection(dummyArgs);
+					this->onReleaseMakeConnection(args);
 				}
 			};
 			this->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {

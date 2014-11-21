@@ -5,12 +5,13 @@
 #include "../Utils/Serializable.h"
 #include "../Utils/Exception.h"
 
-#include "../../../addons/ofxCvGui/src/ofxCvGui/Widgets/IInspectable.h"
+#include "../../../addons/ofxCvGui/src/ofxCvGui/InspectController.h"
+
 #include <string>
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
-		class Node : public ofxCvGui::Widgets::IInspectable, public Utils::Serializable {
+		class Node : public ofxCvGui::IInspectable, public Utils::Serializable {
 		public:
 			virtual void init() { };
 

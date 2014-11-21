@@ -61,13 +61,11 @@ namespace ofxDigitalEmulsion {
 				if (nodeView) {
 					gridGroup->add(nodeView);
 
-					nodeView->onMouse += [node] (MouseArguments & mouse) {
+					nodeView->onMouse.addListener([node] (MouseArguments & mouse) {
 						if (mouse.action == ofxCvGui::MouseArguments::Action::Pressed) {
-							if (!ofxCvGui::isBeingInspected(*node)) {
-								ofxCvGui::inspect(*node);
-							}
+							ofxCvGui::inspect(node);
 						}
-					};
+					}, -100, this);
 
 					nodeView->onDraw += [node] (DrawArguments & drawArgs) {
 						if (isBeingInspected(* node)) {
@@ -87,7 +85,7 @@ namespace ofxDigitalEmulsion {
 			auto inspector = ofxCvGui::Builder::makeInspector();
 			rootGroup->add(inspector);
 
-			Panels::Inspector::onClear += [this] (ElementGroupPtr inspector) {
+			InspectController::X().onClear += [this] (ElementGroupPtr inspector) {
 				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));
@@ -102,7 +100,7 @@ namespace ofxDigitalEmulsion {
 			World::gui = & controller;
 			
 			if (!this->empty()) {
-				ofxCvGui::inspect(* this->front());
+				ofxCvGui::inspect(this->front());
 			}
 		}
 

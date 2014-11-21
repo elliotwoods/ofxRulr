@@ -52,7 +52,7 @@ namespace ofxDigitalEmulsion {
 				NodeHost::Index getNextFreeNodeHostIndex() const;
 				LinkHost::Index getNextFreeLinkHostIndex() const;
 				void callbackBeginMakeConnection(shared_ptr<NodeHost> targetNodeHost, shared_ptr<BasePin> targetPin);
-				void callbackReleaseMakeConnection();
+				void callbackReleaseMakeConnection(ofxCvGui::MouseArguments &);
 
 				NodeHostSet nodeHosts;
 				LinkHostSet linkHosts;

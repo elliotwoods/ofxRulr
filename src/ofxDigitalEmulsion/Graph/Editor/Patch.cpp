@@ -229,8 +229,8 @@ namespace ofxDigitalEmulsion {
 				nodeHost->onBeginMakeConnection += [this, nodeHost](const shared_ptr<BasePin> & inputPin) {
 					this->callbackBeginMakeConnection(nodeHost, inputPin);
 				};
-				nodeHost->onReleaseMakeConnection += [this](const shared_ptr<BasePin> &) {
-					this->callbackReleaseMakeConnection();
+				nodeHost->onReleaseMakeConnection += [this](ofxCvGui::MouseArguments & args) {
+					this->callbackReleaseMakeConnection(args);
 				};
 				this->view->resync();
 			}
@@ -303,14 +303,18 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void Patch::callbackReleaseMakeConnection() {
-				if (this->newLink->flushConnection()) {
-					//we made a new connection
-
-					//get rid of the temporary connection
+			void Patch::callbackReleaseMakeConnection(ofxCvGui::MouseArguments & args) {
+				if (args.button == 2) {
+					//right click, clear the link
 					this->newLink.reset();
+					this->view->resync();
+				}
+				else if (args.button == 0) {
+					//left click, try and make the link
+					this->newLink->flushConnection();
 
-					//update the view
+					//clear the temporary link regardless of success
+					this->newLink.reset();
 					this->view->resync();
 				}
 			}
