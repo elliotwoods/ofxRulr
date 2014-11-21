@@ -4,12 +4,23 @@
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
+		class Node;
+
 		namespace Editor {
+
 			class PinView : public ofxCvGui::Element {
 			public:
-				PinView(string nodeTypeName);
-				void setTypeName(string nodeTypeName);
+				PinView();
+
+				void setup(Node & node);
+
+				template<typename NodeType>
+				void setup() {
+					NodeType tempNode;
+					this->setup(tempNode);
+				}
 			protected:
+				ofImage * icon;
 				string nodeTypeName;
 			};
 		}

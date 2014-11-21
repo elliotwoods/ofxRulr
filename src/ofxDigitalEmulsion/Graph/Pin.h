@@ -43,10 +43,10 @@ namespace ofxDigitalEmulsion {
 		class Pin : public BasePin {
 		public:
 			Pin(string name) : BasePin(name) { 
-				this->pinView->setTypeName(this->getNodeTypeName());
+				this->pinView->setup<NodeType>();
 			}
-			Pin() : BasePin(this->getNodeTypeName()) { 
-				this->pinView->setTypeName(this->getNodeTypeName());
+			Pin() : BasePin(this->getNodeTypeName()) {
+				this->pinView->setup<NodeType>();
 			}
 
 			string getTypeName() override { return string("Pin::") + this->getNodeTypeName(); }

@@ -10,6 +10,7 @@ namespace ofxDigitalEmulsion {
 		class Projector : public Base {
 		public:
 			Projector();
+			void init() override;
 			string getTypeName() const;
 			ofxCvGui::PanelPtr getView() override;
 

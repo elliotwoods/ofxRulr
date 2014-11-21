@@ -55,6 +55,10 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
+			void HomographyFromGraycode::init() {
+			}
+
+			//----------
 			string HomographyFromGraycode::getTypeName() const {
 				return "HomographyFromGraycode";
 			}

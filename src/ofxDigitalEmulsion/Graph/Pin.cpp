@@ -5,27 +5,26 @@ namespace ofxDigitalEmulsion {
 	namespace Graph {
 		//----------
 		BasePin::BasePin(string name) : name(name) {
-			this->pinView = make_shared<Editor::PinView>("");
+			this->pinView = make_shared<Editor::PinView>();
 
 			this->onDraw += [this](ofxCvGui::DrawArguments & args) {
+				//hover mouse
 				if (this->isMouseOver() && this->getMouseState() == LocalMouseState::Waiting) {
 					ofPushStyle();
-					ofSetColor(120);
+					ofSetColor(100);
 					ofRect(args.localBounds);
 					ofPopStyle();
 				}
 
 				ofPushStyle();
+				ofSetLineWidth(6.0f);
 				if (this->isConnected()) {
-					ofFill();
 					ofSetColor(100, 200, 100);
-					ofCircle(this->pinHeadPosition, 5.0f);
 				}
-				ofSetLineWidth(1.0f);
-				ofNoFill();
-				ofCircle(this->pinHeadPosition, 5.0f);
+				ofLine(this->getPinHeadPosition(), this->getPinHeadPosition() + ofVec2f(10.0f, 0.0f));
 				ofPopStyle();
 			};
+
 			this->onMouse += [this](ofxCvGui::MouseArguments & args) {
 				if (args.takeMousePress(this)) {
 					if (args.button == 0) {
@@ -42,11 +41,13 @@ namespace ofxDigitalEmulsion {
 					this->onReleaseMakeConnection(args);
 				}
 			};
+
 			this->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
 				auto ourBounds = this->getLocalBounds();
-				this->pinHeadPosition = ourBounds.getTopLeft() + ofVec2f(10.0f, ourBounds.getHeight() / 2.0f);
-				this->pinView->setBounds(ofRectangle(this->getPinHeadPosition() + ofVec2f(16, -16), 32, 32));
+				this->pinHeadPosition = ourBounds.getTopLeft() + ofVec2f(0.0f, ourBounds.getHeight() / 2.0f);
+				this->pinView->setBounds(ofRectangle(this->getPinHeadPosition() + ofVec2f(32, -16), 32, 32));
 			};
+
 			this->setBounds(ofRectangle(0, 0, 100, 20));
 
 			this->pinView->addListenersToParent(this);

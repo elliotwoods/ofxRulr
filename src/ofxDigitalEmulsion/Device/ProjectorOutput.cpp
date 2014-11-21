@@ -78,6 +78,10 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void ProjectorOutput::init() {
+		}
+
+		//----------
 		string ProjectorOutput::getTypeName() const {
 			return "ProjectorOutput";
 		}

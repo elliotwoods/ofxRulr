@@ -8,6 +8,7 @@ namespace ofxDigitalEmulsion {
 		class Checkerboard : public Base {
 		public:
 			Checkerboard();
+			void init();
 			string getTypeName() const override;
 			ofxCvGui::PanelPtr getView();
 

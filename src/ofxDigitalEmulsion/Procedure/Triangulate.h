@@ -11,6 +11,7 @@ namespace ofxDigitalEmulsion {
 		class Triangulate : public Base {
 		public:
 			Triangulate();
+			void init();
 			string getTypeName() const override;
 			ofxCvGui::PanelPtr getView() override;
 

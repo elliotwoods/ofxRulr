@@ -18,6 +18,10 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void Checkerboard::init() {
+		}
+
+		//----------
 		string Checkerboard::getTypeName() const {
 			return "Checkerboard";
 		}

@@ -7,16 +7,25 @@
 
 #include "../../../addons/ofxCvGui/src/ofxCvGui/InspectController.h"
 
+#include "ofImage.h"
+#include "ofxAssets.h"
+
 #include <string>
+
+#define SETUP_ICON(X) void X::setupIcon() { \
+	this->setIcon(ofxAssets::image("Nodes::" + this->getTypeName())) \
+}
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		class Node : public ofxCvGui::IInspectable, public Utils::Serializable {
 		public:
+			Node();
 			virtual void init() { };
-
 			string getName() const override;
 			void setName(const string);
+
+			ofImage & getIcon();
 
 			const PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr) override;
@@ -61,10 +70,14 @@ namespace ofxDigitalEmulsion {
 			void removeInput(shared_ptr<BasePin>);
 			void clearInputs();
 
+			void setupIcon();
+
 			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
 			string name;
+			string defaultIconName;
 		private:
 			PinSet inputPins;
+			ofImage * icon;
 		};
 	}
 }

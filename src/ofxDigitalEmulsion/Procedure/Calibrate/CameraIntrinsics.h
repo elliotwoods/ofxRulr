@@ -9,6 +9,7 @@ namespace ofxDigitalEmulsion {
 			class CameraIntrinsics : public Base {
 			public:
 				CameraIntrinsics();
+				void init() override;
 				string getTypeName() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;

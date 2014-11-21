@@ -34,6 +34,10 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
+			void ProjectorIntrinsicsExtrinsics::init() {
+			}
+				
+			//----------
 			string ProjectorIntrinsicsExtrinsics::getTypeName() const {
 				return "ProjectorIntrinsicsExtrinsics";
 			}

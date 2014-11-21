@@ -11,6 +11,7 @@ namespace ofxDigitalEmulsion {
 			class Graycode : public Procedure::Base {
 			public:
 				Graycode();
+				void init() override;
 				string getTypeName() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;

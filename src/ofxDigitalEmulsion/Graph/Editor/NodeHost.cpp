@@ -20,28 +20,13 @@ namespace ofxDigitalEmulsion {
 				*/
 
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
-
-				auto deleteButton = make_shared<ofxCvGui::Utils::Button>();
-				deleteButton->onDrawUp += [](ofxCvGui::DrawArguments & args) {
-					image("ofxDigitalEmulsion::cross").draw(args.localBounds);
-				};
-				deleteButton->onDrawDown += [](ofxCvGui::DrawArguments & args) {
-					ofPushStyle();
-					ofSetColor(100);
-					image("ofxDigitalEmulsion::cross").draw(args.localBounds);
-					ofPopStyle();
-				};
-				this->elements->add(deleteButton);
 				
 				auto resizeHandle = make_shared<ofxCvGui::Utils::Button>();
 				resizeHandle->onDrawUp += [](ofxCvGui::DrawArguments & args) {
-					image("ofxDigitalEmulsion::scaleAlongLine").draw(args.localBounds);
+					image("ofxDigitalEmulsion::resizeHandle").draw(args.localBounds);
 				};
 				resizeHandle->onDrawDown += [](ofxCvGui::DrawArguments & args) {
-					ofPushStyle();
-					ofSetColor(100);
-					image("ofxDigitalEmulsion::scaleAlongLine").draw(args.localBounds);
-					ofPopStyle();
+					image("ofxDigitalEmulsion::resizeHandle").draw(args.localBounds);
 				};
 				resizeHandle->onMouse += [this, resizeHandle](ofxCvGui::MouseArguments & args) {
 					if (args.isDragging(resizeHandle.get())) {
@@ -53,13 +38,15 @@ namespace ofxDigitalEmulsion {
 				};
 				this->elements->add(resizeHandle);
 
-				auto pinView = make_shared<PinView>(node->getTypeName());
-				this->elements->add(pinView);
+				auto outputPinView = make_shared<PinView>();
+				outputPinView->setup(*this->getNodeInstance());
+				this->elements->add(outputPinView);
 
-				this->elements->onBoundsChange += [deleteButton, resizeHandle, pinView, this](ofxCvGui::BoundsChangeArguments & args) {
-					deleteButton->setBounds(ofRectangle(args.bounds.getWidth() - 32 - 4, 4, 32, 32));
-					resizeHandle->setBounds(ofRectangle(args.bounds.getWidth() - 32 - 4, args.bounds.getHeight() - 32 - 4, 32, 32));
-					pinView->setBounds(ofRectangle(this->getOutputPinPosition() - ofVec2f(16 + 64, 32), 64, 64));
+				this->elements->onBoundsChange += [resizeHandle, outputPinView, this](ofxCvGui::BoundsChangeArguments & args) {
+					auto & resizeImage = image("ofxDigitalEmulsion::resizeHandle");
+					resizeHandle->setBounds(ofRectangle(args.bounds.getWidth() - resizeImage.getWidth(), args.bounds.getHeight() - resizeImage.getHeight(), resizeImage.getWidth(), resizeImage.getHeight()));
+					const auto iconSize = 48;
+					outputPinView->setBounds(ofRectangle(this->getOutputPinPosition() - ofVec2f(iconSize + 32, iconSize / 2), iconSize, iconSize));
 				};
 
 				this->inputPins = make_shared<ofxCvGui::ElementGroup>();
@@ -73,8 +60,23 @@ namespace ofxDigitalEmulsion {
 					};
 				};
 				this->inputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
-					this->inputPins->layoutGridVertical(20.0f);
+					this->inputPins->layoutGridVertical();
 				};
+				this->inputPins->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
+					ofPushStyle();
+					ofSetLineWidth(1.0f);
+					ofSetColor(50);
+					bool first = true;
+					for (auto pin : this->inputPins->getElements()) {
+						if (first) {
+							first = false;
+						}
+						else {
+							ofLine(pin->getBounds().getTopLeft(), pin->getBounds().getTopRight());
+						}
+					}
+					ofPopStyle();
+				}, -1, this);
 
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					ofPushStyle();
@@ -84,12 +86,12 @@ namespace ofxDigitalEmulsion {
 					ofSetColor(0, 100);
 					ofPushMatrix();
 					ofTranslate(5, 5);
-					ofRectRounded(this->getLocalBounds(), 16.0f);
+					ofRect(this->getLocalBounds());
 					ofPopMatrix();
 
 					//background for node
-					ofSetColor(100);
-					ofRectRounded(this->getLocalBounds(), 16.0f);
+					ofSetColor(80);
+					ofRect(this->getLocalBounds());
 
 					//background for nodeView
 					ofSetColor(30);
@@ -98,12 +100,12 @@ namespace ofxDigitalEmulsion {
 
 					//output pin
 					ofPushStyle();
-					ofFill();
-					ofCircle(this->getOutputPinPosition(), 5.0f);
+					ofSetLineWidth(6.0f);
+					ofLine(this->getOutputPinPosition(), this->getOutputPinPosition() - ofVec2f(10.0f, 0.0f));
 					ofPopStyle();
 				};
 
-				this->onBoundsChange += [this, deleteButton, resizeHandle](ofxCvGui::BoundsChangeArguments & args) {
+				this->onBoundsChange += [this, resizeHandle](ofxCvGui::BoundsChangeArguments & args) {
 					const int minWidth = 200 + 200;
 					const int minHeight = 150;
 
@@ -117,13 +119,13 @@ namespace ofxDigitalEmulsion {
 
 					auto viewBounds = args.localBounds;
 					viewBounds.x = 85;
-					viewBounds.width -= 195;
-					viewBounds.y = 2;
-					viewBounds.height -= 4;
+					viewBounds.width -= 185;
+					viewBounds.y = 1;
+					viewBounds.height -= 2;
 					this->nodeView->setBounds(viewBounds);
-					this->inputPins->setBounds(ofRectangle(2, 10, viewBounds.x - 4, this->getHeight() - 20));
+					this->inputPins->setBounds(ofRectangle(0, 0, viewBounds.x, this->getHeight()));
 
-					this->outputPinPosition = ofVec2f(this->getWidth() - 12, this->getHeight() / 2.0f);
+					this->outputPinPosition = ofVec2f(this->getWidth(), this->getHeight() / 2.0f);
 				};
 
 				this->onMouse += [this](ofxCvGui::MouseArguments & args) {

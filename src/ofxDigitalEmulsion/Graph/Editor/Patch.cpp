@@ -53,6 +53,14 @@ namespace ofxDigitalEmulsion {
 					if (newLink) {
 						newLink->draw(args);
 					}
+					auto selection = this->patchInstance.selection.lock();
+					if (selection) {
+						ofPushStyle();
+						ofSetLineWidth(1.0f);
+						ofNoFill();
+						ofRect(selection->getBounds());
+						ofPopStyle();
+					}
 				};
 
 				this->getCanvasElementGroup()->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
@@ -60,6 +68,12 @@ namespace ofxDigitalEmulsion {
 				}, -1, this);
 				this->onBoundsChange += [this, addButton](ofxCvGui::BoundsChangeArguments & args) {
 					addButton->setBounds(ofRectangle(100, 100, 100, 100));
+				};
+
+				this->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
+					if (args.key == OF_KEY_BACKSPACE || args.key == OF_KEY_DEL) {
+						this->patchInstance.deleteSelection();
+					}
 				};
 			}
 			
@@ -190,7 +204,14 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void Patch::update() {
-
+				//update selection
+				this->selection.reset();
+				for (auto nodeHost : this->nodeHosts) {
+					if (ofxCvGui::isBeingInspected(nodeHost.second->getNodeInstance())) {
+						this->selection = nodeHost.second;
+						break;
+					}
+				}
 			}
 
 			//----------
@@ -255,6 +276,18 @@ namespace ofxDigitalEmulsion {
 
 					this->addNewNode(it->second);
 				}
+			}
+
+			//----------
+			void Patch::deleteSelection() {
+				auto selection = this->selection.lock();
+				for (auto nodeHost : this->nodeHosts) {
+					if (nodeHost.second == selection) {
+						this->nodeHosts.erase(nodeHost.first);
+						break;
+					}
+				}
+				this->view->resync();
 			}
 
 			//----------

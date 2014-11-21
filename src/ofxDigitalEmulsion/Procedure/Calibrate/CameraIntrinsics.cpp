@@ -29,6 +29,10 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
+			void CameraIntrinsics::init() {
+			}
+
+			//----------
 			string CameraIntrinsics::getTypeName() const {
 				return "CameraIntrinsics";
 			}

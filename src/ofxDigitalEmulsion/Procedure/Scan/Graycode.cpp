@@ -28,6 +28,9 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
+			void Graycode::init() {
+			}
+			//----------
 			string Graycode::getTypeName() const {
 				return "Graycode";
 			}

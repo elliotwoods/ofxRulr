@@ -15,6 +15,7 @@ namespace ofxDigitalEmulsion {
 				};
 
 				ProjectorIntrinsicsExtrinsics();
+				void init() override;
 				string getTypeName() const override;
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;

@@ -17,6 +17,7 @@ namespace ofxDigitalEmulsion {
 			};
 
 			ProjectorOutput();
+			void init() override;
 			string getTypeName() const override;
 			void serialize(Json::Value &) override;
 			void deserialize(const Json::Value &) override;

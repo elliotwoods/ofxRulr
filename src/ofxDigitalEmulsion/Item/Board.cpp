@@ -17,6 +17,10 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void Board::init() {
+		}
+
+		//----------
 		string Board::getTypeName() const {
 			return "Board";
 		}

@@ -9,6 +9,12 @@ using namespace ofxCvGui;
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		//----------
+		Node::Node() {
+			this->icon = 0;
+			this->defaultIconName = "Default";
+		}
+
+		//----------
 		string Node::getName() const {
 			if (this->name.empty()) {
 				return this->getTypeName();
@@ -24,6 +30,12 @@ namespace ofxDigitalEmulsion {
 			if (view) {
 				view->setCaption(this->name);
 			}
+		}
+
+		//----------
+		ofImage & Node::getIcon() {
+			this->setupIcon();
+			return * this->icon;
 		}
 
 		//----------
@@ -87,6 +99,24 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Node::clearInputs() {
 			this->inputPins.clear();
+		}
+
+		//----------
+		void Node::setupIcon() {
+			if (this->icon) {
+				//icon is already setup
+				return;
+			}
+
+			const auto imageName = "ofxDigitalEmulsion::Nodes::" + this->getTypeName();
+			if (ofxAssets::AssetRegister.hasImage(imageName)) {
+				//setup with specific node icon
+				this->icon = &ofxAssets::image(imageName);
+			}
+			else {
+				//setup with inherited node icon
+				this->icon = &ofxAssets::image("ofxDigitalEmulsion::Nodes::" + this->defaultIconName);
+			}
 		}
 	}
 }

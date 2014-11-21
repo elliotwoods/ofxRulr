@@ -45,6 +45,8 @@ namespace ofxDigitalEmulsion {
 				void addNewNode(shared_ptr<BaseFactory>);
 				void addDebug();
 
+				void deleteSelection();
+
 				shared_ptr<TemporaryLinkHost> getNewLink() const;
 				shared_ptr<NodeHost> findNodeHost(shared_ptr<Node>) const;
 			protected:
@@ -59,6 +61,7 @@ namespace ofxDigitalEmulsion {
 				shared_ptr<View> view;
 
 				shared_ptr<TemporaryLinkHost> newLink;
+				weak_ptr<NodeHost> selection;
 			};
 		}
 	}
