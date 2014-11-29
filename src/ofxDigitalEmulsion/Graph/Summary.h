@@ -18,7 +18,7 @@ namespace ofxDigitalEmulsion {
 			void deserialize(const Json::Value &) override;
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
-
+			void callbackShowCursor(bool &);
 			shared_ptr<ofxCvGui::Panels::World> view;
 
 			ofParameter<bool> showCursor;

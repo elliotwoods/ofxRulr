@@ -18,10 +18,11 @@ namespace ofxDigitalEmulsion {
 		void World::init(Controller & controller) {
 			Utils::initialiser.checkInitialised();
 
-			this->add(MAKE(Summary, *this));
-
+			//--
+			// INIITALISE NODES
+			//--
+			//
 			set<shared_ptr<Node>> failedNodes;
-
 			for (auto node : *this) {
 				bool initSuccess = false;
 				try
@@ -35,11 +36,19 @@ namespace ofxDigitalEmulsion {
 					failedNodes.insert(node);
 				}
 			}
-
 			for (auto failedNode : failedNodes) {
 				this->remove(failedNode);
 			}
+			//
+			//--
 
+
+
+
+			//--
+			// SETUP GUI GRID
+			//--
+			//
 			auto rootGroup = dynamic_pointer_cast<ofxCvGui::Panels::Groups::Grid>(controller.getRootGroup());
 			if (rootGroup) {
 				//set widths before the rearrangement happens
@@ -51,24 +60,93 @@ namespace ofxDigitalEmulsion {
 					rootGroup->setWidths(widths);
 				}, -1, this);
 			}
-
 			auto gridGroup = MAKE(ofxCvGui::Panels::Groups::Grid);
 			rootGroup->add(gridGroup);
 			this->guiGrid = gridGroup;
+			//
+			//--
 
+
+
+
+
+			//--
+			// NODE GRID
+			//--
+			//
+			auto nodeGrid = MAKE(ofxCvGui::Panels::Groups::Grid);
+			guiGrid->add(nodeGrid);
 			for(auto node : *this) {
 				auto nodeView = node->getView();
 				if (nodeView) {
-					gridGroup->add(nodeView);
+					nodeGrid->add(nodeView);
+				}
+			}
+			//
+			//--
 
-					nodeView->onMouse.addListener([node] (MouseArguments & mouse) {
+
+
+
+
+			//--
+			// SUMMARY VIEW
+			//
+			auto summary = MAKE(Summary, *this);
+			summary->setName("World");
+			this->add(summary); // we intentionally do this after building the Node grid
+			gridGroup->add(summary->getView());
+			//
+			//--
+			
+
+
+
+			//--
+			// INSPECTOR
+			//--
+			//
+			auto inspector = ofxCvGui::Builder::makeInspector();
+			rootGroup->add(inspector);
+
+			//whenever the instpector clears, setup default elements
+			InspectController::X().onClear += [this] (ElementGroupPtr inspector) {
+				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
+					return ofGetFrameRate();
+				}, true));
+				inspector->add(Widgets::Button::make("Save all Nodes", [this] () {
+					for(auto node : * this) {
+						node->save(node->getDefaultFilename());
+					}
+				}));
+				inspector->add(Widgets::Spacer::make());
+			};
+			//
+			//--
+
+
+
+
+			//--
+			// NODE VIEW CALLBACKS
+			//--
+			//
+			for (auto node : *this) {
+				auto nodeView = node->getView();
+				if (nodeView) {
+					//if we click inside the panel, (regardless of what takes the click), then inspect this node
+
+					//we add the listener to be LATE (remember that the mouse stack is notified in reverse)
+					//this ensures that anything nested is called first
+					nodeView->onMouse.addListener([node, this](MouseArguments & mouse) {
 						if (mouse.action == ofxCvGui::MouseArguments::Action::Pressed) {
 							ofxCvGui::inspect(node);
 						}
 					}, -100, this);
 
-					nodeView->onDraw += [node] (DrawArguments & drawArgs) {
-						if (isBeingInspected(* node)) {
+					//draw outlines on gui panels if node is selected
+					nodeView->onDraw += [node](DrawArguments & drawArgs) {
+						if (isBeingInspected(*node)) {
 							ofPushStyle();
 							ofSetColor(255);
 							ofSetLineWidth(3.0f);
@@ -81,21 +159,9 @@ namespace ofxDigitalEmulsion {
 					nodeView->setCaption(node->getName());
 				}
 			}
+			//
+			//--
 
-			auto inspector = ofxCvGui::Builder::makeInspector();
-			rootGroup->add(inspector);
-
-			InspectController::X().onClear += [this] (ElementGroupPtr inspector) {
-				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
-					return ofGetFrameRate();
-				}, true));
-				inspector->add(Widgets::Button::make("Save all Nodes", [this] () {
-					for(auto node : * this) {
-						node->save(node->getDefaultFilename());
-					}
-				}));
-				inspector->add(Widgets::Spacer::make());
-			};
 
 			World::gui = & controller;
 			
@@ -131,7 +197,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		ofxCvGui::PanelGroupPtr World::getGuiGrid() {
+		ofxCvGui::PanelGroupPtr World::getGuiGrid() const {
 			return this->guiGrid;
 		}
 	}

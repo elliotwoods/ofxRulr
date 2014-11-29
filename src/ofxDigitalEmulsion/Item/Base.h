@@ -11,7 +11,7 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		class Base : public Graph::Node {
 		public:
-			virtual void drawWorld() { }
+
 		};
 	}
 }

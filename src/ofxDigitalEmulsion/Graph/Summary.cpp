@@ -1,6 +1,5 @@
 #include "Summary.h"
 
-#include "ofxDigitalEmulsion/Item/Base.h"
 #include "ofxCvGui/Widgets/Toggle.h"
 
 namespace ofxDigitalEmulsion {
@@ -10,16 +9,18 @@ namespace ofxDigitalEmulsion {
 		world(world) {
 			this->view = MAKE(ofxCvGui::Panels::World);
 			this->view->onDrawWorld += [this](ofCamera &) {
+				if (this->showGrid) {
+					ofDrawGrid(10.0f);
+				}
 				for (const auto node : this->world) {
-					auto item = dynamic_pointer_cast<Item::Base>(node);
-					if (item) {
-						item->drawWorld();
-					}
+					node->drawWorld();
 				}
 			};
 
+			this->showCursor.addListener(this, & Summary::callbackShowCursor);
+
 			this->showCursor.set("Show Cursor", false);
-			this->showGrid.set("Show Grid", false);
+			this->showGrid.set("Show Grid", true);
 		}
 
 		//----------
@@ -48,12 +49,18 @@ namespace ofxDigitalEmulsion {
 		void Summary::deserialize(const Json::Value & json) {
 			Utils::Serializable::deserialize(this->showCursor, json);
 			Utils::Serializable::deserialize(this->showGrid, json);
+			this->view->setCursorEnabled(this->showCursor);
 		}
 
 		//----------
 		void Summary::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->showCursor));
 			inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->showGrid));
+		}
+
+		//----------
+		void Summary::callbackShowCursor(bool & showCursor) {
+			this->view->setCursorEnabled(showCursor);
 		}
 	}
 }

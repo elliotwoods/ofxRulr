@@ -35,9 +35,9 @@ namespace ofxDigitalEmulsion {
 
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
+				void drawWorld() override;
 
 				void rebuildLinkHosts();
-
 				const NodeHostSet & getNodeHosts() const;
 				const LinkHostSet & getLinkHosts() const;
 

@@ -12,15 +12,8 @@ namespace ofxDigitalEmulsion {
 				this->node = node;
 				this->nodeView = node->getView();
 				this->nodeView->setCaption(this->node->getName());
-				/*
-			Todo :
-				* inspect the node when click on the view
-				* drag to move / resize
-				* delete button
-				*/
 
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
-				
 				auto resizeHandle = make_shared<ofxCvGui::Utils::Button>();
 				resizeHandle->onDrawUp += [](ofxCvGui::DrawArguments & args) {
 					image("ofxDigitalEmulsion::resizeHandle").draw(args.localBounds);
@@ -78,6 +71,10 @@ namespace ofxDigitalEmulsion {
 					ofPopStyle();
 				}, -1, this);
 
+				this->onUpdate += [this](ofxCvGui::UpdateArguments & args) {
+					this->getNodeInstance()->update();
+				};
+
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					ofPushStyle();
 
@@ -122,7 +119,10 @@ namespace ofxDigitalEmulsion {
 					viewBounds.width -= 185;
 					viewBounds.y = 1;
 					viewBounds.height -= 2;
-					this->nodeView->setBounds(viewBounds);
+					if (this->nodeView) {
+						this->nodeView->setBounds(viewBounds);
+					}
+
 					this->inputPins->setBounds(ofRectangle(0, 0, viewBounds.x, this->getHeight()));
 
 					this->outputPinPosition = ofVec2f(this->getWidth(), this->getHeight() / 2.0f);
@@ -151,7 +151,9 @@ namespace ofxDigitalEmulsion {
 					}
 				};
 
-				this->nodeView->addListenersToParent(this);
+				if (this->nodeView) {
+					this->nodeView->addListenersToParent(this);
+				}
 				this->elements->addListenersToParent(this, true);
 				this->inputPins->addListenersToParent(this);
 

@@ -32,6 +32,13 @@ namespace ofxDigitalEmulsion {
 			virtual ofxCvGui::PanelPtr getView() = 0;
 			virtual void update() { }
 
+			///override this function for any node which can draw to the world
+			virtual void drawWorld() { }
+			///override this function to specifically define how the stencil of this layer will be drawn
+			virtual void drawStencil() {
+				this->drawWorld();
+			}
+
 			template<typename NodeType>
 			void connect(shared_ptr<NodeType> node) {
 				auto inputPin = this->getInputPins().get<Pin<NodeType>>();
@@ -39,7 +46,8 @@ namespace ofxDigitalEmulsion {
 					inputPin->connect(node);
 					int dummy = 0;
 					this->onConnect(dummy);
-				} else {
+				}
+				else {
 					OFXDIGITALEMULSION_ERROR << "Couldn't connect node of type '" << NodeType().getTypeName() << "' to node '" << this->getTypeName() << "'. No matching pin found.";
 				}
 			}
@@ -49,7 +57,8 @@ namespace ofxDigitalEmulsion {
 				auto pin = this->getInputPins().get<Pin<NodeType>>();
 				if (pin) {
 					return pin->getConnection();
-				} else {
+				}
+				else {
 					return shared_ptr<NodeType>();
 				}
 			}

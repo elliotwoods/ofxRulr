@@ -4,6 +4,7 @@
 #include "../Graph/Node.h"
 
 #include "ofxCvGui/Controller.h"
+#include "ofxCvGui/Panels/SharedView.h"
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
@@ -13,9 +14,9 @@ namespace ofxDigitalEmulsion {
 			void loadAll(bool printDebug = false);
 			void saveAll() const;
 			static ofxCvGui::Controller & getGuiController();
-			ofxCvGui::PanelGroupPtr getGuiGrid();
+			ofxCvGui::PanelGroupPtr getGuiGrid() const;
 		protected:
-			static ofxCvGui::Controller * gui;
+			static ofxCvGui::Controller * gui; ///< Why is this static? Needs comment.  I presume it's so we can grid multiple worlds?
 			ofxCvGui::PanelGroupPtr guiGrid;
 		};
 	}

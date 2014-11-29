@@ -215,6 +215,13 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
+			void Patch::drawWorld() {
+				for (auto nodeHost : this->nodeHosts) {
+					nodeHost.second->getNodeInstance()->drawWorld();
+				}
+			}
+
+			//----------
 			void Patch::rebuildLinkHosts() {
 				this->linkHosts.clear();
 				for (auto targetNodeHost : this->nodeHosts) {
