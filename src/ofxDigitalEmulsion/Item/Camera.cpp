@@ -42,8 +42,10 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Camera::init() {
 			if (!this->grabber) {
-				throw(ofxDigitalEmulsion::Utils::Exception("Cannot initialise [Camera] node, no camera device has been set."));
-				//this->grabber = make_shared<ofxMachineVision::Webcam>();
+				//throw(ofxDigitalEmulsion::Utils::Exception("Cannot initialise [Camera] node, no camera device has been set."));
+				this->grabber = make_shared<ofxMachineVision::Webcam>();
+				this->grabber->open();
+				this->grabber->startCapture();
 			}
 			auto view = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference(), this->getTypeName());
 			view->onDraw += [this](ofxCvGui::DrawArguments & args) {
