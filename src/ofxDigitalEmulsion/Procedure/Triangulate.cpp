@@ -56,7 +56,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		string Triangulate::getTypeName() const {
-			return "Triangulate";
+			return "Procedure::Triangulate";
 		}
 
 		//----------

@@ -97,7 +97,9 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		string Serializable::getDefaultFilename() const {
-			return this->getName() + ".json";
+			auto name = this->getName();
+			std::replace(name.begin(), name.end(), ':', '_');
+			return name + ".json";
 		}
 	}
 }

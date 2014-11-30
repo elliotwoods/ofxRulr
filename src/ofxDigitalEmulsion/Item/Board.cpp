@@ -22,7 +22,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		string Board::getTypeName() const {
-			return "Board";
+			return "Item::Board";
 		}
 
 		//----------

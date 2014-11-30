@@ -34,7 +34,7 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			string CameraIntrinsics::getTypeName() const {
-				return "CameraIntrinsics";
+				return "Procedure::Calibrate::CameraIntrinsics";
 			}
 
 			//----------

@@ -96,7 +96,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		string Camera::getTypeName() const {
-			return "Camera";
+			return "Item::Camera";
 		}
 
 		//----------

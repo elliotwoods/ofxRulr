@@ -39,7 +39,7 @@ namespace ofxDigitalEmulsion {
 				
 			//----------
 			string ProjectorIntrinsicsExtrinsics::getTypeName() const {
-				return "ProjectorIntrinsicsExtrinsics";
+				return "Procedure::Calibrate::ProjectorIntrinsicsExtrinsics";
 			}
 
 			//----------

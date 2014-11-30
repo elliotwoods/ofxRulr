@@ -23,7 +23,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		string Checkerboard::getTypeName() const {
-			return "Checkerboard";
+			return "Item::Checkerboard";
 		}
 
 		//----------

@@ -54,7 +54,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		string Projector::getTypeName() const {
-			return "Projector";
+			return "Item::Projector";
 		}
 			
 		//----------

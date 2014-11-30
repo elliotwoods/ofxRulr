@@ -60,7 +60,7 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			string HomographyFromGraycode::getTypeName() const {
-				return "HomographyFromGraycode";
+				return "Procedure::Calibrate::HomographyFromGraycode";
 			}
 
 			//----------

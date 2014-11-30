@@ -32,7 +32,7 @@ namespace ofxDigitalEmulsion {
 			}
 			//----------
 			string Graycode::getTypeName() const {
-				return "Graycode";
+				return "Procedure::Scan::Graycode";
 			}
 
 			//----------
