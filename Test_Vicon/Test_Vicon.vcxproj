@@ -22,7 +22,7 @@
     <ProjectGuid>{7FD42DF7-442E-479A-BA76-D0022F99702A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Test_CameraControl</RootNamespace>
-    <ProjectName>Test_NodeEditor</ProjectName>
+    <ProjectName>Test_Vicon</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -206,6 +206,7 @@
     <ClCompile Include="..\..\..\addons\ofxPolyfit\src\ofxPolyPlane.cpp" />
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Nodes\MotionCapture\Vicon.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -227,8 +228,9 @@
     <ClInclude Include="..\..\..\addons\ofxPolyfit\src\ofxPolyFit.h" />
     <ClInclude Include="..\..\..\addons\ofxPolyfit\src\ofxPolyPlane.h" />
     <ClInclude Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.h" />
-    <ClInclude Include="src\Nodes\Tracker\UpdateRigidBody.h" />
-    <ClInclude Include="src\Nodes\Tracker\ViconTracker.h" />
+    <ClInclude Include="src\Nodes\MotionCapture\Base.h" />
+    <ClInclude Include="src\Nodes\MotionCapture\Frame.h" />
+    <ClInclude Include="src\Nodes\MotionCapture\Vicon.h" />
     <ClInclude Include="src\ofApp.h" />
   </ItemGroup>
   <ItemGroup>

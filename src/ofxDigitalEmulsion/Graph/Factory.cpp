@@ -21,19 +21,22 @@ namespace ofxDigitalEmulsion {
 			if (!FactoryRegister::singleton) {
 				auto factoryRegister = new FactoryRegister();
 				FactoryRegister::singleton = factoryRegister;
-
-				factoryRegister->add(make_shared<Factory<Item::Board>>());
-				factoryRegister->add(make_shared<Factory<Item::Camera>>());
-				factoryRegister->add(make_shared<Factory<Item::Projector>>());
-				factoryRegister->add(make_shared<Factory<Device::ProjectorOutput>>());
-				factoryRegister->add(make_shared<Factory<Procedure::Calibrate::CameraIntrinsics>>());
-				//factoryRegister->add(make_shared<Factory<Procedure::Calibrate::ProjectorIntrinsicsExtrinsics>>());
-				factoryRegister->add(make_shared<Factory<Procedure::Calibrate::HomographyFromGraycode>>());
-				factoryRegister->add(make_shared<Factory<Procedure::Scan::Graycode>>());
-				factoryRegister->add(make_shared<Factory<Procedure::Triangulate>>());
 			}
 
 			return *singleton;
+		}
+
+		//----------
+		FactoryRegister::FactoryRegister() {
+			this->add<Item::Board>();
+			this->add<Item::Camera>();
+			this->add<Item::Projector>();
+			this->add<Device::ProjectorOutput>();
+			this->add<Procedure::Calibrate::CameraIntrinsics>();
+			//factoryRegister->add<Procedure::Calibrate::ProjectorIntrinsicsExtrinsics>();
+			this->add<Procedure::Calibrate::HomographyFromGraycode>();
+			this->add<Procedure::Scan::Graycode>();
+			this->add<Procedure::Triangulate>();
 		}
 
 		//----------

@@ -36,7 +36,13 @@ namespace ofxDigitalEmulsion {
 		public:
 			static FactoryRegister & X();
 
+			FactoryRegister();
 			void add(shared_ptr<BaseFactory>);
+
+			template<typename NodeType>
+			void add() {
+				this->add(make_shared<Factory<NodeType>>());
+			}
 
 			template<typename NodeType>
 			shared_ptr<Factory<NodeType>> get() {

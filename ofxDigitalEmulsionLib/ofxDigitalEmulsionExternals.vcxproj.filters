@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{55a0c96a-0ffa-4e33-8c35-9f7ac130ba55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion">
+      <UniqueIdentifier>{aa6fb2ff-0b56-48fa-a8b1-4be2795edf6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External">
+      <UniqueIdentifier>{317e8331-2208-446c-8271-848a4c3071d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External\Item">
+      <UniqueIdentifier>{bba5b19d-b6b6-44d5-9c8c-eea90ab1519c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External\Procedure">
+      <UniqueIdentifier>{92fbb9fe-9834-414a-9267-6bb47974e588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\External\Procedure\Calibrate">
+      <UniqueIdentifier>{a8346909-c657-4b12-abae-6e888ce4925f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.h">
+      <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.h">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp">
+      <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp">
+      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

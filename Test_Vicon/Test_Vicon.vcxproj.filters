@@ -46,6 +46,9 @@
     <ClCompile Include="..\..\..\addons\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp">
       <Filter>addons\ofxNonLinearFit\ofxNonLinearFit\Models</Filter>
     </ClCompile>
+    <ClCompile Include="src\Nodes\MotionCapture\Vicon.cpp">
+      <Filter>Nodes\MotionCapture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -96,7 +99,7 @@
     <Filter Include="Nodes">
       <UniqueIdentifier>{7df0a1fa-741d-4519-8b77-1d88841d9344}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Nodes\Tracker">
+    <Filter Include="Nodes\MotionCapture">
       <UniqueIdentifier>{cb8277f1-1935-4f55-90a5-71645d276125}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -158,11 +161,14 @@
     <ClInclude Include="..\..\..\addons\ofxNonLinearFit\src\ofxNonLinearFit\Models\Base.h">
       <Filter>addons\ofxNonLinearFit\ofxNonLinearFit\Models</Filter>
     </ClInclude>
-    <ClInclude Include="src\Nodes\Tracker\ViconTracker.h">
-      <Filter>Nodes\Tracker</Filter>
+    <ClInclude Include="src\Nodes\MotionCapture\Vicon.h">
+      <Filter>Nodes\MotionCapture</Filter>
     </ClInclude>
-    <ClInclude Include="src\Nodes\Tracker\UpdateRigidBody.h">
-      <Filter>Nodes\Tracker</Filter>
+    <ClInclude Include="src\Nodes\MotionCapture\Base.h">
+      <Filter>Nodes\MotionCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nodes\MotionCapture\Frame.h">
+      <Filter>Nodes\MotionCapture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

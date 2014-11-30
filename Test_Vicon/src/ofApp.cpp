@@ -1,10 +1,15 @@
 #include "ofApp.h"
 
+#include "Nodes/MotionCapture/Vicon.h"
+
 using namespace ofxAssets;
 
 //--------------------------------------------------------------
 void ofApp::setup2(){
-	ofSetWindowTitle("Digital Emulsion Toolkit v0.1");
+	
+	ofxDigitalEmulsion::Graph::FactoryRegister::X().add<ofxDigitalEmulsion::MotionCapture::Vicon>();
+
+	ofSetWindowTitle("Digital Emulsion Toolkit v0.2");
 	ofSetCircleResolution(120);
 	
 	AssetRegister.addAddon("ofxDigitalEmulsion");

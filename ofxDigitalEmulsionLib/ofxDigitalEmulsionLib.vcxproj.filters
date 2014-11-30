@@ -91,20 +91,8 @@
     <Filter Include="addons\ofxNonLinearFit\src\ofxNonLinearFit\Models">
       <UniqueIdentifier>{11a611df-65dc-4cf3-8637-4ea5e68bd441}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxDigitalEmulsion\External">
-      <UniqueIdentifier>{317e8331-2208-446c-8271-848a4c3071d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxDigitalEmulsion\External\Item">
-      <UniqueIdentifier>{bba5b19d-b6b6-44d5-9c8c-eea90ab1519c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxDigitalEmulsion\Device">
       <UniqueIdentifier>{6d63dd77-671d-4a6e-9685-d51a1f0ee20b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxDigitalEmulsion\External\Procedure">
-      <UniqueIdentifier>{92fbb9fe-9834-414a-9267-6bb47974e588}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxDigitalEmulsion\External\Procedure\Calibrate">
-      <UniqueIdentifier>{a8346909-c657-4b12-abae-6e888ce4925f}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\ofxDigitalEmulsion\Graph\Editor">
       <UniqueIdentifier>{b001908d-3000-479a-9902-5ef8a580856a}</UniqueIdentifier>
@@ -279,23 +267,14 @@
     <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.h">
       <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.h">
-      <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.h">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h">
-      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\World.h">
       <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Summary.h">
       <Filter>src\ofxDigitalEmulsion\Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.h">
-      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Board.h">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
@@ -319,6 +298,9 @@
       <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\PinView.h">
+      <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeBrowser.h">
       <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
     </ClInclude>
   </ItemGroup>
@@ -419,23 +401,14 @@
     <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp">
       <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp">
-      <Filter>src\ofxDigitalEmulsion\External\Item</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.cpp">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp">
-      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp">
       <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Summary.cpp">
       <Filter>src\ofxDigitalEmulsion\Graph</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp">
-      <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Board.cpp">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
@@ -459,6 +432,9 @@
       <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\PinView.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeBrowser.cpp">
       <Filter>src\ofxDigitalEmulsion\Graph\Editor</Filter>
     </ClCompile>
   </ItemGroup>
