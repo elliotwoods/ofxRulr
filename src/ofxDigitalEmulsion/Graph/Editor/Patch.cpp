@@ -75,6 +75,18 @@ namespace ofxDigitalEmulsion {
 						this->patchInstance.deleteSelection();
 					}
 				};
+
+				// NODE BROWSER
+				this->nodeBrowser = make_shared<NodeBrowser>();
+				this->nodeBrowser->disable(); //starts as hidden
+				this->nodeBrowser->addListenersToParent(this, true); // nodeBrowser goes on top of all elements (last listener)
+				this->canvasElements->onMouse += [this](ofxCvGui::MouseArguments & args) {
+					if (args.isDoubleClick) {
+						this->nodeBrowser->setBirthLocation(args.local);
+						this->nodeBrowser->enable();
+						this->nodeBrowser->reset();
+					}
+				};
 			}
 			
 			//----------

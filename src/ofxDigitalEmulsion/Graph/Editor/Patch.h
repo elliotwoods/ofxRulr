@@ -2,6 +2,7 @@
 
 #include "NodeHost.h"
 #include "LinkHost.h"
+#include "NodeBrowser.h"
 
 #include "ofxDigitalEmulsion/Graph/Node.h"
 #include "ofxDigitalEmulsion/Graph/Factory.h"
@@ -25,6 +26,7 @@ namespace ofxDigitalEmulsion {
 					ofVec2f lastCursorPositionInCanvas;
 					void drawGridLines();
 					Patch & patchInstance;
+					shared_ptr<NodeBrowser> nodeBrowser;
 				};
 
 				string getTypeName() const override;

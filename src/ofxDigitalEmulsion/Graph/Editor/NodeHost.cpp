@@ -157,7 +157,7 @@ namespace ofxDigitalEmulsion {
 				this->elements->addListenersToParent(this, true);
 				this->inputPins->addListenersToParent(this);
 
-				this->setBounds(ofRectangle(600, 300, 200, 200));
+				this->setBounds(ofRectangle(200, 200, 200, 200));
 			}
 
 			//----------
