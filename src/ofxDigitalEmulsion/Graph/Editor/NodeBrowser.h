@@ -36,6 +36,7 @@ namespace ofxDigitalEmulsion {
 				shared_ptr<ofxCvGui::Panels::Scroll> listBox;
 
 				weak_ptr<ListItem> currentSelection;
+				ofVec2f mouseDownInListPosition;
 			};
 		}
 	}

@@ -7,9 +7,17 @@ namespace ofxDigitalEmulsion {
 			//----------
 			NodeBrowser::ListItem::ListItem(shared_ptr<BaseFactory> factory) {
 				this->setBounds(ofRectangle(0, 0, 300, 64 + 20));
+				this->setCachedView(true);
 				this->factory = factory;
 
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
+					//background to hide ofFbo bad text
+					ofPushStyle();
+					ofSetColor(80);
+					ofFill();
+					ofRect(args.localBounds);
+					ofPopStyle();
+
 					this->factory->getIcon().draw(10, 10, 64, 64);
 					ofxAssets::font("ofxCvGui::swisop3", 24).drawString(this->factory->getNodeTypeName(), 94, (args.localBounds.height + 24) / 2);
 				};
@@ -175,23 +183,96 @@ namespace ofxDigitalEmulsion {
 				this->textBox->onHitReturn += [this](string &) {
 					this->notifyNewNode();
 				};
+				this->textBox->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
+					if (args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
+						bool selectionChanged = false;
+						auto nodeList = this->listBox->getGroup()->getElements();
+						auto currentSelection = this->currentSelection.lock();
+
+						//press up/down to move through items
+						if (nodeList.size() > 1 && currentSelection) {
+							switch (args.key) {
+							case OF_KEY_UP:
+								if (currentSelection == nodeList.front()) {
+									//if we're going up and on the first item
+									this->currentSelection = dynamic_pointer_cast<ListItem>(nodeList.back());
+									selectionChanged = true;
+								}
+								else {
+									shared_ptr<ListItem> lastItem;
+									for (auto item : nodeList) {
+										if (currentSelection == item) {
+											this->currentSelection = lastItem;
+											selectionChanged = true;
+											break;
+										}
+										lastItem = dynamic_pointer_cast<ListItem>(item);
+									}
+								}
+								break;
+								
+							case OF_KEY_DOWN:
+								if (currentSelection == nodeList.back()) {
+									//if we're going down and on the last item
+									this->currentSelection = dynamic_pointer_cast<ListItem>(nodeList.front());
+									selectionChanged = true;
+								}
+								else {
+									bool lastItemWasSelection = false;
+									for (auto item : nodeList) {
+										if (lastItemWasSelection) {
+											this->currentSelection = dynamic_pointer_cast<ListItem>(item);
+											selectionChanged = true;
+											break;
+										}
+										if (currentSelection == item) {
+											lastItemWasSelection = true;
+										}
+									}
+								}
+								break;
+							default:
+								break;
+							}
+						}
+
+						//scroll to the item
+						if (selectionChanged) {
+							//update the pointer
+							currentSelection = this->currentSelection.lock();
+							if (currentSelection) {
+								this->listBox->scrollToInclude(currentSelection);
+							}
+						}
+					}
+				};
 			}
 
 			//----------
 			void NodeBrowser::buildListBox() {
 				this->listBox = make_shared<ofxCvGui::Panels::Scroll>();
 
-				this->listBox->getGroup()->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
+				this->listBox->getGroup()->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					auto currentSelection = this->currentSelection.lock();
 					if (currentSelection) {
 						//draw background on selected node
 						ofPushStyle();
 						ofFill();
-						ofSetColor(100);
+						ofSetColor(255, 20);
 						ofRect(currentSelection->getBounds());
 						ofPopStyle();
 					}
-				}, -100, this);
+				};
+				this->listBox->onMouse += [this](ofxCvGui::MouseArguments & args) {
+					if (args.action == ofxCvGui::MouseArguments::Action::Pressed) {
+						this->mouseDownInListPosition = args.local;
+					}
+				};
+				this->listBox->onMouseReleased += [this] (ofxCvGui::MouseArguments & args) {
+					if ((args.local - this->mouseDownInListPosition).lengthSquared() < 5 * 5) {
+						this->notifyNewNode();
+					}
+				};
 				this->listBox->addListenersToParent(this->dialog);
 			}
 

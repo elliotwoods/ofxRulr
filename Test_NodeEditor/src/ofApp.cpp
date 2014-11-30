@@ -4,7 +4,7 @@ using namespace ofxAssets;
 
 //--------------------------------------------------------------
 void ofApp::setup2(){
-	ofSetWindowTitle("Digital Emulsion Toolkit v0.1");
+	ofSetWindowTitle("Digital Emulsion Toolkit v0.2");
 	ofSetCircleResolution(120);
 	
 	AssetRegister.addAddon("ofxDigitalEmulsion");
