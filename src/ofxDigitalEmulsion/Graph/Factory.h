@@ -9,6 +9,7 @@ namespace ofxDigitalEmulsion {
 		class BaseFactory {
 		public:
 			virtual string getNodeTypeName() = 0;
+			virtual ofImage & getIcon() = 0;
 			virtual shared_ptr<Node> make() = 0;
 		};
 
@@ -18,6 +19,10 @@ namespace ofxDigitalEmulsion {
 		public:
 			string getNodeTypeName() override {
 				return NodeType().getTypeName();
+			}
+
+			ofImage & getIcon() override {
+				return NodeType().getIcon();
 			}
 
 			shared_ptr<Node> make() override {

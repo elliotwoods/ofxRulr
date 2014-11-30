@@ -7,20 +7,24 @@ namespace ofxDigitalEmulsion {
 			//----------
 			NodeBrowser::ListItem::ListItem(shared_ptr<BaseFactory> factory) {
 				this->setBounds(ofRectangle(0, 0, 300, 64 + 20));
-				auto tempNode = factory->make();
-				
-				ofImage * icon = &tempNode->getIcon();
-				this->setCaption(tempNode->getTypeName());
+				this->factory = factory;
 
-				this->onDraw += [icon, this](ofxCvGui::DrawArguments & args) {
-					icon->draw(10, 10, 64, 64);
-					ofxCvGui::Utils::drawText(this->getCaption(), ofRectangle(10 + 64 + 10, 10, args.localBounds.width - 20 - 64 - 10, args.localBounds.height - 20), false);
+				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
+					this->factory->getIcon().draw(10, 10, 64, 64);
+					ofxAssets::font("ofxCvGui::swisop3", 24).drawString(this->factory->getNodeTypeName(), 94, (args.localBounds.height + 24) / 2);
 				};
+			}
+
+			//----------
+			shared_ptr<BaseFactory> NodeBrowser::ListItem::getFactory() {
+				return this->factory;
 			}
 
 #pragma mark NodeBrowser
 			//----------
 			NodeBrowser::NodeBrowser() {
+				this->setCaption("NodeBrowser");
+
 				this->buildBackground();
 				this->buildDialog();
 
@@ -41,11 +45,6 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void NodeBrowser::setBirthLocation(const ofVec2f & birthLocation) {
-				this->birthLocation = birthLocation;
-			}
-
-			//----------
 			void NodeBrowser::reset() {
 				this->textBox->focus();
 				this->textBox->clearText();
@@ -53,7 +52,7 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void NodeBrowser::refreshResults() {
-				string searchTerm = this->textBox->getText();
+				string searchTerm = ofToLower(this->textBox->getText());
 				
 				this->listBox->clear();
 
@@ -61,14 +60,28 @@ namespace ofxDigitalEmulsion {
 				for (auto factoryIterator : factoryRegister) {
 					bool matches = searchTerm == "";
 					if (!matches) {
-						const auto & factoryName = factoryIterator.first;
+						const auto & factoryName = ofToLower(factoryIterator.first);
 						matches |= factoryName.find(searchTerm) != string::npos;
 					}
 					if (matches) {
-						this->listBox->add(make_shared<ListItem>(factoryIterator.second));
+						auto newListItem = make_shared<ListItem>(factoryIterator.second);
+						newListItem->onMouse += [this, newListItem](ofxCvGui::MouseArguments & args) {
+							if (args.isLocal()) {
+								this->currentSelection = newListItem;
+							}
+						};
+						this->listBox->add(newListItem);
 					}
 				}
 				this->listBox->arrange();
+
+				auto & listItems = this->listBox->getGroup()->getElements();
+				if (listItems.empty()) {
+					this->currentSelection.reset();
+				}
+				else {
+					this->currentSelection = dynamic_pointer_cast<ListItem>(listItems.front());
+				}
 			}
 
 			//----------
@@ -88,9 +101,12 @@ namespace ofxDigitalEmulsion {
 				this->background->addListenersToParent(this, true);
 			}
 
+#define LIST_Y (96 + 10 + 10)
+
 			//----------
 			void NodeBrowser::buildDialog() {
 				this->dialog = make_shared<ofxCvGui::ElementGroup>();
+				this->dialog->setCaption("Dialog");
 				this->dialog->addListenersToParent(this);
 
 				this->dialog->onMouse += [this](ofxCvGui::MouseArguments & args) {
@@ -115,23 +131,32 @@ namespace ofxDigitalEmulsion {
 					//line between text box and list
 					ofSetLineWidth(1.0f);
 					ofSetColor(50);
-					ofLine(0, 100.0f, args.localBounds.width, 100.0f);
+					ofLine(0, LIST_Y, args.localBounds.width, LIST_Y);
 					ofPopStyle();
+
+					//icon if selected
+					auto currentSelection = this->currentSelection.lock();
+					string message = ofToString(this->listBox->getGroup()->getElements().size()) + " nodes found.\n";
+					if (currentSelection) {
+						currentSelection->getFactory()->getIcon().draw(10, 10, 96, 96);
+						message += currentSelection->getFactory()->getNodeTypeName();
+					}
+					ofxAssets::font("ofxCvGui::swisop3", 12).drawString(message, this->textBox->getBounds().x, 10 + 78);
 				};
 
 				this->dialog->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
 					ofRectangle textBoxBounds;
 					textBoxBounds.height = 80.0f;
-					textBoxBounds.width = args.localBounds.width - (20.0f + 64.0f + 10.0f);
+					textBoxBounds.x = 10.0f + 96.0f + 10.0f;
+					textBoxBounds.width = args.localBounds.width - textBoxBounds.x - 10.0f;
 					textBoxBounds.y = 10.0f;
-					textBoxBounds.x = 10 + 32.0f + 10.0f;
 					this->textBox->setBounds(textBoxBounds);
 
-					auto listBounds = args.localBounds;
-					listBounds.y = 110.0f;
-					listBounds.x = 10.0f;
-					listBounds.width -= 20;
-					listBounds.height -= listBounds.y + 10;
+					ofRectangle listBounds;
+					listBounds.y = LIST_Y;
+					listBounds.x = 0.0f;	
+					listBounds.width = args.localBounds.width;
+					listBounds.height = args.localBounds.height - LIST_Y;
 					this->listBox->setBounds(listBounds);
 				};
 
@@ -147,12 +172,36 @@ namespace ofxDigitalEmulsion {
 				this->textBox->onTextChange += [this](string &) {
 					this->refreshResults();
 				};
+				this->textBox->onHitReturn += [this](string &) {
+					this->notifyNewNode();
+				};
 			}
 
 			//----------
 			void NodeBrowser::buildListBox() {
 				this->listBox = make_shared<ofxCvGui::Panels::Scroll>();
+
+				this->listBox->getGroup()->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
+					auto currentSelection = this->currentSelection.lock();
+					if (currentSelection) {
+						//draw background on selected node
+						ofPushStyle();
+						ofFill();
+						ofSetColor(100);
+						ofRect(currentSelection->getBounds());
+						ofPopStyle();
+					}
+				}, -100, this);
 				this->listBox->addListenersToParent(this->dialog);
+			}
+
+			//----------
+			void NodeBrowser::notifyNewNode() {
+				auto currentSelection = this->currentSelection.lock();
+				if (currentSelection) {
+					auto newNode = currentSelection->getFactory()->make();
+					this->onNewNode(newNode);
+				}
 			}
 		}
 	}

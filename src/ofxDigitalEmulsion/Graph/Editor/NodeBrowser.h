@@ -4,7 +4,6 @@
 #include "ofxCvGui/Element.h"
 #include "ofxCvGui/Utils/TextField.h"
 #include "ofxCvGui/Panels/Scroll.h"
-#include "ofxTextInputField.h"
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
@@ -13,26 +12,30 @@ namespace ofxDigitalEmulsion {
 				class ListItem : public ofxCvGui::Element {
 				public:
 					ListItem(shared_ptr<BaseFactory>);
+					shared_ptr<BaseFactory> getFactory();
+				protected:
+					shared_ptr<BaseFactory> factory;
 				};
 
 			public:
 				NodeBrowser();
-				void setBirthLocation(const ofVec2f &);
 				void reset();
 				void refreshResults();
+				ofxLiquidEvent<shared_ptr<Node>> onNewNode;
 			protected:
 				void buildBackground();
-
 				void buildDialog();
 				void buildTextBox();
 				void buildListBox();
 
-				ofVec2f birthLocation;
+				void notifyNewNode();
 
 				ofxCvGui::ElementPtr background;
 				ofxCvGui::ElementGroupPtr dialog;
 				shared_ptr<ofxCvGui::Utils::TextField> textBox;
 				shared_ptr<ofxCvGui::Panels::Scroll> listBox;
+
+				weak_ptr<ListItem> currentSelection;
 			};
 		}
 	}

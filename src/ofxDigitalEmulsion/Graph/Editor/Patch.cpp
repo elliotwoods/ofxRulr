@@ -11,32 +11,6 @@ namespace ofxDigitalEmulsion {
 			//----------
 			Patch::View::View(Patch & owner) :
 				patchInstance(owner) {
-				auto addButton = std::make_shared<ofxCvGui::Utils::Button>();
-				addButton->setCaption("add node");
-				addButton->onDrawUp += [](ofxCvGui::DrawArguments & args) {
-					ofPushStyle();
-					ofSetColor(255);
-					ofxAssets::image("ofxDigitalEmulsion::plus").draw(args.localBounds);
-					ofPopStyle();
-				};
-				addButton->onDrawDown += [](ofxCvGui::DrawArguments & args) {
-					ofPushStyle();
-					ofSetColor(100);
-					ofxAssets::image("ofxDigitalEmulsion::plus").draw(args.localBounds);
-					ofPopStyle();
-				};
-				this->fixedElements->add(addButton);
-				
-				addButton->onMouse += [this, addButton](ofxCvGui::MouseArguments & args) {
-					if (args.action == ofxCvGui::MouseArguments::Action::Released) {
-						try
-						{
-							this->patchInstance.addDebug();
-						}
-						OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
-					}
-				};
-
 				this->canvasElements->onUpdate += [this](ofxCvGui::UpdateArguments & args) {
 					auto newLink = this->patchInstance.newLink;
 					if (newLink) {
@@ -61,14 +35,14 @@ namespace ofxDigitalEmulsion {
 						ofRect(selection->getBounds());
 						ofPopStyle();
 					}
+					if (this->patchInstance.getNodeHosts().empty()) {
+						ofxCvGui::Utils::drawText("Double click to add a new node...", args.localBounds, false);
+					}
 				};
 
 				this->getCanvasElementGroup()->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
 					this->drawGridLines();
 				}, -1, this);
-				this->onBoundsChange += [this, addButton](ofxCvGui::BoundsChangeArguments & args) {
-					addButton->setBounds(ofRectangle(100, 100, 100, 100));
-				};
 
 				this->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
 					if (args.key == OF_KEY_BACKSPACE || args.key == OF_KEY_DEL) {
@@ -80,9 +54,13 @@ namespace ofxDigitalEmulsion {
 				this->nodeBrowser = make_shared<NodeBrowser>();
 				this->nodeBrowser->disable(); //starts as hidden
 				this->nodeBrowser->addListenersToParent(this, true); // nodeBrowser goes on top of all elements (last listener)
+				this->nodeBrowser->onNewNode += [this](shared_ptr<Node> & node) {
+					this->patchInstance.addNode(node, ofRectangle(this->birthLocation, this->birthLocation + ofVec2f(200, 100)));
+					this->nodeBrowser->disable();
+				};
 				this->canvasElements->onMouse += [this](ofxCvGui::MouseArguments & args) {
 					if (args.isDoubleClick) {
-						this->nodeBrowser->setBirthLocation(args.local);
+						this->birthLocation = args.local;
 						this->nodeBrowser->enable();
 						this->nodeBrowser->reset();
 					}
@@ -263,7 +241,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void Patch::addNode(NodeHost::Index index, shared_ptr<Node> node) {
+			void Patch::addNode(NodeHost::Index index, shared_ptr<Node> node, const ofRectangle & bounds) {
 				auto nodeHost = make_shared<NodeHost>(node);
 				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
 				nodeHost->onBeginMakeConnection += [this, nodeHost](const shared_ptr<BasePin> & inputPin) {
@@ -272,12 +250,20 @@ namespace ofxDigitalEmulsion {
 				nodeHost->onReleaseMakeConnection += [this](ofxCvGui::MouseArguments & args) {
 					this->callbackReleaseMakeConnection(args);
 				};
+				if (bounds != ofRectangle()) {
+					nodeHost->setBounds(bounds);
+				}
 				this->view->resync();
 			}
 
 			//----------
-			void Patch::addNewNode(shared_ptr<BaseFactory> factory) {
-				this->addNode(this->getNextFreeNodeHostIndex(), factory->make());
+			void Patch::addNode(shared_ptr<Node> node, const ofRectangle & bounds) {
+				this->addNode(this->getNextFreeNodeHostIndex(), node, bounds);
+			}
+
+			//----------
+			void Patch::addNewNode(shared_ptr<BaseFactory> factory, const ofRectangle & bounds) {
+				this->addNode( factory->make(), bounds);
 			}
 
 			//----------

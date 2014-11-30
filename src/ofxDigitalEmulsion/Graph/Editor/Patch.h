@@ -27,6 +27,7 @@ namespace ofxDigitalEmulsion {
 					void drawGridLines();
 					Patch & patchInstance;
 					shared_ptr<NodeBrowser> nodeBrowser;
+					ofVec2f birthLocation;
 				};
 
 				string getTypeName() const override;
@@ -43,8 +44,9 @@ namespace ofxDigitalEmulsion {
 				const NodeHostSet & getNodeHosts() const;
 				const LinkHostSet & getLinkHosts() const;
 
-				void addNode(NodeHost::Index index, shared_ptr<Node>);
-				void addNewNode(shared_ptr<BaseFactory>);
+				void addNode(NodeHost::Index index, shared_ptr<Node>, const ofRectangle & bounds = ofRectangle());
+				void addNode(shared_ptr<Node>, const ofRectangle & bounds = ofRectangle());
+				void addNewNode(shared_ptr<BaseFactory>, const ofRectangle & bounds = ofRectangle());
 				void addDebug();
 
 				void deleteSelection();

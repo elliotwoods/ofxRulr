@@ -37,7 +37,7 @@ namespace ofxDigitalEmulsion {
 
 				this->elements->onBoundsChange += [resizeHandle, outputPinView, this](ofxCvGui::BoundsChangeArguments & args) {
 					auto & resizeImage = image("ofxDigitalEmulsion::resizeHandle");
-					resizeHandle->setBounds(ofRectangle(args.bounds.getWidth() - resizeImage.getWidth(), args.bounds.getHeight() - resizeImage.getHeight(), resizeImage.getWidth(), resizeImage.getHeight()));
+					resizeHandle->setBounds(ofRectangle(args.localBounds.width - resizeImage.getWidth(), args.localBounds.height - resizeImage.getHeight(), resizeImage.getWidth(), resizeImage.getHeight()));
 					const auto iconSize = 48;
 					outputPinView->setBounds(ofRectangle(this->getOutputPinPosition() - ofVec2f(iconSize + 32, iconSize / 2), iconSize, iconSize));
 				};
@@ -73,6 +73,17 @@ namespace ofxDigitalEmulsion {
 
 				this->onUpdate += [this](ofxCvGui::UpdateArguments & args) {
 					this->getNodeInstance()->update();
+
+					const int minWidth = 200 + 200;
+					const int minHeight = 150;
+
+					auto bounds = this->getBounds();
+					if (bounds.width < minWidth || bounds.height < minHeight) {
+						auto fixedBounds = bounds;
+						fixedBounds.width = MAX(bounds.width, minWidth);
+						fixedBounds.height = MAX(bounds.height, minHeight);
+						this->setBounds(fixedBounds);
+					}
 				};
 
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
@@ -103,17 +114,6 @@ namespace ofxDigitalEmulsion {
 				};
 
 				this->onBoundsChange += [this, resizeHandle](ofxCvGui::BoundsChangeArguments & args) {
-					const int minWidth = 200 + 200;
-					const int minHeight = 150;
-
-					if (args.bounds.width < minWidth || args.bounds.height < minHeight) {
-						auto fixedBounds = args.bounds;
-						fixedBounds.width = MAX(args.bounds.width, minWidth);
-						fixedBounds.height = MAX(args.bounds.height, minHeight);
-						this->setBounds(fixedBounds);
-						return;
-					}
-
 					auto viewBounds = args.localBounds;
 					viewBounds.x = 85;
 					viewBounds.width -= 185;
