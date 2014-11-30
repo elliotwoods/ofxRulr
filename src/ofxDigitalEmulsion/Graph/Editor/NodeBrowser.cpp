@@ -177,6 +177,7 @@ namespace ofxDigitalEmulsion {
 				this->textBox = make_shared<ofxCvGui::Utils::TextField>();
 				this->textBox->addListenersToParent(this->dialog);
 				this->textBox->setFont(ofxAssets::font("ofxCvGui::swisop3", 36));
+				this->textBox->setHintText("Search...");
 				this->textBox->onTextChange += [this](string &) {
 					this->refreshResults();
 				};
