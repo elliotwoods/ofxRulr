@@ -75,7 +75,7 @@ namespace ofxDigitalEmulsion {
 					this->getNodeInstance()->update();
 
 					const int minWidth = 200 + 200;
-					const int minHeight = 150;
+					const int minHeight = MAX(150, this->getNodeInstance()->getInputPins().size() * 75);
 
 					auto bounds = this->getBounds();
 					if (bounds.width < minWidth || bounds.height < minHeight) {
