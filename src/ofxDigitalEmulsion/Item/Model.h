@@ -21,7 +21,14 @@ namespace ofxDigitalEmulsion {
 
 			void updatePreviewMesh();
 
+			ofxCvGui::PanelPtr view;
+
 			ofParameter<string> filename;
+
+			ofParameter<bool> drawVertices, drawWireframe, drawFaces;
+
+			ofParameter<bool> flipX, flipY, flipZ;
+			ofParameter<float> inputUnitScale;
 
 			ofxAssimpModelLoader modelLoader;
 		};
