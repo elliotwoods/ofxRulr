@@ -44,15 +44,15 @@ namespace ofxDigitalEmulsion {
 				const NodeHostSet & getNodeHosts() const;
 				const LinkHostSet & getLinkHosts() const;
 
-				void addNode(NodeHost::Index index, shared_ptr<Node>, const ofRectangle & bounds = ofRectangle());
-				void addNode(shared_ptr<Node>, const ofRectangle & bounds = ofRectangle());
-				void addNewNode(shared_ptr<BaseFactory>, const ofRectangle & bounds = ofRectangle());
-				void addDebug();
+				shared_ptr<NodeHost> addNode(NodeHost::Index index, shared_ptr<Node>, const ofRectangle & bounds = ofRectangle());
+				shared_ptr<NodeHost> addNode(shared_ptr<Node>, const ofRectangle & bounds = ofRectangle());
+				shared_ptr<NodeHost> addNewNode(shared_ptr<BaseFactory>, const ofRectangle & bounds = ofRectangle());
 
 				void deleteSelection();
 
 				shared_ptr<TemporaryLinkHost> getNewLink() const;
 				shared_ptr<NodeHost> findNodeHost(shared_ptr<Node>) const;
+				shared_ptr<NodeHost> getNodeHost(NodeHost::Index) const;
 			protected:
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				NodeHost::Index getNextFreeNodeHostIndex() const;

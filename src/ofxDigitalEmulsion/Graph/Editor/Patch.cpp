@@ -75,7 +75,6 @@ namespace ofxDigitalEmulsion {
 					this->canvasElements->add(it.second);
 				}
 
-				this->patchInstance.rebuildLinkHosts();
 				const auto & linkHosts = this->patchInstance.getLinkHosts();
 				for (const auto & it : linkHosts) {
 					this->canvasElements->add(it.second);
@@ -179,12 +178,104 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void Patch::serialize(Json::Value & json) {
+				map<shared_ptr<Node>, NodeHost::Index> reverseNodeMap;
 
+				//Serialize the nodes
+				auto & nodesJson = json["Nodes"];
+				for (auto & nodeHost : this->nodeHosts) {
+					auto & nodeHostJson = nodesJson[ofToString(nodeHost.first)];
+
+					//serialise ID and bounds
+					nodeHostJson["ID"] = nodeHost.first;
+					nodeHostJson["Bounds"] << nodeHost.second->getBounds();
+
+					//seriaise type name and content
+					auto node = nodeHost.second->getNodeInstance();
+					nodeHostJson["NodeTypeName"] = node->getTypeName();
+					node->serialize(nodeHostJson["Content"]);
+
+					//add the node to the reverse map (we'll use this when building links in the next section)
+					reverseNodeMap.insert(pair<shared_ptr<Node>, NodeHost::Index>(node, nodeHost.first));
+				}
+
+				//Serialize the links
+				for (auto & nodeJson : nodesJson) {
+					auto & inputPinsJson = nodeJson["InputsPins"];
+
+					auto nodeHost = this->nodeHosts[nodeJson["ID"].asInt()];
+					auto node = nodeHost->getNodeInstance();
+
+					for (auto & input : node->getInputPins()) {
+						auto & inputPinJson = inputPinsJson[input->getName()];
+						if (input->isConnected()) {
+							auto linkSource = input->getConnectionUntyped();
+							auto linkSourceIndex = reverseNodeMap[linkSource];
+							inputPinJson["SourceNode"] = linkSourceIndex;
+						}
+					}
+				}
 			}
 
 			//----------
 			void Patch::deserialize(const Json::Value & json) {
+				this->nodeHosts.clear();
+				
+				const auto & nodesJson = json["Nodes"];
 
+				//Deserialise nodes
+				for (const auto & nodeJson : nodesJson) {
+					const auto nodeTypeName = nodeJson["NodeTypeName"].asString();
+					const auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
+
+					auto factory = FactoryRegister::X().get(nodeTypeName);
+					if (factory) {
+						auto node = factory->make();
+						node->deserialize(nodeJson["Content"]);
+
+						ofRectangle bounds;
+						nodeJson["Bounds"] >> bounds;
+
+						auto nodeHost = this->addNode(ID, node, bounds);
+					}
+					else {
+						OFXDIGITALEMULSION_ERROR << "Failed to load Node #" << ID << " [" << nodeTypeName << "]. No matching Factory found.";
+					}
+				}
+
+				//Deserialise links into the nodes
+				for (const auto & nodeJson : nodesJson) {
+					const auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
+
+					//check we successfully created this node before continuing
+					if (this->nodeHosts.find(ID) != this->nodeHosts.end()) {
+						auto nodeHost = this->getNodeHost(nodeJson["ID"].asInt());
+						if (nodeHost) {
+							auto node = nodeHost->getNodeInstance();
+							const auto & inputPinsJson = nodeJson["InputsPins"];
+
+							//go through all the input pins
+							for (auto & inputPin : node->getInputPins()) {
+								//check this pin has been serialised
+								if (inputPinsJson.isMember(inputPin->getName())) {
+									const auto & inputPinJson = inputPinsJson[inputPin->getName()];
+									const auto sourceNodeHostIndex = (NodeHost::Index) inputPinJson["SourceNode"].asInt();
+									auto sourceNodeHost = this->getNodeHost(sourceNodeHostIndex);
+
+									//check the node index we want to connect to exists in the patch
+									if (sourceNodeHost) {
+										auto sourceNode = sourceNodeHost->getNodeInstance();
+
+										//make the connection
+										inputPin->connect(sourceNode);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				this->rebuildLinkHosts();
+				this->view->resync();
 			}
 
 			//----------
@@ -241,7 +332,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void Patch::addNode(NodeHost::Index index, shared_ptr<Node> node, const ofRectangle & bounds) {
+			shared_ptr<NodeHost> Patch::addNode(NodeHost::Index index, shared_ptr<Node> node, const ofRectangle & bounds) {
 				auto nodeHost = make_shared<NodeHost>(node);
 				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
 				nodeHost->onBeginMakeConnection += [this, nodeHost](const shared_ptr<BasePin> & inputPin) {
@@ -250,37 +341,25 @@ namespace ofxDigitalEmulsion {
 				nodeHost->onReleaseMakeConnection += [this](ofxCvGui::MouseArguments & args) {
 					this->callbackReleaseMakeConnection(args);
 				};
+				nodeHost->onDropInputConnection += [this](const shared_ptr<BasePin> &) {
+					this->rebuildLinkHosts();
+					this->view->resync();
+				};
 				if (bounds != ofRectangle()) {
 					nodeHost->setBounds(bounds);
 				}
 				this->view->resync();
+				return nodeHost;
 			}
 
 			//----------
-			void Patch::addNode(shared_ptr<Node> node, const ofRectangle & bounds) {
-				this->addNode(this->getNextFreeNodeHostIndex(), node, bounds);
+			shared_ptr<NodeHost> Patch::addNode(shared_ptr<Node> node, const ofRectangle & bounds) {
+				return this->addNode(this->getNextFreeNodeHostIndex(), node, bounds);
 			}
 
 			//----------
-			void Patch::addNewNode(shared_ptr<BaseFactory> factory, const ofRectangle & bounds) {
-				this->addNode( factory->make(), bounds);
-			}
-
-			//----------
-			void Patch::addDebug() {
-				auto & factoryRegister = FactoryRegister::X();
-				if (factoryRegister.empty()) {
-					throw(Utils::Exception("FactoryRegister has no entires"));
-				}
-				else {
-					//pick a different one each time
-					static int index = 0;
-					index %= factoryRegister.size();
-					auto it = factoryRegister.begin();
-					std::advance(it, index++);
-
-					this->addNewNode(it->second);
-				}
+			shared_ptr<NodeHost> Patch::addNewNode(shared_ptr<BaseFactory> factory, const ofRectangle & bounds) {
+				return this->addNode( factory->make(), bounds);
 			}
 
 			//----------
@@ -292,6 +371,7 @@ namespace ofxDigitalEmulsion {
 						break;
 					}
 				}
+				this->rebuildLinkHosts();
 				this->view->resync();
 			}
 
@@ -308,6 +388,15 @@ namespace ofxDigitalEmulsion {
 					}
 				}
 				return shared_ptr<NodeHost>();
+			}
+
+			//----------
+			shared_ptr<NodeHost> Patch::getNodeHost(NodeHost::Index index) const {
+				shared_ptr<NodeHost> nodeHost;
+				if (this->nodeHosts.find(index) != this->nodeHosts.end()) {
+					nodeHost = this->nodeHosts.at(index);
+				}
+				return nodeHost; // Returns empty pointer if not available
 			}
 
 			//----------
@@ -349,7 +438,10 @@ namespace ofxDigitalEmulsion {
 				}
 				else if (args.button == 0) {
 					//left click, try and make the link
-					this->newLink->flushConnection();
+					if (this->newLink->flushConnection()) {
+						//if the new link was created, let's rebuild the patch's list of links
+						this->rebuildLinkHosts();
+					}
 
 					//clear the temporary link regardless of success
 					this->newLink.reset();

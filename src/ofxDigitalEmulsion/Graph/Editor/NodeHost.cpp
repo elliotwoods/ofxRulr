@@ -11,7 +11,9 @@ namespace ofxDigitalEmulsion {
 			NodeHost::NodeHost(shared_ptr<Node> node) {
 				this->node = node;
 				this->nodeView = node->getView();
-				this->nodeView->setCaption(this->node->getName());
+				if (nodeView) {
+					this->nodeView->setCaption(this->node->getName());
+				}
 
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
 				auto resizeHandle = make_shared<ofxCvGui::Utils::Button>();
@@ -50,6 +52,9 @@ namespace ofxDigitalEmulsion {
 					};
 					inputPin->onReleaseMakeConnection += [this, inputPin](ofxCvGui::MouseArguments & args) {
 						this->onReleaseMakeConnection(args);
+					};
+					inputPin->onDropConnection += [this, inputPin](ofEventArgs &) {
+						this->onDropInputConnection(inputPin);
 					};
 				};
 				this->inputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {

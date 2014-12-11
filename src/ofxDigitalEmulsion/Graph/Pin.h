@@ -31,6 +31,7 @@ namespace ofxDigitalEmulsion {
 
 			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
 			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
+			ofxLiquidEvent<ofEventArgs> onDropConnection;
 		protected:
 			shared_ptr<Editor::PinView> pinView;
 		private:
@@ -64,6 +65,8 @@ namespace ofxDigitalEmulsion {
 			}
 			void resetConnection() override {
 				this->connection.reset();
+				ofEventArgs args;
+				this->onDropConnection.notifyListeners(args);
 			}
 			shared_ptr<NodeType> getConnection() {
 				return this->connection.lock();

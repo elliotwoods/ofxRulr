@@ -27,3 +27,18 @@ namespace ofxDigitalEmulsion {
 		};
 	}
 }
+
+template<typename T>
+Json::Value & operator<< (Json::Value & json, const T & streamSerializableObject) {
+	stringstream stream;
+	stream << streamSerializableObject;
+	json = stream.str();
+	return json;
+}
+
+template<typename T>
+const Json::Value & operator>> (const Json::Value & json, T & streamSerializableObject) {
+	stringstream stream(json.asString());
+	stream >> streamSerializableObject;
+	return json;
+}
