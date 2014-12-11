@@ -56,6 +56,7 @@ namespace ofxDigitalEmulsion {
 			GLFWwindow * window;
 
 			ofParameter<bool> showWindow;
+			ofParameter<bool> showTestGrid;
 			ofParameter<float> splitHorizontal;
 			ofParameter<float> splitVertical;
 			ofParameter<float> splitUseIndex;

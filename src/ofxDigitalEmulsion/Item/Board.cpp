@@ -98,7 +98,7 @@ namespace ofxDigitalEmulsion {
 				this->updatePreviewMesh();
 			};
 
-			auto typeChooser = Widgets::MultipleChoice::make("Board type");
+			auto typeChooser = make_shared<Widgets::MultipleChoice>("Board type");
 			typeChooser->addOption("Checkerboard");
 			typeChooser->addOption("Circles");
 			typeChooser->setSelection(this->boardType);
@@ -106,6 +106,7 @@ namespace ofxDigitalEmulsion {
 				this->boardType = selectionIndex;
 				this->updatePreviewMesh();
 			};
+
 			inspector->add(typeChooser);
 
 			Utils::Gui::addIntSlider(this->sizeX, inspector)->onValueChange += sliderCallback;

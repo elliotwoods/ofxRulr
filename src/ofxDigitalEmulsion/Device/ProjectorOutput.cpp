@@ -41,7 +41,7 @@ namespace ofxDigitalEmulsion {
 							buttonHeight = buttonWidth * (float)output.height / (float)output.width;
 						}
 						else {
-							args.localBounds.getHeight();
+							buttonHeight = args.localBounds.getHeight();
 						}
 						buttonHeight = ofClamp(buttonHeight, 0.0f, args.localBounds.getHeight() - 20);
 						if (buttonHeight > maxButtonHeight) {
@@ -60,6 +60,7 @@ namespace ofxDigitalEmulsion {
 			};
 
 			this->showWindow.set("Show window", false);
+			this->showTestGrid.set("Test Grid", false);
 			this->splitHorizontal.set("Split Horizontal", 1, 1, 8);
 			this->splitVertical.set("Split Vertical", 1, 1, 8);
 			this->splitUseIndex.set("Selected portion", 0, 0, 8);
@@ -94,6 +95,7 @@ namespace ofxDigitalEmulsion {
 			ofxDigitalEmulsion::Utils::Serializable::serialize(this->splitHorizontal, json);
 			ofxDigitalEmulsion::Utils::Serializable::serialize(this->splitVertical, json);
 			ofxDigitalEmulsion::Utils::Serializable::serialize(this->splitUseIndex, json);
+			ofxDigitalEmulsion::Utils::Serializable::serialize(this->showTestGrid, json);
 		}
 
 		//----------
@@ -104,6 +106,7 @@ namespace ofxDigitalEmulsion {
 			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->splitHorizontal, json);
 			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->splitVertical, json);
 			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->splitUseIndex, json);
+			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->showTestGrid, json);
 		}
 
 		//----------
@@ -245,6 +248,8 @@ namespace ofxDigitalEmulsion {
 			inspector->add(splitHorizontalSlider);
 			inspector->add(splitVerticalSlider);
 			inspector->add(splitUseIndexSlider);
+
+			inspector->add(make_shared<ofxCvGui::Widgets::Toggle>(this->showTestGrid));
 		}
 
 		//----------
@@ -289,6 +294,18 @@ namespace ofxDigitalEmulsion {
 
 				this->fbo.bind();
 				ofClear(0, 255);
+
+				if (this->showTestGrid) {
+					const auto outputRect = this->getSplitSelectionRect();
+					ofPushStyle();
+					ofNoFill();
+					ofSetLineWidth(1.0f);
+					ofRect(outputRect);
+					ofLine(outputRect.getCenter() - ofVec2f(outputRect.width / 2.0f, 0.0f), outputRect.getCenter() + ofVec2f(outputRect.width / 2.0f, 0.0f));
+					ofLine(outputRect.getCenter() - ofVec2f(0.0f, outputRect.height / 2.0f), outputRect.getCenter() + ofVec2f(0.0f, outputRect.height / 2.0f));
+					ofPopStyle();
+				}
+
 				this->fbo.unbind();
 			}
 		}
