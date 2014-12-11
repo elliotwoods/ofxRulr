@@ -93,6 +93,7 @@ namespace ofxDigitalEmulsion {
 			// SUMMARY VIEW
 			//
 			auto summary = MAKE(Summary, *this);
+			summary->init();
 			summary->setName("World");
 			this->add(summary); // we intentionally do this after building the Node grid
 			gridGroup->add(summary->getView());
@@ -114,9 +115,14 @@ namespace ofxDigitalEmulsion {
 				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));
-				inspector->add(Widgets::Button::make("Save all Nodes", [this] () {
-					for(auto node : * this) {
+				inspector->add(Widgets::Button::make("Save all", [this]() {
+					for (auto node : *this) {
 						node->save(node->getDefaultFilename());
+					}
+				}));
+				inspector->add(Widgets::Button::make("Load all", [this]() {
+					for (auto node : *this) {
+						node->load(node->getDefaultFilename());
 					}
 				}));
 				inspector->add(Widgets::Spacer::make());

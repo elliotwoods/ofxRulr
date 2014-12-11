@@ -46,14 +46,23 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Node::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(Widgets::Title::make(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H2));
-			inspector->add(Widgets::Button::make("Save Node", [this] () {
+			inspector->add(Widgets::Button::make("Save Node...", [this] () {
 				try {
-					this->save(this->getDefaultFilename());
+					auto result = ofSystemSaveDialog(this->getDefaultFilename(), "Save node [" + this->getName() + "] as json");
+					if (result.bSuccess) {
+						this->save(result.getPath());
+					}
 				}
 				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
-			inspector->add(Widgets::Button::make("Load Node", [this] () {
-				this->load(this->getDefaultFilename());
+			inspector->add(Widgets::Button::make("Load Node...", [this] () {
+				try {
+					auto result = ofSystemLoadDialog("Load node [" + this->getName() + "] from json");
+					if (result.bSuccess) {
+						this->load(result.getPath());
+					}
+				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
 //cancel this out in vs2012 until system dialogs are fixed on vs2012
 #ifndef TARGET_WIN32
