@@ -9,6 +9,8 @@ namespace ofxDigitalEmulsion {
 		class Summary : public Node {
 		public:
 			Summary(const Utils::Set<Graph::Node> & world);
+			void init() override;
+
 			string getTypeName() const override;
 			ofxCvGui::PanelPtr getView() override;
 
@@ -23,6 +25,7 @@ namespace ofxDigitalEmulsion {
 
 			ofParameter<bool> showCursor;
 			ofParameter<bool> showGrid;
+			ofParameter<float> gridScale;
 
 			const Utils::Set<Graph::Node> & world;
 		};

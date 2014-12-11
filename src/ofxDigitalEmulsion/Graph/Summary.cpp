@@ -1,6 +1,7 @@
 #include "Summary.h"
 
 #include "ofxCvGui/Widgets/Toggle.h"
+#include "ofxCvGui/Widgets/Slider.h"
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
@@ -10,7 +11,7 @@ namespace ofxDigitalEmulsion {
 			this->view = MAKE(ofxCvGui::Panels::World);
 			this->view->onDrawWorld += [this](ofCamera &) {
 				if (this->showGrid) {
-					ofDrawGrid(10.0f);
+					ofDrawGrid(this->gridScale);
 				}
 				for (const auto node : this->world) {
 					node->drawWorld();
@@ -18,9 +19,13 @@ namespace ofxDigitalEmulsion {
 			};
 
 			this->showCursor.addListener(this, & Summary::callbackShowCursor);
+		}
 
+		//----------
+		void Summary::init() {
 			this->showCursor.set("Show Cursor", false);
 			this->showGrid.set("Show Grid", true);
+			this->gridScale.set("Grid scale", 10.0f, 0.01f, 100.0f);
 		}
 
 		//----------
@@ -35,20 +40,21 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Summary::update() {
-			this->view->setCursorEnabled(this->showCursor);
-			this->view->setGridEnabled(this->showGrid);
+
 		}
 
 		//----------
 		void Summary::serialize(Json::Value & json) {
 			Utils::Serializable::serialize(this->showCursor, json);
 			Utils::Serializable::serialize(this->showGrid, json);
+			Utils::Serializable::serialize(this->gridScale, json);
 		}
 
 		//----------
 		void Summary::deserialize(const Json::Value & json) {
 			Utils::Serializable::deserialize(this->showCursor, json);
 			Utils::Serializable::deserialize(this->showGrid, json);
+			Utils::Serializable::deserialize(this->gridScale, json);
 			this->view->setCursorEnabled(this->showCursor);
 		}
 
@@ -56,6 +62,7 @@ namespace ofxDigitalEmulsion {
 		void Summary::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->showCursor));
 			inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->showGrid));
+			inspector->add(MAKE(ofxCvGui::Widgets::Slider, this->gridScale));
 		}
 
 		//----------
