@@ -59,7 +59,7 @@ namespace ofxDigitalEmulsion {
 					this->nodeBrowser->disable();
 				};
 				this->canvasElements->onMouse += [this](ofxCvGui::MouseArguments & args) {
-					if (args.isDoubleClick) {
+					if (args.isDoubleClicked(this)) {
 						this->birthLocation = args.local;
 						this->nodeBrowser->enable();
 						this->nodeBrowser->reset();

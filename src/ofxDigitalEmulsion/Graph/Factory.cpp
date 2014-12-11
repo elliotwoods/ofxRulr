@@ -4,6 +4,7 @@
 #include "ofxDigitalEmulsion/Item/Board.h"
 #include "ofxDigitalEmulsion/Item/Camera.h"
 #include "ofxDigitalEmulsion/Item/Projector.h"
+#include "ofxDigitalEmulsion/Item/Model.h"
 #include "ofxDigitalEmulsion/Device/ProjectorOutput.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/CameraIntrinsics.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/ProjectorIntrinsicsExtrinsics.h"
@@ -13,6 +14,22 @@
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
+#pragma mark BaseFactory
+		//----------
+		BaseFactory::BaseFactory() {
+			this->icon = nullptr;
+		}
+
+		//----------
+		ofImage & BaseFactory::getIcon() {
+			if (!this->icon) {
+				auto node = this->makeUninitialised();
+				this->icon = & node->getIcon();
+			}
+			return *this->icon;
+		}
+
+#pragma mark FactoryRegister
 		//----------
 		FactoryRegister * FactoryRegister::singleton = 0;
 
@@ -31,6 +48,7 @@ namespace ofxDigitalEmulsion {
 			this->add<Item::Board>();
 			this->add<Item::Camera>();
 			this->add<Item::Projector>();
+			this->add<Item::Model>();
 			this->add<Device::ProjectorOutput>();
 			this->add<Procedure::Calibrate::CameraIntrinsics>();
 			//factoryRegister->add<Procedure::Calibrate::ProjectorIntrinsicsExtrinsics>();

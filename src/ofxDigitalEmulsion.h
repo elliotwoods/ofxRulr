@@ -3,10 +3,10 @@
 #include "ofxDigitalEmulsion/Graph/World.h"
 #include "ofxDigitalEmulsion/Graph/Factory.h"
 
+#include "ofxDigitalEmulsion/Item/Board.h"
 #include "ofxDigitalEmulsion/Item/Camera.h"
 #include "ofxDigitalEmulsion/Item/Projector.h"
-//#include "ofxDigitalEmulsion/Item/Checkerboard.h" <-- deprecated
-#include "ofxDigitalEmulsion/Item/Board.h"
+#include "ofxDigitalEmulsion/Item/Model.h"
 
 #include "ofxDigitalEmulsion/Device/ProjectorOutput.h"
 

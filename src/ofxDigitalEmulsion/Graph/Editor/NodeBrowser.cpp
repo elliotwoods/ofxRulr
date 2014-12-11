@@ -6,7 +6,7 @@ namespace ofxDigitalEmulsion {
 #pragma mark ListItem
 			//----------
 			NodeBrowser::ListItem::ListItem(shared_ptr<BaseFactory> factory) {
-				this->setBounds(ofRectangle(0, 0, 300, 64 + 20));
+				this->setBounds(ofRectangle(0, 0, 300, 48 + 20));
 				this->setCachedView(true);
 				this->factory = factory;
 
@@ -18,8 +18,8 @@ namespace ofxDigitalEmulsion {
 					ofRect(args.localBounds);
 					ofPopStyle();
 
-					this->factory->getIcon().draw(10, 10, 64, 64);
-					ofxAssets::font("ofxCvGui::swisop3", 24).drawString(this->factory->getNodeTypeName(), 94, (args.localBounds.height + 24) / 2);
+					this->factory->getIcon().draw(10, 10, 48, 48);
+					ofxAssets::font("ofxCvGui::swisop3", 20).drawString(this->factory->getNodeTypeName(), 78, (args.localBounds.height + 20) / 2);
 				};
 			}
 
@@ -144,11 +144,13 @@ namespace ofxDigitalEmulsion {
 
 					//icon if selected
 					auto currentSelection = this->currentSelection.lock();
-					string message = ofToString(this->listBox->getGroup()->getElements().size()) + " nodes found.\n";
+					string message;
 					if (currentSelection) {
 						currentSelection->getFactory()->getIcon().draw(10, 10, 96, 96);
 						message += currentSelection->getFactory()->getNodeTypeName();
 					}
+					message += "\n" + ofToString(this->listBox->getGroup()->getElements().size()) + " nodes found.\n";
+					
 					ofxAssets::font("ofxCvGui::swisop3", 12).drawString(message, this->textBox->getBounds().x, 10 + 78);
 				};
 

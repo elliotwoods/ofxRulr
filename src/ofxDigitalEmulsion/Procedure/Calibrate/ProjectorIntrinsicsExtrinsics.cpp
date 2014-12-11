@@ -1,8 +1,8 @@
 #include "ProjectorIntrinsicsExtrinsics.h"
 
-#include "../../Item/Checkerboard.h"
 #include "../../Item/Camera.h"
 #include "../../Item/Projector.h"
+#include "../../Item/Board.h"
 
 #include "../../Utils/Exception.h"
 #include "../../Utils/Utils.h"
@@ -22,7 +22,7 @@ namespace ofxDigitalEmulsion {
 			ProjectorIntrinsicsExtrinsics::ProjectorIntrinsicsExtrinsics() {
 				this->addInput(MAKE(Pin<Item::Camera>));
 				this->addInput(MAKE(Pin<Item::Projector>));
-				this->addInput(MAKE(Pin<Item::Checkerboard>));
+				this->addInput(MAKE(Pin<Item::Board>));
 
 				this->oscServer.setup(4005);
 
@@ -201,10 +201,15 @@ namespace ofxDigitalEmulsion {
 			void ProjectorIntrinsicsExtrinsics::addPoint(float projectorX, float projectorY, int projectorWidth, int projectorHeight) {
 				auto camera = this->getInput<Item::Camera>();
 				auto projector = this->getInput<Item::Projector>();
-				auto checkerboard = this->getInput<Item::Checkerboard>();
+				auto board = this->getInput<Item::Board>();
 
 				try {
 					this->throwIfMissingAnyConnection();
+					if (board->getBoardType() != ofxCv::BoardType::Checkerboard) {
+						throw(Utils::Exception("Only Item::Board's of type checkerboard are supported."));
+					}
+					auto checkerboard = board;
+
 					if (projectorWidth != projector->getWidth() || projectorHeight != projector->getHeight()) {
 						stringstream message;
 						message << "Resolution of cursor screen app [" << projectorWidth << "x" << projectorHeight << "] does not match Projector object that we are calibrating [" << projector->getWidth() << "x" << projector->getHeight() << "]";

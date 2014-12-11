@@ -104,20 +104,24 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\src;..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs;C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\src;..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__x86_64__;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -125,7 +129,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs64;C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -135,7 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\src;..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -143,6 +148,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs;C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -151,7 +160,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\src;..\..\..\addons\ofxRay\src;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxJSON\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__x86_64__;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -160,10 +169,47 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs64;C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiAnim.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiAssert.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiCamera.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiColor4D.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiConfig.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiDefines.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiFileIO.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiLight.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiMaterial.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiMatrix3x3.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiMatrix4x4.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiMesh.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiPostProcess.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiQuaternion.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiScene.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiTexture.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiTypes.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiVector2D.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiVector3D.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiVersion.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\assimp.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\assimp.hpp" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\Compiler\poppack1.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\Compiler\pushpack1.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\DefaultLogger.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\IOStream.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\IOSystem.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\Logger.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\LogStream.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\NullLogger.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\ProgressHandler.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpModelLoader.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpTexture.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpUtils.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\autolink.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\config.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\features.h" />
@@ -217,7 +263,7 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Board.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Camera.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Model.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Projector.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.h" />
@@ -234,6 +280,10 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp" />
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.cpp" />
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpModelLoader.cpp" />
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpTexture.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_reader.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp" />
@@ -266,7 +316,7 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Board.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Checkerboard.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Model.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\HomographyFromGraycode.cpp" />
@@ -280,6 +330,11 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiColor4D.inl" />
+    <None Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiMaterial.inl" />
+    <None Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiMatrix3x3.inl" />
+    <None Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiMatrix4x4.inl" />
+    <None Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiVector3D.inl" />
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalarray.inl" />
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalmap.inl" />
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl" />

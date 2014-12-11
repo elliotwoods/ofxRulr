@@ -8,9 +8,13 @@ namespace ofxDigitalEmulsion {
 		//----------
 		class BaseFactory {
 		public:
+			BaseFactory();
 			virtual string getNodeTypeName() = 0;
-			virtual ofImage & getIcon() = 0;
+			ofImage & getIcon();
 			virtual shared_ptr<Node> make() = 0;
+			virtual shared_ptr<Node> makeUninitialised() = 0;
+		protected:
+			ofImage * icon;
 		};
 
 		//----------
@@ -33,6 +37,10 @@ namespace ofxDigitalEmulsion {
 				auto node = make_shared<NodeType>();
 				node->init();
 				return node;
+			}
+
+			shared_ptr<Node> makeUninitialised() override {
+				return static_pointer_cast<Node>(make_shared<NodeType>());
 			}
 		};
 
