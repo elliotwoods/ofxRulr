@@ -26,6 +26,7 @@ namespace ofxDigitalEmulsion {
 			this->showCursor.set("Show Cursor", false);
 			this->showGrid.set("Show Grid", true);
 			this->gridScale.set("Grid scale", 10.0f, 0.01f, 100.0f);
+			this->view->setGridEnabled(false);
 		}
 
 		//----------
@@ -48,14 +49,30 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::serialize(this->showCursor, json);
 			Utils::Serializable::serialize(this->showGrid, json);
 			Utils::Serializable::serialize(this->gridScale, json);
+
+			auto & camera = this->view->getCamera();
+			auto & cameraJson = json["Camera"];
+			cameraJson["Transform"] << camera.getGlobalTransformMatrix();
 		}
 
 		//----------
 		void Summary::deserialize(const Json::Value & json) {
 			Utils::Serializable::deserialize(this->showCursor, json);
+			this->view->setCursorEnabled(this->showCursor);
+
 			Utils::Serializable::deserialize(this->showGrid, json);
 			Utils::Serializable::deserialize(this->gridScale, json);
-			this->view->setCursorEnabled(this->showCursor);
+
+			if (json.isMember("Camera")) {
+				auto & cameraJson = json["Camera"];
+				auto & camera = this->view->getCamera();
+				ofMatrix4x4 transform;
+				cameraJson["Transform"] >> transform;
+				camera.setTransformMatrix(transform);
+
+				//nudge the camera
+				camera.move(ofVec3f());
+			}
 		}
 
 		//----------

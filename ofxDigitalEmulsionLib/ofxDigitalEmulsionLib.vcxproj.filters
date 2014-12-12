@@ -282,9 +282,6 @@
     <ClInclude Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.h">
       <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.h">
-      <Filter>src\ofxDigitalEmulsion\Device</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\World.h">
       <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClInclude>
@@ -429,6 +426,9 @@
     <ClInclude Include="..\..\ofxAssimpModelLoader\libs\assimp\include\Compiler\pushpack1.h">
       <Filter>addons\ofxAssimpModelLoader\libs\assimp\include\Compiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.h">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -524,9 +524,6 @@
     <ClCompile Include="..\..\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp">
       <Filter>addons\ofxNonLinearFit\src\ofxNonLinearFit\Models</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.cpp">
-      <Filter>src\ofxDigitalEmulsion\Device</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp">
       <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClCompile>
@@ -574,6 +571,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp">
       <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.cpp">
+      <Filter>src\ofxDigitalEmulsion\Device</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

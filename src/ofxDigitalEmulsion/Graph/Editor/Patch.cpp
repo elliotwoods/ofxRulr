@@ -214,6 +214,9 @@ namespace ofxDigitalEmulsion {
 						}
 					}
 				}
+
+				auto & canvasJson = json["Canvas"];
+				canvasJson["Scroll"] << this->view->getScrollPosition();
 			}
 
 			//----------
@@ -255,9 +258,8 @@ namespace ofxDigitalEmulsion {
 
 							//go through all the input pins
 							for (auto & inputPin : node->getInputPins()) {
-								//check this pin has been serialised
-								if (inputPinsJson.isMember(inputPin->getName())) {
-									const auto & inputPinJson = inputPinsJson[inputPin->getName()];
+								const auto & inputPinJson = inputPinsJson[inputPin->getName()];
+								if (!inputPinJson.isNull()) { //check this pin has been serialised to a node ID
 									const auto sourceNodeHostIndex = (NodeHost::Index) inputPinJson["SourceNode"].asInt();
 									auto sourceNodeHost = this->getNodeHost(sourceNodeHostIndex);
 
@@ -276,6 +278,12 @@ namespace ofxDigitalEmulsion {
 
 				this->rebuildLinkHosts();
 				this->view->resync();
+
+				const auto & canvasJson = json["Canvas"];
+				ofVec2f canvasScrollPosiition;
+				canvasJson["Scroll"] >> canvasScrollPosiition;
+				this->view->setScrollPosition(canvasScrollPosiition);
+
 			}
 
 			//----------

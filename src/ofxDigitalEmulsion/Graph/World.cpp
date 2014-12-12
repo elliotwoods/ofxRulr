@@ -116,14 +116,10 @@ namespace ofxDigitalEmulsion {
 					return ofGetFrameRate();
 				}, true));
 				inspector->add(Widgets::Button::make("Save all", [this]() {
-					for (auto node : *this) {
-						node->save(node->getDefaultFilename());
-					}
+					this->saveAll();
 				}));
 				inspector->add(Widgets::Button::make("Load all", [this]() {
-					for (auto node : *this) {
-						node->load(node->getDefaultFilename());
-					}
+					this->loadAll();
 				}));
 				inspector->add(Widgets::Spacer::make());
 			};

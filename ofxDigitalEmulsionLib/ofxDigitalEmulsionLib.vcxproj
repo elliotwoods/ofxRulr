@@ -249,7 +249,7 @@
     <ClInclude Include="..\..\ofxOsc\src\ofxOscSender.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeBrowser.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\Patch.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\LinkHost.h" />
@@ -303,7 +303,7 @@
     <ClCompile Include="..\..\ofxOsc\src\ofxOscReceiver.cpp" />
     <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\ProjectorOutput.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\LinkHost.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeBrowser.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\Patch.cpp" />

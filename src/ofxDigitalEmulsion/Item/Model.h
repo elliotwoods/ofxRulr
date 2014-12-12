@@ -2,6 +2,8 @@
 
 #include "Base.h"
 
+#include <ofxCvGui/Panels/World.h>
+
 #include "ofxAssimpModelLoader.h"
 
 namespace ofxDigitalEmulsion {
@@ -12,6 +14,8 @@ namespace ofxDigitalEmulsion {
 			string getTypeName() const override;
 			void init() override;
 			ofxCvGui::PanelPtr getView();
+
+			void update() override;
 			void drawWorld() override;
 
 			void serialize(Json::Value &) override;
@@ -21,7 +25,7 @@ namespace ofxDigitalEmulsion {
 
 			void updatePreviewMesh();
 
-			ofxCvGui::PanelPtr view;
+			shared_ptr<ofxCvGui::Panels::World> view;
 
 			ofParameter<string> filename;
 
@@ -31,6 +35,7 @@ namespace ofxDigitalEmulsion {
 			ofParameter<float> inputUnitScale;
 
 			ofxAssimpModelLoader modelLoader;
+			ofLight light;
 		};
 	}
 }

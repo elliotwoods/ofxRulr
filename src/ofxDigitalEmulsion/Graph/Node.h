@@ -82,11 +82,11 @@ namespace ofxDigitalEmulsion {
 			void setupIcon();
 
 			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
-			string name;
-			string defaultIconName;
 		private:
 			PinSet inputPins;
 			ofImage * icon;
+			string name;
+			string defaultIconName;
 		};
 	}
 }

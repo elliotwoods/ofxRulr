@@ -14,7 +14,7 @@ namespace ofxDigitalEmulsion {
 			this->resolutionWidth.set("Resolution width", 1024.0f, 1.0f, 8 * 1280.0f);
 			this->resolutionHeight.set("Resolution height", 768.0f, 1.0f, 8 * 800.0f);
 			this->throwRatioX.set("Throw ratio X", 1.4f, 0.01f, 10.0f);
-			this->throwRatioY.set("Throw ratio Y", 1.4f, 0.01f, 10.0f);
+			this->pixelAspectRatio.set("Pixel aspect ratio", 1.0f, 0.01f, 10.0f);
 			this->lensOffsetX.set("Lens offset X", 0.0f, -2.0f, 2.0f);
 			this->lensOffsetY.set("Lens offset Y", 0.5f, -2.0f, 2.0f);
 			this->translationX.set("Translation X", 0.0f, -100.0f, 100.0f);
@@ -27,7 +27,7 @@ namespace ofxDigitalEmulsion {
 			this->resolutionWidth.addListener(this, &Projector::projectorParameterCallback);
 			this->resolutionHeight.addListener(this, &Projector::projectorParameterCallback);
 			this->throwRatioX.addListener(this, &Projector::projectorParameterCallback);
-			this->throwRatioY.addListener(this, &Projector::projectorParameterCallback);
+			this->pixelAspectRatio.addListener(this, &Projector::projectorParameterCallback);
 			this->lensOffsetX.addListener(this, &Projector::projectorParameterCallback);
 			this->lensOffsetY.addListener(this, &Projector::projectorParameterCallback);
 			this->translationX.addListener(this, &Projector::projectorParameterCallback);
@@ -67,7 +67,7 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::serialize(this->resolutionWidth, json);
 			Utils::Serializable::serialize(this->resolutionHeight, json);
 			Utils::Serializable::serialize(this->throwRatioX, json);
-			Utils::Serializable::serialize(this->throwRatioY, json);
+			Utils::Serializable::serialize(this->pixelAspectRatio, json);
 			Utils::Serializable::serialize(this->lensOffsetX, json);
 			Utils::Serializable::serialize(this->lensOffsetY, json);
 
@@ -84,7 +84,7 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::deserialize(this->resolutionWidth, json);
 			Utils::Serializable::deserialize(this->resolutionHeight, json);
 			Utils::Serializable::deserialize(this->throwRatioX, json);
-			Utils::Serializable::deserialize(this->throwRatioY, json);
+			Utils::Serializable::deserialize(this->pixelAspectRatio, json);
 			Utils::Serializable::deserialize(this->lensOffsetX, json);
 			Utils::Serializable::deserialize(this->lensOffsetY, json);
 
@@ -126,10 +126,15 @@ namespace ofxDigitalEmulsion {
 			float ppy = cameraMatrix.at<double>(1, 2);
 
 			this->throwRatioX = fovx / this->getWidth();
-			this->throwRatioY = fovy / this->getHeight();
+			auto throwRatioY = fovy / this->getHeight();
+			auto throwAspectRatio = this->throwRatioX / throwRatioY;
+			this->pixelAspectRatio = throwAspectRatio / this->getResolutionAspectRatio();
 			
 			this->lensOffsetX = (ppx / this->getWidth()) - 0.5f; // not sure if this is + or -ve (if wrong, then both this and ofxCvMin::Helpers::makeProjectionMatrix should be switched
 			this->lensOffsetY = (ppy / this->getHeight()) - 0.5f;
+			//this may be out by a factor of 2. i.e.
+			//this->lensOffsetX /= 2.0f;
+			//this->lensOffsetY /= 2.0f;
 
 			const auto newProjection = ofxCv::makeProjectionMatrix(cameraMatrix, cv::Size(projector.getWidth(), projector.getHeight()));
 			this->projector.setProjection(newProjection);
@@ -165,6 +170,26 @@ namespace ofxDigitalEmulsion {
 		}
 			
 		//----------
+		float Projector::getResolutionAspectRatio() const {
+			return this->getWidth() / this->getHeight();
+		}
+
+		//----------
+		float Projector::getPixelAspectRatio() const {
+			return this->pixelAspectRatio;
+		}
+
+		//----------
+		float Projector::getThrowRatioX() const {
+			return this->throwRatioX;
+		}
+
+		//----------
+		float Projector::getThrowRatioY() const {
+			return this->throwRatioX * (this->getResolutionAspectRatio() / this->getPixelAspectRatio());
+		}
+
+		//----------
 		void Projector::populateInspector2(ElementGroupPtr inspector) {
 			inspector->add(Widgets::Slider::make(this->resolutionWidth));
 			inspector->add(Widgets::Slider::make(this->resolutionHeight));
@@ -172,7 +197,10 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Spacer::make());
 
 			inspector->add(Widgets::Slider::make(this->throwRatioX));
-			inspector->add(Widgets::Slider::make(this->throwRatioY));
+			inspector->add(Widgets::LiveValue<float>::make("Throw ratio Y", [this]() {
+				return this->getThrowRatioY();
+			}));
+			inspector->add(Widgets::Slider::make(this->pixelAspectRatio));
 			inspector->add(Widgets::Slider::make(this->lensOffsetX));
 			inspector->add(Widgets::Slider::make(this->lensOffsetY));
 
@@ -197,11 +225,11 @@ namespace ofxDigitalEmulsion {
 			this->projector.setView(pose);
 
 			ofMatrix4x4 projection;
-			projection(0,0) = this->throwRatioX;
-			projection(1,1) = -this->throwRatioY;
+			projection(0,0) = this->getThrowRatioX();
+			projection(1,1) = -this->getThrowRatioY();
 			projection(2,3) = 1.0f;
 			projection(3,3) = 0.0f;
-			projection.postMultTranslate(-this->lensOffsetX, -this->lensOffsetY, 0.0f);
+			projection.postMultTranslate(-this->lensOffsetX * 2.0f, -this->lensOffsetY * 2.0f, 0.0f);
 			this->projector.setProjection(projection);
 
 			this->projector.setWidth(this->getWidth());

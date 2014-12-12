@@ -21,9 +21,11 @@ namespace ofxDigitalEmulsion {
 			static void serialize(const ofParameter<int> &, Json::Value &);
 			static void serialize(const ofParameter<float> &, Json::Value &);
 			static void serialize(const ofParameter<bool> &, Json::Value &);
+			static void serialize(const ofParameter<string> &, Json::Value &);
 			static void deserialize(ofParameter<int> &, const Json::Value &);
 			static void deserialize(ofParameter<float> &, const Json::Value &);
 			static void deserialize(ofParameter<bool> &, const Json::Value &);
+			static void deserialize(ofParameter<string> &, const Json::Value &);
 		};
 	}
 }

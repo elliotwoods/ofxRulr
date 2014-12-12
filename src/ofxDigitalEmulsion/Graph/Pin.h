@@ -64,9 +64,9 @@ namespace ofxDigitalEmulsion {
 				this->connect(castNode);
 			}
 			void resetConnection() override {
-				this->connection.reset();
 				ofEventArgs args;
 				this->onDropConnection.notifyListeners(args);
+				this->connection.reset();
 			}
 			shared_ptr<NodeType> getConnection() {
 				return this->connection.lock();

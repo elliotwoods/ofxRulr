@@ -29,6 +29,12 @@ namespace ofxDigitalEmulsion {
 
 			const ofxRay::Projector & getRayProjector() const;
 			void drawWorld() override;
+
+			float getResolutionAspectRatio() const;
+			float getPixelAspectRatio() const;
+
+			float getThrowRatioX() const;
+			float getThrowRatioY() const;
 		protected:
 			void populateInspector2(ofxCvGui::ElementGroupPtr);
 
@@ -40,7 +46,7 @@ namespace ofxDigitalEmulsion {
 			ofxRay::Projector projector;
 
 			ofParameter<float> resolutionWidth, resolutionHeight;
-			ofParameter<float> throwRatioX, throwRatioY;
+			ofParameter<float> throwRatioX, pixelAspectRatio;
 			ofParameter<float> lensOffsetX, lensOffsetY;
 
 			ofParameter<float> translationX, translationY, translationZ;

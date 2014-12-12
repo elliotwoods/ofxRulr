@@ -1,7 +1,7 @@
 #include "Graycode.h"
 
 #include "../../Item/Camera.h"
-#include "../../Item/Projector.h"
+#include "../../Device/VideoOutput.h"
 #include "../../Utils/Exception.h"
 
 #include "ofxCvGui.h"
@@ -16,8 +16,13 @@ namespace ofxDigitalEmulsion {
 		namespace Scan {
 			//---------
 			Graycode::Graycode() {
+
+			}
+
+			//----------
+			void Graycode::init() {
 				this->addInput(MAKE(Pin<Item::Camera>));
-				this->addInput(MAKE(Pin<Item::Projector>));
+				this->addInput(MAKE(Pin<Device::VideoOutput>));
 
 				this->threshold.set("Threshold", 10.0f, 0.0f, 255.0f);
 				this->delay.set("Capture delay [ms]", 200.0f, 0.0f, 2000.0f);
@@ -26,10 +31,7 @@ namespace ofxDigitalEmulsion {
 
 				this->previewIsOfNonLivePixels = false;
 			}
-
-			//----------
-			void Graycode::init() {
-			}
+			
 			//----------
 			string Graycode::getTypeName() const {
 				return "Procedure::Scan::Graycode";
@@ -43,10 +45,11 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void Graycode::update() {
 				//update payload if we need to
-				auto projector = this->getInput<Item::Projector>();
-				if (projector) {
-					if (this->payload.getWidth() != projector->getWidth() || this->payload.getHeight() != projector->getHeight()) {
-						payload.init(projector->getWidth(), projector->getHeight());
+				auto videoOut = this->getInput<Device::VideoOutput>();
+				if (videoOut) {
+					const auto outputSize = videoOut->getSize();
+					if (this->payload.getWidth() != outputSize.getWidth() || this->payload.getHeight() != outputSize.getHeight()) {
+						payload.init(outputSize.getWidth(), outputSize.getHeight());
 						encoder.init(payload);
 						decoder.init(payload);
 						this->load(this->getDefaultFilename());
@@ -75,48 +78,43 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			bool Graycode::isReady() {
-				return (this->getInput<Item::Camera>() && this->getInput<Item::Projector>() && this->payload.isAllocated());
+				return (this->getInput<Item::Camera>() && this->getInput<Device::VideoOutput>() && this->payload.isAllocated());
 			}
 
 			//----------
 			void Graycode::runScan() {
-				auto window = glfwGetCurrentContext();
-				
-				auto camera = this->getInput<Item::Camera>();
-				if (!camera) {
-					throw(Utils::Exception("No camera attached"));
-				}
-				auto projector = this->getInput<Item::Projector>();
-				if (!projector) {
-					throw(Utils::Exception("No projector attached"));
-				}
+				//safety checks
+				this->throwIfMissingAnyConnection();
 				if (!this->payload.isAllocated()) {
 					throw(Utils::Exception("Payload is not allocated"));
 				}
 
-				ofSetFullscreen(true);
-				ofHideCursor();
-
-				auto screenWidth = ofGetScreenWidth();
-				auto screenHeight = ofGetScreenHeight();
-				ofLogNotice("ofxDigitalEmulsion::Graycode") << "Sending on screen with resolution [" << screenWidth << "x" << screenHeight << "]";
-
-				ofPushView();
-				ofViewport(0.0f, 0.0f, screenWidth, screenHeight);
-				ofSetupScreenOrtho(screenWidth, screenHeight);
-
+				//get variables
+				auto window = glfwGetCurrentContext();
+				auto camera = this->getInput<Item::Camera>();
+				auto videoOutput = this->getInput<Device::VideoOutput>();
+				auto videoOutputSize = videoOutput->getSize();
 				auto grabber = camera->getGrabber();
 
-				this->payload.init(projector->getWidth(), projector->getHeight());
+				//initialise scan
+				this->payload.init(videoOutputSize.getWidth(), videoOutputSize.getHeight());
 				this->encoder.reset();
 				this->decoder.reset();
 				this->decoder.setThreshold(this->threshold);
 				this->message.clear();
-					
+				
+				ofHideCursor();
+
 				while (this->encoder >> this->message) {
-					this->message.draw(0,0);
-					glfwSwapBuffers(window);
-					glFlush();
+					videoOutput->clearFbo(false);
+					videoOutput->begin();
+					this->message.draw(0, 0);
+					videoOutput->end();
+					videoOutput->presentFbo();
+
+					stringstream message;
+					message << this->getName() << " scanning " << this->encoder.getFrame() << "/" << this->encoder.getFrameCount();
+					ofxCvGui::Utils::drawProcessingNotice(message.str());
 
 					auto startWait = ofGetElapsedTimeMillis();
 					while(ofGetElapsedTimeMillis() - startWait < this->delay) {
@@ -124,13 +122,11 @@ namespace ofxDigitalEmulsion {
 						grabber->update();
 					}
 
-					this->decoder << grabber->getPixelsRef();
+					auto frame = grabber->getFreshFrame();
+					this->decoder << frame->getPixelsRef();
 				}
 
-				ofPopView();
-
 				ofShowCursor();
-				ofSetFullscreen(false);
 
 				this->switchIfLookingAtDirtyView();
 			}

@@ -1,8 +1,8 @@
 #include "Serializable.h"
+#include "Exception.h"
 
 #include "ofSystemUtils.h"
 #include <string>
-
 using namespace std;
 
 namespace ofxDigitalEmulsion {
@@ -23,6 +23,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void Serializable::serialize(const ofParameter<string> & parameter, Json::Value & json) {
+			json[parameter.getName()] = parameter.get();
+		}
+
+		//----------
 		void Serializable::deserialize(ofParameter<int> & parameter, const Json::Value & json) {
 			const auto name = parameter.getName();
 			if (json[name].isNumeric()) {
@@ -33,7 +38,7 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Serializable::deserialize(ofParameter<float> & parameter, const Json::Value & json) {
 			const auto name = parameter.getName();
-			if (json[name].isNumeric()) {
+			if (json.isMember(name)) {
 				parameter.set(json[name].asFloat());
 			}
 		}
@@ -41,8 +46,16 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Serializable::deserialize(ofParameter<bool> & parameter, const Json::Value & json) {
 			const auto name = parameter.getName();
-			if (json[name].isBool()) {
+			if (json.isMember(name)) {
 				parameter.set(json[parameter.getName()].asBool());
+			}
+		}
+
+		//----------
+		void Serializable::deserialize(ofParameter<string> & parameter, const Json::Value & json) {
+			const auto name = parameter.getName();
+			if (json.isMember(name)) {
+				parameter.set(json[parameter.getName()].asString());
 			}
 		}
 
@@ -89,9 +102,8 @@ namespace ofxDigitalEmulsion {
 					Json::Value json;
 					reader.parse(jsonRaw, json);
 					this->deserialize(json);
-				} catch (std::exception e) {
-					ofSystemAlertDialog(e.what());
-				}
+				} 
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}
 		}
 

@@ -1,11 +1,10 @@
 #include "Factory.h"
-#include "../Device/ProjectorOutput.h"
 
 #include "ofxDigitalEmulsion/Item/Board.h"
 #include "ofxDigitalEmulsion/Item/Camera.h"
 #include "ofxDigitalEmulsion/Item/Projector.h"
 #include "ofxDigitalEmulsion/Item/Model.h"
-#include "ofxDigitalEmulsion/Device/ProjectorOutput.h"
+#include "ofxDigitalEmulsion/Device/VideoOutput.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/CameraIntrinsics.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/ProjectorIntrinsicsExtrinsics.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/HomographyFromGraycode.h"
@@ -49,7 +48,7 @@ namespace ofxDigitalEmulsion {
 			this->add<Item::Camera>();
 			this->add<Item::Projector>();
 			this->add<Item::Model>();
-			this->add<Device::ProjectorOutput>();
+			this->add<Device::VideoOutput>();
 			this->add<Procedure::Calibrate::CameraIntrinsics>();
 			//factoryRegister->add<Procedure::Calibrate::ProjectorIntrinsicsExtrinsics>();
 			this->add<Procedure::Calibrate::HomographyFromGraycode>();
