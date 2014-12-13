@@ -92,7 +92,7 @@ namespace ofxDigitalEmulsion {
 				}
 				case 2:
 					// WHITE
-					ofClear(255);
+					ofClear(255, 255);
 					break;
 				default:
 					break;

@@ -61,6 +61,7 @@ namespace ofxDigitalEmulsion {
 				}, -1, this);
 			}
 			auto gridGroup = MAKE(ofxCvGui::Panels::Groups::Grid);
+			gridGroup->setColsCount(1);
 			rootGroup->add(gridGroup);
 			this->guiGrid = gridGroup;
 			//
