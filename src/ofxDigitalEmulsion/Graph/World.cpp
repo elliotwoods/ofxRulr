@@ -51,13 +51,17 @@ namespace ofxDigitalEmulsion {
 			//
 			auto rootGroup = dynamic_pointer_cast<ofxCvGui::Panels::Groups::Grid>(controller.getRootGroup());
 			if (rootGroup) {
+				weak_ptr<ofxCvGui::Panels::Groups::Grid> rootGroupWeakPtr = rootGroup;
 				//set widths before the rearrangement happens
-				rootGroup->onBoundsChange.addListener([rootGroup] (ofxCvGui::BoundsChangeArguments & args) {
-					const float inspectorWidth = 300.0f;
-					vector<float> widths;
-					widths.push_back(args.bounds.getWidth() - inspectorWidth);
-					widths.push_back(inspectorWidth);
-					rootGroup->setWidths(widths);
+				rootGroup->onBoundsChange.addListener([rootGroupWeakPtr] (ofxCvGui::BoundsChangeArguments & args) {
+					auto rootGroup = rootGroupWeakPtr.lock();
+					if (rootGroup) {
+						const float inspectorWidth = 300.0f;
+						vector<float> widths;
+						widths.push_back(args.bounds.getWidth() - inspectorWidth);
+						widths.push_back(inspectorWidth);
+						rootGroup->setWidths(widths);
+					}
 				}, -1, this);
 			}
 			auto gridGroup = MAKE(ofxCvGui::Panels::Groups::Grid);

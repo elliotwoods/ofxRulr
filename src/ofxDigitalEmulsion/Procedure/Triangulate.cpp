@@ -29,22 +29,30 @@ namespace ofxDigitalEmulsion {
 			
 			cameraPin->onNewConnection += [this] (shared_ptr<Item::Camera> & cameraNode) {
 				cameraNode->getView()->onMouse.removeListeners(this);
-				cameraNode->getView()->onMouse.addListener([this, cameraNode] (MouseArguments & mouseArgs) {
-					if (mouseArgs.isLocal() && (mouseArgs.action == MouseArguments::Action::Pressed || mouseArgs.action == MouseArguments::Action::Dragged)) {
-						this->cameraRay = cameraNode->getRayCamera().castPixel(mouseArgs.localNormalised * ofVec2f(cameraNode->getWidth(), cameraNode->getHeight()));
-						this->intersectRay = this->cameraRay.intersect(this->projectorRay);
-						this->intersectRay.color = ofColor(255);
+				weak_ptr<Item::Camera> cameraNodeWeak = cameraNode;
+				cameraNode->getView()->onMouse.addListener([this, cameraNodeWeak](MouseArguments & mouseArgs) {
+					auto cameraNode = cameraNodeWeak.lock();
+					if (cameraNode) {
+						if (mouseArgs.isLocal() && (mouseArgs.action == MouseArguments::Action::Pressed || mouseArgs.action == MouseArguments::Action::Dragged)) {
+							this->cameraRay = cameraNode->getRayCamera().castPixel(mouseArgs.localNormalised * ofVec2f(cameraNode->getWidth(), cameraNode->getHeight()));
+							this->intersectRay = this->cameraRay.intersect(this->projectorRay);
+							this->intersectRay.color = ofColor(255);
+						}
 					}
 				}, this);
 			};
 			
 			projectorPin->onNewConnection += [this] (shared_ptr<Item::Projector> & projectorNode) {
 				projectorNode->getView()->onMouse.removeListeners(this);
-				projectorNode->getView()->onMouse.addListener([this, projectorNode] (MouseArguments & mouseArgs) {
-					if (mouseArgs.isLocal() && (mouseArgs.action == MouseArguments::Action::Pressed || mouseArgs.action == MouseArguments::Action::Dragged)) {
-						this->projectorRay = projectorNode->getRayProjector().castPixel(mouseArgs.localNormalised * ofVec2f(projectorNode->getWidth(), projectorNode->getHeight()));
-						this->intersectRay = this->cameraRay.intersect(this->projectorRay);
-						this->intersectRay.color = ofColor(255);
+				weak_ptr<Item::Projector> projectorNodeWeak = projectorNode;
+				projectorNode->getView()->onMouse.addListener([this, projectorNodeWeak] (MouseArguments & mouseArgs) {
+					auto projectorNode = projectorNodeWeak.lock();
+					if (projectorNode) {
+						if (mouseArgs.isLocal() && (mouseArgs.action == MouseArguments::Action::Pressed || mouseArgs.action == MouseArguments::Action::Dragged)) {
+							this->projectorRay = projectorNode->getRayProjector().castPixel(mouseArgs.localNormalised * ofVec2f(projectorNode->getWidth(), projectorNode->getHeight()));
+							this->intersectRay = this->cameraRay.intersect(this->projectorRay);
+							this->intersectRay.color = ofColor(255);
+						}
 					}
 				}, this);
 			};

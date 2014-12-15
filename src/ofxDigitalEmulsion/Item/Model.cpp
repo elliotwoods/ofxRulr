@@ -156,6 +156,7 @@ namespace ofxDigitalEmulsion {
 				this->filename.set("");
 			});
 			//we put the listener on the loadButton since we'll be disabling clearModelButton
+			//also it stops there being a circular reference where loadButton owns a listener stack which owns a lambda which owns loadButton
 			loadButton->onUpdate += [this, clearModelButton](ofxCvGui::UpdateArguments &) {
 				clearModelButton->setEnabled(!this->filename.get().empty());
 			};

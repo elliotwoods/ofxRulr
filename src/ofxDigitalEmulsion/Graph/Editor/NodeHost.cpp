@@ -23,7 +23,7 @@ namespace ofxDigitalEmulsion {
 				resizeHandle->onDrawDown += [](ofxCvGui::DrawArguments & args) {
 					image("ofxDigitalEmulsion::resizeHandle").draw(args.localBounds);
 				};
-				resizeHandle->onMouse += [this, resizeHandle](ofxCvGui::MouseArguments & args) {
+				resizeHandle->onMouse += [this, &resizeHandle](ofxCvGui::MouseArguments & args) {
 					if (args.isDragging(resizeHandle.get())) {
 						auto newBounds = this->getBounds();
 						newBounds.width += args.movement.x;
@@ -47,14 +47,24 @@ namespace ofxDigitalEmulsion {
 				this->inputPins = make_shared<ofxCvGui::ElementGroup>();
 				for (auto inputPin : node->getInputPins()) {
 					this->inputPins->add(inputPin);
-					inputPin->onBeginMakeConnection += [this, inputPin](ofEventArgs &) {
-						this->onBeginMakeConnection(inputPin);
+					weak_ptr<BasePin> inputPinWeak = inputPin;
+					inputPin->onBeginMakeConnection += [this, inputPinWeak](ofEventArgs &) {
+						auto inputPin = inputPinWeak.lock();
+						if (inputPin) {
+							this->onBeginMakeConnection(inputPin);
+						}
 					};
-					inputPin->onReleaseMakeConnection += [this, inputPin](ofxCvGui::MouseArguments & args) {
-						this->onReleaseMakeConnection(args);
+					inputPin->onReleaseMakeConnection += [this, inputPinWeak](ofxCvGui::MouseArguments & args) {
+						auto inputPin = inputPinWeak.lock();
+						if (inputPin) {
+							this->onReleaseMakeConnection(args);
+						}
 					};
-					inputPin->onDropConnection += [this, inputPin](ofEventArgs &) {
-						this->onDropInputConnection(inputPin);
+					inputPin->onDropConnection += [this, inputPinWeak](ofEventArgs &) {
+						auto inputPin = inputPinWeak.lock();
+						if (inputPin) {
+							this->onDropInputConnection(inputPin);
+						}
 					};
 				};
 				this->inputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {

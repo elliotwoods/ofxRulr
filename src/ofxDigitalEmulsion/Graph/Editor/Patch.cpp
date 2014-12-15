@@ -343,8 +343,12 @@ namespace ofxDigitalEmulsion {
 			shared_ptr<NodeHost> Patch::addNode(NodeHost::Index index, shared_ptr<Node> node, const ofRectangle & bounds) {
 				auto nodeHost = make_shared<NodeHost>(node);
 				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
-				nodeHost->onBeginMakeConnection += [this, nodeHost](const shared_ptr<BasePin> & inputPin) {
-					this->callbackBeginMakeConnection(nodeHost, inputPin);
+				weak_ptr<NodeHost> nodeHostWeak = nodeHost;
+				nodeHost->onBeginMakeConnection += [this, nodeHostWeak](const shared_ptr<BasePin> & inputPin) {
+					auto nodeHost = nodeHostWeak.lock();
+					if (nodeHost) {
+						this->callbackBeginMakeConnection(nodeHost, inputPin);
+					}
 				};
 				nodeHost->onReleaseMakeConnection += [this](ofxCvGui::MouseArguments & args) {
 					this->callbackReleaseMakeConnection(args);
