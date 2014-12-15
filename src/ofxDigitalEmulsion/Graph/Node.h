@@ -76,6 +76,16 @@ namespace ofxDigitalEmulsion {
 			ofxLiquidEvent<int> onConnect;
 		protected:
 			void addInput(shared_ptr<BasePin>);
+			template<typename NodeType>
+			void addInput() {
+				this->addInput(make_shared<Pin<NodeType>>());
+			}
+			template<typename NodeType>
+			void addInput(const string & pinName) {
+				auto inputPin = make_shared<Pin<NodeType>>();
+				inputPin->setName(pinName);
+				this->addInput(inputPin);
+			}
 			void removeInput(shared_ptr<BasePin>);
 			void clearInputs();
 

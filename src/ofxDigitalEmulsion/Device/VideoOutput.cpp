@@ -119,6 +119,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		VideoOutput::~VideoOutput() {
+			this->setWindowOpen(false);
+		}
+
+		//----------
 		void VideoOutput::init() {
 		}
 
@@ -313,7 +318,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void VideoOutput::clearFbo(bool callDrawListeners) {
-			this->fbo.begin();
+			this->fbo.begin(true);
 			ofClear(0, 255);
 
 			if (callDrawListeners) {
@@ -507,7 +512,12 @@ namespace ofxDigitalEmulsion {
 				const auto splitCount = this->splitHorizontal * this->splitVertical;
 				this->splitUseIndex.setMax(splitCount - 1);
 
-				this->fbo.allocate(videoMode->width, videoMode->height, GL_RGBA);
+				ofFbo::Settings fboSettings;
+				fboSettings.width = this->width;
+				fboSettings.height = this->height;
+				fboSettings.numSamples = 8;
+
+				this->fbo.allocate(fboSettings);
 			}
 		}
 

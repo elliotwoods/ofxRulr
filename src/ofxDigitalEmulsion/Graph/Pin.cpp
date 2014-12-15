@@ -37,9 +37,9 @@ namespace ofxDigitalEmulsion {
 					}
 					
 				}
-				else if (args.action == ofxCvGui::MouseArguments::Action::Released) {
-					this->onReleaseMakeConnection(args);
-				}
+			};
+			this->onMouseReleased += [this](ofxCvGui::MouseArguments & args) {
+				this->onReleaseMakeConnection(args);
 			};
 
 			this->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {

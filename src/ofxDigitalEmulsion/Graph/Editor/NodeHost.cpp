@@ -23,12 +23,16 @@ namespace ofxDigitalEmulsion {
 				resizeHandle->onDrawDown += [](ofxCvGui::DrawArguments & args) {
 					image("ofxDigitalEmulsion::resizeHandle").draw(args.localBounds);
 				};
-				resizeHandle->onMouse += [this, &resizeHandle](ofxCvGui::MouseArguments & args) {
-					if (args.isDragging(resizeHandle.get())) {
-						auto newBounds = this->getBounds();
-						newBounds.width += args.movement.x;
-						newBounds.height += args.movement.y;
-						this->setBounds(newBounds);
+				weak_ptr<ofxCvGui::Utils::Button> resizeHandleWeak = resizeHandle;
+				resizeHandle->onMouse += [this, resizeHandleWeak](ofxCvGui::MouseArguments & args) {
+					auto resizeHandle = resizeHandleWeak.lock();
+					if (resizeHandle) {
+						if (args.isDragging(resizeHandle.get())) {
+							auto newBounds = this->getBounds();
+							newBounds.width += args.movement.x;
+							newBounds.height += args.movement.y;
+							this->setBounds(newBounds);
+						}
 					}
 				};
 				this->elements->add(resizeHandle);

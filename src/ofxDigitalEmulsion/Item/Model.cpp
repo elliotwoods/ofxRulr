@@ -42,7 +42,7 @@ namespace ofxDigitalEmulsion {
 				this->drawWorld();
 			};
 			this->view->onMouse += [this](MouseArguments & args) {
-				if (args.action & (MouseArguments::Action::Pressed | MouseArguments::Action::Dragged | MouseArguments::Action::Released)) {
+				if (args.action & (MouseArguments::Action::Pressed | MouseArguments::Action::Dragged)) {
 					auto & camera = this->view->getCamera();
 					camera.updateCursorWorld();
 					this->light.lookAt(camera.getCursorWorld());
