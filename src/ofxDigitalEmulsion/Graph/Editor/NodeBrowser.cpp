@@ -73,9 +73,13 @@ namespace ofxDigitalEmulsion {
 					}
 					if (matches) {
 						auto newListItem = make_shared<ListItem>(factoryIterator.second);
-						newListItem->onMouse += [this, newListItem](ofxCvGui::MouseArguments & args) {
-							if (args.isLocal()) {
-								this->currentSelection = newListItem;
+						weak_ptr<ListItem> newListItemWeak = newListItem;
+						newListItem->onMouse += [this, newListItemWeak](ofxCvGui::MouseArguments & args) {
+							auto newListItem = newListItemWeak.lock();
+							if (newListItem) {
+								if (args.isLocal()) {
+									this->currentSelection = newListItem;
+								}
 							}
 						};
 						this->listBox->add(newListItem);
@@ -83,7 +87,7 @@ namespace ofxDigitalEmulsion {
 				}
 				this->listBox->arrange();
 
-				auto & listItems = this->listBox->getGroup()->getElements();
+				auto & listItems = this->listBox->getElementGroup()->getElements();
 				if (listItems.empty()) {
 					this->currentSelection.reset();
 				}
@@ -149,7 +153,7 @@ namespace ofxDigitalEmulsion {
 						currentSelection->getFactory()->getIcon().draw(10, 10, 96, 96);
 						message += currentSelection->getFactory()->getNodeTypeName();
 					}
-					message += "\n" + ofToString(this->listBox->getGroup()->getElements().size()) + " nodes found.\n";
+					message += "\n" + ofToString(this->listBox->getElementGroup()->getElements().size()) + " nodes found.\n";
 					
 					ofxAssets::font("ofxCvGui::swisop3", 12).drawString(message, this->textBox->getBounds().x, 10 + 78);
 				};
@@ -189,7 +193,7 @@ namespace ofxDigitalEmulsion {
 				this->textBox->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
 					if (args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
 						bool selectionChanged = false;
-						auto nodeList = this->listBox->getGroup()->getElements();
+						auto nodeList = this->listBox->getElementGroup()->getElements();
 						auto currentSelection = this->currentSelection.lock();
 
 						//press up/down to move through items
@@ -255,7 +259,7 @@ namespace ofxDigitalEmulsion {
 			void NodeBrowser::buildListBox() {
 				this->listBox = make_shared<ofxCvGui::Panels::Scroll>();
 
-				this->listBox->getGroup()->onDraw += [this](ofxCvGui::DrawArguments & args) {
+				this->listBox->getElementGroup()->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					auto currentSelection = this->currentSelection.lock();
 					if (currentSelection) {
 						//draw background on selected node
