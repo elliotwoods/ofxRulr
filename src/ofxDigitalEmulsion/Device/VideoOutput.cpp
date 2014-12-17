@@ -30,8 +30,6 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		VideoOutput::VideoOutput() {
-			this->videoOutputSelection = 0;
-
 			this->view = MAKE(ofxCvGui::Panels::ElementHost);
 			this->refreshMonitors();
 
@@ -75,12 +73,11 @@ namespace ofxDigitalEmulsion {
 				}
 			};
 
-			this->onDrawOutput += [this](ofRectangle &) {
+			this->onDrawOutput += [this](ofRectangle & outputRect) {
 				switch (this->testPattern.get()) {
 				case 1:
 				{
 					// GRID
-					const auto outputRect = this->getSize();
 					ofPushStyle();
 					ofNoFill();
 					ofSetLineWidth(1.0f);
@@ -99,6 +96,7 @@ namespace ofxDigitalEmulsion {
 				}
 			};
 
+			this->previewFboEnabled.set("Preview fbo", true);
 			this->showWindow.set("Show window", false);
 			this->testPattern.set("Test Pattern", 0);
 			this->splitHorizontal.set("Split Horizontal", 1, 1, 8);
@@ -107,6 +105,7 @@ namespace ofxDigitalEmulsion {
 
 			this->splitHorizontal.addListener(this, &VideoOutput::callbackChangeSplit);
 			this->splitVertical.addListener(this, &VideoOutput::callbackChangeSplit);
+			this->splitUseIndex.addListener(this, &VideoOutput::callbackChangeSplit);
 
 			this->window = nullptr;
 			this->videoMode = nullptr;
@@ -114,8 +113,12 @@ namespace ofxDigitalEmulsion {
 			monitorEventChangeListener.onMonitorChange += [this](GLFWmonitor *) {
 				this->needsMonitorRefresh = true;
 			};
+
 			this->width = 1024.0f;
 			this->height = 768.0f;
+			this->videoOutputSelection = 0;
+			this->scissorWasEnabled = false;
+
 		}
 
 		//----------
@@ -138,6 +141,7 @@ namespace ofxDigitalEmulsion {
 			json["width"] = this->width;
 			json["height"] = this->height;
 			json["monitorSelection"] = this->videoOutputSelection;
+			ofxDigitalEmulsion::Utils::Serializable::serialize(this->previewFboEnabled, json);
 			ofxDigitalEmulsion::Utils::Serializable::serialize(this->splitHorizontal, json);
 			ofxDigitalEmulsion::Utils::Serializable::serialize(this->splitVertical, json);
 			ofxDigitalEmulsion::Utils::Serializable::serialize(this->splitUseIndex, json);
@@ -149,6 +153,7 @@ namespace ofxDigitalEmulsion {
 			this->width = json["width"].asInt();
 			this->height = json["height"].asInt();
 			this->setVideoOutputSelection(json["monitorSelection"].asInt());
+			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->previewFboEnabled, json);
 			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->splitHorizontal, json);
 			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->splitVertical, json);
 			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->splitUseIndex, json);
@@ -210,6 +215,9 @@ namespace ofxDigitalEmulsion {
 				this->testPattern = selection;
 			};
 			inspector->add(testPatternSelector);
+
+			inspector->add(make_shared<ofxCvGui::Widgets::Toggle>(this->previewFboEnabled));
+			inspector->add(make_shared<ofxCvGui::Widgets::Title>("NOTE : Suggest disabling on\nATI graphic cards to avoid\nissues with corrupted output in window.", ofxCvGui::Widgets::Title::Level::H3));
 		}
 
 		//----------
@@ -228,8 +236,11 @@ namespace ofxDigitalEmulsion {
 				this->splitUseIndex.set(ofClamp(this->splitUseIndex, 0, this->splitHorizontal * this->splitVertical - 1));
 			}
 
+			//show and then clear the window
 			this->presentFbo();
 			this->clearFbo(true);
+
+			this->fboPreview->setEnabled(this->previewFboEnabled.get());
 		}
 
 		//----------
@@ -318,7 +329,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void VideoOutput::clearFbo(bool callDrawListeners) {
-			this->fbo.begin(true);
+			this->begin();
 			ofClear(0, 255);
 
 			if (callDrawListeners) {
@@ -326,17 +337,19 @@ namespace ofxDigitalEmulsion {
 				this->onDrawOutput.notifyListeners(size);
 			}
 
-			this->fbo.end();
+			this->end();
 		}
 
 		//----------
 		void VideoOutput::begin() {
-			this->fbo.begin();
+			this->scissorWasEnabled = ofxCvGui::Utils::disableScissor();
+			this->fbo.begin(true);
 		}
 
 		//----------
 		void VideoOutput::end() {
 			this->fbo.end();
+			ofxCvGui::Utils::enableScissor();
 		}
 
 		//----------
@@ -344,33 +357,42 @@ namespace ofxDigitalEmulsion {
 			if (!this->window) {
 				return;
 			}
+			
+			//cache the viewport
+			auto mainViewport = ofGetCurrentViewport();
+
 			//Open and draw to the window
 			auto mainWindow = glfwGetCurrentContext();
 			glfwMakeContextCurrent(this->window);
 
+			//switch to window viewport
+			glViewport(0, 0, this->width, this->height); //ofViewport would poll the wrong window resolution, so need to use gl
+
 			//clear the entire video output
-			glViewport(0, 0, this->videoMode->width, this->videoMode->height);
 			ofClear(0, 0);
 
-			//set the viewport to the right projector
-			const auto viewport = this->getRectangleInCombinedOutput();
-			GLint viewportCached[4];
-			glGetIntegerv(GL_VIEWPORT, viewportCached);
-			glViewport(viewport.x, viewport.y, viewport.width, viewport.height); //<--needs checking for vertical splits (might be upside down)
-
 			//set the drawing matrices to normalised coordinates
-			ofSetMatrixMode(OF_MATRIX_PROJECTION);
-			ofLoadIdentityMatrix();
-			ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-			ofLoadIdentityMatrix();
-			this->fbo.draw(-1, -1, 2, 2);
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glLoadIdentity();
+
+			this->fbo.draw(-1, +1, 2, -2);
+			
+			//reset all transforms
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
+			glMatrixMode(GL_MODELVIEW);
+			glPopMatrix();
 
 			glfwSwapBuffers(this->window);
 			glFlush();
 
 			//return to main window
 			glfwMakeContextCurrent(mainWindow);
-			glViewport(viewportCached[0], viewportCached[1], viewportCached[2], viewportCached[3]);
+			ofViewport(mainViewport);
 		}
 
 		//----------
@@ -458,6 +480,7 @@ namespace ofxDigitalEmulsion {
 			auto subViewForFbo = make_shared<ofxCvGui::Panels::Draws>(this->fbo);
 			subViewForFbo->setCaption("Output");
 			this->view->getElementGroup()->add(subViewForFbo);
+			this->fboPreview = subViewForFbo;
 
 			this->view->getElementGroup()->arrange();
 
@@ -477,11 +500,14 @@ namespace ofxDigitalEmulsion {
 
 				glfwGetMonitorPos(videoOutput.monitor, &x, &y);
 
+				x += this->width * ((int) this->splitUseIndex.get() % (int) this->splitHorizontal.get());
+				y += this->height * ((int) this->splitUseIndex.get() / (int) this->splitHorizontal.get());
+
 				this->videoMode = glfwGetVideoMode(videoOutput.monitor);
 				this->calculateSplit();
 
 				glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-				this->window = glfwCreateWindow(this->videoMode->width, this->videoMode->height, this->getName().c_str(), NULL, glfwGetCurrentContext());
+				this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), NULL, glfwGetCurrentContext());
 				glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 				glfwSetWindowPos(this->window, x, y);
 			}
@@ -505,6 +531,20 @@ namespace ofxDigitalEmulsion {
 					this->videoMode = glfwGetVideoMode(this->videoOutputs[this->videoOutputSelection].monitor);
 				}
 			}
+
+			//make sure we don't have any erroneous settings
+			if (this->splitHorizontal.get() < 1) {
+				this->splitHorizontal.disableEvents();
+				this->splitHorizontal = 1;
+				this->splitHorizontal.enableEvents();
+			}
+
+			if (this->splitVertical.get() < 1) {
+				this->splitVertical.disableEvents();
+				this->splitVertical = 1;
+				this->splitVertical.enableEvents();
+			}
+
 			if (this->videoMode) {
 				this->width = videoMode->width / this->splitHorizontal;
 				this->height = videoMode->height / this->splitVertical;
@@ -524,6 +564,9 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void VideoOutput::callbackChangeSplit(float &) {
 			this->calculateSplit();
+			if (this->isWindowOpen()) {
+				this->createWindow();
+			}
 		}
 	}
 }

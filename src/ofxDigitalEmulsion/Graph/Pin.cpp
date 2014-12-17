@@ -4,7 +4,7 @@
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		//----------
-		BasePin::BasePin(string name) : name(name) {
+		AbstractPin::AbstractPin(string name) : name(name) {
 			this->pinView = make_shared<Editor::PinView>();
 
 			this->onDraw += [this](ofxCvGui::DrawArguments & args) {
@@ -35,11 +35,11 @@ namespace ofxDigitalEmulsion {
 					else if (args.button == 2) {
 						this->resetConnection();
 					}
-					
 				}
-			};
-			this->onMouseReleased += [this](ofxCvGui::MouseArguments & args) {
-				this->onReleaseMakeConnection(args);
+				if (args.action == ofxCvGui::MouseArguments::Action::Released && args.getOwner() == this) {
+					//mouse drag is released, we took the mouse, and it could have been released outside of this element
+					this->onReleaseMakeConnection(args);
+				}
 			};
 
 			this->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
@@ -54,12 +54,12 @@ namespace ofxDigitalEmulsion {
 		}
 		
 		//----------
-		string BasePin::getName() const {
+		string AbstractPin::getName() const {
 			return this->name;
 		}
 
 		//----------
-		ofVec2f BasePin::getPinHeadPosition() const {
+		ofVec2f AbstractPin::getPinHeadPosition() const {
 			return this->pinHeadPosition;
 		}
 	}

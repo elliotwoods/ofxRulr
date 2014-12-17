@@ -16,12 +16,12 @@ namespace ofxDigitalEmulsion {
 
 				NodeHost(shared_ptr<Node>);
 				shared_ptr<Node> getNodeInstance();
-				ofVec2f getInputPinPosition(shared_ptr<BasePin>) const;
+				ofVec2f getInputPinPosition(shared_ptr<AbstractPin>) const;
 				ofVec2f getOutputPinPositionGlobal() const;
 
-				ofxLiquidEvent<const shared_ptr<BasePin>> onBeginMakeConnection;
+				ofxLiquidEvent<const shared_ptr<AbstractPin>> onBeginMakeConnection;
 				ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
-				ofxLiquidEvent<const shared_ptr<BasePin>> onDropInputConnection;
+				ofxLiquidEvent<const shared_ptr<AbstractPin>> onDropInputConnection;
 			protected:
 				ofVec2f getOutputPinPosition() const;
 				shared_ptr<Node> node;

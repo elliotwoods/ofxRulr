@@ -57,7 +57,7 @@ namespace ofxDigitalEmulsion {
 				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				NodeHost::Index getNextFreeNodeHostIndex() const;
 				LinkHost::Index getNextFreeLinkHostIndex() const;
-				void callbackBeginMakeConnection(shared_ptr<NodeHost> targetNodeHost, shared_ptr<BasePin> targetPin);
+				void callbackBeginMakeConnection(shared_ptr<NodeHost> targetNodeHost, shared_ptr<AbstractPin> targetPin);
 				void callbackReleaseMakeConnection(ofxCvGui::MouseArguments &);
 
 				NodeHostSet nodeHosts;

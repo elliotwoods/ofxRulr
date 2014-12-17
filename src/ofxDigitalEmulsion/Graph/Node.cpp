@@ -45,7 +45,27 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Node::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
-			inspector->add(Widgets::Title::make(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H2));
+			auto nameWidget = Widgets::Title::make(this->getName(), ofxCvGui::Widgets::Title::Level::H1);
+			auto nameWidgetWeak = weak_ptr<Element>(nameWidget);
+			nameWidget->onDraw += [this](ofxCvGui::DrawArguments & args) {
+				ofxAssets::image("ofxCvGui::edit").draw(ofRectangle(args.localBounds.width - 20, 5, 15, 15));
+			};
+			nameWidget->onMouse += [this, nameWidgetWeak](ofxCvGui::MouseArguments & args) {
+				auto nameWidget = nameWidgetWeak.lock();
+				if (nameWidget) {
+					if (args.takeMousePress(nameWidget)) {
+						auto result = ofSystemTextBoxDialog("Change name of [" + this->getTypeName() + "] node (" + this->getName() + ")");
+						if (result != "") {
+							this->setName(result);
+							nameWidget->setCaption(result);
+						}
+					}
+				}
+			};
+			inspector->add(nameWidget);
+
+			inspector->add(Widgets::Title::make(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H3));
+
 			inspector->add(Widgets::Button::make("Save Node...", [this] () {
 				try {
 					auto result = ofSystemSaveDialog(this->getDefaultFilename(), "Save node [" + this->getName() + "] as json");
@@ -55,6 +75,7 @@ namespace ofxDigitalEmulsion {
 				}
 				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
+
 			inspector->add(Widgets::Button::make("Load Node...", [this] () {
 				try {
 					auto result = ofSystemLoadDialog("Load node [" + this->getName() + "] from json");
@@ -64,22 +85,16 @@ namespace ofxDigitalEmulsion {
 				}
 				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
-//cancel this out in vs2012 until system dialogs are fixed on vs2012
-#ifndef TARGET_WIN32
-			inspector->add(Widgets::Button::make("Load from...", [this] () {
-				try {
-					this->load();
-				}
-				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
-			}));
-#endif
+
+			//pin status
 			for (auto inputPin : this->getInputPins()) {
 				inspector->add(Widgets::Indicator::make(inputPin->getName(), [inputPin]() {
 					return (Widgets::Indicator::Status) inputPin->isConnected();
 				}));
 			}
-			inspector->add(Widgets::Spacer::make());
 
+			//node parameters
+			inspector->add(Widgets::Spacer::make());
 			this->populateInspector2(inspector);
 		}
 
@@ -96,12 +111,12 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Node::addInput(shared_ptr<BasePin> pin) {
+		void Node::addInput(shared_ptr<AbstractPin> pin) {
 			this->inputPins.add(pin);
 		}
 
 		//----------
-		void Node::removeInput(shared_ptr<BasePin> pin) {
+		void Node::removeInput(shared_ptr<AbstractPin> pin) {
 			this->inputPins.remove(pin);
 		}
 

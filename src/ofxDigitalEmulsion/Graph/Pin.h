@@ -15,9 +15,9 @@ namespace ofxDigitalEmulsion {
 	namespace Graph {
 		class Node;
 
-		class BasePin : public ofxCvGui::Element {
+		class AbstractPin : public ofxCvGui::Element {
 		public:
-			BasePin(string name);
+			AbstractPin(string name);
 			virtual string getTypeName() = 0;
 			virtual string getNodeTypeName() = 0;
 			virtual void connect(shared_ptr<Node> node) = 0;
@@ -31,7 +31,9 @@ namespace ofxDigitalEmulsion {
 
 			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
 			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
-			ofxLiquidEvent<ofEventArgs> onDropConnection;
+
+			ofxLiquidEvent<shared_ptr<Node>> onNewConnection;
+			ofxLiquidEvent<shared_ptr<Node>> onDeleteConnection;
 		protected:
 			shared_ptr<Editor::PinView> pinView;
 		private:
@@ -41,20 +43,25 @@ namespace ofxDigitalEmulsion {
 		};
 
 		template<typename NodeType>
-		class Pin : public BasePin {
+		class Pin : public AbstractPin {
 		public:
-			Pin(string name) : BasePin(name) { 
+			Pin(string name) : AbstractPin(name) {
 				this->pinView->setup<NodeType>();
 			}
-			Pin() : BasePin(this->getNodeTypeName()) {
+			Pin() : AbstractPin(this->getNodeTypeName()) {
 				this->pinView->setup<NodeType>();
+			}
+			~Pin() {
+				this->resetConnection();
 			}
 
 			string getTypeName() override { return string("Pin::") + this->getNodeTypeName(); }
 			string getNodeTypeName() override { return NodeType().getTypeName(); }
 			void connect(shared_ptr<NodeType> node) {
 				this->connection = node;
-				this->onNewConnection(node);
+				this->onNewConnectionTyped(node);
+				auto untypedNode = shared_ptr<Node>(node);
+				this->onNewConnection(untypedNode);
 			}
 			void connect(shared_ptr<Node> node) override {
 				auto castNode = dynamic_pointer_cast<NodeType>(node);
@@ -64,8 +71,13 @@ namespace ofxDigitalEmulsion {
 				this->connect(castNode);
 			}
 			void resetConnection() override {
-				ofEventArgs args;
-				this->onDropConnection.notifyListeners(args);
+				auto node = this->getConnection();
+				if (node) {
+					this->onDeleteConnectionTyped.notifyListeners(node);
+					auto untypedNode = shared_ptr<Node>(node);
+					this->onDeleteConnection.notifyListeners(untypedNode);
+				}
+				
 				this->connection.reset();
 			}
 			shared_ptr<NodeType> getConnection() {
@@ -81,11 +93,12 @@ namespace ofxDigitalEmulsion {
 				return this->connection.lock();
 			}
 			
-			ofxLiquidEvent<shared_ptr<NodeType> > onNewConnection;
+			ofxLiquidEvent<shared_ptr<NodeType> > onNewConnectionTyped;
+			ofxLiquidEvent<shared_ptr<NodeType> > onDeleteConnectionTyped;
 		protected:
 			weak_ptr<NodeType> connection;
 		};
 
-		typedef Utils::Set<BasePin> PinSet;
+		typedef Utils::Set<AbstractPin> PinSet;
 	}
 }

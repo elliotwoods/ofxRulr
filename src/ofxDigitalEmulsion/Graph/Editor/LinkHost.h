@@ -16,12 +16,12 @@ namespace ofxDigitalEmulsion {
 				virtual ofVec2f getTargetPinPosition() const;
 				weak_ptr<NodeHost> sourceNode;
 				weak_ptr<NodeHost> targetNode;
-				weak_ptr<BasePin> targetPin;
+				weak_ptr<AbstractPin> targetPin;
 			};
 
 			class TemporaryLinkHost : public LinkHost {
 			public:
-				TemporaryLinkHost(shared_ptr<NodeHost>, shared_ptr<BasePin>);
+				TemporaryLinkHost(shared_ptr<NodeHost>, shared_ptr<AbstractPin>);
 				void setCursorPosition(const ofVec2f &);
 				void setSource(shared_ptr<NodeHost>);
 
@@ -34,7 +34,7 @@ namespace ofxDigitalEmulsion {
 
 			class ObservedLinkHost : public LinkHost {
 			public:
-				ObservedLinkHost(shared_ptr<NodeHost> sourceNode, shared_ptr<NodeHost> targetNode, shared_ptr<BasePin> targetPin);
+				ObservedLinkHost(shared_ptr<NodeHost> sourceNode, shared_ptr<NodeHost> targetNode, shared_ptr<AbstractPin> targetPin);
 			};
 		}
 	}

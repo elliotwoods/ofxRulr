@@ -192,6 +192,7 @@ namespace ofxDigitalEmulsion {
 					//seriaise type name and content
 					auto node = nodeHost.second->getNodeInstance();
 					nodeHostJson["NodeTypeName"] = node->getTypeName();
+					nodeHostJson["Name"] = node->getName();
 					node->serialize(nodeHostJson["Content"]);
 
 					//add the node to the reverse map (we'll use this when building links in the next section)
@@ -228,12 +229,14 @@ namespace ofxDigitalEmulsion {
 				//Deserialise nodes
 				for (const auto & nodeJson : nodesJson) {
 					const auto nodeTypeName = nodeJson["NodeTypeName"].asString();
+					const auto name = nodeJson["Name"].asString();
 					const auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
 
 					auto factory = FactoryRegister::X().get(nodeTypeName);
 					if (factory) {
 						auto node = factory->make();
 						node->deserialize(nodeJson["Content"]);
+						node->setName(name);
 
 						ofRectangle bounds;
 						nodeJson["Bounds"] >> bounds;
@@ -344,7 +347,7 @@ namespace ofxDigitalEmulsion {
 				auto nodeHost = make_shared<NodeHost>(node);
 				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
 				weak_ptr<NodeHost> nodeHostWeak = nodeHost;
-				nodeHost->onBeginMakeConnection += [this, nodeHostWeak](const shared_ptr<BasePin> & inputPin) {
+				nodeHost->onBeginMakeConnection += [this, nodeHostWeak](const shared_ptr<AbstractPin> & inputPin) {
 					auto nodeHost = nodeHostWeak.lock();
 					if (nodeHost) {
 						this->callbackBeginMakeConnection(nodeHost, inputPin);
@@ -353,7 +356,7 @@ namespace ofxDigitalEmulsion {
 				nodeHost->onReleaseMakeConnection += [this](ofxCvGui::MouseArguments & args) {
 					this->callbackReleaseMakeConnection(args);
 				};
-				nodeHost->onDropInputConnection += [this](const shared_ptr<BasePin> &) {
+				nodeHost->onDropInputConnection += [this](const shared_ptr<AbstractPin> &) {
 					this->rebuildLinkHosts();
 					this->view->resync();
 				};
@@ -437,7 +440,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void Patch::callbackBeginMakeConnection(shared_ptr<NodeHost> targetNodeHost, shared_ptr<BasePin> targetPin) {
+			void Patch::callbackBeginMakeConnection(shared_ptr<NodeHost> targetNodeHost, shared_ptr<AbstractPin> targetPin) {
 				this->newLink = make_shared<TemporaryLinkHost>(targetNodeHost, targetPin);
 			}
 

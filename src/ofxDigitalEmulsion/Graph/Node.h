@@ -54,13 +54,18 @@ namespace ofxDigitalEmulsion {
 
 			template<typename NodeType>
 			shared_ptr<NodeType> getInput() const {
-				auto pin = this->getInputPins().get<Pin<NodeType>>();
+				auto pin = this->getInputPin<NodeType>();
 				if (pin) {
 					return pin->getConnection();
 				}
 				else {
 					return shared_ptr<NodeType>();
 				}
+			}
+
+			template<typename NodeType>
+			shared_ptr<Pin<NodeType>> getInputPin() const {
+				return this->getInputPins().get<Pin<NodeType>>();
 			}
 
 			template<typename NodeType>
@@ -75,18 +80,24 @@ namespace ofxDigitalEmulsion {
 
 			ofxLiquidEvent<int> onConnect;
 		protected:
-			void addInput(shared_ptr<BasePin>);
+			void addInput(shared_ptr<AbstractPin>);
+
 			template<typename NodeType>
-			void addInput() {
-				this->addInput(make_shared<Pin<NodeType>>());
+			shared_ptr<Pin<NodeType>> addInput() {
+				auto inputPin = make_shared<Pin<NodeType>>();
+				this->addInput(inputPin);
+				return inputPin;
 			}
+
 			template<typename NodeType>
-			void addInput(const string & pinName) {
+			shared_ptr<Pin<NodeType>> addInput(const string & pinName) {
 				auto inputPin = make_shared<Pin<NodeType>>();
 				inputPin->setName(pinName);
 				this->addInput(inputPin);
+				return inputPin;
 			}
-			void removeInput(shared_ptr<BasePin>);
+
+			void removeInput(shared_ptr<AbstractPin>);
 			void clearInputs();
 
 			void setupIcon();

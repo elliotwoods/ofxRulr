@@ -114,6 +114,7 @@ namespace ofxDigitalEmulsion {
 			//
 			auto inspector = ofxCvGui::Builder::makeInspector();
 			rootGroup->add(inspector);
+			inspector->setTitleEnabled(false);
 
 			//whenever the instpector clears, setup default elements
 			InspectController::X().onClear += [this] (ElementGroupPtr inspector) {

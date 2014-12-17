@@ -67,7 +67,7 @@ namespace ofxDigitalEmulsion {
 
 #pragma mark TemporaryLinkHost
 			//----------
-			TemporaryLinkHost::TemporaryLinkHost(shared_ptr<NodeHost> targetNode, shared_ptr<BasePin> targetPin) {
+			TemporaryLinkHost::TemporaryLinkHost(shared_ptr<NodeHost> targetNode, shared_ptr<AbstractPin> targetPin) {
 				this->targetNode = targetNode;
 				this->targetPin = targetPin;
 			}
@@ -114,7 +114,7 @@ namespace ofxDigitalEmulsion {
 
 #pragma mark ObservedLinkHost
 			//---------
-			ObservedLinkHost::ObservedLinkHost(shared_ptr<NodeHost> sourceNode, shared_ptr<NodeHost> targetNode, shared_ptr<BasePin> targetPin) {
+			ObservedLinkHost::ObservedLinkHost(shared_ptr<NodeHost> sourceNode, shared_ptr<NodeHost> targetNode, shared_ptr<AbstractPin> targetPin) {
 				this->sourceNode = sourceNode;
 				this->targetNode = targetNode;
 				this->targetPin = targetPin;

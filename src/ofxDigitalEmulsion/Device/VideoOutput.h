@@ -76,6 +76,8 @@ namespace ofxDigitalEmulsion {
 
 			GLFWwindow * window;
 
+			ofParameter<bool> previewFboEnabled;
+
 			ofParameter<bool> showWindow;
 			ofParameter<float> splitHorizontal;
 			ofParameter<float> splitVertical;
@@ -84,6 +86,9 @@ namespace ofxDigitalEmulsion {
 
 			ofFbo fbo;
 			float width, height;
+			bool scissorWasEnabled;
+
+			ofxCvGui::PanelPtr fboPreview;
 		};
 
 		class MonitorEventChangeListener {

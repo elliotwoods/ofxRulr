@@ -51,7 +51,7 @@ namespace ofxDigitalEmulsion {
 				this->inputPins = make_shared<ofxCvGui::ElementGroup>();
 				for (auto inputPin : node->getInputPins()) {
 					this->inputPins->add(inputPin);
-					weak_ptr<BasePin> inputPinWeak = inputPin;
+					weak_ptr<AbstractPin> inputPinWeak = inputPin;
 					inputPin->onBeginMakeConnection += [this, inputPinWeak](ofEventArgs &) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
@@ -64,7 +64,7 @@ namespace ofxDigitalEmulsion {
 							this->onReleaseMakeConnection(args);
 						}
 					};
-					inputPin->onDropConnection += [this, inputPinWeak](ofEventArgs &) {
+					inputPin->onDeleteConnection += [this, inputPinWeak](shared_ptr<Node> &) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
 							this->onDropInputConnection(inputPin);
@@ -185,7 +185,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			ofVec2f NodeHost::getInputPinPosition(shared_ptr<BasePin> pin) const {
+			ofVec2f NodeHost::getInputPinPosition(shared_ptr<AbstractPin> pin) const {
 				for (auto inputPin : this->inputPins->getElements()) {
 					if (inputPin == pin) {
 						return pin->getPinHeadPosition() + pin->getBounds().getTopLeft() + this->inputPins->getBounds().getTopLeft() + this->getBounds().getTopLeft();
