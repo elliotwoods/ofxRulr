@@ -50,15 +50,13 @@ namespace ofxDigitalEmulsion {
 			nameWidget->onDraw += [this](ofxCvGui::DrawArguments & args) {
 				ofxAssets::image("ofxCvGui::edit").draw(ofRectangle(args.localBounds.width - 20, 5, 15, 15));
 			};
-			nameWidget->onMouse += [this, nameWidgetWeak](ofxCvGui::MouseArguments & args) {
+			nameWidget->onMouseReleased += [this, nameWidgetWeak](ofxCvGui::MouseArguments & args) {
 				auto nameWidget = nameWidgetWeak.lock();
 				if (nameWidget) {
-					if (args.takeMousePress(nameWidget)) {
-						auto result = ofSystemTextBoxDialog("Change name of [" + this->getTypeName() + "] node (" + this->getName() + ")");
-						if (result != "") {
-							this->setName(result);
-							nameWidget->setCaption(result);
-						}
+					auto result = ofSystemTextBoxDialog("Change name of [" + this->getTypeName() + "] node (" + this->getName() + ")");
+					if (result != "") {
+						this->setName(result);
+					nameWidget->setCaption(result);
 					}
 				}
 			};

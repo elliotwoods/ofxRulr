@@ -165,6 +165,23 @@ namespace ofxDigitalEmulsion {
 				return nodeUnderCursor;
 			}
 
+			//----------
+			shared_ptr<NodeHost> Patch::View::getNodeHostUnderCursor() {
+				return this->getNodeHostUnderCursor(this->lastCursorPositionInCanvas);
+			}
+
+			//----------
+			const ofxCvGui::PanelPtr Patch::View::findScreen(const ofVec2f & xy, ofRectangle & currentPanelBounds) {
+				auto xyLocal = xy - currentPanelBounds.getTopLeft();
+
+				auto nodeUnderCursor = this->getNodeHostUnderCursor();
+				if (nodeUnderCursor) {
+					return nodeUnderCursor->getNodeInstance()->getView(); // also this will return PanelPtr() if no screen available
+				}
+
+				return ofxCvGui::PanelPtr();
+			}
+
 #pragma mark Instance
 			//----------
 			string Patch::getTypeName() const {

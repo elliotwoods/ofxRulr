@@ -21,7 +21,11 @@ namespace ofxDigitalEmulsion {
 					View(Patch &);
 					//const shared_ptr<ofxCvGui::Panels::Base> findScreen(const ofVec2f & xy, ofRectangle & currentPanelBounds) override;
 					void resync();
+
 					shared_ptr<NodeHost> getNodeHostUnderCursor(const ofVec2f & cursorInCanvas);
+					shared_ptr<NodeHost> getNodeHostUnderCursor();
+
+					const ofxCvGui::PanelPtr findScreen(const ofVec2f & xy, ofRectangle & currentPanelBounds) override;
 				protected:
 					ofVec2f lastCursorPositionInCanvas;
 					void drawGridLines();
