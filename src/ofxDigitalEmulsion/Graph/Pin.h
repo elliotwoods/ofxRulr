@@ -26,9 +26,12 @@ namespace ofxDigitalEmulsion {
 			virtual bool checkSupports(shared_ptr<Node>) const = 0;
 			virtual shared_ptr<Node> getConnectionUntyped() const = 0;
 
+			virtual const ofImage & getNodeIcon() const = 0;
+			virtual const ofColor & getNodeColor() const = 0;
+			
 			string getName() const;
 			ofVec2f getPinHeadPosition() const;
-
+			
 			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
 			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
 
@@ -48,21 +51,30 @@ namespace ofxDigitalEmulsion {
 			Pin(string name) : AbstractPin(name) {
 				this->pinView->setup<NodeType>();
 			}
+
 			Pin() : AbstractPin(this->getNodeTypeName()) {
 				this->pinView->setup<NodeType>();
 			}
+
 			~Pin() {
 				this->resetConnection();
 			}
 
-			string getTypeName() override { return string("Pin::") + this->getNodeTypeName(); }
-			string getNodeTypeName() override { return NodeType().getTypeName(); }
+			string getTypeName() override {
+				return string("Pin::") + this->getNodeTypeName();
+			}
+			
+			string getNodeTypeName() override {
+				return NodeType().getTypeName();
+			}
+
 			void connect(shared_ptr<NodeType> node) {
 				this->connection = node;
 				this->onNewConnectionTyped(node);
 				auto untypedNode = shared_ptr<Node>(node);
 				this->onNewConnection(untypedNode);
 			}
+
 			void connect(shared_ptr<Node> node) override {
 				auto castNode = dynamic_pointer_cast<NodeType>(node);
 				if (!castNode) {
@@ -70,6 +82,7 @@ namespace ofxDigitalEmulsion {
 				}
 				this->connect(castNode);
 			}
+
 			void resetConnection() override {
 				auto node = this->getConnection();
 				if (node) {
@@ -80,17 +93,31 @@ namespace ofxDigitalEmulsion {
 				
 				this->connection.reset();
 			}
+			
 			shared_ptr<NodeType> getConnection() {
 				return this->connection.lock();
 			}
+			
 			bool isConnected() const override {
 				return !this->connection.expired();
 			}
+			
 			bool checkSupports(shared_ptr<Node> node) const override {
 				return (bool)dynamic_pointer_cast<NodeType>(node);
 			}
+			
 			shared_ptr<Node> getConnectionUntyped() const override {
 				return this->connection.lock();
+			}
+
+			const ofImage & getNodeIcon() const override {
+				//this is kind of slow, so let's check later to check
+				// if this is a good location to cache a reference
+				return NodeType().getIcon();
+			}
+
+			const ofColor & getNodeColor() const override {
+				return NodeType().getColor();
 			}
 			
 			ofxLiquidEvent<shared_ptr<NodeType> > onNewConnectionTyped;

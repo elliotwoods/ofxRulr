@@ -8,7 +8,7 @@ namespace ofxDigitalEmulsion {
 			this->pinView = make_shared<Editor::PinView>();
 
 			this->onDraw += [this](ofxCvGui::DrawArguments & args) {
-				//hover mouse
+				//hover mouse = change background
 				if (this->isMouseOver() && this->getMouseState() == LocalMouseState::Waiting) {
 					ofPushStyle();
 					ofSetColor(100);
@@ -16,6 +16,7 @@ namespace ofxDigitalEmulsion {
 					ofPopStyle();
 				}
 
+				//line to indicate connection status
 				ofPushStyle();
 				ofSetLineWidth(6.0f);
 				if (this->isConnected()) {

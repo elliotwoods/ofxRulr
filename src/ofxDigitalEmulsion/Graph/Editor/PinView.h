@@ -8,6 +8,7 @@ namespace ofxDigitalEmulsion {
 
 		namespace Editor {
 
+			/// A class to draw a preview icon for a Node type
 			class PinView : public ofxCvGui::Element {
 			public:
 				PinView();

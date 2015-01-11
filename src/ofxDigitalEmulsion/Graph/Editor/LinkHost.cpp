@@ -28,16 +28,24 @@ namespace ofxDigitalEmulsion {
 					wire.addVertex(sourcePinPosition);
 					wire.bezierTo(sourcePinPosition + wireRigidity, targetPinPosition - wireRigidity, targetPinPosition, 40);
 
+					//outline
 					ofPushStyle();
 					ofSetColor(0);
 					ofSetLineWidth(4.0f);
 					wire.draw();
 
-					ofPushMatrix();
 					ofSetLineWidth(3.0f);
-					ofSetColor(200, 100, 100);
+					
+					//shadow
+					ofPushMatrix();
+					ofSetColor(0, 100);
+					ofTranslate(5.0f, 5.0f);
 					wire.draw();
 					ofPopMatrix();
+
+					//line
+					ofSetColor(this->targetPin.lock()->getNodeColor());
+					wire.draw();
 
 					ofPopStyle();
 				}

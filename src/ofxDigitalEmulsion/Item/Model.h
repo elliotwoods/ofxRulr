@@ -13,7 +13,7 @@ namespace ofxDigitalEmulsion {
 			Model();
 			string getTypeName() const override;
 			void init() override;
-			ofxCvGui::PanelPtr getView();
+			ofxCvGui::PanelPtr getView() override;
 
 			void update() override;
 			void drawWorld() override;
