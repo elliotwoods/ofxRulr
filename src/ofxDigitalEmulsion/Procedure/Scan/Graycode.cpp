@@ -44,18 +44,6 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void Graycode::update() {
-				//update payload if we need to
-				auto videoOut = this->getInput<Device::VideoOutput>();
-				if (videoOut) {
-					const auto outputSize = videoOut->getSize();
-					if (this->payload.getWidth() != outputSize.getWidth() || this->payload.getHeight() != outputSize.getHeight()) {
-						payload.init(outputSize.getWidth(), outputSize.getHeight());
-						encoder.init(payload);
-						decoder.init(payload);
-						this->load(this->getDefaultFilename());
-					}
-				}
-
 				this->decoder.update();
 			}
 
