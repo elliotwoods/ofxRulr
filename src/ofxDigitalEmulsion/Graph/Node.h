@@ -12,10 +12,6 @@
 
 #include <string>
 
-#define SETUP_ICON(X) void X::setupIcon() { \
-	this->setIcon(ofxAssets::image("Nodes::" + this->getTypeName())) \
-}
-
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		class Node : public ofxCvGui::IInspectable, public Utils::Serializable {
@@ -26,6 +22,7 @@ namespace ofxDigitalEmulsion {
 			void setName(const string);
 
 			ofImage & getIcon();
+			const ofColor & getColor();
 
 			const PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr) override;
@@ -100,12 +97,13 @@ namespace ofxDigitalEmulsion {
 			void removeInput(shared_ptr<AbstractPin>);
 			void clearInputs();
 
-			void setupIcon();
+			void setupGraphics();
 
 			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
 		private:
 			PinSet inputPins;
 			ofImage * icon;
+			ofColor color;
 			string name;
 			string defaultIconName;
 		};

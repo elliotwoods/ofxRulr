@@ -34,8 +34,14 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		ofImage & Node::getIcon() {
-			this->setupIcon();
+			this->setupGraphics();
 			return * this->icon;
+		}
+
+		//----------
+		const ofColor & Node::getColor() {
+			this->setupGraphics();
+			return this->color;
 		}
 
 		//----------
@@ -124,12 +130,13 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Node::setupIcon() {
+		void Node::setupGraphics() {
 			if (this->icon) {
-				//icon is already setup
+				//icon is already setup, we presume all graphics are already setup
 				return;
 			}
 
+			//setup icon
 			const auto imageName = "ofxDigitalEmulsion::Nodes::" + this->getTypeName();
 			if (ofxAssets::AssetRegister.hasImage(imageName)) {
 				//setup with specific node icon
@@ -139,6 +146,14 @@ namespace ofxDigitalEmulsion {
 				//setup with inherited node icon
 				this->icon = &ofxAssets::image("ofxDigitalEmulsion::Nodes::" + this->defaultIconName);
 			}
+
+			//setup color
+			auto hash = std::hash<string>()(this->getTypeName());
+			hash %= 255;
+			auto color = ofColor(200, 100, 100);
+			color.setHue((hash % 64) * (256 / 64));
+			color.setBrightness((hash / 64) * 64 + 128);
+			this->color = color;
 		}
 	}
 }
