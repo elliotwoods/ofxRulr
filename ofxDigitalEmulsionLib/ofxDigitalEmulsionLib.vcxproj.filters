@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="src">
@@ -114,6 +114,12 @@
     </Filter>
     <Filter Include="addons\ofxAssimpModelLoader\libs\assimp\include\Compiler">
       <UniqueIdentifier>{6cdb7888-09f8-4ddd-8a57-459645bdcf2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxClipboard">
+      <UniqueIdentifier>{f1cb05b4-df97-4020-adfc-edf1100ceb67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxClipboard\src">
+      <UniqueIdentifier>{86a670bb-3c7e-4bdc-b849-3826e8cd887b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -429,6 +435,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.h">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ofxClipboard\src\ofxClipboard.h">
+      <Filter>addons\ofxClipboard\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -574,6 +583,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.cpp">
       <Filter>src\ofxDigitalEmulsion\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxClipboard\src\ofxClipboard.cpp">
+      <Filter>addons\ofxClipboard\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
