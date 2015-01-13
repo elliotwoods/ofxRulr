@@ -52,7 +52,12 @@ namespace ofxDigitalEmulsion {
 				shared_ptr<NodeHost> addNode(shared_ptr<Node>, const ofRectangle & bounds = ofRectangle());
 				shared_ptr<NodeHost> addNewNode(shared_ptr<BaseFactory>, const ofRectangle & bounds = ofRectangle());
 
+				void addNodeHost(shared_ptr<NodeHost>, int index);
+				void addNodeHost(shared_ptr<NodeHost>);
+
 				void deleteSelection();
+				void copy();
+				void paste();
 
 				shared_ptr<TemporaryLinkHost> getNewLink() const;
 				shared_ptr<NodeHost> findNodeHost(shared_ptr<Node>) const;

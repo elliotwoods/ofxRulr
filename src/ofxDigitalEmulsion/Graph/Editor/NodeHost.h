@@ -22,6 +22,9 @@ namespace ofxDigitalEmulsion {
 				ofxLiquidEvent<const shared_ptr<AbstractPin>> onBeginMakeConnection;
 				ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
 				ofxLiquidEvent<const shared_ptr<AbstractPin>> onDropInputConnection;
+
+				void serialize(Json::Value &);
+
 			protected:
 				ofVec2f getOutputPinPosition() const;
 				shared_ptr<Node> node;

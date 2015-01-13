@@ -8,7 +8,10 @@
 #include <string>
 #include <memory>
 #include <vector>
+
 #include "ofxDigitalEmulsion/Graph/Editor/PinView.h"
+#include "ofxDigitalEmulsion/Utils/Exception.h"
+
 using namespace std;
 
 namespace ofxDigitalEmulsion {
@@ -49,11 +52,11 @@ namespace ofxDigitalEmulsion {
 		class Pin : public AbstractPin {
 		public:
 			Pin(string name) : AbstractPin(name) {
-				this->pinView->setup<NodeType>();
+				this->pinView->template setup<NodeType>();
 			}
 
 			Pin() : AbstractPin(this->getNodeTypeName()) {
-				this->pinView->setup<NodeType>();
+				this->pinView->template setup<NodeType>();
 			}
 
 			~Pin() {
@@ -78,7 +81,7 @@ namespace ofxDigitalEmulsion {
 			void connect(shared_ptr<Node> node) override {
 				auto castNode = dynamic_pointer_cast<NodeType>(node);
 				if (!castNode) {
-					throw(ofxDigitalEmulsion::Utils::Exception("Cannot connect Pin of type [" + this->getNodeTypeName() + "] to Node of type [" + node->getTypeName() + "]"));
+					throw(ofxDigitalEmulsion::Utils::Exception("Cannot connect Pin of type [" + this->getNodeTypeName() + "] to Node of type [" + NodeType().getTypeName() + "]"));
 				}
 				this->connect(castNode);
 			}

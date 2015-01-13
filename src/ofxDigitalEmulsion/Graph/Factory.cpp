@@ -3,7 +3,7 @@
 #include "ofxDigitalEmulsion/Item/Board.h"
 #include "ofxDigitalEmulsion/Item/Camera.h"
 #include "ofxDigitalEmulsion/Item/Projector.h"
-#include "ofxDigitalEmulsion/Item/Model.h"
+//#include "ofxDigitalEmulsion/Item/Model.h"
 #include "ofxDigitalEmulsion/Device/VideoOutput.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/CameraIntrinsics.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/ProjectorIntrinsicsExtrinsics.h"
@@ -47,7 +47,7 @@ namespace ofxDigitalEmulsion {
 			this->add<Item::Board>();
 			this->add<Item::Camera>();
 			this->add<Item::Projector>();
-			this->add<Item::Model>();
+			//this->add<Item::Model>();
 			this->add<Device::VideoOutput>();
 			this->add<Procedure::Calibrate::CameraIntrinsics>();
 			//factoryRegister->add<Procedure::Calibrate::ProjectorIntrinsicsExtrinsics>();
@@ -70,6 +70,28 @@ namespace ofxDigitalEmulsion {
 			else {
 				return findFactory->second;
 			}
+		}
+
+		//----------
+		shared_ptr<Editor::NodeHost> FactoryRegister::make(const Json::Value & json) {
+			const auto nodeTypeName = json["NodeTypeName"].asString();
+
+			auto factory = FactoryRegister::X().get(nodeTypeName);
+			if (!factory) {
+				throw(Utils::Exception("FactoryRegister::make : Missing Factory for Node type " + nodeTypeName));
+			}
+
+			auto node = factory->make();
+			node->deserialize(json["Content"]);
+			node->setName(json["Name"].asString());
+
+			auto nodeHost = make_shared<Editor::NodeHost>(node);
+			
+			ofRectangle bounds;
+			json["Bounds"] >> bounds;
+			nodeHost->setBounds(bounds);
+			
+			return nodeHost;
 		}
 	}
 }

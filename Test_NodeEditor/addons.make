@@ -1,0 +1,6 @@
+ofxCvGui
+ofxLiquidEvent
+ofxGrabCam
+ofxAssets
+ofxTextInputField
+ofxDigitalEmulsion

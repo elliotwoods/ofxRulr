@@ -1,6 +1,7 @@
 #include "Patch.h"
 #include "ofxAssets.h"
 #include "ofSystemUtils.h"
+#include "ofxClipboard.h"
 
 #include "ofxCvGui/Utils/Button.h"
 
@@ -45,8 +46,20 @@ namespace ofxDigitalEmulsion {
 				}, -1, this);
 
 				this->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
-					if (args.key == OF_KEY_BACKSPACE || args.key == OF_KEY_DEL) {
-						this->patchInstance.deleteSelection();
+					if (args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
+						if (args.key == OF_KEY_BACKSPACE || args.key == OF_KEY_DEL) {
+							this->patchInstance.deleteSelection();
+						}
+						if (ofGetKeyPressed(OF_KEY_CONTROL)) {
+							switch (args.key) {
+							case 'c':
+								this->patchInstance.copy();
+								break;
+							case 'v':
+								this->patchInstance.paste();
+								break;
+							}
+						}
 					}
 				};
 
@@ -202,17 +215,13 @@ namespace ofxDigitalEmulsion {
 				for (auto & nodeHost : this->nodeHosts) {
 					auto & nodeHostJson = nodesJson[ofToString(nodeHost.first)];
 
-					//serialise ID and bounds
-					nodeHostJson["ID"] = nodeHost.first;
-					nodeHostJson["Bounds"] << nodeHost.second->getBounds();
+					nodeHost.second->serialize(nodeHostJson);
 
-					//seriaise type name and content
-					auto node = nodeHost.second->getNodeInstance();
-					nodeHostJson["NodeTypeName"] = node->getTypeName();
-					nodeHostJson["Name"] = node->getName();
-					node->serialize(nodeHostJson["Content"]);
+					//serialize the ID seperately (since the nodeHost doesn't know this information)
+					nodeHostJson["ID"] = nodeHost.first;
 
 					//add the node to the reverse map (we'll use this when building links in the next section)
+					auto node = nodeHost.second->getNodeInstance();
 					reverseNodeMap.insert(pair<shared_ptr<Node>, NodeHost::Index>(node, nodeHost.first));
 				}
 
@@ -245,24 +254,12 @@ namespace ofxDigitalEmulsion {
 
 				//Deserialise nodes
 				for (const auto & nodeJson : nodesJson) {
-					const auto nodeTypeName = nodeJson["NodeTypeName"].asString();
-					const auto name = nodeJson["Name"].asString();
 					const auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
-
-					auto factory = FactoryRegister::X().get(nodeTypeName);
-					if (factory) {
-						auto node = factory->make();
-						node->deserialize(nodeJson["Content"]);
-						node->setName(name);
-
-						ofRectangle bounds;
-						nodeJson["Bounds"] >> bounds;
-
-						auto nodeHost = this->addNode(ID, node, bounds);
+					try {
+						auto nodeHost = FactoryRegister::X().make(nodeJson);
+						this->addNodeHost(nodeHost, ID);
 					}
-					else {
-						OFXDIGITALEMULSION_ERROR << "Failed to load Node #" << ID << " [" << nodeTypeName << "]. No matching Factory found.";
-					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ERROR
 				}
 
 				//Deserialise links into the nodes
@@ -362,6 +359,25 @@ namespace ofxDigitalEmulsion {
 			//----------
 			shared_ptr<NodeHost> Patch::addNode(NodeHost::Index index, shared_ptr<Node> node, const ofRectangle & bounds) {
 				auto nodeHost = make_shared<NodeHost>(node);
+				if (bounds != ofRectangle()) {
+					nodeHost->setBounds(bounds);
+				}
+				this->addNodeHost(nodeHost, index);
+				return nodeHost;
+			}
+
+			//----------
+			shared_ptr<NodeHost> Patch::addNode(shared_ptr<Node> node, const ofRectangle & bounds) {
+				return this->addNode(this->getNextFreeNodeHostIndex(), node, bounds);
+			}
+
+			//----------
+			shared_ptr<NodeHost> Patch::addNewNode(shared_ptr<BaseFactory> factory, const ofRectangle & bounds) {
+				return this->addNode( factory->make(), bounds);
+			}
+
+			//----------
+			void Patch::addNodeHost(shared_ptr<ofxDigitalEmulsion::Graph::Editor::NodeHost> nodeHost, int index) {
 				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
 				weak_ptr<NodeHost> nodeHostWeak = nodeHost;
 				nodeHost->onBeginMakeConnection += [this, nodeHostWeak](const shared_ptr<AbstractPin> & inputPin) {
@@ -377,23 +393,14 @@ namespace ofxDigitalEmulsion {
 					this->rebuildLinkHosts();
 					this->view->resync();
 				};
-				if (bounds != ofRectangle()) {
-					nodeHost->setBounds(bounds);
-				}
 				this->view->resync();
-				return nodeHost;
 			}
-
+			
 			//----------
-			shared_ptr<NodeHost> Patch::addNode(shared_ptr<Node> node, const ofRectangle & bounds) {
-				return this->addNode(this->getNextFreeNodeHostIndex(), node, bounds);
+			void Patch::addNodeHost(shared_ptr<ofxDigitalEmulsion::Graph::Editor::NodeHost> nodeHost) {
+				this->addNodeHost(nodeHost, this->getNextFreeNodeHostIndex());
 			}
-
-			//----------
-			shared_ptr<NodeHost> Patch::addNewNode(shared_ptr<BaseFactory> factory, const ofRectangle & bounds) {
-				return this->addNode( factory->make(), bounds);
-			}
-
+			
 			//----------
 			void Patch::deleteSelection() {
 				auto selection = this->selection.lock();
@@ -405,6 +412,52 @@ namespace ofxDigitalEmulsion {
 				}
 				this->rebuildLinkHosts();
 				this->view->resync();
+			}
+
+			//----------
+			void Patch::copy() {
+				auto selection = this->selection.lock();
+				if (selection) {
+					//get the json
+					Json::Value json;
+					selection->serialize(json);
+
+					//push to clipboard
+					stringstream jsonString;
+					Json::StyledStreamWriter styledWriter;
+					styledWriter.write(jsonString, json);
+					ofxClipboard::copy(jsonString.str());
+				}
+			}
+
+			//----------
+			void Patch::paste() {
+				//get the clipboard into json
+				const auto clipboardText = ofxClipboard::paste();
+				Json::Value json;
+				Json::Reader().parse(clipboardText, json);
+
+				//if we got something
+				if (json.isObject()) {
+					//let's make it
+					auto nodeHost = FactoryRegister::X().make(json);
+
+					//and add it to the patch
+					this->addNodeHost(nodeHost);
+
+					//and let's offset the bounds in the clipboard for the next paste
+					ofRectangle bounds;
+					json["Bounds"] >> bounds;
+					bounds.x += 20;
+					bounds.y += 20;
+					json["Bounds"] << bounds;
+
+					//push the updated copy into the clipboard
+					stringstream jsonString;
+					Json::StyledStreamWriter styledWriter;
+					styledWriter.write(jsonString, json);
+					ofxClipboard::copy(jsonString.str());
+				}
 			}
 
 			//----------

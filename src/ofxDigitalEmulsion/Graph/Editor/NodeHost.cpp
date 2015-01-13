@@ -203,6 +203,17 @@ namespace ofxDigitalEmulsion {
 			ofVec2f NodeHost::getOutputPinPosition() const {
 				return this->outputPinPosition;
 			}
+
+			//----------
+			void NodeHost::serialize(Json::Value & json) {
+				json["Bounds"] << this->getBounds();
+
+				//seriaise type name and content
+				auto node = this->getNodeInstance();
+				json["NodeTypeName"] = node->getTypeName();
+				json["Name"] = node->getName();
+				node->serialize(json["Content"]);
+			}
 		}
 	}
 }

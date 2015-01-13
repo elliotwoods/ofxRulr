@@ -149,7 +149,7 @@ namespace ofxDigitalEmulsion {
 				vector<ofVec2f> camera;
 				vector<ofVec2f> projector;
 
-				for (auto & pixel : dataSet) {
+				for (const auto & pixel : dataSet) {
 					if (pixel.active) {
 						camera.push_back(pixel.getCameraXY());
 						projector.push_back(pixel.getProjectorXY());

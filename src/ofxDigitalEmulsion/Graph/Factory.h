@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Node.h"
+#include "Editor/NodeHost.h"
+
 #include "../Utils/Initialiser.h"
 
 namespace ofxDigitalEmulsion {
@@ -10,7 +12,7 @@ namespace ofxDigitalEmulsion {
 		public:
 			BaseFactory();
 			virtual string getNodeTypeName() = 0;
-			ofImage & getIcon();
+			virtual ofImage & getIcon();
 			virtual shared_ptr<Node> make() = 0;
 			virtual shared_ptr<Node> makeUninitialised() = 0;
 		protected:
@@ -65,6 +67,10 @@ namespace ofxDigitalEmulsion {
 			}
 
 			shared_ptr<BaseFactory> get(string nodeTypeName);
+
+			///Make a NodeHost and Node based on a saved/pasted Json value
+			shared_ptr<Editor::NodeHost> make(const Json::Value &);
+
 		protected:
 			static FactoryRegister * singleton;
 		};

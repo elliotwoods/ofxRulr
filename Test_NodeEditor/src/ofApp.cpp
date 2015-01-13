@@ -11,15 +11,6 @@ void ofApp::setup2(){
 	splashScreen.init(image("ofxDigitalEmulsion::SplashScreen"));
 	splashScreen.begin(0.0f);
 	
-	//auto cameraNode = MAKE(Item::Camera);
-	//this->world.add(cameraNode);
-
-	//auto boardNode = MAKE(Item::Board);
-	//this->world.add(boardNode);
-
-	//auto cameraCalibrateNode = MAKE(Procedure::Calibrate::CameraIntrinsics);
-	//this->world.add(cameraCalibrateNode);
-
 	auto patchInstance = MAKE(ofxDigitalEmulsion::Graph::Editor::Patch);
 	this->world.add(patchInstance);
 
@@ -27,6 +18,14 @@ void ofApp::setup2(){
 	this->world.init(this->gui.getController());
 	this->world.loadAll();
 	
+	/*
+	auto canonNode = MAKE(Item::Camera);
+	auto canonDevice = make_shared<ofxMachineVision::Device::CanonDSLRDevice>();
+	canonNode->setDevice(canonDevice);
+	canonNode->init();
+	patchInstance->addNode(canonNode, ofRectangle(0, 0, 200, 200));
+	*/
+
 	this->splashScreen.end();
 	
 }
