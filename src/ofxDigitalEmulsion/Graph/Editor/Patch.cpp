@@ -52,6 +52,9 @@ namespace ofxDigitalEmulsion {
 						}
 						if (ofGetKeyPressed(OF_KEY_CONTROL)) {
 							switch (args.key) {
+							case 'x':
+								this->patchInstance.cut();
+								break; 
 							case 'c':
 								this->patchInstance.copy();
 								break;
@@ -412,6 +415,14 @@ namespace ofxDigitalEmulsion {
 				}
 				this->rebuildLinkHosts();
 				this->view->resync();
+			}
+
+			//----------
+			void Patch::cut() {
+				if (!this->selection.expired()) {
+					this->copy();
+					this->deleteSelection();
+				}
 			}
 
 			//----------

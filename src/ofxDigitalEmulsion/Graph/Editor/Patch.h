@@ -56,6 +56,7 @@ namespace ofxDigitalEmulsion {
 				void addNodeHost(shared_ptr<NodeHost>);
 
 				void deleteSelection();
+				void cut();
 				void copy();
 				void paste();
 
