@@ -1,7 +1,7 @@
 #include "CameraFromKinectV2.h"
 
 #include "../../../Item/Camera.h"
-#include "../../../Item/Checkerboard.h"
+#include "../../../Item/Board.h"
 #include "../../Item/KinectV2.h"
 
 #include "../../../Utils/Utils.h"
@@ -30,7 +30,7 @@ namespace ofxDigitalEmulsion {
 			CameraFromKinectV2::CameraFromKinectV2() {
 				this->addInput(MAKE(Pin<Item::KinectV2>));
 				this->addInput(MAKE(Pin<Item::Camera>));
-				this->addInput(MAKE(Pin<Item::Checkerboard>));
+				this->addInput(MAKE(Pin<Item::Board>));
 
 				this->usePreTest.set("Pre Test at low resolution", true);
 
@@ -150,7 +150,7 @@ namespace ofxDigitalEmulsion {
 				auto cameraWidth = cameraPixels.getWidth();
 				auto cameraHeight = cameraPixels.getHeight();
 
-				auto checkerboardNode = this->getInput<Item::Checkerboard>();
+				auto checkerboardNode = this->getInput<Item::Board>();
 				auto checkerboardSize = checkerboardNode->getSize();
 				auto checkerboardObjectPoints = checkerboardNode->getObjectPoints();
 
