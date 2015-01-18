@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -251,6 +251,7 @@
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\Manager.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeBrowser.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\Patch.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\LinkHost.h" />
@@ -306,6 +307,7 @@
     <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\Manager.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\LinkHost.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeBrowser.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\Patch.cpp" />

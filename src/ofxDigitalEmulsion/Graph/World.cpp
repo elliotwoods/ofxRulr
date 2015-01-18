@@ -4,6 +4,7 @@
 
 #include "../Utils/Exception.h"
 #include "../Utils/Initialiser.h"
+#include "../External/Manager.h"
 
 #include "ofxCvGui.h"
 
@@ -17,6 +18,9 @@ namespace ofxDigitalEmulsion {
 		//-----------
 		void World::init(Controller & controller) {
 			Utils::initialiser.checkInitialised();
+
+			// Register factories for any externals
+			External::Manager::X().registerFactories();
 
 			//--
 			// INIITALISE NODES
