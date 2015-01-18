@@ -120,9 +120,12 @@ namespace ofxDigitalEmulsion {
 					ofSetColor(80);
 					ofRect(this->getLocalBounds());
 
-					//background for nodeView
-					ofSetColor(30);
-					ofRect(this->nodeView->getBounds());
+					if (this->nodeView) {
+						//background for nodeView
+						ofSetColor(30);
+						ofRect(this->nodeView->getBounds());
+					}
+
 					ofPopStyle();
 
 					//output pin

@@ -98,6 +98,7 @@ namespace ofxDigitalEmulsion {
 			void clearInputs();
 
 			void setupGraphics();
+			void setIcon(ofImage &);
 
 			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
 		private:

@@ -155,5 +155,10 @@ namespace ofxDigitalEmulsion {
 			color.setBrightness((hash / 64) * 64 + 128);
 			this->color = color;
 		}
+
+		//----------
+		void Node::setIcon(ofImage & icon) {
+			this->icon = &icon;
+		}
 	}
 }
