@@ -19,8 +19,8 @@ namespace ofxDigitalEmulsion {
 			void update() override;
 			ofxCvGui::PanelPtr getView() override;
 
-			void serialize(Json::Value &) override;
-			void deserialize(const Json::Value &) override;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 
 			void setDevice(ofxMachineVision::DevicePtr, int deviceIndex = 0);
 			shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
@@ -39,7 +39,7 @@ namespace ofxDigitalEmulsion {
 
 			ofPixels getFreshFrame();
 		protected:
-			void populateInspector2(ofxCvGui::ElementGroupPtr);
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 			void updateRayCamera();
 
 			void exposureCallback(float &);

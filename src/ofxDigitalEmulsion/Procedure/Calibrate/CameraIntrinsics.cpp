@@ -30,6 +30,7 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void CameraIntrinsics::init() {
+				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 			}
 
 			//----------
@@ -133,7 +134,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void CameraIntrinsics::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+			void CameraIntrinsics::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Toggle::make(this->enableFinder));
 				inspector->add(Widgets::Indicator::make("Points found", [this]() {
 					return (Widgets::Indicator::Status) !this->currentCorners.empty();

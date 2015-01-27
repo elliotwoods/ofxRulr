@@ -72,6 +72,8 @@ namespace ofxDigitalEmulsion {
 				view->add(colorView);
 
 				this->view = view;
+
+				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 			}
 
 			//----------
@@ -256,7 +258,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void ProjectorFromKinectV2::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+			void ProjectorFromKinectV2::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				auto slider = MAKE(ofxCvGui::Widgets::Slider, this->checkerboardScale);
 				inspector->add(slider);
 

@@ -56,6 +56,7 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void HomographyFromGraycode::init() {
+				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 			}
 
 			//----------
@@ -275,7 +276,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void HomographyFromGraycode::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+			void HomographyFromGraycode::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				auto findHomographyButton = MAKE(ofxCvGui::Widgets::Button, "Find Homography", [this]() {
 					try {
 						this->findHomography();

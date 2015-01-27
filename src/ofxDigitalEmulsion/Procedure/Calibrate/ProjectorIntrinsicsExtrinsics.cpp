@@ -35,6 +35,7 @@ namespace ofxDigitalEmulsion {
 
 			//----------
 			void ProjectorIntrinsicsExtrinsics::init() {
+				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 			}
 				
 			//----------
@@ -137,7 +138,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void ProjectorIntrinsicsExtrinsics::populateInspector2(ElementGroupPtr inspector) {
+			void ProjectorIntrinsicsExtrinsics::populateInspector(ElementGroupPtr inspector) {
 				inspector->add(Widgets::LiveValue<int>::make("Correspondence points", [this] () {
 					return (int) this->correspondences.size();
 				}));

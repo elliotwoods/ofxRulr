@@ -30,6 +30,8 @@ namespace ofxDigitalEmulsion {
 
 			this->viewType.set("Play state", 0, 0, 1);
 			this->viewType.set("View type", 3, 0, 3);
+
+			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -60,7 +62,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void KinectV2::drawWorld() {
+		void KinectV2::drawObject() {
 			if (this->device) {
 				switch (this->viewType.get()) {
 				case 1:
@@ -81,7 +83,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void KinectV2::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+		void KinectV2::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			auto selectPlayState = make_shared<ofxCvGui::Widgets::MultipleChoice>("Play state");
 			selectPlayState->addOption("Play");
 			selectPlayState->addOption("Pause");

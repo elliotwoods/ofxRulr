@@ -65,6 +65,16 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void Serializable::serialize(Json::Value & json) {
+			this->onSerialize.notifyListeners(json);
+		}
+
+		//----------
+		void Serializable::deserialize(const Json::Value & json) {
+			this->onDeserialize.notifyListeners(json);
+		}
+
+		//----------
 		void Serializable::save(string filename) {
 			if (filename == "") {
 				auto result = ofSystemSaveDialog(this->getDefaultFilename(), "Save " + this->getTypeName());

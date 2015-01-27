@@ -12,8 +12,8 @@ namespace ofxDigitalEmulsion {
 			string getTypeName() const override;
 			ofxCvGui::PanelPtr getView();
 
-			void serialize(Json::Value &) override;
-			void deserialize(const Json::Value &) override;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 
 			ofxCv::BoardType getBoardType() const;
 			cv::Size getSize() const;
@@ -21,7 +21,7 @@ namespace ofxDigitalEmulsion {
 
 			bool findBoard(cv::Mat, vector<cv::Point2f> & result, bool useOptimisers = true) const;
 		protected:
-			void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 			void updatePreviewMesh();
 
 			ofParameter<int> boardType;

@@ -16,8 +16,8 @@ namespace ofxDigitalEmulsion {
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
-				void serialize(Json::Value &) override;
-				void deserialize(const Json::Value &) override;
+				void serialize(Json::Value &);
+				void deserialize(const Json::Value &);
  
 				bool isReady();
 				void runScan();
@@ -25,7 +25,7 @@ namespace ofxDigitalEmulsion {
 				ofxGraycode::Decoder & getDecoder();
 				const ofxGraycode::DataSet & getDataSet() const;
 			protected:
-				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+				void populateInspector(ofxCvGui::ElementGroupPtr);
 				void switchIfLookingAtDirtyView();
 
 				shared_ptr<ofxCvGui::Panels::Image> view;

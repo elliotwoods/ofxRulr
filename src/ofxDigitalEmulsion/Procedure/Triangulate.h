@@ -15,12 +15,12 @@ namespace ofxDigitalEmulsion {
 			string getTypeName() const override;
 			ofxCvGui::PanelPtr getView() override;
 
-			void serialize(Json::Value &) override;
-			void deserialize(const Json::Value &) override;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 
 			void triangulate();
 		protected:
-			void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 			void drawWorld();
 			
 			ofMesh mesh;

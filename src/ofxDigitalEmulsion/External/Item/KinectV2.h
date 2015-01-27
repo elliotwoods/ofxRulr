@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Item/Base.h"
+#include "../../Graph/IRigidBody.h"
 
 #include "ofxKinectForWindows2.h"
 
@@ -8,7 +8,7 @@
 
 namespace ofxDigitalEmulsion {
 	namespace Item {
-		class KinectV2 : public ofxDigitalEmulsion::Item::Base {
+		class KinectV2 : public ofxDigitalEmulsion::Graph::IRigidBody {
 		public:
 			KinectV2();
 			void init() override;
@@ -16,14 +16,14 @@ namespace ofxDigitalEmulsion {
 			void update() override;
 			ofxCvGui::PanelPtr getView() override;
 
-			void serialize(Json::Value &) override;
-			void deserialize(const Json::Value &) override;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 
-			void drawWorld();
+			void drawObject() override;
 			shared_ptr<ofxKinectForWindows2::Device> getDevice();
 
 		protected:
-			void populateInspector2(ofxCvGui::ElementGroupPtr);
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 			shared_ptr<ofxKinectForWindows2::Device> device;
 			shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
 

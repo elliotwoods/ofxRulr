@@ -83,6 +83,8 @@ namespace ofxDigitalEmulsion {
 				view->add(cameraColorView);
 
 				this->view = view;
+
+				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 			}
 
 			//----------
@@ -272,7 +274,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void CameraFromKinectV2::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+			void CameraFromKinectV2::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 
 				auto addButton = MAKE(ofxCvGui::Widgets::Button, "Add Capture", [this]() {
 					try {

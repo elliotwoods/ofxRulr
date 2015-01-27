@@ -207,6 +207,8 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void Patch::init() {
 				this->view = MAKE(View, *this);
+
+				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS
 			}
 
 			//----------
@@ -493,11 +495,6 @@ namespace ofxDigitalEmulsion {
 					nodeHost = this->nodeHosts.at(index);
 				}
 				return nodeHost; // Returns empty pointer if not available
-			}
-
-			//----------
-			void Patch::populateInspector2(ofxCvGui::ElementGroupPtr) {
-
 			}
 
 			//----------

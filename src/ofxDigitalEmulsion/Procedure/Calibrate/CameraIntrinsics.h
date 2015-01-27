@@ -17,7 +17,7 @@ namespace ofxDigitalEmulsion {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 			protected:
-				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+				void populateInspector(ofxCvGui::ElementGroupPtr);
 				void calibrate();
 
 				ofParameter<bool> enableFinder;

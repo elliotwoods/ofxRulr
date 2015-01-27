@@ -18,13 +18,13 @@ namespace ofxDigitalEmulsion {
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
 
-				void serialize(Json::Value &) override;
-				void deserialize(const Json::Value &) override;
+				void serialize(Json::Value &);
+				void deserialize(const Json::Value &);
 
 				void addCapture();
 				void calibrate();
 			protected:
-				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+				void populateInspector(ofxCvGui::ElementGroupPtr);
 				void drawWorld();
 				ofxCvGui::PanelPtr view;
 

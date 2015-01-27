@@ -50,6 +50,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Projector::init() {
+			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -190,7 +191,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Projector::populateInspector2(ElementGroupPtr inspector) {
+		void Projector::populateInspector(ElementGroupPtr inspector) {
 			inspector->add(Widgets::Slider::make(this->resolutionWidth));
 			inspector->add(Widgets::Slider::make(this->resolutionHeight));
 

@@ -12,6 +12,9 @@ namespace ofxDigitalEmulsion {
 		Node::Node() {
 			this->icon = 0;
 			this->defaultIconName = "Default";
+			this->onPopulateInspector += [this](ofxCvGui::InspectArguments & args) {
+				this->populateInspector(args.inspector);
+			};
 		}
 
 		//----------
@@ -99,7 +102,6 @@ namespace ofxDigitalEmulsion {
 
 			//node parameters
 			inspector->add(Widgets::Spacer::make());
-			this->populateInspector2(inspector);
 		}
 
 		//----------

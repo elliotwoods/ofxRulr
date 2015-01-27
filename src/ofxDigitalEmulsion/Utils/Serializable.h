@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ofParameter.h"
-#include <json/json.h>
+#include "ofxLiquidEvent.h"
 
+#include <json/json.h>
 #include <string>
 
 namespace ofxDigitalEmulsion {
@@ -11,8 +12,11 @@ namespace ofxDigitalEmulsion {
 		public:
 			virtual std::string getTypeName() const = 0;
 			virtual std::string getName() const;
-			virtual void serialize(Json::Value &) = 0;
-			virtual void deserialize(const Json::Value &) = 0;
+
+			ofxLiquidEvent<Json::Value> onSerialize;
+			ofxLiquidEvent<const Json::Value> onDeserialize;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 
 			void save(std::string filename = "");
 			void load(std::string filename = "");

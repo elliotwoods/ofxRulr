@@ -37,8 +37,8 @@ namespace ofxDigitalEmulsion {
 				string getTypeName() const override;
 				void init() override;
 
-				void serialize(Json::Value &) override;
-				void deserialize(const Json::Value &) override;
+				void serialize(Json::Value &);
+				void deserialize(const Json::Value &);
 
 				ofxCvGui::PanelPtr getView() override;
 				void update() override;
@@ -64,7 +64,6 @@ namespace ofxDigitalEmulsion {
 				shared_ptr<NodeHost> findNodeHost(shared_ptr<Node>) const;
 				shared_ptr<NodeHost> getNodeHost(NodeHost::Index) const;
 			protected:
-				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
 				NodeHost::Index getNextFreeNodeHostIndex() const;
 				LinkHost::Index getNextFreeLinkHostIndex() const;
 				void callbackBeginMakeConnection(shared_ptr<NodeHost> targetNodeHost, shared_ptr<AbstractPin> targetPin);

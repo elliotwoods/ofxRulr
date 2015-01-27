@@ -14,8 +14,8 @@ namespace ofxDigitalEmulsion {
 			string getTypeName() const;
 			ofxCvGui::PanelPtr getView() override;
 
-			void serialize(Json::Value &) override;
-			void deserialize(const Json::Value &) override;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 
 			float getWidth() const;
 			float getHeight() const;
@@ -36,7 +36,7 @@ namespace ofxDigitalEmulsion {
 			float getThrowRatioX() const;
 			float getThrowRatioY() const;
 		protected:
-			void populateInspector2(ofxCvGui::ElementGroupPtr);
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 
 			void rebuildProjector();
 			void projectorParameterCallback(float &);

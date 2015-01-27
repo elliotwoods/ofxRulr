@@ -27,6 +27,8 @@ namespace ofxDigitalEmulsion {
 			this->showGrid.set("Show Grid", true);
 			this->gridScale.set("Grid scale", 10.0f, 0.01f, 100.0f);
 			this->view->setGridEnabled(false);
+
+			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -76,7 +78,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Summary::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+		void Summary::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->showCursor));
 			inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->showGrid));
 			inspector->add(MAKE(ofxCvGui::Widgets::Slider, this->gridScale));

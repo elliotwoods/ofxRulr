@@ -48,6 +48,8 @@ namespace ofxDigitalEmulsion {
 					this->light.lookAt(camera.getCursorWorld());
 				}
 			};
+
+			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -138,7 +140,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Model::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+		void Model::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			auto loadButton = make_shared<ofxCvGui::Widgets::Button>("Load model...", [this]() {
 				auto result = ofSystemLoadDialog("Load model using Assimp");
 				if (result.bSuccess) {

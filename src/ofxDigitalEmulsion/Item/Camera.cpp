@@ -92,6 +92,8 @@ namespace ofxDigitalEmulsion {
 				ofPopStyle();
 			};
 			this->view = view;
+
+			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -293,7 +295,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Camera::populateInspector2(ElementGroupPtr inspector) {
+		void Camera::populateInspector(ElementGroupPtr inspector) {
 			inspector->add(Widgets::LiveValueHistory::make("Device fps [Hz]", [this] () {
 				if (this->grabber) {
 					return this->grabber->getFps();

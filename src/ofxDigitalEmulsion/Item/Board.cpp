@@ -18,6 +18,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Board::init() {
+			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -93,7 +94,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Board::populateInspector2(ElementGroupPtr inspector) {
+		void Board::populateInspector(ElementGroupPtr inspector) {
 			auto sliderCallback = [this](ofParameter<float> &) {
 				this->updatePreviewMesh();
 			};

@@ -14,15 +14,15 @@ namespace ofxDigitalEmulsion {
 				string getTypeName() const override;
 				ofxCvGui::PanelPtr getView() override;
 
-				void serialize(Json::Value &) override;
-				void deserialize(const Json::Value &) override;
+				void serialize(Json::Value &);
+				void deserialize(const Json::Value &);
 				void update() override;
 				
 				void findHomography();
 				void findDistortionCoefficients();
 				void exportMappingImage(string filename = "") const;
 			protected:
-				void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+				void populateInspector(ofxCvGui::ElementGroupPtr);
 
 				shared_ptr<ofxCvGui::Panels::Image> view;
 

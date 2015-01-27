@@ -128,6 +128,7 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void VideoOutput::init() {
+			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -166,7 +167,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void VideoOutput::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+		void VideoOutput::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(MAKE(ofxCvGui::Widgets::Button, "Refresh monitors", [this]() {
 				this->refreshMonitors();
 			}));

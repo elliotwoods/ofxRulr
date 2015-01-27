@@ -12,6 +12,21 @@
 
 #include <string>
 
+#define OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER \
+	this->onPopulateInspector += [this](ofxCvGui::InspectArguments & args) { \
+		this->populateInspector(args.inspector); \
+	};
+#define OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS \
+	this->onSerialize += [this](Json::Value & json) { \
+		this->serialize(json); \
+	}; \
+	this->onDeserialize += [this](Json::Value const & json) { \
+		this->deserialize(json); \
+	};
+#define OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS \
+	OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER \
+	OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS
+
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		class Node : public ofxCvGui::IInspectable, public Utils::Serializable {
@@ -25,7 +40,7 @@ namespace ofxDigitalEmulsion {
 			const ofColor & getColor();
 
 			const PinSet & getInputPins() const;
-			void populateInspector(ofxCvGui::ElementGroupPtr) override;
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 			virtual ofxCvGui::PanelPtr getView() = 0;
 			virtual void update() { }
 
@@ -99,8 +114,6 @@ namespace ofxDigitalEmulsion {
 
 			void setupGraphics();
 			void setIcon(ofImage &);
-
-			virtual void populateInspector2(ofxCvGui::ElementGroupPtr) = 0;
 		private:
 			PinSet inputPins;
 			ofImage * icon;

@@ -23,11 +23,11 @@ namespace ofxDigitalEmulsion {
 			~VideoOutput();
 			void init() override;
 			string getTypeName() const override;
-			void serialize(Json::Value &) override;
-			void deserialize(const Json::Value &) override;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 
 			ofxCvGui::PanelPtr getView() override;
-			void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 			void update();
 
 			float getWidth() const;

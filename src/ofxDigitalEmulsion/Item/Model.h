@@ -18,10 +18,10 @@ namespace ofxDigitalEmulsion {
 			void update() override;
 			void drawWorld() override;
 
-			void serialize(Json::Value &) override;
-			void deserialize(const Json::Value &) override;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 		protected:
-			void populateInspector2(ofxCvGui::ElementGroupPtr) override;
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 
 			void updatePreviewMesh();
 

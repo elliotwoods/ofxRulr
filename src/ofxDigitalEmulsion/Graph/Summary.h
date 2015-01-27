@@ -16,10 +16,10 @@ namespace ofxDigitalEmulsion {
 
 			void update() override;
 
-			void serialize(Json::Value &) override;
-			void deserialize(const Json::Value &) override;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 		protected:
-			void populateInspector2(ofxCvGui::ElementGroupPtr);
+			void populateInspector(ofxCvGui::ElementGroupPtr);
 			void callbackShowCursor(bool &);
 			shared_ptr<ofxCvGui::Panels::World> view;
 

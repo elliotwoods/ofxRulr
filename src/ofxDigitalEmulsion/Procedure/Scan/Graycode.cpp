@@ -29,6 +29,8 @@ namespace ofxDigitalEmulsion {
 
 				this->view = MAKE(Panels::Image, this->decoder.getProjectorInCamera());
 
+				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
+
 				this->previewIsOfNonLivePixels = false;
 			}
 			
@@ -133,7 +135,7 @@ namespace ofxDigitalEmulsion {
 			}
 			
 			//----------
-			void Graycode::populateInspector2(ElementGroupPtr inspector) {
+			void Graycode::populateInspector(ElementGroupPtr inspector) {
 				auto scanButton = Widgets::Button::make("SCAN", [this] () {
 					try {
 						this->runScan();

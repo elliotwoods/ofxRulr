@@ -444,6 +444,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Manager.h">
       <Filter>src\ofxDigitalEmulsion\External</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\IRigidBody.h">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -595,6 +598,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Manager.cpp">
       <Filter>src\ofxDigitalEmulsion\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\IRigidBody.cpp">
+      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

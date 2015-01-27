@@ -67,6 +67,8 @@ namespace ofxDigitalEmulsion {
 			projectorPin->onDeleteConnectionTyped += [this](shared_ptr<Item::Projector> & projectorNode) {
 				projectorNode->getView()->onMouse.removeListeners(this);
 			};
+
+			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -110,7 +112,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Triangulate::populateInspector2(ofxCvGui::ElementGroupPtr inspector) {
+		void Triangulate::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			auto triangulateButton = Widgets::Button::make("Triangulate", [this] () {
 				try {
 					this->triangulate();
