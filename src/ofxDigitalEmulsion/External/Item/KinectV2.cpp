@@ -21,12 +21,17 @@ namespace ofxDigitalEmulsion {
 
 			this->device = MAKE(ofxKinectForWindows2::Device);
 			this->device->open();
-			this->device->initDepthSource();
-			this->device->initColorSource();
-			this->device->initBodySource();
 
-			this->view->add(make_shared<ofxCvGui::Panels::Draws>(this->device->getColorSource()->getTextureReference()));
-			this->view->add(make_shared<ofxCvGui::Panels::Draws>(this->device->getDepthSource()->getTextureReference()));
+			if (this->device->isOpen()) {
+				this->device->initDepthSource();
+				this->device->initColorSource();
+				this->device->initBodySource();
+				this->view->add(make_shared<ofxCvGui::Panels::Draws>(this->device->getColorSource()->getTextureReference()));
+				this->view->add(make_shared<ofxCvGui::Panels::Draws>(this->device->getDepthSource()->getTextureReference()));
+			}
+			else {
+				throw(Utils::Exception("Cannot initialise Kinect device. We should find a way to fail elegantly here (and retry later)."));
+			}
 
 			this->viewType.set("Play state", 0, 0, 1);
 			this->viewType.set("View type", 3, 0, 3);
