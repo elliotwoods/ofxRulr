@@ -12,9 +12,7 @@ namespace ofxDigitalEmulsion {
 		Node::Node() {
 			this->icon = 0;
 			this->defaultIconName = "Default";
-			this->onPopulateInspector += [this](ofxCvGui::InspectArguments & args) {
-				this->populateInspector(args.inspector);
-			};
+			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER
 		}
 
 		//----------

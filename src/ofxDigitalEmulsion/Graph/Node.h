@@ -13,7 +13,7 @@
 #include <string>
 
 #define OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER \
-	this->onPopulateInspector += [this](ofxCvGui::InspectArguments & args) { \
+	this->onInspect += [this](ofxCvGui::InspectArguments & args) { \
 		this->populateInspector(args.inspector); \
 	};
 #define OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS \
