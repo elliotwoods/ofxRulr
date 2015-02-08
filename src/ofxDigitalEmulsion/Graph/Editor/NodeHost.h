@@ -4,6 +4,10 @@
 #include "ofxDigitalEmulsion/Graph/Node.h"
 #include "ofxCvGui/Utils/Button.h"
 
+#define OFXDIGITALEMULSION_NODEHOST_INPUTAREA_WIDTH 85
+#define OFXDIGITALEMULSION_NODEHOST_TITLE_WIDTH 50
+#define OFXDIGITALEMULSION_NODEHOST_OUTPUTAREA_WIDTH 100
+
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		namespace Editor {

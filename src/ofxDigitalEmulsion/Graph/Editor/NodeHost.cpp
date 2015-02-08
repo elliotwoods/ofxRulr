@@ -9,13 +9,52 @@ namespace ofxDigitalEmulsion {
 		namespace Editor {
 			//----------
 			NodeHost::NodeHost(shared_ptr<Node> node) {
+				/*
+				The NodeHost Gui element is a tree of elements:
+
+				NodeHost
+					- nodeView (if any)
+					- elements
+						- title (if any)
+						- resizeHandle
+						- outputPinViewv
+					- inputPins
+				*/
 				this->node = node;
 				this->nodeView = node->getView();
+				
+				this->elements = make_shared<ofxCvGui::ElementGroup>();
+				ofxCvGui::ElementPtr title;
+
+				//check if this node has a view
 				if (nodeView) {
+					//we setup the nodeView and add it
 					this->nodeView->setCaption(this->node->getName());
+					this->elements->add(nodeView);
+				}
+				else {
+					//we setup a title and add it
+					title = make_shared<Element>();
+					title->setScissor(true);
+					title->onDraw += [this](ofxCvGui::DrawArguments & args) {
+						//draw line between inputs and outs
+						ofPushStyle();
+						ofSetLineWidth(1.0f);
+						ofSetColor(50);
+						ofLine(0, 0, 0, args.localBounds.height);
+						ofLine(args.localBounds.width - 1, 0, args.localBounds.width - 1, args.localBounds.height); //-1 because of scissor
+						ofPopStyle();
+
+						//draw text
+						ofPushMatrix();
+						ofTranslate(0, args.localBounds.height);
+						ofRotate(-90);
+						ofxCvGui::Utils::drawText(this->getNodeInstance()->getName(), ofRectangle(0, 0, args.localBounds.height, args.localBounds.width), false);
+						ofPopMatrix();
+					};
+					this->elements->add(title);
 				}
 
-				this->elements = make_shared<ofxCvGui::ElementGroup>();
 				auto resizeHandle = make_shared<ofxCvGui::Utils::Button>();
 				resizeHandle->onDrawUp += [](ofxCvGui::DrawArguments & args) {
 					image("ofxDigitalEmulsion::resizeHandle").draw(args.localBounds);
@@ -41,11 +80,17 @@ namespace ofxDigitalEmulsion {
 				outputPinView->setup(*this->getNodeInstance());
 				this->elements->add(outputPinView);
 
-				this->elements->onBoundsChange += [resizeHandle, outputPinView, this](ofxCvGui::BoundsChangeArguments & args) {
+				this->elements->onBoundsChange += [resizeHandle, title, outputPinView, this](ofxCvGui::BoundsChangeArguments & args) {
 					auto & resizeImage = image("ofxDigitalEmulsion::resizeHandle");
 					resizeHandle->setBounds(ofRectangle(args.localBounds.width - resizeImage.getWidth(), args.localBounds.height - resizeImage.getHeight(), resizeImage.getWidth(), resizeImage.getHeight()));
 					const auto iconSize = 48;
 					outputPinView->setBounds(ofRectangle(this->getOutputPinPosition() - ofVec2f(iconSize + 32, iconSize / 2), iconSize, iconSize));
+
+					if (title) {
+						title->setBounds(ofRectangle(OFXDIGITALEMULSION_NODEHOST_INPUTAREA_WIDTH, 0, OFXDIGITALEMULSION_NODEHOST_TITLE_WIDTH, args.localBounds.height));
+					}
+					this->inputPins->setBounds(ofRectangle(0, 0, OFXDIGITALEMULSION_NODEHOST_INPUTAREA_WIDTH, this->getHeight()));
+					this->outputPinPosition = ofVec2f(this->getWidth(), this->getHeight() / 2.0f);
 				};
 
 				this->inputPins = make_shared<ofxCvGui::ElementGroup>();
@@ -93,16 +138,33 @@ namespace ofxDigitalEmulsion {
 				this->onUpdate += [this](ofxCvGui::UpdateArguments & args) {
 					this->getNodeInstance()->update();
 
-					const int minWidth = 200 + 200;
+					//--
+					//Clamp bounds
+					//--
+					//
 					const int minHeight = MAX(150, this->getNodeInstance()->getInputPins().size() * 75);
-
 					auto bounds = this->getBounds();
-					if (bounds.width < minWidth || bounds.height < minHeight) {
-						auto fixedBounds = bounds;
-						fixedBounds.width = MAX(bounds.width, minWidth);
-						fixedBounds.height = MAX(bounds.height, minHeight);
-						this->setBounds(fixedBounds);
+					if (this->nodeView) {
+						//this node has a view
+						const int minWidth = OFXDIGITALEMULSION_NODEHOST_INPUTAREA_WIDTH + OFXDIGITALEMULSION_NODEHOST_OUTPUTAREA_WIDTH + 200;
+						if (bounds.width < minWidth || bounds.height < minHeight) {
+							auto fixedBounds = bounds;
+							fixedBounds.width = MAX(bounds.width, minWidth);
+							fixedBounds.height = MAX(bounds.height, minHeight);
+							this->setBounds(fixedBounds);
+						}
 					}
+					else {
+						//this node has no view
+						const auto nodeHostWidth = OFXDIGITALEMULSION_NODEHOST_INPUTAREA_WIDTH + OFXDIGITALEMULSION_NODEHOST_OUTPUTAREA_WIDTH + OFXDIGITALEMULSION_NODEHOST_TITLE_WIDTH;
+						if (bounds.width != nodeHostWidth || bounds.height < minHeight) {
+							bounds.width = nodeHostWidth;
+							bounds.height = MAX(bounds.height, minHeight);
+							this->setBounds(bounds);
+						}
+					}
+					//
+					//--
 				};
 
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
@@ -135,19 +197,15 @@ namespace ofxDigitalEmulsion {
 					ofPopStyle();
 				};
 
-				this->onBoundsChange += [this, resizeHandle](ofxCvGui::BoundsChangeArguments & args) {
-					auto viewBounds = args.localBounds;
-					viewBounds.x = 85;
-					viewBounds.width -= 185;
-					viewBounds.y = 1;
-					viewBounds.height -= 2;
+				this->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
 					if (this->nodeView) {
+						auto viewBounds = args.localBounds;
+						viewBounds.x = OFXDIGITALEMULSION_NODEHOST_INPUTAREA_WIDTH;
+						viewBounds.width -= OFXDIGITALEMULSION_NODEHOST_INPUTAREA_WIDTH + OFXDIGITALEMULSION_NODEHOST_OUTPUTAREA_WIDTH;
+						viewBounds.y = 1;
+						viewBounds.height -= 2;
 						this->nodeView->setBounds(viewBounds);
 					}
-
-					this->inputPins->setBounds(ofRectangle(0, 0, viewBounds.x, this->getHeight()));
-
-					this->outputPinPosition = ofVec2f(this->getWidth(), this->getHeight() / 2.0f);
 				};
 
 				this->onMouse += [this](ofxCvGui::MouseArguments & args) {
@@ -164,7 +222,7 @@ namespace ofxDigitalEmulsion {
 						this->setBounds(newBounds);
 					}
 					
-					//if no children took the mouse press, then we'll have it to block it going down
+					//if no children took the mouse press, then we'll have it
 					args.takeMousePress(this);
 
 					if (args.action == ofxCvGui::MouseArguments::Pressed) {
