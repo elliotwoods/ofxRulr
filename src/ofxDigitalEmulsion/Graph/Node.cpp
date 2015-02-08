@@ -63,7 +63,7 @@ namespace ofxDigitalEmulsion {
 					auto result = ofSystemTextBoxDialog("Change name of [" + this->getTypeName() + "] node (" + this->getName() + ")");
 					if (result != "") {
 						this->setName(result);
-					nameWidget->setCaption(result);
+						nameWidget->setCaption(result);
 					}
 				}
 			};

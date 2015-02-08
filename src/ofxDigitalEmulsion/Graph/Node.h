@@ -41,7 +41,7 @@ namespace ofxDigitalEmulsion {
 
 			const PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr);
-			virtual ofxCvGui::PanelPtr getView() = 0;
+			virtual ofxCvGui::PanelPtr getView() { return ofxCvGui::PanelPtr(); };
 			virtual void update() { }
 
 			///override this function for any node which can draw to the world
