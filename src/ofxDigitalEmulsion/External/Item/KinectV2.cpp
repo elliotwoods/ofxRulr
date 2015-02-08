@@ -26,14 +26,19 @@ namespace ofxDigitalEmulsion {
 				this->device->initDepthSource();
 				this->device->initColorSource();
 				this->device->initBodySource();
-				this->view->add(make_shared<ofxCvGui::Panels::Draws>(this->device->getColorSource()->getTextureReference()));
-				this->view->add(make_shared<ofxCvGui::Panels::Draws>(this->device->getDepthSource()->getTextureReference()));
+
+				auto rgbView = make_shared<ofxCvGui::Panels::Draws>(this->device->getColorSource()->getTextureReference());
+				auto depthView = make_shared<ofxCvGui::Panels::Draws>(this->device->getDepthSource()->getTextureReference());
+				rgbView->setCaption("RGB");
+				depthView->setCaption("Depth");
+				this->view->add(rgbView);
+				this->view->add(depthView);
 			}
 			else {
 				throw(Utils::Exception("Cannot initialise Kinect device. We should find a way to fail elegantly here (and retry later)."));
 			}
 
-			this->viewType.set("Play state", 0, 0, 1);
+			this->playState.set("Play state", 0, 0, 1);
 			this->viewType.set("View type", 3, 0, 3);
 
 			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
@@ -74,7 +79,7 @@ namespace ofxDigitalEmulsion {
 					this->device->getBodySource()->drawBodies();
 					break;
 				case 2:
-					this->device->drawWorld();
+					this->device->drawWorld(ofxKinectForWindows2::Device::DrawStyle::Vertices);
 					break;
 				default:
 					break;
