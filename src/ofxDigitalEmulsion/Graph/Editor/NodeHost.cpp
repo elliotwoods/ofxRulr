@@ -19,19 +19,16 @@ namespace ofxDigitalEmulsion {
 						- outputPinViewv
 						- nodeView (if any)
 					- inputPins
-				*/
-				this->node = node;
-				this->nodeView = node->getView();
-				
+				*/				
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
 				this->elements->setScissor(true);
 
 				ofxCvGui::ElementPtr title;
 
+				this->node = node;
+				this->nodeView = node->getView();
 				//check if this node has a view
 				if (nodeView) {
-					//we setup the nodeView and add it
-					this->nodeView->setCaption(this->node->getName());
 					this->elements->add(nodeView);
 				}
 				

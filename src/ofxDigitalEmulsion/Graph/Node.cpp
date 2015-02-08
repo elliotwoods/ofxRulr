@@ -27,10 +27,6 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Node::setName(const string name) {
 			this->name = name;
-			auto view = this->getView();
-			if (view) {
-				view->setCaption(this->name);
-			}
 		}
 
 		//----------

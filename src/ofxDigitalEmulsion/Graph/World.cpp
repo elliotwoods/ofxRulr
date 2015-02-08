@@ -167,8 +167,6 @@ namespace ofxDigitalEmulsion {
 							ofPopStyle();
 						}
 					};
-
-					nodeView->setCaption(node->getName());
 				}
 			}
 			//
