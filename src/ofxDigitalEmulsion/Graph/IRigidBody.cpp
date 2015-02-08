@@ -1,4 +1,5 @@
 #include "IRigidBody.h"
+#include "ofxCvGui/Widgets/Button.h"
 #include "ofxCvGui/Widgets/Spacer.h"
 #include "ofxCvGui/Widgets/Slider.h"
 
@@ -136,6 +137,13 @@ namespace ofxDigitalEmulsion {
 		void IRigidBody::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			//NOTE : WHEN WE CHANGE THESE FROM SLIDERS, LETS ALSO GET RID OF THE RANGE ON THE PARAMETERS
 			// TRANSLATION SHOULDN'T BE BOUND to +/-100
+
+			inspector->add(make_shared<Widgets::Button>("Clear Transform", [this]() {
+				for (int i = 0; i < 3; i++) {
+					this->translation[i] = 0.0f;
+					this->rotationEuler[i] = 0.0f;
+				}
+			}));
 
 			for (int i = 0; i < 3; i++) {
 				inspector->add(make_shared<Widgets::Slider>(this->translation[i]));
