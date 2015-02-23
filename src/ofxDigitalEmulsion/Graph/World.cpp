@@ -5,6 +5,7 @@
 #include "../Utils/Exception.h"
 #include "../Utils/Initialiser.h"
 #include "../External/Manager.h"
+#include "../Version.h"
 
 #include "ofxCvGui.h"
 
@@ -18,6 +19,8 @@ namespace ofxDigitalEmulsion {
 		//-----------
 		void World::init(Controller & controller) {
 			Utils::initialiser.checkInitialised();
+
+			ofSetWindowTitle("Rulr v" + OFXDIGITALEMULSION_VERSION_STRING);
 
 			// Register factories for any externals
 			External::Manager::X().registerFactories();
@@ -121,7 +124,8 @@ namespace ofxDigitalEmulsion {
 			inspector->setTitleEnabled(false);
 
 			//whenever the instpector clears, setup default elements
-			InspectController::X().onClear += [this] (ElementGroupPtr inspector) {
+			InspectController::X().onClear += [this] (InspectArguments & args) {
+				auto inspector = args.inspector;
 				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));

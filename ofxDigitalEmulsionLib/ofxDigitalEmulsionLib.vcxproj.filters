@@ -447,6 +447,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\IRigidBody.h">
       <Filter>src\ofxDigitalEmulsion\Graph</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Version.h">
+      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">

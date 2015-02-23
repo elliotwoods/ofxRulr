@@ -281,6 +281,7 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Set.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Utils.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp" />
