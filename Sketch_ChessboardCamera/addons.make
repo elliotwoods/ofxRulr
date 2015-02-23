@@ -1,4 +1,0 @@
-ofxCvGui2
-ofxUVC
-ofxMachineVision
-ofxCvMin
