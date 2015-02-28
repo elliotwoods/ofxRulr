@@ -2,6 +2,7 @@
 
 #include "Base.h"
 #include "../../../addons/ofxMachineVision/src/ofxMachineVision.h"
+#include "../../../addons/ofxCvGui/src/ofxCvGui/Panels/Groups/Grid.h"
 
 #include "ofxCvMin.h"
 #include "ofxRay.h"
@@ -16,13 +17,14 @@ namespace ofxDigitalEmulsion {
 
 			void init();
 			string getTypeName() const override;
-			void update() override;
+			void update();
 			ofxCvGui::PanelPtr getView() override;
 
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
 
 			void setDevice(ofxMachineVision::DevicePtr, int deviceIndex = 0);
+			void clearDevice();
 			shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
 
 			float getWidth();
@@ -35,8 +37,8 @@ namespace ofxDigitalEmulsion {
 			cv::Mat getDistortionCoefficients() const;
 
 			const ofxRay::Camera & getRayCamera() const;
-			void drawWorld() override;
 
+			void drawWorld() override;
 			ofPixels getFreshFrame();
 		protected:
 			void populateInspector(ofxCvGui::ElementGroupPtr);
@@ -47,7 +49,7 @@ namespace ofxDigitalEmulsion {
 			void focusCallback(float &);
 			void sharpnessCallback(float &);
 			
-			ofxCvGui::PanelPtr view;
+			shared_ptr<ofxCvGui::Panels::Groups::Grid> placeholderView;
 
 			shared_ptr<ofxMachineVision::Grabber::Simple> grabber;
 
