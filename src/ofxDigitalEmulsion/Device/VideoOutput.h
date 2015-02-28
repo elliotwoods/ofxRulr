@@ -20,8 +20,7 @@ namespace ofxDigitalEmulsion {
 			};
 
 			VideoOutput();
-			~VideoOutput();
-			void init() override;
+			void init();
 			string getTypeName() const override;
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);

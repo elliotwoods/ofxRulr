@@ -12,27 +12,35 @@
 
 #include <string>
 
+#define OFXDIGITALEMULSION_NODE_INIT_LISTENER \
+	this->onInit += [this]() { \
+		this->init(); \
+	}
+#define OFXDIGITALEMULSION_NODE_UPDATE_LISTENER \
+	this->onUpdate += [this]() { \
+		this->update(); \
+	}
 #define OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER \
 	this->onInspect += [this](ofxCvGui::InspectArguments & args) { \
 		this->populateInspector(args.inspector); \
-	};
+	}
 #define OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS \
 	this->onSerialize += [this](Json::Value & json) { \
 		this->serialize(json); \
 	}; \
 	this->onDeserialize += [this](Json::Value const & json) { \
 		this->deserialize(json); \
-	};
-#define OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS \
-	OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER \
-	OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS
+	}
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
 		class Node : public ofxCvGui::IInspectable, public Utils::Serializable {
 		public:
 			Node();
-			virtual void init() { };
+			~Node();
+			void init();
+			void destroy();
+			void update();
 			string getName() const override;
 			void setName(const string);
 
@@ -42,7 +50,6 @@ namespace ofxDigitalEmulsion {
 			const PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr);
 			virtual ofxCvGui::PanelPtr getView() { return ofxCvGui::PanelPtr(); };
-			virtual void update() { }
 
 			///override this function for any node which can draw to the world
 			virtual void drawWorld() { }
@@ -90,6 +97,9 @@ namespace ofxDigitalEmulsion {
 			}
 			void throwIfMissingAnyConnection() const;
 
+			ofxLiquidEvent<void> onInit;
+			ofxLiquidEvent<void> onDestroy;
+			ofxLiquidEvent<void> onUpdate;
 			ofxLiquidEvent<int> onConnect;
 		protected:
 			void addInput(shared_ptr<AbstractPin>);
@@ -120,6 +130,7 @@ namespace ofxDigitalEmulsion {
 			ofColor color;
 			string name;
 			string defaultIconName;
+			bool initialized;
 		};
 	}
 }

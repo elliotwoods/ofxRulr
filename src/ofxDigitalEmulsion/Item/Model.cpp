@@ -15,7 +15,7 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
 		Model::Model() {
-
+			OFXDIGITALEMULSION_NODE_INIT_LISTENER;
 		}
 
 		//----------
@@ -25,6 +25,10 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Model::init() {
+			OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+			
 			this->drawVertices.set("Draw vertices", false);
 			this->drawWireframe.set("Draw wireframe", false);
 			this->drawFaces.set("Draw faces", true);
@@ -49,7 +53,6 @@ namespace ofxDigitalEmulsion {
 				}
 			};
 
-			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------

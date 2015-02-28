@@ -27,24 +27,19 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			ProjectorFromKinectV2::ProjectorFromKinectV2() {
-				this->addInput(MAKE(Pin<Item::KinectV2>));
-				this->addInput(MAKE(Pin<Item::Projector>));
-				this->addInput(MAKE(Pin<Device::ProjectorOutput>));
-
-				this->checkerboardScale.set("Checkerboard Scale", 0.2f, 0.01f, 1.0f);
-				this->checkerboardCornersX.set("Checkerboard Corners X", 5, 1, 10);
-				this->checkerboardCornersY.set("Checkerboard Corners Y", 5, 1, 10);
-				this->checkerboardPositionX.set("Checkerboard Position X", 0, -1, 1);
-				this->checkerboardPositionY.set("Checkerboard Position Y", 0, -1, 1);
-				this->checkerboardBrightness.set("Checkerboard Brightness", 0.5, 0, 1);
-				this->initialLensOffset.set("Initial Lens Offset", 0.5f, -1.0f, 1.0f);
-				this->trimOutliers.set("Trim Outliers", false);
-
-				this->error = 0.0f;
+				OFXDIGITALEMULSION_NODE_INIT_LISTENER;
 			}
 
 			//----------
 			void ProjectorFromKinectV2::init() {
+				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+				OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+
+				this->addInput(MAKE(Pin<Item::KinectV2>));
+				this->addInput(MAKE(Pin<Item::Projector>));
+				this->addInput(MAKE(Pin<Device::ProjectorOutput>));
+
 				auto view = MAKE(ofxCvGui::Panels::Groups::Grid);
 				auto worldView = MAKE(ofxCvGui::Panels::World);
 				worldView->onDrawWorld += [this](ofCamera &) {
@@ -73,7 +68,16 @@ namespace ofxDigitalEmulsion {
 
 				this->view = view;
 
-				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
+				this->checkerboardScale.set("Checkerboard Scale", 0.2f, 0.01f, 1.0f);
+				this->checkerboardCornersX.set("Checkerboard Corners X", 5, 1, 10);
+				this->checkerboardCornersY.set("Checkerboard Corners Y", 5, 1, 10);
+				this->checkerboardPositionX.set("Checkerboard Position X", 0, -1, 1);
+				this->checkerboardPositionY.set("Checkerboard Position Y", 0, -1, 1);
+				this->checkerboardBrightness.set("Checkerboard Brightness", 0.5, 0, 1);
+				this->initialLensOffset.set("Initial Lens Offset", 0.5f, -1.0f, 1.0f);
+				this->trimOutliers.set("Trim Outliers", false);
+
+				this->error = 0.0f;
 			}
 
 			//----------

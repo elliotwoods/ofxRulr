@@ -12,10 +12,10 @@ namespace ofxDigitalEmulsion {
 		public:
 			Model();
 			string getTypeName() const override;
-			void init() override;
+			void init();
 			ofxCvGui::PanelPtr getView() override;
 
-			void update() override;
+			void update();
 			void drawWorld() override;
 
 			void serialize(Json::Value &);

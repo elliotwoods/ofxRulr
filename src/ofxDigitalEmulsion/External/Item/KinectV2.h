@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Graph/IRigidBody.h"
+#include "../../Item/RigidBody.h"
 
 #include "ofxKinectForWindows2.h"
 
@@ -8,12 +8,12 @@
 
 namespace ofxDigitalEmulsion {
 	namespace Item {
-		class KinectV2 : public ofxDigitalEmulsion::Graph::IRigidBody {
+		class KinectV2 : public ofxDigitalEmulsion::Item::RigidBody {
 		public:
 			KinectV2();
-			void init() override;
+			void init();
 			string getTypeName() const override;
-			void update() override;
+			void update();
 			ofxCvGui::PanelPtr getView() override;
 
 			void serialize(Json::Value &);

@@ -20,6 +20,15 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			ProjectorIntrinsicsExtrinsics::ProjectorIntrinsicsExtrinsics() {
+				OFXDIGITALEMULSION_NODE_INIT_LISTENER;
+			}
+
+			//----------
+			void ProjectorIntrinsicsExtrinsics::init() {
+				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+				OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+
 				this->addInput(MAKE(Pin<Item::Camera>));
 				this->addInput(MAKE(Pin<Item::Projector>));
 				this->addInput(MAKE(Pin<Item::Board>));
@@ -31,11 +40,6 @@ namespace ofxDigitalEmulsion {
 				this->lastSeenFail = -10.0f;
 				this->lastSeenSuccess = -10.0f;
 				this->error = 0.0f;
-			}
-
-			//----------
-			void ProjectorIntrinsicsExtrinsics::init() {
-				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 			}
 				
 			//----------

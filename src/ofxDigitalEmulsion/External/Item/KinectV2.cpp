@@ -11,11 +11,18 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
 		KinectV2::KinectV2() {
-			
+			this->onInit += [this]() {
+				this->init();
+			};
+			//OFXDIGITALEMULSION_NODE_INIT_LISTENER;
 		}
 
 		//----------
 		void KinectV2::init() {
+			OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+			
 			auto view = MAKE(ofxCvGui::Panels::Groups::Grid);
 			this->view = view;
 
@@ -40,8 +47,6 @@ namespace ofxDigitalEmulsion {
 
 			this->playState.set("Play state", 0, 0, 1);
 			this->viewType.set("View type", 3, 0, 3);
-
-			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------

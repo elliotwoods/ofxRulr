@@ -198,7 +198,12 @@ namespace ofxDigitalEmulsion {
 				return ofxCvGui::PanelPtr();
 			}
 
-#pragma mark Instance
+#pragma mark Patch
+			//----------
+			Patch::Patch() {
+				OFXDIGITALEMULSION_NODE_INIT_LISTENER;
+			}
+
 			//----------
 			string Patch::getTypeName() const {
 				return "Patch";
@@ -208,7 +213,8 @@ namespace ofxDigitalEmulsion {
 			void Patch::init() {
 				this->view = MAKE(View, *this);
 
-				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS
+				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
 			}
 
 			//----------

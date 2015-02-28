@@ -19,29 +19,20 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			CameraIntrinsics::CameraIntrinsics() {
-				this->addInput(MAKE(Pin<Item::Board>));
-				this->addInput(MAKE(Pin<Item::Camera>));
-
-				this->enableFinder.set("Run board finder", false);
-				this->error.set("Reprojection error", 0.0f, 0.0f, std::numeric_limits<float>::max());
-
-				this->error = 0.0f;
+				OFXDIGITALEMULSION_NODE_INIT_LISTENER;
 			}
 
 			//----------
 			void CameraIntrinsics::init() {
-				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
-			}
+				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+				OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
 
-			//----------
-			string CameraIntrinsics::getTypeName() const {
-				return "Procedure::Calibrate::CameraIntrinsics";
-			}
+				this->addInput(MAKE(Pin<Item::Board>));
+				this->addInput(MAKE(Pin<Item::Camera>));
 
-			//----------
-			ofxCvGui::PanelPtr CameraIntrinsics::getView() {
-				auto view = MAKE(ofxCvGui::Panels::Base);
-				view->onDraw += [this] (DrawArguments & drawArgs) {
+				this->view = MAKE(ofxCvGui::Panels::Base);
+				this->view->onDraw += [this](DrawArguments & drawArgs) {
 					auto camera = this->getInput<Item::Camera>();
 					if (camera) {
 						auto grabber = camera->getGrabber();
@@ -54,17 +45,17 @@ namespace ofxDigitalEmulsion {
 
 						//draw current corners
 						ofxCv::drawCorners(this->currentCorners);
-						
+
 						//draw past corners
 						ofPushStyle();
 						ofFill();
 						ofSetLineWidth(0.0f);
 						int boardIndex = 0;
 						ofColor boardColor(200, 100, 100);
-						for(auto & board : this->accumulatedCorners) {
+						for (auto & board : this->accumulatedCorners) {
 							boardColor.setHue(boardIndex++ * 30 % 360);
 							ofSetColor(boardColor);
-							for(auto & corner : board) {
+							for (auto & corner : board) {
 								ofCircle(corner, 3.0f);
 							}
 						}
@@ -73,7 +64,21 @@ namespace ofxDigitalEmulsion {
 						ofPopMatrix();
 					}
 				};
-				return view;
+
+				this->enableFinder.set("Run board finder", false);
+				this->error.set("Reprojection error", 0.0f, 0.0f, std::numeric_limits<float>::max());
+
+				this->error = 0.0f;
+			}
+
+			//----------
+			string CameraIntrinsics::getTypeName() const {
+				return "Procedure::Calibrate::CameraIntrinsics";
+			}
+
+			//----------
+			ofxCvGui::PanelPtr CameraIntrinsics::getView() {
+				return this->view;
 			}
 
 			//----------

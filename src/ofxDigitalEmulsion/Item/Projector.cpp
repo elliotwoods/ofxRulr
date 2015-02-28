@@ -8,6 +8,14 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
 		Projector::Projector() {
+			OFXDIGITALEMULSION_NODE_INIT_LISTENER;
+		}
+
+		//----------
+		void Projector::init() {
+			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+
 			this->projector.setDefaultNear(0.05f);
 			this->projector.setDefaultFar(2.0f);
 
@@ -23,7 +31,7 @@ namespace ofxDigitalEmulsion {
 			this->rotationX.set("Rotation X", 0.0f, -360.0f, 360.0f);
 			this->rotationY.set("Rotation Y", 0.0f, -360.0f, 360.0f);
 			this->rotationZ.set("Rotation Z", 0.0f, -360.0f, 360.0f);
-								 
+
 			this->resolutionWidth.addListener(this, &Projector::projectorParameterCallback);
 			this->resolutionHeight.addListener(this, &Projector::projectorParameterCallback);
 			this->throwRatioX.addListener(this, &Projector::projectorParameterCallback);
@@ -38,19 +46,6 @@ namespace ofxDigitalEmulsion {
 			this->rotationZ.addListener(this, &Projector::projectorParameterCallback);
 
 			this->rebuildProjector();
-			
-			auto view = MAKE(Panels::World);
-			view->getCamera().rotate(180.0f, 0.0f, 0.0f, 1.0f);
-			view->getCamera().lookAt(ofVec3f(0,0,1), ofVec3f(0,-1,0));
-			view->onDrawWorld += [this] (ofCamera &) {
-				this->drawWorld();
-			};
-			this->view = view;
-		}
-
-		//----------
-		void Projector::init() {
-			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -58,11 +53,6 @@ namespace ofxDigitalEmulsion {
 			return "Item::Projector";
 		}
 			
-		//----------
-		PanelPtr Projector::getView() {
-			return this->view;
-		}
-
 		//----------
 		void Projector::serialize(Json::Value & json) {
 			Utils::Serializable::serialize(this->resolutionWidth, json);

@@ -16,11 +16,15 @@ namespace ofxDigitalEmulsion {
 		namespace Scan {
 			//---------
 			Graycode::Graycode() {
-
+				OFXDIGITALEMULSION_NODE_INIT_LISTENER;
 			}
 
 			//----------
 			void Graycode::init() {
+				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+				OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+
 				this->addInput(MAKE(Pin<Item::Camera>));
 				this->addInput(MAKE(Pin<Device::VideoOutput>));
 
@@ -28,8 +32,6 @@ namespace ofxDigitalEmulsion {
 				this->delay.set("Capture delay [ms]", 200.0f, 0.0f, 2000.0f);
 
 				this->view = MAKE(Panels::Image, this->decoder.getProjectorInCamera());
-
-				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 
 				this->previewIsOfNonLivePixels = false;
 			}
@@ -75,9 +77,6 @@ namespace ofxDigitalEmulsion {
 			void Graycode::runScan() {
 				//safety checks
 				this->throwIfMissingAnyConnection();
-				if (!this->payload.isAllocated()) {
-					throw(Utils::Exception("Payload is not allocated"));
-				}
 
 				//get variables
 				auto window = glfwGetCurrentContext();
@@ -86,8 +85,12 @@ namespace ofxDigitalEmulsion {
 				auto videoOutputSize = videoOutput->getSize();
 				auto grabber = camera->getGrabber();
 
-				//initialise scan
+				//initialise payload
 				this->payload.init(videoOutputSize.getWidth(), videoOutputSize.getHeight());
+				this->encoder.init(payload);
+				this->decoder.init(payload);
+
+				//initialise scan
 				this->encoder.reset();
 				this->decoder.reset();
 				this->decoder.setThreshold(this->threshold);

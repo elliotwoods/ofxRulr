@@ -10,9 +10,8 @@ namespace ofxDigitalEmulsion {
 		class Projector : public Base {
 		public:
 			Projector();
-			void init() override;
+			void init();
 			string getTypeName() const;
-			ofxCvGui::PanelPtr getView() override;
 
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
@@ -41,8 +40,6 @@ namespace ofxDigitalEmulsion {
 			void rebuildProjector();
 			void projectorParameterCallback(float &);
 			
-			ofxCvGui::PanelPtr view;
-
 			ofxRay::Projector projector;
 
 			ofParameter<float> resolutionWidth, resolutionHeight;

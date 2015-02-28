@@ -8,7 +8,7 @@ namespace ofxDigitalEmulsion {
 		class Board : public Base {
 		public:
 			Board();
-			void init() override;
+			void init();
 			string getTypeName() const override;
 			ofxCvGui::PanelPtr getView();
 

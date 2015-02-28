@@ -18,6 +18,9 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Triangulate::init() {
+			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+
 			auto cameraPin = MAKE(Graph::Pin<Item::Camera>);
 			auto projectorPin = MAKE(Graph::Pin<Item::Projector>);
 			auto graycodePin = MAKE(Graph::Pin<Scan::Graycode>);
@@ -67,8 +70,6 @@ namespace ofxDigitalEmulsion {
 			projectorPin->onDeleteConnectionTyped += [this](shared_ptr<Item::Projector> & projectorNode) {
 				projectorNode->getView()->onMouse.removeListeners(this);
 			};
-
-			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------

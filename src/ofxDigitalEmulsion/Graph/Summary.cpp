@@ -8,6 +8,14 @@ namespace ofxDigitalEmulsion {
 		//----------
 		Summary::Summary(const Utils::Set<Graph::Node> & world) :
 		world(world) {
+			OFXDIGITALEMULSION_NODE_INIT_LISTENER;
+		}
+
+		//----------
+		void Summary::init() {
+			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+		
 			this->view = MAKE(ofxCvGui::Panels::World);
 			this->view->onDrawWorld += [this](ofCamera &) {
 				if (this->showGrid) {
@@ -18,17 +26,11 @@ namespace ofxDigitalEmulsion {
 				}
 			};
 
-			this->showCursor.addListener(this, & Summary::callbackShowCursor);
-		}
-
-		//----------
-		void Summary::init() {
+			this->showCursor.addListener(this, &Summary::callbackShowCursor);
 			this->showCursor.set("Show Cursor", false);
 			this->showGrid.set("Show Grid", true);
 			this->gridScale.set("Grid scale", 10.0f, 0.01f, 100.0f);
 			this->view->setGridEnabled(false);
-
-			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------
@@ -39,11 +41,6 @@ namespace ofxDigitalEmulsion {
 		//----------
 		ofxCvGui::PanelPtr Summary::getView() {
 			return this->view;
-		}
-
-		//----------
-		void Summary::update() {
-
 		}
 
 		//----------

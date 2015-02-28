@@ -10,13 +10,13 @@ namespace ofxDigitalEmulsion {
 			class HomographyFromGraycode : public Procedure::Base {
 			public:
 				HomographyFromGraycode();
-				void init() override;
+				void init();
 				string getTypeName() const override;
 				ofxCvGui::PanelPtr getView() override;
+				void update();
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
-				void update() override;
 				
 				void findHomography();
 				void findDistortionCoefficients();

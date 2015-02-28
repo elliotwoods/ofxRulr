@@ -30,6 +30,21 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		VideoOutput::VideoOutput() {
+			OFXDIGITALEMULSION_NODE_INIT_LISTENER;
+			this->window = nullptr;
+			this->videoMode = nullptr;
+		}
+
+		//----------
+		void VideoOutput::init() {
+			OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+
+			this->onDestroy += [this]() {
+				this->setWindowOpen(false);
+			};
+
 			this->view = MAKE(ofxCvGui::Panels::ElementHost);
 			this->refreshMonitors();
 
@@ -44,7 +59,7 @@ namespace ofxDigitalEmulsion {
 				for (auto element : elements) {
 					if (index < this->getVideoOutputCount()) {
 						//it's a monitor
-						
+
 						//currently we set them all to have the same width but this could change
 						auto buttonWidth = blockWidth - 20;
 						float buttonHeight;
@@ -55,7 +70,7 @@ namespace ofxDigitalEmulsion {
 						buttonHeight = buttonWidth * (float)videoOutput.height / (float)videoOutput.width;
 						//and clamp it incase it was too tall
 						buttonHeight = ofClamp(buttonHeight, 0.0f, args.localBounds.getHeight() - 50);
-						
+
 						element->setBounds(ofRectangle(blockWidth * index + 10, 70, blockWidth - 20, buttonHeight));
 
 						//note the maximum button height
@@ -65,7 +80,7 @@ namespace ofxDigitalEmulsion {
 					}
 					else {
 						//it's the fbo
-						element->setBounds(ofRectangle(10, maxButtonHeight + 80, args.localBounds.width - 20, 
+						element->setBounds(ofRectangle(10, maxButtonHeight + 80, args.localBounds.width - 20,
 							MAX(0, args.localBounds.height - (maxButtonHeight + 80 + 20))
 							));
 					}
@@ -77,15 +92,15 @@ namespace ofxDigitalEmulsion {
 				switch (this->testPattern.get()) {
 				case 1:
 				{
-					// GRID
-					ofPushStyle();
-					ofNoFill();
-					ofSetLineWidth(1.0f);
-					ofRect(outputRect);
-					ofLine(outputRect.getCenter() - ofVec2f(outputRect.width / 2.0f, 0.0f), outputRect.getCenter() + ofVec2f(outputRect.width / 2.0f, 0.0f));
-					ofLine(outputRect.getCenter() - ofVec2f(0.0f, outputRect.height / 2.0f), outputRect.getCenter() + ofVec2f(0.0f, outputRect.height / 2.0f));
-					ofPopStyle();
-					break;
+						  // GRID
+						  ofPushStyle();
+						  ofNoFill();
+						  ofSetLineWidth(1.0f);
+						  ofRect(outputRect);
+						  ofLine(outputRect.getCenter() - ofVec2f(outputRect.width / 2.0f, 0.0f), outputRect.getCenter() + ofVec2f(outputRect.width / 2.0f, 0.0f));
+						  ofLine(outputRect.getCenter() - ofVec2f(0.0f, outputRect.height / 2.0f), outputRect.getCenter() + ofVec2f(0.0f, outputRect.height / 2.0f));
+						  ofPopStyle();
+						  break;
 				}
 				case 2:
 					// WHITE
@@ -107,9 +122,6 @@ namespace ofxDigitalEmulsion {
 			this->splitVertical.addListener(this, &VideoOutput::callbackChangeSplit);
 			this->splitUseIndex.addListener(this, &VideoOutput::callbackChangeSplit);
 
-			this->window = nullptr;
-			this->videoMode = nullptr;
-
 			monitorEventChangeListener.onMonitorChange += [this](GLFWmonitor *) {
 				this->needsMonitorRefresh = true;
 			};
@@ -118,17 +130,6 @@ namespace ofxDigitalEmulsion {
 			this->height = 768.0f;
 			this->videoOutputSelection = 0;
 			this->scissorWasEnabled = false;
-
-		}
-
-		//----------
-		VideoOutput::~VideoOutput() {
-			this->setWindowOpen(false);
-		}
-
-		//----------
-		void VideoOutput::init() {
-			OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 		}
 
 		//----------

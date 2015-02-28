@@ -19,6 +19,15 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			HomographyFromGraycode::HomographyFromGraycode() {
+				OFXDIGITALEMULSION_NODE_INIT_LISTENER;
+			}
+
+			//----------
+			void HomographyFromGraycode::init() {
+				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+				OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+
 				this->grid = ofMesh::plane(1.0f, 1.0f, 11.0f, 11.0f);
 				for (auto & vertex : grid.getVertices()) {
 					vertex += ofVec3f(0.5f, 0.5f, 0.0f);
@@ -55,11 +64,6 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			void HomographyFromGraycode::init() {
-				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
-			}
-
-			//----------
 			string HomographyFromGraycode::getTypeName() const {
 				return "Procedure::Calibrate::HomographyFromGraycode";
 			}
@@ -67,6 +71,14 @@ namespace ofxDigitalEmulsion {
 			//----------
 			ofxCvGui::PanelPtr HomographyFromGraycode::getView() {
 				return this->view;
+			}
+
+			//----------
+			void HomographyFromGraycode::update() {
+				auto graycodeNode = this->getInput<Scan::Graycode>();
+				if (graycodeNode) {
+					this->view->setImage(graycodeNode->getDecoder().getProjectorInCamera());
+				}
 			}
 
 			//----------
@@ -127,14 +139,6 @@ namespace ofxDigitalEmulsion {
 				}
 
 				Utils::Serializable::deserialize(this->doubleExportSize, json);
-			}
-
-			//----------
-			void HomographyFromGraycode::update() {
-				auto graycodeNode = this->getInput<Scan::Graycode>();
-				if (graycodeNode) {
-					this->view->setImage(graycodeNode->getDecoder().getProjectorInCamera());
-				}
 			}
 
 			//----------

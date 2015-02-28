@@ -11,10 +11,10 @@ namespace ofxDigitalEmulsion {
 			class Graycode : public Procedure::Base {
 			public:
 				Graycode();
-				void init() override;
+				void init();
 				string getTypeName() const override;
 				ofxCvGui::PanelPtr getView() override;
-				void update() override;
+				void update();
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);

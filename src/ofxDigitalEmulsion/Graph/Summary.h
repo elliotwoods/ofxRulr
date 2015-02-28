@@ -9,16 +9,12 @@ namespace ofxDigitalEmulsion {
 		class Summary : public Node {
 		public:
 			Summary(const Utils::Set<Graph::Node> & world);
-			void init() override;
-
+			void init();
 			string getTypeName() const override;
 			ofxCvGui::PanelPtr getView() override;
-
-			void update() override;
-
+		protected:
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
-		protected:
 			void populateInspector(ofxCvGui::ElementGroupPtr);
 			void callbackShowCursor(bool &);
 			shared_ptr<ofxCvGui::Panels::World> view;

@@ -28,6 +28,15 @@ namespace ofxDigitalEmulsion {
 		namespace Calibrate {
 			//----------
 			CameraFromKinectV2::CameraFromKinectV2() {
+				OFXDIGITALEMULSION_NODE_INIT_LISTENER;
+			}
+
+			//----------
+			void CameraFromKinectV2::init() {
+				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
+				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+				OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+
 				this->addInput(MAKE(Pin<Item::KinectV2>));
 				this->addInput(MAKE(Pin<Item::Camera>));
 				this->addInput(MAKE(Pin<Item::Board>));
@@ -35,10 +44,7 @@ namespace ofxDigitalEmulsion {
 				this->usePreTest.set("Pre Test at low resolution", true);
 
 				this->error = 0.0f;
-			}
-
-			//----------
-			void CameraFromKinectV2::init() {
+				
 				auto view = MAKE(ofxCvGui::Panels::Groups::Grid);
 				auto worldView = MAKE(ofxCvGui::Panels::World);
 				worldView->onDrawWorld += [this](ofCamera &) {
@@ -83,8 +89,6 @@ namespace ofxDigitalEmulsion {
 				view->add(cameraColorView);
 
 				this->view = view;
-
-				OFXDIGITALEMULSION_NODE_STANDARD_LISTENERS
 			}
 
 			//----------

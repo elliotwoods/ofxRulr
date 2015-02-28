@@ -11,8 +11,28 @@ namespace ofxDigitalEmulsion {
 		//----------
 		Node::Node() {
 			this->icon = 0;
+			this->initialized = false;
 			this->defaultIconName = "Default";
-			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER
+			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
+		}
+
+		//----------
+		Node::~Node() {
+			if (this->initialized) {
+				this->onDestroy.notifyListenersInReverse();
+				this->initialized = false;
+			}
+		}
+
+		//----------
+		void Node::init() {
+			this->onInit.notifyListeners();
+			this->initialized = true;
+		}
+
+		//----------
+		void Node::update() {
+			this->onUpdate.notifyListeners();
 		}
 
 		//----------

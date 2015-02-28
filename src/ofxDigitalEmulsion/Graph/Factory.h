@@ -37,7 +37,7 @@ namespace ofxDigitalEmulsion {
 
 			shared_ptr<NodeType> makeTyped() {
 				auto node = make_shared<NodeType>();
-				node->init();
+				dynamic_pointer_cast<Node>(node)->init(); //init must be called on base class to call all inits
 				return node;
 			}
 

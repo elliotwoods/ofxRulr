@@ -33,15 +33,15 @@ namespace ofxDigitalEmulsion {
 					shared_ptr<NodeBrowser> nodeBrowser;
 					ofVec2f birthLocation;
 				};
-
+				Patch();
 				string getTypeName() const override;
-				void init() override;
+				void init();
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 
 				ofxCvGui::PanelPtr getView() override;
-				void update() override;
+				void update();
 				void drawWorld() override;
 
 				void rebuildLinkHosts();
