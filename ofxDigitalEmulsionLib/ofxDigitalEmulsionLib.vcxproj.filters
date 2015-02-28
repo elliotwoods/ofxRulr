@@ -444,11 +444,14 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Manager.h">
       <Filter>src\ofxDigitalEmulsion\External</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\IRigidBody.h">
-      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Version.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\View.h">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\RigidBody.h">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -602,8 +605,11 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Manager.cpp">
       <Filter>src\ofxDigitalEmulsion\External</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\IRigidBody.cpp">
-      <Filter>src\ofxDigitalEmulsion\Graph</Filter>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\View.cpp">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\RigidBody_.cpp">
+      <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

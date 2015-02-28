@@ -257,7 +257,6 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\LinkHost.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeHost.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\PinView.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\IRigidBody.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Node.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Factory.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Pin.h" />
@@ -266,6 +265,8 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Base.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Board.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Camera.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\RigidBody.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Item\View.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Model.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\Projector.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Base.h" />
@@ -316,13 +317,14 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeHost.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\PinView.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Factory.cpp" />
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\IRigidBody.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Node.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Pin.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Summary.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\World.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Board.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\RigidBody_.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Item\View.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Model.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Projector.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\CameraIntrinsics.cpp" />
