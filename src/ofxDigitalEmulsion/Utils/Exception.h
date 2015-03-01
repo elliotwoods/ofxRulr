@@ -14,15 +14,18 @@ namespace ofxDigitalEmulsion {
 			const std::string message;
 		};
 	}
+
+	//put into parent namespace also
+	typedef Utils::Exception Exception;
 }
 
+#define OFXDIGITALEMULSION_CATCH_ALL_TO(X) \
+	catch (ofxDigitalEmulsion::Utils::Exception e) { X; } \
+	catch (cv::Exception e) { X; } \
+	catch (std::exception e) { X; }
+
 #define OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT \
-	catch(ofxDigitalEmulsion::Utils::Exception e) { ofSystemAlertDialog(e.what()); } \
-	catch (cv::Exception e) { ofSystemAlertDialog(e.what()); } \
-	catch (std::exception e) { ofSystemAlertDialog(e.what()); }
+	OFXDIGITALEMULSION_CATCH_ALL_TO(ofSystemAlertDialog(e.what()))
 
 #define OFXDIGITALEMULSION_CATCH_ALL_TO_ERROR \
-	catch (ofxDigitalEmulsion::Utils::Exception e) { ofLogError("ofxDigitalEmulsion") << e.what(); } \
-	catch (cv::Exception e) { ofLogError("ofxDigitalEmulsion") << e.what(); } \
-	catch (std::exception e) { ofLogError("ofxDigitalEmulsion") << e.what(); }
-
+	OFXDIGITALEMULSION_CATCH_ALL_TO(ofLogError("ofxDigitalEmulsion") << e.what())

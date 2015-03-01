@@ -44,6 +44,7 @@ namespace ofxDigitalEmulsion {
 			ofPixels getFreshFrame();
 		protected:
 			void populateInspector(ofxCvGui::ElementGroupPtr);
+			void setAllCameraProperties();
 			void updateRayCamera();
 
 			void exposureCallback(float &);

@@ -116,7 +116,9 @@ namespace ofxDigitalEmulsion {
 					}
 
 					auto frame = grabber->getFreshFrame();
+					frame->lockForReading();
 					this->decoder << frame->getPixelsRef();
+					frame->unlock();
 				}
 
 				ofShowCursor();

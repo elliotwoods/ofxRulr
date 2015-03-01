@@ -69,7 +69,9 @@ namespace ofxDigitalEmulsion {
 
 			if (this->showFocusLine) {
 				if (this->grabber->isFrameNew()) {
-					const auto & pixels = this->grabber->getPixelsRef();
+					auto frame = this->grabber->getFrame();
+					frame->lockForReading();
+					const auto & pixels = frame->getPixelsRef();
 					auto middleRow = pixels.getPixels() + pixels.getWidth() * pixels.getNumChannels() * pixels.getHeight() / 2;
 
 					this->focusLineGraph.clear();
@@ -78,6 +80,7 @@ namespace ofxDigitalEmulsion {
 						this->focusLineGraph.addVertex(ofVec3f(i, *middleRow, 0));
 						middleRow += pixels.getNumChannels();
 					}
+					frame->unlock();
 				}
 			}
 		}
@@ -152,11 +155,7 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::deserialize(this->rotationY, json);
 			Utils::Serializable::deserialize(this->rotationZ, json);
 
-			//set the device properties on deserialize.
-			this->grabber->setExposure(this->exposure);
-			this->grabber->setGain(this->gain);
-			this->grabber->setFocus(this->focus);
-			this->grabber->setSharpness(this->sharpness);
+			this->setAllCameraProperties();
 
 			//if the device isn't open, we'll take the saved resolution
 			auto deviceOpen = this->grabber->getIsDeviceOpen();
@@ -198,62 +197,71 @@ namespace ofxDigitalEmulsion {
 			this->grabber->setDevice(device);
 
 			if (device) {
-				this->grabber->open(this->deviceIndex);
-				this->grabber->startCapture();
-
-				//set all the camera parameters for the new device
-				this->grabber->setExposure(this->exposure);
-				this->grabber->setGain(this->gain);
-				this->grabber->setFocus(this->focus);
-				this->grabber->setSharpness(this->sharpness);
-
-				auto cameraView = ofxCvGui::Builder::makePanel(this->grabber->getTextureReference());
-				cameraView->onDraw += [this](ofxCvGui::DrawArguments & args) {
-					if (this->showSpecification) {
-						stringstream status;
-						status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
-						status << endl;
-						status << this->getGrabber()->getDeviceSpecification().toString() << endl;
-
-						ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
+				try
+				{
+					this->grabber->open(this->deviceIndex);
+					if (!this->grabber->getIsDeviceOpen()) {
+						throw(ofxDigitalEmulsion::Exception("Cannot open device of type [" + device->getTypeName() + "] at deviceIndex [" + ofToString(this->deviceIndex) + "]"));
 					}
-				};
-				cameraView->onDrawCropped += [this](Panels::BaseImage::DrawCroppedArguments & args) {
-					if (this->showFocusLine) {
-						ofPushMatrix();
+					this->grabber->startCapture();
+					if (!this->grabber->getIsDeviceOpen()) {
+						throw(ofxDigitalEmulsion::Exception("Cannot start capture on device of type [" + device->getTypeName() + "] at deviceIndex [" + ofToString(this->deviceIndex) + "]"));
+					}
+
+					this->setAllCameraProperties();
+
+					auto cameraView = ofxCvGui::Builder::makePanel(*this->grabber);
+					cameraView->onDraw += [this](ofxCvGui::DrawArguments & args) {
+						if (this->showSpecification) {
+							stringstream status;
+							status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
+							status << endl;
+							status << this->getGrabber()->getDeviceSpecification().toString() << endl;
+
+							ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
+						}
+					};
+					cameraView->onDrawCropped += [this](Panels::BaseImage::DrawCroppedArguments & args) {
+						if (this->showFocusLine) {
+							ofPushMatrix();
+							ofPushStyle();
+
+							ofTranslate(0, args.size.y / 2.0f);
+							ofSetColor(100, 255, 100);
+							ofLine(0, 0, args.size.x, 0);
+
+							ofTranslate(0, +128);
+							ofScale(1.0f, -1.0f);
+							ofSetColor(0, 0, 0);
+							ofSetLineWidth(2.0f);
+							this->focusLineGraph.draw();
+							ofSetLineWidth(1.0f);
+							ofSetColor(255, 100, 100);
+							this->focusLineGraph.draw();
+
+							ofPopStyle();
+							ofPopMatrix();
+						}
+
+						//crosshair
 						ofPushStyle();
-
-						ofTranslate(0, args.size.y / 2.0f);
-						ofSetColor(100, 255, 100);
-						ofLine(0, 0, args.size.x, 0);
-
-						ofTranslate(0, +128);
-						ofScale(1.0f, -1.0f);
-						ofSetColor(0, 0, 0);
-						ofSetLineWidth(2.0f);
-						this->focusLineGraph.draw();
-						ofSetLineWidth(1.0f);
-						ofSetColor(255, 100, 100);
-						this->focusLineGraph.draw();
-
-						ofPopStyle();
+						ofSetLineWidth(1);
+						ofSetColor(255);
+						ofPushMatrix();
+						ofTranslate(args.size.x / 2.0f, args.size.y / 2.0f);
+						ofLine(-10, 0, 10, 0);
+						ofLine(0, -10, 0, 10);
 						ofPopMatrix();
-					}
+						ofPopStyle();
+					};
 
-					//crosshair
-					ofPushStyle();
-					ofSetLineWidth(1);
-					ofSetColor(255);
-					ofPushMatrix();
-					ofTranslate(args.size.x / 2.0f, args.size.y / 2.0f);
-					ofLine(-10, 0, 10, 0);
-					ofLine(0, -10, 0, 10);
-					ofPopMatrix();
-					ofPopStyle();
-				};
-
-				this->placeholderView->clear();
-				this->placeholderView->add(cameraView);
+					this->placeholderView->clear();
+					this->placeholderView->add(cameraView);
+				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO({
+					this->deviceTypeName = "";
+					ofSystemAlertDialog(e.what());
+				});
 			}
 			else {
 				//there is no device, and we want to setup a view to select the device
@@ -450,6 +458,24 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::Slider::make(this->rotationX));
 			inspector->add(Widgets::Slider::make(this->rotationY));
 			inspector->add(Widgets::Slider::make(this->rotationZ));
+		}
+
+		//----------
+		void Camera::setAllCameraProperties() {
+			auto deviceSpecification = this->grabber->getDeviceSpecification();
+			
+			if (deviceSpecification.supports(Feature::Feature_Exposure)) {
+				this->grabber->setExposure(this->exposure);
+			}
+			if (deviceSpecification.supports(Feature::Feature_Gain)) {
+				this->grabber->setGain(this->gain);
+			}
+			if (deviceSpecification.supports(Feature::Feature_Focus)) {
+				this->grabber->setFocus(this->focus);
+			}
+			if (deviceSpecification.supports(Feature::Feature_Sharpness)) {
+				this->grabber->setSharpness(this->sharpness);
+			}
 		}
 
 		//----------
