@@ -23,7 +23,9 @@ namespace ofxDigitalEmulsion {
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
 
-			void setDevice(ofxMachineVision::DevicePtr, int deviceIndex = 0);
+			void setDeviceIndex(int);
+			void setDevice(const string & deviceTypeName);
+			void setDevice(ofxMachineVision::DevicePtr);
 			void clearDevice();
 			shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
 
@@ -52,6 +54,9 @@ namespace ofxDigitalEmulsion {
 			shared_ptr<ofxCvGui::Panels::Groups::Grid> placeholderView;
 
 			shared_ptr<ofxMachineVision::Grabber::Simple> grabber;
+
+			ofParameter<int> deviceIndex;
+			ofParameter<string> deviceTypeName;
 
 			ofParameter<bool> showSpecification;
 			ofParameter<bool> showFocusLine;

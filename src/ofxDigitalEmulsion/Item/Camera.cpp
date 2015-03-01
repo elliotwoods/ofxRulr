@@ -20,6 +20,9 @@ namespace ofxDigitalEmulsion {
 
 			this->placeholderView = make_shared<Panels::Groups::Grid>();
 
+			this->deviceIndex.set("Device index", 0);
+			this->deviceTypeName.set("Device type name", "uninitialised"); // this should be different from the setDevice("") call below
+
 			this->showSpecification.set("Show specification", false);
 			this->showFocusLine.set("Show focus line", true);
 			this->exposure.set("Exposure [us]", 500.0f, 0.0f, 1000000.0f);
@@ -50,7 +53,7 @@ namespace ofxDigitalEmulsion {
 			this->grabber = make_shared<ofxMachineVision::Grabber::Simple>();
 
 			//this sets up the GUI for selecting a device
-			this->clearDevice();
+			this->setDevice("");
 		}
 
 		//----------
@@ -86,7 +89,11 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Camera::serialize(Json::Value & json) {
-			auto & jsonSettings = json["settings"];
+			auto & jsonDevice = json["device"];
+			Utils::Serializable::serialize(this->deviceTypeName, jsonDevice);
+			Utils::Serializable::serialize(this->deviceIndex, jsonDevice);
+
+			auto & jsonSettings = json["properties"];
 			Utils::Serializable::serialize(this->exposure, jsonSettings);
 			Utils::Serializable::serialize(this->gain, jsonSettings);
 			Utils::Serializable::serialize(this->focus, jsonSettings);
@@ -117,7 +124,11 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Camera::deserialize(const Json::Value & json) {
-			auto & jsonSettings = json["settings"];
+			auto & jsonDevice = json["device"];
+			this->setDeviceIndex(jsonDevice[this->deviceIndex.getName()].asInt());
+			this->setDevice(jsonDevice[this->deviceTypeName.getName()].asString());
+			
+			auto & jsonSettings = json["properties"];
 			Utils::Serializable::deserialize(this->exposure, jsonSettings);
 			Utils::Serializable::deserialize(this->gain, jsonSettings);
 			Utils::Serializable::deserialize(this->focus, jsonSettings);
@@ -157,11 +168,37 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Camera::setDevice(DevicePtr device, int deviceIndex) {
+		void Camera::setDeviceIndex(int deviceIndex) {
+			if (this->deviceIndex.get() == deviceIndex) {
+				//do nothing
+				return;
+			}
+
+			this->deviceIndex = deviceIndex;
+			if (this->grabber->getIsDeviceOpen()) {
+				//if we have a device open, let's reopen it
+				this->setDevice(this->grabber->getDevice());
+			}
+		}
+
+		//----------
+		void Camera::setDevice(const string & deviceTypeName) {
+			if (this->deviceTypeName.get() == deviceTypeName) {
+				//do nothing
+				return;
+			}
+
+			this->deviceTypeName = deviceTypeName;
+			auto device = ofxMachineVision::Device::FactoryRegister::X().make(deviceTypeName);
+			this->setDevice(device);
+		}
+
+		//----------
+		void Camera::setDevice(DevicePtr device) {
 			this->grabber->setDevice(device);
 
 			if (device) {
-				this->grabber->open(deviceIndex);
+				this->grabber->open(this->deviceIndex);
 				this->grabber->startCapture();
 
 				//set all the camera parameters for the new device
@@ -221,12 +258,20 @@ namespace ofxDigitalEmulsion {
 			else {
 				//there is no device, and we want to setup a view to select the device
 				auto cameraSelectorView = make_shared<Panels::Scroll>();
+				auto deviceIndexWidget = Widgets::LiveValue<int>::make("Device Index", [this]() {
+					return this->deviceIndex;
+				});
+				deviceIndexWidget->setEditable(true);
+				deviceIndexWidget->onEditValue += [this](string & deviceIndexSelection) {
+					this->deviceIndex = ofToInt(deviceIndexSelection);
+				};
+				cameraSelectorView->add(deviceIndexWidget);
 				cameraSelectorView->add(Widgets::Title::make("Select device type:", Widgets::Title::Level::H3));
 
 				auto & factories = ofxMachineVision::Device::FactoryRegister::X().getFactories();
 				for (auto factory : factories) {
 					auto makeButton = Widgets::Button::make(factory.first, [this, factory]() {
-						this->setDevice(factory.second->make());
+						this->setDevice(factory.first);
 					});
 					cameraSelectorView->add(makeButton);
 				}
@@ -328,14 +373,16 @@ namespace ofxDigitalEmulsion {
 			
 			inspector->add(Widgets::Title::make("Device", Widgets::Title::H2));
 			inspector->add(Widgets::LiveValue<string>::make("Device Type", [this]() {
-				auto device = this->grabber->getDevice();
-				if (device) {
-					return device->getTypeName();
-				}
-				else {
-					return string("None");
-				}
+				return this->deviceTypeName;
 			}));
+			auto deviceIndexWidget = Widgets::LiveValue<int>::make("Device Index", [this]() {
+				return this->deviceIndex;
+			});
+			deviceIndexWidget->setEditable(true);
+			deviceIndexWidget->onEditValue += [this](string & deviceIndexSelection) {
+				this->deviceIndex = ofToInt(deviceIndexSelection);
+			};
+			inspector->add(deviceIndexWidget);
 			inspector->add(Widgets::Button::make("Clear device", [this]() {
 				this->clearDevice();
 			}));
