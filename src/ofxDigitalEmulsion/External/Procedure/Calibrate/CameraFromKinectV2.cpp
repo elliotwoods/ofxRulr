@@ -32,6 +32,11 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
+			string CameraFromKinectV2::getTypeName() const {
+				return "Procedure::Calibrate::CameraFromKinectV2";
+			}
+
+			//----------
 			void CameraFromKinectV2::init() {
 				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
 				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
@@ -89,11 +94,6 @@ namespace ofxDigitalEmulsion {
 				view->add(cameraColorView);
 
 				this->view = view;
-			}
-
-			//----------
-			string CameraFromKinectV2::getTypeName() const {
-				return "CameraFromKinectV2";
 			}
 
 			//----------

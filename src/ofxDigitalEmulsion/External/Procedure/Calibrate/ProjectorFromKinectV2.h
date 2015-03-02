@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../../addons/ofxCvGui/src/ofxCvGui/Panels/Draws.h"
 #include "../../../Procedure/Base.h"
 
 namespace ofxDigitalEmulsion {
@@ -13,8 +14,8 @@ namespace ofxDigitalEmulsion {
 				};
 
 				ProjectorFromKinectV2();
-				void init();
 				string getTypeName() const override;
+				void init();
 				ofxCvGui::PanelPtr getView() override;
 				void update();
 
@@ -26,7 +27,7 @@ namespace ofxDigitalEmulsion {
 			protected:
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 				void drawWorld();
-				ofxCvGui::PanelPtr view;
+				shared_ptr<ofxCvGui::Panels::Draws> view;
 
 				ofParameter<float> checkerboardScale;
 				ofParameter<float> checkerboardCornersX;

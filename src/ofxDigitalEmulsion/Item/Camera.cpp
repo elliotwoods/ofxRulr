@@ -266,14 +266,7 @@ namespace ofxDigitalEmulsion {
 			else {
 				//there is no device, and we want to setup a view to select the device
 				auto cameraSelectorView = make_shared<Panels::Scroll>();
-				auto deviceIndexWidget = Widgets::LiveValue<int>::make("Device Index", [this]() {
-					return this->deviceIndex;
-				});
-				deviceIndexWidget->setEditable(true);
-				deviceIndexWidget->onEditValue += [this](string & deviceIndexSelection) {
-					this->deviceIndex = ofToInt(deviceIndexSelection);
-				};
-				cameraSelectorView->add(deviceIndexWidget);
+				cameraSelectorView->add(Widgets::EditableValue<int>::make(this->deviceIndex));
 				cameraSelectorView->add(Widgets::Title::make("Select device type:", Widgets::Title::Level::H3));
 
 				auto & factories = ofxMachineVision::Device::FactoryRegister::X().getFactories();

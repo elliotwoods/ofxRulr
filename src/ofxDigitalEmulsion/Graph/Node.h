@@ -63,8 +63,6 @@ namespace ofxDigitalEmulsion {
 				auto inputPin = this->getInputPins().get<Pin<NodeType>>();
 				if (inputPin) {
 					inputPin->connect(node);
-					int dummy = 0;
-					this->onConnect(dummy);
 				}
 				else {
 					OFXDIGITALEMULSION_ERROR << "Couldn't connect node of type '" << NodeType().getTypeName() << "' to node '" << this->getTypeName() << "'. No matching pin found.";
@@ -100,7 +98,11 @@ namespace ofxDigitalEmulsion {
 			ofxLiquidEvent<void> onInit;
 			ofxLiquidEvent<void> onDestroy;
 			ofxLiquidEvent<void> onUpdate;
-			ofxLiquidEvent<int> onConnect;
+
+			ofxLiquidEvent<shared_ptr<AbstractPin>> onConnect;
+			ofxLiquidEvent<shared_ptr<AbstractPin>> onDisconnect;
+			ofxLiquidEvent<void> onAnyInputConnectionChanged;
+
 		protected:
 			void addInput(shared_ptr<AbstractPin>);
 

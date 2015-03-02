@@ -27,6 +27,10 @@ namespace ofxDigitalEmulsion {
 			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
 			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
 		
+			this->onTransformChange += [this]() {
+				this->rebuildViewFromParameters();
+			};
+
 			this->focalLengthX.set("Focal Length X", 1024.0f, 1.0f, 50000.0f);
 			this->focalLengthY.set("Focal Length Y", 1024.0f, 1.0f, 50000.0f);
 			this->principalPointX.set("Center Of Projection X", 512.0f, -10000.0f, 10000.0f);
@@ -34,13 +38,19 @@ namespace ofxDigitalEmulsion {
 			for (int i = 0; i<OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 				this->distortion[i].set("Distortion K" + ofToString(i + 1), 0.0f, -1000.0f, 1000.0f);
 			}
+
+			this->viewInObjectSpace.setDefaultFar(20.0f);
 		}
 
 		//---------
 		void View::update() {
-			this->rayCameraObject.setProjection(ofxCv::makeProjectionMatrix(this->getCameraMatrix(), cv::Size(this->getWidth(), this->getHeight())));
-			this->rayCameraWorld = this->rayCameraObject;
-			this->rayCameraWorld.setView(RigidBody::getTransform());
+
+		}
+
+		//----------
+		void View::drawObject() {
+			this->viewInObjectSpace.draw();
+			ofDrawBitmapString(this->getName(), ofVec3f());
 		}
 
 		//---------
@@ -73,13 +83,15 @@ namespace ofxDigitalEmulsion {
 		
 		//---------
 		void View::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			inspector->add(Widgets::Title::make("View", Widgets::Title::Level::H2));
+
 			inspector->add(Widgets::Title::make("Camera matrix", Widgets::Title::Level::H3));
 			inspector->add(Widgets::Slider::make(this->focalLengthX));
 			inspector->add(Widgets::Slider::make(this->focalLengthY));
 			inspector->add(Widgets::Slider::make(this->principalPointX));
 			inspector->add(Widgets::Slider::make(this->principalPointY));
 			inspector->add(Widgets::LiveValue<float>::make("Throw ratio X", [this]() {
-				return this->rayCameraObject.getThrowRatio();
+				return this->viewInObjectSpace.getThrowRatio();
 			}));
 			inspector->add(Widgets::LiveValue<float>::make("Aspect ratio", [this]() {
 				return this->focalLengthY / this->focalLengthX;
@@ -92,17 +104,25 @@ namespace ofxDigitalEmulsion {
 				inspector->add(Widgets::Slider::make(this->distortion[i]));
 			}
 
+			inspector->add(Widgets::Button::make("Export View matrix...", [this]() {
+				try {
+					this->exportViewMatrix();
+				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
+			}));
+
+
 			inspector->add(make_shared<Widgets::Spacer>());
 		}
 
 		//----------
 		float View::getWidth() const {
-			return this->rayCameraObject.getWidth();
+			return this->viewInObjectSpace.getWidth();
 		}
 
 		//----------
 		float View::getHeight() const {
-			return this->rayCameraObject.getHeight();
+			return this->viewInObjectSpace.getHeight();
 		}
 
 		//----------
@@ -114,6 +134,12 @@ namespace ofxDigitalEmulsion {
 			for (int i = 0; i<OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 				this->distortion[i] = distortionCoefficients.at<double>(i);
 			}
+			this->rebuildViewFromParameters();
+		}
+
+		//----------
+		cv::Size View::getSize() const {
+			return cv::Size(this->getWidth(), this->getHeight());
 		}
 
 		//----------
@@ -136,19 +162,40 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		const ofxRay::Camera & View::getRayCameraWorld() const {
-			return this->rayCameraWorld;
+		const ofxRay::Camera & View::getViewInObjectSpace() const {
+			return this->viewInWorldSpace;
 		}
 
 		//----------
-		const ofxRay::Camera & View::getRayCameraObject() const {
-			return this->rayCameraObject;
+		const ofxRay::Camera & View::getViewInWorldSpace() const {
+			return this->viewInObjectSpace;
 		}
 
 		//----------
-		void View::drawObject() {
-			this->rayCameraObject.draw();
-			ofDrawBitmapString(this->getName(), ofVec3f());
+		void View::rebuildViewFromParameters() {
+			auto projection = ofxCv::makeProjectionMatrix(this->getCameraMatrix(), this->getSize());
+			this->viewInObjectSpace.setProjection(projection);
+
+			this->viewInWorldSpace = this->viewInObjectSpace;
+
+			const auto viewInverse = this->getTransform();
+			this->viewInWorldSpace.setView(viewInverse);
+		}
+
+		//----------
+		void View::rebuildParametersFromView() {
+			this->setTransform(this->viewInWorldSpace.getViewMatrix().getInverse());
+		}
+
+		//----------
+		void View::exportViewMatrix() {
+			const auto matrix = this->getViewInObjectSpace().getClippedProjectionMatrix();
+			auto result = ofSystemSaveDialog(this->getName() + "-Projection.mat", "Export View matrix");
+			if (result.bSuccess) {
+				ofstream fileout(ofToDataPath(result.filePath), ios::binary | ios::out);
+				fileout.write((char*)& matrix, sizeof(matrix));
+				fileout.close();
+			}
 		}
 	}
 }

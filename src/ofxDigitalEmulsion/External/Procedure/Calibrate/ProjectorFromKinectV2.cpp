@@ -1,7 +1,7 @@
 #include "ProjectorFromKinectV2.h"
 
 #include "../../../Item/Projector.h"
-#include "../../../Device/ProjectorOutput.h"
+#include "../../../Device/VideoOutput.h"
 #include "../../Item/KinectV2.h"
 
 #include "../../../Utils/Utils.h"
@@ -31,27 +31,23 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
+			string ProjectorFromKinectV2::getTypeName() const {
+				return "Procedure::Calibrate::ProjectorFromKinectV2";
+			}
+
+			//----------
 			void ProjectorFromKinectV2::init() {
 				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
 				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
 				OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
 
-				this->addInput(MAKE(Pin<Item::KinectV2>));
+				auto kinectPin = MAKE(Pin<Item::KinectV2>);
+				this->addInput(kinectPin);
 				this->addInput(MAKE(Pin<Item::Projector>));
-				this->addInput(MAKE(Pin<Device::ProjectorOutput>));
+				this->addInput(MAKE(Pin<Device::VideoOutput>));
 
-				auto view = MAKE(ofxCvGui::Panels::Groups::Grid);
-				auto worldView = MAKE(ofxCvGui::Panels::World);
-				worldView->onDrawWorld += [this](ofCamera &) {
-					this->drawWorld();
-				};
-				auto & camera = worldView->getCamera();
-				camera.setPosition(-1, -1, 0);
-				camera.lookAt(ofVec3f(0, 0, 3));
-				view->add(worldView);
-				auto colorSource = this->getInput<Item::KinectV2>()->getDevice()->getColorSource();
-				auto colorView = MAKE(ofxCvGui::Panels::Draws, colorSource->getTextureReference());
-				colorView->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
+				this->view = MAKE(ofxCvGui::Panels::Draws);
+				this->view->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
 					ofPolyline previewLine;
 					if (!this->previewCornerFinds.empty()) {
 						ofCircle(this->previewCornerFinds.front(), 10.0f);
@@ -64,9 +60,16 @@ namespace ofxDigitalEmulsion {
 					previewLine.draw();
 					ofPopStyle();
 				};
-				view->add(colorView);
 
-				this->view = view;
+				kinectPin->onNewConnectionTyped += [this](shared_ptr<Item::KinectV2> & kinectNode) {
+					if (kinectNode) {
+						auto source = kinectNode->getDevice()->getColorSource();
+						this->view->setDrawObject(* source);
+					}
+				};
+				kinectPin->onDeleteConnection += [this](shared_ptr<Node> &) {
+					this->view->clearDrawObject();
+				};
 
 				this->checkerboardScale.set("Checkerboard Scale", 0.2f, 0.01f, 1.0f);
 				this->checkerboardCornersX.set("Checkerboard Corners X", 5, 1, 10);
@@ -81,27 +84,15 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//----------
-			string ProjectorFromKinectV2::getTypeName() const {
-				return "ProjectorFromKinectV2";
-			}
-
-			//----------
 			ofxCvGui::PanelPtr ProjectorFromKinectV2::getView() {
 				return view;
 			}
 
 			//----------
 			void ProjectorFromKinectV2::update() {
-				auto projectorOutput = this->getInput<Device::ProjectorOutput>();
+				auto projectorOutput = this->getInput<Device::VideoOutput>();
 				if (projectorOutput) {
 					if (projectorOutput->isWindowOpen()) {
-
-						auto projectorNode = this->getInput<Item::Projector>();
-						if (projectorNode) {
-							projectorNode->setWidth(projectorOutput->getWidth());
-							projectorNode->setHeight(projectorOutput->getHeight());
-						}
-
 						projectorOutput->getFbo().begin();
 						ofSetMatrixMode(ofMatrixMode::OF_MATRIX_PROJECTION);
 						ofLoadIdentityMatrix();
@@ -217,6 +208,7 @@ namespace ofxDigitalEmulsion {
 						correspondence.world = cameraToWorldPointer[(int) cameraPoint.x + (int) cameraPoint.y * cameraWidth];
 						correspondence.projector = (ofVec2f)checkerboardCorners[pointIndex] + ofVec2f(this->checkerboardPositionX, this->checkerboardPositionY);
 
+						//check correspondence has valid z coordinate before adding it to the calibration set
 						if (correspondence.world.z > 0.5f) {
 							this->correspondences.push_back(correspondence);
 						}
@@ -233,32 +225,29 @@ namespace ofxDigitalEmulsion {
 			void ProjectorFromKinectV2::calibrate() {
 				this->throwIfMissingAnyConnection();
 
+				auto projector = this->getInput<Item::Projector>();
+				auto videoOutput = this->getInput<Device::VideoOutput>();
+
+				//update projector width and height to match the video output
+				projector->setWidth(videoOutput->getWidth());
+				projector->setHeight(videoOutput->getHeight());
+
 				vector<ofVec3f> worldPoints;
 				vector<ofVec2f> projectorPoints;
 
 				for (auto correpondence : this->correspondences) {
-					worldPoints.push_back(correpondence.world * ofVec3f(-1,1,-1));
-					projectorPoints.push_back(correpondence.projector * ofVec2f(1,1));
+					worldPoints.push_back(correpondence.world);
+					projectorPoints.push_back(correpondence.projector);
 				}
 				cv::Mat cameraMatrix, rotation, translation;
 				this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
 					worldPoints, projectorPoints,
 					this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight(),
 					this->initialLensOffset, 1.4f, this->trimOutliers);
-				this->getInput<Item::Projector>()->setExtrinsics(rotation, translation);
-				this->getInput<Item::Projector>()->setIntrinsics(cameraMatrix);
 
-				auto viewMatrix = ofxCv::makeMatrix(rotation, translation);
-				auto projectionMatrix = ofxCv::makeProjectionMatrix(cameraMatrix, cv::Size(this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight()));
-
-				ofstream file;
-				auto projectorName = this->getInput<Item::Projector>()->getName();
-				file.open(ofToDataPath(projectorName + "View.mat").c_str(), ios::out | ios::binary);
-				file.write((char*)viewMatrix.getPtr(), sizeof(float)* 16);
-				file.close();
-				file.open(ofToDataPath(projectorName + "Projection.mat").c_str(), ios::out | ios::binary);
-				file.write((char*)projectionMatrix.getPtr(), sizeof(float)* 16);
-				file.close();
+				auto view = ofxCv::makeMatrix(rotation, translation);
+				projector->setTransform(view.getInverse());
+				projector->setIntrinsics(cameraMatrix);
 			}
 
 			//----------
@@ -301,7 +290,7 @@ namespace ofxDigitalEmulsion {
 				}, OF_KEY_RETURN);
 				calibrateButton->setHeight(100.0f);
 				inspector->add(calibrateButton);
-				inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<float>, "Reprojection error", [this]() {
+				inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<float>, "Reprojection error [px]", [this]() {
 					return this->error;
 				}));
 			}
@@ -310,13 +299,6 @@ namespace ofxDigitalEmulsion {
 			void ProjectorFromKinectV2::drawWorld() {
 				auto kinect = this->getInput<Item::KinectV2>();
 				auto projector = this->getInput<Item::Projector>();
-
-				if (kinect) {
-					ofPushStyle();
-					ofSetColor(100);
-					kinect->getDevice()->getDepthSource()->getMesh().drawVertices();
-					ofPopStyle();
-				}
 
 				ofMesh preview;
 				for (auto correspondence : this->correspondences) {

@@ -60,7 +60,7 @@ namespace ofxDigitalEmulsion {
 					auto projectorNode = projectorNodeWeak.lock();
 					if (projectorNode) {
 						if (mouseArgs.isLocal() && (mouseArgs.action == MouseArguments::Action::Pressed || mouseArgs.action == MouseArguments::Action::Dragged)) {
-							this->projectorRay = projectorNode->getRayProjector().castPixel(mouseArgs.localNormalised * ofVec2f(projectorNode->getWidth(), projectorNode->getHeight()));
+							this->projectorRay = projectorNode->getViewInWorldSpace().castPixel(mouseArgs.localNormalised * ofVec2f(projectorNode->getWidth(), projectorNode->getHeight()));
 							this->intersectRay = this->cameraRay.intersect(this->projectorRay);
 							this->intersectRay.color = ofColor(255);
 						}
@@ -109,7 +109,7 @@ namespace ofxDigitalEmulsion {
 			const auto & dataSet = graycode->getDataSet();
 
 			ofxCvGui::Utils::drawProcessingNotice("Triangulating..");
-			ofxTriangulate::Triangulate(dataSet, camera->getRayCamera(), projector->getRayProjector(), this->mesh, this->maxLength, this->giveColor, this->giveTexCoords);
+			ofxTriangulate::Triangulate(dataSet, camera->getRayCamera(), projector->getViewInWorldSpace(), this->mesh, this->maxLength, this->giveColor, this->giveTexCoords);
 		}
 
 		//----------
@@ -173,16 +173,14 @@ namespace ofxDigitalEmulsion {
 			
 			auto camera = this->getInput<Item::Camera>();
 			if (camera) {
-				camera->drawWorld();
 				if (graycode) {
 					camera->getRayCamera().drawOnNearPlane(graycode->getDecoder().getProjectorInCamera());
 				}
 			}
 			auto projector = this->getInput<Item::Projector>();
 			if (projector) {
-				projector->drawWorld();
 				if (graycode) {
-					projector->getRayProjector().drawOnNearPlane(graycode->getDecoder().getCameraInProjector());
+					projector->getViewInWorldSpace().drawOnNearPlane(graycode->getDecoder().getCameraInProjector());
 				}
 			}
 			

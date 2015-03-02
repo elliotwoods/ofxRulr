@@ -13,18 +13,23 @@ namespace ofxDigitalEmulsion {
 			void drawWorld() override;
 			virtual void drawObject() { }
 
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
+			void populateInspector(ofxCvGui::ElementGroupPtr);
+
 			ofMatrix4x4 getTransform() const;
 			void setTransform(const ofMatrix4x4 &);
 			void setExtrinsics(cv::Mat rotation, cv::Mat translation);
 
+			ofxLiquidEvent<void> onTransformChange;
 		protected:
+			void exportRigidBodyMatrix();
+
 			ofParameter<float> translation[3];
 			ofParameter<float> rotationEuler[3];
 
 		private:
-			void serialize(Json::Value &);
-			void deserialize(const Json::Value &);
-			void populateInspector(ofxCvGui::ElementGroupPtr);
+
 		};
 
 		ofVec3f toEuler(const ofQuaternion &);

@@ -13,8 +13,8 @@ namespace ofxDigitalEmulsion {
 				};
 
 				CameraFromKinectV2();
-				void init();
 				string getTypeName() const override;
+				void init();
 				ofxCvGui::PanelPtr getView() override;
 				void update();
 

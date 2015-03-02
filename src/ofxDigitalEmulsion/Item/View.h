@@ -17,28 +17,34 @@ namespace ofxDigitalEmulsion {
 			void update();
 			void drawObject() override;
 
+			void setDistortionEnabled(bool);
+			bool getDistortionEnabled() const;
 			virtual float getWidth() const;
 			virtual float getHeight() const;
 
-			void setIntrinsics(cv::Mat cameraMatrix, cv::Mat distortionCoefficients);
-			void setExtrinsics(cv::Mat rotation, cv::Mat translation);
+			void setIntrinsics(cv::Mat cameraMatrix, cv::Mat distortionCoefficients = cv::Mat::zeros(OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT, 1, CV_64F));
 
+			cv::Size getSize() const;
 			cv::Mat getCameraMatrix() const;
 			cv::Mat getDistortionCoefficients() const;
 
-			const ofxRay::Camera & getRayCameraWorld() const;
-			const ofxRay::Camera & getRayCameraObject() const;
-
-			virtual void drawNearClip() { }
+			const ofxRay::Camera & getViewInObjectSpace() const;
+			const ofxRay::Camera & getViewInWorldSpace() const;
 		protected:
+			void rebuildViewFromParameters();
+			void rebuildParametersFromView();
+
+			void exportViewMatrix();
+
 			ofParameter<float> focalLengthX, focalLengthY;
 			ofParameter<float> principalPointX, principalPointY;
 
 			ofParameter<bool> hasDistortion;
 			ofParameter<float> distortion[OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT];
 
-			ofxRay::Camera rayCameraWorld;
-			ofxRay::Camera rayCameraObject;
+			//Versions of this view as an ofxRay::Camera in world space and object space
+			ofxRay::Camera viewInWorldSpace;
+			ofxRay::Camera viewInObjectSpace;
 		private:
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);

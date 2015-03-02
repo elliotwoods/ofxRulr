@@ -13,12 +13,15 @@ namespace ofxDigitalEmulsion {
 			this->icon = 0;
 			this->initialized = false;
 			this->defaultIconName = "Default";
-			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
 		}
 
 		//----------
 		Node::~Node() {
 			if (this->initialized) {
+				//pins will try to notify this node when connections are dropped, so drop the pins first
+				for (auto pin : this->inputPins) {
+					pin->resetConnection();
+				}
 				this->onDestroy.notifyListenersInReverse();
 				this->initialized = false;
 			}
@@ -26,6 +29,11 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Node::init() {
+			this->onInspect.addListener([this](ofxCvGui::InspectArguments & args) {
+				this->populateInspector(args.inspector);
+			}, 99999, this); // populate the instpector with this at the top. We call notify in reverse for inheritance
+
+			//notify the subclasses to init
 			this->onInit.notifyListeners();
 			this->initialized = true;
 		}
@@ -132,6 +140,23 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void Node::addInput(shared_ptr<AbstractPin> pin) {
+			//setup events to fire on this node for this pin
+			auto pinWeak = weak_ptr<AbstractPin>(pin);
+			pin->onNewConnection += [this, pinWeak](shared_ptr<Node> &) {
+				auto pin = pinWeak.lock();
+				if (pin) {
+					this->onConnect(pin);
+				}
+				this->onAnyInputConnectionChanged.notifyListeners();
+			};
+			pin->onDeleteConnection += [this, pinWeak](shared_ptr<Node> &) {
+				auto pin = pinWeak.lock();
+				if (pin) {
+					this->onDisconnect(pin);
+				}
+				this->onAnyInputConnectionChanged.notifyListeners();
+			};
+
 			this->inputPins.add(pin);
 		}
 
