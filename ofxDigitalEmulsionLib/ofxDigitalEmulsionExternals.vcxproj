@@ -172,11 +172,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\External.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\External.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\ProjectorFromKinectV2.cpp" />

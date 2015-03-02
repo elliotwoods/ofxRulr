@@ -34,5 +34,11 @@ namespace ofxDigitalEmulsion {
 		protected:
 			vector<std::function<void()>> factoryInitialisers;
 		};
+
+		//short hand for the above
+		template<typename NodeType>
+		void declareNode() {
+			Manager::X().declareNode<NodeType>();
+		}
 	}
 }

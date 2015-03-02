@@ -10,6 +10,8 @@ void ofApp::setup2(){
 	splashScreen.init(image("ofxDigitalEmulsion::SplashScreen"));
 	splashScreen.begin(0.0f);
 	
+	ofxDigitalEmulsion::External::registerExternals();
+
 	auto patchInstance = MAKE(ofxDigitalEmulsion::Graph::Editor::Patch);
 	this->world.add(patchInstance);
 

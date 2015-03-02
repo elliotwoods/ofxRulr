@@ -257,6 +257,9 @@
     <ProjectReference Include="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGuiLib.vcxproj">
       <Project>{6f0ddb4f-4014-4433-919b-9d956c034bad}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\ofxDigitalEmulsionLib\ofxDigitalEmulsionExternals.vcxproj">
+      <Project>{2dcf22a8-cac5-4308-b870-fb5ef4707e11}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">

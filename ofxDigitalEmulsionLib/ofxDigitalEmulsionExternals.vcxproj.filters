@@ -30,6 +30,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.h">
       <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\External\External.h">
+      <Filter>src\ofxDigitalEmulsion\External</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Item\KinectV2.cpp">
@@ -40,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Procedure\Calibrate\CameraFromKinectV2.cpp">
       <Filter>src\ofxDigitalEmulsion\External\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\External\External.cpp">
+      <Filter>src\ofxDigitalEmulsion\External</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
