@@ -7,8 +7,8 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		Assets::Assets() {
-			this->failSound.loadSound("fail.mp3");
-			this->successSound.loadSound("success.mp3");
+			this->failSound.loadSound("assets/ofxDigitalEmulsion/sound/fail.mp3");
+			this->successSound.loadSound("assets/ofxDigitalEmulsion/sound/success.mp3");
 		}
 
 		//----------
