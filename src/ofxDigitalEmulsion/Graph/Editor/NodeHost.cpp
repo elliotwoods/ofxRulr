@@ -252,7 +252,7 @@ namespace ofxDigitalEmulsion {
 						return pin->getPinHeadPosition() + pin->getBounds().getTopLeft() + this->inputPins->getBounds().getTopLeft() + this->getBounds().getTopLeft();
 					}
 				}
-				throw(ofxDigitalEmulsion::Utils::Exception("NodeHost::getInputPinPosition can't find input pin" + ofToString((int) pin.get())));
+				throw(ofxDigitalEmulsion::Exception("NodeHost::getInputPinPosition can't find input pin" + ofToString((int) pin.get())));
 			}
 
 			//----------

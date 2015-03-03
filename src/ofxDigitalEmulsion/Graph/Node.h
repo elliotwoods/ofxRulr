@@ -3,7 +3,7 @@
 #include "Pin.h"
 #include "../Utils/Constants.h"
 #include "../Utils/Serializable.h"
-#include "../Utils/Exception.h"
+#include "../Exception.h"
 
 #include "../../../addons/ofxCvGui/src/ofxCvGui/InspectController.h"
 
@@ -90,7 +90,7 @@ namespace ofxDigitalEmulsion {
 				if (!this->getInput<NodeType>()) {
 					stringstream message;
 					message << "Node [" << this->getTypeName() << "] is missing a connection to [" << NodeType().getTypeName() << "]";
-					throw(Utils::Exception(message.str()));
+					throw(Exception(message.str()));
 				}
 			}
 			void throwIfMissingAnyConnection() const;

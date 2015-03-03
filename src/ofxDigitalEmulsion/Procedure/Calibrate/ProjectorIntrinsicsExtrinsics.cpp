@@ -4,7 +4,7 @@
 #include "../../Item/Projector.h"
 #include "../../Item/Board.h"
 
-#include "../../Utils/Exception.h"
+#include "../../Exception.h"
 #include "../../Utils/Utils.h"
 
 #include "ofxCvGui.h"
@@ -211,21 +211,21 @@ namespace ofxDigitalEmulsion {
 				try {
 					this->throwIfMissingAnyConnection();
 					if (board->getBoardType() != ofxCv::BoardType::Checkerboard) {
-						throw(Utils::Exception("Only Item::Board's of type checkerboard are supported."));
+						throw(Exception("Only Item::Board's of type checkerboard are supported."));
 					}
 					auto checkerboard = board;
 
 					if (projectorWidth != projector->getWidth() || projectorHeight != projector->getHeight()) {
 						stringstream message;
 						message << "Resolution of cursor screen app [" << projectorWidth << "x" << projectorHeight << "] does not match Projector object that we are calibrating [" << projector->getWidth() << "x" << projector->getHeight() << "]";
-						throw(Utils::Exception(message.str()));
+						throw(Exception(message.str()));
 					}
 
 					vector<cv::Point2f> corners;
 					ofxCvGui::Utils::drawProcessingNotice("Finding chessboard...");
 					ofxCv::findChessboardCornersPreTest(toCv(camera->getGrabber()->getPixelsRef()), checkerboard->getSize(), corners, 1024);
 					if (corners.empty()) {
-						throw(Utils::Exception("No checkerboard found in image"));
+						throw(Exception("No checkerboard found in image"));
 					}
 					Mat rotation;
 					Mat translation;

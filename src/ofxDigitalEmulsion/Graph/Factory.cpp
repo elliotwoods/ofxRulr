@@ -84,7 +84,7 @@ namespace ofxDigitalEmulsion {
 
 			auto factory = FactoryRegister::X().get(nodeTypeName);
 			if (!factory) {
-				throw(Utils::Exception("FactoryRegister::make : Missing Factory for Node type " + nodeTypeName));
+				throw(Exception("FactoryRegister::make : Missing Factory for Node type " + nodeTypeName));
 			}
 
 			auto node = factory->make();

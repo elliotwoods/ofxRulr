@@ -1,6 +1,6 @@
 #include "Node.h"
 
-#include "../Utils/Exception.h"
+#include "../Exception.h"
 
 #include "ofxCvGui.h"
 
@@ -133,7 +133,7 @@ namespace ofxDigitalEmulsion {
 				if (!inputPin->isConnected()) {
 					stringstream message;
 					message << "Node [" << this->getTypeName() << "] is missing connection [" << inputPin->getName() << "]";
-					throw(Utils::Exception(message.str()));
+					throw(Exception(message.str()));
 				}
 			}
 		}

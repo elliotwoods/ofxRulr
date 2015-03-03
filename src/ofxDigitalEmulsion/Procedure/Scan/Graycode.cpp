@@ -2,7 +2,7 @@
 
 #include "../../Item/Camera.h"
 #include "../../Device/VideoOutput.h"
-#include "../../Utils/Exception.h"
+#include "../../Exception.h"
 
 #include "ofxCvGui.h"
 
@@ -134,7 +134,7 @@ namespace ofxDigitalEmulsion {
 			//----------
 			const ofxGraycode::DataSet & Graycode::getDataSet() const {
 				if (!this->decoder.hasData()) {
-					throw(Utils::Exception("Can't get DataSet from Graycode node, no data available"));
+					throw(Exception("Can't get DataSet from Graycode node, no data available"));
 				}
 				return this->decoder.getDataSet();
 			}

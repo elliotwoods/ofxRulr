@@ -1,5 +1,5 @@
 #include "Serializable.h"
-#include "Exception.h"
+#include "../Exception.h"
 
 #include "ofSystemUtils.h"
 #include <string>

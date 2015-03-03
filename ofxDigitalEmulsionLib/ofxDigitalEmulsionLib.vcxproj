@@ -251,6 +251,7 @@
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.h" />
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Exception.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Manager.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeBrowser.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Graph\Editor\Patch.h" />
@@ -276,7 +277,6 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Constants.h" />
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Exception.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Gui.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.h" />
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h" />
@@ -310,6 +310,7 @@
     <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp" />
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Device\VideoOutput.cpp" />
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Exception.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\External\Manager.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\LinkHost.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Graph\Editor\NodeBrowser.cpp" />
@@ -332,7 +333,6 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.cpp" />
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Exception.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Gui.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Initialiser.cpp" />
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp" />

@@ -258,9 +258,6 @@
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscPacketListener.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Exception.h">
-      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.h">
       <Filter>src\ofxDigitalEmulsion\Procedure</Filter>
     </ClInclude>
@@ -444,14 +441,17 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\External\Manager.h">
       <Filter>src\ofxDigitalEmulsion\External</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Version.h">
-      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\View.h">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Item\RigidBody.h">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Exception.h">
+      <Filter>src\ofxDigitalEmulsion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Version.h">
+      <Filter>src\ofxDigitalEmulsion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -526,9 +526,6 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Exception.cpp">
-      <Filter>src\ofxDigitalEmulsion\Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.cpp">
       <Filter>src\ofxDigitalEmulsion\Procedure</Filter>
@@ -610,6 +607,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\RigidBody_.cpp">
       <Filter>src\ofxDigitalEmulsion\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Exception.cpp">
+      <Filter>src\ofxDigitalEmulsion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

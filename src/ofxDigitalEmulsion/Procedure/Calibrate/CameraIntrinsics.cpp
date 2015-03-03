@@ -90,7 +90,7 @@ namespace ofxDigitalEmulsion {
 					try {
 						auto grabber = camera->getGrabber();
 						if (! grabber->getPixelsRef().isAllocated()) {
-							throw(Utils::Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));
+							throw(Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));
 						}
 						if (this->grayscale.getWidth() != camera->getWidth() || this->grayscale.getHeight() != camera->getHeight()) {
 							this->grayscale.allocate(camera->getWidth(), camera->getHeight(), OF_IMAGE_GRAYSCALE);

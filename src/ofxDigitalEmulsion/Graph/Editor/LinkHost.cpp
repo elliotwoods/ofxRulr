@@ -49,7 +49,7 @@ namespace ofxDigitalEmulsion {
 
 					ofPopStyle();
 				}
-				catch (ofxDigitalEmulsion::Utils::Exception e) {
+				catch (ofxDigitalEmulsion::Exception e) {
 					ofLogError("ofxDigitalEmulsion::Graph::Editor::LinkHost::draw()") << e.what();
 				}
 			}
@@ -58,7 +58,7 @@ namespace ofxDigitalEmulsion {
 			ofVec2f LinkHost::getSourcePinPosition() const {
 				auto sourceNode = this->sourceNode.lock();
 				if (!sourceNode) {
-					throw(ofxDigitalEmulsion::Utils::Exception("LinkHost has no valid source node"));;
+					throw(ofxDigitalEmulsion::Exception("LinkHost has no valid source node"));;
 				}
 				return sourceNode->getOutputPinPositionGlobal();
 			}
@@ -68,7 +68,7 @@ namespace ofxDigitalEmulsion {
 				auto targetNode = this->targetNode.lock();
 				auto targetPin = this->targetPin.lock();
 				if (!targetNode || !targetPin) {
-					throw(ofxDigitalEmulsion::Utils::Exception("LinkHost has no valid target node or pin"));;
+					throw(ofxDigitalEmulsion::Exception("LinkHost has no valid target node or pin"));;
 				}
 				return targetNode->getInputPinPosition(targetPin);
 			}

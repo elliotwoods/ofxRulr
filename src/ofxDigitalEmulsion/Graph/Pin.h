@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "ofxDigitalEmulsion/Graph/Editor/PinView.h"
-#include "ofxDigitalEmulsion/Utils/Exception.h"
+#include "ofxDigitalEmulsion/Exception.h"
 
 using namespace std;
 
@@ -81,7 +81,7 @@ namespace ofxDigitalEmulsion {
 			void connect(shared_ptr<Node> node) override {
 				auto castNode = dynamic_pointer_cast<NodeType>(node);
 				if (!castNode) {
-					throw(ofxDigitalEmulsion::Utils::Exception("Cannot connect Pin of type [" + this->getNodeTypeName() + "] to Node of type [" + NodeType().getTypeName() + "]"));
+					throw(ofxDigitalEmulsion::Exception("Cannot connect Pin of type [" + this->getNodeTypeName() + "] to Node of type [" + NodeType().getTypeName() + "]"));
 				}
 				this->connect(castNode);
 			}

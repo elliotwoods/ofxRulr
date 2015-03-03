@@ -2,7 +2,7 @@
 
 #include "Summary.h"
 
-#include "../Utils/Exception.h"
+#include "../Exception.h"
 #include "../Utils/Initialiser.h"
 #include "../External/Manager.h"
 #include "../Version.h"
@@ -206,7 +206,7 @@ namespace ofxDigitalEmulsion {
 			if (World::gui) {
 				return * World::gui;
 			} else {
-				throw(Utils::Exception("No gui attached yet"));
+				throw(Exception("No gui attached yet"));
 			}
 		}
 

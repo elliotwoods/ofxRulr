@@ -1,6 +1,6 @@
 #include "HomographyFromGraycode.h"
 
-#include "../../Utils/Exception.h"
+#include "../../Exception.h"
 
 #include "../Scan/Graycode.h"
 #include "../../Item/Camera.h"
@@ -96,7 +96,7 @@ namespace ofxDigitalEmulsion {
 					auto graycodeNode = this->getInput<Scan::Graycode>();
 					auto & dataSet = graycodeNode->getDecoder().getDataSet();
 					if (!dataSet.getHasData()) {
-						throw(new Utils::Exception("No [ofxGraycode::DataSet] loaded"));
+						throw(new Exception("No [ofxGraycode::DataSet] loaded"));
 					}
 					auto normalisedToCamera = ofMatrix4x4::newTranslationMatrix(1.0f, -1.0f, 1.0f) * 
 						ofMatrix4x4::newScaleMatrix(0.5f, -0.5f, 1.0f) *
@@ -148,7 +148,7 @@ namespace ofxDigitalEmulsion {
 				auto graycodeNode = this->getInput<Scan::Graycode>();
 				auto & dataSet = graycodeNode->getDataSet();
 				if (!dataSet.getHasData()) {
-					throw(ofxDigitalEmulsion::Utils::Exception("No data loaded for [ofxGraycode::DataSet]"));
+					throw(ofxDigitalEmulsion::Exception("No data loaded for [ofxGraycode::DataSet]"));
 				}
 
 				vector<ofVec2f> camera;
@@ -218,11 +218,11 @@ namespace ofxDigitalEmulsion {
 				auto graycodeNode = this->getInput<Scan::Graycode>();
 				auto & dataSet = graycodeNode->getDataSet();
 				if (!dataSet.getHasData()) {
-					throw(ofxDigitalEmulsion::Utils::Exception("No data loaded for [ofxGraycode::DataSet]"));
+					throw(ofxDigitalEmulsion::Exception("No data loaded for [ofxGraycode::DataSet]"));
 				}
 
 				if (this->cameraToProjector.isIdentity()) {
-					throw(ofxDigitalEmulsion::Utils::Exception("No mapping has been found yet, so can't save"));
+					throw(ofxDigitalEmulsion::Exception("No mapping has been found yet, so can't save"));
 				}
 
 				string filePath;
