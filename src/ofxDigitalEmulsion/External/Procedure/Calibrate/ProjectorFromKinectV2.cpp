@@ -73,7 +73,7 @@ namespace ofxDigitalEmulsion {
 
 				this->checkerboardScale.set("Checkerboard Scale", 0.2f, 0.01f, 1.0f);
 				this->checkerboardCornersX.set("Checkerboard Corners X", 5, 1, 10);
-				this->checkerboardCornersY.set("Checkerboard Corners Y", 5, 1, 10);
+				this->checkerboardCornersY.set("Checkerboard Corners Y", 4, 1, 10);
 				this->checkerboardPositionX.set("Checkerboard Position X", 0, -1, 1);
 				this->checkerboardPositionY.set("Checkerboard Position Y", 0, -1, 1);
 				this->checkerboardBrightness.set("Checkerboard Brightness", 0.5, 0, 1);
@@ -262,6 +262,20 @@ namespace ofxDigitalEmulsion {
 				slider = MAKE(ofxCvGui::Widgets::Slider, this->checkerboardCornersY);
 				slider->addIntValidator();
 				inspector->add(slider);
+
+				inspector->add(ofxCvGui::Widgets::LiveValue<string>::make("Warning", [this]() {
+					bool xOdd = (int) this->checkerboardCornersX & 1;
+					bool yOdd = (int) this->checkerboardCornersY & 1;
+					if (xOdd && yOdd) {
+						return "Corners X and Corners Y both odd";
+					}
+					else if (!xOdd && !yOdd) {
+						return "Corners X and Corners Y both even";
+					}
+					else {
+						return "";
+					}
+				}));
 
 				inspector->add(MAKE(ofxCvGui::Widgets::Slider, this->checkerboardPositionX));
 				inspector->add(MAKE(ofxCvGui::Widgets::Slider, this->checkerboardPositionY));

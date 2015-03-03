@@ -4,8 +4,8 @@
 #include "../../../Item/Board.h"
 #include "../../Item/KinectV2.h"
 
+#include "../../../Exception.h"
 #include "../../../Utils/Utils.h"
-#include "../../../Utils/Exception.h"
 
 #include "ofxCvGui/Panels/Groups/Grid.h"
 #include "ofxCvGui/Panels/Draws.h"
@@ -332,7 +332,6 @@ namespace ofxDigitalEmulsion {
 				glPointSize(10.0f);
 				preview.drawVertices();
 				glPopAttrib();
-
 
 				if (projector) {
 					projector->drawWorld();

@@ -42,7 +42,7 @@ namespace ofxDigitalEmulsion {
 				this->view->add(depthView);
 			}
 			else {
-				throw(Utils::Exception("Cannot initialise Kinect device. We should find a way to fail elegantly here (and retry later)."));
+				throw(Exception("Cannot initialise Kinect device. We should find a way to fail elegantly here (and retry later)."));
 			}
 
 			this->playState.set("Play state", 0, 0, 1);

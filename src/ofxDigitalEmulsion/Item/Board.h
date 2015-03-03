@@ -24,7 +24,7 @@ namespace ofxDigitalEmulsion {
 			void populateInspector(ofxCvGui::ElementGroupPtr);
 			void updatePreviewMesh();
 
-			ofParameter<int> boardType;
+			ofParameter<int> boardType; // 0 = checkerboard, 1 = circles
 			ofParameter<float> sizeX, sizeY;
 			ofParameter<float> spacing;
 			ofMesh previewMesh;

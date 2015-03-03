@@ -18,7 +18,7 @@ namespace ofxDigitalEmulsion {
 			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
 
 			this->boardType.set("Board Type", 0, 0, 1);
-			this->sizeX.set("Size X", 9.0f, 2.0f, 20.0f);
+			this->sizeX.set("Size X", 10.0f, 2.0f, 20.0f);
 			this->sizeY.set("Size Y", 5.0f, 2.0f, 20.0f);
 			this->spacing.set("Spacing [m]", 0.025f, 0.001f, 1.0f);
 			this->updatePreviewMesh();
@@ -116,6 +116,28 @@ namespace ofxDigitalEmulsion {
 			Utils::Gui::addIntSlider(this->sizeX, inspector)->onValueChange += sliderCallback;
 			Utils::Gui::addIntSlider(this->sizeY, inspector)->onValueChange += sliderCallback;
 			inspector->add(Widgets::Title::make("NB : Checkerboard size is\n counted by number of\n inner corners", Widgets::Title::Level::H3));
+			inspector->add(ofxCvGui::Widgets::LiveValue<string>::make("Warning", [this]() {
+				if (this->boardType == 0) {
+					//CHECKERBOARD
+
+					bool xOdd = (int) this->sizeX & 1;
+					bool yOdd = (int) this->sizeY & 1;
+					if (xOdd && yOdd) {
+						return "Size X and Size Y are both odd";
+					}
+					else if (!xOdd && !yOdd) {
+						return "Size X and Size Y are both even";
+					}
+					else {
+						return "";
+					}
+				}
+				else {
+					//CIRCLES
+
+					return "";
+				}
+			}));
 			inspector->add(Widgets::Spacer::make());
 
 			auto spacingSlider = Widgets::Slider::make(this->spacing);
