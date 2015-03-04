@@ -10,6 +10,9 @@ namespace ofxDigitalEmulsion {
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					this->callbackDraw(args);
 				};
+				this->onUpdate += [this](ofxCvGui::UpdateArguments & args) {
+					this->updateBounds();
+				};
 			}
 
 			//---------
@@ -18,10 +21,24 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//---------
+			void LinkHost::updateBounds() {
+				ofRectangle bounds(this->getSourcePinPosition(), this->getTargetPinPosition());
+				bounds.x -= 10;
+				bounds.y -= 10;
+				bounds.width += 20;
+				bounds.height += 20;
+				this->setBounds(bounds);
+			}
+
+			//---------
 			void LinkHost::callbackDraw(ofxCvGui::DrawArguments & args) {
 				try {
 					const ofVec2f sourcePinPosition = this->getSourcePinPosition();
 					const ofVec2f targetPinPosition = this->getTargetPinPosition();
+
+					//move from local to patch space
+					ofPushMatrix();
+					ofTranslate(this->getBoundsInParent().getTopLeft());
 
 					const auto wireRigidity = ofVec2f(100, 0);
 					ofPolyline wire;
@@ -48,6 +65,8 @@ namespace ofxDigitalEmulsion {
 					wire.draw();
 
 					ofPopStyle();
+
+					ofPopMatrix();
 				}
 				catch (ofxDigitalEmulsion::Exception e) {
 					ofLogError("ofxDigitalEmulsion::Graph::Editor::LinkHost::draw()") << e.what();

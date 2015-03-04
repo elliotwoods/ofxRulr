@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Base.h"
+#include "View.h"
 #include "../../../addons/ofxMachineVision/src/ofxMachineVision.h"
 #include "../../../addons/ofxCvGui/src/ofxCvGui/Panels/Groups/Grid.h"
 
@@ -11,7 +11,7 @@
 
 namespace ofxDigitalEmulsion {
 	namespace Item {
-		class Camera : public Base {
+		class Camera : public View {
 		public:
 			Camera();
 
@@ -29,23 +29,10 @@ namespace ofxDigitalEmulsion {
 			void clearDevice();
 			shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
 
-			float getWidth();
-			float getHeight();
-
-			void setIntrinsics(cv::Mat cameraMatrix, cv::Mat distortionCoefficients);
-			void setExtrinsics(cv::Mat rotation, cv::Mat translation);
-
-			cv::Mat getCameraMatrix() const;
-			cv::Mat getDistortionCoefficients() const;
-
-			const ofxRay::Camera & getRayCamera() const;
-
-			void drawWorld() override;
 			ofPixels getFreshFrame();
 		protected:
 			void populateInspector(ofxCvGui::ElementGroupPtr);
 			void setAllCameraProperties();
-			void updateRayCamera();
 
 			void exposureCallback(float &);
 			void gainCallback(float &);
@@ -66,15 +53,6 @@ namespace ofxDigitalEmulsion {
 			ofParameter<float> gain;
 			ofParameter<float> focus;
 			ofParameter<float> sharpness;
-
-			ofParameter<float> focalLengthX, focalLengthY;
-			ofParameter<float> principalPointX, principalPointY;
-			ofParameter<float> distortion[4];
-
-			ofParameter<float> translationX, translationY, translationZ;
-			ofParameter<float> rotationX, rotationY, rotationZ;
-
-			ofxRay::Camera rayCamera;
 
 			ofMesh focusLineGraph;
 		};

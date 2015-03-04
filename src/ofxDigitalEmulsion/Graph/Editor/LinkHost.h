@@ -10,6 +10,7 @@ namespace ofxDigitalEmulsion {
 				typedef unsigned int Index;
 				LinkHost();
 				bool isValid() const;
+				void updateBounds(); //ideally can be called from listener instead of every frame
 			protected:
 				void callbackDraw(ofxCvGui::DrawArguments &);
 				virtual ofVec2f getSourcePinPosition() const;

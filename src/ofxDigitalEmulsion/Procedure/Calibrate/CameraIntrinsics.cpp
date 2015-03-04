@@ -89,17 +89,25 @@ namespace ofxDigitalEmulsion {
 				if (this->enableFinder && camera && board) {
 					try {
 						auto grabber = camera->getGrabber();
-						if (! grabber->getPixelsRef().isAllocated()) {
+						auto frame = grabber->getFrame();
+						
+						//copy the frame out
+						frame->lockForReading();
+						auto & pixels = frame->getPixelsRef();
+						if (! pixels.isAllocated()) {
+							frame->unlock();
 							throw(Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));
 						}
-						if (this->grayscale.getWidth() != camera->getWidth() || this->grayscale.getHeight() != camera->getHeight()) {
-							this->grayscale.allocate(camera->getWidth(), camera->getHeight(), OF_IMAGE_GRAYSCALE);
+						if (this->grayscale.getWidth() != pixels.getWidth() || this->grayscale.getHeight() != pixels.getHeight()) {
+							this->grayscale.allocate(pixels.getWidth(), pixels.getHeight(), OF_IMAGE_GRAYSCALE);
 						}
-						if (grabber->getPixelsRef().getNumChannels() != 1) {
-							cv::cvtColor(toCv(grabber->getPixelsRef()), toCv(this->grayscale), CV_RGB2GRAY);
+						if (pixels.getNumChannels() != 1) {
+							cv::cvtColor(toCv(pixels), toCv(this->grayscale), CV_RGB2GRAY);
 						} else {
-							this->grayscale = grabber->getPixelsRef();
+							this->grayscale = pixels;
 						}
+						frame->unlock();
+
 						this->grayscale.update();
 						this->currentCorners.clear();
 

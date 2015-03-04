@@ -84,6 +84,11 @@ namespace ofxDigitalEmulsion {
 		//---------
 		void View::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			inspector->add(Widgets::Title::make("View", Widgets::Title::Level::H2));
+			inspector->add(make_shared<Widgets::LiveValue<string>>("Resolution", [this](){
+				string msg;
+				msg = ofToString((int)this->getWidth()) + ", " + ofToString((int)this->getHeight());
+				return msg;
+			}));
 
 			inspector->add(Widgets::Title::make("Camera matrix", Widgets::Title::Level::H3));
 			inspector->add(Widgets::Slider::make(this->focalLengthX));
@@ -95,6 +100,9 @@ namespace ofxDigitalEmulsion {
 			}));
 			inspector->add(Widgets::LiveValue<float>::make("Aspect ratio", [this]() {
 				return this->focalLengthY / this->focalLengthX;
+			}));
+			inspector->add(Widgets::LiveValue<ofVec2f>::make("Lens offset", [this]() {
+				return this->getViewInObjectSpace().getLensOffset();
 			}));
 
 			inspector->add(Widgets::Spacer::make());
