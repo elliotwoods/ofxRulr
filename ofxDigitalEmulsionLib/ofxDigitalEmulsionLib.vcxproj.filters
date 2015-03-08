@@ -124,6 +124,12 @@
     <Filter Include="src\ofxDigitalEmulsion\External">
       <UniqueIdentifier>{0d9561e6-49e9-4506-a76a-b69f67e27a5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxSpinCursor">
+      <UniqueIdentifier>{3a2c250e-bbba-4c31-a149-7dd6f28ca586}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSpinCursor\src">
+      <UniqueIdentifier>{8505b6da-0d0e-496f-a5cc-1214161a5a76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
@@ -456,6 +462,12 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\IReferenceVertices.h">
       <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ViewToVertices.h">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h">
+      <Filter>addons\ofxSpinCursor\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -616,6 +628,12 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\IReferenceVertices.cpp">
       <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ViewToVertices.cpp">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp">
+      <Filter>addons\ofxSpinCursor\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
