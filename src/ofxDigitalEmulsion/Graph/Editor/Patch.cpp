@@ -401,8 +401,10 @@ namespace ofxDigitalEmulsion {
 					this->callbackReleaseMakeConnection(args);
 				};
 				nodeHost->onDropInputConnection += [this](const shared_ptr<AbstractPin> &) {
-					this->rebuildLinkHosts();
 					this->view->resync();
+				};
+				nodeHost->getNodeInstance()->onAnyInputConnectionChanged += [this]() {
+					this->rebuildLinkHosts();
 				};
 				this->view->resync();
 			}
@@ -537,10 +539,7 @@ namespace ofxDigitalEmulsion {
 				}
 				else if (args.button == 0) {
 					//left click, try and make the link
-					if (this->newLink->flushConnection()) {
-						//if the new link was created, let's rebuild the patch's list of links
-						this->rebuildLinkHosts();
-					}
+					this->newLink->flushConnection(); // this will trigger a notice downstream to rebuild the list of connections
 
 					//clear the temporary link regardless of success
 					this->newLink.reset();

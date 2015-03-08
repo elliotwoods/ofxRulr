@@ -87,14 +87,14 @@ namespace ofxDigitalEmulsion {
 			}
 
 			void resetConnection() override {
-				auto node = this->getConnection();
+				auto node = this->getConnection(); // cache the connected node before removing connection
+				this->connection.reset(); //we clear the state before firing the event (e.g. for rebuilding link list)
+
 				if (node) {
 					this->onDeleteConnectionTyped.notifyListeners(node);
 					auto untypedNode = shared_ptr<Node>(node);
 					this->onDeleteConnection.notifyListeners(untypedNode);
-				}
-				
-				this->connection.reset();
+				}	
 			}
 			
 			shared_ptr<NodeType> getConnection() {

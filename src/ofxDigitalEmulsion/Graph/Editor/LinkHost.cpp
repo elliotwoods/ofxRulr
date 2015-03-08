@@ -102,6 +102,10 @@ namespace ofxDigitalEmulsion {
 			//---------
 			void TemporaryLinkHost::setCursorPosition(const ofVec2f & cursorPosition) {
 				this->cursorPosition = cursorPosition;
+				auto targetNode = this->targetNode.lock();
+				if (targetNode) {
+					this->setBounds(ofRectangle(cursorPosition, targetNode->getOutputPinPositionGlobal()));
+				}
 			}
 
 			//---------
