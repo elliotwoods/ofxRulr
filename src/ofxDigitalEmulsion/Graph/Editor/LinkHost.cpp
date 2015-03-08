@@ -38,7 +38,7 @@ namespace ofxDigitalEmulsion {
 
 					//move from local to patch space
 					ofPushMatrix();
-					ofTranslate(this->getBoundsInParent().getTopLeft());
+					ofTranslate(-this->getBoundsInParent().getTopLeft());
 
 					const auto wireRigidity = ofVec2f(100, 0);
 					ofPolyline wire;

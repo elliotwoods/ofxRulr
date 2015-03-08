@@ -453,6 +453,9 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Version.h">
       <Filter>src\ofxDigitalEmulsion</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\IReferenceVertices.h">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -610,6 +613,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Exception.cpp">
       <Filter>src\ofxDigitalEmulsion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\IReferenceVertices.cpp">
+      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
