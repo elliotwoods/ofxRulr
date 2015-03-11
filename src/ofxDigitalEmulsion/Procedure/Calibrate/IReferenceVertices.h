@@ -13,6 +13,9 @@ namespace ofxDigitalEmulsion {
 				public:
 					virtual ofVec3f getWorldPosition() const = 0;
 					virtual void drawWorld(const ofColor & = ofColor(255));
+					virtual bool isSelected() const = 0;
+
+					ofVec2f viewPosition; /// px
 				protected:
 					void drawObjectLines();
 				};
@@ -22,6 +25,8 @@ namespace ofxDigitalEmulsion {
 				void drawWorld() override;
 
 				const vector<shared_ptr<Vertex>> & getVertices() const;
+
+				ofxLiquidEvent<void> onChangeVertex;
 			protected:
 				vector<shared_ptr<Vertex>> vertices;
 			};

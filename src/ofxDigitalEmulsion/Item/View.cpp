@@ -162,37 +162,35 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		Mat View::getDistortionCoefficients() const {
-			Mat distortionCoefficients = Mat::zeros(8, 1, CV_64F);
+			Mat distortionCoefficients = Mat::zeros(7, 1, CV_64F);
 			for (int i = 0; i<OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 				distortionCoefficients.at<double>(i) = this->distortion[i];
+			}
+			for (int i = OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i < 7; i++) {
+				distortionCoefficients.at<double>(i) = 0.0;
 			}
 			return distortionCoefficients;
 		}
 
 		//----------
 		const ofxRay::Camera & View::getViewInObjectSpace() const {
-			return this->viewInWorldSpace;
+			return this->viewInObjectSpace;
 		}
 
 		//----------
-		const ofxRay::Camera & View::getViewInWorldSpace() const {
-			return this->viewInObjectSpace;
+		ofxRay::Camera View::getViewInWorldSpace() const {
+			auto viewInWorldSpace = this->viewInObjectSpace;
+
+			const auto viewInverse = this->getTransform();
+			viewInWorldSpace.setView(viewInverse.getInverse());
+
+			return viewInWorldSpace;
 		}
 
 		//----------
 		void View::rebuildViewFromParameters() {
 			auto projection = ofxCv::makeProjectionMatrix(this->getCameraMatrix(), this->getSize());
 			this->viewInObjectSpace.setProjection(projection);
-
-			this->viewInWorldSpace = this->viewInObjectSpace;
-
-			const auto viewInverse = this->getTransform();
-			this->viewInWorldSpace.setView(viewInverse);
-		}
-
-		//----------
-		void View::rebuildParametersFromView() {
-			this->setTransform(this->viewInWorldSpace.getViewMatrix().getInverse());
 		}
 
 		//----------

@@ -124,7 +124,7 @@ namespace ofxDigitalEmulsion {
 			}
 			
 			ofxLiquidEvent<shared_ptr<NodeType> > onNewConnectionTyped;
-			ofxLiquidEvent<shared_ptr<NodeType> > onDeleteConnectionTyped;
+			ofxLiquidEvent<shared_ptr<NodeType> > onDeleteConnectionTyped; /// remember to check if the pointer is still valid
 		protected:
 			weak_ptr<NodeType> connection;
 		};

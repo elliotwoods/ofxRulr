@@ -178,9 +178,9 @@ namespace ofxDigitalEmulsion {
 							ofPushMatrix();
 							ofPushStyle();
 
-							ofTranslate(0, args.size.y / 2.0f);
+							ofTranslate(0, args.drawSize.y / 2.0f);
 							ofSetColor(100, 255, 100);
-							ofLine(0, 0, args.size.x, 0);
+							ofLine(0, 0, args.drawSize.x, 0);
 
 							ofTranslate(0, +128);
 							ofScale(1.0f, -1.0f);
@@ -200,7 +200,7 @@ namespace ofxDigitalEmulsion {
 						ofSetLineWidth(1);
 						ofSetColor(255);
 						ofPushMatrix();
-						ofTranslate(args.size.x / 2.0f, args.size.y / 2.0f);
+						ofTranslate(args.drawSize.x / 2.0f, args.drawSize.y / 2.0f);
 						ofLine(-10, 0, 10, 0);
 						ofLine(0, -10, 0, 10);
 						ofPopMatrix();

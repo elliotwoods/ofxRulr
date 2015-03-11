@@ -3,9 +3,10 @@
 #include "RigidBody.h"
 
 #include "../../../addons/ofxRay/src/ofxRay.h"
+#include <opencv2/calib3d/calib3d.hpp>
 
 #define OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT 4
-
+#define OFXDIGITALEMULSION_VIEW_CALIBRATION_FLAGS CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST
 namespace ofxDigitalEmulsion {
 	namespace Item {
 		class View : public RigidBody {
@@ -26,13 +27,13 @@ namespace ofxDigitalEmulsion {
 
 			cv::Size getSize() const;
 			cv::Mat getCameraMatrix() const;
+			virtual bool getHasDistortion() const { return false; };
 			cv::Mat getDistortionCoefficients() const;
 
 			const ofxRay::Camera & getViewInObjectSpace() const;
-			const ofxRay::Camera & getViewInWorldSpace() const;
+			ofxRay::Camera getViewInWorldSpace() const;
 		protected:
 			void rebuildViewFromParameters();
-			void rebuildParametersFromView();
 
 			void exportViewMatrix();
 
@@ -43,7 +44,6 @@ namespace ofxDigitalEmulsion {
 			ofParameter<float> distortion[OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT];
 
 			//Versions of this view as an ofxRay::Camera in world space and object space
-			ofxRay::Camera viewInWorldSpace;
 			ofxRay::Camera viewInObjectSpace;
 		private:
 			void serialize(Json::Value &);

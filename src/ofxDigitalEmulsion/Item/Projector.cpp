@@ -16,9 +16,6 @@ namespace ofxDigitalEmulsion {
 			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
 			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
 
-			this->projector.setDefaultNear(0.05f);
-			this->projector.setDefaultFar(2.0f);
-
 			this->resolutionWidth.set("Resolution width", 1024.0f, 1.0f, 8 * 1280.0f);
 			this->resolutionHeight.set("Resolution height", 768.0f, 1.0f, 8 * 800.0f);
 			this->resolutionWidth.addListener(this, &Projector::projectorParameterCallback);
