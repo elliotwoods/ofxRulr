@@ -167,7 +167,7 @@ namespace ofxDigitalEmulsion {
 				this->refreshMonitors();
 			}));
 
-			auto showWindowToggle = MAKE(ofxCvGui::Widgets::Toggle, this->showWindow);
+			auto showWindowToggle = MAKE(ofxCvGui::Widgets::Toggle, this->showWindow, OF_KEY_RETURN);
 			showWindowToggle->setHeight(100.0f);
 			inspector->add(showWindowToggle);
 			showWindowToggle->onValueChange += [this](ofParameter<bool> & value) {
