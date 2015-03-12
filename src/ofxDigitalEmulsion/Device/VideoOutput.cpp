@@ -44,63 +44,60 @@ namespace ofxDigitalEmulsion {
 			this->onDestroy += [this]() {
 				this->setWindowOpen(false);
 			};
-
-			this->view = MAKE(ofxCvGui::Panels::ElementHost);
-			this->refreshMonitors();
-
-			this->view->getElementGroup()->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
+			
+			auto previewView = make_shared<ofxCvGui::Panels::Draws>(this->fbo);
+			previewView->setCaption("Preview");
+			this->monitorSelectionView = MAKE(ofxCvGui::Panels::ElementHost);
+			this->monitorSelectionView->getElementGroup()->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
 				//arrange buttons and subview for fbo
 
-				auto elements = this->view->getElementGroup()->getElements();
+				auto elements = this->monitorSelectionView->getElementGroup()->getElements();
 				auto blockWidth = args.localBounds.width / this->videoOutputs.size();
 
-				int index = 0;
 				float maxButtonHeight = 0;
+				int index = 0;
 				for (auto element : elements) {
-					if (index < this->getVideoOutputCount()) {
-						//it's a monitor
+					//currently we set them all to have the same width but this could change
+					auto buttonWidth = blockWidth - 20;
+					float buttonHeight;
 
-						//currently we set them all to have the same width but this could change
-						auto buttonWidth = blockWidth - 20;
-						float buttonHeight;
+					const auto & videoOutput = this->videoOutputs[index];
 
-						const auto & videoOutput = this->videoOutputs[index];
+					//set the height to match the aspect ratio
+					buttonHeight = buttonWidth * (float)videoOutput.height / (float)videoOutput.width;
+					//and clamp it incase it was too tall
+					buttonHeight = ofClamp(buttonHeight, 0.0f, args.localBounds.getHeight() - 20);
 
-						//set the height to match the aspect ratio
-						buttonHeight = buttonWidth * (float)videoOutput.height / (float)videoOutput.width;
-						//and clamp it incase it was too tall
-						buttonHeight = ofClamp(buttonHeight, 0.0f, args.localBounds.getHeight() - 50);
+					element->setBounds(ofRectangle(blockWidth * index + 10, 10, blockWidth - 20, buttonHeight));
 
-						element->setBounds(ofRectangle(blockWidth * index + 10, 70, blockWidth - 20, buttonHeight));
-
-						//note the maximum button height
-						if (buttonHeight > maxButtonHeight) {
-							maxButtonHeight = buttonHeight;
-						}
+					//note the maximum button height
+					if (buttonHeight > maxButtonHeight) {
+						maxButtonHeight = buttonHeight;
 					}
-					else {
-						//it's the fbo
-						element->setBounds(ofRectangle(10, maxButtonHeight + 80, args.localBounds.width - 20,
-							MAX(0, args.localBounds.height - (maxButtonHeight + 80 + 20))
-							));
-					}
+
 					index++;
 				}
 			};
+			auto groupView = make_shared<ofxCvGui::Panels::Groups::Grid>();
+			groupView->add(previewView);
+			groupView->add(this->monitorSelectionView);
+			this->view = groupView;
+
+			this->refreshMonitors();
 
 			this->onDrawOutput += [this](ofRectangle & outputRect) {
 				switch (this->testPattern.get()) {
 				case 1:
 				{
-						  // GRID
-						  ofPushStyle();
-						  ofNoFill();
-						  ofSetLineWidth(1.0f);
-						  ofRect(outputRect);
-						  ofLine(outputRect.getCenter() - ofVec2f(outputRect.width / 2.0f, 0.0f), outputRect.getCenter() + ofVec2f(outputRect.width / 2.0f, 0.0f));
-						  ofLine(outputRect.getCenter() - ofVec2f(0.0f, outputRect.height / 2.0f), outputRect.getCenter() + ofVec2f(0.0f, outputRect.height / 2.0f));
-						  ofPopStyle();
-						  break;
+					// GRID
+					ofPushStyle();
+					ofNoFill();
+					ofSetLineWidth(1.0f);
+					ofRect(outputRect);
+					ofLine(outputRect.getCenter() - ofVec2f(outputRect.width / 2.0f, 0.0f), outputRect.getCenter() + ofVec2f(outputRect.width / 2.0f, 0.0f));
+					ofLine(outputRect.getCenter() - ofVec2f(0.0f, outputRect.height / 2.0f), outputRect.getCenter() + ofVec2f(0.0f, outputRect.height / 2.0f));
+					ofPopStyle();
+					break;
 				}
 				case 2:
 					// WHITE
@@ -111,7 +108,6 @@ namespace ofxDigitalEmulsion {
 				}
 			};
 
-			this->previewFboEnabled.set("Preview fbo", true);
 			this->showWindow.set("Show window", false);
 			this->testPattern.set("Test Pattern", 0);
 			this->splitHorizontal.set("Split Horizontal", 1, 1, 8);
@@ -143,7 +139,6 @@ namespace ofxDigitalEmulsion {
 			json["width"] = this->width;
 			json["height"] = this->height;
 			json["monitorSelection"] = this->videoOutputSelection;
-			ofxDigitalEmulsion::Utils::Serializable::serialize(this->previewFboEnabled, json);
 			ofxDigitalEmulsion::Utils::Serializable::serialize(this->splitHorizontal, json);
 			ofxDigitalEmulsion::Utils::Serializable::serialize(this->splitVertical, json);
 			ofxDigitalEmulsion::Utils::Serializable::serialize(this->splitUseIndex, json);
@@ -155,7 +150,6 @@ namespace ofxDigitalEmulsion {
 			this->width = json["width"].asInt();
 			this->height = json["height"].asInt();
 			this->setVideoOutputSelection(json["monitorSelection"].asInt());
-			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->previewFboEnabled, json);
 			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->splitHorizontal, json);
 			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->splitVertical, json);
 			ofxDigitalEmulsion::Utils::Serializable::deserialize(this->splitUseIndex, json);
@@ -217,9 +211,6 @@ namespace ofxDigitalEmulsion {
 				this->testPattern = selection;
 			};
 			inspector->add(testPatternSelector);
-
-			inspector->add(make_shared<ofxCvGui::Widgets::Toggle>(this->previewFboEnabled));
-			inspector->add(make_shared<ofxCvGui::Widgets::Title>("NOTE : Suggest disabling on\nATI graphic cards to avoid\nissues with corrupted output in window.", ofxCvGui::Widgets::Title::Level::H3));
 		}
 
 		//----------
@@ -241,8 +232,6 @@ namespace ofxDigitalEmulsion {
 			//show and then clear the window
 			this->presentFbo();
 			this->clearFbo(true);
-
-			this->fboPreview->setEnabled(this->previewFboEnabled.get());
 		}
 
 		//----------
@@ -346,12 +335,16 @@ namespace ofxDigitalEmulsion {
 		void VideoOutput::begin() {
 			this->scissorWasEnabled = ofxCvGui::Utils::disableScissor();
 			this->fbo.begin(true);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ACCUM_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			ofClear(0, 0, 0, 255);
 		}
 
 		//----------
 		void VideoOutput::end() {
 			this->fbo.end();
-			ofxCvGui::Utils::enableScissor();
+			if (this->scissorWasEnabled) {
+				ofxCvGui::Utils::enableScissor();
+			}
 		}
 
 		//----------
@@ -360,6 +353,9 @@ namespace ofxDigitalEmulsion {
 				return;
 			}
 			
+			//remove any scissor
+			auto scissorEnabled = ofxCvGui::Utils::disableScissor();
+
 			//cache the viewport
 			auto mainViewport = ofGetCurrentViewport();
 
@@ -395,6 +391,10 @@ namespace ofxDigitalEmulsion {
 			//return to main window
 			glfwMakeContextCurrent(mainWindow);
 			ofViewport(mainViewport);
+
+			if (scissorEnabled) {
+				ofxCvGui::Utils::enableScissor();
+			}
 		}
 
 		//----------
@@ -410,7 +410,7 @@ namespace ofxDigitalEmulsion {
 			}
 
 			//build gui
-			this->view->getElementGroup()->clear();
+			this->monitorSelectionView->getElementGroup()->clear();
 			for (auto & videoOutput : this->videoOutputs) {
 				auto selectButton = MAKE(ofxCvGui::Element);
 
@@ -476,15 +476,8 @@ namespace ofxDigitalEmulsion {
 				//turn the scissor on
 				selectButton->setScissor(true);
 
-				this->view->getElementGroup()->add(selectButton);
+				this->monitorSelectionView->getElementGroup()->add(selectButton);
 			}
-
-			auto subViewForFbo = make_shared<ofxCvGui::Panels::Draws>(this->fbo);
-			subViewForFbo->setCaption("Output");
-			this->view->getElementGroup()->add(subViewForFbo);
-			this->fboPreview = subViewForFbo;
-
-			this->view->getElementGroup()->arrange();
 
 			this->needsMonitorRefresh = false;
 		}
@@ -512,6 +505,13 @@ namespace ofxDigitalEmulsion {
 				this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), NULL, glfwGetCurrentContext());
 				glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 				glfwSetWindowPos(this->window, x, y);
+
+				//allocate fbo to match the window
+				ofFbo::Settings fboSettings;
+				fboSettings.width = this->width;
+				fboSettings.height = this->height;
+				auto mainContext = glfwGetCurrentContext();
+				this->fbo.allocate(fboSettings);
 			}
 			else {
 				this->showWindow = false;
@@ -554,12 +554,9 @@ namespace ofxDigitalEmulsion {
 				const auto splitCount = this->splitHorizontal * this->splitVertical;
 				this->splitUseIndex.setMax(splitCount - 1);
 
-				ofFbo::Settings fboSettings;
-				fboSettings.width = this->width;
-				fboSettings.height = this->height;
-				fboSettings.numSamples = 8;
-
-				this->fbo.allocate(fboSettings);
+				if (this->isWindowOpen()) {
+					this->setWindowOpen(true);
+				}
 			}
 		}
 

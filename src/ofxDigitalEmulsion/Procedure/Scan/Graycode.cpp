@@ -79,11 +79,15 @@ namespace ofxDigitalEmulsion {
 				this->throwIfMissingAnyConnection();
 
 				//get variables
-				auto window = glfwGetCurrentContext();
 				auto camera = this->getInput<Item::Camera>();
 				auto videoOutput = this->getInput<Device::VideoOutput>();
 				auto videoOutputSize = videoOutput->getSize();
 				auto grabber = camera->getGrabber();
+				
+				//check that the window is open
+				if (!videoOutput->isWindowOpen()) {
+					throw(Exception("Cannot run Graycode scan whilst the VideoOutput's window isn't open"));
+				}
 
 				//initialise payload
 				this->payload.init(videoOutputSize.getWidth(), videoOutputSize.getHeight());

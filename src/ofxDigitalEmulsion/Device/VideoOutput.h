@@ -65,7 +65,8 @@ namespace ofxDigitalEmulsion {
 			void calculateSplit();
 			void callbackChangeSplit(float &);
 
-			shared_ptr<ofxCvGui::Panels::ElementHost> view;
+			ofxCvGui::PanelPtr view;
+			shared_ptr<ofxCvGui::Panels::ElementHost> monitorSelectionView;
 
 			const GLFWvidmode * videoMode;
 
@@ -74,8 +75,6 @@ namespace ofxDigitalEmulsion {
 			bool needsMonitorRefresh;
 
 			GLFWwindow * window;
-
-			ofParameter<bool> previewFboEnabled;
 
 			ofParameter<bool> showWindow;
 			ofParameter<float> splitHorizontal;
