@@ -93,9 +93,16 @@ namespace ofxDigitalEmulsion {
 					ofPushStyle();
 					ofNoFill();
 					ofSetLineWidth(1.0f);
-					ofRect(outputRect);
-					ofLine(outputRect.getCenter() - ofVec2f(outputRect.width / 2.0f, 0.0f), outputRect.getCenter() + ofVec2f(outputRect.width / 2.0f, 0.0f));
-					ofLine(outputRect.getCenter() - ofVec2f(0.0f, outputRect.height / 2.0f), outputRect.getCenter() + ofVec2f(0.0f, outputRect.height / 2.0f));
+					auto xStep = (this->getWidth() - 1) / 4;
+					auto yStep = (this->getHeight() - 1) / 4;
+					for (int i = 0; i < 5; i++){
+						ofSetColor((i % 2 == 0) ? 255 : 100);
+						auto x = xStep * i + 0.5f;
+						auto y = yStep * i + 0.5f;
+						ofLine(x, 0, x, this->getHeight());
+						ofLine(0, y, this->getWidth(), y);
+					}
+					ofDrawBitmapString(this->getName() + "\n" + ofToString(this->getWidth()) + "x" + ofToString(this->getHeight()), xStep * 2 + 10, yStep * 2 - 20);
 					ofPopStyle();
 					break;
 				}

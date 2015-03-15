@@ -296,9 +296,29 @@ namespace ofxDigitalEmulsion {
 					view.push_back(vertex->viewPosition);
 				}
 
-				cv::Mat cameraMatrix = viewNode->getCameraMatrix();
-				cv::Mat distortionCoefficients = viewNode->getDistortionCoefficients();
+				auto cameraMatrix = viewNode->getCameraMatrix();
+				auto distortionCoefficients = viewNode->getDistortionCoefficients();
 				vector<cv::Mat> rotations, translations;
+				auto viewSize = viewNode->getSize();
+
+				//clamp the initial intrinsics so that principal point is inside the image plane.
+				//this is generally true for cameras, and insisted by OpenCV before fitting,
+				//but often not true for projectors and the fit function will return principal
+				//points outside of this range.
+				auto & principalPointX = cameraMatrix.at<double>(0, 2);
+				auto & principalPointY = cameraMatrix.at<double>(1, 2);
+				if (principalPointX <= 1) {
+					principalPointX = 1;
+				}
+				if (principalPointX >= viewSize.width - 2) {
+					principalPointX = viewSize.width - 2;
+				}
+				if (principalPointY <= 1) {
+					principalPointY = 1;
+				}
+				if (principalPointY >= viewSize.height - 2) {
+					principalPointY = viewSize.height - 2;
+				}
 
 				auto flags = CV_CALIB_USE_INTRINSIC_GUESS; // since we're using a single object
 				if (viewNode->getHasDistortion()) {
@@ -307,7 +327,7 @@ namespace ofxDigitalEmulsion {
 				else {
 					flags |= (CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST);
 				}
-				auto reprojectionError = cv::calibrateCamera(toCv(worldRows), toCv(viewRows), viewNode->getSize(), cameraMatrix, distortionCoefficients, rotations, translations, flags);
+				auto reprojectionError = cv::calibrateCamera(toCv(worldRows), toCv(viewRows), viewSize, cameraMatrix, distortionCoefficients, rotations, translations, flags);
 				//we might have thrown at this point
 				
 				viewNode->setIntrinsics(cameraMatrix, distortionCoefficients);

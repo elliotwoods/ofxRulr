@@ -28,6 +28,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		string Node::getTypeName() const {
+			return "Node";
+		}
+
+		//----------
 		void Node::init() {
 			this->onInspect.addListener([this](ofxCvGui::InspectArguments & args) {
 				this->populateInspector(args.inspector);

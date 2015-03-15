@@ -49,30 +49,6 @@
     <Filter Include="addons\ofxJSON\libs\jsoncpp\include\json">
       <UniqueIdentifier>{c3e30439-3d91-4430-b867-2fc51c562bb6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxOsc">
-      <UniqueIdentifier>{da519d2b-1987-4914-a8a9-5cea731ba8ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\src">
-      <UniqueIdentifier>{39b59e8a-998f-4e29-b204-116f61573b05}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs">
-      <UniqueIdentifier>{d4442796-1085-455a-a2fb-8ebf0c1f076f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack">
-      <UniqueIdentifier>{90930e03-424b-4657-8e47-4f47cbac36b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src">
-      <UniqueIdentifier>{64439bd9-2cbf-4e62-85d2-0c62cc05c9a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip">
-      <UniqueIdentifier>{11878c09-2a29-4396-bf88-1e1b04020de9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\win32">
-      <UniqueIdentifier>{4419d629-b63f-427b-a3df-0cb22bac9e4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
-      <UniqueIdentifier>{81018c19-8a2b-4713-8e94-01cd7fb28e99}</UniqueIdentifier>
-    </Filter>
     <Filter Include="addons\ofxTriangulate">
       <UniqueIdentifier>{721289e2-b8bc-4d7a-81f4-62f6f39826be}</UniqueIdentifier>
     </Filter>
@@ -129,6 +105,9 @@
     </Filter>
     <Filter Include="addons\ofxSpinCursor\src">
       <UniqueIdentifier>{8505b6da-0d0e-496f-a5cc-1214161a5a76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxDigitalEmulsion\Render">
+      <UniqueIdentifier>{7a399311-58d3-4207-baf8-3d5bed1844db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -200,69 +179,6 @@
     </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Utils\Serializable.h">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.h">
-      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscMessage.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscParameterSync.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscReceiver.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscSender.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOsc.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscArg.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscBundle.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\PacketListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\TimerListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\UdpSocket.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\MessageMappingOscPacketListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscException.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscHostEndianness.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscPacketListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.h">
       <Filter>src\ofxDigitalEmulsion\Procedure</Filter>
@@ -468,6 +384,9 @@
     <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h">
       <Filter>addons\ofxSpinCursor\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxDigitalEmulsion\Render\NodeThroughView.h">
+      <Filter>src\ofxDigitalEmulsion\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -502,45 +421,6 @@
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Utils\Serializable.cpp">
       <Filter>src\ofxDigitalEmulsion\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Calibrate\ProjectorIntrinsicsExtrinsics.cpp">
-      <Filter>src\ofxDigitalEmulsion\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscParameterSync.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscReceiver.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscBundle.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscMessage.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\UdpSocketWin.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtilsWin.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscReceivedElements.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscPrintReceivedElements.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Procedure\Triangulate.cpp">
       <Filter>src\ofxDigitalEmulsion\Procedure</Filter>
@@ -634,6 +514,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp">
       <Filter>addons\ofxSpinCursor\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxDigitalEmulsion\Render\NodeThroughView.cpp">
+      <Filter>src\ofxDigitalEmulsion\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

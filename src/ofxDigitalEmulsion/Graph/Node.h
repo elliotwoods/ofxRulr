@@ -38,6 +38,7 @@ namespace ofxDigitalEmulsion {
 		public:
 			Node();
 			~Node();
+			virtual string getTypeName() const override;
 			void init();
 			void destroy();
 			void update();

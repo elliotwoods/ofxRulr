@@ -9,9 +9,10 @@
 
 #include "ofxDigitalEmulsion/Device/VideoOutput.h"
 
+#include "ofxDigitalEmulsion/Render/NodeThroughView.h"
+
 #include "ofxDigitalEmulsion/Procedure/Calibrate/CameraIntrinsics.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/ViewToVertices.h"
-#include "ofxDigitalEmulsion/Procedure/Calibrate/ProjectorIntrinsicsExtrinsics.h"
 #include "ofxDigitalEmulsion/Procedure/Calibrate/HomographyFromGraycode.h"
 #include "ofxDigitalEmulsion/Procedure/Scan/Graycode.h"
 #include "ofxDigitalEmulsion/Procedure/Triangulate.h"
@@ -56,9 +57,9 @@ namespace ofxDigitalEmulsion {
 			this->add<Item::Projector>();
 			//this->add<Item::Model>();
 			this->add<Device::VideoOutput>();
+			this->add<Render::NodeThroughView>();
 			this->add<Procedure::Calibrate::CameraIntrinsics>();
 			this->add<Procedure::Calibrate::ViewToVertices>();
-			//factoryRegister->add<Procedure::Calibrate::ProjectorIntrinsicsExtrinsics>();
 			this->add<Procedure::Calibrate::HomographyFromGraycode>();
 			this->add<Procedure::Scan::Graycode>();
 			this->add<Procedure::Triangulate>();
