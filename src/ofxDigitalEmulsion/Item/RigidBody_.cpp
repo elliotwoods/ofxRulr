@@ -41,6 +41,7 @@ namespace ofxDigitalEmulsion {
 		void RigidBody::drawWorld() {
 			ofPushMatrix();
 			ofMultMatrix(this->getTransform());
+			ofDrawBitmapString(this->getName(), ofVec3f());
 			this->drawObject();
 			ofPopMatrix();
 		}
@@ -90,10 +91,19 @@ namespace ofxDigitalEmulsion {
 			}));
 
 			for (int i = 0; i < 3; i++) {
-				inspector->add(make_shared<Widgets::Slider>(this->translation[i]));
+				auto slider = Widgets::Slider::make(this->translation[i]);
+				slider->onValueChange += [this](ofParameter<float> &) {
+					this->onTransformChange.notifyListeners();
+				};
+				inspector->add(slider);
+
 			}
 			for (int i = 0; i < 3; i++) {
-				inspector->add(make_shared<Widgets::Slider>(this->rotationEuler[i]));
+				auto slider = Widgets::Slider::make(this->rotationEuler[i]);
+				slider->onValueChange += [this](ofParameter<float> &) {
+					this->onTransformChange.notifyListeners();
+				};
+				inspector->add(slider);
 			}
 
 			inspector->add(Widgets::Button::make("Export RigidBody matrix...", [this]() {
@@ -187,15 +197,15 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//---------
-		ofQuaternion toQuaternion(const ofVec3f & rotationEuler) {
+		ofQuaternion toQuaternion(const ofVec3f & rotationEulerDegrees) {
 			//from http://www.cs.stanford.edu/~acoates/quaternion.h
 			ofQuaternion rotation;
-			float c1 = cos(rotationEuler[2] * 0.5);
-			float c2 = cos(rotationEuler[1] * 0.5);
-			float c3 = cos(rotationEuler[0] * 0.5);
-			float s1 = sin(rotationEuler[2] * 0.5);
-			float s2 = sin(rotationEuler[1] * 0.5);
-			float s3 = sin(rotationEuler[0] * 0.5);
+			float c1 = cos(rotationEulerDegrees[2] * 0.5 * DEG_TO_RAD);
+			float c2 = cos(rotationEulerDegrees[1] * 0.5 * DEG_TO_RAD);
+			float c3 = cos(rotationEulerDegrees[0] * 0.5 * DEG_TO_RAD);
+			float s1 = sin(rotationEulerDegrees[2] * 0.5 * DEG_TO_RAD);
+			float s2 = sin(rotationEulerDegrees[1] * 0.5 * DEG_TO_RAD);
+			float s3 = sin(rotationEulerDegrees[0] * 0.5 * DEG_TO_RAD);
 
 			rotation[0] = c1*c2*s3 - s1*s2*c3;
 			rotation[1] = c1*s2*c3 + s1*c2*s3;

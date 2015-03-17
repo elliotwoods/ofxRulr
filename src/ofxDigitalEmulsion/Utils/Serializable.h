@@ -6,6 +6,21 @@
 #include <json/json.h>
 #include <string>
 
+template<typename T>
+Json::Value & operator<< (Json::Value & json, const T & streamSerializableObject) {
+	stringstream stream;
+	stream << streamSerializableObject;
+	json = stream.str();
+	return json;
+}
+
+template<typename T>
+const Json::Value & operator>> (const Json::Value & json, T & streamSerializableObject) {
+	stringstream stream(json.asString());
+	stream >> streamSerializableObject;
+	return json;
+}
+
 namespace ofxDigitalEmulsion {
 	namespace Utils {
 		class Serializable {
@@ -22,29 +37,25 @@ namespace ofxDigitalEmulsion {
 			void load(std::string filename = "");
 			std::string getDefaultFilename() const;
 		
+			template<typename T>
+			static void serialize(const ofParameter<T> & parameter, Json::Value & json) {
+				json[parameter.getName()] << parameter.get();
+			}
 			static void serialize(const ofParameter<int> &, Json::Value &);
 			static void serialize(const ofParameter<float> &, Json::Value &);
 			static void serialize(const ofParameter<bool> &, Json::Value &);
 			static void serialize(const ofParameter<string> &, Json::Value &);
+
+			template<typename T>
+			static void deserialize(ofParameter<T> & parameter, const Json::Value & json) {
+				T value;
+				json[parameter.getName()] >> value;
+				parameter.set(value);
+			}
 			static void deserialize(ofParameter<int> &, const Json::Value &);
 			static void deserialize(ofParameter<float> &, const Json::Value &);
 			static void deserialize(ofParameter<bool> &, const Json::Value &);
 			static void deserialize(ofParameter<string> &, const Json::Value &);
 		};
 	}
-}
-
-template<typename T>
-Json::Value & operator<< (Json::Value & json, const T & streamSerializableObject) {
-	stringstream stream;
-	stream << streamSerializableObject;
-	json = stream.str();
-	return json;
-}
-
-template<typename T>
-const Json::Value & operator>> (const Json::Value & json, T & streamSerializableObject) {
-	stringstream stream(json.asString());
-	stream >> streamSerializableObject;
-	return json;
 }

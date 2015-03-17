@@ -35,7 +35,7 @@ namespace ofxDigitalEmulsion {
 			this->drawPointSize.set("Point size for draw", 1.0f, 1.0f, 10.0f);
 			this->drawDebugRays.set("Draw debug rays", false);
 
-			cameraPin->onNewConnectionTyped += [this](shared_ptr<Item::Camera> & cameraNode) {
+			cameraPin->onNewConnection += [this](shared_ptr<Item::Camera> & cameraNode) {
 				cameraNode->getView()->onMouse.removeListeners(this);
 				weak_ptr<Item::Camera> cameraNodeWeak = cameraNode;
 				cameraNode->getView()->onMouse.addListener([this, cameraNodeWeak](MouseArguments & mouseArgs) {
@@ -49,11 +49,11 @@ namespace ofxDigitalEmulsion {
 					}
 				}, this);
 			};
-			cameraPin->onDeleteConnectionTyped += [this](shared_ptr<Item::Camera> & cameraNode) {
+			cameraPin->onDeleteConnection += [this](shared_ptr<Item::Camera> & cameraNode) {
 				cameraNode->getView()->onMouse.removeListeners(this);
 			};
 
-			projectorPin->onNewConnectionTyped += [this](shared_ptr<Item::Projector> & projectorNode) {
+			projectorPin->onNewConnection += [this](shared_ptr<Item::Projector> & projectorNode) {
 				projectorNode->getView()->onMouse.removeListeners(this);
 				weak_ptr<Item::Projector> projectorNodeWeak = projectorNode;
 				projectorNode->getView()->onMouse.addListener([this, projectorNodeWeak](MouseArguments & mouseArgs) {
@@ -67,7 +67,7 @@ namespace ofxDigitalEmulsion {
 					}
 				}, this);
 			};
-			projectorPin->onDeleteConnectionTyped += [this](shared_ptr<Item::Projector> & projectorNode) {
+			projectorPin->onDeleteConnection += [this](shared_ptr<Item::Projector> & projectorNode) {
 				projectorNode->getView()->onMouse.removeListeners(this);
 			};
 		}

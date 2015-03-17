@@ -38,8 +38,8 @@ namespace ofxDigitalEmulsion {
 			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
 			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
 
-			ofxLiquidEvent<shared_ptr<Node>> onNewConnection;
-			ofxLiquidEvent<shared_ptr<Node>> onDeleteConnection;
+			ofxLiquidEvent<shared_ptr<Node>> onNewConnectionUntyped;
+			ofxLiquidEvent<shared_ptr<Node>> onDeleteConnectionUntyped;
 		protected:
 			shared_ptr<Editor::PinView> pinView;
 		private:
@@ -73,9 +73,9 @@ namespace ofxDigitalEmulsion {
 
 			void connect(shared_ptr<NodeType> node) {
 				this->connection = node;
-				this->onNewConnectionTyped(node);
+				this->onNewConnection(node);
 				auto untypedNode = shared_ptr<Node>(node);
-				this->onNewConnection(untypedNode);
+				this->onNewConnectionUntyped(untypedNode);
 			}
 
 			void connect(shared_ptr<Node> node) override {
@@ -91,9 +91,9 @@ namespace ofxDigitalEmulsion {
 				this->connection.reset(); //we clear the state before firing the event (e.g. for rebuilding link list)
 
 				if (node) {
-					this->onDeleteConnectionTyped.notifyListeners(node);
+					this->onDeleteConnection.notifyListeners(node);
 					auto untypedNode = shared_ptr<Node>(node);
-					this->onDeleteConnection.notifyListeners(untypedNode);
+					this->onDeleteConnectionUntyped.notifyListeners(untypedNode);
 				}	
 			}
 			
@@ -123,8 +123,8 @@ namespace ofxDigitalEmulsion {
 				return NodeType().getColor();
 			}
 			
-			ofxLiquidEvent<shared_ptr<NodeType> > onNewConnectionTyped;
-			ofxLiquidEvent<shared_ptr<NodeType> > onDeleteConnectionTyped; /// remember to check if the pointer is still valid
+			ofxLiquidEvent<shared_ptr<NodeType> > onNewConnection;
+			ofxLiquidEvent<shared_ptr<NodeType> > onDeleteConnection; /// remember to check if the pointer is still valid
 		protected:
 			weak_ptr<NodeType> connection;
 		};

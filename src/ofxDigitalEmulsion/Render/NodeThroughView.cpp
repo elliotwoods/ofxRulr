@@ -21,12 +21,12 @@ namespace ofxDigitalEmulsion {
 			this->addInput<Item::View>();
 			auto videoOutputInput = this->addInput<Device::VideoOutput>();
 
-			videoOutputInput->onNewConnectionTyped += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+			videoOutputInput->onNewConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
 				videoOutput->onDrawOutput.addListener([this](ofRectangle & videoBounds) {
 					this->drawOnVideoOutput(videoBounds);
 				}, this);
 			};
-			videoOutputInput->onDeleteConnectionTyped += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+			videoOutputInput->onDeleteConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
 				if (videoOutput) {
 					videoOutput->onDrawOutput.removeListeners(this);
 				}

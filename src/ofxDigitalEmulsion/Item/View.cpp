@@ -39,6 +39,11 @@ namespace ofxDigitalEmulsion {
 				this->distortion[i].set("Distortion K" + ofToString(i + 1), 0.0f, -1000.0f, 1000.0f);
 			}
 
+			this->focalLengthX.addListener(this, &View::parameterCallback);
+			this->focalLengthY.addListener(this, &View::parameterCallback);
+			this->principalPointX.addListener(this, &View::parameterCallback);
+			this->principalPointX.addListener(this, &View::parameterCallback);
+
 			this->viewInObjectSpace.setDefaultFar(20.0f);
 		}
 
@@ -50,7 +55,6 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void View::drawObject() {
 			this->viewInObjectSpace.draw();
-			ofDrawBitmapString(this->getName(), ofVec3f());
 		}
 
 		//---------
@@ -146,6 +150,12 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void View::setProjection(const ofMatrix4x4 & projection) {
+			ofLogWarning("View::setProjection") << "Calls to this function will only change cached objects (not parameters). Use this function for debug purposes only.";
+			this->viewInObjectSpace.setProjection(projection);
+		}
+
+		//----------
 		cv::Size View::getSize() const {
 			return cv::Size(this->getWidth(), this->getHeight());
 		}
@@ -199,6 +209,11 @@ namespace ofxDigitalEmulsion {
 				fileout.write((char*)& matrix, sizeof(matrix));
 				fileout.close();
 			}
+		}
+
+		//---------
+		void View::parameterCallback(float &) {
+			this->rebuildViewFromParameters();
 		}
 	}
 }

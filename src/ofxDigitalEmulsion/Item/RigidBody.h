@@ -33,6 +33,6 @@ namespace ofxDigitalEmulsion {
 		};
 
 		ofVec3f toEuler(const ofQuaternion &);
-		ofQuaternion toQuaternion(const ofVec3f &);
+		ofQuaternion toQuaternion(const ofVec3f & degrees);
 	}
 }

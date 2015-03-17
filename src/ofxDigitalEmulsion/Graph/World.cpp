@@ -177,6 +177,8 @@ namespace ofxDigitalEmulsion {
 			//--
 
 
+
+
 			World::gui = & controller;
 			
 			if (!this->empty()) {

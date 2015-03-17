@@ -123,7 +123,7 @@ namespace ofxDigitalEmulsion {
 							this->onReleaseMakeConnection(args);
 						}
 					};
-					inputPin->onDeleteConnection += [this, inputPinWeak](shared_ptr<Node> &) {
+					inputPin->onDeleteConnectionUntyped += [this, inputPinWeak](shared_ptr<Node> &) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
 							this->onDropInputConnection(inputPin);

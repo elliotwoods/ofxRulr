@@ -24,6 +24,7 @@ namespace ofxDigitalEmulsion {
 			virtual float getHeight() const;
 
 			void setIntrinsics(cv::Mat cameraMatrix, cv::Mat distortionCoefficients = cv::Mat::zeros(OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT, 1, CV_64F));
+			void setProjection(const ofMatrix4x4 &);
 
 			cv::Size getSize() const;
 			cv::Mat getCameraMatrix() const;
@@ -46,6 +47,7 @@ namespace ofxDigitalEmulsion {
 			//Versions of this view as an ofxRay::Camera in world space and object space
 			ofxRay::Camera viewInObjectSpace;
 		private:
+			void parameterCallback(float &);
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
 			void populateInspector(ofxCvGui::ElementGroupPtr);

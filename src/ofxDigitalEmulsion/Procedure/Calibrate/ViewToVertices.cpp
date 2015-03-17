@@ -7,7 +7,7 @@
 #include "ofxCvGui/Widgets/SelectFile.h"
 #include "ofxCvGui/Widgets/Indicator.h"
 #include "ofxCvGui/Widgets/Button.h"
-#include "ofxSpinCursor.h"
+#include "../../../addons/ofxSpinCursor/src/ofxSpinCursor.h"
 
 #include "ofxCvMin.h"
 
@@ -123,9 +123,8 @@ namespace ofxDigitalEmulsion {
 
 					//if the mouse is dragging then move the vertex in view space
 					if (args.isDragging(view) && this->dragVerticesEnabled) {
-						auto videoOutput = this->getInput<Device::VideoOutput>();
 						auto referenceVertices = this->getInput<IReferenceVertices>();
-						if (videoOutput && referenceVertices) {
+						if (referenceVertices) {
 							const auto & vertices = referenceVertices->getVertices();
 							for (auto vertex : vertices) {
 								if (vertex->isSelected()) {
@@ -141,56 +140,63 @@ namespace ofxDigitalEmulsion {
 					}
 				};
 				view->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
-					ofVec2f movement;
-					switch (args.key) {
-					case OF_KEY_LEFT:
-						movement.x = -1;
-						break;
-					case OF_KEY_RIGHT:
-						movement.x = +1;
-						break;
-					case OF_KEY_UP:
-						movement.y = -1;
-						break;
-					case OF_KEY_DOWN:
-						movement.y = +1;
-						break;
-					}
-					if (movement != ofVec2f()) {
-						if (ofGetKeyPressed(OF_KEY_SHIFT)) {
-							movement *= 5;
+					if (args.action == KeyboardArguments::Action::Pressed) {
+						ofVec2f movement;
+						switch (args.key) {
+						case OF_KEY_LEFT:
+							movement.x = -1;
+							break;
+						case OF_KEY_RIGHT:
+							movement.x = +1;
+							break;
+						case OF_KEY_UP:
+							movement.y = -1;
+							break;
+						case OF_KEY_DOWN:
+							movement.y = +1;
+							break;
+						default:
+							break;
 						}
-						auto referenceVertices = this->getInput<IReferenceVertices>();
-						if (referenceVertices) {
-							const auto & vertices = referenceVertices->getVertices();
-							for (auto vertex : vertices) {
-								if (vertex->isSelected()) {
-									vertex->viewPosition += movement;
-									referenceVertices->onChangeVertex.notifyListeners();
+
+						if (movement != ofVec2f()) {
+							if (ofGetKeyPressed(OF_KEY_SHIFT)) {
+								movement *= 5;
+							}
+							auto referenceVertices = this->getInput<IReferenceVertices>();
+							if (referenceVertices) {
+								const auto & vertices = referenceVertices->getVertices();
+								for (auto vertex : vertices) {
+									if (vertex->isSelected()) {
+										vertex->viewPosition += movement;
+										referenceVertices->onChangeVertex.notifyListeners();
+									}
 								}
 							}
 						}
 					}
 				};
+
 				this->view = view;
 
 				this->dragVerticesEnabled.set("Drag vertices enabled", true);
+				this->useExistingParametersAsInitial.set("Use existing data as initial", false);
 				this->projectorReferenceImageFilename.set("Projector reference image filename", "");
 				this->calibrateOnVertexChange.set("Calibrate on vertex change", true);
 
-				videoOutputPin->onNewConnectionTyped += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+				videoOutputPin->onNewConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
 					videoOutput->onDrawOutput.addListener([this](ofRectangle & outputRectangle) {
 						this->drawOnProjector();
 					}, this);
 				};
-				videoOutputPin->onDeleteConnectionTyped += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+				videoOutputPin->onDeleteConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
 					if (videoOutput) {
 						videoOutput->onDrawOutput.removeListeners(this);
 					}
 				};
 
 				//auto-call calibrate when a vertex changes
-				referenceVerticesPin->onNewConnectionTyped += [this](shared_ptr<IReferenceVertices> referenceVertices) {
+				referenceVerticesPin->onNewConnection += [this](shared_ptr<IReferenceVertices> referenceVertices) {
 					auto referenceVerticesWeak = weak_ptr<IReferenceVertices>(referenceVertices);
 					referenceVertices->onChangeVertex.addListener([this, referenceVerticesWeak]() {
 						if (this->calibrateOnVertexChange) {
@@ -205,9 +211,12 @@ namespace ofxDigitalEmulsion {
 						}
 					}, this);
 				};
-				referenceVerticesPin->onDeleteConnectionTyped += [this](shared_ptr<IReferenceVertices> referenceVertices) {
+				referenceVerticesPin->onDeleteConnection += [this](shared_ptr<IReferenceVertices> referenceVertices) {
 					referenceVertices->onChangeVertex.removeListeners(this);
 				};
+
+				this->success = false;
+				this->reprojectionError = 0.0f;
 			}
 
 			//---------
@@ -223,6 +232,9 @@ namespace ofxDigitalEmulsion {
 			//---------
 			void ViewToVertices::serialize(Json::Value & json) {
 				ofxDigitalEmulsion::Utils::Serializable::serialize(this->projectorReferenceImageFilename, json);
+				ofxDigitalEmulsion::Utils::Serializable::serialize(this->dragVerticesEnabled, json);
+				ofxDigitalEmulsion::Utils::Serializable::serialize(this->calibrateOnVertexChange, json);
+				ofxDigitalEmulsion::Utils::Serializable::serialize(this->useExistingParametersAsInitial, json);
 			}
 
 			//---------
@@ -234,6 +246,10 @@ namespace ofxDigitalEmulsion {
 				else {
 					this->projectorReferenceImage.loadImage(this->projectorReferenceImageFilename.get());
 				}
+
+				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->dragVerticesEnabled, json);
+				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->calibrateOnVertexChange, json);
+				ofxDigitalEmulsion::Utils::Serializable::deserialize(this->useExistingParametersAsInitial, json);
 			}
 
 			//---------
@@ -264,15 +280,13 @@ namespace ofxDigitalEmulsion {
 				calibrateButton->setHeight(100.0f);
 				inspector->add(calibrateButton);
 				inspector->add(Widgets::Toggle::make(this->calibrateOnVertexChange));
+				inspector->add(Widgets::Toggle::make(this->useExistingParametersAsInitial));
 				inspector->add(Widgets::LiveValue<float>::make("Reprojection error", [this]() {
 					return this->reprojectionError;
 				}));
 				inspector->add(Widgets::Indicator::make("Calibration success", [this]() {
 					return (Widgets::Indicator::Status) this->success;
 				}));
-
-				this->success = false;
-				this->reprojectionError = 0.0f;
 			}
 
 			//---------
@@ -296,30 +310,88 @@ namespace ofxDigitalEmulsion {
 					view.push_back(vertex->viewPosition);
 				}
 
-				auto cameraMatrix = viewNode->getCameraMatrix();
-				auto distortionCoefficients = viewNode->getDistortionCoefficients();
 				vector<cv::Mat> rotations, translations;
 				auto viewSize = viewNode->getSize();
 
-				//clamp the initial intrinsics so that principal point is inside the image plane.
-				//this is generally true for cameras, and insisted by OpenCV before fitting,
-				//but often not true for projectors and the fit function will return principal
-				//points outside of this range.
-				auto & principalPointX = cameraMatrix.at<double>(0, 2);
-				auto & principalPointY = cameraMatrix.at<double>(1, 2);
-				if (principalPointX <= 1) {
-					principalPointX = 1;
-				}
-				if (principalPointX >= viewSize.width - 2) {
-					principalPointX = viewSize.width - 2;
-				}
-				if (principalPointY <= 1) {
-					principalPointY = 1;
-				}
-				if (principalPointY >= viewSize.height - 2) {
-					principalPointY = viewSize.height - 2;
-				}
 
+
+				//--
+				//Initialise matrices
+				//--
+				//
+				cv::Mat cameraMatrix, distortionCoefficients;
+				if (this->useExistingParametersAsInitial) {
+					cameraMatrix = viewNode->getCameraMatrix();
+					distortionCoefficients = viewNode->getDistortionCoefficients();
+
+					//clamp the initial intrinsics so that focal length is positive
+					auto & focalLengthX = cameraMatrix.at<double>(0, 0);
+					auto & focalLengthY = cameraMatrix.at<double>(1, 1);
+					if (focalLengthX <= 0) {
+						focalLengthX = viewSize.width;
+					}
+					if (focalLengthY <= 0) {
+						focalLengthY = viewSize.height;
+					}
+
+					//clamp the initial intrinsics so that principal point is inside the image plane.
+					//this is generally true for cameras, and insisted by OpenCV before fitting,
+					//but often not true for projectors and the fit function will return principal
+					//points outside of this range.
+					auto & principalPointX = cameraMatrix.at<double>(0, 2);
+					auto & principalPointY = cameraMatrix.at<double>(1, 2);
+					if (principalPointX <= 1) {
+						principalPointX = 1;
+					}
+					if (principalPointX >= viewSize.width - 2) {
+						principalPointX = viewSize.width - 2;
+					}
+					if (principalPointY <= 1) {
+						principalPointY = 1;
+					}
+					if (principalPointY >= viewSize.height - 2) {
+						principalPointY = viewSize.height - 2;
+					}
+				}
+				else {
+					//setup some default characteristics
+					cameraMatrix = Mat::eye(3, 3, CV_64F);
+					cameraMatrix.at<double>(0, 0) = (double)viewSize.width * 1.0; // default at throw ratio of 1. : 1.0f throw ratio
+					cameraMatrix.at<double>(1, 1) = (double)viewSize.height * 1.0;
+					cameraMatrix.at<double>(0, 2) = viewSize.width / 2.0f;
+					cameraMatrix.at<double>(1, 2) = viewSize.height * (0.50f - -0.4 / 2.0f); // default at 40% lens offset
+
+					distortionCoefficients = Mat::zeros(5, 1, CV_64F);
+				}
+				//
+				//--
+
+
+				//--
+				//check videoOutput has same size
+				//--
+				//
+				auto videoOutput = this->getInput<Device::VideoOutput>();
+				if (videoOutput) {
+					if (videoOutput->getWidth() != viewSize.width || videoOutput->getHeight() != viewSize.height) {
+						ofLogWarning("ViewToVertices") << "VideoOutput's size does not match View's size";
+					}
+				}
+				//
+				//--
+
+
+
+				//INSERT SYNETHESISED DATA
+				//ofLogWarning() << "USING SYNTHESISED DATA for 1280x800 view";
+				//worldRows.clear(); viewRows.clear();
+				//worldRows.push_back(vector<ofVec3f>()); viewRows.push_back(vector<ofVec2f>());
+				//worldRows[0].push_back(ofVec3f(0.4245, -0.3661, 0.4878)); viewRows[0].push_back(ofVec2f(596.9032, 721.8095));				//worldRows[0].push_back(ofVec3f(0.3507, 0.4697, -0.4054)); viewRows[0].push_back(ofVec2f(490.7527, 278.5092));				//worldRows[0].push_back(ofVec3f(-0.4230, 0.1083, -0.4126)); viewRows[0].push_back(ofVec2f(839.1771, 427.4655));				//worldRows[0].push_back(ofVec3f(-0.1699, -0.0651, -0.4814)); viewRows[0].push_back(ofVec2f(709.3167, 524.0535));				//worldRows[0].push_back(ofVec3f(0.2611, 0.3133, -0.1917)); viewRows[0].push_back(ofVec2f(563.7585, 382.7776));				//worldRows[0].push_back(ofVec3f(0.1478, 0.3996, 0.4931)); viewRows[0].push_back(ofVec2f(689.3846, 419.8475));				//worldRows[0].push_back(ofVec3f(0.0032, 0.1185, -0.2893)); viewRows[0].push_back(ofVec2f(656.1019, 455.0570));
+
+				//--
+				//setup flags
+				//--
+				//
 				auto flags = CV_CALIB_USE_INTRINSIC_GUESS; // since we're using a single object
 				if (viewNode->getHasDistortion()) {
 					flags |= OFXDIGITALEMULSION_VIEW_CALIBRATION_FLAGS;
@@ -327,14 +399,39 @@ namespace ofxDigitalEmulsion {
 				else {
 					flags |= (CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST);
 				}
+				//--
+
+
+
+				//--
+				//FIT
+				//--
+				//
 				auto reprojectionError = cv::calibrateCamera(toCv(worldRows), toCv(viewRows), viewSize, cameraMatrix, distortionCoefficients, rotations, translations, flags);
 				//we might have thrown at this point
+				//
+				//--
 				
+
+
+				//--
+				//Set output
+				//--
+				//
 				viewNode->setIntrinsics(cameraMatrix, distortionCoefficients);
 				auto objectTransform = ofxCv::makeMatrix(rotations[0], translations[0]);
 				viewNode->setTransform(objectTransform.getInverse());
 				this->success = true;
 				this->reprojectionError = reprojectionError;
+				//
+				//--
+
+				for (auto & point : worldRows[0]) {
+					cout << point << endl;
+				}
+				for (auto & point : viewRows[0]) {
+					cout << point << endl;
+				}
 			}
 
 			//---------

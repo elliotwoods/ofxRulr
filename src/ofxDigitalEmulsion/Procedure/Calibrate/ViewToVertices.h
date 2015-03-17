@@ -38,6 +38,7 @@ namespace ofxDigitalEmulsion {
 				ofImage projectorReferenceImage;
 				ofParameter<bool> dragVerticesEnabled;
 				ofParameter<bool> calibrateOnVertexChange;
+				ofParameter<bool> useExistingParametersAsInitial;
 				bool success;
 				float reprojectionError;
 			};

@@ -147,14 +147,14 @@ namespace ofxDigitalEmulsion {
 		void Node::addInput(shared_ptr<AbstractPin> pin) {
 			//setup events to fire on this node for this pin
 			auto pinWeak = weak_ptr<AbstractPin>(pin);
-			pin->onNewConnection += [this, pinWeak](shared_ptr<Node> &) {
+			pin->onNewConnectionUntyped += [this, pinWeak](shared_ptr<Node> &) {
 				auto pin = pinWeak.lock();
 				if (pin) {
 					this->onConnect(pin);
 				}
 				this->onAnyInputConnectionChanged.notifyListeners();
 			};
-			pin->onDeleteConnection += [this, pinWeak](shared_ptr<Node> &) {
+			pin->onDeleteConnectionUntyped += [this, pinWeak](shared_ptr<Node> &) {
 				auto pin = pinWeak.lock();
 				if (pin) {
 					this->onDisconnect(pin);

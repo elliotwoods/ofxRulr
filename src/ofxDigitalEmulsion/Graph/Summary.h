@@ -17,13 +17,20 @@ namespace ofxDigitalEmulsion {
 			void deserialize(const Json::Value &);
 			void populateInspector(ofxCvGui::ElementGroupPtr);
 			void callbackShowCursor(bool &);
+
+			void drawGrid();
+
 			shared_ptr<ofxCvGui::Panels::World> view;
 
 			ofParameter<bool> showCursor;
 			ofParameter<bool> showGrid;
-			ofParameter<float> gridScale;
+			ofParameter<ofVec3f> roomMinimum;
+			ofParameter<ofVec3f> roomMaximum;
+			ofLight light;
 
 			const Utils::Set<Graph::Node> & world;
+
+			ofImage * grid;
 		};
 	}
 }
