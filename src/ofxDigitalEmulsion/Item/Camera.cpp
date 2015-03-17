@@ -119,6 +119,27 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		float Camera::getWidth() const {
+			if (this->grabber) {
+				if (this->grabber->getIsDeviceOpen()) {
+					auto width = this->grabber->getWidth();
+					return width;
+				}
+			}
+			return View::getWidth(); // else return the width of the view object
+		}
+
+		//----------
+		float Camera::getHeight() const {
+			if (this->grabber) {
+				if (this->grabber->getIsDeviceOpen()) {
+					return this->grabber->getHeight();
+				}
+			}
+			return View::getWidth(); // else return the height of the view object
+		}
+
+		//----------
 		void Camera::setDeviceIndex(int deviceIndex) {
 			if (this->deviceIndex.get() == deviceIndex) {
 				//do nothing
@@ -160,6 +181,8 @@ namespace ofxDigitalEmulsion {
 						throw(ofxDigitalEmulsion::Exception("Cannot start capture on device of type [" + device->getTypeName() + "] at deviceIndex [" + ofToString(this->deviceIndex) + "]"));
 					}
 
+					this->grabber->getFreshFrame(); // get the first frame to initialise the size of the frame
+					this->rebuildViewFromParameters(); // size will have changed
 					this->setAllCameraProperties();
 
 					auto cameraView = ofxCvGui::Builder::makePanel(*this->grabber);
