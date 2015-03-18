@@ -40,6 +40,8 @@ namespace ofxDigitalEmulsion {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 
+				void insertPatchlet(const Json::Value &, bool useNewIDs, ofVec2f offset = ofVec2f());
+
 				ofxCvGui::PanelPtr getView() override;
 				void update();
 				void drawWorld() override;
@@ -64,6 +66,8 @@ namespace ofxDigitalEmulsion {
 				shared_ptr<NodeHost> findNodeHost(shared_ptr<Node>) const;
 				shared_ptr<NodeHost> getNodeHost(NodeHost::Index) const;
 			protected:
+				void populateInspector(ofxCvGui::ElementGroupPtr);
+
 				NodeHost::Index getNextFreeNodeHostIndex() const;
 				LinkHost::Index getNextFreeLinkHostIndex() const;
 				void callbackBeginMakeConnection(shared_ptr<NodeHost> targetNodeHost, shared_ptr<AbstractPin> targetPin);

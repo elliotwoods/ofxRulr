@@ -3,7 +3,9 @@
 #include "ofSystemUtils.h"
 #include "ofxClipboard.h"
 
-#include "ofxCvGui/Utils/Button.h"
+#include "ofxCvGui/Widgets/Button.h"
+
+using namespace ofxCvGui;
 
 namespace ofxDigitalEmulsion {
 	namespace Graph {
@@ -215,6 +217,7 @@ namespace ofxDigitalEmulsion {
 
 				OFXDIGITALEMULSION_NODE_UPDATE_LISTENER;
 				OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
+				OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
 			}
 
 			//----------
@@ -261,13 +264,38 @@ namespace ofxDigitalEmulsion {
 			void Patch::deserialize(const Json::Value & json) {
 				this->nodeHosts.clear();
 				
-				const auto & nodesJson = json["Nodes"];
+				this->insertPatchlet(json, false);
 
+				const auto & canvasJson = json["Canvas"];
+				ofVec2f canvasScrollPosiition;
+				canvasJson["Scroll"] >> canvasScrollPosiition;
+				this->view->setScrollPosition(canvasScrollPosiition);
+
+			}
+
+			//----------
+			void Patch::insertPatchlet(const Json::Value & json, bool useNewIDs, ofVec2f offset) {
+				bool hasOffset = offset != ofVec2f();
+				map<int, int> reassignIDs;
+
+				const auto & nodesJson = json["Nodes"];
 				//Deserialise nodes
 				for (const auto & nodeJson : nodesJson) {
-					const auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
+					auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
+					if (useNewIDs) {
+						//use a new ID instead, store a reference to what we changed
+						auto newID = this->getNextFreeNodeHostIndex();
+						reassignIDs.insert(pair<int, int>(ID, newID));
+						ID = newID;
+					}
 					try {
 						auto nodeHost = FactoryRegister::X().make(nodeJson);
+						if (hasOffset) {
+							auto bounds = nodeHost->getBounds();
+							bounds.x += offset.x;
+							bounds.y += offset.y;
+							nodeHost->setBounds(bounds);
+						}
 						this->addNodeHost(nodeHost, ID);
 					}
 					OFXDIGITALEMULSION_CATCH_ALL_TO_ERROR
@@ -275,11 +303,14 @@ namespace ofxDigitalEmulsion {
 
 				//Deserialise links into the nodes
 				for (const auto & nodeJson : nodesJson) {
-					const auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
+					auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
+					if (useNewIDs) {
+						ID = reassignIDs.at(ID);
+					}
 
 					//check we successfully created this node before continuing
 					if (this->nodeHosts.find(ID) != this->nodeHosts.end()) {
-						auto nodeHost = this->getNodeHost(nodeJson["ID"].asInt());
+						auto nodeHost = this->getNodeHost(ID);
 						if (nodeHost) {
 							auto node = nodeHost->getNodeInstance();
 							const auto & inputPinsJson = nodeJson["InputsPins"];
@@ -288,7 +319,10 @@ namespace ofxDigitalEmulsion {
 							for (auto & inputPin : node->getInputPins()) {
 								const auto & inputPinJson = inputPinsJson[inputPin->getName()];
 								if (!inputPinJson.isNull()) { //check this pin has been serialised to a node ID
-									const auto sourceNodeHostIndex = (NodeHost::Index) inputPinJson["SourceNode"].asInt();
+									auto sourceNodeHostIndex = (NodeHost::Index) inputPinJson["SourceNode"].asInt();
+									if (useNewIDs) {
+										sourceNodeHostIndex = reassignIDs.at(sourceNodeHostIndex);
+									}
 									auto sourceNodeHost = this->getNodeHost(sourceNodeHostIndex);
 
 									//check the node index we want to connect to exists in the patch
@@ -306,12 +340,6 @@ namespace ofxDigitalEmulsion {
 
 				this->rebuildLinkHosts();
 				this->view->resync();
-
-				const auto & canvasJson = json["Canvas"];
-				ofVec2f canvasScrollPosiition;
-				canvasJson["Scroll"] >> canvasScrollPosiition;
-				this->view->setScrollPosition(canvasScrollPosiition);
-
 			}
 
 			//----------
@@ -503,6 +531,20 @@ namespace ofxDigitalEmulsion {
 					nodeHost = this->nodeHosts.at(index);
 				}
 				return nodeHost; // Returns empty pointer if not available
+			}
+
+			//----------
+			void Patch::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				inspector->add(Widgets::Button::make("Duplicate patch down", [this]() {
+					Json::Value json;
+					this->serialize(json);
+					this->insertPatchlet(json, true, this->view->getCanvasExtents().getBottomLeft());
+				}));
+				inspector->add(Widgets::Button::make("Duplicate patch right", [this]() {
+					Json::Value json;
+					this->serialize(json);
+					this->insertPatchlet(json, true, this->view->getCanvasExtents().getTopRight());
+				}));
 			}
 
 			//----------

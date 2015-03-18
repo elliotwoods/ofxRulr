@@ -116,8 +116,7 @@ namespace ofxDigitalEmulsion {
 
 			template<typename NodeType>
 			shared_ptr<Pin<NodeType>> addInput(const string & pinName) {
-				auto inputPin = make_shared<Pin<NodeType>>();
-				inputPin->setName(pinName);
+				auto inputPin = make_shared<Pin<NodeType>>(pinName);
 				this->addInput(inputPin);
 				return inputPin;
 			}

@@ -3,6 +3,7 @@
 #include <exception>
 #include <string>
 #include "opencv2/core/core.hpp"
+#include <Poco/Exception.h>
 
 namespace ofxDigitalEmulsion {
 	class Exception : public std::exception {

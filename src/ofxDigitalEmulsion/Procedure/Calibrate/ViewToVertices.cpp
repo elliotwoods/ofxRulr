@@ -159,7 +159,7 @@ namespace ofxDigitalEmulsion {
 							break;
 						}
 
-						if (movement != ofVec2f()) {
+						if (movement != ofVec2f() && this->dragVerticesEnabled) {
 							if (ofGetKeyPressed(OF_KEY_SHIFT)) {
 								movement *= 5;
 							}

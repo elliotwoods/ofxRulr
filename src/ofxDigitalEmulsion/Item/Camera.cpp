@@ -260,6 +260,7 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void Camera::clearDevice() {
 			this->setDevice(DevicePtr());
+			this->deviceTypeName.set("uninitialised");
 		}
 
 		//----------
