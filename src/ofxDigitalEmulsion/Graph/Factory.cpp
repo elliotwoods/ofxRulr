@@ -91,8 +91,8 @@ namespace ofxDigitalEmulsion {
 			}
 
 			auto node = factory->make();
-			node->deserialize(json["Content"]);
 			node->setName(json["Name"].asString());
+			node->deserialize(json["Content"]);
 
 			auto nodeHost = make_shared<Editor::NodeHost>(node);
 			
