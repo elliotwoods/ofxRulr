@@ -79,13 +79,32 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void KinectV2::drawObject() {
 			if (this->device) {
-				switch (this->viewType.get()) {
-				case 1:
-					this->device->getBodySource()->drawBodies();
-					break;
+				switch (this->viewType.get()) { // don't break on the cases, flow through
 				case 2:
 					this->device->drawWorld(ofxKinectForWindows2::Device::DrawStyle::Vertices);
-					break;
+				case 1:
+				{
+					auto bodySource = this->device->getBodySource();
+					if (bodySource) {
+						bodySource->drawBodies();
+					}
+				}
+				case 0:
+				{
+					ofPushStyle();
+					ofSetColor(this->getColor());
+					ofNoFill();
+					ofSetLineWidth(1.0f);
+					auto depthSource = this->device->getDepthSource();
+					if (depthSource) {
+						depthSource->drawFrustum();
+					}
+					auto colorSource = this->device->getColorSource();
+					if (colorSource) {
+						colorSource->drawFrustum();
+					}
+					ofPopStyle();
+				}
 				default:
 					break;
 				}
@@ -106,7 +125,7 @@ namespace ofxDigitalEmulsion {
 			inspector->add(selectPlayState);
 
 			auto selectViewType = make_shared<ofxCvGui::Widgets::MultipleChoice>("3D View");
-			selectViewType->addOption("None");
+			selectViewType->addOption("Frustums");
 			selectViewType->addOption("Bodies");
 			selectViewType->addOption("All");
 			selectViewType->entangle(this->viewType);

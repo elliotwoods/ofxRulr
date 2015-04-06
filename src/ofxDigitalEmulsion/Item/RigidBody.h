@@ -11,7 +11,7 @@ namespace ofxDigitalEmulsion {
 			virtual string getTypeName() const override;
 			void init();
 			void drawWorld() override;
-			virtual void drawObject() { }
+			virtual void drawObject();
 
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
@@ -19,7 +19,7 @@ namespace ofxDigitalEmulsion {
 
 			ofMatrix4x4 getTransform() const;
 			void setTransform(const ofMatrix4x4 &);
-			void setExtrinsics(cv::Mat rotation, cv::Mat translation);
+			void setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse = false);
 
 			ofxLiquidEvent<void> onTransformChange;
 		protected:

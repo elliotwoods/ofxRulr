@@ -47,6 +47,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//---------
+		void RigidBody::drawObject() {
+			ofDrawAxis(0.3f);
+		}
+
+		//---------
 		void RigidBody::serialize(Json::Value & json) {
 			auto & jsonTransform = json["transform"];
 
@@ -145,9 +150,14 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void RigidBody::setExtrinsics(cv::Mat rotation, cv::Mat translation) {
+		void RigidBody::setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse) {
 			const auto extrinsicsMatrix = ofxCv::makeMatrix(rotation, translation);
-			this->setTransform(extrinsicsMatrix);
+			if (inverse) {
+				this->setTransform(extrinsicsMatrix.getInverse());
+			}
+			else {
+				this->setTransform(extrinsicsMatrix);
+			}
 		}
 
 		//----------

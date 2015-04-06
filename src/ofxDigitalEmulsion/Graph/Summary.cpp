@@ -36,8 +36,8 @@ namespace ofxDigitalEmulsion {
 			this->showCursor.addListener(this, &Summary::callbackShowCursor);
 			this->showCursor.set("Show Cursor", false);
 			this->showGrid.set("Show Grid", true);
-			this->roomMinimum.set("Room minimum", ofVec3f(-5.0f, -5.0f, 0.0f));
-			this->roomMaximum.set("Room maxmimim", ofVec3f(+5.0f, 0.0f, 10.0f));
+			this->roomMinimum.set("Room minimum", ofVec3f(-5.0f, -5.0f, -5.0f));
+			this->roomMaximum.set("Room maxmimim", ofVec3f(+5.0f, 0.0f, 0.0f));
 			this->view->setGridEnabled(false);
 		}
 
@@ -124,11 +124,11 @@ namespace ofxDigitalEmulsion {
 			//
 			//y
 			ofSetColor(100, 200, 100);
-			ofLine(0, roomMaximum.y, 0, roomMinimum.y);
+			ofLine(0, roomMaximum.y, roomMaximum.z, 0, roomMinimum.y, roomMaximum.z);
 			//
 			//z
 			ofSetColor(100, 200, 100);
-			ofLine(0, roomMaximum.y, roomMaximum.z, 0, roomMinimum.y, roomMinimum.z);
+			ofLine(0, roomMaximum.y, roomMaximum.z, 0, roomMaximum.y, roomMinimum.z);
 			//
 			ofPopStyle();
 			//
@@ -169,16 +169,20 @@ namespace ofxDigitalEmulsion {
 			ofPushMatrix();
 			//
 			//back wall
+			ofPushMatrix();
+			ofTranslate(0, 0, roomMaximum.z);
 			for (int x = roomMinimum.x; x < roomMaximum.x; x++) {
 				for (int y = roomMinimum.y; y < roomMaximum.y; y++) {
 					this->grid->draw((float)x, (float)y, 1.0f, 1.0f);
 				}
 			}
+			ofPopMatrix();
 			//
 			//floor
-			ofTranslate(0, roomMaximum.y, roomMinimum.z); // y = 0 is the floor
+			ofTranslate(0, roomMaximum.y, 0.0f); // y = 0 is the floor
 			//also translate so rotation is around start of room
 			ofRotate(90, -1, 0, 0);
+			ofTranslate(0, -roomMinimum.z, 0); // offset drawing to begin earlier
 			for (int x = roomMinimum.x; x < roomMaximum.x; x++) {
 				for (int z = roomMinimum.z; z < roomMaximum.z; z++) {
 					this->grid->draw((float) x, (float)z, +1.0f, 1.0f);

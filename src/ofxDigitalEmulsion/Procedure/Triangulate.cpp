@@ -13,7 +13,7 @@ namespace ofxDigitalEmulsion {
 	namespace Procedure {
 		//----------
 		Triangulate::Triangulate() {
-			
+			OFXDIGITALEMULSION_NODE_INIT_LISTENER;
 		}
 
 		//----------
@@ -33,43 +33,6 @@ namespace ofxDigitalEmulsion {
 			this->giveColor.set("Give color", true);
 			this->giveTexCoords.set("Give texture coordinates", true);
 			this->drawPointSize.set("Point size for draw", 1.0f, 1.0f, 10.0f);
-			this->drawDebugRays.set("Draw debug rays", false);
-
-			cameraPin->onNewConnection += [this](shared_ptr<Item::Camera> & cameraNode) {
-				cameraNode->getView()->onMouse.removeListeners(this);
-				weak_ptr<Item::Camera> cameraNodeWeak = cameraNode;
-				cameraNode->getView()->onMouse.addListener([this, cameraNodeWeak](MouseArguments & mouseArgs) {
-					auto cameraNode = cameraNodeWeak.lock();
-					if (cameraNode) {
-						if (mouseArgs.isLocal() && (mouseArgs.action == MouseArguments::Action::Pressed || mouseArgs.action == MouseArguments::Action::Dragged)) {
-							this->cameraRay = cameraNode->getViewInWorldSpace().castPixel(mouseArgs.localNormalised * ofVec2f(cameraNode->getWidth(), cameraNode->getHeight()));
-							this->intersectRay = this->cameraRay.intersect(this->projectorRay);
-							this->intersectRay.color = ofColor(255);
-						}
-					}
-				}, this);
-			};
-			cameraPin->onDeleteConnection += [this](shared_ptr<Item::Camera> & cameraNode) {
-				cameraNode->getView()->onMouse.removeListeners(this);
-			};
-
-			projectorPin->onNewConnection += [this](shared_ptr<Item::Projector> & projectorNode) {
-				projectorNode->getView()->onMouse.removeListeners(this);
-				weak_ptr<Item::Projector> projectorNodeWeak = projectorNode;
-				projectorNode->getView()->onMouse.addListener([this, projectorNodeWeak](MouseArguments & mouseArgs) {
-					auto projectorNode = projectorNodeWeak.lock();
-					if (projectorNode) {
-						if (mouseArgs.isLocal() && (mouseArgs.action == MouseArguments::Action::Pressed || mouseArgs.action == MouseArguments::Action::Dragged)) {
-							this->projectorRay = projectorNode->getViewInWorldSpace().castPixel(mouseArgs.localNormalised * ofVec2f(projectorNode->getWidth(), projectorNode->getHeight()));
-							this->intersectRay = this->cameraRay.intersect(this->projectorRay);
-							this->intersectRay.color = ofColor(255);
-						}
-					}
-				}, this);
-			};
-			projectorPin->onDeleteConnection += [this](shared_ptr<Item::Projector> & projectorNode) {
-				projectorNode->getView()->onMouse.removeListeners(this);
-			};
 		}
 
 		//----------
@@ -157,9 +120,6 @@ namespace ofxDigitalEmulsion {
 					save.close();
 				}
 			}));
-			
-			inspector->add(Widgets::Spacer::make());
-			inspector->add(Widgets::Toggle::make(this->drawDebugRays));
 		}
 		
 		//----------
@@ -182,12 +142,6 @@ namespace ofxDigitalEmulsion {
 				if (graycode) {
 					projector->getViewInWorldSpace().drawOnNearPlane(graycode->getDecoder().getCameraInProjector());
 				}
-			}
-			
-			if (this->drawDebugRays) {
-				this->cameraRay.draw();
-				this->projectorRay.draw();
-				this->intersectRay.draw();
 			}
 		}
 	}

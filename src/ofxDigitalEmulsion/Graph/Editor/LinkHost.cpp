@@ -48,10 +48,10 @@ namespace ofxDigitalEmulsion {
 					//outline
 					ofPushStyle();
 					ofSetColor(0);
-					ofSetLineWidth(4.0f);
+					ofSetLineWidth(3.0f);
 					wire.draw();
 
-					ofSetLineWidth(3.0f);
+					ofSetLineWidth(2.0f);
 					
 					//shadow
 					ofPushMatrix();

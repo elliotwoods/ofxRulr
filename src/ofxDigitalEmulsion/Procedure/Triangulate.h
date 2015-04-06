@@ -25,14 +25,10 @@ namespace ofxDigitalEmulsion {
 			
 			ofMesh mesh;
 			
-			ofxRay::Ray cameraRay, projectorRay, intersectRay;
-
 			ofParameter<float> maxLength;
 			ofParameter<bool> giveColor;
 			ofParameter<bool> giveTexCoords;
 			ofParameter<float> drawPointSize;
-			
-			ofParameter<bool> drawDebugRays;
 		};
 	}
 }

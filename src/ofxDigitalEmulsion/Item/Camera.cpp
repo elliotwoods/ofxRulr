@@ -264,6 +264,11 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
+		void Camera::reopenDevice() {
+			this->setDevice(this->getGrabber()->getDevice());
+		}
+
+		//----------
 		shared_ptr<Grabber::Simple> Camera::getGrabber() {
 			return this->grabber;
 		}
@@ -286,13 +291,12 @@ namespace ofxDigitalEmulsion {
 			inspector->add(Widgets::LiveValue<string>::make("Device Type", [this]() {
 				return this->deviceTypeName;
 			}));
-			auto deviceIndexWidget = Widgets::LiveValue<int>::make("Device Index", [this]() {
+			auto deviceIndexWidget = Widgets::EditableValue<int>::make("Device Index", [this]() {
 				return this->deviceIndex;
-			});
-			deviceIndexWidget->setEditable(true);
-			deviceIndexWidget->onEditValue += [this](string & deviceIndexSelection) {
+			}, [this](string & deviceIndexSelection) {
 				this->deviceIndex = ofToInt(deviceIndexSelection);
-			};
+				this->reopenDevice();
+			});
 			inspector->add(deviceIndexWidget);
 			inspector->add(Widgets::Button::make("Clear device", [this]() {
 				this->clearDevice();

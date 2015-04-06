@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../Procedure/Base.h"
+#include "ofxCvGui/Panels/Groups/Grid.h"
 
 namespace ofxDigitalEmulsion {
 	namespace Procedure {
@@ -8,8 +9,9 @@ namespace ofxDigitalEmulsion {
 			class CameraFromKinectV2 : public ofxDigitalEmulsion::Procedure::Base {
 			public:
 				struct Correspondence {
-					ofVec3f world;
+					ofVec3f kinectObject;
 					ofVec2f camera;
+					ofVec2f cameraNormalized;
 				};
 
 				CameraFromKinectV2();
@@ -26,7 +28,8 @@ namespace ofxDigitalEmulsion {
 			protected:
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 				void drawWorld();
-				ofxCvGui::PanelPtr view;
+				void rebuildView();
+				shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
 
 				ofParameter<bool> usePreTest;
 

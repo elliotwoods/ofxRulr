@@ -61,13 +61,13 @@ namespace ofxDigitalEmulsion {
 					ofPopStyle();
 				};
 
-				kinectPin->onNewConnectionTyped += [this](shared_ptr<Item::KinectV2> & kinectNode) {
+				kinectPin->onNewConnection += [this](shared_ptr<Item::KinectV2> & kinectNode) {
 					if (kinectNode) {
 						auto source = kinectNode->getDevice()->getColorSource();
 						this->view->setDrawObject(* source);
 					}
 				};
-				kinectPin->onDeleteConnection += [this](shared_ptr<Node> &) {
+				kinectPin->onDeleteConnectionUntyped += [this](shared_ptr<Node> &) {
 					this->view->clearDrawObject();
 				};
 

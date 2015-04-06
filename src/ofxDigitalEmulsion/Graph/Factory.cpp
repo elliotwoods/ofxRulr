@@ -92,7 +92,10 @@ namespace ofxDigitalEmulsion {
 
 			auto node = factory->make();
 			node->setName(json["Name"].asString());
-			node->deserialize(json["Content"]);
+			try {
+				node->deserialize(json["Content"]);
+			}
+			OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT // don't fail on bad deserialize, just notify user what went wrong
 
 			auto nodeHost = make_shared<Editor::NodeHost>(node);
 			

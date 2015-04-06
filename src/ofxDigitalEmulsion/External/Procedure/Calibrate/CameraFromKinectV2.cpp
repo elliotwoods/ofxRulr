@@ -50,50 +50,10 @@ namespace ofxDigitalEmulsion {
 
 				this->error = 0.0f;
 				
-				auto view = MAKE(ofxCvGui::Panels::Groups::Grid);
-				auto worldView = MAKE(ofxCvGui::Panels::World);
-				worldView->onDrawWorld += [this](ofCamera &) {
-					this->drawWorld();
+				this->view = MAKE(ofxCvGui::Panels::Groups::Grid);
+				this->onAnyInputConnectionChanged += [this]() {
+					this->rebuildView();
 				};
-				auto & camera = worldView->getCamera();
-				camera.setPosition(-1, -1, 0);
-				camera.lookAt(ofVec3f(0, 0, 3));
-				view->add(worldView);
-
-				auto kinectColorSource = this->getInput<Item::KinectV2>()->getDevice()->getColorSource();
-				auto kinectColorView = MAKE(ofxCvGui::Panels::Draws, kinectColorSource->getTextureReference());
-				kinectColorView->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
-					ofPolyline previewLine;
-					if (!this->previewCornerFindsKinect.empty()) {
-						ofCircle(this->previewCornerFindsKinect.front(), 10.0f);
-						for (const auto & previewCornerFind : this->previewCornerFindsKinect) {
-							previewLine.addVertex(previewCornerFind);
-						}
-					}
-					ofPushStyle();
-					ofSetColor(255, 0, 0);
-					previewLine.draw();
-					ofPopStyle();
-				};
-				view->add(kinectColorView);
-
-				auto cameraColorView = MAKE(ofxCvGui::Panels::Draws, this->getInput<Item::Camera>()->getGrabber()->getTextureReference());
-				cameraColorView->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
-					ofPolyline previewLine;
-					if (!this->previewCornerFindsCamera.empty()) {
-						ofCircle(this->previewCornerFindsCamera.front(), 10.0f);
-						for (const auto & previewCornerFind : this->previewCornerFindsCamera) {
-							previewLine.addVertex(previewCornerFind);
-						}
-					}
-					ofPushStyle();
-					ofSetColor(255, 0, 0);
-					previewLine.draw();
-					ofPopStyle();
-				};
-				view->add(cameraColorView);
-
-				this->view = view;
 			}
 
 			//----------
@@ -112,12 +72,9 @@ namespace ofxDigitalEmulsion {
 				int index = 0;
 				for (const auto & correspondence : this->correspondences) {
 					auto & jsonCorrespondence = jsonCorrespondences[index++];
-					for (int i = 0; i < 3; i++) {
-						jsonCorrespondence["world"][i] = correspondence.world[i];
-					}
-					for (int i = 0; i < 2; i++) {
-						jsonCorrespondence["camera"][i] = correspondence.camera[i];
-					}
+					jsonCorrespondence["kinectObject"] << correspondence.kinectObject;
+					jsonCorrespondence["camera"] << correspondence.camera;
+					jsonCorrespondence["cameraNormalized"] << correspondence.cameraNormalized;
 				}
 
 				json["error"] = this->error;
@@ -129,12 +86,9 @@ namespace ofxDigitalEmulsion {
 				auto & jsonCorrespondences = json["correspondences"];
 				for (const auto & jsonCorrespondence : jsonCorrespondences) {
 					Correspondence correspondence;
-					for (int i = 0; i < 3; i++) {
-						correspondence.world[i] = jsonCorrespondence["world"][i].asFloat();
-					}
-					for (int i = 0; i < 2; i++) {
-						correspondence.camera[i] = jsonCorrespondence["camera"][i].asFloat();
-					}
+					jsonCorrespondence["kinectObject"] >> correspondence.kinectObject;
+					jsonCorrespondence["camera"] >> correspondence.camera;
+					jsonCorrespondence["cameraNormalized"] >> correspondence.cameraNormalized;
 					this->correspondences.push_back(correspondence);
 				}
 
@@ -149,6 +103,7 @@ namespace ofxDigitalEmulsion {
 				auto kinectDevice = kinectNode->getDevice();
 				auto kinectColorPixels = kinectDevice->getColorSource()->getPixelsRef();
 				auto kinectColorImage = ofxCv::toCv(kinectColorPixels);
+				const auto kinectTransform = kinectNode->getTransform();
 
 				auto cameraNode = this->getInput<Item::Camera>();
 				auto cameraPixels = cameraNode->getFreshFrame();
@@ -222,11 +177,12 @@ namespace ofxDigitalEmulsion {
 
 						Correspondence correspondence;
 
-						correspondence.world = kinectCameraToWorldPointer[(int)kinectCameraPoint.x + (int)kinectCameraPoint.y * kinectCameraWidth];
-						correspondence.camera = ofVec2f(ofMap(cameraPoint.x, 0, cameraWidth, -1, 1),
-							ofMap(cameraPoint.y, 0, cameraHeight, 1, -1));
+						correspondence.kinectObject = kinectCameraToWorldPointer[(int)kinectCameraPoint.x + (int)kinectCameraPoint.y * kinectCameraWidth];
+						correspondence.camera = cameraPoint;
+						correspondence.cameraNormalized = ofVec2f(ofMap(cameraPoint.x, 0, cameraWidth, 0, 1),
+							ofMap(cameraPoint.y, 0, cameraHeight, 0, 1));
 
-						if (correspondence.world.z > 0.5f) {
+						if (correspondence.kinectObject.z > 0.5f) {
 							this->correspondences.push_back(correspondence);
 						}
 
@@ -242,44 +198,44 @@ namespace ofxDigitalEmulsion {
 			void CameraFromKinectV2::calibrate() {
 				this->throwIfMissingAnyConnection();
 
+				auto camera = this->getInput<Item::Camera>();
+				auto kinect = this->getInput<Item::KinectV2>();
+				auto kinectTransform = kinect->getTransform();
+
 				vector<ofVec3f> worldPoints;
-				vector<ofVec2f> projectorPoints;
+				vector<ofVec2f> cameraPoints;
 
 				for (auto correpondence : this->correspondences) {
-					worldPoints.push_back(correpondence.world * ofVec3f(1, 1, 1));
-					projectorPoints.push_back(correpondence.camera * ofVec2f(1, -1));
+					worldPoints.push_back(correpondence.kinectObject * kinectTransform);
+					cameraPoints.push_back(correpondence.camera);
 				}
-				cv::Mat cameraMatrix, rotation, translation;
+
+				const auto worldPointsRows = vector<vector<cv::Point3f> >(1, ofxCv::toCv(worldPoints));
+				const auto cameraPointsRows = vector<vector<cv::Point2f> >(1, ofxCv::toCv(cameraPoints));
 				
+				auto cameraMatrix = camera->getCameraMatrix();
+				auto distortion = camera->getDistortionCoefficients();
+
+				vector<cv::Mat> rotations, translations;
+				
+				//fix intrinsics
 				int flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST | CV_CALIB_USE_INTRINSIC_GUESS;
-				flags |= CV_CALIB_FIX_PRINCIPAL_POINT | CV_CALIB_FIX_ASPECT_RATIO;
+				flags |= CV_CALIB_FIX_PRINCIPAL_POINT | CV_CALIB_FIX_ASPECT_RATIO | CV_CALIB_FIX_FOCAL_LENGTH;
 				
 				auto width = this->getInput<Item::Camera>()->getWidth();
 				auto height = this->getInput<Item::Camera>()->getHeight();
 
-				this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
-					worldPoints, projectorPoints,
-					width, height,
-					0.0f, 1.0f, false, flags);
-				this->getInput<Item::Camera>()->setExtrinsics(rotation, translation);
-				this->getInput<Item::Camera>()->setIntrinsics(cameraMatrix, Mat::zeros(5, 1, CV_64F));
+				this->error = cv::calibrateCamera(worldPointsRows, cameraPointsRows, camera->getSize(), cameraMatrix, distortion, rotations, translations, flags);
 
-				auto viewMatrix = ofxCv::makeMatrix(rotation, translation);
-				auto projectionMatrix = ofxCv::makeProjectionMatrix(cameraMatrix, cv::Size(width, height));
-
-				const auto cameraName = this->getInput<Item::Camera>()->getName();
-				ofstream file;
-				file.open(ofToDataPath(cameraName + "View.mat").c_str(), ios::out | ios::binary);
-				file.write((char*)viewMatrix.getPtr(), sizeof(float)* 16);
-				file.close();
-				file.open(ofToDataPath(cameraName + "Projection.mat").c_str(), ios::out | ios::binary);
-				file.write((char*)projectionMatrix.getPtr(), sizeof(float)* 16);
-				file.close();
+				camera->setExtrinsics(rotations[0], translations[0], false);
+				//camera->setIntrinsics(cameraMatrix, distortion); <-- intrinsics shouldn't change
 			}
 
 			//----------
 			void CameraFromKinectV2::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
-
+				inspector->add(ofxCvGui::Widgets::LiveValue<int>::make("Correspondences found", [this]() {
+					return (int) this->correspondences.size();
+				}));
 				auto addButton = MAKE(ofxCvGui::Widgets::Button, "Add Capture", [this]() {
 					try {
 						this->addCapture();
@@ -310,31 +266,67 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void CameraFromKinectV2::drawWorld() {
 				auto kinect = this->getInput<Item::KinectV2>();
-				auto projector = this->getInput<Item::Camera>();
-
 				if (kinect) {
-					ofPushStyle();
-					ofSetColor(100);
-					kinect->getDevice()->getDepthSource()->getMesh().drawVertices();
-					ofPopStyle();
-				}
+					auto kinectTransform = kinect->getTransform();
 
-				ofMesh preview;
-				for (auto correspondence : this->correspondences) {
-					preview.addVertex(correspondence.world);
-					preview.addColor(ofColor(
-						ofMap(correspondence.camera.x, -1, 1, 0, 255),
-						ofMap(correspondence.camera.y, -1, 1, 0, 255),
-						0));
+					ofMesh preview;
+					for (auto correspondence : this->correspondences) {
+						preview.addVertex(correspondence.kinectObject * kinectTransform);
+						preview.addColor(ofColor(
+							correspondence.cameraNormalized.x,
+							correspondence.cameraNormalized.y,
+							0));
+					}
+					glPushAttrib(GL_POINT_BIT);
+					glEnable(GL_POINT_SMOOTH);
+					glPointSize(10.0f);
+					preview.drawVertices();
+					glPopAttrib();
 				}
-				glPushAttrib(GL_POINT_BIT);
-				glEnable(GL_POINT_SMOOTH);
-				glPointSize(10.0f);
-				preview.drawVertices();
-				glPopAttrib();
+			}
 
-				if (projector) {
-					projector->drawWorld();
+			//----------
+			void CameraFromKinectV2::rebuildView() {
+				this->view->clear();
+
+				auto kinect = this->getInput<Item::KinectV2>();
+				auto camera = this->getInput<Item::Camera>();
+
+				if (kinect && camera) {
+					auto kinectColorSource = kinect->getDevice()->getColorSource();
+					auto kinectColorView = MAKE(ofxCvGui::Panels::Draws, kinectColorSource->getTextureReference());
+					kinectColorView->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
+						ofPolyline previewLine;
+						if (!this->previewCornerFindsKinect.empty()) {
+							ofCircle(this->previewCornerFindsKinect.front(), 10.0f);
+							for (const auto & previewCornerFind : this->previewCornerFindsKinect) {
+								previewLine.addVertex(previewCornerFind);
+							}
+						}
+						ofPushStyle();
+						ofSetColor(255, 0, 0);
+						previewLine.draw();
+						ofPopStyle();
+					};
+					kinectColorView->setCaption("Kinect RGB");
+					this->view->add(kinectColorView);
+
+					auto cameraColorView = MAKE(ofxCvGui::Panels::Draws, camera->getGrabber()->getTextureReference());
+					cameraColorView->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
+						ofPolyline previewLine;
+						if (!this->previewCornerFindsCamera.empty()) {
+							ofCircle(this->previewCornerFindsCamera.front(), 10.0f);
+							for (const auto & previewCornerFind : this->previewCornerFindsCamera) {
+								previewLine.addVertex(previewCornerFind);
+							}
+						}
+						ofPushStyle();
+						ofSetColor(255, 0, 0);
+						previewLine.draw();
+						ofPopStyle();
+					};
+					cameraColorView->setCaption("Camera");
+					this->view->add(cameraColorView);
 				}
 			}
 		}

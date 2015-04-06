@@ -30,6 +30,7 @@ namespace ofxDigitalEmulsion {
 			void setDevice(const string & deviceTypeName);
 			void setDevice(ofxMachineVision::DevicePtr);
 			void clearDevice();
+			void reopenDevice();
 			shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
 
 			ofPixels getFreshFrame();
