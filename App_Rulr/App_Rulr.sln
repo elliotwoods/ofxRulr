@@ -24,6 +24,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvGuiLib", "..\..\ofxCvG
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxDigitalEmulsionExternals", "..\ofxDigitalEmulsionLib\ofxDigitalEmulsionExternals.vcxproj", "{2DCF22A8-CAC5-4308-B870-FB5EF4707E11}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxUeyeLib", "..\..\ofxUeye\ofxUeyeLib\ofxUeyeLib.vcxproj", "{8D6B518C-D891-4907-8BC1-3232914BAB97}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxBlackmagicLib", "..\..\ofxBlackmagic2\ofxBlackmagicLib\ofxBlackmagicLib.vcxproj", "{E57BE93F-5BA0-4165-8861-DF6653F11A37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -120,6 +124,22 @@ Global
 		{2DCF22A8-CAC5-4308-B870-FB5EF4707E11}.Release|Win32.Build.0 = Release|Win32
 		{2DCF22A8-CAC5-4308-B870-FB5EF4707E11}.Release|x64.ActiveCfg = Release|x64
 		{2DCF22A8-CAC5-4308-B870-FB5EF4707E11}.Release|x64.Build.0 = Release|x64
+		{8D6B518C-D891-4907-8BC1-3232914BAB97}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8D6B518C-D891-4907-8BC1-3232914BAB97}.Debug|Win32.Build.0 = Debug|Win32
+		{8D6B518C-D891-4907-8BC1-3232914BAB97}.Debug|x64.ActiveCfg = Debug|x64
+		{8D6B518C-D891-4907-8BC1-3232914BAB97}.Debug|x64.Build.0 = Debug|x64
+		{8D6B518C-D891-4907-8BC1-3232914BAB97}.Release|Win32.ActiveCfg = Release|Win32
+		{8D6B518C-D891-4907-8BC1-3232914BAB97}.Release|Win32.Build.0 = Release|Win32
+		{8D6B518C-D891-4907-8BC1-3232914BAB97}.Release|x64.ActiveCfg = Release|x64
+		{8D6B518C-D891-4907-8BC1-3232914BAB97}.Release|x64.Build.0 = Release|x64
+		{E57BE93F-5BA0-4165-8861-DF6653F11A37}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E57BE93F-5BA0-4165-8861-DF6653F11A37}.Debug|Win32.Build.0 = Debug|Win32
+		{E57BE93F-5BA0-4165-8861-DF6653F11A37}.Debug|x64.ActiveCfg = Debug|x64
+		{E57BE93F-5BA0-4165-8861-DF6653F11A37}.Debug|x64.Build.0 = Debug|x64
+		{E57BE93F-5BA0-4165-8861-DF6653F11A37}.Release|Win32.ActiveCfg = Release|Win32
+		{E57BE93F-5BA0-4165-8861-DF6653F11A37}.Release|Win32.Build.0 = Release|Win32
+		{E57BE93F-5BA0-4165-8861-DF6653F11A37}.Release|x64.ActiveCfg = Release|x64
+		{E57BE93F-5BA0-4165-8861-DF6653F11A37}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -46,6 +46,12 @@
     <ClCompile Include="..\..\..\addons\ofxNonLinearFit\src\ofxNonLinearFit\Models\RigidBody.cpp">
       <Filter>addons\ofxNonLinearFit\ofxNonLinearFit\Models</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ofxBlackmagic2\pairs\ofxMachineVision\Device\DeckLink.cpp">
+      <Filter>pairs\ofxBlackmagic2\ofxMachineVision\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.cpp">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision\Device</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -92,6 +98,27 @@
     </Filter>
     <Filter Include="addons\ofxNonLinearFit\ofxNonLinearFit\Models">
       <UniqueIdentifier>{69574dfd-f430-48ec-8919-f47d9d7a7881}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs">
+      <UniqueIdentifier>{9abbd710-b0af-4504-a5a0-dfc743b397f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxBlackmagic2">
+      <UniqueIdentifier>{9f7580f4-fa90-4e58-b439-cbf4bcb806ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxBlackmagic2\ofxMachineVision">
+      <UniqueIdentifier>{3e2fbcf0-ba37-4c1a-8a0e-c4ab03d42912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxBlackmagic2\ofxMachineVision\Device">
+      <UniqueIdentifier>{7703cddb-1b85-4ad5-8ac3-44bbc5dd1353}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk">
+      <UniqueIdentifier>{75baf25d-ddd0-4288-aeb7-9c83047edcbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk\ofxMachineVision">
+      <UniqueIdentifier>{439281a3-6bf9-4418-9862-21c3ec8e151a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk\ofxMachineVision\Device">
+      <UniqueIdentifier>{f4b88f50-0553-477f-b184-8b93724748a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +178,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxNonLinearFit\src\ofxNonLinearFit\Models\Base.h">
       <Filter>addons\ofxNonLinearFit\ofxNonLinearFit\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxBlackmagic2\pairs\ofxMachineVision\Device\DeckLink.h">
+      <Filter>pairs\ofxBlackmagic2\ofxMachineVision\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.h">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision\Device</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

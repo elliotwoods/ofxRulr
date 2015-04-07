@@ -1,3 +1,7 @@
+#include "../../../addons/ofxBlackmagic2/pairs/ofxMachineVision/Device/DeckLink.h"
+#include "../../../addons/ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRDevice.h"
+#include "../../../addons/ofxUeye/src/ofxUeye.h"
+
 #include "ofApp.h"
 
 using namespace ofxAssets;
@@ -10,6 +14,10 @@ void ofApp::setup2(){
 	splashScreen.init(image("ofxDigitalEmulsion::SplashScreen"));
 	splashScreen.begin(0.0f);
 	
+	ofxMachineVision::registerDevice<ofxMachineVision::Device::CanonDSLRDevice>();
+	ofxMachineVision::registerDevice<ofxMachineVision::Device::DeckLink>();
+	ofxMachineVision::registerDevice<ofxUeye::Device>();
+
 	ofxDigitalEmulsion::External::registerExternals();
 
 	auto patchInstance = MAKE(ofxDigitalEmulsion::Graph::Editor::Patch);

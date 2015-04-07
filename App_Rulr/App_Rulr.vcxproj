@@ -205,6 +205,8 @@
     <ClCompile Include="..\..\..\addons\ofxPolyfit\src\ofxPolyFit.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPolyfit\src\ofxPolyPlane.cpp" />
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp" />
+    <ClCompile Include="..\..\ofxBlackmagic2\pairs\ofxMachineVision\Device\DeckLink.cpp" />
+    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
   </ItemGroup>
@@ -227,6 +229,8 @@
     <ClInclude Include="..\..\..\addons\ofxPolyfit\src\ofxPolyFit.h" />
     <ClInclude Include="..\..\..\addons\ofxPolyfit\src\ofxPolyPlane.h" />
     <ClInclude Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.h" />
+    <ClInclude Include="..\..\ofxBlackmagic2\pairs\ofxMachineVision\Device\DeckLink.h" />
+    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.h" />
     <ClInclude Include="src\ofApp.h" />
   </ItemGroup>
   <ItemGroup>
@@ -254,8 +258,14 @@
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
       <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\ofxBlackmagic2\ofxBlackmagicLib\ofxBlackmagicLib.vcxproj">
+      <Project>{e57be93f-5ba0-4165-8861-df6653f11a37}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGuiLib.vcxproj">
       <Project>{6f0ddb4f-4014-4433-919b-9d956c034bad}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxUeye\ofxUeyeLib\ofxUeyeLib.vcxproj">
+      <Project>{8d6b518c-d891-4907-8bc1-3232914bab97}</Project>
     </ProjectReference>
     <ProjectReference Include="..\ofxDigitalEmulsionLib\ofxDigitalEmulsionExternals.vcxproj">
       <Project>{2dcf22a8-cac5-4308-b870-fb5ef4707e11}</Project>
