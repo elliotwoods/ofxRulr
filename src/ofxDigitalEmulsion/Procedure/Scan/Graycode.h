@@ -38,6 +38,7 @@ namespace ofxDigitalEmulsion {
 				ofImage preview;
 				ofParameter<float> threshold;
 				ofParameter<float> delay;
+				ofParameter<float> brightness;
 
 				bool previewIsOfNonLivePixels;
 			};

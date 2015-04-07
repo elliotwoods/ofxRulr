@@ -13,7 +13,6 @@ namespace ofxDigitalEmulsion {
 			Triangulate();
 			void init();
 			string getTypeName() const override;
-			ofxCvGui::PanelPtr getView() override;
 
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);

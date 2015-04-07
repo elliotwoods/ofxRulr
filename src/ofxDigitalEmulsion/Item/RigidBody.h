@@ -11,7 +11,7 @@ namespace ofxDigitalEmulsion {
 			virtual string getTypeName() const override;
 			void init();
 			void drawWorld() override;
-			virtual void drawObject();
+			virtual void drawObject() { }
 
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
@@ -29,7 +29,6 @@ namespace ofxDigitalEmulsion {
 			ofParameter<float> rotationEuler[3];
 
 		private:
-
 		};
 
 		ofVec3f toEuler(const ofQuaternion &);

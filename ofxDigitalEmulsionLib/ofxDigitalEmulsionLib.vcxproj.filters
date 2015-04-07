@@ -109,6 +109,30 @@
     <Filter Include="src\ofxDigitalEmulsion\Render">
       <UniqueIdentifier>{7a399311-58d3-4207-baf8-3d5bed1844db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxGLM">
+      <UniqueIdentifier>{03e08704-e00c-4943-a546-a02df78a0e4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGLM\src">
+      <UniqueIdentifier>{e2963c2b-c8de-413c-90a7-4f25af4c840d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGLM\libs">
+      <UniqueIdentifier>{2b9c5bf0-4fc1-4bcf-9f92-0f824cb396da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGLM\libs\glm">
+      <UniqueIdentifier>{341f7505-0ad5-4c77-b335-d1e34b769010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGLM\libs\glm\core">
+      <UniqueIdentifier>{9e1b0d92-5338-4a5a-aef6-23257efc8207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGLM\libs\glm\gtc">
+      <UniqueIdentifier>{151c500b-5c95-46e6-8e64-fbaf6dbf181e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGLM\libs\glm\gtx">
+      <UniqueIdentifier>{f9b53a3a-51f3-44d3-a89a-fa4fe6cb6ba5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGLM\libs\glm\virtrev">
+      <UniqueIdentifier>{6033325d-d754-49ac-80da-13be3a94e389}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ofxDigitalEmulsion.h">
@@ -387,6 +411,375 @@
     <ClInclude Include="..\src\ofxDigitalEmulsion\Render\NodeThroughView.h">
       <Filter>src\ofxDigitalEmulsion\Render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h">
+      <Filter>addons\ofxGLM\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\ext.hpp">
+      <Filter>addons\ofxGLM\libs\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\glm.hpp">
+      <Filter>addons\ofxGLM\libs\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_exponential.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_geometric.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_integer.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_matrix.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_noise.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_packing.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_trigonometric.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_vector_relational.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\hint.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\intrinsic_common.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\intrinsic_exponential.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\intrinsic_geometric.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\intrinsic_matrix.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\intrinsic_trigonometric.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\intrinsic_vector_relational.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\setup.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_float.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_gentype.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_half.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_int.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat2x2.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat2x3.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat2x4.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat3x2.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat3x3.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat3x4.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat4x2.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat4x3.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_mat4x4.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_size.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_vec.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_vec1.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_vec2.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_vec3.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\type_vec4.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\_detail.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\_fixes.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\_swizzle.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\_swizzle_func.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\_vectorize.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_common.hpp">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\matrix_transform.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\noise.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\quaternion.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\random.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\reciprocal.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\swizzle.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\type_precision.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\type_ptr.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\ulp.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\constants.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\epsilon.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\half_float.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\matrix_access.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\matrix_integer.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtc\matrix_inverse.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\color_space_YCoCg.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\compatibility.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\component_wise.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\constants.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\epsilon.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\euler_angles.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\extend.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\extented_min_max.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\fast_exponential.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\fast_square_root.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\fast_trigonometry.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\gradient_paint.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\handed_coordinate_space.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\inertia.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\int_10_10_10_2.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\integer.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\intersect.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\log_base.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\matrix_cross_product.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\matrix_interpolation.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\matrix_major_storage.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\matrix_operation.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\matrix_query.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\mixed_product.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\multiple.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\noise.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\norm.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\normal.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\normalize_dot.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\number_precision.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\ocl_type.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\optimum_pow.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\orthonormalize.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\perpendicular.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\polar_coordinates.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\projection.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\quaternion.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\random.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\raw_data.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\reciprocal.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\rotate_vector.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\simd_mat4.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\simd_vec4.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\spline.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\std_based_type.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\string_cast.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\transform.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\transform2.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\ulp.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\unsigned_int.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\vec1.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\vector_access.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\vector_angle.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\vector_query.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\verbose_operator.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\wrap.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\associated_min_max.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\bit.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\closest_point.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\color_cast.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\color_space.hpp">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxGLM\libs\glm\virtrev\xstream.hpp">
+      <Filter>addons\ofxGLM\libs\glm\virtrev</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ofxDigitalEmulsion\Item\Camera.cpp">
@@ -518,6 +911,9 @@
     <ClCompile Include="..\src\ofxDigitalEmulsion\Render\NodeThroughView.cpp">
       <Filter>src\ofxDigitalEmulsion\Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
+      <Filter>addons\ofxGLM\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl">
@@ -546,6 +942,309 @@
     </None>
     <None Include="..\..\ofxAssimpModelLoader\libs\assimp\include\aiVector3D.inl">
       <Filter>addons\ofxAssimpModelLoader\libs\assimp\include</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\func_exponential.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\func_geometric.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\func_integer.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\func_matrix.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\func_noise.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\func_packing.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\func_trigonometric.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\func_vector_relational.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\intrinsic_common.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\intrinsic_exponential.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\intrinsic_geometric.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\intrinsic_matrix.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\intrinsic_trigonometric.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\intrinsic_vector_relational.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_gentype.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_half.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat2x2.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat2x3.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat2x4.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat3x2.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat3x3.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat3x4.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat4x2.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat4x3.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_mat4x4.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_vec.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_vec1.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_vec2.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_vec3.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\type_vec4.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\core\func_common.inl">
+      <Filter>addons\ofxGLM\libs\glm\core</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\matrix_inverse.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\matrix_transform.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\noise.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\quaternion.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\random.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\reciprocal.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\swizzle.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\type_precision.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\type_ptr.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\ulp.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\constants.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\epsilon.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\half_float.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtc\matrix_access.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtc</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\color_space_YCoCg.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\compatibility.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\component_wise.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\euler_angles.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\extend.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\extented_min_max.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\fast_exponential.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\fast_square_root.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\fast_trigonometry.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\gradient_paint.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\handed_coordinate_space.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\inertia.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\int_10_10_10_2.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\integer.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\intersect.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\log_base.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\matrix_cross_product.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\matrix_interpolation.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\matrix_major_storage.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\matrix_operation.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\matrix_query.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\mixed_product.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\multiple.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\norm.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\normal.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\normalize_dot.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\number_precision.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\ocl_type.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\optimum_pow.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\orthonormalize.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\perpendicular.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\polar_coordinates.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\projection.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\quaternion.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\raw_data.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\rotate_vector.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\simd_mat4.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\simd_vec4.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\spline.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\std_based_type.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\string_cast.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\transform.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\transform2.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\unsigned_int.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\vec1.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\vector_access.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\vector_angle.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\vector_query.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\verbose_operator.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\wrap.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\associated_min_max.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\bit.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\closest_point.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\color_cast.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
+    </None>
+    <None Include="..\..\ofxGLM\libs\glm\gtx\color_space.inl">
+      <Filter>addons\ofxGLM\libs\glm\gtx</Filter>
     </None>
   </ItemGroup>
 </Project>

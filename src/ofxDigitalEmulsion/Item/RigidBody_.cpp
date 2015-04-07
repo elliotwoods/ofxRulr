@@ -4,9 +4,12 @@
 #include "ofxCvGui/Widgets/Slider.h"
 #include "ofxCvGui/Widgets/Title.h"
 
+#include "ofxGLM.h"
+
 using namespace ofxCvGui;
 using namespace ofxCv;
 using namespace cv;
+using namespace ofxGLM;
 
 namespace ofxDigitalEmulsion {
 	namespace Item {
@@ -32,23 +35,19 @@ namespace ofxDigitalEmulsion {
 			this->translation[0].set("Translation X", 0, -100.0f, 100.0f);
 			this->translation[1].set("Translation Y", 0, -100.0f, 100.0f);
 			this->translation[2].set("Translation Z", 0, -100.0f, 100.0f);
-			this->rotationEuler[0].set("Rotation X", 0, -180.0f, 180.0f);
-			this->rotationEuler[1].set("Rotation Y", 0, -180.0f, 180.0f);
-			this->rotationEuler[2].set("Rotation Z", 0, -180.0f, 180.0f);
+			this->rotationEuler[0].set("Rotation X", 0, -360.0f, 360.0f);
+			this->rotationEuler[1].set("Rotation Y", 0, -360.0f, 360.0f);
+			this->rotationEuler[2].set("Rotation Z", 0, -360.0f, 360.0f);
 		}
 		
 		//---------
 		void RigidBody::drawWorld() {
 			ofPushMatrix();
 			ofMultMatrix(this->getTransform());
+			ofDrawAxis(0.3f);
 			ofDrawBitmapString(this->getName(), ofVec3f());
 			this->drawObject();
 			ofPopMatrix();
-		}
-
-		//---------
-		void RigidBody::drawObject() {
-			ofDrawAxis(0.3f);
 		}
 
 		//---------
@@ -123,24 +122,29 @@ namespace ofxDigitalEmulsion {
 
 		//---------
 		ofMatrix4x4 RigidBody::getTransform() const {
-			ofMatrix4x4 transform;
+			//rotation
+			auto quat = glm::quat(glm::vec3(this->rotationEuler[0] * DEG_TO_RAD, this->rotationEuler[1] * DEG_TO_RAD, this->rotationEuler[2] * DEG_TO_RAD));
+			auto transform = toOf(glm::toMat4(quat));
 
-			auto rotation = toQuaternion(ofVec3f(this->rotationEuler[0], this->rotationEuler[1], this->rotationEuler[2]));
-
-			transform.rotate(rotation);
-			transform.translate(this->translation[0], this->translation[1], this->translation[2]);
+			//translation
+			((ofVec4f*)&transform)[3] = ofVec4f(this->translation[0], this->translation[1], this->translation[2], 1.0f);
 
 			return transform;
 		}
 
 		//---------
 		void RigidBody::setTransform(const ofMatrix4x4 & transform) {
-			ofVec3f translation, scale;
-			ofQuaternion rotation, scaleRotation;
-			transform.decompose(translation, rotation, scale, scaleRotation);
+			auto translation = ((ofVec4f*)&transform)[3]; //last row is translation. rip it out;
 
-			auto rotationEuler = toEuler(rotation);
-
+			//first 3x3 is rotation, rip it out and convert it
+			glm::mat3 rotationMatrix;
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					rotationMatrix[i][j] = transform(i, j); //copy out the 3x3 matrix elements
+				}
+			}
+			auto rotationEuler = glm::eulerAngles(glm::toQuat(rotationMatrix));
+			
 			for (int i = 0; i < 3; i++) {
 				this->translation[i] = translation[i];
 				this->rotationEuler[i] = rotationEuler[i];
@@ -151,9 +155,10 @@ namespace ofxDigitalEmulsion {
 
 		//----------
 		void RigidBody::setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse) {
-			const auto extrinsicsMatrix = ofxCv::makeMatrix(rotation, translation);
+			auto extrinsicsMatrix = ofxCv::makeMatrix(rotation, translation);
 			if (inverse) {
-				this->setTransform(extrinsicsMatrix.getInverse());
+				extrinsicsMatrix = toOf(glm::inverse(toGLM(extrinsicsMatrix)));
+				this->setTransform(extrinsicsMatrix);
 			}
 			else {
 				this->setTransform(extrinsicsMatrix);
@@ -203,7 +208,7 @@ namespace ofxDigitalEmulsion {
 				if (euler[1] < 0)
 					euler[2] = PI - euler[2];
 			}
-			return euler;
+			return euler * RAD_TO_DEG;
 		}
 
 		//---------

@@ -41,17 +41,6 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		ofxCvGui::PanelPtr Triangulate::getView() {
-			auto view = MAKE(Panels::World);
-			view->getCamera().rotate(180.0f, 0.0f, 0.0f, 1.0f);
-			view->getCamera().lookAt(ofVec3f(0,0,1), ofVec3f(0,-1,0));
-			view->onDrawWorld += [this] (ofCamera &) {
-				this->drawWorld();
-			};
-			return view;			
-		}
-
-		//----------
 		void Triangulate::serialize(Json::Value & json) {
 			
 		}

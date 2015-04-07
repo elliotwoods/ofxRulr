@@ -102,12 +102,10 @@ namespace ofxDigitalEmulsion {
 			auto & jsonDevice = json["device"];
 			this->setDeviceIndex(jsonDevice[this->deviceIndex.getName()].asInt());
 			this->setDevice(jsonDevice[this->deviceTypeName.getName()].asString());
-			//if the device isn't open, we'll take the saved resolution
-			auto deviceOpen = this->grabber->getIsDeviceOpen();
-			if (!deviceOpen) {
-				this->viewInObjectSpace.setWidth(jsonDevice["width"].asFloat());
-				this->viewInObjectSpace.setHeight(jsonDevice["height"].asFloat());
-			}
+			
+			//take in the saved resolution, this will be overwritten when the device is open and running
+			this->viewInObjectSpace.setWidth(jsonDevice["width"].asFloat());
+			this->viewInObjectSpace.setHeight(jsonDevice["height"].asFloat());
 
 			auto & jsonSettings = json["properties"];
 			Utils::Serializable::deserialize(this->exposure, jsonSettings);
@@ -123,7 +121,9 @@ namespace ofxDigitalEmulsion {
 			if (this->grabber) {
 				if (this->grabber->getIsDeviceOpen()) {
 					auto width = this->grabber->getWidth();
-					return width;
+					if (width > 0) {
+						return width;
+					}
 				}
 			}
 			return View::getWidth(); // else return the width of the view object
@@ -133,10 +133,13 @@ namespace ofxDigitalEmulsion {
 		float Camera::getHeight() const {
 			if (this->grabber) {
 				if (this->grabber->getIsDeviceOpen()) {
-					return this->grabber->getHeight();
+					auto height = this->grabber->getHeight();
+					if (height > 0) {
+						return height;
+					}
 				}
 			}
-			return View::getWidth(); // else return the height of the view object
+			return View::getHeight(); // else return the height of the view object
 		}
 
 		//----------

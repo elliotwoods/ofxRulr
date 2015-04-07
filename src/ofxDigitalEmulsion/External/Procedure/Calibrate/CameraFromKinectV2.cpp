@@ -228,6 +228,7 @@ namespace ofxDigitalEmulsion {
 				this->error = cv::calibrateCamera(worldPointsRows, cameraPointsRows, camera->getSize(), cameraMatrix, distortion, rotations, translations, flags);
 
 				camera->setExtrinsics(rotations[0], translations[0], false);
+
 				//camera->setIntrinsics(cameraMatrix, distortion); <-- intrinsics shouldn't change
 			}
 
@@ -273,8 +274,8 @@ namespace ofxDigitalEmulsion {
 					for (auto correspondence : this->correspondences) {
 						preview.addVertex(correspondence.kinectObject * kinectTransform);
 						preview.addColor(ofColor(
-							correspondence.cameraNormalized.x,
-							correspondence.cameraNormalized.y,
+							correspondence.cameraNormalized.x * 255.0f,
+							correspondence.cameraNormalized.y * 255.0f,
 							0));
 					}
 					glPushAttrib(GL_POINT_BIT);

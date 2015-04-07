@@ -30,6 +30,7 @@ namespace ofxDigitalEmulsion {
 
 				this->threshold.set("Threshold", 10.0f, 0.0f, 255.0f);
 				this->delay.set("Capture delay [ms]", 200.0f, 0.0f, 2000.0f);
+				this->brightness.set("Brightness [/255]", 0.0f, 1.0f, 255.0f);
 
 				this->view = MAKE(Panels::Image, this->decoder.getProjectorInCamera());
 
@@ -55,6 +56,7 @@ namespace ofxDigitalEmulsion {
 			void Graycode::serialize(Json::Value & json) {
 				Utils::Serializable::serialize(this->threshold, json);
 				Utils::Serializable::serialize(this->delay, json);
+				Utils::Serializable::serialize(this->brightness, json);
 				auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
 				this->decoder.saveDataSet(filename);
 			}
@@ -64,8 +66,9 @@ namespace ofxDigitalEmulsion {
 				auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
 				this->decoder.loadDataSet(filename);
 				Utils::Serializable::deserialize(this->threshold, json);
-				Utils::Serializable::deserialize(this->delay, json);
 				this->decoder.setThreshold(this->threshold);
+				Utils::Serializable::deserialize(this->delay, json);
+				Utils::Serializable::deserialize(this->brightness, json);
 			}
 
 			//----------
@@ -105,7 +108,13 @@ namespace ofxDigitalEmulsion {
 				while (this->encoder >> this->message) {
 					videoOutput->clearFbo(false);
 					videoOutput->begin();
+					//
+					ofPushStyle();
+					auto brightness = this->brightness;
+					ofSetColor(brightness);
 					this->message.draw(0, 0);
+					ofPopStyle();
+					//
 					videoOutput->end();
 					videoOutput->presentFbo();
 
@@ -181,6 +190,9 @@ namespace ofxDigitalEmulsion {
 					this->switchIfLookingAtDirtyView();
 				};
 				inspector->add(thresholdSlider);
+				auto brightnessSlider = Widgets::Slider::make(this->brightness);
+				brightnessSlider->addIntValidator();
+				inspector->add(brightnessSlider);
 
 				inspector->add(Widgets::Title::make("Payload", Widgets::Title::Level::H2));
 				inspector->add(Widgets::LiveValue<unsigned int>::make("Width", [this] () { return this->payload.getWidth(); }));

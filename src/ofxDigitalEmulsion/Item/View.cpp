@@ -80,6 +80,8 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::deserialize(this->principalPointX, jsonCalibration);
 			Utils::Serializable::deserialize(this->principalPointY, jsonCalibration);
 
+			this->rebuildViewFromParameters();
+
 			auto & jsonDistortion = jsonCalibration["distortion"];
 			for (int i = 0; i<OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 				Utils::Serializable::deserialize(this->distortion[i], jsonDistortion);
