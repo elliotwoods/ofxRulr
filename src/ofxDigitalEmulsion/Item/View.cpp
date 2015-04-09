@@ -5,6 +5,7 @@
 #include "ofxCvGui/Widgets/Slider.h"
 #include "ofxCvGui/Widgets/Title.h"
 #include "ofxCvGui/Widgets/LiveValue.h"
+#include "ofxCvGui/Widgets/EditableValue.h"
 
 using namespace ofxCvGui;
 using namespace cv;
@@ -98,18 +99,49 @@ namespace ofxDigitalEmulsion {
 			}));
 
 			inspector->add(Widgets::Title::make("Camera matrix", Widgets::Title::Level::H3));
-			inspector->add(Widgets::Slider::make(this->focalLengthX));
-			inspector->add(Widgets::Slider::make(this->focalLengthY));
-			inspector->add(Widgets::Slider::make(this->principalPointX));
-			inspector->add(Widgets::Slider::make(this->principalPointY));
-			inspector->add(Widgets::LiveValue<float>::make("Throw ratio X", [this]() {
+			auto addCameraMatrixParameter = [this, inspector](ofParameter<float> & parameter) {
+				auto slider = Widgets::Slider::make(parameter);
+				slider->onValueChange += [this](ofParameter<float> &) {
+					this->rebuildViewFromParameters();
+				};
+				inspector->add(slider);
+			};
+			
+			addCameraMatrixParameter(this->focalLengthX);
+			addCameraMatrixParameter(this->focalLengthY);
+			addCameraMatrixParameter(this->principalPointX);
+			addCameraMatrixParameter(this->principalPointY);
+
+			inspector->add(Widgets::EditableValue<float>::make("Throw ratio X", [this]() {
 				return this->viewInObjectSpace.getThrowRatio();
+			}, [this](string newValueString) {
+				auto newThrowRatio = ofToFloat(newValueString);
+				if (newThrowRatio > 0.0f) {
+					auto pixelAspectRatio = this->focalLengthY / this->focalLengthX;
+					this->focalLengthX = this->getWidth() * newThrowRatio;
+					this->focalLengthY = this->focalLengthX / pixelAspectRatio;
+					this->rebuildViewFromParameters();
+				}
 			}));
-			inspector->add(Widgets::LiveValue<float>::make("Aspect ratio", [this]() {
+			inspector->add(Widgets::EditableValue<float>::make("Pixel aspect ratio", [this]() {
 				return this->focalLengthY / this->focalLengthX;
+			}, [this](string newValueString) {
+				auto newPixelAspectRatio = ofToFloat(newValueString);
+				if (newPixelAspectRatio > 0.0f) {
+					this->focalLengthY = this->focalLengthX / newPixelAspectRatio;
+					this->rebuildViewFromParameters();
+				}
 			}));
-			inspector->add(Widgets::LiveValue<ofVec2f>::make("Lens offset", [this]() {
+
+			inspector->add(Widgets::EditableValue<ofVec2f>::make("Lens offset", [this]() {
 				return this->getViewInObjectSpace().getLensOffset();
+			}, [this](string newValueString) {
+				auto newValueStrings = ofSplitString(newValueString, ",");
+				if (newValueStrings.size() == 2) {
+					this->principalPointX = ofMap(ofToFloat(newValueStrings[0]), +0.5f, -0.5f, 0, this->getWidth());
+					this->principalPointY = ofMap(ofToFloat(newValueStrings[1]), -0.5f, +0.5f, 0, this->getHeight());
+					this->rebuildViewFromParameters();
+				}
 			}));
 
 			inspector->add(Widgets::Spacer::make());
