@@ -36,8 +36,8 @@ namespace ofxDigitalEmulsion {
 			this->showCursor.addListener(this, &Summary::callbackShowCursor);
 			this->showCursor.set("Show Cursor", false);
 			this->showGrid.set("Show Grid", true);
-			this->roomMinimum.set("Room minimum", ofVec3f(-5.0f, -5.0f, -5.0f));
-			this->roomMaximum.set("Room maxmimim", ofVec3f(+5.0f, 0.0f, 0.0f));
+			this->roomMinimum.set("Room minimum", ofVec3f(-5.0f, -4.0f, 0.0f));
+			this->roomMaximum.set("Room maxmimim", ofVec3f(+5.0f, 0.0f, 6.0f));
 			this->view->setGridEnabled(false);
 		}
 
@@ -60,7 +60,8 @@ namespace ofxDigitalEmulsion {
 
 			auto & camera = this->view->getCamera();
 			auto & cameraJson = json["Camera"];
-			cameraJson["Transform"] << camera.getGlobalTransformMatrix();
+			cameraJson["position"] << camera.getPosition();
+			cameraJson["orientation"] << (ofVec4f&) camera.getOrientationQuat(); //cast as ofVec4f since ofQuaternion doesn't have serialisation
 		}
 
 		//----------
@@ -71,15 +72,21 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::deserialize(this->roomMinimum, json);
 			Utils::Serializable::deserialize(this->roomMaximum, json);
 
+			auto & camera = this->view->getCamera();
 			if (json.isMember("Camera")) {
 				auto & cameraJson = json["Camera"];
-				auto & camera = this->view->getCamera();
-				ofMatrix4x4 transform;
-				cameraJson["Transform"] >> transform;
-				camera.setTransformMatrix(transform);
+				ofVec3f position;
+				cameraJson["position"] >> position;
+				camera.setPosition(position);
 
-				//nudge the camera
-				camera.move(ofVec3f());
+				ofQuaternion orientation;
+				cameraJson["orientation"] >> (ofVec4f&) orientation;
+				camera.setOrientation(orientation);
+			}
+			else {
+				camera.setPosition(this->roomMinimum.get() * ofVec3f(0.0f, 1.0f, 1.0f));
+				camera.lookAt(this->roomMaximum.get() * ofVec3f(0.0f, 1.0f, 1.0f), ofVec3f(0, -1, 0));
+				camera.move(ofVec3f()); // nudge camera to update
 			}
 		}
 
@@ -179,7 +186,7 @@ namespace ofxDigitalEmulsion {
 			ofPopMatrix();
 			//
 			//floor
-			ofTranslate(0, roomMaximum.y, 0.0f); // y = 0 is the floor
+			ofTranslate(0, roomMaximum.y, roomMaximum.z); // y = 0 is the floor
 			//also translate so rotation is around start of room
 			ofRotate(90, -1, 0, 0);
 			ofTranslate(0, -roomMinimum.z, 0); // offset drawing to begin earlier

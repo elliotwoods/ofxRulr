@@ -30,7 +30,7 @@ namespace ofxDigitalEmulsion {
 
 				this->threshold.set("Threshold", 10.0f, 0.0f, 255.0f);
 				this->delay.set("Capture delay [ms]", 200.0f, 0.0f, 2000.0f);
-				this->brightness.set("Brightness [/255]", 0.0f, 1.0f, 255.0f);
+				this->brightness.set("Brightness [/255]", 255.0f, 0.0f, 255.0f);
 
 				this->view = MAKE(Panels::Image, this->decoder.getProjectorInCamera());
 

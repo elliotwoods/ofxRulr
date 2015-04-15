@@ -49,7 +49,7 @@ namespace ofxDigitalEmulsion {
 			template<typename T>
 			static void deserialize(ofParameter<T> & parameter, const Json::Value & json) {
 				auto & jsonValue = json[parameter.getName()];
-				if (jsonValue.isObject()) {
+				if (!jsonValue.isNull()) {
 					T value;
 					jsonValue >> value;
 					parameter.set(value);

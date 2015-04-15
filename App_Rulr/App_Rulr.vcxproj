@@ -240,9 +240,6 @@
     <ProjectReference Include="..\..\..\addons\ofxDigitalEmulsion\ofxDigitalEmulsionLib\ofxDigitalEmulsionLib.vcxproj">
       <Project>{3e918808-adee-4b04-9042-25f795280bad}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\addons\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj">
-      <Project>{630936f8-c65f-4ab9-92ad-80569eaa7782}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\addons\ofxGraycode\ofxGraycodeLib\ofxGraycodeLib.vcxproj">
       <Project>{ba65a9dd-2be2-4ff8-a9c6-6ac6624cddc3}</Project>
     </ProjectReference>
@@ -263,6 +260,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGuiLib.vcxproj">
       <Project>{6f0ddb4f-4014-4433-919b-9d956c034bad}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj">
+      <Project>{630936f8-c65f-4ab9-92ad-80569eaa7782}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\ofxUeye\ofxUeyeLib\ofxUeyeLib.vcxproj">
       <Project>{8d6b518c-d891-4907-8bc1-3232914bab97}</Project>

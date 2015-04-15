@@ -47,6 +47,8 @@ namespace ofxDigitalEmulsion {
 
 			this->viewInObjectSpace.setDefaultFar(20.0f);
 			this->viewInObjectSpace.color = this->getColor();
+
+			this->rebuildViewFromParameters();
 		}
 
 		//---------
