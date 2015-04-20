@@ -117,32 +117,6 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		float Camera::getWidth() const {
-			if (this->grabber) {
-				if (this->grabber->getIsDeviceOpen()) {
-					auto width = this->grabber->getWidth();
-					if (width > 0) {
-						return width;
-					}
-				}
-			}
-			return View::getWidth(); // else return the width of the view object
-		}
-
-		//----------
-		float Camera::getHeight() const {
-			if (this->grabber) {
-				if (this->grabber->getIsDeviceOpen()) {
-					auto height = this->grabber->getHeight();
-					if (height > 0) {
-						return height;
-					}
-				}
-			}
-			return View::getHeight(); // else return the height of the view object
-		}
-
-		//----------
 		void Camera::setDeviceIndex(int deviceIndex) {
 			if (this->deviceIndex.get() == deviceIndex) {
 				//do nothing
@@ -185,6 +159,13 @@ namespace ofxDigitalEmulsion {
 					}
 
 					this->grabber->getFreshFrame(); // get the first frame to initialise the size of the frame
+					auto width = this->grabber->getWidth();
+					auto height = this->grabber->getHeight();
+					if (width != 0 && height != 0) {
+						this->setWidth(width);
+						this->setHeight(height);
+					}
+
 					this->rebuildViewFromParameters(); // size will have changed
 					this->setAllCameraProperties();
 

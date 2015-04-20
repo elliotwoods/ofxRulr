@@ -198,9 +198,8 @@ namespace ofxDigitalEmulsion {
 						auto flags = CV_CALIB_FIX_K6 | CV_CALIB_FIX_K5;
 						this->error = cv::calibrateCamera(objectPointsSet, accumulatedCornersCv, cameraResolution, cameraMatrix, distortionCoefficients, Rotations, Translations, flags);
 						camera->setIntrinsics(cameraMatrix, distortionCoefficients);
-					} catch (cv::Exception e) {
-						ofSystemAlertDialog(e.msg);
 					}
+					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 				}
 			}
 		}

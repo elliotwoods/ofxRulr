@@ -16,11 +16,6 @@ namespace ofxDigitalEmulsion {
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
 
-			void setWidth(float);
-			void setHeight(float);
-			float getWidth() const override;
-			float getHeight() const override;
-			
 		protected:
 			void populateInspector(ofxCvGui::ElementGroupPtr);
 
@@ -29,8 +24,6 @@ namespace ofxDigitalEmulsion {
 			void projectorParameterCallback(float &);
 			
 			ofxRay::Projector projector;
-
-			ofParameter<float> resolutionWidth, resolutionHeight;
 		};
 	}
 }

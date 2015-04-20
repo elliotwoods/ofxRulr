@@ -15,6 +15,7 @@ namespace ofxDigitalEmulsion {
 		//---------
 		View::View() {
 			OFXDIGITALEMULSION_NODE_INIT_LISTENER;
+			this->testCamera = nullptr;
 		}
 
 		//---------
@@ -59,6 +60,10 @@ namespace ofxDigitalEmulsion {
 		//----------
 		void View::drawObject() {
 			this->viewInObjectSpace.draw();
+
+			if (this->testCamera) {
+				this->testCamera->draw();
+			}
 		}
 
 		//---------
@@ -69,6 +74,10 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::serialize(this->principalPointX, jsonCalibration);
 			Utils::Serializable::serialize(this->principalPointY, jsonCalibration);
 
+			auto & jsonResolution = json["resolution"];
+			jsonResolution["width"] = this->viewInObjectSpace.getWidth();
+			jsonResolution["height"] = this->viewInObjectSpace.getWidth();
+
 			auto & jsonDistortion = jsonCalibration["distortion"];
 			for (int i = 0; i<OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 				Utils::Serializable::serialize(this->distortion[i], jsonDistortion);
@@ -77,13 +86,21 @@ namespace ofxDigitalEmulsion {
 
 		//---------
 		void View::deserialize(const Json::Value & json) {
-			auto & jsonCalibration = json["calibration"];
+			const auto & jsonCalibration = json["calibration"];
 			Utils::Serializable::deserialize(this->focalLengthX, jsonCalibration);
 			Utils::Serializable::deserialize(this->focalLengthY, jsonCalibration);
 			Utils::Serializable::deserialize(this->principalPointX, jsonCalibration);
 			Utils::Serializable::deserialize(this->principalPointY, jsonCalibration);
 
-			this->rebuildViewFromParameters();
+			const auto & jsonResolution = json["resolution"];
+			if (!jsonResolution.isNull()) {
+				this->setWidth(jsonResolution["width"].asFloat());
+				this->setWidth(jsonResolution["height"].asFloat());
+			}
+			else {
+				this->setWidth(1024);
+				this->setHeight(768);
+			}
 
 			auto & jsonDistortion = jsonCalibration["distortion"];
 			for (int i = 0; i<OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
@@ -160,10 +177,28 @@ namespace ofxDigitalEmulsion {
 				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 			}));
 
+			inspector->add(Widgets::Button::make("Export ofxRay::Camera...", [this]() {
+				try {
+					this->exportRayCamera();
+				}
+				OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
+			}));
 
 			inspector->add(make_shared<Widgets::Spacer>());
 		}
 
+		//----------
+		void View::setWidth(float width) {
+			this->viewInObjectSpace.setWidth(width);
+			this->rebuildViewFromParameters();
+		}
+
+		//----------
+		void View::setHeight(float height) {
+			this->viewInObjectSpace.setHeight(height);
+			this->rebuildViewFromParameters();
+		}
+		
 		//----------
 		float View::getWidth() const {
 			return this->viewInObjectSpace.getWidth();
@@ -244,6 +279,17 @@ namespace ofxDigitalEmulsion {
 			if (result.bSuccess) {
 				ofstream fileout(ofToDataPath(result.filePath), ios::binary | ios::out);
 				fileout.write((char*)& matrix, sizeof(matrix));
+				fileout.close();
+			}
+		}
+
+		//----------
+		void View::exportRayCamera() {
+			const auto view = this->getViewInWorldSpace();
+			auto result = ofSystemSaveDialog(this->getName() + ".ofxRayCamera", "Export ofxRay::Camera");
+			if (result.bSuccess) {
+				ofstream fileout(ofToDataPath(result.filePath), ios::binary | ios::out);
+				fileout << view;
 				fileout.close();
 			}
 		}

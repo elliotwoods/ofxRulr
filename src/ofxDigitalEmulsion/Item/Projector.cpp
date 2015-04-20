@@ -15,11 +15,6 @@ namespace ofxDigitalEmulsion {
 		void Projector::init() {
 			OFXDIGITALEMULSION_NODE_SERIALIZATION_LISTENERS;
 			OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
-
-			this->resolutionWidth.set("Resolution width", 1024.0f, 1.0f, 8 * 1280.0f);
-			this->resolutionHeight.set("Resolution height", 768.0f, 1.0f, 8 * 800.0f);
-			this->resolutionWidth.addListener(this, &Projector::projectorParameterCallback);
-			this->resolutionHeight.addListener(this, &Projector::projectorParameterCallback);
 		}
 
 		//----------
@@ -29,34 +24,12 @@ namespace ofxDigitalEmulsion {
 			
 		//----------
 		void Projector::serialize(Json::Value & json) {
-			Utils::Serializable::serialize(this->resolutionWidth, json);
-			Utils::Serializable::serialize(this->resolutionHeight, json);
+
 		}
 
 		//----------
 		void Projector::deserialize(const Json::Value & json) {
-			Utils::Serializable::deserialize(this->resolutionWidth, json);
-			Utils::Serializable::deserialize(this->resolutionHeight, json);
-		}
 
-		//----------
-		void Projector::setWidth(float width) {
-			this->resolutionWidth = width;
-		}
-
-		//----------
-		void Projector::setHeight(float height) {
-			this->resolutionHeight = height;
-		}
-
-		//----------
-		float Projector::getWidth() const {
-			return this->resolutionWidth;
-		}
-
-		//----------
-		float Projector::getHeight() const {
-			return this->resolutionHeight;
 		}
 
 		//----------
@@ -65,8 +38,22 @@ namespace ofxDigitalEmulsion {
 		}
 		//----------
 		void Projector::populateInspector(ElementGroupPtr inspector) {
-			inspector->add(Widgets::EditableValue<float>::make(this->resolutionWidth));
-			inspector->add(Widgets::EditableValue<float>::make(this->resolutionHeight));
+			inspector->add(Widgets::EditableValue<float>::make("Resolution width", [this]() {
+				return this->getWidth();
+			}, [this](string valueString) {
+				const auto value = ofToFloat(valueString);
+				if (value > 0) {
+					this->setWidth(value);
+				}
+			}));
+			inspector->add(Widgets::EditableValue<float>::make("Resolution height", [this]() {
+				return this->getHeight();
+			}, [this](string valueString) {
+				const auto value = ofToFloat(valueString);
+				if (value > 0) {
+					this->setHeight(value);
+				}
+			}));
 		}
 	}
 }

@@ -23,9 +23,6 @@ namespace ofxDigitalEmulsion {
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
 
-			float getWidth() const override;
-			float getHeight() const override;
-
 			void setDeviceIndex(int);
 			void setDevice(const string & deviceTypeName);
 			void setDevice(ofxMachineVision::DevicePtr);

@@ -20,8 +20,11 @@ namespace ofxDigitalEmulsion {
 
 			void setDistortionEnabled(bool);
 			bool getDistortionEnabled() const;
-			virtual float getWidth() const;
-			virtual float getHeight() const;
+
+			void setWidth(float);
+			void setHeight(float);
+			float getWidth() const;
+			float getHeight() const;
 
 			void setIntrinsics(cv::Mat cameraMatrix, cv::Mat distortionCoefficients = cv::Mat::zeros(OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT, 1, CV_64F));
 			void setProjection(const ofMatrix4x4 &);
@@ -37,6 +40,7 @@ namespace ofxDigitalEmulsion {
 			void rebuildViewFromParameters();
 
 			void exportViewMatrix();
+			void exportRayCamera();
 
 			ofParameter<float> focalLengthX, focalLengthY;
 			ofParameter<float> principalPointX, principalPointY;
@@ -51,6 +55,8 @@ namespace ofxDigitalEmulsion {
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
 			void populateInspector(ofxCvGui::ElementGroupPtr);
+
+			ofxRay::Camera * testCamera;
 		};
 	}
 }
