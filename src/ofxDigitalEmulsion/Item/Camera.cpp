@@ -50,12 +50,6 @@ namespace ofxDigitalEmulsion {
 		void Camera::update() {
 			this->grabber->update();
 
-			if (this->grabber->getIsDeviceOpen()) {
-				auto specification = this->grabber->getDeviceSpecification();
-				this->viewInObjectSpace.setWidth(specification.getSensorWidth());
-				this->viewInObjectSpace.setHeight(specification.getSensorHeight());
-			}
-
 			if (this->showFocusLine) {
 				if (this->grabber->isFrameNew()) {
 					auto frame = this->grabber->getFrame();
@@ -94,7 +88,6 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::serialize(this->sharpness, jsonSettings);
 
 			auto & jsonResolution = json["resolution"];
-
 		}
 
 		//----------
@@ -113,7 +106,7 @@ namespace ofxDigitalEmulsion {
 			Utils::Serializable::deserialize(this->focus, jsonSettings);
 			Utils::Serializable::deserialize(this->sharpness, jsonSettings);
 
-			this->setAllCameraProperties();
+			this->setAllGrabberProperties();
 		}
 
 		//----------
@@ -164,10 +157,10 @@ namespace ofxDigitalEmulsion {
 					if (width != 0 && height != 0) {
 						this->setWidth(width);
 						this->setHeight(height);
+						this->rebuildViewFromParameters(); // size will have changed
 					}
 
-					this->rebuildViewFromParameters(); // size will have changed
-					this->setAllCameraProperties();
+					this->setAllGrabberProperties();
 
 					auto cameraView = ofxCvGui::Builder::makePanel(*this->grabber);
 					cameraView->onDraw += [this](ofxCvGui::DrawArguments & args) {
@@ -315,7 +308,7 @@ namespace ofxDigitalEmulsion {
 		}
 
 		//----------
-		void Camera::setAllCameraProperties() {
+		void Camera::setAllGrabberProperties() {
 			auto deviceSpecification = this->grabber->getDeviceSpecification();
 			
 			if (deviceSpecification.supports(Feature::Feature_Exposure)) {

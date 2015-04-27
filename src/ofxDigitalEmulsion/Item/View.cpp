@@ -277,7 +277,7 @@ namespace ofxDigitalEmulsion {
 			const auto matrix = this->getViewInObjectSpace().getClippedProjectionMatrix();
 			auto result = ofSystemSaveDialog(this->getName() + "-Projection.mat", "Export View matrix");
 			if (result.bSuccess) {
-				ofstream fileout(ofToDataPath(result.filePath), ios::binary | ios::out);
+				ofstream fileout(ofToDataPath(result.filePath), ios::out);
 				fileout.write((char*)& matrix, sizeof(matrix));
 				fileout.close();
 			}
@@ -288,7 +288,7 @@ namespace ofxDigitalEmulsion {
 			const auto view = this->getViewInWorldSpace();
 			auto result = ofSystemSaveDialog(this->getName() + ".ofxRayCamera", "Export ofxRay::Camera");
 			if (result.bSuccess) {
-				ofstream fileout(ofToDataPath(result.filePath), ios::binary | ios::out);
+				ofstream fileout(ofToDataPath(result.filePath), ios::out);
 				fileout << view;
 				fileout.close();
 			}

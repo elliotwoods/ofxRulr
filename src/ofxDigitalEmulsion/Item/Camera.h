@@ -33,7 +33,7 @@ namespace ofxDigitalEmulsion {
 			ofPixels getFreshFrame();
 		protected:
 			void populateInspector(ofxCvGui::ElementGroupPtr);
-			void setAllCameraProperties();
+			void setAllGrabberProperties();
 
 			void exposureCallback(float &);
 			void gainCallback(float &);
