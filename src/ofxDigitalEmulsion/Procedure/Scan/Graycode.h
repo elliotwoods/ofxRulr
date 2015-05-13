@@ -25,6 +25,7 @@ namespace ofxDigitalEmulsion {
 				ofxGraycode::Decoder & getDecoder();
 				const ofxGraycode::DataSet & getDataSet() const;
 			protected:
+				void drawPreviewOnVideoOutput(const ofRectangle &);
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 				void switchIfLookingAtDirtyView();
 
@@ -39,6 +40,7 @@ namespace ofxDigitalEmulsion {
 				ofParameter<float> threshold;
 				ofParameter<float> delay;
 				ofParameter<float> brightness;
+				ofParameter<bool> enablePreviewOnVideoOutput;
 
 				bool previewIsOfNonLivePixels;
 			};

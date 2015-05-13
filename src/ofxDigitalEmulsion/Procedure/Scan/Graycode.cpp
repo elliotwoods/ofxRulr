@@ -26,13 +26,27 @@ namespace ofxDigitalEmulsion {
 				OFXDIGITALEMULSION_NODE_INSPECTOR_LISTENER;
 
 				this->addInput(MAKE(Pin<Item::Camera>));
-				this->addInput(MAKE(Pin<Device::VideoOutput>));
+				auto videoOutputPin = MAKE(Pin<Device::VideoOutput>);
+				this->addInput(videoOutputPin);
 
 				this->threshold.set("Threshold", 10.0f, 0.0f, 255.0f);
 				this->delay.set("Capture delay [ms]", 200.0f, 0.0f, 2000.0f);
 				this->brightness.set("Brightness [/255]", 255.0f, 0.0f, 255.0f);
+				this->enablePreviewOnVideoOutput.set("Enable preview on output", false);
 
 				this->view = MAKE(Panels::Image, this->decoder.getProjectorInCamera());
+
+				videoOutputPin->onNewConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+					videoOutput->onDrawOutput.addListener([this](ofRectangle & rectangle) {
+						this->drawPreviewOnVideoOutput(rectangle);
+					}, this);
+				};
+
+				videoOutputPin->onDeleteConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+					if (videoOutput) {
+						videoOutput->onDrawOutput.removeListeners(this);
+					}
+				};
 
 				this->previewIsOfNonLivePixels = false;
 			}
@@ -59,6 +73,8 @@ namespace ofxDigitalEmulsion {
 				Utils::Serializable::serialize(this->brightness, json);
 				auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
 				this->decoder.saveDataSet(filename);
+
+				Utils::Serializable::serialize(this->enablePreviewOnVideoOutput, json);
 			}
 
 			//----------
@@ -69,6 +85,8 @@ namespace ofxDigitalEmulsion {
 				this->decoder.setThreshold(this->threshold);
 				Utils::Serializable::deserialize(this->delay, json);
 				Utils::Serializable::deserialize(this->brightness, json);
+
+				Utils::Serializable::deserialize(this->enablePreviewOnVideoOutput, json);
 			}
 
 			//----------
@@ -153,6 +171,13 @@ namespace ofxDigitalEmulsion {
 			}
 			
 			//----------
+			void Graycode::drawPreviewOnVideoOutput(const ofRectangle & rectangle) {
+				if (this->enablePreviewOnVideoOutput && this->preview.isAllocated()) {
+					this->preview.draw(rectangle);
+				}
+			}
+
+			//----------
 			void Graycode::populateInspector(ElementGroupPtr inspector) {
 				auto scanButton = Widgets::Button::make("SCAN", [this] () {
 					try {
@@ -226,6 +251,10 @@ namespace ofxDigitalEmulsion {
 					this->view->setImage(this->preview);
 					this->previewIsOfNonLivePixels = true;
 				}));
+
+				inspector->add(Widgets::Spacer::make());
+
+				inspector->add(Widgets::Toggle::make(this->enablePreviewOnVideoOutput));
 			}
 
 			//----------

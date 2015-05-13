@@ -104,7 +104,7 @@ namespace ofxDigitalEmulsion {
 					
 					auto numColors = (uint32_t) this->mesh.getNumColors();
 					save.write((char *) & numColors, sizeof(numColors));
-					save.write((char *) this->mesh.getColorsPointer(), sizeof(ofColor) * numColors);
+					save.write((char *) this->mesh.getColorsPointer(), sizeof(ofFloatColor) * numColors);
 					
 					save.close();
 				}
