@@ -8,7 +8,7 @@ using namespace ofxAssets;
 
 //--------------------------------------------------------------
 void ofApp::setup2(){
-	ofSetCircleResolution(120);
+	ofSetEscapeQuitsApp(false);
 	
 	AssetRegister.addAddon("ofxDigitalEmulsion");
 	splashScreen.init(image("ofxDigitalEmulsion::SplashScreen"));
