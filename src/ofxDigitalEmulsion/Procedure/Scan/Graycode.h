@@ -24,6 +24,7 @@ namespace ofxDigitalEmulsion {
 
 				ofxGraycode::Decoder & getDecoder();
 				const ofxGraycode::DataSet & getDataSet() const;
+
 			protected:
 				void drawPreviewOnVideoOutput(const ofRectangle &);
 				void populateInspector(ofxCvGui::ElementGroupPtr);

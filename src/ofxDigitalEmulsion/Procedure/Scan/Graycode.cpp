@@ -34,11 +34,17 @@ namespace ofxDigitalEmulsion {
 				this->brightness.set("Brightness [/255]", 255.0f, 0.0f, 255.0f);
 				this->enablePreviewOnVideoOutput.set("Enable preview on output", false);
 
+				this->payload.init(1, 1);
+				this->decoder.init(payload);
+				this->encoder.init(payload);
+
 				this->view = MAKE(Panels::Image, this->decoder.getProjectorInCamera());
 
 				videoOutputPin->onNewConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
 					videoOutput->onDrawOutput.addListener([this](ofRectangle & rectangle) {
-						this->drawPreviewOnVideoOutput(rectangle);
+						if (this->enablePreviewOnVideoOutput) {
+							this->drawPreviewOnVideoOutput(rectangle);
+						}
 					}, this);
 				};
 
@@ -80,7 +86,7 @@ namespace ofxDigitalEmulsion {
 			//----------
 			void Graycode::deserialize(const Json::Value & json) {
 				auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
-				this->decoder.loadDataSet(filename);
+				this->decoder.loadDataSet(filename, false);
 				Utils::Serializable::deserialize(this->threshold, json);
 				this->decoder.setThreshold(this->threshold);
 				Utils::Serializable::deserialize(this->delay, json);
@@ -169,11 +175,12 @@ namespace ofxDigitalEmulsion {
 				}
 				return this->decoder.getDataSet();
 			}
-			
+
 			//----------
 			void Graycode::drawPreviewOnVideoOutput(const ofRectangle & rectangle) {
-				if (this->enablePreviewOnVideoOutput && this->preview.isAllocated()) {
-					this->preview.draw(rectangle);
+				auto preview = this->view->getImage();
+				if (preview) {
+					preview->draw(rectangle);
 				}
 			}
 

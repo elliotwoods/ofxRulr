@@ -116,7 +116,7 @@ namespace ofxDigitalEmulsion {
 			};
 
 			this->showWindow.set("Show window", false);
-			this->testPattern.set("Test Pattern", 0);
+			this->testPattern.set("Test Pattern", 1);
 			this->splitHorizontal.set("Split Horizontal", 1, 1, 8);
 			this->splitVertical.set("Split Vertical", 1, 1, 8);
 			this->splitUseIndex.set("Selected portion", 0, 0, 8);

@@ -273,10 +273,16 @@ namespace ofxDigitalEmulsion {
 
 				mappingImage.end();
 
-				ofFloatPixels pixels;
-				mappingImage.readToPixels(pixels);
+				ofFloatImage saveImage;
+				mappingImage.readToPixels(saveImage.getPixelsRef());
+				saveImage.saveImage(filePath + ".exr");
 
-				ofSaveImage(pixels, filePath);
+
+				//save matrix
+				ofstream fileOut;
+				fileOut.open(ofToDataPath(filePath + ".matrix").c_str(), ofstream::out | ofstream::binary);
+				fileOut.write((char*)&this->cameraToProjector, sizeof(this->cameraToProjector));
+				fileOut.close();
 			}
 
 			//----------
