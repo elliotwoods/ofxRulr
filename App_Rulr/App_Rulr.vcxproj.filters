@@ -185,8 +185,12 @@
     <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.h">
       <Filter>pairs\ofxEdsdk\ofxMachineVision\Device</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="icon.rc" />
+    <ResourceCompile Include="App_Rulr.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="main_icon.ico" />
   </ItemGroup>
 </Project>
