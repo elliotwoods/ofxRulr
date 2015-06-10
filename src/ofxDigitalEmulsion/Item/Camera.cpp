@@ -8,7 +8,7 @@ using namespace cv;
 namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
-		Camera::Camera() {
+		Camera::Camera() : View(true) {
 			OFXDIGITALEMULSION_NODE_INIT_LISTENER;
 		}
 

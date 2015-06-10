@@ -32,7 +32,10 @@ namespace ofxDigitalEmulsion {
 				for (auto & vertex : grid.getVertices()) {
 					vertex += ofVec3f(0.5f, 0.5f, 0.0f);
 				}
+				
 				this->addInput(MAKE(Graph::Pin<Scan::Graycode>));
+				this->addInput(MAKE(Graph::Pin<Item::Camera>));
+
 				auto view = MAKE(ofxCvGui::Panels::Image, this->dummy);
 				view->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
 					try {
@@ -60,6 +63,7 @@ namespace ofxDigitalEmulsion {
 				};
 				this->view = view;
 
+				this->undistortFirst.set("Undistort first", false);
 				this->doubleExportSize.set("Double size of exported images", false);
 			}
 
@@ -125,6 +129,7 @@ namespace ofxDigitalEmulsion {
 
 				}
 
+				Utils::Serializable::serialize(this->undistortFirst, json);
 				Utils::Serializable::serialize(this->doubleExportSize, json);
 			}
 
@@ -138,6 +143,7 @@ namespace ofxDigitalEmulsion {
 					}
 				}
 
+				Utils::Serializable::deserialize(this->undistortFirst, json);
 				Utils::Serializable::deserialize(this->doubleExportSize, json);
 			}
 
@@ -159,6 +165,12 @@ namespace ofxDigitalEmulsion {
 						camera.push_back(pixel.getCameraXY());
 						projector.push_back(pixel.getProjectorXY());
 					}
+				}
+
+				if (this->undistortFirst) {
+					this->throwIfMissingAConnection<Item::Camera>();
+					auto cameraNode = this->getInput<Item::Camera>();
+					camera = toOf(ofxCv::undistortPixelCoordinates(toCv(camera), cameraNode->getCameraMatrix(), cameraNode->getDistortionCoefficients()));
 				}
 
 				auto result = cv::findHomography(ofxCv::toCv(camera), ofxCv::toCv(projector), CV_LMEDS, 5.0);
@@ -283,6 +295,34 @@ namespace ofxDigitalEmulsion {
 				fileOut.open(ofToDataPath(filePath + ".matrix").c_str(), ofstream::out | ofstream::binary);
 				fileOut.write((char*)&this->cameraToProjector, sizeof(this->cameraToProjector));
 				fileOut.close();
+
+				//save undistort
+				if (this->undistortFirst) {
+					this->throwIfMissingAConnection<Item::Camera>();
+					auto cameraNode = this->getInput<Item::Camera>();
+
+					auto cameraMatrix = cameraNode->getCameraMatrix();
+					auto distortionCoefficients = cameraNode->getDistortionCoefficients();
+					auto fx = cameraMatrix.at<double>(0, 0);
+					auto fy = cameraMatrix.at<double>(1, 1);
+					auto cx = cameraMatrix.at<double>(0, 2);
+					auto cy = cameraMatrix.at<double>(1, 2);
+					auto distortionVector = vector<double>(OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT);
+					for (int i = 0; i < distortionVector.size(); i++) {
+						distortionVector[i] = distortionCoefficients.at<double>(i);
+					}
+
+					ofstream fileOut;
+					fileOut.open(ofToDataPath(filePath + ".undistort").c_str(), ofstream::out | ofstream::binary);
+					fileOut.write((char*)&fx, sizeof(double));
+					fileOut.write((char*)&fy, sizeof(double));
+					fileOut.write((char*)&cx, sizeof(double));
+					fileOut.write((char*)&cy, sizeof(double));
+					for (int i = 0; i < distortionVector.size(); i++) {
+						fileOut.write((char*)&distortionVector[i], sizeof(double));
+					}
+					fileOut.close();
+				}
 			}
 
 			//----------
@@ -302,6 +342,8 @@ namespace ofxDigitalEmulsion {
 					}
 					OFXDIGITALEMULSION_CATCH_ALL_TO_ALERT
 				}));
+
+				inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->undistortFirst));
 				inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->doubleExportSize));
 			}
 		}

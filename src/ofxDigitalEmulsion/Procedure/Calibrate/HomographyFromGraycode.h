@@ -30,6 +30,7 @@ namespace ofxDigitalEmulsion {
 				ofMesh grid;
 				ofImage dummy;
 
+				ofParameter<bool> undistortFirst;
 				ofParameter<bool> doubleExportSize;
 			};
 		}

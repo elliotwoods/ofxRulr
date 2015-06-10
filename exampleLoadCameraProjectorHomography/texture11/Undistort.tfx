@@ -1,0 +1,45 @@
+//@author: vux
+//@help: template for texture fx
+//@tags: texture
+//@credits: 
+
+Texture2D texture2d : PREVIOUS;
+#include "undistort.fxh"
+
+float4 Distortion;
+float2 FocalLength;
+float2 PrincipalPoint;
+float2 Resolution;
+
+SamplerState linearSampler : IMMUTABLE
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Clamp;
+    AddressV = Clamp;
+};
+
+struct psInput
+{
+	float4 p : SV_Position;
+	float2 uv : TEXCOORD0;
+};
+
+
+float4 PS(psInput input) : SV_Target
+{
+    float2 uv = Undistort(input.uv, FocalLength, PrincipalPoint, Distortion, Resolution);
+	
+	float4 c = texture2d.Sample(linearSampler,uv);
+	return c;
+}
+
+technique10 Process
+{
+	pass P0
+	{
+		SetPixelShader(CompileShader(ps_4_0,PS()));
+	}
+}
+
+
+

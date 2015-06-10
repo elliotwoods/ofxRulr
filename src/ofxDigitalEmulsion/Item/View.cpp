@@ -13,7 +13,7 @@ using namespace cv;
 namespace ofxDigitalEmulsion {
 	namespace Item {
 		//---------
-		View::View() {
+		View::View(bool hasDistortion) : hasDistortion(hasDistortion) {
 			OFXDIGITALEMULSION_NODE_INIT_LISTENER;
 			this->testCamera = nullptr;
 		}
@@ -45,6 +45,9 @@ namespace ofxDigitalEmulsion {
 			this->focalLengthY.addListener(this, &View::parameterCallback);
 			this->principalPointX.addListener(this, &View::parameterCallback);
 			this->principalPointX.addListener(this, &View::parameterCallback);
+			for (int i = 0; i<OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
+				this->distortion[i].addListener(this, &View::parameterCallback);
+			}
 
 			this->viewInObjectSpace.setDefaultFar(20.0f);
 			this->viewInObjectSpace.color = this->getColor();
@@ -163,12 +166,16 @@ namespace ofxDigitalEmulsion {
 				}
 			}));
 
-			inspector->add(Widgets::Spacer::make());
+			if (this->hasDistortion) {
+				inspector->add(Widgets::Spacer::make());
 
-			inspector->add(Widgets::Title::make("Distortion coefficients", Widgets::Title::Level::H3));
-			for (int i = 0; i<OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-				inspector->add(Widgets::Slider::make(this->distortion[i]));
+				inspector->add(Widgets::Title::make("Distortion coefficients", Widgets::Title::Level::H3));
+				for (int i = 0; i<OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
+					inspector->add(Widgets::Slider::make(this->distortion[i]));
+				}
 			}
+			
+			inspector->add(Widgets::Spacer::make());
 
 			inspector->add(Widgets::Button::make("Export View matrix...", [this]() {
 				try {
@@ -270,6 +277,14 @@ namespace ofxDigitalEmulsion {
 		void View::rebuildViewFromParameters() {
 			auto projection = ofxCv::makeProjectionMatrix(this->getCameraMatrix(), this->getSize());
 			this->viewInObjectSpace.setProjection(projection);
+
+			if (this->hasDistortion) {
+				auto distortionVector = vector<float>(OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT);
+				for (int i = 0; i < OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
+					distortionVector[i] = this->distortion[i].get();
+				}
+				this->viewInObjectSpace.distortion = distortionVector;
+			}
 		}
 
 		//----------

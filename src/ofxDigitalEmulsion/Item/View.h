@@ -11,7 +11,7 @@ namespace ofxDigitalEmulsion {
 	namespace Item {
 		class View : public RigidBody {
 		public:
-			View();
+			View(bool hasDistortion = true);
 			virtual string getTypeName() const override;
 
 			void init();
@@ -31,7 +31,7 @@ namespace ofxDigitalEmulsion {
 
 			cv::Size getSize() const;
 			cv::Mat getCameraMatrix() const;
-			virtual bool getHasDistortion() const { return false; };
+			virtual bool getHasDistortion() const { return this->hasDistortion; };
 			cv::Mat getDistortionCoefficients() const;
 
 			const ofxRay::Camera & getViewInObjectSpace() const;
@@ -45,7 +45,7 @@ namespace ofxDigitalEmulsion {
 			ofParameter<float> focalLengthX, focalLengthY;
 			ofParameter<float> principalPointX, principalPointY;
 
-			ofParameter<bool> hasDistortion;
+			const bool hasDistortion;
 			ofParameter<float> distortion[OFXDIGITALEMULSION_VIEW_DISTORTION_COEFFICIENT_COUNT];
 
 			//Versions of this view as an ofxRay::Camera in world space and object space

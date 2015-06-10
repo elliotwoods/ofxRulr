@@ -7,7 +7,7 @@ using namespace ofxCvGui;
 namespace ofxDigitalEmulsion {
 	namespace Item {
 		//----------
-		Projector::Projector() {
+		Projector::Projector() : View(false) {
 			OFXDIGITALEMULSION_NODE_INIT_LISTENER;
 		}
 
