@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ofxRulr">
+      <UniqueIdentifier>{a5ebfd6c-8dcd-48f1-8b8c-b5db74f6f732}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Graph">
+      <UniqueIdentifier>{6c94d630-9339-4601-ae19-fdce499df997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Graph\Editor">
+      <UniqueIdentifier>{e468759d-d487-48db-a966-6617ce9aa63d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Plugins">
+      <UniqueIdentifier>{b8609362-3d65-4761-8e47-bded66e3a721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Utils">
+      <UniqueIdentifier>{3323f018-b50f-4eb5-8d8e-8465f90f3e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons">
+      <UniqueIdentifier>{7cfba1ea-d11f-4ef4-8926-c7e28ba7f0c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson">
+      <UniqueIdentifier>{8c21fc0c-fafb-4f80-a6a6-eed5e4fa917c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\src">
+      <UniqueIdentifier>{167a7f7c-1794-4d7d-bac5-7597db1343f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs">
+      <UniqueIdentifier>{01ce3573-77fe-4a03-abc7-00514d41595e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp">
+      <UniqueIdentifier>{09adac28-243d-4c77-afab-5f6d58547cbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\include">
+      <UniqueIdentifier>{4a20149c-4e72-428b-b9e7-4b466736d711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\include\json">
+      <UniqueIdentifier>{c3dea055-97a3-4b31-bedc-b81aa430f8ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxJson\libs\jsoncpp\src">
+      <UniqueIdentifier>{bd5f6534-79ed-4305-af5c-9faec1039953}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ofxRulr\Exception.cpp">
+      <Filter>ofxRulr</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\Node.cpp">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\Pin.cpp">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\Summary.cpp">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\World.cpp">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\Factory.cpp">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\Editor\NodeHost.cpp">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\Editor\Patch.cpp">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\Editor\PinView.cpp">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\Editor\LinkHost.cpp">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Graph\Editor\NodeBrowser.cpp">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Plugins\Manager.cpp">
+      <Filter>ofxRulr\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Utils\Serializable.cpp">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Utils\Utils.cpp">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Utils\Gui.cpp">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Utils\Initialiser.cpp">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp">
+      <Filter>addons\ofxJson\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_reader.cpp">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ofxRulr\Exception.h">
+      <Filter>ofxRulr</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Version.h">
+      <Filter>ofxRulr</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\Node.h">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\Pin.h">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\Summary.h">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\World.h">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\Factory.h">
+      <Filter>ofxRulr\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\Editor\NodeBrowser.h">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\Editor\NodeHost.h">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\Editor\Patch.h">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\Editor\PinView.h">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Graph\Editor\LinkHost.h">
+      <Filter>ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Plugins\Manager.h">
+      <Filter>ofxRulr\Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Utils\Serializable.h">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Utils\Set.h">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Utils\Utils.h">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Utils\Constants.h">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Utils\Gui.h">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Utils\Initialiser.h">
+      <Filter>ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\src\ofxJSONElement.h">
+      <Filter>addons\ofxJson\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\json.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\reader.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\value.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\writer.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\autolink.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\config.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\features.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\forwards.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_batchallocator.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_tool.h">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </None>
+    <None Include="..\..\ofxJSON\libs\jsoncpp\src\sconscript">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </None>
+    <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalarray.inl">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </None>
+    <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalmap.inl">
+      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

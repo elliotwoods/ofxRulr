@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="External.cpp" />
+    <ClCompile Include="ofxRulr\Nodes\Item\KinectV2.cpp">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\CameraFromKinectV2.cpp">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromKinectV2.cpp">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="External.h" />
+    <ClInclude Include="ofxRulr\Nodes\Item\KinectV2.h">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromKinectV2.h">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\CameraFromKinectV2.h">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ofxRulr">
+      <UniqueIdentifier>{4a85870e-108b-4bfc-8506-cd527b342102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes">
+      <UniqueIdentifier>{b5fccf2e-99b2-48d6-ac02-070c142d804e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Item">
+      <UniqueIdentifier>{e8ce5bc2-a4be-4bf0-bb96-dcfa035ed1e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Procedure">
+      <UniqueIdentifier>{190c7784-9efc-40a7-aab0-a7d809cb808a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Procedure\Calibrate">
+      <UniqueIdentifier>{99b42e00-885b-49c5-b5fc-c2eb8ac9f546}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ofxRulr">
+      <UniqueIdentifier>{f86e6996-d0f1-4600-99b1-11258a486325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes">
+      <UniqueIdentifier>{67703275-437c-4b98-9e1c-eac97902a40f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Device">
+      <UniqueIdentifier>{60203297-2e3c-430c-9904-30b72dbc657a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Item">
+      <UniqueIdentifier>{3839fabc-d627-4b8e-a34b-9c3418c556eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Procedure">
+      <UniqueIdentifier>{6cb4f291-4cab-4088-9ad8-91599b7125f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Procedure\Scan">
+      <UniqueIdentifier>{6418dc67-8def-4cd4-8807-01a4ef065686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Procedure\Calibrate">
+      <UniqueIdentifier>{a37713d8-b5cf-46c5-a0e8-f306919ad0e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Render">
+      <UniqueIdentifier>{434e707b-75f8-4610-90d2-b5df5fa14f60}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ofxRulr\Nodes\Device\VideoOutput.h">
+      <Filter>ofxRulr\Nodes\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Item\Board.h">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Item\Camera.h">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Item\Model.h">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Item\Projector.h">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Item\RigidBody.h">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Item\View.h">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Item\Base.h">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Procedure\Base.h">
+      <Filter>ofxRulr\Nodes\Procedure</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Procedure\Triangulate.h">
+      <Filter>ofxRulr\Nodes\Procedure</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Procedure\Scan\Graycode.h">
+      <Filter>ofxRulr\Nodes\Procedure\Scan</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.h">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\Render\NodeThroughView.h">
+      <Filter>ofxRulr\Nodes\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ofxRulr\Nodes\DeclareCoreNodes.h">
+      <Filter>ofxRulr\Nodes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ofxRulr\Nodes\Device\VideoOutput.cpp">
+      <Filter>ofxRulr\Nodes\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Item\Camera.cpp">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Item\Model.cpp">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Item\Projector.cpp">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Item\View.cpp">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Item\Board.cpp">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Procedure\Triangulate.cpp">
+      <Filter>ofxRulr\Nodes\Procedure</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Procedure\Scan\Graycode.cpp">
+      <Filter>ofxRulr\Nodes\Procedure\Scan</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.cpp">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp">
+      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Render\NodeThroughView.cpp">
+      <Filter>ofxRulr\Nodes\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\Item\RigidBody.cpp">
+      <Filter>ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ofxRulr\Nodes\DeclareCoreNodes.cpp">
+      <Filter>ofxRulr\Nodes</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

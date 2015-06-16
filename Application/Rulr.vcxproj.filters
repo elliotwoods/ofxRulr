@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\ofApp.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp">
+      <Filter>addons\ofxSplashScreen\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxBlackmagic2\pairs\ofxMachineVision\Device\DeckLink.cpp">
+      <Filter>pairs\ofxBlackMagic2\ofxMachineVision\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.cpp">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision\Device</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons">
+      <UniqueIdentifier>{df0f8135-b16c-4406-a2dd-409cad4f9c38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSplashScreen">
+      <UniqueIdentifier>{6474802e-fa18-40f6-bbaf-beea5b4e6e67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSplashScreen\src">
+      <UniqueIdentifier>{16605a73-ca0f-476f-abda-9458b54e79f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs">
+      <UniqueIdentifier>{789c2420-830c-4a05-83a4-3ead6564dcc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxBlackMagic2">
+      <UniqueIdentifier>{03177efb-95f9-4c3f-ba6d-6a165c607ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxBlackMagic2\ofxMachineVision">
+      <UniqueIdentifier>{da0ab37c-3cca-45d0-a1cb-55cef34964a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxBlackMagic2\ofxMachineVision\Device">
+      <UniqueIdentifier>{03ebb869-aba6-4004-a4d7-f45b5fb0d0b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk">
+      <UniqueIdentifier>{5c9e5163-dcd4-4b87-a48a-e4d17c8ba08e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk\ofxMachineVision">
+      <UniqueIdentifier>{ef178622-cf41-466c-b429-63d7ca114770}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk\ofxMachineVision\Device">
+      <UniqueIdentifier>{53860f86-af0a-4923-9aa8-bb799688eb5d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ofApp.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.h">
+      <Filter>addons\ofxSplashScreen\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxBlackmagic2\pairs\ofxMachineVision\Device\DeckLink.h">
+      <Filter>pairs\ofxBlackMagic2\ofxMachineVision\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.h">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Rulr.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="main_icon.ico" />
+  </ItemGroup>
+</Project>

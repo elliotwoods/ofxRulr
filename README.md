@@ -1,5 +1,5 @@
-ofxDigitalEmulsion
-==================
+Rulr
+====
 
 
 # The problem
