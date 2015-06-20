@@ -40,6 +40,7 @@ namespace ofxDigitalEmulsion {
 				ofImage preview;
 				ofParameter<float> threshold;
 				ofParameter<float> delay;
+				ofParameter<float> averagedExposures;
 				ofParameter<float> brightness;
 				ofParameter<bool> enablePreviewOnVideoOutput;
 

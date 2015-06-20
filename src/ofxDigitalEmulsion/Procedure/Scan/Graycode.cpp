@@ -31,6 +31,7 @@ namespace ofxDigitalEmulsion {
 
 				this->threshold.set("Threshold", 10.0f, 0.0f, 255.0f);
 				this->delay.set("Capture delay [ms]", 200.0f, 0.0f, 2000.0f);
+				this->averagedExposures.set("Averaged exposures", 1, 1, 60);
 				this->brightness.set("Brightness [/255]", 255.0f, 0.0f, 255.0f);
 				this->enablePreviewOnVideoOutput.set("Enable preview on output", false);
 
@@ -77,6 +78,7 @@ namespace ofxDigitalEmulsion {
 				Utils::Serializable::serialize(this->threshold, json);
 				Utils::Serializable::serialize(this->delay, json);
 				Utils::Serializable::serialize(this->brightness, json);
+				Utils::Serializable::serialize(this->averagedExposures, json);
 				auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
 				this->decoder.saveDataSet(filename);
 
@@ -91,6 +93,7 @@ namespace ofxDigitalEmulsion {
 				this->decoder.setThreshold(this->threshold);
 				Utils::Serializable::deserialize(this->delay, json);
 				Utils::Serializable::deserialize(this->brightness, json);
+				Utils::Serializable::deserialize(this->averagedExposures, json);
 
 				Utils::Serializable::deserialize(this->enablePreviewOnVideoOutput, json);
 			}
@@ -152,7 +155,7 @@ namespace ofxDigitalEmulsion {
 						grabber->update();
 					}
 
-					auto frame = grabber->getFreshFrame();
+					auto frame = grabber->getFreshFrameAveraged((int)(this->averagedExposures));
 					frame->lockForReading();
 					this->decoder << frame->getPixelsRef();
 					frame->unlock();
@@ -215,6 +218,9 @@ namespace ofxDigitalEmulsion {
 					return this->decoder.hasData() ? "True" : "False";
 				}));
 				inspector->add(Widgets::Slider::make(this->delay));
+				auto exposuresSlider = Widgets::Slider::make(this->averagedExposures);
+				exposuresSlider->addIntValidator();
+				inspector->add(exposuresSlider);
 				auto thresholdSlider = Widgets::Slider::make(this->threshold);
 				thresholdSlider->addIntValidator();
 				thresholdSlider->onValueChange += [this] (ofParameter<float> &) {
