@@ -6,45 +6,47 @@
 #include "ofxCvGui/Panels/Image.h"
 
 namespace ofxRulr {
-	namespace Procedure {
-		namespace Scan {
-			class Graycode : public Procedure::Base {
-			public:
-				Graycode();
-				void init();
-				string getTypeName() const override;
-				ofxCvGui::PanelPtr getView() override;
-				void update();
+	namespace Nodes {
+		namespace Procedure {
+			namespace Scan {
+				class Graycode : public Procedure::Base {
+				public:
+					Graycode();
+					void init();
+					string getTypeName() const override;
+					ofxCvGui::PanelPtr getView() override;
+					void update();
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
- 
-				bool isReady();
-				void runScan();
+					void serialize(Json::Value &);
+					void deserialize(const Json::Value &);
 
-				ofxGraycode::Decoder & getDecoder();
-				const ofxGraycode::DataSet & getDataSet() const;
+					bool isReady();
+					void runScan();
 
-			protected:
-				void drawPreviewOnVideoOutput(const ofRectangle &);
-				void populateInspector(ofxCvGui::ElementGroupPtr);
-				void switchIfLookingAtDirtyView();
+					ofxGraycode::Decoder & getDecoder();
+					const ofxGraycode::DataSet & getDataSet() const;
 
-				shared_ptr<ofxCvGui::Panels::Image> view;
+				protected:
+					void drawPreviewOnVideoOutput(const ofRectangle &);
+					void populateInspector(ofxCvGui::ElementGroupPtr);
+					void switchIfLookingAtDirtyView();
 
-				ofxGraycode::PayloadGraycode payload;
-				ofxGraycode::Encoder encoder;
-				ofxGraycode::Decoder decoder;
-				ofImage message;
+					shared_ptr<ofxCvGui::Panels::Image> view;
 
-				ofImage preview;
-				ofParameter<float> threshold;
-				ofParameter<float> delay;
-				ofParameter<float> brightness;
-				ofParameter<bool> enablePreviewOnVideoOutput;
+					ofxGraycode::PayloadGraycode payload;
+					ofxGraycode::Encoder encoder;
+					ofxGraycode::Decoder decoder;
+					ofImage message;
 
-				bool previewIsOfNonLivePixels;
-			};
+					ofImage preview;
+					ofParameter<float> threshold;
+					ofParameter<float> delay;
+					ofParameter<float> brightness;
+					ofParameter<bool> enablePreviewOnVideoOutput;
+
+					bool previewIsOfNonLivePixels;
+				};
+			}
 		}
 	}
 }

@@ -2,6 +2,6 @@
 
 namespace ofxRulr {
 	namespace Nodes {
-		void declarCoreNodes();
+		void declareCoreNodes();
 	}
 }

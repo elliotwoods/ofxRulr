@@ -134,17 +134,11 @@
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
       <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\ofxBlackmagic2\ofxBlackmagicLib\ofxBlackmagicLib.vcxproj">
-      <Project>{e57be93f-5ba0-4165-8861-df6653f11a37}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGuiLib.vcxproj">
       <Project>{6f0ddb4f-4014-4433-919b-9d956c034bad}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj">
       <Project>{630936f8-c65f-4ab9-92ad-80569eaa7782}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ofxUeye\ofxUeyeLib\ofxUeyeLib.vcxproj">
-      <Project>{8d6b518c-d891-4907-8bc1-3232914bab97}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.vcxproj">
       <Project>{9201d4e8-8b5a-44d4-baa6-23229a1871a7}</Project>

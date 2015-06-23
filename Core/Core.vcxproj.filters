@@ -40,6 +40,12 @@
     <Filter Include="addons\ofxJson\libs\jsoncpp\src">
       <UniqueIdentifier>{bd5f6534-79ed-4305-af5c-9faec1039953}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxClipboard">
+      <UniqueIdentifier>{2e07442a-7b34-45d3-9ffd-dbd2f13430b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxClipboard\src">
+      <UniqueIdentifier>{82727677-eaf1-4107-9eb4-557d1488c722}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ofxRulr\Exception.cpp">
@@ -101,6 +107,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp">
       <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxClipboard\src\ofxClipboard.cpp">
+      <Filter>addons\ofxClipboard\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_tool.h">
       <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxClipboard\src\ofxClipboard.h">
+      <Filter>addons\ofxClipboard\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

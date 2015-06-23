@@ -33,9 +33,15 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Core\ofxRulr_Core.props" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug64.props" />
+    <Import Project="..\Nodes\ofxRulr_Nodes.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Core\ofxRulr_Core.props" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease64.props" />
+    <Import Project="..\Nodes\ofxRulr_Nodes.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -74,6 +80,11 @@
     <ClInclude Include="ofxRulr\Nodes\Item\KinectV2.h" />
     <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\CameraFromKinectV2.h" />
     <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromKinectV2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nodes\Nodes.vcxproj">
+      <Project>{33d577f9-86e9-4f15-81f1-256a00bbe3ea}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

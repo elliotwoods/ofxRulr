@@ -6,9 +6,11 @@
 using namespace std;
 
 namespace ofxRulr {
-	namespace Procedure {
-		class Base : public Graph::Node {
-		public:
-		};
+	namespace Nodes {
+		namespace Procedure {
+			class Base : public Graph::Node {
+			public:
+			};
+		}
 	}
 }

@@ -28,8 +28,7 @@ void ofApp::setup2(){
 	//--
 	//
 	ofxMachineVision::registerDevice<ofxMachineVision::Device::CanonDSLRDevice>();
-	ofxMachineVision::registerDevice<ofxMachineVision::Device::DeckLink>();
-	ofxMachineVision::registerDevice<ofxUeye::Device>();
+	// cameras should generally be plugins, so these will come later
 	//
 	//--
 
@@ -38,7 +37,7 @@ void ofApp::setup2(){
 	//Initialise core nodes
 	//--
 	//
-	ofxRulr::Nodes::declarCoreNodes();
+	ofxRulr::Nodes::declareCoreNodes();
 	//
 	//--
 

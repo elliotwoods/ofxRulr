@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\ofxClipboard\src\ofxClipboard.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_reader.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp" />
@@ -33,6 +34,7 @@
     <ClCompile Include="ofxRulr\Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\ofxClipboard\src\ofxClipboard.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\autolink.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\config.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\features.h" />
@@ -100,8 +102,8 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
+    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease64.props" />
     <Import Project="ofxRulr_Core.props" />
   </ImportGroup>

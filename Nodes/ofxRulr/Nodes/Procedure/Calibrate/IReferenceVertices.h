@@ -5,31 +5,33 @@
 #include "ofxCvGui/Panels/Image.h"
 
 namespace ofxRulr {
-	namespace Procedure {
-		namespace Calibrate {
-			class IReferenceVertices : public Procedure::Base {
-			public:
-				class Vertex {
+	namespace Nodes {
+		namespace Procedure {
+			namespace Calibrate {
+				class IReferenceVertices : public Procedure::Base {
 				public:
-					virtual ofVec3f getWorldPosition() const = 0;
-					virtual void drawWorld(const ofColor & = ofColor(255));
-					virtual bool isSelected() const = 0;
+					class Vertex {
+					public:
+						virtual ofVec3f getWorldPosition() const = 0;
+						virtual void drawWorld(const ofColor & = ofColor(255));
+						virtual bool isSelected() const = 0;
 
-					ofVec2f viewPosition; /// px
+						ofVec2f viewPosition; /// px
+					protected:
+						void drawObjectLines();
+					};
+
+					IReferenceVertices();
+					string getTypeName() const override;
+					void drawWorld() override;
+
+					const vector<shared_ptr<Vertex>> & getVertices() const;
+
+					ofxLiquidEvent<void> onChangeVertex;
 				protected:
-					void drawObjectLines();
+					vector<shared_ptr<Vertex>> vertices;
 				};
-
-				IReferenceVertices();
-				string getTypeName() const override;
-				void drawWorld() override;
-
-				const vector<shared_ptr<Vertex>> & getVertices() const;
-
-				ofxLiquidEvent<void> onChangeVertex;
-			protected:
-				vector<shared_ptr<Vertex>> vertices;
-			};
+			}
 		}
 	}
 }
