@@ -83,7 +83,7 @@ namespace ofxRulr {
 
 			template<typename NodeType>
 			shared_ptr<Graph::Pin<NodeType>> getInputPin() const {
-				return this->getInputPins().get<Pin<NodeType>>();
+				return this->getInputPins().get<Graph::Pin<NodeType>>();
 			}
 
 			template<typename NodeType>
