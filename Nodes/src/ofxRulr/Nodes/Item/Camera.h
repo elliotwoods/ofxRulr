@@ -31,7 +31,7 @@ namespace ofxRulr {
 				void reopenDevice();
 				shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
 
-				ofPixels getFreshFrame();
+				shared_ptr<ofxMachineVision::Frame> getFreshFrame();
 			protected:
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 				void setAllGrabberProperties();

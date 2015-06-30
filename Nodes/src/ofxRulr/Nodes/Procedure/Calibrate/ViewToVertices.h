@@ -11,10 +11,10 @@ namespace ofxRulr {
 					class ViewArea : public ofBaseDraws {
 					public:
 						ViewArea(ViewToVertices &);
-						void draw(float x, float y) override;
-						void draw(float x, float y, float w, float h) override;
-						float getHeight() override;
-						float getWidth() override;
+						void draw(float x, float y) const override;
+						void draw(float x, float y, float w, float h) const override;
+						float getHeight() const override;
+						float getWidth() const override;
 					protected:
 						ViewToVertices & parent;
 					};

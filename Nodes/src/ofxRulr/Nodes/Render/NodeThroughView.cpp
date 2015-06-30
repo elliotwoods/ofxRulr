@@ -19,7 +19,7 @@ namespace ofxRulr {
 
 		//----------
 		void NodeThroughView::init() {
-			this->addInput<Node>();
+			this->addInput<Nodes::Base>();
 			this->addInput<Item::View>();
 			auto videoOutputInput = this->addInput<Device::VideoOutput>();
 
@@ -37,7 +37,7 @@ namespace ofxRulr {
 
 		//----------
 		void NodeThroughView::drawOnVideoOutput(const ofRectangle & viewBounds) {
-			auto node = this->getInput<Node>();
+			auto node = this->getInput<Nodes::Base>();
 			auto view = this->getInput<Item::View>();
 
 			if (node && view) {

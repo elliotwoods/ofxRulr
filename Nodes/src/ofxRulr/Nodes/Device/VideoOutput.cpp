@@ -427,7 +427,7 @@ namespace ofxRulr {
 
 						//modified from ofxCvGui::Widgets::Toggle::draw()
 
-						auto & font = ofxAssets::AssetRegister.getFont(ofxCvGui::defaultTypeface, 12);
+						auto & font = ofxAssets::Register().getFont(ofxCvGui::defaultTypeface, 12);
 
 						ofPushStyle();
 

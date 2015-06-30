@@ -1,20 +1,20 @@
 #include "DeclareCoreNodes.h"
 #include "ofxRulr/Graph/Factory.h"
 
-#include "Nodes/Device/VideoOutput.h"
+#include "ofxRulr/Nodes/Device/VideoOutput.h"
 
-#include "Nodes/Item/Board.h"
-#include "Nodes/Item/Camera.h"
+#include "ofxRulr/Nodes/Item/Board.h"
+#include "ofxRulr/Nodes/Item/Camera.h"
 //#include "Nodes/Item/Model.h"
-#include "Nodes/Item/Projector.h"
-#include "Nodes/Item/RigidBody.h"
-#include "Nodes/Item/View.h"
+#include "ofxRulr/Nodes/Item/Projector.h"
+#include "ofxRulr/Nodes/Item/RigidBody.h"
+#include "ofxRulr/Nodes/Item/View.h"
 
-#include "Nodes/Procedure/Calibrate/CameraIntrinsics.h"
-#include "Nodes/Procedure/Calibrate/HomographyFromGraycode.h"
-#include "Nodes/Procedure/Calibrate/ViewToVertices.h"
-#include "Nodes/Procedure/Scan/Graycode.h"
-#include "Nodes/Procedure/Triangulate.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/CameraIntrinsics.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/HomographyFromGraycode.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/ViewToVertices.h"
+#include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
+#include "ofxRulr/Nodes/Procedure/Triangulate.h"
 
 namespace ofxRulr {
 	namespace Nodes {

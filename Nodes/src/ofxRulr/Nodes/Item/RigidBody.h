@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ofxRulr/Graph/Node.h"
+#include "ofxRulr/Nodes/Base.h"
 #include "ofxCvMin/src/ofxCvMin.h"
 
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
-			class RigidBody : public Graph::Node {
+			class RigidBody : public Nodes::Base {
 			public:
 				RigidBody();
 				virtual string getTypeName() const override;

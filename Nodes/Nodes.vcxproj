@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -13,18 +13,19 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{33D577F9-86E9-4F15-81F1-256A00BBE3EA}</ProjectGuid>
     <RootNamespace>Nodes</RootNamespace>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -34,7 +35,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\Core\ofxRulr_Core.props" />
-    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug64.props" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\..\ofxMachineVision\ofxMachineVisionLib\ofxMachineVision.props" />
@@ -46,7 +47,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\Core\ofxRulr_Core.props" />
-    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease64.props" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\..\ofxMachineVision\ofxMachineVisionLib\ofxMachineVision.props" />
@@ -56,7 +57,9 @@
     <Import Project="ofxRulr_Nodes.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -64,15 +67,17 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -91,10 +96,11 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -223,43 +229,43 @@
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h" />
     <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
-    <ClInclude Include="ofxRulr\Nodes\DeclareCoreNodes.h" />
-    <ClInclude Include="ofxRulr\Nodes\Device\VideoOutput.h" />
-    <ClInclude Include="ofxRulr\Nodes\Item\Base.h" />
-    <ClInclude Include="ofxRulr\Nodes\Item\Board.h" />
-    <ClInclude Include="ofxRulr\Nodes\Item\Camera.h" />
-    <ClInclude Include="ofxRulr\Nodes\Item\Model.h" />
-    <ClInclude Include="ofxRulr\Nodes\Item\Projector.h" />
-    <ClInclude Include="ofxRulr\Nodes\Item\RigidBody.h" />
-    <ClInclude Include="ofxRulr\Nodes\Item\View.h" />
-    <ClInclude Include="ofxRulr\Nodes\Procedure\Base.h" />
-    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h" />
-    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h" />
-    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.h" />
-    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h" />
-    <ClInclude Include="ofxRulr\Nodes\Procedure\Scan\Graycode.h" />
-    <ClInclude Include="ofxRulr\Nodes\Procedure\Triangulate.h" />
-    <ClInclude Include="ofxRulr\Nodes\Render\NodeThroughView.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\DeclareCoreNodes.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Device\VideoOutput.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Base.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Board.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Model.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Projector.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\RigidBody.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\View.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Base.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Triangulate.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Render\NodeThroughView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp" />
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp" />
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\DeclareCoreNodes.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Device\VideoOutput.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Item\Board.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Item\Camera.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Item\Model.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Item\Projector.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Item\RigidBody.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Item\View.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Procedure\Scan\Graycode.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Procedure\Triangulate.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Render\NodeThroughView.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\DeclareCoreNodes.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Device\VideoOutput.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Board.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Model.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Projector.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\RigidBody.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\View.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Render\NodeThroughView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">

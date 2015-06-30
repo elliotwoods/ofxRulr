@@ -26,19 +26,19 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void ViewToVertices::ViewArea::draw(float x, float y) {
+				void ViewToVertices::ViewArea::draw(float x, float y) const {
 					this->draw(x, y, this->getWidth(), this->getHeight());
 				}
 
 				//---------
-				void ViewToVertices::ViewArea::draw(float x, float y, float w, float h) {
+				void ViewToVertices::ViewArea::draw(float x, float y, float w, float h) const {
 					if (this->parent.projectorReferenceImage.isAllocated()) {
 						this->parent.projectorReferenceImage.draw(x, y, w, h);
 					}
 				}
 
 				//---------
-				float ViewToVertices::ViewArea::getHeight() {
+				float ViewToVertices::ViewArea::getHeight() const {
 					auto view = this->parent.getInput<Item::View>();
 					if (view) {
 						return view->getHeight();
@@ -49,7 +49,7 @@ namespace ofxRulr {
 				}
 
 				//---------
-				float ViewToVertices::ViewArea::getWidth() {
+				float ViewToVertices::ViewArea::getWidth() const {
 					auto view = this->parent.getInput<Item::View>();
 					if (view) {
 						return view->getWidth();

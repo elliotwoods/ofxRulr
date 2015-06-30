@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ofxRulr/Graph/Node.h"
+#include "ofxRulr/Nodes/Base.h"
 
 namespace ofxRulr {
 	namespace Render {
-		class NodeThroughView : public Graph::Node {
+		class NodeThroughView : public Nodes::Base {
 		public:
 			NodeThroughView();
 			string getTypeName() const override;

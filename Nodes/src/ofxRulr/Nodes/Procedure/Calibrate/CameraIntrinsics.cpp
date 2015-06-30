@@ -193,7 +193,7 @@ namespace ofxRulr {
 
 					//copy the frame out
 					frame->lockForReading();
-					auto & pixels = frame->getPixelsRef();
+					auto & pixels = frame->getPixels();
 					if (!pixels.isAllocated()) {
 						frame->unlock();
 						throw(Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));

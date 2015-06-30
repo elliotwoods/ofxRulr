@@ -55,7 +55,7 @@ namespace ofxRulr {
 					if (this->grabber->isFrameNew()) {
 						auto frame = this->grabber->getFrame();
 						frame->lockForReading();
-						const auto & pixels = frame->getPixelsRef();
+						const auto & pixels = frame->getPixels();
 						auto middleRow = pixels.getPixels() + pixels.getWidth() * pixels.getNumChannels() * pixels.getHeight() / 2;
 
 						this->focusLineGraph.clear();
@@ -132,7 +132,7 @@ namespace ofxRulr {
 				}
 
 				this->deviceTypeName = deviceTypeName;
-				auto device = ofxMachineVision::Device::FactoryRegister::X().make(deviceTypeName);
+				auto device = ofxMachineVision::Device::FactoryRegister::X().get(deviceTypeName)->makeUntyped();
 				this->setDevice(device);
 			}
 
@@ -222,7 +222,7 @@ namespace ofxRulr {
 					cameraSelectorView->add(Widgets::EditableValue<int>::make(this->deviceIndex));
 					cameraSelectorView->add(Widgets::Title::make("Select device type:", Widgets::Title::Level::H3));
 
-					auto & factories = ofxMachineVision::Device::FactoryRegister::X().getFactories();
+					auto & factories = ofxMachineVision::Device::FactoryRegister::X();
 					for (auto factory : factories) {
 						auto makeButton = Widgets::Button::make(factory.first, [this, factory]() {
 							this->setDevice(factory.first);
@@ -252,12 +252,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofPixels Camera::getFreshFrame() {
+			shared_ptr<ofxMachineVision::Frame> Camera::getFreshFrame() {
 				if (!this->grabber) {
-					return ofPixels();
+					return nullptr;
 				}
 				else {
-					return this->grabber->getFreshFrame()->getPixelsRef();
+					return this->grabber->getFreshFrame();
 				}
 			}
 
