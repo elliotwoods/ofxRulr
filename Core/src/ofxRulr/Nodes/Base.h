@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Pin.h"
+#include "../Graph/Pin.h"
 #include "../Utils/Constants.h"
 #include "../Utils/Serializable.h"
 #include "../Exception.h"
@@ -33,11 +33,11 @@
 	}
 
 namespace ofxRulr {
-	namespace Graph {
-		class Node : public ofxCvGui::IInspectable, public Utils::Serializable {
+	namespace Nodes {
+		class Base : public ofxCvGui::IInspectable, public Utils::Serializable {
 		public:
-			Node();
-			~Node();
+			Base();
+			~Base();
 			virtual string getTypeName() const override;
 			void init();
 			void destroy();
@@ -48,7 +48,7 @@ namespace ofxRulr {
 			ofImage & getIcon();
 			const ofColor & getColor();
 
-			const PinSet & getInputPins() const;
+			const Graph::PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr);
 			virtual ofxCvGui::PanelPtr getView() { return ofxCvGui::PanelPtr(); };
 
@@ -82,7 +82,7 @@ namespace ofxRulr {
 			}
 
 			template<typename NodeType>
-			shared_ptr<Pin<NodeType>> getInputPin() const {
+			shared_ptr<Graph::Pin<NodeType>> getInputPin() const {
 				return this->getInputPins().get<Pin<NodeType>>();
 			}
 
@@ -100,34 +100,34 @@ namespace ofxRulr {
 			ofxLiquidEvent<void> onDestroy;
 			ofxLiquidEvent<void> onUpdate;
 
-			ofxLiquidEvent<shared_ptr<AbstractPin>> onConnect;
-			ofxLiquidEvent<shared_ptr<AbstractPin>> onDisconnect;
+			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onConnect;
+			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onDisconnect;
 			ofxLiquidEvent<void> onAnyInputConnectionChanged;
 
 		protected:
-			void addInput(shared_ptr<AbstractPin>);
+			void addInput(shared_ptr<Graph::AbstractPin>);
 
 			template<typename NodeType>
-			shared_ptr<Pin<NodeType>> addInput() {
+			shared_ptr<Graph::Pin<NodeType>> addInput() {
 				auto inputPin = make_shared<Pin<NodeType>>();
 				this->addInput(inputPin);
 				return inputPin;
 			}
 
 			template<typename NodeType>
-			shared_ptr<Pin<NodeType>> addInput(const string & pinName) {
-				auto inputPin = make_shared<Pin<NodeType>>(pinName);
+			shared_ptr<Graph::Pin<NodeType>> addInput(const string & pinName) {
+				auto inputPin = make_shared<Graph::Pin<NodeType>>(pinName);
 				this->addInput(inputPin);
 				return inputPin;
 			}
 
-			void removeInput(shared_ptr<AbstractPin>);
+			void removeInput(shared_ptr<Graph::AbstractPin>);
 			void clearInputs();
 
 			void setupGraphics();
 			void setIcon(ofImage &);
 		private:
-			PinSet inputPins;
+			Graph::PinSet inputPins;
 			ofImage * icon;
 			ofColor color;
 			string name;

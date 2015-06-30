@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Node.h"
+#include "../Nodes/Base.h"
 
 #include "ofxCvGui/Panels/World.h"
 
 namespace ofxRulr {
 	namespace Graph {
-		class Summary : public Node {
+		class Summary : public Nodes::Base {
 		public:
-			Summary(const Utils::Set<Graph::Node> & world);
+			Summary(const Utils::Set<Nodes::Base> & world);
 			void init();
 			string getTypeName() const override;
 			ofxCvGui::PanelPtr getView() override;
@@ -28,7 +28,7 @@ namespace ofxRulr {
 			ofParameter<ofVec3f> roomMaximum;
 			ofLight light;
 
-			const Utils::Set<Graph::Node> & world;
+			const Utils::Set<Nodes::Base> & world;
 
 			ofImage * grid;
 		};

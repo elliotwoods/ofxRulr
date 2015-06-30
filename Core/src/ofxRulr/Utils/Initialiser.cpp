@@ -19,7 +19,7 @@ namespace ofxRulr {
 
 		//----------
 		void Initialiser::initialise() {
-			ofxAssets::AssetRegister.addAddon("ofxRulr");
+			ofxAssets::Register::X().addAddon("ofxRulr");
 		}
 
 		//----------

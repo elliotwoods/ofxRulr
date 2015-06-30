@@ -1,14 +1,14 @@
 #pragma once
 
 #include "../Utils/Set.h"
-#include "../Graph/Node.h"
+#include "../Nodes/Base.h"
 
 #include "ofxCvGui/Controller.h"
 #include "ofxCvGui/Panels/SharedView.h"
 
 namespace ofxRulr {
 	namespace Graph {
-		class World : public Utils::Set<Graph::Node> {
+		class World : public Utils::Set<Nodes::Base> {
 		public:
 			void init(ofxCvGui::Controller &);
 			void loadAll(bool printDebug = false);

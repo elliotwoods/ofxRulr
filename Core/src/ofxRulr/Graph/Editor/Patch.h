@@ -4,14 +4,14 @@
 #include "LinkHost.h"
 #include "NodeBrowser.h"
 
-#include "ofxRulr/Graph/Node.h"
+#include "ofxRulr/Nodes/Base.h"
 #include "ofxRulr/Graph/Factory.h"
 #include "ofxCvGui/Panels/ElementCanvas.h"
 
 namespace ofxRulr {
 	namespace Graph {
 		namespace Editor {
-			class Patch : public Graph::Node {
+			class Patch : public Nodes::Base {
 			public:
 				typedef map<NodeHost::Index, shared_ptr<NodeHost> > NodeHostSet;
 				typedef map<LinkHost::Index, shared_ptr<LinkHost> > LinkHostSet;
@@ -50,8 +50,8 @@ namespace ofxRulr {
 				const NodeHostSet & getNodeHosts() const;
 				const LinkHostSet & getLinkHosts() const;
 
-				shared_ptr<NodeHost> addNode(NodeHost::Index index, shared_ptr<Node>, const ofRectangle & bounds = ofRectangle());
-				shared_ptr<NodeHost> addNode(shared_ptr<Node>, const ofRectangle & bounds = ofRectangle());
+				shared_ptr<NodeHost> addNode(NodeHost::Index index, shared_ptr<Nodes::Base>, const ofRectangle & bounds = ofRectangle());
+				shared_ptr<NodeHost> addNode(shared_ptr<Nodes::Base>, const ofRectangle & bounds = ofRectangle());
 				shared_ptr<NodeHost> addNewNode(shared_ptr<BaseFactory>, const ofRectangle & bounds = ofRectangle());
 
 				void addNodeHost(shared_ptr<NodeHost>, int index);
@@ -63,7 +63,7 @@ namespace ofxRulr {
 				void paste();
 
 				shared_ptr<TemporaryLinkHost> getNewLink() const;
-				shared_ptr<NodeHost> findNodeHost(shared_ptr<Node>) const;
+				shared_ptr<NodeHost> findNodeHost(shared_ptr<Nodes::Base>) const;
 				shared_ptr<NodeHost> getNodeHost(NodeHost::Index) const;
 			protected:
 				void populateInspector(ofxCvGui::ElementGroupPtr);

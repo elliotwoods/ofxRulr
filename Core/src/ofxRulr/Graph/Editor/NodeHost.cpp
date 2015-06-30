@@ -8,7 +8,7 @@ namespace ofxRulr {
 	namespace Graph {
 		namespace Editor {
 			//----------
-			NodeHost::NodeHost(shared_ptr<Node> node) {
+			NodeHost::NodeHost(shared_ptr<Nodes::Base> node) {
 				/*
 				The NodeHost Gui element is a tree of elements:
 
@@ -123,7 +123,7 @@ namespace ofxRulr {
 							this->onReleaseMakeConnection(args);
 						}
 					};
-					inputPin->onDeleteConnectionUntyped += [this, inputPinWeak](shared_ptr<Node> &) {
+					inputPin->onDeleteConnectionUntyped += [this, inputPinWeak](shared_ptr<Nodes::Base> &) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
 							this->onDropInputConnection(inputPin);
@@ -241,7 +241,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			shared_ptr<Node> NodeHost::getNodeInstance() {
+			shared_ptr<Nodes::Base> NodeHost::getNodeInstance() {
 				return this->node;
 			}
 

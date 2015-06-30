@@ -25,7 +25,7 @@ namespace ofxRulr {
 			// INIITALISE NODES
 			//--
 			//
-			set<shared_ptr<Node>> failedNodes;
+			set<shared_ptr<Nodes::Base>> failedNodes;
 			for (auto node : *this) {
 				bool initSuccess = false;
 				try

@@ -1,6 +1,6 @@
 #include "PinView.h"
 #include "ofxAssets.h"
-#include "../Node.h"
+#include "../../Nodes/Base.h"
 
 namespace ofxRulr {
 	namespace Graph {
@@ -20,7 +20,7 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void PinView::setup(Node & node) {
+			void PinView::setup(Nodes::Base & node) {
 				this->icon = &node.getIcon();
 				this->nodeTypeName = node.getTypeName();
 			}

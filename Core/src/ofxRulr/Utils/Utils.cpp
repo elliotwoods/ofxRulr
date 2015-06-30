@@ -7,8 +7,8 @@ namespace ofxRulr {
 
 		//----------
 		Assets::Assets() {
-			this->failSound.loadSound("assets/ofxRulr/sound/fail.mp3");
-			this->successSound.loadSound("assets/ofxRulr/sound/success.mp3");
+			this->failSound.load("assets/ofxRulr/sound/fail.mp3");
+			this->successSound.load("assets/ofxRulr/sound/success.mp3");
 		}
 
 		//----------

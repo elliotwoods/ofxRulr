@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxRulr\Core;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxCvGui\src;..\..\..\addons\ofxClipboard\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxRulr\Core\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxCvGui\src;..\..\..\addons\ofxClipboard\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

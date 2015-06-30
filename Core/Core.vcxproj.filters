@@ -1,19 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ofxRulr">
-      <UniqueIdentifier>{a5ebfd6c-8dcd-48f1-8b8c-b5db74f6f732}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ofxRulr\Graph">
+    <Filter Include="src\ofxRulr\Graph">
       <UniqueIdentifier>{6c94d630-9339-4601-ae19-fdce499df997}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ofxRulr\Graph\Editor">
+    <Filter Include="src\ofxRulr\Graph\Editor">
       <UniqueIdentifier>{e468759d-d487-48db-a966-6617ce9aa63d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ofxRulr\Plugins">
+    <Filter Include="src\ofxRulr\Plugins">
       <UniqueIdentifier>{b8609362-3d65-4761-8e47-bded66e3a721}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ofxRulr\Utils">
+    <Filter Include="src\ofxRulr\Utils">
       <UniqueIdentifier>{3323f018-b50f-4eb5-8d8e-8465f90f3e62}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons">
@@ -46,55 +43,61 @@
     <Filter Include="addons\ofxClipboard\src">
       <UniqueIdentifier>{82727677-eaf1-4107-9eb4-557d1488c722}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{3bce12bf-90a2-4feb-831d-ead413a41720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{1d8e493b-f189-4d07-8a39-851fdc37f1aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Graph">
+      <UniqueIdentifier>{949fbb27-4f39-4e76-8daa-fdbd87a6060d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{3e1f058f-86fd-4a62-b1e5-65fd6d04430f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ofxRulr\Exception.cpp">
-      <Filter>ofxRulr</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\Pin.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\Node.cpp">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\Summary.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\Pin.cpp">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\World.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\Summary.cpp">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\Factory.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\World.cpp">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\NodeHost.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\Factory.cpp">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\Patch.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\Editor\NodeHost.cpp">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\PinView.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\Editor\Patch.cpp">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\LinkHost.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\Editor\PinView.cpp">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\NodeBrowser.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\Editor\LinkHost.cpp">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClCompile Include="src\ofxRulr\Plugins\Manager.cpp">
+      <Filter>src\ofxRulr\Plugins</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Graph\Editor\NodeBrowser.cpp">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Plugins\Manager.cpp">
-      <Filter>ofxRulr\Plugins</Filter>
+    <ClCompile Include="src\ofxRulr\Utils\Utils.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Utils\Serializable.cpp">
-      <Filter>ofxRulr\Utils</Filter>
+    <ClCompile Include="src\ofxRulr\Utils\Gui.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Utils\Utils.cpp">
-      <Filter>ofxRulr\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="ofxRulr\Utils\Gui.cpp">
-      <Filter>ofxRulr\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="ofxRulr\Utils\Initialiser.cpp">
-      <Filter>ofxRulr\Utils</Filter>
+    <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp">
       <Filter>addons\ofxJson\src</Filter>
@@ -111,64 +114,61 @@
     <ClCompile Include="..\..\ofxClipboard\src\ofxClipboard.cpp">
       <Filter>addons\ofxClipboard\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Exception.cpp">
+      <Filter>src\ofxRulr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Base.cpp">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ofxRulr\Exception.h">
-      <Filter>ofxRulr</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\Pin.h">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Version.h">
-      <Filter>ofxRulr</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\Summary.h">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\Node.h">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\World.h">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\Pin.h">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\Factory.h">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\Summary.h">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\NodeBrowser.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\World.h">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\NodeHost.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\Factory.h">
-      <Filter>ofxRulr\Graph</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\Patch.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\Editor\NodeBrowser.h">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\PinView.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\Editor\NodeHost.h">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\LinkHost.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\Editor\Patch.h">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClInclude Include="src\ofxRulr\Plugins\Manager.h">
+      <Filter>src\ofxRulr\Plugins</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\Editor\PinView.h">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClInclude Include="src\ofxRulr\Utils\Serializable.h">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Graph\Editor\LinkHost.h">
-      <Filter>ofxRulr\Graph\Editor</Filter>
+    <ClInclude Include="src\ofxRulr\Utils\Set.h">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Plugins\Manager.h">
-      <Filter>ofxRulr\Plugins</Filter>
+    <ClInclude Include="src\ofxRulr\Utils\Utils.h">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Utils\Serializable.h">
-      <Filter>ofxRulr\Utils</Filter>
+    <ClInclude Include="src\ofxRulr\Utils\Constants.h">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Utils\Set.h">
-      <Filter>ofxRulr\Utils</Filter>
+    <ClInclude Include="src\ofxRulr\Utils\Gui.h">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Utils\Utils.h">
-      <Filter>ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="ofxRulr\Utils\Constants.h">
-      <Filter>ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="ofxRulr\Utils\Gui.h">
-      <Filter>ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="ofxRulr\Utils\Initialiser.h">
-      <Filter>ofxRulr\Utils</Filter>
+    <ClInclude Include="src\ofxRulr\Utils\Initialiser.h">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ofxJSON\src\ofxJSONElement.h">
       <Filter>addons\ofxJson\src</Filter>
@@ -205,6 +205,15 @@
     </ClInclude>
     <ClInclude Include="..\..\ofxClipboard\src\ofxClipboard.h">
       <Filter>addons\ofxClipboard\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Exception.h">
+      <Filter>src\ofxRulr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Version.h">
+      <Filter>src\ofxRulr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Base.h">
+      <Filter>src\ofxRulr\Nodes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

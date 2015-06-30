@@ -72,7 +72,7 @@ namespace ofxRulr {
 				this->nodeBrowser = make_shared<NodeBrowser>();
 				this->nodeBrowser->disable(); //starts as hidden
 				this->nodeBrowser->addListenersToParent(this, true); // nodeBrowser goes on top of all elements (last listener)
-				this->nodeBrowser->onNewNode += [this](shared_ptr<Node> & node) {
+				this->nodeBrowser->onNewNode += [this](shared_ptr<Nodes::Base> & node) {
 					this->patchInstance.addNode(node, ofRectangle(this->birthLocation, this->birthLocation + ofVec2f(200, 100)));
 					this->nodeBrowser->disable();
 				};
@@ -222,7 +222,7 @@ namespace ofxRulr {
 
 			//----------
 			void Patch::serialize(Json::Value & json) {
-				map<shared_ptr<Node>, NodeHost::Index> reverseNodeMap;
+				map<shared_ptr<Nodes::Base>, NodeHost::Index> reverseNodeMap;
 
 				//Serialize the nodes
 				auto & nodesJson = json["Nodes"];
@@ -236,7 +236,7 @@ namespace ofxRulr {
 
 					//add the node to the reverse map (we'll use this when building links in the next section)
 					auto node = nodeHost.second->getNodeInstance();
-					reverseNodeMap.insert(pair<shared_ptr<Node>, NodeHost::Index>(node, nodeHost.first));
+					reverseNodeMap.insert(pair<shared_ptr<Nodes::Base>, NodeHost::Index>(node, nodeHost.first));
 				}
 
 				//Serialize the links
@@ -396,7 +396,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			shared_ptr<NodeHost> Patch::addNode(NodeHost::Index index, shared_ptr<Node> node, const ofRectangle & bounds) {
+			shared_ptr<NodeHost> Patch::addNode(NodeHost::Index index, shared_ptr<Nodes::Base> node, const ofRectangle & bounds) {
 				auto nodeHost = make_shared<NodeHost>(node);
 				if (bounds != ofRectangle()) {
 					nodeHost->setBounds(bounds);
@@ -406,13 +406,13 @@ namespace ofxRulr {
 			}
 
 			//----------
-			shared_ptr<NodeHost> Patch::addNode(shared_ptr<Node> node, const ofRectangle & bounds) {
+			shared_ptr<NodeHost> Patch::addNode(shared_ptr<Nodes::Base> node, const ofRectangle & bounds) {
 				return this->addNode(this->getNextFreeNodeHostIndex(), node, bounds);
 			}
 
 			//----------
 			shared_ptr<NodeHost> Patch::addNewNode(shared_ptr<BaseFactory> factory, const ofRectangle & bounds) {
-				return this->addNode( factory->make(), bounds);
+				return this->addNode( factory->makeUntyped(), bounds);
 			}
 
 			//----------
@@ -515,7 +515,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			shared_ptr<NodeHost> Patch::findNodeHost(shared_ptr<Node> node) const {
+			shared_ptr<NodeHost> Patch::findNodeHost(shared_ptr<Nodes::Base> node) const {
 				for (auto nodeHost : this->nodeHosts) {
 					if (nodeHost.second->getNodeInstance() == node) {
 						return nodeHost.second;

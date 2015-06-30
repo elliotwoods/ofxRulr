@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -16,22 +16,22 @@
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp" />
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp" />
     <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp" />
-    <ClCompile Include="ofxRulr\Exception.cpp" />
-    <ClCompile Include="ofxRulr\Graph\Editor\LinkHost.cpp" />
-    <ClCompile Include="ofxRulr\Graph\Editor\NodeBrowser.cpp" />
-    <ClCompile Include="ofxRulr\Graph\Editor\NodeHost.cpp" />
-    <ClCompile Include="ofxRulr\Graph\Editor\Patch.cpp" />
-    <ClCompile Include="ofxRulr\Graph\Editor\PinView.cpp" />
-    <ClCompile Include="ofxRulr\Graph\Factory.cpp" />
-    <ClCompile Include="ofxRulr\Graph\Node.cpp" />
-    <ClCompile Include="ofxRulr\Graph\Pin.cpp" />
-    <ClCompile Include="ofxRulr\Graph\Summary.cpp" />
-    <ClCompile Include="ofxRulr\Graph\World.cpp" />
-    <ClCompile Include="ofxRulr\Plugins\Manager.cpp" />
-    <ClCompile Include="ofxRulr\Utils\Gui.cpp" />
-    <ClCompile Include="ofxRulr\Utils\Initialiser.cpp" />
-    <ClCompile Include="ofxRulr\Utils\Serializable.cpp" />
-    <ClCompile Include="ofxRulr\Utils\Utils.cpp" />
+    <ClCompile Include="src\ofxRulr\Exception.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\Editor\LinkHost.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\Editor\NodeBrowser.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\Editor\NodeHost.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\Editor\Patch.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\Editor\PinView.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\Factory.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\Pin.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\Summary.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\World.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Base.cpp" />
+    <ClCompile Include="src\ofxRulr\Plugins\Manager.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\Gui.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxClipboard\src\ofxClipboard.h" />
@@ -46,25 +46,25 @@
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_batchallocator.h" />
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_tool.h" />
     <ClInclude Include="..\..\ofxJSON\src\ofxJSONElement.h" />
-    <ClInclude Include="ofxRulr\Exception.h" />
-    <ClInclude Include="ofxRulr\Graph\Editor\LinkHost.h" />
-    <ClInclude Include="ofxRulr\Graph\Editor\NodeBrowser.h" />
-    <ClInclude Include="ofxRulr\Graph\Editor\NodeHost.h" />
-    <ClInclude Include="ofxRulr\Graph\Editor\Patch.h" />
-    <ClInclude Include="ofxRulr\Graph\Editor\PinView.h" />
-    <ClInclude Include="ofxRulr\Graph\Factory.h" />
-    <ClInclude Include="ofxRulr\Graph\Node.h" />
-    <ClInclude Include="ofxRulr\Graph\Pin.h" />
-    <ClInclude Include="ofxRulr\Graph\Summary.h" />
-    <ClInclude Include="ofxRulr\Graph\World.h" />
-    <ClInclude Include="ofxRulr\Plugins\Manager.h" />
-    <ClInclude Include="ofxRulr\Utils\Constants.h" />
-    <ClInclude Include="ofxRulr\Utils\Gui.h" />
-    <ClInclude Include="ofxRulr\Utils\Initialiser.h" />
-    <ClInclude Include="ofxRulr\Utils\Serializable.h" />
-    <ClInclude Include="ofxRulr\Utils\Set.h" />
-    <ClInclude Include="ofxRulr\Utils\Utils.h" />
-    <ClInclude Include="ofxRulr\Version.h" />
+    <ClInclude Include="src\ofxRulr\Exception.h" />
+    <ClInclude Include="src\ofxRulr\Graph\Editor\LinkHost.h" />
+    <ClInclude Include="src\ofxRulr\Graph\Editor\NodeBrowser.h" />
+    <ClInclude Include="src\ofxRulr\Graph\Editor\NodeHost.h" />
+    <ClInclude Include="src\ofxRulr\Graph\Editor\Patch.h" />
+    <ClInclude Include="src\ofxRulr\Graph\Editor\PinView.h" />
+    <ClInclude Include="src\ofxRulr\Graph\Factory.h" />
+    <ClInclude Include="src\ofxRulr\Graph\Pin.h" />
+    <ClInclude Include="src\ofxRulr\Graph\Summary.h" />
+    <ClInclude Include="src\ofxRulr\Graph\World.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Base.h" />
+    <ClInclude Include="src\ofxRulr\Plugins\Manager.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Constants.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Gui.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Initialiser.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Serializable.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Set.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Utils.h" />
+    <ClInclude Include="src\ofxRulr\Version.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalarray.inl" />
@@ -80,13 +80,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -97,15 +97,17 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
-    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug64.props" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="ofxRulr_Core.props" />
+    <Import Project="..\..\ofxPlugin\ofxPluginLib\ofxPlugin.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
-    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease64.props" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="ofxRulr_Core.props" />
+    <Import Project="..\..\ofxPlugin\ofxPluginLib\ofxPlugin.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -115,6 +117,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

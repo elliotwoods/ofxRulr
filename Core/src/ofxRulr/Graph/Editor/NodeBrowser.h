@@ -13,15 +13,17 @@ namespace ofxRulr {
 				public:
 					ListItem(shared_ptr<BaseFactory>);
 					shared_ptr<BaseFactory> getFactory();
+					ofImage & getIcon();
 				protected:
 					shared_ptr<BaseFactory> factory;
+					ofImage * icon;
 				};
 
 			public:
 				NodeBrowser();
 				void reset();
 				void refreshResults();
-				ofxLiquidEvent<shared_ptr<Node>> onNewNode;
+				ofxLiquidEvent<shared_ptr<Nodes::Base>> onNewNode;
 			protected:
 				void buildBackground();
 				void buildDialog();

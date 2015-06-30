@@ -23,11 +23,11 @@ namespace ofxRulr {
 			AbstractPin(string name);
 			virtual string getTypeName() = 0;
 			virtual string getNodeTypeName() = 0;
-			virtual void connect(shared_ptr<Node> node) = 0;
+			virtual void connect(shared_ptr<Nodes::Base> node) = 0;
 			virtual void resetConnection() = 0;
 			virtual bool isConnected() const = 0;
-			virtual bool checkSupports(shared_ptr<Node>) const = 0;
-			virtual shared_ptr<Node> getConnectionUntyped() const = 0;
+			virtual bool checkSupports(shared_ptr<Nodes::Base>) const = 0;
+			virtual shared_ptr<Nodes::Base> getConnectionUntyped() const = 0;
 
 			virtual const ofImage & getNodeIcon() const = 0;
 			virtual const ofColor & getNodeColor() const = 0;
@@ -38,8 +38,8 @@ namespace ofxRulr {
 			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
 			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
 
-			ofxLiquidEvent<shared_ptr<Node>> onNewConnectionUntyped;
-			ofxLiquidEvent<shared_ptr<Node>> onDeleteConnectionUntyped;
+			ofxLiquidEvent<shared_ptr<Nodes::Base>> onNewConnectionUntyped;
+			ofxLiquidEvent<shared_ptr<Nodes::Base>> onDeleteConnectionUntyped;
 		protected:
 			shared_ptr<Editor::PinView> pinView;
 		private:
@@ -74,11 +74,11 @@ namespace ofxRulr {
 			void connect(shared_ptr<NodeType> node) {
 				this->connection = node;
 				this->onNewConnection(node);
-				auto untypedNode = shared_ptr<Node>(node);
+				auto untypedNode = shared_ptr<Nodes::Base>(node);
 				this->onNewConnectionUntyped(untypedNode);
 			}
 
-			void connect(shared_ptr<Node> node) override {
+			void connect(shared_ptr<Nodes::Base> node) override {
 				auto castNode = dynamic_pointer_cast<NodeType>(node);
 				if (!castNode) {
 					throw(ofxRulr::Exception("Cannot connect Pin of type [" + this->getNodeTypeName() + "] to Node of type [" + NodeType().getTypeName() + "]"));
@@ -92,7 +92,7 @@ namespace ofxRulr {
 
 				if (node) {
 					this->onDeleteConnection.notifyListeners(node);
-					auto untypedNode = shared_ptr<Node>(node);
+					auto untypedNode = shared_ptr<Nodes::Base>(node);
 					this->onDeleteConnectionUntyped.notifyListeners(untypedNode);
 				}	
 			}
@@ -105,11 +105,11 @@ namespace ofxRulr {
 				return !this->connection.expired();
 			}
 			
-			bool checkSupports(shared_ptr<Node> node) const override {
+			bool checkSupports(shared_ptr<Nodes::Base> node) const override {
 				return (bool)dynamic_pointer_cast<NodeType>(node);
 			}
 			
-			shared_ptr<Node> getConnectionUntyped() const override {
+			shared_ptr<Nodes::Base> getConnectionUntyped() const override {
 				return this->connection.lock();
 			}
 

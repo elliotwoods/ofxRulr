@@ -9,6 +9,7 @@ namespace ofxRulr {
 				this->setBounds(ofRectangle(0, 0, 300, 48 + 20));
 				this->setCachedView(true);
 				this->factory = factory;
+				this->icon = & FactoryRegister::X().getIcon(factory);
 
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					//background to hide ofFbo bad text
@@ -18,14 +19,19 @@ namespace ofxRulr {
 					ofRect(args.localBounds);
 					ofPopStyle();
 
-					this->factory->getIcon().draw(10, 10, 48, 48);
-					ofxAssets::font("ofxCvGui::swisop3", 20).drawString(this->factory->getNodeTypeName(), 78, (args.localBounds.height + 20) / 2);
+					this->icon->draw(10, 10, 48, 48);
+					ofxAssets::font("ofxCvGui::swisop3", 20).drawString(this->factory->getModuleTypeName(), 78, (args.localBounds.height + 20) / 2);
 				};
 			}
 
 			//----------
 			shared_ptr<BaseFactory> NodeBrowser::ListItem::getFactory() {
 				return this->factory;
+			}
+
+			//----------
+			ofImage & NodeBrowser::ListItem::getIcon() {
+				return * this->icon;
 			}
 
 #pragma mark NodeBrowser
@@ -150,8 +156,8 @@ namespace ofxRulr {
 					auto currentSelection = this->currentSelection.lock();
 					string message;
 					if (currentSelection) {
-						currentSelection->getFactory()->getIcon().draw(10, 10, 96, 96);
-						message += currentSelection->getFactory()->getNodeTypeName();
+						currentSelection->getIcon().draw(10, 10, 96, 96);
+						message += currentSelection->getFactory()->getModuleTypeName();
 					}
 					message += "\n" + ofToString(this->listBox->getElementGroup()->getElements().size()) + " nodes found.\n";
 					
@@ -287,7 +293,7 @@ namespace ofxRulr {
 			void NodeBrowser::notifyNewNode() {
 				auto currentSelection = this->currentSelection.lock();
 				if (currentSelection) {
-					auto newNode = currentSelection->getFactory()->make();
+					auto newNode = currentSelection->getFactory()->makeUntyped();
 					this->onNewNode(newNode);
 				}
 			}

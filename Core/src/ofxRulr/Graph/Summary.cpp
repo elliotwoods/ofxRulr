@@ -10,7 +10,7 @@ using namespace ofxCvGui;
 namespace ofxRulr {
 	namespace Graph {
 		//----------
-		Summary::Summary(const Utils::Set<Graph::Node> & world) :
+		Summary::Summary(const Utils::Set<Nodes::Base> & world) :
 		world(world) {
 			RULR_NODE_INIT_LISTENER;
 		}

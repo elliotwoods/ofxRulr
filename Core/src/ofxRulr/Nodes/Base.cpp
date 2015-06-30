@@ -1,4 +1,4 @@
-#include "Node.h"
+#include "Base.h"
 
 #include "../Exception.h"
 
@@ -7,16 +7,16 @@
 using namespace ofxCvGui;
 
 namespace ofxRulr {
-	namespace Graph {
+	namespace Nodes {
 		//----------
-		Node::Node() {
+		Base::Base() {
 			this->icon = 0;
 			this->initialized = false;
 			this->defaultIconName = "Default";
 		}
 
 		//----------
-		Node::~Node() {
+		Base::~Base() {
 			if (this->initialized) {
 				//pins will try to notify this node when connections are dropped, so drop the pins first
 				for (auto pin : this->inputPins) {
@@ -28,12 +28,12 @@ namespace ofxRulr {
 		}
 
 		//----------
-		string Node::getTypeName() const {
+		string Base::getTypeName() const {
 			return "Node";
 		}
 
 		//----------
-		void Node::init() {
+		void Base::init() {
 			this->onInspect.addListener([this](ofxCvGui::InspectArguments & args) {
 				this->populateInspector(args.inspector);
 			}, 99999, this); // populate the instpector with this at the top. We call notify in reverse for inheritance
@@ -44,12 +44,12 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Node::update() {
+		void Base::update() {
 			this->onUpdate.notifyListeners();
 		}
 
 		//----------
-		string Node::getName() const {
+		string Base::getName() const {
 			if (this->name.empty()) {
 				return this->getTypeName();
 			} else {
@@ -58,29 +58,29 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Node::setName(const string name) {
+		void Base::setName(const string name) {
 			this->name = name;
 		}
 
 		//----------
-		ofImage & Node::getIcon() {
+		ofImage & Base::getIcon() {
 			this->setupGraphics();
 			return * this->icon;
 		}
 
 		//----------
-		const ofColor & Node::getColor() {
+		const ofColor & Base::getColor() {
 			this->setupGraphics();
 			return this->color;
 		}
 
 		//----------
-		const PinSet & Node::getInputPins() const {
+		const Graph::PinSet & Base::getInputPins() const {
 			return this->inputPins;
 		}
 
 		//----------
-		void Node::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+		void Base::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 			auto nameWidget = Widgets::Title::make(this->getName(), ofxCvGui::Widgets::Title::Level::H1);
 			auto nameWidgetWeak = weak_ptr<Element>(nameWidget);
 			nameWidget->onDraw += [this](ofxCvGui::DrawArguments & args) {
@@ -132,7 +132,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Node::throwIfMissingAnyConnection() const {
+		void Base::throwIfMissingAnyConnection() const {
 			const auto inputPins = this->getInputPins();
 			for(auto & inputPin : inputPins) {
 				if (!inputPin->isConnected()) {
@@ -144,17 +144,17 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Node::addInput(shared_ptr<AbstractPin> pin) {
+		void Base::addInput(shared_ptr<Graph::AbstractPin> pin) {
 			//setup events to fire on this node for this pin
-			auto pinWeak = weak_ptr<AbstractPin>(pin);
-			pin->onNewConnectionUntyped += [this, pinWeak](shared_ptr<Node> &) {
+			auto pinWeak = weak_ptr<Graph::AbstractPin>(pin);
+			pin->onNewConnectionUntyped += [this, pinWeak](shared_ptr<Base> &) {
 				auto pin = pinWeak.lock();
 				if (pin) {
 					this->onConnect(pin);
 				}
 				this->onAnyInputConnectionChanged.notifyListeners();
 			};
-			pin->onDeleteConnectionUntyped += [this, pinWeak](shared_ptr<Node> &) {
+			pin->onDeleteConnectionUntyped += [this, pinWeak](shared_ptr<Base> &) {
 				auto pin = pinWeak.lock();
 				if (pin) {
 					this->onDisconnect(pin);
@@ -166,17 +166,17 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Node::removeInput(shared_ptr<AbstractPin> pin) {
+		void Base::removeInput(shared_ptr<Graph::AbstractPin> pin) {
 			this->inputPins.remove(pin);
 		}
 
 		//----------
-		void Node::clearInputs() {
+		void Base::clearInputs() {
 			this->inputPins.clear();
 		}
 
 		//----------
-		void Node::setupGraphics() {
+		void Base::setupGraphics() {
 			if (this->icon) {
 				//icon is already setup, we presume all graphics are already setup
 				return;
@@ -184,13 +184,13 @@ namespace ofxRulr {
 
 			//setup icon
 			const auto imageName = "ofxRulr::Nodes::" + this->getTypeName();
-			if (ofxAssets::AssetRegister.hasImage(imageName)) {
+			if (ofxAssets::Register::X().hasImage(imageName)) {
 				//setup with specific node icon
 				this->icon = &ofxAssets::image(imageName);
 			}
 			else {
 				//setup with inherited node icon
-				this->icon = &ofxAssets::image("ofxRulr::Nodes::" + this->defaultIconName);
+				this->icon = & ofxAssets::image("ofxRulr::Nodes::" + this->defaultIconName);
 			}
 
 			//setup color
@@ -203,7 +203,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Node::setIcon(ofImage & icon) {
+		void Base::setIcon(ofImage & icon) {
 			this->icon = &icon;
 		}
 	}

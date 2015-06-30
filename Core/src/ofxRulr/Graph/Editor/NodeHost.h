@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PinView.h"
-#include "ofxRulr/Graph/Node.h"
+#include "ofxRulr/Nodes/Base.h"
 #include "ofxCvGui/Utils/Button.h"
 
 #define RULR_NODEHOST_INPUTAREA_WIDTH 85
@@ -18,8 +18,8 @@ namespace ofxRulr {
 			public:
 				typedef unsigned int Index;
 
-				NodeHost(shared_ptr<Node>);
-				shared_ptr<Node> getNodeInstance();
+				NodeHost(shared_ptr<Nodes::Base>);
+				shared_ptr<Nodes::Base> getNodeInstance();
 				ofVec2f getInputPinPosition(shared_ptr<AbstractPin>) const;
 				ofVec2f getOutputPinPositionGlobal() const;
 
@@ -31,7 +31,7 @@ namespace ofxRulr {
 
 			protected:
 				ofVec2f getOutputPinPosition() const;
-				shared_ptr<Node> node;
+				shared_ptr<Nodes::Base> node;
 				ofVec2f outputPinPosition;
 
 				ofxCvGui::PanelPtr nodeView;
