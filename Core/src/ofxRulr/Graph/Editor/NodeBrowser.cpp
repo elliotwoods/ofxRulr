@@ -294,6 +294,7 @@ namespace ofxRulr {
 				auto currentSelection = this->currentSelection.lock();
 				if (currentSelection) {
 					auto newNode = currentSelection->getFactory()->makeUntyped();
+					newNode->init();
 					this->onNewNode(newNode);
 				}
 			}

@@ -412,7 +412,9 @@ namespace ofxRulr {
 
 			//----------
 			shared_ptr<NodeHost> Patch::addNewNode(shared_ptr<BaseFactory> factory, const ofRectangle & bounds) {
-				return this->addNode( factory->makeUntyped(), bounds);
+				auto newNode = factory->makeUntyped();
+				newNode->init();
+				return this->addNode(newNode, bounds);
 			}
 
 			//----------

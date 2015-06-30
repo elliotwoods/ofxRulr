@@ -18,6 +18,7 @@ namespace ofxRulr {
 			}
 
 			auto node = factory->makeUntyped();
+			node->init();
 
 			node->setName(json["Name"].asString());
 			try {
