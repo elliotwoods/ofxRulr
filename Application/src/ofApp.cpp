@@ -1,7 +1,3 @@
-#include "../../../addons/ofxBlackmagic2/pairs/ofxMachineVision/Device/DeckLink.h"
-#include "../../../addons/ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRDevice.h"
-#include "../../../addons/ofxUeye/src/ofxUeye.h"
-
 #include "../../../addons/ofxRulr/Nodes/ofxRulr/Nodes/DeclareCoreNodes.h"
 
 #include "ofApp.h"
@@ -16,9 +12,9 @@ void ofApp::setup2(){
 	//Start splash screen
 	//--
 	//
-	AssetRegister.addAddon("ofxRulr");
+	ofxAssets::Register::X().addAddon("ofxRulr");
 	splashScreen.init(image("ofxRulr::SplashScreen"));
-	splashScreen.begin(0.0f);
+	splashScreen.begin(1.0f);
 	//
 	//--
 	
@@ -27,7 +23,6 @@ void ofApp::setup2(){
 	//Initialise camera drivers
 	//--
 	//
-	ofxMachineVision::registerDevice<ofxMachineVision::Device::CanonDSLRDevice>();
 	// cameras should generally be plugins, so these will come later
 	//
 	//--
