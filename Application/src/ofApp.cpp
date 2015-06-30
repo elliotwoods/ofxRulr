@@ -1,4 +1,4 @@
-#include "../../../addons/ofxRulr/Nodes/ofxRulr/Nodes/DeclareCoreNodes.h"
+#include "../../../addons/ofxRulr/Nodes/src/ofxRulr/Nodes/DeclareCoreNodes.h"
 
 #include "ofApp.h"
 

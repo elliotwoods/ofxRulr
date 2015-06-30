@@ -14,3 +14,10 @@ Rulr
 	* Standardised models for cameras, projectors
 	* Saving / loading
 	* Dynamic linking
+
+# Changelog
+
+## 0.4
+
+* Move to oF 0.9.0 / VS2015
+* Introduce plugins for nodes and cameras 

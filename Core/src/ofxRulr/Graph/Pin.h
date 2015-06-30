@@ -71,7 +71,7 @@ namespace ofxRulr {
 				return NodeType().getTypeName();
 			}
 
-			void connect(shared_ptr<NodeType> node) {
+			void connectTyped(shared_ptr<NodeType> node) {
 				this->connection = node;
 				this->onNewConnection(node);
 				auto untypedNode = shared_ptr<Nodes::Base>(node);
@@ -83,7 +83,7 @@ namespace ofxRulr {
 				if (!castNode) {
 					throw(ofxRulr::Exception("Cannot connect Pin of type [" + this->getNodeTypeName() + "] to Node of type [" + NodeType().getTypeName() + "]"));
 				}
-				this->connect(castNode);
+				this->connectTyped(castNode);
 			}
 
 			void resetConnection() override {

@@ -109,7 +109,7 @@ namespace ofxRulr {
 
 			template<typename NodeType>
 			shared_ptr<Graph::Pin<NodeType>> addInput() {
-				auto inputPin = make_shared<Pin<NodeType>>();
+				auto inputPin = make_shared<Graph::Pin<NodeType>>();
 				this->addInput(inputPin);
 				return inputPin;
 			}

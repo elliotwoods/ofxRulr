@@ -120,9 +120,6 @@
     <ProjectReference Include="..\..\..\addons\ofxGraycode\ofxGraycodeLib\ofxGraycodeLib.vcxproj">
       <Project>{ba65a9dd-2be2-4ff8-a9c6-6ac6624cddc3}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj">
-      <Project>{f6008d6a-6d39-4b68-840e-e7ac8ed855da}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\addons\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj">
       <Project>{cd4455e0-0454-4c3c-bb42-9d15d16a34dd}</Project>
     </ProjectReference>
