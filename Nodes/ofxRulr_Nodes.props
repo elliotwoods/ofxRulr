@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\..\..\addons\ofxRulr\Core\ofxRulr_Core.props" />
+    <Import Project="..\..\..\addons\ofxNonLinearFit\ofxNonLinearFit64.props" />
+    <Import Project="..\..\..\addons\ofxGraycode\ofxGraycodeLib\ofxGraycode.props" />
+    <Import Project="..\..\..\addons\ofxRay\ofxRayLib\ofxRay.props" />
+    <Import Project="..\..\..\addons\ofxMachineVision\ofxMachineVisionLib\ofxMachineVision.props" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
   <ItemDefinitionGroup>

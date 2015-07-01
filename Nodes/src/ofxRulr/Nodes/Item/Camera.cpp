@@ -132,8 +132,12 @@ namespace ofxRulr {
 				}
 
 				this->deviceTypeName = deviceTypeName;
-				auto device = ofxMachineVision::Device::FactoryRegister::X().get(deviceTypeName)->makeUntyped();
-				this->setDevice(device);
+				auto factory = ofxMachineVision::Device::FactoryRegister::X().get(deviceTypeName);
+				shared_ptr<Device::Base> device;
+				if (factory) {
+					device = factory->makeUntyped();
+				}
+				this->setDevice(device); //setting to null is also valid
 			}
 
 			//----------

@@ -156,7 +156,7 @@ namespace ofxRulr {
 					//Clamp bounds
 					//--
 					//
-					const int minHeight = MAX(150, this->getNodeInstance()->getInputPins().size() * 75);
+					const int minHeight = MAX(150, (int) this->getNodeInstance()->getInputPins().size() * 75);
 					auto bounds = this->getBounds();
 					if (this->nodeView) {
 						//this node has a view
@@ -252,7 +252,7 @@ namespace ofxRulr {
 						return pin->getPinHeadPosition() + pin->getBounds().getTopLeft() + this->inputPins->getBounds().getTopLeft() + this->getBounds().getTopLeft();
 					}
 				}
-				throw(ofxRulr::Exception("NodeHost::getInputPinPosition can't find input pin" + ofToString((int) pin.get())));
+				throw(ofxRulr::Exception("NodeHost::getInputPinPosition can't find input pin" + ofToString((unsigned long) pin.get())));
 			}
 
 			//----------

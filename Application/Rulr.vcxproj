@@ -31,23 +31,13 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\addons\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
-    <Import Project="..\..\..\addons\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
-    <Import Project="..\..\..\addons\ofxNonLinearFit\ofxNonLinearFit64.props" />
-    <Import Project="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2.props" />
-    <Import Project="..\Core\ofxRulr_Core.props" />
-    <Import Project="..\..\ofxPlugin\ofxPluginLib\ofxPlugin.props" />
+    <Import Project="..\Nodes\ofxRulr_Nodes.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\addons\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
-    <Import Project="..\..\..\addons\ofxCvMin\ofxCvMinLib\ofxCvMin.props" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
-    <Import Project="..\..\..\addons\ofxNonLinearFit\ofxNonLinearFit64.props" />
-    <Import Project="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2.props" />
-    <Import Project="..\Core\ofxRulr_Core.props" />
-    <Import Project="..\..\ofxPlugin\ofxPluginLib\ofxPlugin.props" />
+    <Import Project="..\Nodes\ofxRulr_Nodes.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
