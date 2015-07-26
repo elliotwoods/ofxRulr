@@ -33,11 +33,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="..\Nodes\ofxRulr_Nodes.props" />
+    <Import Project="..\Core\ofxRulr_Core.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="..\Nodes\ofxRulr_Nodes.props" />
+    <Import Project="..\Core\ofxRulr_Core.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -68,6 +70,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\addons\ofxMessagePack\libs\msgpack-c\lib\win64;..\..\..\addons\ofxNonLinearFit\libs\NLopt\lib\win64;..\..\..\addons\ofxUeye\libs\ueye\vs2012;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -91,6 +94,7 @@
       <AdditionalLibraryDirectories>..\..\..\addons\ofxMessagePack\libs\msgpack-c\lib\win64;..\..\..\addons\ofxNonLinearFit\libs\NLopt\lib\win64;..\..\..\addons\ofxUeye\libs\ueye\vs2012;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AssemblyDebug>
       </AssemblyDebug>
+      <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -124,6 +128,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj">
       <Project>{630936f8-c65f-4ab9-92ad-80569eaa7782}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxPlugin\ofxPluginLib\ofxPluginLib.vcxproj">
+      <Project>{68b9239b-5ae6-45c0-b1cb-6fc6b58bb6ee}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.vcxproj">
       <Project>{9201d4e8-8b5a-44d4-baa6-23229a1871a7}</Project>

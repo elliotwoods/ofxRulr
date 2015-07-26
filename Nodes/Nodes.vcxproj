@@ -36,11 +36,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="ofxRulr_Nodes.props" />
+    <Import Project="..\Core\ofxRulr_Core.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="ofxRulr_Nodes.props" />
+    <Import Project="..\Core\ofxRulr_Core.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -215,7 +217,7 @@
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h" />
     <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\DeclareCoreNodes.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\DeclareNodes.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Device\VideoOutput.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Board.h" />
@@ -237,7 +239,7 @@
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp" />
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp" />
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\DeclareCoreNodes.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\DeclareNodes.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Device\VideoOutput.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Board.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp" />
@@ -252,11 +254,6 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Render\NodeThroughView.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Core\Core.vcxproj">
-      <Project>{9201d4e8-8b5a-44d4-baa6-23229a1871a7}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxGLM\libs\glm\core\func_common.inl" />

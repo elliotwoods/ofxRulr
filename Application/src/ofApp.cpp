@@ -1,4 +1,4 @@
-#include "../../../addons/ofxRulr/Nodes/src/ofxRulr/Nodes/DeclareCoreNodes.h"
+#include "../../../addons/ofxRulr/Nodes/src/ofxRulr/Nodes/DeclareNodes.h"
 
 #include "ofApp.h"
 
@@ -29,10 +29,11 @@ void ofApp::setup2(){
 
 	
 	//--
-	//Initialise core nodes
+	//Initialise nodes
 	//--
 	//
-	ofxRulr::Nodes::declareCoreNodes();
+	ofxRulr::Nodes::loadCoreNodes();
+	ofxRulr::Nodes::loadPluginNodes();
 	//
 	//--
 

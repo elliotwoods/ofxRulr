@@ -1,44 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="External.cpp" />
-    <ClCompile Include="ofxRulr\Nodes\Item\KinectV2.cpp">
-      <Filter>ofxRulr\Nodes\Item</Filter>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\KinectV2.cpp">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\CameraFromKinectV2.cpp">
-      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromKinectV2.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
-    <ClCompile Include="ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromKinectV2.cpp">
-      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromKinectV2.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
+    <ClCompile Include="src\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="External.h" />
-    <ClInclude Include="ofxRulr\Nodes\Item\KinectV2.h">
-      <Filter>ofxRulr\Nodes\Item</Filter>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\KinectV2.h">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromKinectV2.h">
-      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromKinectV2.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
-    <ClInclude Include="ofxRulr\Nodes\Procedure\Calibrate\CameraFromKinectV2.h">
-      <Filter>ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromKinectV2.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="ofxRulr">
-      <UniqueIdentifier>{4a85870e-108b-4bfc-8506-cd527b342102}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ofxRulr\Nodes">
+    <Filter Include="src\ofxRulr\Nodes">
       <UniqueIdentifier>{b5fccf2e-99b2-48d6-ac02-070c142d804e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ofxRulr\Nodes\Item">
+    <Filter Include="src\ofxRulr\Nodes\Item">
       <UniqueIdentifier>{e8ce5bc2-a4be-4bf0-bb96-dcfa035ed1e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ofxRulr\Nodes\Procedure">
+    <Filter Include="src\ofxRulr\Nodes\Procedure">
       <UniqueIdentifier>{190c7784-9efc-40a7-aab0-a7d809cb808a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ofxRulr\Nodes\Procedure\Calibrate">
+    <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
       <UniqueIdentifier>{99b42e00-885b-49c5-b5fc-c2eb8ac9f546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{7cb23bcc-0fb3-4499-b761-25860287bbd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{bd1bdc99-569d-4780-b8f2-1bebc15d27b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{5298b00f-faab-425c-b58d-8fc893f88157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure">
+      <UniqueIdentifier>{faa2746c-f704-43a1-bcb3-f2eb4fca83e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
+      <UniqueIdentifier>{376e1462-6366-4f47-8372-53cc30de8df6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Item">
+      <UniqueIdentifier>{adae8927-d19a-4f23-b894-73994d05d55c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

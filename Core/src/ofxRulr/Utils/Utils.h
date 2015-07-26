@@ -1,18 +1,17 @@
 #pragma once
 
+#include "ofxSingleton.h"
+
 #include "ofSoundPlayer.h"
 
 namespace ofxRulr {
 	namespace Utils {
-		class Assets{
+		class Assets : public ofxSingleton::Singleton<Assets> {
 		public:
 			Assets();
-			static Assets & X();
 
 			ofSoundPlayer failSound;
 			ofSoundPlayer successSound;
-
-			static Assets * singleton;
 		};
 
 		void playSuccessSound();

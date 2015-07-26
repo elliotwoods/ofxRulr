@@ -1,5 +1,4 @@
-#include "DeclareCoreNodes.h"
-#include "ofxRulr/Graph/Factory.h"
+#include "DeclareNodes.h"
 
 #include "ofxRulr/Nodes/Device/VideoOutput.h"
 
@@ -16,9 +15,11 @@
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Procedure/Triangulate.h"
 
+#include "ofxRulr/Graph/Factory.h"
+
 namespace ofxRulr {
 	namespace Nodes {
-		void declareCoreNodes() {
+		void loadCoreNodes() {
 			RULR_DECLARE_NODE(Device::VideoOutput);
 
 			RULR_DECLARE_NODE(Item::Board);
@@ -33,6 +34,10 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Procedure::Calibrate::ViewToVertices);
 			RULR_DECLARE_NODE(Procedure::Scan::Graycode);
 			RULR_DECLARE_NODE(Procedure::Triangulate);
+		}
+
+		void loadPluginNodes() {
+			Graph::FactoryRegister::X().loadPlugins();
 		}
 	}
 }

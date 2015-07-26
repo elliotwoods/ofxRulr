@@ -19,5 +19,7 @@ Rulr
 
 ## 0.4
 
+* `ofxDigitalEmulsion` -> `ofxRulr`
 * Move to oF 0.9.0 / VS2015
-* Introduce plugins for nodes and cameras 
+* Introduce plugins for nodes and cameras (e.g. seperate dll files). This helps compatability between machines
+* `ofxRulr::Graph::Node` -> `ofxRulr::Nodes::Base`

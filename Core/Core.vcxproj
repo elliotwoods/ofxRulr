@@ -75,6 +75,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9201D4E8-8B5A-44D4-BAA6-23229A1871A7}</ProjectGuid>
     <RootNamespace>Core</RootNamespace>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

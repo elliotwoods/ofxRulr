@@ -462,9 +462,6 @@
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h">
       <Filter>addons\ofxTriangulate\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\DeclareCoreNodes.h">
-      <Filter>src\ofxRulr\Nodes</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Device\VideoOutput.h">
       <Filter>src\ofxRulr\Nodes\Device</Filter>
     </ClInclude>
@@ -513,6 +510,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\Render\NodeThroughView.h">
       <Filter>src\ofxRulr\Nodes\Render</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\DeclareNodes.h">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -523,9 +523,6 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp">
       <Filter>addons\ofxTriangulate\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\DeclareCoreNodes.cpp">
-      <Filter>src\ofxRulr\Nodes</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Device\VideoOutput.cpp">
       <Filter>src\ofxRulr\Nodes\Device</Filter>
@@ -568,6 +565,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Render\NodeThroughView.cpp">
       <Filter>src\ofxRulr\Nodes\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\DeclareNodes.cpp">
+      <Filter>src\ofxRulr\Nodes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

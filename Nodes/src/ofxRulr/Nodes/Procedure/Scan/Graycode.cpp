@@ -155,9 +155,7 @@ namespace ofxRulr {
 						}
 
 						auto frame = grabber->getFreshFrame();
-						frame->lockForReading();
 						this->decoder << frame->getPixels();
-						frame->unlock();
 					}
 
 					ofShowCursor();

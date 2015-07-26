@@ -150,6 +150,7 @@ namespace ofxRulr {
 							//if it's a DSLR, let's take a single shot and find the board
 							const auto cameraSpecification = camera->getGrabber()->getDeviceSpecification();
 							if (cameraSpecification.supports(ofxMachineVision::Feature::Feature_OneShot) && !cameraSpecification.supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+								//by calling getFreshFrame(), then update(), we should guarantee that the frame 
 								camera->getGrabber()->getFreshFrame();
 								this->findBoard();
 							}
