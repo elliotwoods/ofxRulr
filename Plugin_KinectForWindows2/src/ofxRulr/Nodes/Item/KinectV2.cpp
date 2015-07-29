@@ -80,12 +80,14 @@ namespace ofxRulr {
 				if (this->device) {
 					switch (this->viewType.get()) { // don't break on the cases, flow through
 					case 2:
-						this->device->drawWorld(ofxKinectForWindows2::Device::DrawStyle::Vertices);
+						//this should be something like 'draw pretty mesh'
+						//something seems to have been missed out of a merge in ofxKinectForWindows2
+						this->device->drawWorld();
 					case 1:
 					{
 						auto bodySource = this->device->getBodySource();
 						if (bodySource) {
-							bodySource->drawBodies();
+							bodySource->drawWorld();
 						}
 					}
 					case 0:

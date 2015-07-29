@@ -117,7 +117,10 @@ namespace ofxRulr {
 					auto checkerboardSize = checkerboardNode->getSize();
 					auto checkerboardObjectPoints = checkerboardNode->getObjectPoints();
 
-					cv::cvtColor(cameraColorImage, cameraColorImage, CV_RGB2GRAY);
+					//convert to grayscale
+					if (cameraColorImage.channels() == 3) {
+						cv::cvtColor(cameraColorImage, cameraColorImage, CV_RGB2GRAY);
+					}
 
 					//---
 					//find the points in kinect space
