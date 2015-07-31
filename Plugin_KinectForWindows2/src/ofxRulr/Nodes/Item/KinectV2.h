@@ -6,10 +6,16 @@
 
 #include "ofxCvGui/Panels/Groups/Grid.h"
 
+#ifdef  Plugin_KinectForWindows2_Exports 
+	#define DLLEXPORT __declspec(dllexport)  
+#else
+	#define DLLEXPORT __declspec(dllimport)  
+#endif
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
-			class KinectV2 : public ofxRulr::Nodes::Item::RigidBody {
+			class DLLEXPORT KinectV2 : public ofxRulr::Nodes::Item::RigidBody {
 			public:
 				KinectV2();
 				void init();
