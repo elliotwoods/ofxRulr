@@ -5,7 +5,7 @@
 #include "NodeBrowser.h"
 
 #include "ofxRulr/Nodes/Base.h"
-#include "ofxRulr/Graph/Factory.h"
+#include "ofxRulr/Graph/FactoryRegister.h"
 #include "ofxCvGui/Panels/ElementCanvas.h"
 
 namespace ofxRulr {

@@ -29,7 +29,7 @@ namespace ofxRulr {
 			virtual bool checkSupports(shared_ptr<Nodes::Base>) const = 0;
 			virtual shared_ptr<Nodes::Base> getConnectionUntyped() const = 0;
 
-			virtual const ofImage & getNodeIcon() const = 0;
+			virtual shared_ptr<ofImage> getNodeIcon() = 0;
 			virtual const ofColor & getNodeColor() const = 0;
 			
 			string getName() const;
@@ -53,7 +53,8 @@ namespace ofxRulr {
 		public:
 			Pin(string name) : AbstractPin(name) {
 				this->pinView->template setup<NodeType>();
-			}
+				auto tempNode = NodeType();
+				this->color = tempNode.getColor();			}
 
 			Pin() : AbstractPin(this->getNodeTypeName()) {
 				this->pinView->template setup<NodeType>();
@@ -113,20 +114,23 @@ namespace ofxRulr {
 				return this->connection.lock();
 			}
 
-			const ofImage & getNodeIcon() const override {
-				//this is kind of slow, so let's check later to check
-				// if this is a good location to cache a reference
-				return NodeType().getIcon();
+			shared_ptr<ofImage> getNodeIcon() override {
+				if (!this->icon) {
+					this->icon = NodeType().getIcon();
+				}
+				return this->icon;
 			}
 
 			const ofColor & getNodeColor() const override {
-				return NodeType().getColor();
+				return this->color;
 			}
 			
 			ofxLiquidEvent<shared_ptr<NodeType> > onNewConnection;
 			ofxLiquidEvent<shared_ptr<NodeType> > onDeleteConnection; /// remember to check if the pointer is still valid
 		protected:
 			weak_ptr<NodeType> connection;
+			shared_ptr<ofImage> icon;
+			ofColor color;
 		};
 
 		typedef Utils::Set<AbstractPin> PinSet;

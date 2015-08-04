@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Base.h"
-#include "ofxRulr/Graph/Factory.h"
 
 #include "ofParameter.h"
 

@@ -15,7 +15,7 @@
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Procedure/Triangulate.h"
 
-#include "ofxRulr/Graph/Factory.h"
+#include "ofxRulr/Graph/FactoryRegister.h"
 
 namespace ofxRulr {
 	namespace Nodes {

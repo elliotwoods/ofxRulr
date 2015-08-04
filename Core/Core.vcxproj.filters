@@ -7,9 +7,6 @@
     <Filter Include="src\ofxRulr\Graph\Editor">
       <UniqueIdentifier>{e468759d-d487-48db-a966-6617ce9aa63d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Plugins">
-      <UniqueIdentifier>{b8609362-3d65-4761-8e47-bded66e3a721}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Utils">
       <UniqueIdentifier>{3323f018-b50f-4eb5-8d8e-8465f90f3e62}</UniqueIdentifier>
     </Filter>
@@ -66,9 +63,6 @@
     <ClCompile Include="src\ofxRulr\Graph\World.cpp">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\Factory.cpp">
-      <Filter>src\ofxRulr\Graph</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Graph\Editor\NodeHost.cpp">
       <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClCompile>
@@ -83,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Graph\Editor\NodeBrowser.cpp">
       <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Plugins\Manager.cpp">
-      <Filter>src\ofxRulr\Plugins</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
@@ -120,6 +111,12 @@
     <ClCompile Include="src\ofxRulr\Nodes\Base.cpp">
       <Filter>src\ofxRulr\Nodes</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Graphics.cpp">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\FactoryRegister.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -129,9 +126,6 @@
       <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\World.h">
-      <Filter>src\ofxRulr\Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\Factory.h">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\Editor\NodeBrowser.h">
@@ -148,9 +142,6 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\Editor\LinkHost.h">
       <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Plugins\Manager.h">
-      <Filter>src\ofxRulr\Plugins</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\Serializable.h">
       <Filter>src\ofxRulr\Utils</Filter>
@@ -214,6 +205,12 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Base.h">
       <Filter>src\ofxRulr\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Graphics.h">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\FactoryRegister.h">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

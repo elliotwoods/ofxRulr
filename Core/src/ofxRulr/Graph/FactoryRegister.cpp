@@ -1,4 +1,4 @@
-#include "Factory.h"
+#include "FactoryRegister.h"
 #include "ofxRulr/Exception.h"
 #include "ofSystemUtils.h"
 
@@ -33,26 +33,6 @@ namespace ofxRulr {
 			nodeHost->setBounds(bounds);
 			
 			return nodeHost;
-		}
-
-		//----------
-		ofImage & FactoryRegister::getIcon(const shared_ptr<BaseFactory> & factory) {
-			auto findIcon = this->icons.find(factory.get());
-			if (findIcon != this->icons.end()) {
-				//we have the icon
-				return *findIcon->second;
-			}
-			else {
-				//we don't have the icon
-				if (factory) {
-					//make the icon
-					auto & icon = factory->makeUntyped()->getIcon();
-					this->icons.insert(pair<BaseFactory *, ofImage *>(factory.get(), & icon));
-					return icon;
-				} else {
-					throw(ofxRulr::Exception("Failed to get icon. No factory available."));
-				}
-			}
 		}
 	}
 }

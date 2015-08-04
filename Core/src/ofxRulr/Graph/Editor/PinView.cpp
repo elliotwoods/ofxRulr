@@ -7,8 +7,6 @@ namespace ofxRulr {
 		namespace Editor {
 			//----------
 			PinView::PinView() {
-				this->icon = 0;
-
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					if (this->icon) {
 						this->icon->draw(args.localBounds);
@@ -21,7 +19,7 @@ namespace ofxRulr {
 
 			//---------
 			void PinView::setup(Nodes::Base & node) {
-				this->icon = &node.getIcon();
+				this->icon = node.getIcon();
 				this->nodeTypeName = node.getTypeName();
 			}
 		}

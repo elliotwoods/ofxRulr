@@ -215,7 +215,7 @@ namespace ofxRulr {
 				testPatternSelector->addOption("Grid");
 				testPatternSelector->addOption("White");
 				testPatternSelector->setSelection(this->testPattern.get());
-				testPatternSelector->onSelectionChange += [this](const int & selection){
+				testPatternSelector->onValueChange += [this](const int & selection){
 					this->testPattern = selection;
 				};
 				inspector->add(testPatternSelector);
@@ -427,7 +427,7 @@ namespace ofxRulr {
 
 						//modified from ofxCvGui::Widgets::Toggle::draw()
 
-						auto & font = ofxAssets::Register().getFont(ofxCvGui::defaultTypeface, 12);
+						auto & font = ofxAssets::Register::X().getFont(ofxCvGui::defaultTypeface, 12);
 
 						ofPushStyle();
 

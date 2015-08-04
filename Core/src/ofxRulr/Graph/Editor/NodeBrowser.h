@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Factory.h"
+#include "../FactoryRegister.h"
 #include "ofxCvGui/Element.h"
 #include "ofxCvGui/Utils/TextField.h"
 #include "ofxCvGui/Panels/Scroll.h"
@@ -13,10 +13,10 @@ namespace ofxRulr {
 				public:
 					ListItem(shared_ptr<BaseFactory>);
 					shared_ptr<BaseFactory> getFactory();
-					ofImage & getIcon();
+					const ofImage & getIcon();
 				protected:
 					shared_ptr<BaseFactory> factory;
-					ofImage * icon;
+					shared_ptr<ofImage> icon;
 				};
 
 			public:

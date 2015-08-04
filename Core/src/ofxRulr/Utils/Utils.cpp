@@ -1,7 +1,7 @@
 #include "Utils.h"
 
 //----------
-ofxRulr::Utils::Assets::SingletonStore ofxRulr::Utils::Assets::singletonStore;
+OFXSINGLETON_DEFINE(ofxRulr::Utils::Assets);
 
 namespace ofxRulr {
 	namespace Utils {

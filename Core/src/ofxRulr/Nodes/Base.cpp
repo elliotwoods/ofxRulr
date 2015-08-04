@@ -1,6 +1,7 @@
 #include "Base.h"
 
 #include "../Exception.h"
+#include "Graphics.h"
 
 #include "ofxCvGui.h"
 
@@ -10,9 +11,9 @@ namespace ofxRulr {
 	namespace Nodes {
 		//----------
 		Base::Base() {
-			this->icon = 0;
 			this->initialized = false;
-			this->defaultIconName = "Default";
+			this->lastFrameUpdate = 0;
+			this->updateAllInputsFirst = true;
 		}
 
 		//----------
@@ -45,7 +46,19 @@ namespace ofxRulr {
 
 		//----------
 		void Base::update() {
-			this->onUpdate.notifyListeners();
+			auto currentFrameIndex = ofGetFrameNum() + 1; // otherwise confusions at 0th frame
+			if (currentFrameIndex > this->lastFrameUpdate) {
+				if (this->updateAllInputsFirst) {
+					for (auto inputPin : this->inputPins) {
+						auto inputNode = inputPin->getConnectionUntyped();
+						if (inputNode) {
+							inputNode->update();
+						}
+					}
+				}
+				this->onUpdate.notifyListeners();
+				this->lastFrameUpdate = currentFrameIndex;
+			}
 		}
 
 		//----------
@@ -63,15 +76,29 @@ namespace ofxRulr {
 		}
 
 		//----------
-		ofImage & Base::getIcon() {
-			this->setupGraphics();
-			return * this->icon;
+		shared_ptr<ofImage> Base::getIcon() {
+			if (!this->icon) {
+				this->icon = Graphics::X().getIcon(this->getTypeName());
+			}
+			return this->icon;
 		}
 
 		//----------
 		const ofColor & Base::getColor() {
-			this->setupGraphics();
-			return this->color;
+			if (!this->color) {
+				this->color = make_shared<ofColor>(Graphics::X().getColor(this->getTypeName()));
+			}
+			return * this->color;
+		}
+
+		//----------
+		void Base::setIcon(shared_ptr<ofImage> icon) {
+			this->icon = icon;
+		}
+
+		//----------
+		void Base::setColor(const ofColor & color) {
+			this->color = make_shared<ofColor>(color);
 		}
 
 		//----------
@@ -176,35 +203,13 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Base::setupGraphics() {
-			if (this->icon) {
-				//icon is already setup, we presume all graphics are already setup
-				return;
-			}
-
-			//setup icon
-			const auto imageName = "ofxRulr::Nodes::" + this->getTypeName();
-			if (ofxAssets::Register::X().hasImage(imageName)) {
-				//setup with specific node icon
-				this->icon = &ofxAssets::image(imageName);
-			}
-			else {
-				//setup with inherited node icon
-				this->icon = & ofxAssets::image("ofxRulr::Nodes::" + this->defaultIconName);
-			}
-
-			//setup color
-			auto hash = std::hash<string>()(this->getTypeName());
-			hash %= 255;
-			auto color = ofColor(200, 100, 100);
-			color.setHue((hash % 64) * (256 / 64));
-			color.setBrightness((hash / 64) * 64 + 128);
-			this->color = color;
+		void Base::setUpdateAllInputsFirst(bool updateAllInputsFirst) {
+			this->updateAllInputsFirst = updateAllInputsFirst;
 		}
 
 		//----------
-		void Base::setIcon(ofImage & icon) {
-			this->icon = &icon;
+		bool Base::getUpdateAllInputsFirst() const {
+			return this->updateAllInputsFirst;
 		}
 	}
 }

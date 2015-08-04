@@ -17,12 +17,6 @@ namespace ofxRulr {
 		public:
 			///Make a NodeHost and Node based on a saved/pasted Json value
 			shared_ptr<Editor::NodeHost> make(const Json::Value &);
-
-			ofImage & getIcon(const shared_ptr<BaseFactory> &);
-			ofImage & getIcon(const string & nodeTypeName);
-
-		protected:
-			map<BaseFactory *, ofImage *> icons;
 		};
 
 		//----------

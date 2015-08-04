@@ -107,7 +107,7 @@ namespace ofxRulr {
 				typeChooser->addOption("Checkerboard");
 				typeChooser->addOption("Circles");
 				typeChooser->setSelection(this->boardType);
-				typeChooser->onSelectionChange += [this](const int & selectionIndex) {
+				typeChooser->onValueChange += [this](const int & selectionIndex) {
 					this->boardType = selectionIndex;
 					this->updatePreviewMesh();
 				};

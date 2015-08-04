@@ -40,13 +40,18 @@ namespace ofxRulr {
 			~Base();
 			virtual string getTypeName() const override;
 			void init();
-			void destroy();
+
+			///Note : manually calling update more than once per frame will have no effect
 			void update();
+
 			string getName() const override;
 			void setName(const string);
-
-			ofImage & getIcon();
+			
+			///Calling getIcon caches the icon and the color
+			shared_ptr<ofImage> getIcon();
 			const ofColor & getColor();
+			void setIcon(shared_ptr<ofImage>);
+			void setColor(const ofColor &);
 
 			const Graph::PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr);
@@ -82,8 +87,31 @@ namespace ofxRulr {
 			}
 
 			template<typename NodeType>
+			shared_ptr<NodeType> getInput(const string & name) const {
+				auto pin = this->getInputPin<NodeType>(name);
+				if (pin) {
+					return pin->getConnection();
+				}
+				else {
+					return shared_ptr<NodeType>();
+				}
+			}
+
+			template<typename NodeType>
 			shared_ptr<Graph::Pin<NodeType>> getInputPin() const {
 				return this->getInputPins().get<Graph::Pin<NodeType>>();
+			}
+
+			template<typename NodeType>
+			shared_ptr<Graph::Pin<NodeType>> getInputPin(const string & name) const {
+				const auto & inputPins = this->getInputPins();
+				for (auto inputPin : inputPins) {
+					auto typedPin = dynamic_pointer_cast<Graph::Pin<NodeType>>(inputPin);
+					if (typedPin && typedPin->getName() == name) {
+						return typedPin; // found the right one
+					}
+				}
+				return shared_ptr<Graph::Pin<NodeType>>(); // didn't find
 			}
 
 			template<typename NodeType>
@@ -124,15 +152,17 @@ namespace ofxRulr {
 			void removeInput(shared_ptr<Graph::AbstractPin>);
 			void clearInputs();
 
-			void setupGraphics();
-			void setIcon(ofImage &);
+			void setUpdateAllInputsFirst(bool);
+			bool getUpdateAllInputsFirst() const;
 		private:
 			Graph::PinSet inputPins;
-			ofImage * icon;
-			ofColor color;
+			shared_ptr<ofImage> icon;
+			shared_ptr<ofColor> color;
+
 			string name;
-			string defaultIconName;
 			bool initialized;
+			uint64_t lastFrameUpdate;
+			bool updateAllInputsFirst;
 		};
 	}
 }
