@@ -2,12 +2,11 @@
 #include "ofxRulr/Exception.h"
 #include "ofSystemUtils.h"
 
+OFXSINGLETON_DEFINE(ofxRulr::Graph::FactoryRegister);
+
 namespace ofxRulr {
 	namespace Graph {
 #pragma mark FactoryRegister
-		//----------
-		OFXPLUGIN_FACTORY_REGISTER_SINGLETON_SOURCE(FactoryRegister);
-
 		//----------
 		shared_ptr<Editor::NodeHost> FactoryRegister::make(const Json::Value & json) {
 			const auto nodeTypeName = json["NodeTypeName"].asString();

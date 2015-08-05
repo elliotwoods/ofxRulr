@@ -36,7 +36,6 @@ namespace ofxRulr {
 				ofParameter<float> inputUnitScale;
 
 				shared_ptr<ofxAssimpModelLoader> modelLoader;
-				ofLight light;
 			};
 		}
 	}

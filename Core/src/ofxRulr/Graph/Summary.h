@@ -16,7 +16,9 @@ namespace ofxRulr {
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
 			void populateInspector(ofxCvGui::ElementGroupPtr);
+#ifdef OFXCVGUI_USE_OFXGRABCAM
 			void callbackShowCursor(bool &);
+#endif
 
 			void drawGrid();
 
@@ -26,7 +28,6 @@ namespace ofxRulr {
 			ofParameter<bool> showGrid;
 			ofParameter<ofVec3f> roomMinimum;
 			ofParameter<ofVec3f> roomMaximum;
-			ofLight light;
 
 			const Utils::Set<Nodes::Base> & world;
 

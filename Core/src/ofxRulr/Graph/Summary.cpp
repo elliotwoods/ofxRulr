@@ -31,9 +31,10 @@ namespace ofxRulr {
 			};
 
 			this->grid = &ofxAssets::image("ofxRulr::grid-10");
-			this->light.setDirectional();
 
+#ifdef OFXCVGUI_USE_OFXGRABCAM
 			this->showCursor.addListener(this, &Summary::callbackShowCursor);
+#endif
 			this->showCursor.set("Show Cursor", false);
 			this->showGrid.set("Show Grid", true);
 			this->roomMinimum.set("Room minimum", ofVec3f(-5.0f, -4.0f, 0.0f));
@@ -67,7 +68,9 @@ namespace ofxRulr {
 		//----------
 		void Summary::deserialize(const Json::Value & json) {
 			Utils::Serializable::deserialize(this->showCursor, json);
+#ifdef OFXCVGUI_USE_OFXGRABCAM
 			this->view->setCursorEnabled(this->showCursor);
+#endif
 			Utils::Serializable::deserialize(this->showGrid, json);
 			Utils::Serializable::deserialize(this->roomMinimum, json);
 			Utils::Serializable::deserialize(this->roomMaximum, json);
@@ -92,11 +95,14 @@ namespace ofxRulr {
 
 		//----------
 		void Summary::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+#ifdef OFXCVGUI_USE_OFXGRABCAM
 			inspector->add(Widgets::Title::make("Cursor", Widgets::Title::Level::H3));
 			inspector->add(Widgets::Toggle::make(this->showCursor));
+
 			inspector->add(Widgets::LiveValue<ofVec3f>::make("Position", [this]() {
 				return this->view->getCamera().getCursorWorld();
 			}));
+#endif
 
 			inspector->add(Widgets::Title::make("Grid", Widgets::Title::Level::H3));
 			inspector->add(Widgets::Toggle::make(this->showGrid));
@@ -104,10 +110,13 @@ namespace ofxRulr {
 			inspector->add(Widgets::EditableValue<ofVec3f>::make(this->roomMaximum));
 		}
 
+
+#ifdef OFXCVGUI_USE_OFXGRABCAM
 		//----------
 		void Summary::callbackShowCursor(bool & showCursor) {
 			this->view->setCursorEnabled(showCursor);
 		}
+#endif
 
 		//----------
 		void Summary::drawGrid() {
@@ -143,6 +152,7 @@ namespace ofxRulr {
 
 
 
+#ifdef OFXCVGUI_USE_OFXGRABCAM
 			//--
 			//cursor lines
 			//--
@@ -163,6 +173,7 @@ namespace ofxRulr {
 			ofPopStyle();
 			//
 			//--
+#endif
 
 
 
@@ -171,8 +182,6 @@ namespace ofxRulr {
 			//--
 			//
 			glEnable(GL_CULL_FACE);
-			this->light.setOrientation(camera.getOrientationQuat());
-			this->light.enable();
 			ofPushMatrix();
 			//
 			//back wall
@@ -197,8 +206,6 @@ namespace ofxRulr {
 			}
 			//
 			ofPopMatrix();
-			this->light.disable();
-			ofDisableLighting();
 			glDisable(GL_CULL_FACE);
 			//
 			//--

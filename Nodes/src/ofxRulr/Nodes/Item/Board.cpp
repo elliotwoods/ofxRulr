@@ -23,6 +23,22 @@ namespace ofxRulr {
 				this->sizeY.set("Size Y", 7.0f, 2.0f, 20.0f);
 				this->spacing.set("Spacing [m]", 0.05f, 0.001f, 1.0f);
 				this->updatePreviewMesh();
+
+				auto view = MAKE(ofxCvGui::Panels::World);
+				view->onDrawWorld += [this](ofCamera &) {
+					this->previewMesh.draw();
+				};
+				view->setGridEnabled(false);
+#ifdef OFXCVGUI_USE_OFXGRABCAM
+				view->getCamera().setCursorDraw(true, this->spacing / 5.0f);
+#endif
+				auto & camera = view->getCamera();
+				auto distance = this->spacing * MAX(this->sizeX, this->sizeY);
+				camera.setPosition(0, 0, -distance);
+				camera.lookAt(ofVec3f(), ofVec3f(0, -1, 0));
+				camera.setNearClip(distance / 100.0f);
+				camera.setFarClip(distance * 100.0f);
+				this->view = view;
 			}
 
 			//----------
@@ -32,23 +48,7 @@ namespace ofxRulr {
 
 			//----------
 			ofxCvGui::PanelPtr Board::getView() {
-				auto view = MAKE(ofxCvGui::Panels::World);
-				view->onDrawWorld += [this](ofCamera &) {
-					this->previewMesh.draw();
-				};
-				view->setGridEnabled(false);
-#ifdef USE_OFXGRABCAM
-				view->getCamera().setCursorDraw(true, this->spacing / 5.0f);
-#endif
-
-				auto & camera = view->getCamera();
-				auto distance = this->spacing * MAX(this->sizeX, this->sizeY);
-				camera.setPosition(0, 0, -distance);
-				camera.lookAt(ofVec3f(), ofVec3f(0, -1, 0));
-				camera.setNearClip(distance / 100.0f);
-				camera.setFarClip(distance * 100.0f);
-
-				return view;
+				return this->view;
 			}
 
 			//----------

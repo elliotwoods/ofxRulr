@@ -56,9 +56,7 @@ namespace ofxRulr {
 				auto tempNode = NodeType();
 				this->color = tempNode.getColor();			}
 
-			Pin() : AbstractPin(this->getNodeTypeName()) {
-				this->pinView->template setup<NodeType>();
-			}
+			Pin() : Pin(this->getNodeTypeName()) { }
 
 			~Pin() {
 				this->resetConnection();

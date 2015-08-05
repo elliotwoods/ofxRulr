@@ -25,6 +25,7 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 				void updatePreviewMesh();
 
+				ofxCvGui::PanelPtr view;
 				ofParameter<int> boardType; // 0 = checkerboard, 1 = circles
 				ofParameter<float> sizeX, sizeY;
 				ofParameter<float> spacing;

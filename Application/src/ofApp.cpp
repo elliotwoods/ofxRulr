@@ -13,21 +13,12 @@ void ofApp::setup2(){
 	//--
 	//
 	ofxAssets::Register::X().addAddon("ofxRulr");
-	splashScreen.init(image("ofxRulr::SplashScreen"));
-	splashScreen.begin(1.0f);
-	//
-	//--
-	
-
-	//--
-	//Initialise camera drivers
-	//--
-	//
-	// cameras should generally be plugins, so these will come later
+	//splashScreen.init(image("ofxRulr::SplashScreen"));
+	//splashScreen.begin(1.0f);
 	//
 	//--
 
-	
+
 	//--
 	//Initialise nodes
 	//--
@@ -36,7 +27,6 @@ void ofApp::setup2(){
 	ofxRulr::Nodes::loadPluginNodes();
 	//
 	//--
-
 
 
 	//--
@@ -49,9 +39,8 @@ void ofApp::setup2(){
 	//--
 
 
-
 	//--
-	//Initialise the Gui and the World
+	//Initialise gui, world and load last patch
 	//--
 	//
 	this->gui.init();
@@ -65,7 +54,7 @@ void ofApp::setup2(){
 	//--
 	//Hide the splash screen, back to business!
 	//
-	this->splashScreen.end();
+	//this->splashScreen.end();
 	//
 	//--
 }

@@ -44,35 +44,40 @@ namespace ofxRulr {
 							}
 
 							ofPushMatrix();
-							ofScale(drawArgs.localBounds.getWidth() / camera->getWidth(), drawArgs.localBounds.getHeight() / camera->getHeight());
+							{
+								ofScale(drawArgs.localBounds.getWidth() / camera->getWidth(), drawArgs.localBounds.getHeight() / camera->getHeight());
 
-							//draw current corners
-							ofxCv::drawCorners(this->currentCorners);
+								//draw current corners
+								ofxCv::drawCorners(this->currentCorners);
 
-							//draw past corners
-							ofPushStyle();
-							ofFill();
-							ofSetLineWidth(0.0f);
-							int boardIndex = 0;
-							ofColor boardColor(200, 100, 100);
-							for (auto & board : this->accumulatedCorners) {
-								boardColor.setHue(boardIndex++ * 30 % 360);
-								ofSetColor(boardColor);
-								for (auto & corner : board) {
-									ofCircle(corner, 3.0f);
+								//draw past corners
+								ofPushStyle();
+								{
+									ofFill();
+									ofSetLineWidth(0.0f);
+									int boardIndex = 0;
+									ofColor boardColor(200, 100, 100);
+									for (auto & board : this->accumulatedCorners) {
+										boardColor.setHue(boardIndex++ * 30 % 360);
+										ofSetColor(boardColor);
+										for (auto & corner : board) {
+											ofCircle(corner, 3.0f);
+										}
+									}
 								}
+								ofPopStyle();
 							}
-							ofPopStyle();
-
 							ofPopMatrix();
 
 							if (!this->isBeingInspected()) {
-								ofEnableAlphaBlending();
-								ofSetColor(255, 100);
-								if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
-									ofxCvGui::Utils::drawText("Select node to run preview...", drawArgs.localBounds);
+								ofPushStyle(); 
+								{
+									ofSetColor(255, 100);
+									if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+										ofxCvGui::Utils::drawText("Select node to enable board finder...", drawArgs.localBounds);
+									}
 								}
-								ofDisableAlphaBlending();
+								ofPopStyle();
 							}
 						}
 						

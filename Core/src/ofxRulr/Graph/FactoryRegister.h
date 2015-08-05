@@ -12,8 +12,7 @@
 namespace ofxRulr {
 	namespace Graph {
 		//----------
-		class FactoryRegister : public ofxPlugin::FactoryRegister<Nodes::Base> {
-			OFXPLUGIN_FACTORY_REGISTER_SINGLETON_HEADER(FactoryRegister)
+		class FactoryRegister : public ofxPlugin::FactoryRegister<Nodes::Base>, public ofxSingleton::Singleton<FactoryRegister> {
 		public:
 			///Make a NodeHost and Node based on a saved/pasted Json value
 			shared_ptr<Editor::NodeHost> make(const Json::Value &);

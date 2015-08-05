@@ -43,20 +43,18 @@ namespace ofxRulr {
 				this->flipZ.set("Flip Z", true);
 				this->inputUnitScale.set("Input unit scale", 0.0254f, 1e-6f, 1e6f);
 
-				this->light.setPosition(ofVec3f(0, 10, 0));
-				this->light.setDirectional();
-
 				this->view = make_shared<Panels::World>();
 				this->view->onDrawWorld += [this](ofCamera &) {
 					this->drawWorld();
 				};
+#ifdef OFXCVGUI_USE_OFXGRABCAM
 				this->view->onMouse += [this](MouseArguments & args) {
 					if (args.action & (MouseArguments::Action::Pressed | MouseArguments::Action::Dragged)) {
 						auto & camera = this->view->getCamera();
 						camera.updateCursorWorld();
-						this->light.lookAt(camera.getCursorWorld());
 					}
 				};
+#endif
 			}
 
 			//----------
@@ -95,10 +93,7 @@ namespace ofxRulr {
 					this->modelLoader->drawWireframe();
 				}
 				if (this->drawFaces) {
-					this->light.enable();
 					this->modelLoader->drawFaces();
-					this->light.disable();
-					ofDisableLighting();
 				}
 				ofPopMatrix();
 			}
@@ -113,10 +108,6 @@ namespace ofxRulr {
 				Utils::Serializable::serialize(this->flipY, json);
 				Utils::Serializable::serialize(this->flipZ, json);
 				Utils::Serializable::serialize(this->inputUnitScale, json);
-
-				auto & lightJson = json["Light"];
-				lightJson["Position"] << this->light.getPosition();
-				lightJson["Orientation"] << this->light.getOrientationEuler();
 			}
 
 			//----------
@@ -129,14 +120,6 @@ namespace ofxRulr {
 				Utils::Serializable::deserialize(this->flipY, json);
 				Utils::Serializable::deserialize(this->flipZ, json);
 				Utils::Serializable::deserialize(this->inputUnitScale, json);
-
-				const auto & lightJson = json["Light"];
-				ofVec3f position;
-				lightJson["Position"] >> position;
-				this->light.setPosition(position);
-				ofVec3f orientation;
-				lightJson["Orientation"] >> orientation;
-				this->light.setOrientation(orientation);
 
 				if (this->filename.get().empty()) {
 					this->modelLoader->clear();

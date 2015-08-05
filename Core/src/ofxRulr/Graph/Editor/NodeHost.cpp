@@ -183,37 +183,44 @@ namespace ofxRulr {
 
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					ofPushStyle();
+					{
+						//shadow for node
+						ofFill();
+						ofSetColor(0, 100);
+						ofPushMatrix();
+						{
+							ofTranslate(5, 5);
+							ofRect(this->getLocalBounds());
+						}
+						ofPopMatrix();
 
-					//shadow for node
-					ofFill();
-					ofSetColor(0, 100);
-					ofPushMatrix();
-					ofTranslate(5, 5);
-					ofRect(this->getLocalBounds());
-					ofPopMatrix();
+						//background for node
+						ofSetColor(80);
+						ofRect(this->getLocalBounds());
 
-					//background for node
-					ofSetColor(80);
-					ofRect(this->getLocalBounds());
-
-					if (this->nodeView) {
-						//background for nodeView
-						ofSetColor(30);
-						ofRect(this->nodeView->getBounds());
+						if (this->nodeView) {
+							//background for nodeView
+							ofSetColor(30);
+							ofRect(this->nodeView->getBounds());
+						}
 					}
-
 					ofPopStyle();
+
 
 					//output pin
 					ofPushStyle();
-					ofPushMatrix();
-					ofTranslate(this->getOutputPinPosition());
-					//
-					ofSetColor(this->getNodeInstance()->getColor());
-					ofSetLineWidth(0.0f);
-					ofRect(-10, -3, 10, 6);
-					//
-					ofPopMatrix();
+					{
+						ofPushMatrix();
+						{
+							ofTranslate(this->getOutputPinPosition());
+							//
+							ofSetColor(this->getNodeInstance()->getColor());
+							ofSetLineWidth(0.0f);
+							ofRect(-10, -3, 10, 6);
+							//
+						}
+						ofPopMatrix();
+					}
 					ofPopStyle();
 				};
 

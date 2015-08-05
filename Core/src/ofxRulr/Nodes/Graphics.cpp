@@ -18,7 +18,8 @@ namespace ofxRulr {
 					//the image file doesn't exist, let's use default icon
 					imageName = "ofxRulr::Nodes::Default";
 				}
-				inserter.second = ofxAssets::Register::X().getImagePointer(imageName);
+				inserter.second = make_shared<ofImage>();
+				inserter.second->clone(ofxAssets::image(imageName));
 				this->icons.insert(inserter);
 				return inserter.second;
 			}
