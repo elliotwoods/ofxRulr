@@ -68,9 +68,6 @@ namespace ofxRulr {
 		//----------
 		void Summary::deserialize(const Json::Value & json) {
 			Utils::Serializable::deserialize(this->showCursor, json);
-#ifdef OFXCVGUI_USE_OFXGRABCAM
-			this->view->setCursorEnabled(this->showCursor);
-#endif
 			Utils::Serializable::deserialize(this->showGrid, json);
 			Utils::Serializable::deserialize(this->roomMinimum, json);
 			Utils::Serializable::deserialize(this->roomMaximum, json);
