@@ -7,6 +7,11 @@ OFXSINGLETON_DEFINE(ofxRulr::Nodes::Graphics);
 namespace ofxRulr {
 	namespace Nodes {
 		//----------
+		Graphics::Graphics() {
+
+		}
+
+		//----------
 		shared_ptr<ofImage> Graphics::getIcon(const string & nodeTypeName) {
 			auto findIcon = this->icons.find(nodeTypeName);
 			if (findIcon == this->icons.end()) {
@@ -34,7 +39,7 @@ namespace ofxRulr {
 				//no color yet, let's calculate it
 				auto hash = std::hash<string>()(nodeTypeName);
 				auto hue = hash % 256;
-				auto saturation = (hash >> 8) % 128 + 128;
+				auto saturation = (hash >> 8) % 128;
 				auto brightness = (hash >> 12) % 64 + 192;
 
 				pair<string, ofColor> inserter;

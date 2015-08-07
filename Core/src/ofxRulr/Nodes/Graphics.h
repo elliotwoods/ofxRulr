@@ -9,6 +9,7 @@ namespace ofxRulr {
 	namespace Nodes {
 		class Graphics : public ofxSingleton::Singleton<Graphics> {
 		public:
+			Graphics();
 			shared_ptr<ofImage> getIcon(const string & nodeTypeName);
 			ofColor getColor(const string & nodeTypeName);
 

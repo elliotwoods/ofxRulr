@@ -11,6 +11,7 @@ namespace ofxRulr {
 				LinkHost();
 				bool isValid() const;
 				void updateBounds(); //ideally can be called from listener instead of every frame
+				ofColor getColor() const;
 			protected:
 				void callbackDraw(ofxCvGui::DrawArguments &);
 				virtual ofVec2f getSourcePinPosition() const;

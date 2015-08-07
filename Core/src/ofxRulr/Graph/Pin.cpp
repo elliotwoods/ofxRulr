@@ -11,18 +11,29 @@ namespace ofxRulr {
 				//hover mouse = change background
 				if (this->isMouseOver() && this->getMouseState() == LocalMouseState::Waiting) {
 					ofPushStyle();
-					ofSetColor(100);
-					ofRect(args.localBounds);
+					{
+						ofSetColor(100);
+						ofRect(args.localBounds);
+					}
 					ofPopStyle();
 				}
 
 				//line to indicate connection status
 				ofPushStyle();
-				ofSetLineWidth(6.0f);
-				if (this->isConnected()) {
-					ofSetColor(100, 200, 100);
+				{
+					ofSetLineWidth(0.0f);
+					ofFill();
+					if (this->isConnected()) {
+						ofSetColor(100, 200, 100);
+					}
+
+					ofPushMatrix();
+					{
+						ofTranslate(this->getPinHeadPosition());
+						ofDrawRectangle(0, -3.0f, 10.0f, 6.0f);
+					}
+					ofPopMatrix();
 				}
-				ofLine(this->getPinHeadPosition(), this->getPinHeadPosition() + ofVec2f(10.0f, 0.0f));
 				ofPopStyle();
 			};
 

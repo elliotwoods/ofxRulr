@@ -29,6 +29,17 @@ namespace ofxRulr {
 				bounds.height += 20;
 				this->setBounds(bounds);
 			}
+			
+			//---------
+			ofColor LinkHost::getColor() const {
+				auto sourceNode = this->sourceNode.lock();
+				if (sourceNode) {
+					return sourceNode->getNodeInstance()->getColor();
+				}
+				else {
+					return this->targetPin.lock()->getNodeColor();
+				}
+			}
 
 			//---------
 			void LinkHost::callbackDraw(ofxCvGui::DrawArguments & args) {
@@ -38,34 +49,39 @@ namespace ofxRulr {
 
 					//move from local to patch space
 					ofPushMatrix();
-					ofTranslate(-this->getBoundsInParent().getTopLeft());
+					{
+						ofTranslate(-this->getBoundsInParent().getTopLeft());
 
-					const auto wireRigidity = ofVec2f(100, 0);
-					ofPolyline wire;
-					wire.addVertex(sourcePinPosition);
-					wire.bezierTo(sourcePinPosition + wireRigidity, targetPinPosition - wireRigidity, targetPinPosition, 40);
+						const auto wireRigidity = ofVec2f(100, 0);
+						ofPolyline wire;
+						wire.addVertex(sourcePinPosition);
+						wire.bezierTo(sourcePinPosition + wireRigidity, targetPinPosition - wireRigidity, targetPinPosition, 40);
 
-					//outline
-					ofPushStyle();
-					ofSetColor(0);
-					ofSetLineWidth(3.0f);
-					wire.draw();
+						ofPushStyle();
+						{
 
-					ofSetLineWidth(2.0f);
-					
-					//shadow
-					ofPushMatrix();
-					ofSetColor(0, 100);
-					ofTranslate(5.0f, 5.0f);
-					wire.draw();
-					ofPopMatrix();
+							//shadow
+							ofPushMatrix();
+							{
+								ofTranslate(5.0f, 5.0f);
+								ofSetLineWidth(2.0f);
+								ofSetColor(0, 100);
+								wire.draw();
+							}
+							ofPopMatrix();
 
-					//line
-					ofSetColor(this->targetPin.lock()->getNodeColor());
-					wire.draw();
+							//outline
+							ofSetLineWidth(3.0f);
+							ofSetColor(0);
+							wire.draw();
 
-					ofPopStyle();
-
+							//line
+							ofSetLineWidth(2.0f);
+							ofSetColor(this->getColor());
+							wire.draw();
+						}
+						ofPopStyle();
+					}
 					ofPopMatrix();
 				}
 				catch (ofxRulr::Exception e) {
