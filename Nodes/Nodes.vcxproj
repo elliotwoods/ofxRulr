@@ -219,6 +219,7 @@
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h" />
     <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Recorder.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DeclareNodes.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Device\VideoOutput.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Base.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp" />
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp" />
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Recorder.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DeclareNodes.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Device\VideoOutput.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Board.cpp" />

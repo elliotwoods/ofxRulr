@@ -71,6 +71,8 @@ namespace ofxRulr {
 			}
 
 			void connectTyped(shared_ptr<NodeType> node) {
+				this->resetConnection();
+
 				this->connection = node;
 				this->onNewConnection(node);
 				auto untypedNode = shared_ptr<Nodes::Base>(node);

@@ -85,6 +85,9 @@
     <Filter Include="src\ofxRulr\Nodes\Render">
       <UniqueIdentifier>{0ef9b4f9-3bda-4368-bba8-592c4c0d2c6e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Data">
+      <UniqueIdentifier>{b1da98cf-610f-474c-96b6-f3f5203aea47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h">
@@ -513,6 +516,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\DeclareNodes.h">
       <Filter>src\ofxRulr\Nodes</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Recorder.h">
+      <Filter>src\ofxRulr\Nodes\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -568,6 +574,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\DeclareNodes.cpp">
       <Filter>src\ofxRulr\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Recorder.cpp">
+      <Filter>src\ofxRulr\Nodes\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,7 @@
 #include "DeclareNodes.h"
 
+#include "ofxRulr/Nodes/Data/Recorder.h"
+
 #include "ofxRulr/Nodes/Device/VideoOutput.h"
 
 #include "ofxRulr/Nodes/Item/Board.h"
@@ -20,6 +22,8 @@
 namespace ofxRulr {
 	namespace Nodes {
 		void loadCoreNodes() {
+			RULR_DECLARE_NODE(Data::Recorder);
+
 			RULR_DECLARE_NODE(Device::VideoOutput);
 
 			RULR_DECLARE_NODE(Item::Board);

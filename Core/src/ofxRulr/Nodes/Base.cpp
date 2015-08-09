@@ -48,6 +48,7 @@ namespace ofxRulr {
 		void Base::update() {
 			auto currentFrameIndex = ofGetFrameNum() + 1; // otherwise confusions at 0th frame
 			if (currentFrameIndex > this->lastFrameUpdate) {
+				this->lastFrameUpdate = currentFrameIndex;
 				if (this->updateAllInputsFirst) {
 					for (auto inputPin : this->inputPins) {
 						auto inputNode = inputPin->getConnectionUntyped();
@@ -57,7 +58,6 @@ namespace ofxRulr {
 					}
 				}
 				this->onUpdate.notifyListeners();
-				this->lastFrameUpdate = currentFrameIndex;
 			}
 		}
 

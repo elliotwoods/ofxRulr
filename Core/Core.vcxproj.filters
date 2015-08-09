@@ -117,6 +117,9 @@
     <ClCompile Include="src\ofxRulr\Graph\FactoryRegister.cpp">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Base64.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\FactoryRegister.h">
       <Filter>src\ofxRulr\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Base64.h">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
