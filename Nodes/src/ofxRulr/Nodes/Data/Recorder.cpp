@@ -7,12 +7,55 @@
 #include "ofxCvGui/Widgets/Toggle.h"
 #include "ofxCvGui/Panels/Scroll.h"
 
+#include "ofAppRunner.h"
+
 using namespace ofxCvGui;
+using namespace std::chrono;
 
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Data {
 #pragma mark public
+			//----------
+			chrono::microseconds Recorder::getAppTime() {
+				return chrono::microseconds(ofGetElapsedTimeMicros());
+			}
+
+			//----------
+			chrono::microseconds Recorder::getLastAppFrameDuration() {
+				auto countMicroseconds = (uint64_t)(ofGetLastFrameTime() * 1e6);
+				return microseconds(countMicroseconds);
+			}
+
+			//----------
+#define stripMagnitude(remainingTime, magnitude, result, magnitudeString) \
+	if(remainingTime > magnitude(1)) { \
+		auto remainingTimeAtMagnitude = duration_cast<magnitude>(remainingTime); \
+		result << remainingTimeAtMagnitude.count() << magnitudeString; \
+		remainingTime -= remainingTimeAtMagnitude; \
+	}
+			//
+			string Recorder::formatTime(const microseconds & microseconds) {
+				stringstream result;
+				if (microseconds < 1ms) {
+					//if less than a microsecond
+					result << microseconds.count() << "us";
+				}
+				else {
+					auto remainingTime = microseconds;
+					stripMagnitude(remainingTime, hours, result, "h ");
+					result << setw(2) << setfill('0');
+					stripMagnitude(remainingTime, minutes, result, "m ");
+					stripMagnitude(remainingTime, seconds, result, "s ");
+
+					if (remainingTime > 1ms) {
+						result << setw(3);
+						result << duration_cast<milliseconds>(remainingTime).count() << "ms";
+					}
+				}
+				return result.str();
+			}
+
 			//----------
 			Recorder::Recorder() {
 				RULR_NODE_INIT_LISTENER;
@@ -27,29 +70,41 @@ namespace ofxRulr {
 			void Recorder::init() {
 				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
+				RULR_NODE_INSPECTOR_LISTENER;
 
 				auto masterRecorderPin = this->addInput<Recorder>("Master");
 				masterRecorderPin->onNewConnection += [this](shared_ptr<Recorder> master) {
 					master->registerSlave(this->shared_from_this());
 					this->flagRebuildView = true;
+					this->performOnFamily([](Recorder & recorder) {
+						recorder.stop(); // always stop all recorders if a sync network is changed
+					});
 				};
 				masterRecorderPin->onDeleteConnection += [this](shared_ptr<Recorder> master) {
-					master->unregisterSlave(this->shared_from_this());
+					this->performOnFamily([](Recorder & recorder) {
+						recorder.stop(); // always stop all recorders if a sync network is changed
+					});
 					this->flagRebuildView = true;
+					master->unregisterSlave(this->shared_from_this());
 				};
 
 				this->view = make_shared<Panels::Scroll>();
 
 				this->trackView = make_shared<Element>();
-				this->trackView->setBounds(ofRectangle(0, 0, 100, 50));
+				this->trackView->setBounds(ofRectangle(0, 0, 100, 70));
 				this->trackView->onDraw += [this](DrawArguments & args) {
 					ofDrawBitmapString(this->getName(), 10, 20);
 					ofDrawBitmapString("Frame count : " + ofToString(this->frames.size()), 10, 30);
+					ofDrawBitmapString("Duration : " + Recorder::formatTime(this->getDuration()), 10, 40);
+					ofDrawBitmapString("First frame : " + Recorder::formatTime(this->getFirstFrameTime()), 10, 50);
+					ofDrawBitmapString("Playback head : " + Recorder::formatTime(this->getPlaybackHeadPosition()), 10, 60);
 				};
 
-				this->state = State::Stopped;
-				this->paused = false;
+				this->loopPlayback.set("Loop", true);
+
 				this->flagRebuildView = false;
+
+				this->stop();
 			}
 
 			//----------
@@ -61,16 +116,33 @@ namespace ofxRulr {
 
 				switch (this->state) {
 				case State::Stopped:
+					this->currentFrame = this->getNewSourceFrame();
 					break;
 				case State::Playing:
 				{
+					this->playHeadPosition += Recorder::getLastAppFrameDuration();
+					if (this->playHeadPosition > this->getLastFrameTime()) {
+						if (this->loopPlayback) {
+							this->playHeadPosition = 0us;
+						}
+						else {
+							this->playHeadPosition = this->getLastFrameTime();
+							this->stop();
+						}
+					}
+					if (this->state == State::Playing) {
+						// if we're still playing, haven't stopped because end of track
+						this->currentFrame = this->getFrameAtTime(this->playHeadPosition);
+					}
+					else {
+						this->currentFrame = this->getNewSourceFrame();
+					}
 					break;
 				}
 				case State::Recording:
 				{
-					this->performOnFamily([](Recorder & recorder) {
-						recorder.recordFrame();
-					});
+					this->currentFrame = this->getNewSourceFrame();
+					this->recordFrame();
 					break;
 				}
 				}
@@ -88,22 +160,25 @@ namespace ofxRulr {
 
 			//----------
 			void Recorder::serialize(Json::Value & json) {
+				auto & jsonFrames = json["frames"];
 				for (auto frame : this->frames) {
-					frame.second->serialize(json[ofToString(frame.first)]);
+					frame.second->serialize(jsonFrames[ofToString(frame.first.count())]);
 				}
 			}
 
 			//----------
 			void Recorder::deserialize(const Json::Value & json) {
 				this->clear();
-				for (auto frameIndexString : json.getMemberNames()) {
+				const auto & jsonFrames = json["frames"];
+				for (auto frameTimeString : jsonFrames.getMemberNames()) {
 					try {
-						auto frameIndex = ofToInt64(frameIndexString);
-						auto frame = this->deserializeFrame(json[frameIndexString]);
+						auto frameTime = ofToInt64(frameTimeString);
+						auto frame = this->deserializeFrame(jsonFrames[frameTimeString]);
 						if (!frame) {
-							throw(ofxRulr::Exception("Couldn't load frame [" + frameIndexString + "]"));
+							throw(ofxRulr::Exception("Couldn't load frame [" + frameTimeString + "]"));
 						}
-						auto frameInserter = FrameInserter(frameIndex, frame);
+						auto frameTimeMicroseconds = chrono::microseconds(frameTime);
+						auto frameInserter = FrameInserter(frameTimeMicroseconds, frame);
 						this->frames.insert(frameInserter);
 					}
 					RULR_CATCH_ALL_TO_ERROR;
@@ -112,14 +187,31 @@ namespace ofxRulr {
 
 			//----------
 			void Recorder::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
-
+				inspector->add(Widgets::Toggle::make(this->loopPlayback));
+				inspector->add(Widgets::Button::make("Erase blank before first frame", [this]() {
+					try {
+						this->performOnFamily([](Recorder & recorder) {
+							recorder.eraseBlankBeforeFirstFrame();
+						});
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				}));
+				inspector->add(Widgets::Button::make("Stretch recording by factor", [this]() {
+					auto factorString = ofSystemTextBoxDialog("Stretch factor [1x]");
+					auto factor = ofToFloat(factorString);
+					try {
+						this->performOnFamily([factor](Recorder & recorder) {
+							recorder.stretchDurationByFactor((double) factor);
+						});
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				}));
 			}
 
 			//----------
 			void Recorder::record() {
-				this->recordStartAppTime = ofGetElapsedTimeMillis();
 				if (this->frames.empty()) {
-					this->recordStartTrackTime = 0;
+					this->recordStartTrackTime = Recorder::getAppTime();
 				}
 				else {
 					auto lastFrame = this->frames.end();
@@ -144,6 +236,7 @@ namespace ofxRulr {
 			//----------
 			void Recorder::stop() {
 				this->state = State::Stopped;
+				this->playHeadPosition = 0us;
 				this->paused = false;
 			}
 
@@ -156,9 +249,23 @@ namespace ofxRulr {
 
 			//----------
 			void Recorder::clear() {
-				this->performOnFamily([](Recorder & recorder) {
-					recorder.frames.clear();
-				});
+				this->frames.clear();
+			}
+
+			//----------
+			shared_ptr<Recorder::AbstractFrame> Recorder::getCurrentFrame() const {
+				return this->currentFrame;
+			}
+
+			//----------
+			shared_ptr<Recorder::AbstractFrame> Recorder::getFrameAtTime(const microseconds & time) const {
+				auto findFrame = this->frames.lower_bound(time);
+				if (findFrame != this->frames.end()) {
+					return findFrame->second;
+				}
+				else {
+					return shared_ptr<Recorder::AbstractFrame>();
+				}
 			}
 
 			//----------
@@ -169,6 +276,100 @@ namespace ofxRulr {
 			//----------
 			bool Recorder::getPaused() const {
 				return this->paused;
+			}
+
+			//----------
+			size_t Recorder::getFrameCount() const {
+				return this->frames.size();
+			}
+
+			//----------
+			bool Recorder::empty() const {
+				return this->frames.empty();
+			}
+
+			//----------
+			microseconds Recorder::getFirstFrameTime() const {
+				if (this->frames.empty()) {
+					// we return start and end as being at 0 in this case
+					return 0us;
+				}
+				else {
+					return this->frames.begin()->first;
+				}
+			}
+
+			//----------
+			microseconds Recorder::getLastFrameTime() const {
+				if (this->frames.empty()) {
+					// we return start and end as being at 0 in this case
+					return 0us;
+				}
+				else {
+					auto lastFrame = this->frames.end();
+					lastFrame--;
+					return lastFrame->first;
+				}
+			}
+
+			//----------
+			microseconds Recorder::getPlaybackHeadPosition() const {
+				return this->playHeadPosition;
+			}
+
+			//----------
+			void Recorder::erase(chrono::microseconds start, chrono::microseconds end) {
+				//delete all frames with timestamp >= start && timestamp < end
+				{
+					auto startIt = this->frames.lower_bound(start);
+					auto endIt = this->frames.lower_bound(end); //stop when = to end
+					this->frames.erase(startIt, endIt);
+				}
+				
+				//also move the timestamp of all frames after end back by (end - start)
+				{
+					auto eraseDuration = end - start;
+					auto it = this->frames.lower_bound(end);
+					while (it != this->frames.end()) {
+						auto newTimestamp = it->first - eraseDuration;
+						swap(this->frames[newTimestamp], it->second);
+						this->frames.erase(it++);
+					}
+				}
+			}
+
+			//----------
+			void Recorder::eraseBlankBeforeFirstFrame() {
+				this->erase(0us, this->getFirstFrameTime());
+			}
+
+			//----------
+			void Recorder::stretchDuration(microseconds newDuration) {
+				auto factor = (double)newDuration.count() / (double) this->getDuration().count();
+				this->stretchDurationByFactor(factor);
+			}
+
+			//----------
+			void Recorder::stretchDurationByFactor(double factor) {
+				if (factor >= 0.0f) {
+				}
+				else {
+					//could be NaN, 0 or negative
+					stringstream errorMessage;
+					errorMessage << "Recorder : Cannot stretch by a factor of " << factor;
+					throw(ofxRulr::Exception(errorMessage.str()));
+				}
+				//completely reallocate frame holders
+				Frames newFrames;
+
+				for (const auto & frame : this->frames) {
+					auto newFrameTimeRaw = (double)frame.first.count() * factor;
+					microseconds newFrameTime((uint64_t)newFrameTimeRaw);
+					auto inserter = FrameInserter(newFrameTime, frame.second);
+					newFrames.insert(inserter);
+				}
+
+				swap(this->frames, newFrames);
 			}
 
 #pragma mark protected
@@ -231,28 +432,38 @@ namespace ofxRulr {
 						return Widgets::Indicator::Status::Clear;
 					}));
 
-					this->view->add(Widgets::Toggle::make("Record", [this]() {
-						return this->getState() == State::Recording;
-					}, [this](bool record) {
-						if (record) {
-							this->record();
-						}
-						else {
-							this->stop();
-						}
-					}));
 					this->view->add(Widgets::Toggle::make("Play", [this]() {
 						return this->getState() == State::Playing;
 					}, [this](bool play) {
 						if (play) {
-							this->play();
+							this->performOnFamily([](Recorder & recorder) {
+								recorder.play();
+							});
 						}
 						else {
-							this->stop();
+							this->performOnFamily([](Recorder & recorder) {
+								recorder.stop();
+							});
+						}
+					}));
+					this->view->add(Widgets::Toggle::make("Record", [this]() {
+						return this->getState() == State::Recording;
+					}, [this](bool record) {
+						if (record) {
+							this->performOnFamily([](Recorder & recorder) {
+								recorder.record();
+							});
+						}
+						else {
+							this->performOnFamily([](Recorder & recorder) {
+								recorder.stop();
+							});
 						}
 					}));
 					this->view->add(Widgets::Button::make("Clear", [this]() {
-						this->clear();
+						this->performOnFamily([](Recorder & recorder) {
+							recorder.clear();
+						});
 					}));
 
 					//add our track and child tracks
@@ -264,11 +475,10 @@ namespace ofxRulr {
 
 			//----------
 			void Recorder::recordFrame() {
-				//get the current frame, if it's not empty then store it
-				auto currentFrame = this->getNewSourceFrame();
-				if (currentFrame) {
-					auto recordTrackTime = ofGetElapsedTimeMillis() - recordStartAppTime + recordStartTrackTime;
-					const auto inserter = FrameInserter(recordTrackTime, currentFrame);
+				//if our current frame isn't blank then store it
+				if (this->currentFrame) {
+					auto recordTrackTime = Recorder::getAppTime() - recordStartAppTime + recordStartTrackTime;
+					const auto inserter = FrameInserter(recordTrackTime, this->currentFrame);
 					this->frames.insert(inserter);
 				}
 			}

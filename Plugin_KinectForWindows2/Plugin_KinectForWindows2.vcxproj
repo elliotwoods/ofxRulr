@@ -177,9 +177,6 @@
     <ProjectReference Include="..\..\ofxRay\ofxRayLib\ofxRayLib.vcxproj">
       <Project>{048e1ec4-64fe-4aac-b524-1bd56a1fc726}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\ofxSingleton\ofxSingletonLib\ofxSingleton.vcxproj">
-      <Project>{4d3bcfdd-e65d-4247-b303-e0839caec6a6}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Core\Core.vcxproj">
       <Project>{9201d4e8-8b5a-44d4-baa6-23229a1871a7}</Project>
     </ProjectReference>

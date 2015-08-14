@@ -265,7 +265,10 @@ namespace ofxRulr {
 						return pin->getPinHeadPosition() + pin->getBounds().getTopLeft() + this->inputPins->getBounds().getTopLeft() + this->getBounds().getTopLeft();
 					}
 				}
-				throw(ofxRulr::Exception("NodeHost::getInputPinPosition can't find input pin" + ofToString((unsigned long) pin.get())));
+
+				//throw an error if we didn't find it
+				auto pointerValue = (size_t) pin.get();
+				throw(ofxRulr::Exception("NodeHost::getInputPinPosition can't find input pin" + ofToString(pointerValue)));
 			}
 
 			//----------

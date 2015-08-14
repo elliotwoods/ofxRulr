@@ -6,6 +6,8 @@
 
 #include "ofxCvGui/Panels/Scroll.h"
 
+#include <chrono>
+
 namespace ofxRulr {
 	namespace  Nodes {
 		namespace Data {
@@ -17,17 +19,22 @@ namespace ofxRulr {
 			* Implement deserializeFrame(const Json::Value &)
 			* Probably inherit another class which provides data of your type to output the recording
 			**/
-			class Recorder : public ofxRulr::Nodes::Base, public std::enable_shared_from_this<Recorder> {
+			class Recorder : virtual public ofxRulr::Nodes::Base, public std::enable_shared_from_this<Recorder> {
 			public:
 				typedef ofxRulr::Utils::Serializable AbstractFrame;
-				typedef map<uint64_t, shared_ptr<AbstractFrame>> Frames;
-				typedef pair<uint64_t, shared_ptr<AbstractFrame>> FrameInserter;
+				typedef map<chrono::microseconds, shared_ptr<AbstractFrame>> Frames;
+				typedef pair<chrono::microseconds, shared_ptr<AbstractFrame>> FrameInserter;
 
 				enum State {
 					Stopped, // allow data to flow through
 					Playing,
 					Recording
 				};
+
+				static chrono::microseconds getAppTime();
+				static chrono::microseconds getLastAppFrameDuration();
+
+				static string formatTime(const chrono::microseconds &);
 
 				Recorder();
 				virtual string getTypeName() const override;
@@ -46,12 +53,28 @@ namespace ofxRulr {
 				void play();
 				void stop();
 				void pause(); //pause a playing or recording. doesn't change state
-				
 				void clear();
+
+				shared_ptr<AbstractFrame> getCurrentFrame() const;
+				shared_ptr<AbstractFrame> getFrameAtTime(const chrono::microseconds &) const;
 
 				const State & getState() const;
 				bool getPaused() const;
 
+				size_t getFrameCount() const;
+				bool empty() const;
+				chrono::microseconds getFirstFrameTime() const;
+				chrono::microseconds getLastFrameTime() const;
+				chrono::microseconds getDuration() const {
+					return this->getLastFrameTime();
+				}
+				chrono::microseconds getPlaybackHeadPosition() const;
+
+				void erase(chrono::microseconds start, chrono::microseconds end);
+				void eraseBlankBeforeFirstFrame();
+
+				void stretchDuration(chrono::microseconds);
+				void stretchDurationByFactor(double factor);
 			protected:
 				//returns an empty pointer if no new data is available this frame
 				virtual shared_ptr<AbstractFrame> getNewSourceFrame();
@@ -69,11 +92,15 @@ namespace ofxRulr {
 
 				State state;
 				Frames frames;
-				uint64_t recordStartAppTime;
-				uint64_t recordStartTrackTime;
+				chrono::microseconds recordStartAppTime;
+				chrono::microseconds recordStartTrackTime;
 				bool paused;
+				chrono::microseconds playHeadPosition;
 				bool flagRebuildView;
 
+				ofParameter<bool> loopPlayback;
+
+				shared_ptr<AbstractFrame> currentFrame;
 				set<weak_ptr<Recorder>, owner_less<weak_ptr<Recorder>>> slaves;
 
 				shared_ptr<ofxCvGui::Panels::Scroll> view;

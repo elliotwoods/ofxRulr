@@ -341,7 +341,8 @@ namespace ofxRulr {
 
 			//----------
 			void VideoOutput::begin() {
-				this->scissorWasEnabled = ofxCvGui::Utils::disableScissor();
+				this->scissorWasEnabled = ofxCvGui::Utils::ScissorManager::X().getScissorEnabled();
+				ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(false); 
 				this->fbo.begin(true);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ACCUM_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				ofClear(0, 0, 0, 255);
@@ -351,7 +352,7 @@ namespace ofxRulr {
 			void VideoOutput::end() {
 				this->fbo.end();
 				if (this->scissorWasEnabled) {
-					ofxCvGui::Utils::enableScissor();
+					ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(true);
 				}
 			}
 
@@ -362,7 +363,8 @@ namespace ofxRulr {
 				}
 
 				//remove any scissor
-				auto scissorEnabled = ofxCvGui::Utils::disableScissor();
+				auto scissorEnabled = ofxCvGui::Utils::ScissorManager::X().getScissorEnabled();
+				ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(false);
 
 				//cache the viewport
 				auto mainViewport = ofGetCurrentViewport();
@@ -401,7 +403,7 @@ namespace ofxRulr {
 				ofViewport(mainViewport);
 
 				if (scissorEnabled) {
-					ofxCvGui::Utils::enableScissor();
+					ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(true);
 				}
 			}
 
