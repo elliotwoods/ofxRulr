@@ -10,10 +10,7 @@ namespace ofxRulr {
 		namespace Item {
 			//----------
 			KinectV2::KinectV2() {
-				this->onInit += [this]() {
-					this->init();
-				};
-				//RULR_NODE_INIT_LISTENER;
+				RULR_NODE_INIT_LISTENER;
 			}
 
 			//----------
