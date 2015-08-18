@@ -9,17 +9,26 @@ namespace ofxRulr {
 	namespace Utils {
 		//----------
 		void Serializable::serialize(const ofParameter<int> & parameter, Json::Value & json) {
-			json[parameter.getName()] = parameter.get();
+			const auto & value = parameter.get();
+			if (value == value) { // don't serialize a NaN
+				json[parameter.getName()] = parameter.get();
+			}
 		}
 
 		//----------
 		void Serializable::serialize(const ofParameter<float> & parameter, Json::Value & json) {
-			json[parameter.getName()] = parameter.get();
+			const auto & value = parameter.get();
+			if (value == value) { // don't serialize a NaN
+				json[parameter.getName()] = parameter.get();
+			}
 		}
 
 		//----------
 		void Serializable::serialize(const ofParameter<bool> & parameter, Json::Value & json) {
-			json[parameter.getName()] = parameter.get();
+			const auto & value = parameter.get();
+			if (value == value) { // don't serialize a NaN
+				json[parameter.getName()] = parameter.get();
+			}
 		}
 
 		//----------

@@ -88,6 +88,9 @@
     <Filter Include="src\ofxRulr\Nodes\Data">
       <UniqueIdentifier>{b1da98cf-610f-474c-96b6-f3f5203aea47}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\DMX">
+      <UniqueIdentifier>{5ddb32e0-a6b3-430a-9faa-563cca4c9428}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h">
@@ -519,6 +522,27 @@
     <ClInclude Include="src\ofxRulr\Nodes\Data\Recorder.h">
       <Filter>src\ofxRulr\Nodes\Data</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\DMX\Transmit.h">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\DMX\Base.h">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\DMX\Fixture.h">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\DMX\MovingHead.h">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\DMX\Sharpy.h">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.h">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -577,6 +601,27 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Data\Recorder.cpp">
       <Filter>src\ofxRulr\Nodes\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\DMX\Transmit.cpp">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\DMX\Base.cpp">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\DMX\Fixture.cpp">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\DMX\MovingHead.cpp">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\DMX\Sharpy.cpp">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.cpp">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

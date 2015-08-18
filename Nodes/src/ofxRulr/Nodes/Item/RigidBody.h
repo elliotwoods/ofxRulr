@@ -6,7 +6,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
-			class RigidBody : public Nodes::Base {
+			class RigidBody : public virtual Nodes::Base {
 			public:
 				RigidBody();
 				virtual string getTypeName() const override;
@@ -19,7 +19,13 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 
 				ofMatrix4x4 getTransform() const;
+				ofVec3f getPosition() const;
+				ofQuaternion getRotationQuat() const;
+				ofVec3f getRotationEuler() const;
+
 				void setTransform(const ofMatrix4x4 &);
+				void setPosition(const ofVec3f &);
+				void setRotationEuler(const ofVec3f &);
 				void setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse = false);
 
 				ofxLiquidEvent<void> onTransformChange;

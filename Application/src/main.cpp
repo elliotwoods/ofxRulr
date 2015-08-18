@@ -4,7 +4,7 @@
 //========================================================================
 int main( ){
 	ofGLFWWindowSettings windowSettings;
-	windowSettings.setGLVersion(3, 0); //according to http://www.glfw.org/docs/latest/window.html#window_hints GLFW will attempt to provide the highest supported context version if you specify 1.0
+	windowSettings.setGLVersion(2, 0); //according to http://www.glfw.org/docs/latest/window.html#window_hints GLFW will attempt to provide the highest supported context version if you specify 1.0
 	windowSettings.width = 1920;
 	windowSettings.height = 1080;
 	windowSettings.windowMode = OF_WINDOW;

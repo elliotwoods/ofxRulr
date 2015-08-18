@@ -33,9 +33,9 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
-				this->translation[0].set("Translation X", 0, -100.0f, 100.0f);
-				this->translation[1].set("Translation Y", 0, -100.0f, 100.0f);
-				this->translation[2].set("Translation Z", 0, -100.0f, 100.0f);
+				this->translation[0].set("Translation X", 0, -30.0f, 30.0f);
+				this->translation[1].set("Translation Y", 0, -30.0f, 30.0f);
+				this->translation[2].set("Translation Z", 0, -30.0f, 30.0f);
 				this->rotationEuler[0].set("Rotation X", 0, -360.0f, 360.0f);
 				this->rotationEuler[1].set("Rotation Y", 0, -360.0f, 360.0f);
 				this->rotationEuler[2].set("Rotation Z", 0, -360.0f, 360.0f);
@@ -134,6 +134,29 @@ namespace ofxRulr {
 			}
 
 			//---------
+			ofVec3f RigidBody::getPosition() const {
+				ofVec3f position;
+				for (int i = 0; i < 3; i++) {
+					position[i] = this->translation[i];
+				}
+				return position;
+			}
+
+			//---------
+			ofQuaternion RigidBody::getRotationQuat() const {
+				return toOf(glm::quat(toGLM(getRotationEuler())));
+			}
+
+			//---------
+			ofVec3f RigidBody::getRotationEuler() const {
+				ofVec3f rotationEuler;
+				for (int i = 0; i < 3; i++) {
+					rotationEuler[i] = this->rotationEuler[i];
+				}
+				return rotationEuler;
+			}
+
+			//---------
 			void RigidBody::setTransform(const ofMatrix4x4 & transform) {
 				auto translation = ((ofVec4f*)&transform)[3]; //last row is translation. rip it out;
 
@@ -151,6 +174,22 @@ namespace ofxRulr {
 					this->rotationEuler[i] = rotationEuler[i];
 				}
 
+				this->onTransformChange.notifyListeners();
+			}
+
+			//---------
+			void RigidBody::setPosition(const ofVec3f & position) {
+				for (int i = 0; i < 3; i++) {
+					this->translation[i] = position[i];
+				}
+				this->onTransformChange.notifyListeners();
+			}
+
+			//---------
+			void RigidBody::setRotationEuler(const ofVec3f & rotationEuler) {
+				for (int i = 0; i < 3; i++) {
+					this->rotationEuler[i] = rotationEuler[i];
+				}
 				this->onTransformChange.notifyListeners();
 			}
 
@@ -178,6 +217,9 @@ namespace ofxRulr {
 			}
 
 #pragma mark Helpers
+			/*
+			//using glm now
+
 			//---------
 			ofVec3f toEuler(const ofQuaternion & rotation) {
 				//from http://www.cs.stanford.edu/~acoates/quaternion.h
@@ -230,6 +272,7 @@ namespace ofxRulr {
 
 				return rotation;
 			}
+			*/
 		}
 	}
 }

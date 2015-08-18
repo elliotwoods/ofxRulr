@@ -35,6 +35,16 @@ namespace ofxRulr {
 			}
 
 #pragma mark NodeBrowser
+			/*
+			Gui listener tree:
+				- this
+					- background
+					- dialog
+						- textBox
+						- listBox
+							- listItems
+			*/
+
 			//----------
 			NodeBrowser::NodeBrowser() {
 				this->setCaption("NodeBrowser");

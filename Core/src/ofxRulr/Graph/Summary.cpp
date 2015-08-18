@@ -17,6 +17,7 @@ namespace ofxRulr {
 
 		//----------
 		void Summary::init() {
+			RULR_NODE_UPDATE_LISTENER;
 			RULR_NODE_INSPECTOR_LISTENER;
 			RULR_NODE_SERIALIZATION_LISTENERS;
 		
@@ -45,6 +46,13 @@ namespace ofxRulr {
 		//----------
 		string Summary::getTypeName() const {
 			return "Summary";
+		}
+
+		//----------
+		void Summary::update() {
+			auto camera = view->getCamera();
+			this->light.setPosition(camera.getPosition());
+			this->light.lookAt(camera.getCursorWorld());
 		}
 
 		//----------
@@ -183,11 +191,16 @@ namespace ofxRulr {
 			//
 			//back wall
 			ofPushMatrix();
-			ofTranslate(0, 0, roomMaximum.z);
-			for (int x = roomMinimum.x; x < roomMaximum.x; x++) {
-				for (int y = roomMinimum.y; y < roomMaximum.y; y++) {
-					this->grid->draw((float)x, (float)y, 1.0f, 1.0f);
+			{
+				this->light.enable();
+				ofTranslate(0, 0, roomMaximum.z);
+				for (int x = roomMinimum.x; x < roomMaximum.x; x++) {
+					for (int y = roomMinimum.y; y < roomMaximum.y; y++) {
+						this->grid->draw((float)x, (float)y, 1.0f, 1.0f);
+					}
 				}
+				this->light.disable();
+				ofDisableLighting();
 			}
 			ofPopMatrix();
 			//

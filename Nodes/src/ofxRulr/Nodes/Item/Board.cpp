@@ -24,7 +24,7 @@ namespace ofxRulr {
 				this->spacing.set("Spacing [m]", 0.05f, 0.001f, 1.0f);
 				this->updatePreviewMesh();
 
-				auto view = MAKE(ofxCvGui::Panels::World);
+				auto view = make_shared<ofxCvGui::Panels::World>();
 				view->onDrawWorld += [this](ofCamera &) {
 					this->previewMesh.draw();
 				};
@@ -33,13 +33,14 @@ namespace ofxRulr {
 				view->getCamera().setCursorDrawEnabled(true);
 				view->getCamera().setCursorDrawSize(this->spacing / 5.0f);
 #endif
+				this->view = view;
+
 				auto & camera = view->getCamera();
 				auto distance = this->spacing * MAX(this->sizeX, this->sizeY);
 				camera.setPosition(0, 0, -distance);
 				camera.lookAt(ofVec3f(), ofVec3f(0, -1, 0));
 				camera.setNearClip(distance / 100.0f);
 				camera.setFarClip(distance * 100.0f);
-				this->view = view;
 			}
 
 			//----------
@@ -118,6 +119,7 @@ namespace ofxRulr {
 				Utils::Gui::addIntSlider(this->sizeX, inspector)->onValueChange += sliderCallback;
 				Utils::Gui::addIntSlider(this->sizeY, inspector)->onValueChange += sliderCallback;
 				inspector->add(Widgets::Title::make("NB : Checkerboard size is\n counted by number of\n inner corners", Widgets::Title::Level::H3));
+				
 				inspector->add(ofxCvGui::Widgets::LiveValue<string>::make("Warning", [this]() {
 					if (this->boardType == 0) {
 						//CHECKERBOARD

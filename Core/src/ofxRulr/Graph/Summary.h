@@ -4,6 +4,8 @@
 
 #include "ofxCvGui/Panels/World.h"
 
+#include "ofLight.h"
+
 namespace ofxRulr {
 	namespace Graph {
 		class Summary : public Nodes::Base {
@@ -11,6 +13,7 @@ namespace ofxRulr {
 			Summary(const Utils::Set<Nodes::Base> & world);
 			void init();
 			string getTypeName() const override;
+			void update();
 			ofxCvGui::PanelPtr getView() override;
 		protected:
 			void serialize(Json::Value &);
@@ -32,6 +35,7 @@ namespace ofxRulr {
 			const Utils::Set<Nodes::Base> & world;
 
 			ofImage * grid;
+			ofLight light;
 		};
 	}
 }
