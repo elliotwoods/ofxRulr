@@ -305,6 +305,7 @@ namespace ofxRulr {
 				if (currentSelection) {
 					auto newNode = currentSelection->getFactory()->makeUntyped();
 					newNode->init();
+					newNode->deserialize(Json::Value()); // always call deserialize
 					this->onNewNode(newNode);
 				}
 			}

@@ -89,10 +89,7 @@ namespace ofxRulr {
 				inspector->add(Widgets::Title::make("RigidBody", Widgets::Title::Level::H2));
 
 				inspector->add(make_shared<Widgets::Button>("Clear Transform", [this]() {
-					for (int i = 0; i < 3; i++) {
-						this->translation[i] = 0.0f;
-						this->rotationEuler[i] = 0.0f;
-					}
+					this->clearTransform();
 				}));
 
 				for (int i = 0; i < 3; i++) {
@@ -203,6 +200,15 @@ namespace ofxRulr {
 				else {
 					this->setTransform(extrinsicsMatrix);
 				}
+			}
+
+			//----------
+			void RigidBody::clearTransform() {
+				for (int i = 0; i < 3; i++) {
+					this->translation[i] = 0.0f;
+					this->rotationEuler[i] = 0.0f;
+				}
+				this->onTransformChange.notifyListeners();
 			}
 
 			//----------

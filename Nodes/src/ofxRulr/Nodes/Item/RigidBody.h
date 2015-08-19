@@ -27,6 +27,7 @@ namespace ofxRulr {
 				void setPosition(const ofVec3f &);
 				void setRotationEuler(const ofVec3f &);
 				void setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse = false);
+				void clearTransform();
 
 				ofxLiquidEvent<void> onTransformChange;
 			protected:

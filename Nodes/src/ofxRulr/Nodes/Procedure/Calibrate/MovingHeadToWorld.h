@@ -22,12 +22,14 @@ namespace ofxRulr {
 					void populateInspector(ofxCvGui::ElementGroupPtr);
 
 					void drawWorld() override;
-
+					ofxCvGui::PanelPtr getView() override;
 					void addCapture();
 					void calibrate();
 				protected:
 					vector<DataPoint> dataPoints;
 					float residual;
+
+					ofxCvGui::PanelPtr view;
 				};
 			}
 		}

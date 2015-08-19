@@ -44,11 +44,11 @@ namespace ofxRulr {
 				this->channels.push_back(make_shared<Channel>("Function"));
 				this->channels.push_back(make_shared<Channel>("Reset"));
 				this->channels.push_back(make_shared<Channel>("Lamp Control", [this]() {
-					if (this->power.get()) {
+					if (this->powerStateSignal) {
 						return 255;
 					}
 					else {
-						return 0;
+						return 50;
 					}
 				}));
 			}

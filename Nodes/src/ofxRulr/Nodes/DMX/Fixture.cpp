@@ -83,12 +83,22 @@ namespace ofxRulr {
 			void Fixture::serialize(Json::Value & json) {
 				Utils::Serializable::serialize(this->channelIndex, json);
 				Utils::Serializable::serialize(this->universeIndex, json);
+				
+				auto & jsonChannels = json["channels"];
+				for (auto channel : this->channels) {
+					Utils::Serializable::serialize(channel->value, jsonChannels);
+				}
 			}
 
 			//----------
 			void Fixture::deserialize(const Json::Value & json) {
 				Utils::Serializable::deserialize(this->channelIndex, json);
 				Utils::Serializable::deserialize(this->universeIndex, json);
+
+				const auto & jsonChannels = json["channels"];
+				for (auto channel : this->channels) {
+					Utils::Serializable::deserialize(channel->value, jsonChannels);
+				}
 			}
 
 			//----------

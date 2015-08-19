@@ -3,6 +3,10 @@
 #include "ofxRulr/Nodes/Item/RigidBody.h"
 #include "ofxRulr/Nodes/DMX/MovingHead.h"
 
+#include "ofxCvGui/Widgets/Toggle.h"
+
+using namespace ofxCvGui;
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace DMX {
@@ -14,9 +18,13 @@ namespace ofxRulr {
 			//----------
 			void AimMovingHeadAt::init() {
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_INSPECTOR_LISTENER;
+				RULR_NODE_SERIALIZATION_LISTENERS;
 
 				this->addInput<MovingHead>();
 				this->addInput<Item::RigidBody>("Target");
+
+				this->ignoreBlankTransform.set("Ignore blank transform", true);
 			}
 
 			//----------
@@ -34,6 +42,21 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ERROR;
 				}
+			}
+
+			//----------
+			void AimMovingHeadAt::serialize(Json::Value & json) {
+				Utils::Serializable::serialize(this->ignoreBlankTransform, json);
+			}
+
+			//----------
+			void AimMovingHeadAt::deserialize(const Json::Value & json) {
+				Utils::Serializable::deserialize(this->ignoreBlankTransform, json);
+			}
+
+			//----------
+			void AimMovingHeadAt::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				inspector->add(Widgets::Toggle::make(this->ignoreBlankTransform));
 			}
 		}
 	}
