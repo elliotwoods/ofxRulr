@@ -11,10 +11,6 @@ namespace ofxRulr {
 				void init();
 				string getTypeName() const override;
 				void update();
-
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
-				void populateInspector(ofxCvGui::ElementGroupPtr);
 			};
 		}
 	}

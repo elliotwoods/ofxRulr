@@ -128,6 +128,9 @@
     <ProjectReference Include="..\..\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj">
       <Project>{630936f8-c65f-4ab9-92ad-80569eaa7782}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\ofxNonLinearFit\ofxNonLinearFitLib\ofxNonLinearFit.vcxproj">
+      <Project>{c087079e-2a0e-4b85-a479-c28e2d01a048}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\ofxPlugin\ofxPluginLib\ofxPluginLib.vcxproj">
       <Project>{68b9239b-5ae6-45c0-b1cb-6fc6b58bb6ee}</Project>
     </ProjectReference>

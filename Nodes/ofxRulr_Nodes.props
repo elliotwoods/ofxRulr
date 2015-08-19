@@ -4,7 +4,7 @@
     <Import Project="..\..\..\addons\ofxGraycode\ofxGraycodeLib\ofxGraycode.props" />
     <Import Project="..\..\..\addons\ofxRay\ofxRayLib\ofxRay.props" />
     <Import Project="..\..\..\addons\ofxMachineVision\ofxMachineVisionLib\ofxMachineVision.props" />
-    <Import Project="..\..\ofxNonLinearFit\ofxNonLinearFit.props" />
+    <Import Project="..\..\..\addons\ofxNonLinearFit\ofxNonLinearFitLib\ofxNonLinearFit.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />

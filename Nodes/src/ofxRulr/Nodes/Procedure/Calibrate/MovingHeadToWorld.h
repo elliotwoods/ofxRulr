@@ -10,8 +10,7 @@ namespace ofxRulr {
 				public:
 					struct DataPoint {
 						ofVec3f world;
-						float pan;
-						float tilt;
+						ofVec2f panTilt;
 					};
 
 					MovingHeadToWorld();

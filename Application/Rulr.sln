@@ -44,6 +44,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EnttecUsbPro", "EnttecUsbPr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_EnttecUsbPro", "..\Plugin_EnttecUsbPro\Plugin_EnttecUsbPro.vcxproj", "{5688EFFC-E727-4032-9CC3-2697085BEC57}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxNonLinearFit", "..\..\ofxNonLinearFit\ofxNonLinearFitLib\ofxNonLinearFit.vcxproj", "{C087079E-2A0E-4B85-A479-C28E2D01A048}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -188,6 +190,14 @@ Global
 		{5688EFFC-E727-4032-9CC3-2697085BEC57}.Release|x64.Build.0 = Release|x64
 		{5688EFFC-E727-4032-9CC3-2697085BEC57}.Release|x86.ActiveCfg = Release|Win32
 		{5688EFFC-E727-4032-9CC3-2697085BEC57}.Release|x86.Build.0 = Release|Win32
+		{C087079E-2A0E-4B85-A479-C28E2D01A048}.Debug|x64.ActiveCfg = Debug|x64
+		{C087079E-2A0E-4B85-A479-C28E2D01A048}.Debug|x64.Build.0 = Debug|x64
+		{C087079E-2A0E-4B85-A479-C28E2D01A048}.Debug|x86.ActiveCfg = Debug|Win32
+		{C087079E-2A0E-4B85-A479-C28E2D01A048}.Debug|x86.Build.0 = Debug|Win32
+		{C087079E-2A0E-4B85-A479-C28E2D01A048}.Release|x64.ActiveCfg = Release|x64
+		{C087079E-2A0E-4B85-A479-C28E2D01A048}.Release|x64.Build.0 = Release|x64
+		{C087079E-2A0E-4B85-A479-C28E2D01A048}.Release|x86.ActiveCfg = Release|Win32
+		{C087079E-2A0E-4B85-A479-C28E2D01A048}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -211,5 +221,6 @@ Global
 		{68B9239B-5AE6-45C0-B1CB-6FC6B58BB6EE} = {16F575BF-69CD-4DE7-886A-F1E871E4D5B1}
 		{4D3BCFDD-E65D-4247-B303-E0839CAEC6A6} = {16F575BF-69CD-4DE7-886A-F1E871E4D5B1}
 		{5688EFFC-E727-4032-9CC3-2697085BEC57} = {8A40CBDF-2E1C-40FA-8CF6-B5E4C8904278}
+		{C087079E-2A0E-4B85-A479-C28E2D01A048} = {16F575BF-69CD-4DE7-886A-F1E871E4D5B1}
 	EndGlobalSection
 EndGlobal

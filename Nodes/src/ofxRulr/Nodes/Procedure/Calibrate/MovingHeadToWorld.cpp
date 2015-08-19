@@ -60,7 +60,7 @@ namespace ofxRulr {
 						lines.addVertex(dataPoint.world);
 
 						auto vector = ofVec3f(0, 0.1f, 0.0f);
-						auto rotation = movingHeadRotation * ofQuaternion(dataPoint.pan, ofVec3f(0, -1, 0)) * ofQuaternion(dataPoint.tilt, ofVec3f(1,0,0));
+						auto rotation = movingHeadRotation * ofQuaternion(dataPoint.panTilt.x, ofVec3f(0, -1, 0)) * ofQuaternion(dataPoint.panTilt.y, ofVec3f(1,0,0));
 						lines.addVertex(vector * rotation + dataPoint.world);
 					}
 					lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
@@ -75,14 +75,17 @@ namespace ofxRulr {
 
 					DataPoint dataPoint = {
 						target->getPosition(),
-						movingHead->getPan(),
-						movingHead->getTilt()
+						movingHead->getPanTilt()
 					};
 				}
 
 				//---------
 				class Model : public ofxNonLinearFit::Models::Base<MovingHeadToWorld::DataPoint, Model> {
 				public:
+					Model() {
+						//Fit needs to call this constructor at the start
+					}
+
 					Model(shared_ptr<DMX::MovingHead> movingHead) {
 						this->movingHead = movingHead;
 					}
@@ -91,6 +94,7 @@ namespace ofxRulr {
 					unsigned int getParameterCount() const override {
 						return 6;
 					}
+
 					void resetParameters() override {
 						auto parameters = this->getParameters();
 						auto position = this->movingHead->getPosition();
@@ -102,12 +106,25 @@ namespace ofxRulr {
 							*parameters++ = rotationEuler[i];
 						}
 					}
+					
 					double getResidual(DataPoint point) const override {
-						return 0;
-					}
-					void evaluate(DataPoint &) const {
+						auto pointEvaluated = point;
+						try {
+							this->evaluate(pointEvaluated);
+						}
+						catch (...) {
+							//invalid position
+							return std::numeric_limits<double>::max();
+						}
 
+						return (pointEvaluated.panTilt - point.panTilt).lengthSquared();
 					}
+
+					///Warning : can throw exception
+					void evaluate(DataPoint & point) const {
+						point.panTilt = this->movingHead->getPanTiltForTarget(point.world, false);
+					}
+
 					void cacheModel() override {
 						if (this->isReady()) {
 							auto parameters = this->getParameters();

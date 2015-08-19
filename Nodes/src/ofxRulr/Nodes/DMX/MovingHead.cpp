@@ -55,54 +55,60 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MovingHead::lookAt(const ofVec3f & worldSpacePoint) {
+			ofVec2f MovingHead::getPanTilt() const {
+				return ofVec2f(this->pan, this->tilt);
+			}
+
+			//----------
+			ofVec2f MovingHead::getPanTiltForTarget(const ofVec3f & worldSpacePoint, bool closestToCurrent) const {
 				auto worldToObject = this->getTransform().getInverse();
 				auto objectSpacePoint = worldSpacePoint * worldToObject;
-				auto panTarget = atan2(objectSpacePoint.z, objectSpacePoint.x) * RAD_TO_DEG - 90.0f;
-				auto tiltTarget = acos(-objectSpacePoint.y / objectSpacePoint.length()) * RAD_TO_DEG; // will always produce positive tilt
+				auto pan = atan2(objectSpacePoint.z, objectSpacePoint.x) * RAD_TO_DEG - 90.0f;
+				auto tilt = acos(-objectSpacePoint.y / objectSpacePoint.length()) * RAD_TO_DEG; // will always produce positive tilt
 
-				//we want to find the fastest route to it, for every 180 degrees of pan there is a valid solution, let's choose the one with the smallest pan always
-				auto halfRotationsMin = ceil(this->pan.getMin() / 180.0f);
-				auto halfRotationsMax = ceil(this->pan.getMax() / 180.0f) + 1;
-				map<float, pair<float, float>> solutions; // panDistance, (pan,tilt)
-				for (int halfRotation = halfRotationsMin; halfRotation < halfRotationsMax; halfRotation++) {
-					//for each hemisphere, find the solution, check if it's in valid range
-					float pan = (halfRotation * 180) + panTarget;
-					float tilt;
-					if (halfRotation % 2 == 0) {
-						//even, keep tilt
-						tilt = tiltTarget;
+				if (closestToCurrent) {
+					//we want to find the fastest route to it, for every 180 degrees of pan there is a valid solution, let's choose the one with the smallest pan always
+					auto halfRotationsMin = ceil(this->pan.getMin() / 180.0f);
+					auto halfRotationsMax = ceil(this->pan.getMax() / 180.0f) + 1;
+					map<float, ofVec2f> solutions; // panDistance, (pan,tilt)
+					for (int halfRotation = halfRotationsMin; halfRotation < halfRotationsMax; halfRotation++) {
+						//for each hemisphere, find the solution, check if it's in valid range
+						float searchPan = (halfRotation * 180) + pan;
+						float searchTilt;
+						if (halfRotation % 2 == 0) {
+							//even, keep tilt
+							searchTilt = tilt;
+						}
+						else {
+							//odd, flip tilt
+							searchTilt = -tilt;
+						}
+						if (searchPan >= this->pan.getMin() && searchPan <= this->pan.getMax() && searchTilt >= this->tilt.getMin() && searchTilt <= this->tilt.getMax()) {
+							//it's a valid solution
+							auto panDistance = abs(searchPan - this->pan);
+							pair<float, ofVec2f> solution(panDistance, ofVec2f(pan, tilt));
+							solutions.insert(solution);
+						}
 					}
-					else {
-						//odd, flip tilt
-						tilt = -tiltTarget;
-					}
-					if (pan >= this->pan.getMin() && pan <= this->pan.getMax() && tilt >= this->tilt.getMin() && tilt <= this->tilt.getMax()) {
-						//it's a valid solution
-						auto panDistance = abs(pan - this->pan);
-						pair<float, pair<float, float>> solution(panDistance, pair<float, float>(pan, tilt));
-						solutions.insert(solution);
-					}
-				}
 
-				if (solutions.empty()) {
-					RULR_WARNING << "No valid solutions found to aim MovingHead '" << this->getName() << "' at target (" << worldSpacePoint << ")";
-				}
-				else {
+					if (solutions.empty()) {
+						throw(ofxRulr::Exception("No valid solutions found to aim MovingHead '" + this->getName() + "' at target (" + ofToString(worldSpacePoint) + ")"));
+					}
+
 					auto solution = solutions.begin();
-					this->pan = solution->second.first;
-					this->tilt = solution->second.second;
+					return solution->second;
 				}
-			}
-			
-			//----------
-			float MovingHead::getPan() const {
-				return this->pan.get();
 			}
 
 			//----------
-			float MovingHead::getTilt() const {
-				return this->tilt.get();
+			void MovingHead::lookAt(const ofVec3f & worldSpacePoint) {
+				this->setPanTilt(this->getPanTiltForTarget(worldSpacePoint, true));
+			}
+		
+			//----------
+			void MovingHead::setPanTilt(const ofVec2f & panTilt) {
+				this->pan = panTilt.x;
+				this->tilt = panTilt.y;
 			}
 
 			//----------
