@@ -21,6 +21,8 @@ namespace ofxRulr {
 				struct {
 					ofParameter<bool> enabled;
 					ofParameter<float> delay;
+					ofParameter<float> historySize;
+					map<float, ofVec3f> history;
 				} prediction;
 			};
 		}

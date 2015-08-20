@@ -31,6 +31,7 @@
     <ClCompile Include="src\ofxRulr\Utils\Base64.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Gui.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\PolyFit.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Utils.cpp" />
   </ItemGroup>
@@ -63,6 +64,7 @@
     <ClInclude Include="src\ofxRulr\Utils\Constants.h" />
     <ClInclude Include="src\ofxRulr\Utils\Gui.h" />
     <ClInclude Include="src\ofxRulr\Utils\Initialiser.h" />
+    <ClInclude Include="src\ofxRulr\Utils\PolyFit.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serializable.h" />
     <ClInclude Include="src\ofxRulr\Utils\Set.h" />
     <ClInclude Include="src\ofxRulr\Utils\Utils.h" />

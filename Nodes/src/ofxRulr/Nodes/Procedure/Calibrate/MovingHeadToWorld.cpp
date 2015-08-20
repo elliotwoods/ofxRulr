@@ -51,15 +51,15 @@ namespace ofxRulr {
 				//---------
 				double MovingHeadToWorld::Model::getResidual(DataPoint point) const {
 					auto pointEvaluated = point;
-					try {
-						this->evaluate(pointEvaluated);
+					this->evaluate(pointEvaluated);
+					auto difference = pointEvaluated.panTilt - point.panTilt;
+					while (difference.x > 180.0f) {
+						difference.x -= 360.0f;
 					}
-					catch (...) {
-						//invalid position
-						return std::numeric_limits<double>::max();
+					while (difference.x < -180.0f) {
+						difference.x += 360.0f;
 					}
-
-					auto residual = (pointEvaluated.panTilt - point.panTilt).lengthSquared();
+					auto residual = difference.lengthSquared();
 					return residual;
 				}
 
@@ -74,12 +74,12 @@ namespace ofxRulr {
 					if (this->isReady()) {
 						auto parameters = this->getParameters();
 
-						auto position = ofVec3f(*parameters++, *parameters++, *parameters++);
-						auto rotationEuler = ofVec3f(*parameters++, *parameters++, *parameters++);
+						auto position = ofVec3f(parameters[0], parameters[1], parameters[2]);
+						auto rotationEuler = ofVec3f(parameters[3], parameters[4], parameters[5]);
 						auto rotationQuat = toOf(glm::quat(toGLM(rotationEuler)));
 						this->transform = ofMatrix4x4::newRotationMatrix(rotationQuat) * ofMatrix4x4::newTranslationMatrix(position);
 
-						this->tiltOffset = *parameters++;
+						this->tiltOffset = parameters[6];
 					}
 				}
 
@@ -264,7 +264,7 @@ namespace ofxRulr {
 
 					for (const auto & dataPoint : this->dataPoints) {
 						lines.addVertex(dataPoint.world);
-						lines.addColor(ofColor(255, 255));
+						lines.addColor(ofColor(255, 100, 100, 255));
 						auto vector = ofVec3f(0, 0.1f, 0.0f);
 						auto rotation = movingHeadRotation * ofQuaternion(dataPoint.panTilt.x, ofVec3f(0, -1, 0)) * ofQuaternion(dataPoint.panTilt.y, ofVec3f(1,0,0));
 						lines.addVertex(vector * rotation + dataPoint.world);
@@ -272,11 +272,12 @@ namespace ofxRulr {
 					}
 					lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
 					lines.draw();
+					lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_POINTS);
 					glPushAttrib(GL_POINT_BIT);
 					{
-						glPointSize(5.0f);
+						glPointSize(3.0f);
 						glEnable(GL_POINT_SMOOTH);
-						lines.drawVertices(); //draw as dots also
+						lines.draw(); //draw as dots also
 					}
 					glPopAttrib();
 				}
