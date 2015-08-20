@@ -38,7 +38,19 @@ namespace ofxRulr {
 				auto target = this->getInput<Item::RigidBody>("Target");
 				if (target && movingHead) {
 					try {
-						movingHead->lookAt(target->getPosition());
+						bool doIt = true;
+
+						//check if transform is blank before using it (blank can be an indicator of bad tracking)
+						if (this->ignoreBlankTransform) {
+							if (target->getTransform().isIdentity()) {
+								doIt = false;
+							}
+						}
+
+						//perform the move
+						if (doIt) {
+							movingHead->lookAt(target->getPosition());
+						}
 					}
 					RULR_CATCH_ALL_TO_ERROR;
 				}

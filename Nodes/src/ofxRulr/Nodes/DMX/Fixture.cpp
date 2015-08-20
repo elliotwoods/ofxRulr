@@ -14,18 +14,19 @@ namespace ofxRulr {
 		namespace DMX {
 #pragma mark Fixture::Channel
 			//----------
-			Fixture::Channel::Channel() {
-				this->value.set("Value", 0, 0, 255);
+			Fixture::Channel::Channel() : 
+			Channel("Value") {
 			}
 
 			//----------
 			Fixture::Channel::Channel(string name) {
 				this->value.set(name, 0, 0, 255);
+				this->enabled.set("Enabled", true);
 			}
 
 			//----------
-			Fixture::Channel::Channel(string name, function<DMX::Value()> generateValue) {
-				this->value.set(name, 0, 0, 255);
+			Fixture::Channel::Channel(string name, function<DMX::Value()> generateValue) : 
+			Channel(name) {
 				this->generateValue = generateValue;
 			}
 
@@ -55,14 +56,19 @@ namespace ofxRulr {
 			//----------
 			void Fixture::update() {
 				//calculate DMX
-				vector<DMX::Value> output(this->channels.size());
+				vector<DMX::Value> output;
 				for (int i = 0; i < this->channels.size(); i++) {
-					auto & generator = this->channels[i]->generateValue;
+					auto channel = this->channels[i];
+					if (channel->enabled.get() == false) {
+						//break on first disabled channel
+						break;
+					}
+					auto & generator = channel->generateValue;
 					if (generator) {
 						auto value = generator();
-						this->channels[i]->value.set(value);
+						channel->value.set(value);
 					}
-					output[i] = this->channels[i]->value;
+					output.push_back(this->channels[i]->value);
 				}
 				
 				//transmit DMX
@@ -71,7 +77,7 @@ namespace ofxRulr {
 					const auto & universes = transmit->getUniverses();
 					auto universe = transmit->getUniverse(this->universeIndex.get());
 					if (universe) {
-						universe->setChannels(this->channelIndex.get(), &output[0], this->channels.size());
+						universe->setChannels(this->channelIndex.get(), &output[0], output.size());
 					}
 					else {
 						RULR_ERROR << "Universe index " << this->universeIndex << " is out of bounds for this sender";
@@ -102,12 +108,23 @@ namespace ofxRulr {
 			}
 
 			//----------
+			const vector<shared_ptr<Fixture::Channel>> & Fixture::getChannels() const {
+				return this->channels;
+			}
+
+			//----------
 			void Fixture::populateInspector(ElementGroupPtr inspector) {
 				inspector->add(Widgets::Title::make("DMX::Fixture", Widgets::Title::Level::H2));
 				inspector->add(Widgets::EditableValue<ChannelIndex>::make(this->channelIndex));
 				inspector->add(Widgets::EditableValue<ChannelIndex>::make(this->universeIndex));
 				
 				for (int i = 0; i < this->channels.size(); i++) {
+					auto channel = this->channels[i];
+					if (channel->enabled.get() == false) {
+						//break on first disabled channel.
+						break;
+					}
+
 					if (i % 8 == 0) {
 						auto rangeMin = i + 1;
 						auto rangeMax = MIN(i + 8, this->channels.size());
@@ -115,7 +132,6 @@ namespace ofxRulr {
 						inspector->add(Widgets::Title::make("Channels " + ofToString(rangeMin) + "..." + ofToString(rangeMax), Widgets::Title::Level::H3));
 					}
 
-					auto channel = this->channels[i];
 					if (channel->generateValue) {
 						//if it has a value generator, make a live value
 						inspector->add(Widgets::LiveValue<int>::make(channel->value.getName(), [this, channel]() {

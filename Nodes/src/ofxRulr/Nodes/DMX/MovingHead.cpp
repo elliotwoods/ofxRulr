@@ -25,9 +25,11 @@ namespace ofxRulr {
 				this->pan.set("Pan", 0.0f, -180.0f, 180.0f);
 				this->tilt.set("Tilt", 0.0f, -100.0f, 100.0f);
 				this->brightness.set("Brightness", 0.0f, 0.0f, 1.0f);
+				this->iris.set("Iris", 1.0f, 0.0f, 1.0f);
 				this->power.set("Power", false);
 				this->powerCircuit.set("Power circuit (mutex)", "main ring");
 				this->pauseBetweenPowerUps.set("Pause between power ups [s]", 5);
+				this->tiltOffset.set("Tilt offset", 0.0f, -90.0f, 90.0f);
 
 				this->powerStateSignal = false;
 			}
@@ -81,9 +83,11 @@ namespace ofxRulr {
 				Utils::Serializable::serialize(this->pan, json);
 				Utils::Serializable::serialize(this->tilt, json);
 				Utils::Serializable::serialize(this->brightness, json);
+				Utils::Serializable::serialize(this->iris, json);
 				Utils::Serializable::serialize(this->power, json);
 				Utils::Serializable::serialize(this->powerCircuit, json);
 				Utils::Serializable::serialize(this->pauseBetweenPowerUps, json);
+				Utils::Serializable::serialize(this->tiltOffset, json);
 			}
 
 			//----------
@@ -91,9 +95,11 @@ namespace ofxRulr {
 				Utils::Serializable::deserialize(this->pan, json);
 				Utils::Serializable::deserialize(this->tilt, json);
 				Utils::Serializable::deserialize(this->brightness, json);
+				Utils::Serializable::deserialize(this->iris, json);
 				Utils::Serializable::deserialize(this->power, json);
 				Utils::Serializable::deserialize(this->powerCircuit, json);
 				Utils::Serializable::deserialize(this->pauseBetweenPowerUps, json);
+				Utils::Serializable::deserialize(this->tiltOffset, json);
 			}
 
 			//----------
@@ -111,7 +117,7 @@ namespace ofxRulr {
 				auto worldToObject = this->getTransform().getInverse();
 				auto objectSpacePoint = worldSpacePoint * worldToObject;
 				
-				auto panTilt = MovingHead::getPanTiltForTargetInObjectSpace(objectSpacePoint);
+				auto panTilt = MovingHead::getPanTiltForTargetInObjectSpace(objectSpacePoint, this->tiltOffset);
 
 				if (navigationEnabled) {
 					//we want to find the fastest route to it, for every 180 degrees of pan there is a valid solution, let's choose the one with the smallest pan always
@@ -151,15 +157,15 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofVec2f MovingHead::getPanTiltForTargetInObjectSpace(const ofVec3f & objectSpacePoint) {
+			ofVec2f MovingHead::getPanTiltForTargetInObjectSpace(const ofVec3f & objectSpacePoint, float tiltOffset) {
 				auto pan = atan2(objectSpacePoint.z, objectSpacePoint.x) * RAD_TO_DEG - 90.0f;
 				auto tilt = acos(-objectSpacePoint.y / objectSpacePoint.length()) * RAD_TO_DEG; // will always produce positive tilt
-				return ofVec2f(pan, tilt);
+				return ofVec2f(pan, tilt + tiltOffset);
 			}
 
 			//----------
 			void MovingHead::lookAt(const ofVec3f & worldSpacePoint) {
-				const auto panTilt = this->getPanTiltForTarget(worldSpacePoint, true);
+				const auto panTilt = this->getPanTiltForTarget(worldSpacePoint, false);
 				this->setPanTilt(panTilt);
 			}
 		
@@ -170,18 +176,31 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void MovingHead::setBrightness(float brightness) {
+				this->brightness = brightness;
+			}
+
+			//----------
+			void MovingHead::setIris(float iris) {
+				this->iris = iris;
+			}
+
+			//----------
 			void MovingHead::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Title::make("DMX::MovingHead", Widgets::Title::Level::H2));
 				inspector->add(Widgets::Slider::make(this->pan));
 				inspector->add(Widgets::Slider::make(this->tilt));
-				inspector->add(Widgets::Slider::make(this->brightness));
-				inspector->add(Widgets::Toggle::make(this->power));
-				inspector->add(Widgets::EditableValue<string>::make(this->powerCircuit));
-				inspector->add(Widgets::EditableValue<int>::make(this->pauseBetweenPowerUps));
 				inspector->add(Widgets::Button::make("Home", [this]() {
 					this->pan.set(0.0f);
 					this->tilt.set(0.0f);
 				}));
+				inspector->add(Widgets::Slider::make(this->brightness));
+				inspector->add(Widgets::Slider::make(this->iris));
+				inspector->add(Widgets::Toggle::make(this->power));
+				inspector->add(Widgets::EditableValue<string>::make(this->powerCircuit));
+				inspector->add(Widgets::EditableValue<int>::make(this->pauseBetweenPowerUps));
+				inspector->add(Widgets::Slider::make(this->tiltOffset));
+				
 			}
 		}
 	}
