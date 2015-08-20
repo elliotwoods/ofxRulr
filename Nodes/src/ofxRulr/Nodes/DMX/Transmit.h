@@ -25,6 +25,7 @@ namespace ofxRulr {
 
 				Transmit();
 				void init();
+				void update();
 				virtual string getTypeName() const override;
 				ofxCvGui::PanelPtr getView() override;
 
@@ -33,10 +34,12 @@ namespace ofxRulr {
 				shared_ptr<Universe> getUniverse(UniverseIndex universeIndex) const;
 			protected:
 				void setUniverseCount(UniverseIndex);
-
+				virtual void sendUniverse(UniverseIndex, shared_ptr<Universe>) { }
 				shared_ptr<ofxCvGui::Panels::Scroll> view;
 
 				vector<shared_ptr<Universe>> universes;
+
+				bool firstFrame;
 			};
 		}
 	}

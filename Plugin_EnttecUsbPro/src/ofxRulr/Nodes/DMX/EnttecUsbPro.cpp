@@ -23,7 +23,6 @@ namespace ofxRulr {
 
 			//----------
 			void EnttecUsbPro::init() {
-				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
@@ -35,36 +34,6 @@ namespace ofxRulr {
 			//----------
 			string EnttecUsbPro::getTypeName() const {
 				return "DMX::EnttecUsbPro";
-			}
-
-			//----------
-			void EnttecUsbPro::update() {
-				auto universe = this->getUniverse(0);
-
-				if (this->sender && universe) {
-					//code taken from ofxDmx
-
-					ChannelIndex dataSize = 512 + DMX_START_CODE_SIZE;
-					unsigned int packetSize = DMX_PRO_HEADER_SIZE + dataSize + DMX_PRO_END_SIZE;
-					DMX::Value * packet = new DMX::Value[packetSize];
-					
-					// header
-					packet[0] = DMX_PRO_START_MSG;
-					packet[1] = DMX_PRO_SEND_PACKET;
-					packet[2] = dataSize & 0xff; // data length lsb
-					packet[3] = (dataSize >> 8) & 0xff; // data length msb
-
-														// data
-					packet[4] = DMX_START_CODE; // first data byte
-					memcpy(packet + 5, universe->getChannels() + 1, 512);
-
-					// end
-					packet[packetSize - 1] = DMX_PRO_END_MSG;
-
-					this->sender->writeBytes(&packet[0], packetSize);
-
-					delete[] packet;
-				}
 			}
 
 			//----------
@@ -100,6 +69,36 @@ namespace ofxRulr {
 				if (this->sender) {
 					this->sender->close();
 					this->sender.reset();
+				}
+			}
+
+			//----------
+			void EnttecUsbPro::sendUniverse(UniverseIndex index, shared_ptr<Universe> universe) {
+				if (this->sender && universe) {
+					//code taken from ofxDmx
+
+					//we only have one universe, so send it
+
+					ChannelIndex dataSize = 512 + DMX_START_CODE_SIZE;
+					unsigned int packetSize = DMX_PRO_HEADER_SIZE + dataSize + DMX_PRO_END_SIZE;
+					DMX::Value * packet = new DMX::Value[packetSize];
+
+					// header
+					packet[0] = DMX_PRO_START_MSG;
+					packet[1] = DMX_PRO_SEND_PACKET;
+					packet[2] = dataSize & 0xff; // data length lsb
+					packet[3] = (dataSize >> 8) & 0xff; // data length msb
+
+														// data
+					packet[4] = DMX_START_CODE; // first data byte
+					memcpy(packet + 5, universe->getChannels() + 1, 512);
+
+					// end
+					packet[packetSize - 1] = DMX_PRO_END_MSG;
+
+					this->sender->writeBytes(&packet[0], packetSize);
+
+					delete[] packet;
 				}
 			}
 

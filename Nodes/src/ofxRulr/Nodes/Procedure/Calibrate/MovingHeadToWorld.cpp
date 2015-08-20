@@ -88,6 +88,11 @@ namespace ofxRulr {
 					return this->transform;
 				}
 
+				//---------
+				float MovingHeadToWorld::Model::getTiltOffset() const {
+					return this->tiltOffset;
+				}
+
 #pragma mark MovingHeadToWorld
 				//---------
 				MovingHeadToWorld::MovingHeadToWorld() {
@@ -314,11 +319,7 @@ namespace ofxRulr {
 					fit.optimise(model, &this->dataPoints, &residual);
 
 					movingHead->setTransform(model.getTransform());
-					
-					cout << "Setting transform : " << endl;
-					cout << model.getTransform() << endl;
-					cout << "Getting transform" << endl;
-					cout << movingHead->getTransform() << endl;
+					movingHead->setTiltOffset(model.getTiltOffset());
 
 					this->residual = residual;
 

@@ -25,6 +25,8 @@ namespace ofxRulr {
 
 				void setBrightness(float);
 				void setIris(float);
+
+				void setTiltOffset(float);
 			protected:
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 

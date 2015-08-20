@@ -56,12 +56,27 @@ namespace ofxRulr {
 			//----------
 			Transmit::Transmit() {
 				RULR_NODE_INIT_LISTENER;
+				RULR_NODE_UPDATE_LISTENER;
 			}
 
 			//----------
 			void Transmit::init() {
 				this->view = make_shared<Panels::Scroll>();
 				this->setUniverseCount(1);
+				this->firstFrame = true;
+			}
+
+			//----------
+			void Transmit::update() {
+				if (this->firstFrame) {
+					//don't send on first frame
+					this->firstFrame = false;
+				}
+				else {
+					for (int i = 0; i < this->universes.size(); i++) {
+						this->sendUniverse(i, this->universes[i]);
+					}
+				}
 			}
 
 			//----------
@@ -76,7 +91,7 @@ namespace ofxRulr {
 
 			//----------
 			UniverseIndex Transmit::getUniverseCount() const {
-				return this->universes.size();
+				return (UniverseIndex) this->universes.size();
 			}
 
 			//----------

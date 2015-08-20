@@ -4,6 +4,8 @@
 #include "ofxRulr/Nodes/DMX/MovingHead.h"
 
 #include "ofxCvGui/Widgets/Toggle.h"
+#include "ofxCvGui/Widgets/Slider.h"
+#include "ofxCvGui/Widgets/Title.h"
 
 using namespace ofxCvGui;
 
@@ -25,6 +27,11 @@ namespace ofxRulr {
 				this->addInput<Item::RigidBody>("Target");
 
 				this->ignoreBlankTransform.set("Ignore blank transform", true);
+
+				{
+					this->prediction.enabled.set("Enabled", false);
+					this->prediction.delay.set("Delay", 0.0f, -5.0f, 0.0f);
+				}
 			}
 
 			//----------
@@ -59,16 +66,33 @@ namespace ofxRulr {
 			//----------
 			void AimMovingHeadAt::serialize(Json::Value & json) {
 				Utils::Serializable::serialize(this->ignoreBlankTransform, json);
+
+				auto & jsonPrediction = json["prediction"];
+				{
+					Utils::Serializable::serialize(this->prediction.enabled, json["prediction"]);
+					Utils::Serializable::serialize(this->prediction.delay, json["prediction"]);
+				}
 			}
 
 			//----------
 			void AimMovingHeadAt::deserialize(const Json::Value & json) {
 				Utils::Serializable::deserialize(this->ignoreBlankTransform, json);
+				const auto & jsonPrediction = json["prediction"];
+				{
+					Utils::Serializable::deserialize(this->prediction.enabled, json["prediction"]);
+					Utils::Serializable::deserialize(this->prediction.delay, json["prediction"]);
+				}
 			}
 
 			//----------
 			void AimMovingHeadAt::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Toggle::make(this->ignoreBlankTransform));
+
+				inspector->add(Widgets::Title::make("Prediction"));
+				{
+					inspector->add(Widgets::Toggle::make(this->prediction.enabled));
+					inspector->add(Widgets::Slider::make(this->prediction.delay));
+				}
 			}
 		}
 	}

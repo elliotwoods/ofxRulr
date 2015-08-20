@@ -186,6 +186,11 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void MovingHead::setTiltOffset(float tiltOffset) {
+				this->tiltOffset = tiltOffset;
+			}
+
+			//----------
 			void MovingHead::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Title::make("DMX::MovingHead", Widgets::Title::Level::H2));
 				inspector->add(Widgets::Slider::make(this->pan));

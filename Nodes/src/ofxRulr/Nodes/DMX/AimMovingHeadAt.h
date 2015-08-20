@@ -17,6 +17,11 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 			protected:
 				ofParameter<bool> ignoreBlankTransform;
+
+				struct {
+					ofParameter<bool> enabled;
+					ofParameter<float> delay;
+				} prediction;
 			};
 		}
 	}

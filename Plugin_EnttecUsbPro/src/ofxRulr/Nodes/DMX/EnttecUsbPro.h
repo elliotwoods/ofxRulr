@@ -11,13 +11,14 @@ namespace ofxRulr {
 				EnttecUsbPro();
 				void init();
 				string getTypeName() const;
-				void update();
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 			protected:
 				void connect();
 				void disconnect();
+
+				void sendUniverse(UniverseIndex, shared_ptr<Universe>) override;
 
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 

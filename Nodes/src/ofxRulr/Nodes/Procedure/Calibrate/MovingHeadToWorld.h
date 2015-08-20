@@ -28,6 +28,7 @@ namespace ofxRulr {
 						void cacheModel() override;
 
 						const ofMatrix4x4 & getTransform();
+						float getTiltOffset() const;
 					protected:
 						ofVec3f initialPosition;
 						ofVec3f initialRotationEuler;
