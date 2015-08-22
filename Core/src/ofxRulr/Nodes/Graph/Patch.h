@@ -36,7 +36,7 @@ namespace ofxRulr {
 					shared_ptr<NodeBrowser> nodeBrowser;
 					ofVec2f birthLocation;
 				};
-				Patch();
+				Patch(bool isRootPatch = false);
 				string getTypeName() const override;
 				void init();
 
@@ -82,6 +82,8 @@ namespace ofxRulr {
 
 				shared_ptr<TemporaryLinkHost> newLink;
 				weak_ptr<NodeHost> selection;
+
+				bool isRootPatch
 			};
 		}
 	}

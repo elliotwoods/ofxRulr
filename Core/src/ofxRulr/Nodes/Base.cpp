@@ -102,7 +102,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		const Graph::PinSet & Base::getInputPins() const {
+		const ofxRulr::Graph::PinSet & Base::getInputPins() const {
 			return this->inputPins;
 		}
 
@@ -171,9 +171,17 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Base::addInput(shared_ptr<Graph::AbstractPin> pin) {
+		void Base::setParentPatch(shared_ptr<ofxRulr::Nodes::Graph::Patch> patch) {
+			this->parentPatch = patch;
+			for (auto inputPin : this->inputPins) {
+				inputPin->setParentPatch(patch);
+			}
+		}
+
+		//----------
+		void Base::addInput(shared_ptr<ofxRulr::Graph::AbstractPin> pin) {
 			//setup events to fire on this node for this pin
-			auto pinWeak = weak_ptr<Graph::AbstractPin>(pin);
+			auto pinWeak = weak_ptr<ofxRulr::Graph::AbstractPin>(pin);
 			pin->onNewConnectionUntyped += [this, pinWeak](shared_ptr<Base> &) {
 				auto pin = pinWeak.lock();
 				if (pin) {
@@ -194,7 +202,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Base::removeInput(shared_ptr<Graph::AbstractPin> pin) {
+		void Base::removeInput(shared_ptr<ofxRulr::Graph::AbstractPin> pin) {
 			this->inputPins.remove(pin);
 			this->onRemoveInputPin(pin);
 		}

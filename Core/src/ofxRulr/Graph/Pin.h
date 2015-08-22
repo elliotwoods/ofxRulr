@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "ofxRulr/Graph/Editor/PinView.h"
+#include "ofxRulr/Nodes/Graph/Patch.h"
 #include "ofxRulr/Exception.h"
 
 using namespace std;
@@ -34,14 +35,17 @@ namespace ofxRulr {
 			
 			string getName() const;
 			ofVec2f getPinHeadPosition() const;
+
+			void setParentPatch(shared_ptr<Nodes::Graph::Patch>);
 			
-			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
+			ofxLiquidEvent<void> onBeginMakeConnection;
 			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
 
 			ofxLiquidEvent<shared_ptr<Nodes::Base>> onNewConnectionUntyped;
 			ofxLiquidEvent<shared_ptr<Nodes::Base>> onDeleteConnectionUntyped;
 		protected:
 			shared_ptr<Editor::PinView> pinView;
+			shared_ptr<Nodes::Graph::Patch> parentPatch;
 		private:
 			const string name;
 			ofVec2f pinHeadPosition;

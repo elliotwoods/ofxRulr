@@ -1,8 +1,6 @@
 #include "LinkHost.h"
 #include "ofPolyline.h"
 
-#include "ofxRulr/Nodes/Graph/ExposeInputs.h"
-
 namespace ofxRulr {
 	namespace Graph {
 		namespace Editor {

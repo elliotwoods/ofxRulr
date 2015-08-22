@@ -126,9 +126,6 @@
     <ClCompile Include="src\ofxRulr\Nodes\Graph\Patch.cpp">
       <Filter>src\ofxRulr\Nodes\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Graph\ExposeInputs.cpp">
-      <Filter>src\ofxRulr\Nodes\Graph</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -228,9 +225,6 @@
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Graph\Patch.h">
-      <Filter>src\ofxRulr\Nodes\Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Graph\ExposeInputs.h">
       <Filter>src\ofxRulr\Nodes\Graph</Filter>
     </ClInclude>
   </ItemGroup>

@@ -53,7 +53,7 @@ namespace ofxRulr {
 			void setIcon(shared_ptr<ofImage>);
 			void setColor(const ofColor &);
 
-			const Graph::PinSet & getInputPins() const;
+			const ofxRulr::Graph::PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr);
 			virtual ofxCvGui::PanelPtr getView() { return ofxCvGui::PanelPtr(); };
 
@@ -124,18 +124,20 @@ namespace ofxRulr {
 			}
 			void throwIfMissingAnyConnection() const;
 
+			void setParentPatch(shared_ptr<ofxRulr::Nodes::Graph::Patch>);
+
 			ofxLiquidEvent<void> onInit;
 			ofxLiquidEvent<void> onDestroy;
 			ofxLiquidEvent<void> onUpdate;
 
-			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onConnect;
-			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onDisconnect;
+			ofxLiquidEvent<shared_ptr<ofxRulr::Graph::AbstractPin>> onConnect;
+			ofxLiquidEvent<shared_ptr<ofxRulr::Graph::AbstractPin>> onDisconnect;
 			ofxLiquidEvent<void> onAnyInputConnectionChanged;
 
-			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onAddInputPin;
-			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onRemoveInputPin;
+			ofxLiquidEvent<shared_ptr<ofxRulr::Graph::AbstractPin>> onAddInputPin;
+			ofxLiquidEvent<shared_ptr<ofxRulr::Graph::AbstractPin>> onRemoveInputPin;
 		protected:
-			void addInput(shared_ptr<Graph::AbstractPin>);
+			void addInput(shared_ptr<ofxRulr::Graph::AbstractPin>);
 
 			template<typename NodeType>
 			shared_ptr<Graph::Pin<NodeType>> addInput() {
@@ -151,13 +153,15 @@ namespace ofxRulr {
 				return inputPin;
 			}
 
-			void removeInput(shared_ptr<Graph::AbstractPin>);
+			void removeInput(shared_ptr<ofxRulr::Graph::AbstractPin>);
 			void clearInputs();
 
 			void setUpdateAllInputsFirst(bool);
 			bool getUpdateAllInputsFirst() const;
 		private:
-			Graph::PinSet inputPins;
+			shared_ptr<ofxRulr::Nodes::Graph::Patch> parentPatch;
+
+			ofxRulr::Graph::PinSet inputPins;
 			shared_ptr<ofImage> icon;
 			shared_ptr<ofColor> color;
 

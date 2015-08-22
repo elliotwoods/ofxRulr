@@ -74,5 +74,10 @@ namespace ofxRulr {
 		ofVec2f AbstractPin::getPinHeadPosition() const {
 			return this->pinHeadPosition;
 		}
+
+		//----------
+		void AbstractPin::setParentPatch(shared_ptr<Nodes::Graph::Patch> parentPatch) {
+			this->parentPatch = parentPatch;
+		}
 	}
 }

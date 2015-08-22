@@ -204,8 +204,9 @@ namespace ofxRulr {
 
 #pragma mark Patch
 			//----------
-			Patch::Patch() {
+			Patch::Patch(bool isRootPatch) {
 				RULR_NODE_INIT_LISTENER;
+				this->isRootPatch = isRootPatch;
 			}
 
 			//----------
