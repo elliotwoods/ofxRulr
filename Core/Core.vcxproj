@@ -17,6 +17,7 @@
     <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp" />
     <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp" />
     <ClCompile Include="src\ofxRulr\Exception.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\Editor\ExposeInputs.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\Editor\LinkHost.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\Editor\NodeBrowser.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\Editor\NodeHost.cpp" />
@@ -27,7 +28,6 @@
     <ClCompile Include="src\ofxRulr\Graph\World.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Base.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Graphics.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Graph\ExposeInputs.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Graph\Patch.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Base64.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Gui.cpp" />
@@ -50,6 +50,7 @@
     <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_tool.h" />
     <ClInclude Include="..\..\ofxJSON\src\ofxJSONElement.h" />
     <ClInclude Include="src\ofxRulr\Exception.h" />
+    <ClInclude Include="src\ofxRulr\Graph\Editor\ExposeInputs.h" />
     <ClInclude Include="src\ofxRulr\Graph\Editor\LinkHost.h" />
     <ClInclude Include="src\ofxRulr\Graph\Editor\NodeBrowser.h" />
     <ClInclude Include="src\ofxRulr\Graph\Editor\NodeHost.h" />
@@ -60,7 +61,6 @@
     <ClInclude Include="src\ofxRulr\Graph\World.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Graphics.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Graph\ExposeInputs.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Graph\Patch.h" />
     <ClInclude Include="src\ofxRulr\Utils\Base64.h" />
     <ClInclude Include="src\ofxRulr\Utils\Constants.h" />

@@ -3,6 +3,7 @@
 #include "ofxRulr/Graph/Editor/NodeHost.h"
 #include "ofxRulr/Graph/Editor/LinkHost.h"
 #include "ofxRulr/Graph/Editor/NodeBrowser.h"
+#include "ofxRulr/Graph/Editor/ExposeInputs.h"
 
 #include "ofxRulr/Nodes/Base.h"
 #include "ofxRulr/Graph/FactoryRegister.h"
@@ -14,7 +15,7 @@ namespace ofxRulr {
 			using namespace ofxRulr::Graph::Editor;
 			using namespace ofxRulr::Graph;
 
-			class Patch : public Nodes::Base {
+			class Patch : public Nodes::Base, public enable_shared_from_this<Patch> {
 			public:
 				typedef map<NodeHost::Index, shared_ptr<NodeHost> > NodeHostSet;
 				typedef map<LinkHost::Index, shared_ptr<LinkHost> > LinkHostSet;
@@ -36,7 +37,8 @@ namespace ofxRulr {
 					shared_ptr<NodeBrowser> nodeBrowser;
 					ofVec2f birthLocation;
 				};
-				Patch();
+
+				Patch(bool isRootPatch = false); // disable exposeInputs
 				string getTypeName() const override;
 				void init();
 
@@ -82,6 +84,10 @@ namespace ofxRulr {
 
 				shared_ptr<TemporaryLinkHost> newLink;
 				weak_ptr<NodeHost> selection;
+
+				bool isRootPatch;
+				shared_ptr<Graph::Editor::ExposeInputs> exposeInputsNode;
+				shared_ptr<ExposeInputsHost> exposeInputsNodeHost;
 			};
 		}
 	}

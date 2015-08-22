@@ -126,8 +126,8 @@
     <ClCompile Include="src\ofxRulr\Nodes\Graph\Patch.cpp">
       <Filter>src\ofxRulr\Nodes\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Graph\ExposeInputs.cpp">
-      <Filter>src\ofxRulr\Nodes\Graph</Filter>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\ExposeInputs.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,8 +230,8 @@
     <ClInclude Include="src\ofxRulr\Nodes\Graph\Patch.h">
       <Filter>src\ofxRulr\Nodes\Graph</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Graph\ExposeInputs.h">
-      <Filter>src\ofxRulr\Nodes\Graph</Filter>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\ExposeInputs.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

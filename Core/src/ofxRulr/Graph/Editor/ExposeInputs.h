@@ -1,17 +1,19 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Base.h"
-#include "Patch.h"
+#include "ofxRulr/Nodes/Graph/Patch.h"
+
+#include "NodeHost.h"
 
 namespace ofxRulr {
-	namespace Nodes {
-		namespace Graph {
+	namespace Graph {
+		namespace Editor {
+			using namespace ofxRulr::Nodes::Graph;
 			class ExposeInputs : public Nodes::Base {
 			public:
 				ExposeInputs();
-				string getTypeName() const override;
 				void init();
-
+				string getTypeName() const override;
 				void setHost(shared_ptr<Patch>);
 			protected:
 				weak_ptr<Patch> host;

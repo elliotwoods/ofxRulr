@@ -204,8 +204,9 @@ namespace ofxRulr {
 
 #pragma mark Patch
 			//----------
-			Patch::Patch() {
+			Patch::Patch(bool isRootPatch) {
 				RULR_NODE_INIT_LISTENER;
+				this->isRootPatch = isRootPatch;
 			}
 
 			//----------
@@ -220,6 +221,11 @@ namespace ofxRulr {
 				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
+
+				if (!this->isRootPatch) {
+					this->exposeInputsNode = make_shared<ExposeInputs>();
+					this->exposeInputsNode->setHostPatch(shared_from_this());
+				}
 			}
 
 			//----------
