@@ -1,6 +1,8 @@
 #include "LinkHost.h"
 #include "ofPolyline.h"
 
+#include "ofxRulr/Graph/Editor/Patch.h"
+
 namespace ofxRulr {
 	namespace Graph {
 		namespace Editor {
@@ -105,7 +107,15 @@ namespace ofxRulr {
 				if (!targetNode || !targetPin) {
 					throw(ofxRulr::Exception("LinkHost has no valid target node or pin"));;
 				}
-				return targetNode->getInputPinPosition(targetPin);
+				if (targetPin->getIsExposedThroughParentPatch()) {
+					// if it'a an exposed  pin, ask the parent patch's node instead
+					auto patchNode = (Nodes::Base*) targetPin->getParentPatch();
+					return patchNode->getNodeHost()->getInputPinPosition(targetPin);
+				}
+				else {
+					//otherwise ask the node directly
+					return targetNode->getInputPinPosition(targetPin);
+				}
 			}
 
 #pragma mark TemporaryLinkHost

@@ -23,6 +23,8 @@
 
 #include "ofxRulr/Graph/FactoryRegister.h"
 
+#include "ofxRulr/Graph/Editor/Patch.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		void loadCoreNodes() {
@@ -46,6 +48,8 @@ namespace ofxRulr {
 
 			RULR_DECLARE_NODE(DMX::Sharpy);
 			RULR_DECLARE_NODE(DMX::AimMovingHeadAt);
+
+			RULR_DECLARE_NODE(Graph::Editor::Patch);
 		}
 
 		void loadPluginNodes() {

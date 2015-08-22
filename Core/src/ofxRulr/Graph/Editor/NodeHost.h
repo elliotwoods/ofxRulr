@@ -14,7 +14,7 @@ namespace ofxRulr {
 			/***
 			Possesses the node
 			*/
-			class NodeHost : public ofxCvGui::Element {
+			class NodeHost : public ofxCvGui::Element, public enable_shared_from_this<NodeHost> {
 			public:
 				typedef unsigned int Index;
 
@@ -30,13 +30,14 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 
 			protected:
+				void rebuildInputs();
 				ofVec2f getOutputPinPosition() const;
 				shared_ptr<Nodes::Base> node;
 				ofVec2f outputPinPosition;
 
 				ofxCvGui::PanelPtr nodeView;
 				ofxCvGui::ElementGroupPtr elements;
-				ofxCvGui::ElementGroupPtr inputPins;
+				ofxCvGui::ElementGroupPtr visibleInputPins; //may contain inputs from child nodes if this node is a patch
 			};
 		}
 	}

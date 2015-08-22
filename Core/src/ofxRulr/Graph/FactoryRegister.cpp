@@ -26,7 +26,7 @@ namespace ofxRulr {
 			RULR_CATCH_ALL_TO_ALERT // don't fail on bad deserialize, just notify user what went wrong
 
 			auto nodeHost = make_shared<Editor::NodeHost>(node);
-			
+
 			ofRectangle bounds;
 			json["Bounds"] >> bounds;
 			nodeHost->setBounds(bounds);

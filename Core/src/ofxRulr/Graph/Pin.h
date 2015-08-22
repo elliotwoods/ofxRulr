@@ -12,6 +12,8 @@
 #include "ofxRulr/Graph/Editor/PinView.h"
 #include "ofxRulr/Exception.h"
 
+#include "ofxCvGui/ElementGroup.h"
+
 using namespace std;
 
 namespace ofxRulr {
@@ -20,9 +22,21 @@ namespace ofxRulr {
 			class Patch;
 		}
 
-		class AbstractPin : public ofxCvGui::Element {
+		class AbstractPin : public ofxCvGui::Element, enable_shared_from_this<AbstractPin> {
 		public:
+			class Widget : public ofxCvGui::Element {
+			public:
+				Widget(AbstractPin &);
+			protected:
+				ofxCvGui::ElementGroupPtr elements;
+				AbstractPin & hostPin;
+			};
+
 			AbstractPin(string name);
+			void setParentNode(Nodes::Base *);
+			void setParentPatch(Graph::Editor::Patch *);
+			Graph::Editor::Patch * getParentPatch() const;
+
 			virtual string getTypeName() = 0;
 			virtual string getNodeTypeName() = 0;
 			virtual void connect(shared_ptr<Nodes::Base> node) = 0;
@@ -37,17 +51,24 @@ namespace ofxRulr {
 			string getName() const;
 			ofVec2f getPinHeadPosition() const;
 
-			void setParentPatch(shared_ptr<Graph::Editor::Patch>);
-			shared_ptr<Graph::Editor::Patch> getParentPatch() const;
-			
+			shared_ptr<Widget> getWidget();
+
+
+			void setIsExposedThroughParentPatch(bool);
+			bool getIsExposedThroughParentPatch() const;
+			bool isVisibleInPatch(Graph::Editor::Patch *) const;
+
 			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
 			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
 
 			ofxLiquidEvent<shared_ptr<Nodes::Base>> onNewConnectionUntyped;
 			ofxLiquidEvent<shared_ptr<Nodes::Base>> onDeleteConnectionUntyped;
 		protected:
+			Nodes::Base * parentNode;
+			Graph::Editor::Patch * parentPatch;
 			shared_ptr<Editor::PinView> pinView;
-			weak_ptr<Graph::Editor::Patch> parentPatch;
+			shared_ptr<Widget> widget;
+			bool isExposedThroughParentPatch;
 		private:
 			const string name;
 			ofVec2f pinHeadPosition;

@@ -2,6 +2,8 @@
 #include "ofxAssets.h"
 #include "ofxCvGui.h"
 
+#include "ofxRulr/Graph/Editor/Patch.h"
+
 using namespace ofxAssets;
 
 namespace ofxRulr {
@@ -26,6 +28,8 @@ namespace ofxRulr {
 				ofxCvGui::ElementPtr title;
 
 				this->node = node;
+				node->setNodeHost(this);
+
 				this->nodeView = node->getView();
 				//check if this node has a view
 				if (nodeView) {
@@ -81,7 +85,7 @@ namespace ofxRulr {
 				this->elements->add(outputPinView);
 
 				this->elements->onBoundsChange += [resizeHandle, title, outputPinView, this](ofxCvGui::BoundsChangeArguments & args) {
-					this->inputPins->setBounds(ofRectangle(0, 0, RULR_NODEHOST_INPUTAREA_WIDTH, this->getHeight()));
+					this->visibleInputPins->setBounds(ofRectangle(0, 0, RULR_NODEHOST_INPUTAREA_WIDTH, this->getHeight()));
 					
 					auto titleX = RULR_NODEHOST_INPUTAREA_WIDTH;
 
@@ -107,38 +111,16 @@ namespace ofxRulr {
 
 				};
 
-				this->inputPins = make_shared<ofxCvGui::ElementGroup>();
-				for (auto inputPin : node->getInputPins()) {
-					this->inputPins->add(inputPin);
-					weak_ptr<AbstractPin> inputPinWeak = inputPin;
-					inputPin->onBeginMakeConnection += [this, inputPinWeak](ofEventArgs &) {
-						auto inputPin = inputPinWeak.lock();
-						if (inputPin) {
-							this->onBeginMakeConnection(inputPin);
-						}
-					};
-					inputPin->onReleaseMakeConnection += [this, inputPinWeak](ofxCvGui::MouseArguments & args) {
-						auto inputPin = inputPinWeak.lock();
-						if (inputPin) {
-							this->onReleaseMakeConnection(args);
-						}
-					};
-					inputPin->onDeleteConnectionUntyped += [this, inputPinWeak](shared_ptr<Nodes::Base> &) {
-						auto inputPin = inputPinWeak.lock();
-						if (inputPin) {
-							this->onDropInputConnection(inputPin);
-						}
-					};
+				this->visibleInputPins = make_shared<ofxCvGui::ElementGroup>();
+				this->visibleInputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
+					this->visibleInputPins->layoutGridVertical();
 				};
-				this->inputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
-					this->inputPins->layoutGridVertical();
-				};
-				this->inputPins->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
+				this->visibleInputPins->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
 					ofPushStyle();
 					ofSetLineWidth(1.0f);
 					ofSetColor(50);
 					bool first = true;
-					for (auto pin : this->inputPins->getElements()) {
+					for (auto pin : this->visibleInputPins->getElements()) {
 						if (first) {
 							first = false;
 						}
@@ -248,9 +230,20 @@ namespace ofxRulr {
 				};
 
 				this->elements->addListenersToParent(this, true);
-				this->inputPins->addListenersToParent(this);
+				this->visibleInputPins->addListenersToParent(this);
 
 				this->setBounds(ofRectangle(200, 200, 200, 200));
+
+				node->onAddInput += [this](shared_ptr<Graph::AbstractPin>) {
+					this->rebuildInputs();
+				};
+				node->onRemoveInput += [this](shared_ptr<Graph::AbstractPin>) {
+					this->rebuildInputs();
+				};
+				node->onExposedPinsChanged += [this]() {
+					this->rebuildInputs();
+				};
+				this->rebuildInputs();
 			}
 
 			//----------
@@ -260,15 +253,14 @@ namespace ofxRulr {
 
 			//----------
 			ofVec2f NodeHost::getInputPinPosition(shared_ptr<AbstractPin> pin) const {
-				for (auto inputPin : this->inputPins->getElements()) {
+				for (auto inputPin : this->visibleInputPins->getElements()) {
 					if (inputPin == pin) {
-						return pin->getPinHeadPosition() + pin->getBounds().getTopLeft() + this->inputPins->getBounds().getTopLeft() + this->getBounds().getTopLeft();
+						return pin->getPinHeadPosition() + pin->getBounds().getTopLeft() + this->visibleInputPins->getBounds().getTopLeft() + this->getBounds().getTopLeft();
 					}
 				}
 
 				//throw an error if we didn't find it
-				auto pointerValue = (size_t) pin.get();
-				throw(ofxRulr::Exception("NodeHost::getInputPinPosition can't find input pin" + ofToString(pointerValue)));
+				throw(ofxRulr::Exception("NodeHost::getInputPinPosition can't find input pin" + ofToString((int) pin.get())));
 			}
 
 			//----------
@@ -290,6 +282,58 @@ namespace ofxRulr {
 				json["NodeTypeName"] = node->getTypeName();
 				json["Name"] = node->getName();
 				node->serialize(json["Content"]);
+			}
+			
+			//----------
+			void NodeHost::rebuildInputs() {
+				this->visibleInputPins->clear();
+				set<shared_ptr<AbstractPin>> pinsToExpose;
+
+				//add inputs from this node
+				for (auto inputPin : this->node->getInputPins()) {
+					//only expose if it's not in parent patch
+					if (inputPin->getIsExposedThroughParentPatch()) {
+						//if this pin is exposed through parent, then don't show it
+					} else {
+						pinsToExpose.insert(inputPin);
+					}
+				};
+
+				//if we're a patch, add all exposed inputs
+				auto patch = dynamic_pointer_cast<Graph::Editor::Patch>(this->node);
+				if (patch) {
+					const auto & exposedPins = patch->getExposedPins();
+					for (const auto & exposedPin : exposedPins) {
+						auto inputPin = exposedPin.second.pin.lock();
+						if (inputPin) {
+							pinsToExpose.insert(exposedPin.second.pin.lock());
+						}
+					}
+				}
+
+				for (auto inputPin : pinsToExpose) {
+					this->visibleInputPins->add(inputPin);
+					weak_ptr<AbstractPin> inputPinWeak = inputPin;
+					inputPin->onBeginMakeConnection += [this, inputPinWeak](ofEventArgs &) {
+						auto inputPin = inputPinWeak.lock();
+						if (inputPin) {
+							this->onBeginMakeConnection(inputPin);
+						}
+					};
+					inputPin->onReleaseMakeConnection += [this, inputPinWeak](ofxCvGui::MouseArguments & args) {
+						auto inputPin = inputPinWeak.lock();
+						if (inputPin) {
+							this->onReleaseMakeConnection(args);
+						}
+					};
+					inputPin->onDeleteConnectionUntyped += [this, inputPinWeak](shared_ptr<Nodes::Base> &) {
+						auto inputPin = inputPinWeak.lock();
+						if (inputPin) {
+							this->onDropInputConnection(inputPin);
+						}
+					};
+				}
+				this->visibleInputPins->arrange();
 			}
 		}
 	}

@@ -4,6 +4,7 @@
 #include "../Utils/Constants.h"
 #include "../Utils/Serializable.h"
 #include "../Exception.h"
+#include "ofxRulr/Graph/Editor/NodeHost.h"
 
 #include "../../../addons/ofxCvGui/src/ofxCvGui/InspectController.h"
 
@@ -37,6 +38,7 @@ namespace ofxRulr {
 		namespace Editor {
 			//forward declaration
 			class Patch;
+			class NodeHost;
 		}
 	}
 
@@ -60,8 +62,8 @@ namespace ofxRulr {
 			void setIcon(shared_ptr<ofImage>);
 			void setColor(const ofColor &);
 
-			void setParentPatch(shared_ptr<Graph::Editor::Patch>);
-			shared_ptr<Graph::Editor::Patch> getParentPatch() const;
+			void setParentPatch(Graph::Editor::Patch *);
+			Graph::Editor::Patch * getParentPatch() const;
 
 			const Graph::PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr);
@@ -134,6 +136,9 @@ namespace ofxRulr {
 			}
 			void throwIfMissingAnyConnection() const;
 
+			void setNodeHost(Graph::Editor::NodeHost *);
+			Graph::Editor::NodeHost * getNodeHost() const;
+
 			ofxLiquidEvent<void> onInit;
 			ofxLiquidEvent<void> onDestroy;
 			ofxLiquidEvent<void> onUpdate;
@@ -142,19 +147,16 @@ namespace ofxRulr {
 			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onDisconnect;
 			ofxLiquidEvent<void> onAnyInputConnectionChanged;
 
+			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onAddInput; // add pin to interface. the pin may not belong to this node
+			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onRemoveInput;
+			ofxLiquidEvent<void> onExposedPinsChanged; // used by Patch when exposed pins are added/removed. and by AbstractPin on the node which has the pin being exposed/hidden
 		protected:
 			void addInput(shared_ptr<Graph::AbstractPin>);
 
 			template<typename NodeType>
-			shared_ptr<Graph::Pin<NodeType>> addInput() {
-				auto inputPin = make_shared<Graph::Pin<NodeType>>();
-				this->addInput(inputPin);
-				return inputPin;
-			}
-
-			template<typename NodeType>
-			shared_ptr<Graph::Pin<NodeType>> addInput(const string & pinName) {
+			shared_ptr<Graph::Pin<NodeType>> addInput(const string & pinName = "") {
 				auto inputPin = make_shared<Graph::Pin<NodeType>>(pinName);
+				inputPin->setParentNode(this);
 				this->addInput(inputPin);
 				return inputPin;
 			}
@@ -165,6 +167,9 @@ namespace ofxRulr {
 			void setUpdateAllInputsFirst(bool);
 			bool getUpdateAllInputsFirst() const;
 		private:
+			friend Graph::Editor::Patch;
+			Graph::Editor::NodeHost * nodeHost;
+
 			Graph::PinSet inputPins;
 			shared_ptr<ofImage> icon;
 			shared_ptr<ofColor> color;
@@ -174,7 +179,7 @@ namespace ofxRulr {
 			uint64_t lastFrameUpdate;
 			bool updateAllInputsFirst; // flag to say call update on all nodes connected to input pins before update this node
 
-			weak_ptr<Graph::Editor::Patch> parentPatch;
+			Graph::Editor::Patch * parentPatch;
 		};
 	}
 }

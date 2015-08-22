@@ -4,6 +4,7 @@
 #include "Graphics.h"
 
 #include "ofxRulr/Graph/Editor/Patch.h"
+#include "ofxRulr/Graph/Editor/NodeHost.h"
 
 #include "ofxCvGui.h"
 
@@ -104,13 +105,16 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Base::setParentPatch(shared_ptr<Graph::Editor::Patch> patch) {
+		void Base::setParentPatch(Graph::Editor::Patch * patch) {
 			this->parentPatch = patch;
+			for (auto inputPin : this->inputPins) {
+				inputPin->setParentPatch(patch);
+			}
 		}
 
 		//----------
-		shared_ptr<Graph::Editor::Patch> Base::getParentPatch() const {
-			return this->parentPatch.lock();
+		Graph::Editor::Patch * Base::getParentPatch() const {
+			return this->parentPatch;
 		}
 
 		//----------
@@ -159,11 +163,10 @@ namespace ofxRulr {
 				RULR_CATCH_ALL_TO_ALERT
 			}));
 
-			//pin status
+			//pin widgets
+			inspector->add(Widgets::Title::make("Input pins", Widgets::Title::Level::H2));
 			for (auto inputPin : this->getInputPins()) {
-				inspector->add(Widgets::Indicator::make(inputPin->getName(), [inputPin]() {
-					return (Widgets::Indicator::Status) inputPin->isConnected();
-				}));
+				inspector->add(inputPin->getWidget());
 			}
 
 			//node parameters
@@ -182,6 +185,17 @@ namespace ofxRulr {
 			}
 		}
 
+
+		//----------
+		void Base::setNodeHost(Graph::Editor::NodeHost * nodeHost) {
+			this->nodeHost = nodeHost;
+		}
+
+		//----------
+		Graph::Editor::NodeHost * Base::getNodeHost() const {
+			return this->nodeHost;
+		}
+
 		//----------
 		void Base::addInput(shared_ptr<Graph::AbstractPin> pin) {
 			//setup events to fire on this node for this pin
@@ -191,6 +205,11 @@ namespace ofxRulr {
 				if (pin) {
 					this->onConnect(pin);
 				}
+
+				//notify onAnyInputConnectionChanged on parent also if we're exposed there
+				if (pin->getIsExposedThroughParentPatch()) {
+					this->getParentPatch()->onAnyInputConnectionChanged.notifyListeners();
+				}
 				this->onAnyInputConnectionChanged.notifyListeners();
 			};
 			pin->onDeleteConnectionUntyped += [this, pinWeak](shared_ptr<Base> &) {
@@ -198,15 +217,27 @@ namespace ofxRulr {
 				if (pin) {
 					this->onDisconnect(pin);
 				}
+
+				//notify onAnyInputConnectionChanged on parent also if we're exposed there
+				if (pin->getIsExposedThroughParentPatch()) {
+					this->getParentPatch()->onAnyInputConnectionChanged.notifyListeners();
+				}
 				this->onAnyInputConnectionChanged.notifyListeners();
 			};
 
+			//setup the parent patch
+			if (this->parentPatch) {
+				pin->setParentPatch(this->parentPatch);
+			}
+			
 			this->inputPins.add(pin);
+			this->onAddInput(pin);
 		}
 
 		//----------
 		void Base::removeInput(shared_ptr<Graph::AbstractPin> pin) {
 			this->inputPins.remove(pin);
+			this->onRemoveInput(pin);
 		}
 
 		//----------

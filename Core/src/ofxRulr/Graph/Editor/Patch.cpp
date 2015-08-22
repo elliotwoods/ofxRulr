@@ -372,6 +372,8 @@ namespace ofxRulr {
 				this->linkHosts.clear();
 				for (auto targetNodeHost : this->nodeHosts) {
 					auto targetNode = targetNodeHost.second->getNodeInstance();
+
+					//build all standard links
 					for (auto targetPin : targetNode->getInputPins()) {
 						if (targetPin->isConnected()) {
 							auto sourceNode = targetPin->getConnectionUntyped();
@@ -380,6 +382,28 @@ namespace ofxRulr {
 								auto observedLinkHost = make_shared<ObservedLinkHost>(sourceNodeHost, targetNodeHost.second, targetPin);
 								auto linkHost = dynamic_pointer_cast<LinkHost>(observedLinkHost);
 								this->linkHosts.insert(pair <LinkHost::Index, shared_ptr<LinkHost>>(this->getNextFreeLinkHostIndex(), linkHost));
+							}
+						}
+					}
+
+					//build all links as exposed
+					auto nodeAsPatch = dynamic_pointer_cast<Patch>(targetNode);
+					cout << targetNode->getTypeName();
+					if (nodeAsPatch) {
+						//it's a patch, and might have exposed pins we need to handle
+						const auto & exposedInputs = nodeAsPatch->getExposedPins();
+						for (auto exposedInput : exposedInputs) {
+							auto targetPin = exposedInput.first.lock();
+							if (targetPin) {
+								auto sourceNode = targetPin->getConnectionUntyped();
+								if (sourceNode) {
+									//ok there's a connection
+									auto sourceNodeHost = sourceNode->getNodeHost()->shared_from_this();
+									auto observedLinkHost = make_shared<ObservedLinkHost>(sourceNodeHost, targetNodeHost.second, targetPin);
+									auto linkHost = dynamic_pointer_cast<LinkHost>(observedLinkHost);
+									this->linkHosts.insert(pair <LinkHost::Index, shared_ptr<LinkHost>>(this->getNextFreeLinkHostIndex(), linkHost));
+								}
+								
 							}
 						}
 					}
@@ -420,10 +444,10 @@ namespace ofxRulr {
 
 			//----------
 			void Patch::addNodeHost(shared_ptr<ofxRulr::Graph::Editor::NodeHost> nodeHost, int index) {
-				//this is the common function which all add's go through
+				//all add's go through here or FactoryRegister::add
 				auto node = nodeHost->getNodeInstance();
 				if (!this->isRootPatch) {
-					node->setParentPatch(shared_from_this());
+					node->setParentPatch(this);
 				}
 				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
 				weak_ptr<NodeHost> nodeHostWeak = nodeHost;
@@ -542,6 +566,32 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void Patch::exposePin(shared_ptr<AbstractPin> pin, Nodes::Base * node) {
+				//remove it if we already have it
+				this->unexposePin(pin);
+
+				//we have a set of exposedPinSet and we add and remove them manually to inputPins without calling addInput which adds an input to the node itself
+
+				auto inserter = pair<weak_ptr<AbstractPin>, ExposedPin>(pin, { pin, node });
+				this->exposedPinSet.insert(inserter);
+				this->onExposedPinsChanged.notifyListeners();
+			}
+
+			//----------
+			void Patch::unexposePin(shared_ptr<AbstractPin> pin) {
+				auto findPin = this->exposedPinSet.find(pin);
+				if (findPin != this->exposedPinSet.end()) {
+					this->exposedPinSet.erase(findPin);
+					this->onExposedPinsChanged.notifyListeners();
+				}
+			}
+
+			//----------
+			const Patch::ExposedPinSet & Patch::getExposedPins() const {
+				return this->exposedPinSet;
+			}
+
+			//----------
 			void Patch::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Button::make("Duplicate patch down", [this]() {
 					Json::Value json;
@@ -577,7 +627,10 @@ namespace ofxRulr {
 
 			//----------
 			void Patch::callbackBeginMakeConnection(shared_ptr<NodeHost> targetNodeHost, shared_ptr<AbstractPin> targetPin) {
-				this->newLink = make_shared<TemporaryLinkHost>(targetNodeHost, targetPin);
+				if (targetPin->isVisibleInPatch(this)) {
+					//only make the newLink if it's supposed to be visible in this patch
+					this->newLink = make_shared<TemporaryLinkHost>(targetNodeHost, targetPin);
+				}
 			}
 
 			//----------
@@ -588,12 +641,15 @@ namespace ofxRulr {
 					this->view->resync();
 				}
 				else if (args.button == 0) {
-					//left click, try and make the link
-					this->newLink->flushConnection(); // this will trigger a notice downstream to rebuild the list of connections
+					if (this->newLink) {
+						//left click and we're making the link in this patch, try and make the link
+						//if newLink is blank, then chances are that we're making the link in the parent patch
+						this->newLink->flushConnection(); // this will trigger a notice downstream to rebuild the list of connections
 
-					//clear the temporary link regardless of success
-					this->newLink.reset();
-					this->view->resync();
+														  //clear the temporary link regardless of success
+						this->newLink.reset();
+						this->view->resync();
+					}
 				}
 			}
 		}

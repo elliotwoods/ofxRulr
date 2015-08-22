@@ -33,6 +33,12 @@ namespace ofxRulr {
 					shared_ptr<NodeBrowser> nodeBrowser;
 					ofVec2f birthLocation;
 				};
+				struct ExposedPin {
+					weak_ptr<Graph::AbstractPin> pin;
+					Nodes::Base * node;
+				};
+				typedef map<weak_ptr<AbstractPin>, ExposedPin, owner_less<std::weak_ptr<AbstractPin>>> ExposedPinSet;
+
 				Patch(bool isRootPatch = false);
 				string getTypeName() const override;
 				void init();
@@ -65,6 +71,11 @@ namespace ofxRulr {
 				shared_ptr<TemporaryLinkHost> getNewLink() const;
 				shared_ptr<NodeHost> findNodeHost(shared_ptr<Nodes::Base>) const;
 				shared_ptr<NodeHost> getNodeHost(NodeHost::Index) const;
+
+				void exposePin(shared_ptr<AbstractPin>, Nodes::Base *);
+				void unexposePin(shared_ptr<AbstractPin>);
+
+				const ExposedPinSet & getExposedPins() const;
 			protected:
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 
@@ -81,6 +92,7 @@ namespace ofxRulr {
 				weak_ptr<NodeHost> selection;
 
 				bool isRootPatch;
+				ExposedPinSet exposedPinSet;
 			};
 		}
 	}
