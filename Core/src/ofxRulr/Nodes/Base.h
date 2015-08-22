@@ -33,6 +33,13 @@
 	}
 
 namespace ofxRulr {
+	namespace Graph {
+		namespace Editor {
+			//forward declaration
+			class Patch;
+		}
+	}
+
 	namespace Nodes {
 		class Base : public ofxCvGui::IInspectable, public Utils::Serializable {
 		public:
@@ -52,6 +59,9 @@ namespace ofxRulr {
 			const ofColor & getColor();
 			void setIcon(shared_ptr<ofImage>);
 			void setColor(const ofColor &);
+
+			void setParentPatch(shared_ptr<Graph::Editor::Patch>);
+			shared_ptr<Graph::Editor::Patch> getParentPatch() const;
 
 			const Graph::PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::ElementGroupPtr);
@@ -162,7 +172,9 @@ namespace ofxRulr {
 			string name;
 			bool initialized;
 			uint64_t lastFrameUpdate;
-			bool updateAllInputsFirst;
+			bool updateAllInputsFirst; // flag to say call update on all nodes connected to input pins before update this node
+
+			weak_ptr<Graph::Editor::Patch> parentPatch;
 		};
 	}
 }

@@ -202,8 +202,9 @@ namespace ofxRulr {
 
 #pragma mark Patch
 			//----------
-			Patch::Patch() {
+			Patch::Patch(bool isRootPatch) {
 				RULR_NODE_INIT_LISTENER;
+				this->isRootPatch = isRootPatch;
 			}
 
 			//----------
@@ -419,6 +420,11 @@ namespace ofxRulr {
 
 			//----------
 			void Patch::addNodeHost(shared_ptr<ofxRulr::Graph::Editor::NodeHost> nodeHost, int index) {
+				//this is the common function which all add's go through
+				auto node = nodeHost->getNodeInstance();
+				if (!this->isRootPatch) {
+					node->setParentPatch(shared_from_this());
+				}
 				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
 				weak_ptr<NodeHost> nodeHostWeak = nodeHost;
 				nodeHost->onBeginMakeConnection += [this, nodeHostWeak](const shared_ptr<AbstractPin> & inputPin) {

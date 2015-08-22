@@ -16,7 +16,9 @@ using namespace std;
 
 namespace ofxRulr {
 	namespace Graph {
-		class Node;
+		namespace Editor {
+			class Patch;
+		}
 
 		class AbstractPin : public ofxCvGui::Element {
 		public:
@@ -34,6 +36,9 @@ namespace ofxRulr {
 			
 			string getName() const;
 			ofVec2f getPinHeadPosition() const;
+
+			void setParentPatch(shared_ptr<Graph::Editor::Patch>);
+			shared_ptr<Graph::Editor::Patch> getParentPatch() const;
 			
 			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
 			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
@@ -42,6 +47,7 @@ namespace ofxRulr {
 			ofxLiquidEvent<shared_ptr<Nodes::Base>> onDeleteConnectionUntyped;
 		protected:
 			shared_ptr<Editor::PinView> pinView;
+			weak_ptr<Graph::Editor::Patch> parentPatch;
 		private:
 			const string name;
 			ofVec2f pinHeadPosition;

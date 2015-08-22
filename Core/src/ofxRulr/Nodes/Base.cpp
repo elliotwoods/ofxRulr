@@ -3,6 +3,8 @@
 #include "../Exception.h"
 #include "Graphics.h"
 
+#include "ofxRulr/Graph/Editor/Patch.h"
+
 #include "ofxCvGui.h"
 
 using namespace ofxCvGui;
@@ -99,6 +101,16 @@ namespace ofxRulr {
 		//----------
 		void Base::setColor(const ofColor & color) {
 			this->color = make_shared<ofColor>(color);
+		}
+
+		//----------
+		void Base::setParentPatch(shared_ptr<Graph::Editor::Patch> patch) {
+			this->parentPatch = patch;
+		}
+
+		//----------
+		shared_ptr<Graph::Editor::Patch> Base::getParentPatch() const {
+			return this->parentPatch.lock();
 		}
 
 		//----------

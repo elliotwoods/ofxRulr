@@ -11,7 +11,7 @@
 namespace ofxRulr {
 	namespace Graph {
 		namespace Editor {
-			class Patch : public Nodes::Base {
+			class Patch : public Nodes::Base, public enable_shared_from_this<Patch> {
 			public:
 				typedef map<NodeHost::Index, shared_ptr<NodeHost> > NodeHostSet;
 				typedef map<LinkHost::Index, shared_ptr<LinkHost> > LinkHostSet;
@@ -33,7 +33,7 @@ namespace ofxRulr {
 					shared_ptr<NodeBrowser> nodeBrowser;
 					ofVec2f birthLocation;
 				};
-				Patch();
+				Patch(bool isRootPatch = false);
 				string getTypeName() const override;
 				void init();
 
@@ -79,6 +79,8 @@ namespace ofxRulr {
 
 				shared_ptr<TemporaryLinkHost> newLink;
 				weak_ptr<NodeHost> selection;
+
+				bool isRootPatch;
 			};
 		}
 	}

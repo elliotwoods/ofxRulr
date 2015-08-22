@@ -1,4 +1,6 @@
 #include "Pin.h"
+
+#include "ofxRulr/Graph/Editor/Patch.h"
 #include "../../../addons/ofxCvGui/src/ofxCvGui/Utils/Utils.h"
 
 namespace ofxRulr {
@@ -35,6 +37,12 @@ namespace ofxRulr {
 					ofPopMatrix();
 				}
 				ofPopStyle();
+
+				//debug - show if we have a parent patch
+				auto parentPatch = this->parentPatch.lock();
+				if (parentPatch) {
+					ofDrawBitmapString("parent", 10, 10);
+				}
 			};
 
 			this->onMouse += [this](ofxCvGui::MouseArguments & args) {
@@ -74,5 +82,16 @@ namespace ofxRulr {
 		ofVec2f AbstractPin::getPinHeadPosition() const {
 			return this->pinHeadPosition;
 		}
+
+		//----------
+		void AbstractPin::setParentPatch(shared_ptr<Graph::Editor::Patch> parentPatch) {
+			this->parentPatch = parentPatch;
+		}
+
+		//----------
+		shared_ptr<Graph::Editor::Patch> AbstractPin::getParentPatch() const {
+			return this->parentPatch;
+		}
+
 	}
 }
