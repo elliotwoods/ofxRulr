@@ -52,6 +52,9 @@
     <Filter Include="src\ofxRulr\Nodes">
       <UniqueIdentifier>{3e1f058f-86fd-4a62-b1e5-65fd6d04430f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Graph">
+      <UniqueIdentifier>{21edc764-40af-4e36-9ab5-e33fc59f778b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Graph\Pin.cpp">
@@ -64,9 +67,6 @@
       <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Graph\Editor\NodeHost.cpp">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\Editor\Patch.cpp">
       <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Graph\Editor\PinView.cpp">
@@ -123,6 +123,12 @@
     <ClCompile Include="src\ofxRulr\Utils\PolyFit.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Graph\Patch.cpp">
+      <Filter>src\ofxRulr\Nodes\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Graph\ExposeInputs.cpp">
+      <Filter>src\ofxRulr\Nodes\Graph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -138,9 +144,6 @@
       <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\Editor\NodeHost.h">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\Editor\Patch.h">
       <Filter>src\ofxRulr\Graph\Editor</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\Editor\PinView.h">
@@ -223,6 +226,12 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\PolyFit.h">
       <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Graph\Patch.h">
+      <Filter>src\ofxRulr\Nodes\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Graph\ExposeInputs.h">
+      <Filter>src\ofxRulr\Nodes\Graph</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

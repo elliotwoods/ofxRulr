@@ -108,46 +108,13 @@ namespace ofxRulr {
 				};
 
 				this->inputPins = make_shared<ofxCvGui::ElementGroup>();
-				for (auto inputPin : node->getInputPins()) {
-					this->inputPins->add(inputPin);
-					weak_ptr<AbstractPin> inputPinWeak = inputPin;
-					inputPin->onBeginMakeConnection += [this, inputPinWeak](ofEventArgs &) {
-						auto inputPin = inputPinWeak.lock();
-						if (inputPin) {
-							this->onBeginMakeConnection(inputPin);
-						}
-					};
-					inputPin->onReleaseMakeConnection += [this, inputPinWeak](ofxCvGui::MouseArguments & args) {
-						auto inputPin = inputPinWeak.lock();
-						if (inputPin) {
-							this->onReleaseMakeConnection(args);
-						}
-					};
-					inputPin->onDeleteConnectionUntyped += [this, inputPinWeak](shared_ptr<Nodes::Base> &) {
-						auto inputPin = inputPinWeak.lock();
-						if (inputPin) {
-							this->onDropInputConnection(inputPin);
-						}
-					};
+				this->rebuildInputPins();
+				this->node->onAddInputPin += [this](shared_ptr<Graph::AbstractPin>) {
+					this->rebuildInputPins();
 				};
-				this->inputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
-					this->inputPins->layoutGridVertical();
+				this->node->onRemoveInputPin += [this](shared_ptr<Graph::AbstractPin>) {
+					this->rebuildInputPins();
 				};
-				this->inputPins->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
-					ofPushStyle();
-					ofSetLineWidth(1.0f);
-					ofSetColor(50);
-					bool first = true;
-					for (auto pin : this->inputPins->getElements()) {
-						if (first) {
-							first = false;
-						}
-						else {
-							ofLine(pin->getBounds().getTopLeft(), pin->getBounds().getTopRight());
-						}
-					}
-					ofPopStyle();
-				}, -1, this);
 
 				this->onUpdate += [this](ofxCvGui::UpdateArguments & args) {
 					this->getNodeInstance()->update();
@@ -279,6 +246,50 @@ namespace ofxRulr {
 			//----------
 			ofVec2f NodeHost::getOutputPinPosition() const {
 				return this->outputPinPosition;
+			}
+
+			//---------
+			void NodeHost::rebuildInputPins() {
+				for (auto inputPin : node->getInputPins()) {
+					this->inputPins->add(inputPin);
+					weak_ptr<AbstractPin> inputPinWeak = inputPin;
+					inputPin->onBeginMakeConnection += [this, inputPinWeak](ofEventArgs &) {
+						auto inputPin = inputPinWeak.lock();
+						if (inputPin) {
+							this->onBeginMakeConnection(inputPin);
+						}
+					};
+					inputPin->onReleaseMakeConnection += [this, inputPinWeak](ofxCvGui::MouseArguments & args) {
+						auto inputPin = inputPinWeak.lock();
+						if (inputPin) {
+							this->onReleaseMakeConnection(args);
+						}
+					};
+					inputPin->onDeleteConnectionUntyped += [this, inputPinWeak](shared_ptr<Nodes::Base> &) {
+						auto inputPin = inputPinWeak.lock();
+						if (inputPin) {
+							this->onDropInputConnection(inputPin);
+						}
+					};
+				};
+				this->inputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
+					this->inputPins->layoutGridVertical();
+				};
+				this->inputPins->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
+					ofPushStyle();
+					ofSetLineWidth(1.0f);
+					ofSetColor(50);
+					bool first = true;
+					for (auto pin : this->inputPins->getElements()) {
+						if (first) {
+							first = false;
+						}
+						else {
+							ofLine(pin->getBounds().getTopLeft(), pin->getBounds().getTopRight());
+						}
+					}
+					ofPopStyle();
+				}, -1, this);
 			}
 
 			//----------

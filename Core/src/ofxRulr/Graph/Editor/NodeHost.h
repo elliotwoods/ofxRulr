@@ -30,6 +30,7 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 
 			protected:
+				void rebuildInputPins();
 				ofVec2f getOutputPinPosition() const;
 				shared_ptr<Nodes::Base> node;
 				ofVec2f outputPinPosition;

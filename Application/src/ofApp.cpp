@@ -33,7 +33,7 @@ void ofApp::setup2(){
 	//Setup the patch
 	//--
 	//
-	auto patchInstance = MAKE(ofxRulr::Graph::Editor::Patch);
+	auto patchInstance = MAKE(ofxRulr::Nodes::Graph::Patch);
 	this->world.add(patchInstance);
 	//
 	//--

@@ -20,7 +20,6 @@
     <ClCompile Include="src\ofxRulr\Graph\Editor\LinkHost.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\Editor\NodeBrowser.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\Editor\NodeHost.cpp" />
-    <ClCompile Include="src\ofxRulr\Graph\Editor\Patch.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\Editor\PinView.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\FactoryRegister.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\Pin.cpp" />
@@ -28,6 +27,8 @@
     <ClCompile Include="src\ofxRulr\Graph\World.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Base.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Graphics.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Graph\ExposeInputs.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Graph\Patch.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Base64.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Gui.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp" />
@@ -52,7 +53,6 @@
     <ClInclude Include="src\ofxRulr\Graph\Editor\LinkHost.h" />
     <ClInclude Include="src\ofxRulr\Graph\Editor\NodeBrowser.h" />
     <ClInclude Include="src\ofxRulr\Graph\Editor\NodeHost.h" />
-    <ClInclude Include="src\ofxRulr\Graph\Editor\Patch.h" />
     <ClInclude Include="src\ofxRulr\Graph\Editor\PinView.h" />
     <ClInclude Include="src\ofxRulr\Graph\FactoryRegister.h" />
     <ClInclude Include="src\ofxRulr\Graph\Pin.h" />
@@ -60,6 +60,8 @@
     <ClInclude Include="src\ofxRulr\Graph\World.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Graphics.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Graph\ExposeInputs.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Graph\Patch.h" />
     <ClInclude Include="src\ofxRulr\Utils\Base64.h" />
     <ClInclude Include="src\ofxRulr\Utils\Constants.h" />
     <ClInclude Include="src\ofxRulr\Utils\Gui.h" />

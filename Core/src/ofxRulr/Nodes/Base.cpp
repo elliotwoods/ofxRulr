@@ -190,11 +190,13 @@ namespace ofxRulr {
 			};
 
 			this->inputPins.add(pin);
+			this->onAddInputPin(pin);
 		}
 
 		//----------
 		void Base::removeInput(shared_ptr<Graph::AbstractPin> pin) {
 			this->inputPins.remove(pin);
+			this->onRemoveInputPin(pin);
 		}
 
 		//----------
