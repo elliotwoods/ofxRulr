@@ -175,19 +175,19 @@ namespace ofxRulr {
 		//----------
 		void AbstractPin::setIsExposedThroughParentPatch(bool pinIsExposed) {
 			if (pinIsExposed != this->isExposedThroughParentPatch) {
-
-			}
-			auto parentPatch = this->parentPatch;
-			if (parentPatch) {
-				if (pinIsExposed) {
-					this->isExposedThroughParentPatch = true;
-					parentPatch->exposePin(shared_from_this(), this->parentNode);
-					parentNode->onExposedPinsChanged.notifyListeners();
-				}
-				else {
-					this->isExposedThroughParentPatch = false;
-					parentPatch->unexposePin(shared_from_this());
-					parentNode->onExposedPinsChanged.notifyListeners();
+				auto parentPatch = this->parentPatch;
+				if (parentPatch) {
+					if (pinIsExposed) {
+						this->isExposedThroughParentPatch = true;
+						parentPatch->exposePin(shared_from_this(), this->parentNode);
+						parentNode->onExposedPinsChanged.notifyListeners();
+					}
+					else {
+						this->resetConnection();
+						this->isExposedThroughParentPatch = false;
+						parentPatch->unexposePin(shared_from_this());
+						parentNode->onExposedPinsChanged.notifyListeners();
+					}
 				}
 			}
 		}

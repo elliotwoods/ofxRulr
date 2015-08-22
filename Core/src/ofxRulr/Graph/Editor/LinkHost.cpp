@@ -102,9 +102,9 @@ namespace ofxRulr {
 
 			//---------
 			ofVec2f LinkHost::getTargetPinPosition() const {
-				auto targetNode = this->targetNode.lock();
+				auto targetNodeHost = this->targetNode.lock();
 				auto targetPin = this->targetPin.lock();
-				if (!targetNode || !targetPin) {
+				if (!targetNodeHost || !targetPin) {
 					throw(ofxRulr::Exception("LinkHost has no valid target node or pin"));;
 				}
 				if (targetPin->getIsExposedThroughParentPatch()) {
@@ -114,7 +114,7 @@ namespace ofxRulr {
 				}
 				else {
 					//otherwise ask the node directly
-					return targetNode->getInputPinPosition(targetPin);
+					return targetNodeHost->getInputPinPosition(targetPin);
 				}
 			}
 
@@ -179,4 +179,3 @@ namespace ofxRulr {
 		}
 	}
 }
-//---------

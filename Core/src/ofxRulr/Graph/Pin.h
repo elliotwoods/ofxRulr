@@ -37,8 +37,8 @@ namespace ofxRulr {
 			void setParentPatch(Graph::Editor::Patch *);
 			Graph::Editor::Patch * getParentPatch() const;
 
-			virtual string getTypeName() = 0;
-			virtual string getNodeTypeName() = 0;
+			virtual string getTypeName() const = 0;
+			virtual string getNodeTypeName() const = 0;
 			virtual void connect(shared_ptr<Nodes::Base> node) = 0;
 			virtual void resetConnection() = 0;
 			virtual bool isConnected() const = 0;
@@ -89,11 +89,11 @@ namespace ofxRulr {
 				this->resetConnection();
 			}
 
-			string getTypeName() override {
+			string getTypeName() const override{
 				return string("Pin::") + this->getNodeTypeName();
 			}
 			
-			string getNodeTypeName() override {
+			string getNodeTypeName() const override {
 				return NodeType().getTypeName();
 			}
 
