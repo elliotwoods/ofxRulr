@@ -9,7 +9,10 @@
 
 #include "ofxRulr/Utils/PolyFit.h"
 
+#include "ofxCvMin.h"
+
 using namespace ofxCvGui;
+using namespace cv;
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -30,10 +33,13 @@ namespace ofxRulr {
 
 				this->ignoreBlankTransform.set("Ignore blank transform", true);
 
+				//prediction
 				{
-					this->prediction.enabled.set("Enabled", false);
-					this->prediction.delay.set("Delay", 0.0f, -5.0f, 0.0f);
-					this->prediction.historySize.set("History size", 5, 0, 100);
+					this->steveJobs.enabled.set("Enabled", false);
+					this->steveJobs.steps.set("Steps", 10, 0, 1000);
+					this->steveJobs.kalmanFilter = KalmanFilter(6, 3, 0);
+					this->steveJobs.measurmentVector = Mat_<float>(3, 1);
+					this->steveJobs.objectSeen = false;
 				}
 			}
 
@@ -49,44 +55,86 @@ namespace ofxRulr {
 				if (target && movingHead) {
 					try {
 						bool doIt = true;
-						ofVec3f aimPosition = target->getPosition();
+						ofVec3f targetPosition = target->getPosition();
 
 						//check if transform is blank before using it (blank can be an indicator of bad tracking)
 						if (this->ignoreBlankTransform) {
 							if (target->getTransform().isIdentity()) {
 								doIt = false;
+								this->steveJobs.objectSeen = false;
 							}
 						}
 
 						//steve jobs mode
-						if (this->prediction.enabled) {
-							auto now = ofGetElapsedTimef();
-							this->prediction.history[now] = aimPosition;
-							while (this->prediction.history.size() > this->prediction.historySize && !this->prediction.history.empty()) {
-								this->prediction.history.erase(this->prediction.history.begin());
+						if (this->steveJobs.enabled) {
+							//we presume a constant frame rate (necessary for Kalman filter)
+
+							//if it's the first time to see the object again
+							if (!this->steveJobs.objectSeen) {
+								//initialise the tracking
+								this->initPrediction(targetPosition);
+								this->steveJobs.objectSeen = true;
 							}
 
-//#pragma omp parallel for
-							auto delay = this->prediction.delay.get();
+
+
+							//--
+							//normal kalman operation
+							//--
+							//
+							auto prediction = this->steveJobs.kalmanFilter.predict();
 							for (int i = 0; i < 3; i++) {
-								vector<ofVec2f> x_vs_t;
-								for (auto historyFrame : this->prediction.history) {
-									x_vs_t.push_back(ofVec2f(historyFrame.first, historyFrame.second[i]));
-								}
-								auto model = Utils::PolyFit::fit(x_vs_t, 1);
-								auto predictedPosition = Utils::PolyFit::evaluate(model, now - delay);
-								//watch out for NaN's
-								if (predictedPosition == predictedPosition) {
-									aimPosition[i] = predictedPosition;
-								}
+								this->steveJobs.measurmentVector.at<float>(i) = targetPosition[i];
+							}
+							auto corrected = this->steveJobs.kalmanFilter.correct(this->steveJobs.measurmentVector);
+							//
+							//--
+
+
+
+							//--
+							//calculate the future after 30 frames
+							//--
+							//
+							auto futureKalman = KalmanFilter(4, 2, 0);
+#define COPY_ATTRIB(TARGET, SOURCE, ATTRIBUTE) TARGET.ATTRIBUTE = SOURCE.ATTRIBUTE.clone()
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, errorCovPost);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, errorCovPre);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, gain);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, measurementMatrix);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, measurementNoiseCov);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, processNoiseCov);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, statePost);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, statePre);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, transitionMatrix);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp1);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp2);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp3);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp4);
+							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp5);
+							for (int i = 0; i < this->steveJobs.steps; i++) {
+								futureKalman.statePost = futureKalman.predict();
+							}
+							auto theNextIPad = futureKalman.predict();
+							//
+							//--
+
+
+
+							//copy the future predicted state back into the measurement position we'll use
+							for (int i = 0; i < 3; i++) {
+								targetPosition[i] = theNextIPad.at<float>(i);
 							}
 						}
 						//perform the move
 						if (doIt) {
-							movingHead->lookAt(aimPosition);
+							movingHead->lookAt(targetPosition);
 						}
 					}
 					RULR_CATCH_ALL_TO_ERROR;
+				}
+				else {
+					this->steveJobs.objectSeen = false;
 				}
 			}
 
@@ -96,9 +144,8 @@ namespace ofxRulr {
 
 				auto & jsonPrediction = json["prediction"];
 				{
-					Utils::Serializable::serialize(this->prediction.enabled, json["prediction"]);
-					Utils::Serializable::serialize(this->prediction.delay, json["prediction"]);
-					Utils::Serializable::serialize(this->prediction.historySize, json["prediction"]);
+					Utils::Serializable::serialize(this->steveJobs.enabled, json["prediction"]);
+					Utils::Serializable::serialize(this->steveJobs.steps, json["prediction"]);
 				}
 			}
 
@@ -107,9 +154,8 @@ namespace ofxRulr {
 				Utils::Serializable::deserialize(this->ignoreBlankTransform, json);
 				const auto & jsonPrediction = json["prediction"];
 				{
-					Utils::Serializable::deserialize(this->prediction.enabled, json["prediction"]);
-					Utils::Serializable::deserialize(this->prediction.delay, json["prediction"]);
-					Utils::Serializable::deserialize(this->prediction.historySize, json["prediction"]);
+					Utils::Serializable::deserialize(this->steveJobs.enabled, json["prediction"]);
+					Utils::Serializable::deserialize(this->steveJobs.steps, json["prediction"]);
 				}
 			}
 
@@ -120,13 +166,37 @@ namespace ofxRulr {
 				inspector->add(Widgets::Title::make("Steve Jobs Mode", Widgets::Title::Level::H2));
 				{
 					inspector->add(Widgets::Title::make("Prediction", Widgets::Title::Level::H3));
-					inspector->add(Widgets::Toggle::make(this->prediction.enabled));
-					inspector->add(Widgets::Slider::make(this->prediction.delay));
-
-					auto historySizeWidget = Widgets::Slider::make(this->prediction.historySize);
-					historySizeWidget->addIntValidator();
-					inspector->add(historySizeWidget);
+					inspector->add(Widgets::Toggle::make(this->steveJobs.enabled));
+					inspector->add(Widgets::Slider::make(this->steveJobs.steps));
 				}
+			}
+
+			//----------
+			void AimMovingHeadAt::initPrediction(const ofVec3f & startPostiion) {
+				//state
+				//x, y, vx, vy
+
+				//transition
+				this->steveJobs.kalmanFilter.transitionMatrix = *(Mat_<float>(6, 6) <<
+					1, 0, 0, 1, 0, 0,
+					0, 1, 0, 0, 1, 0,
+					0, 0, 1, 0, 0, 1,
+					0, 0, 0, 1, 0, 0,
+					0, 0, 0, 0, 1, 0,
+					0, 0, 0, 0, 0, 1);
+				
+				//opening state (presume no velocity to begin)
+				this->steveJobs.kalmanFilter.statePre.at<float>(0) = startPostiion.x;
+				this->steveJobs.kalmanFilter.statePre.at<float>(1) = startPostiion.y;
+				this->steveJobs.kalmanFilter.statePre.at<float>(2) = startPostiion.z;
+				this->steveJobs.kalmanFilter.statePre.at<float>(3) = 0.0f;
+				this->steveJobs.kalmanFilter.statePre.at<float>(4) = 0.0f;
+				this->steveJobs.kalmanFilter.statePre.at<float>(5) = 0.0f;
+
+				setIdentity(this->steveJobs.kalmanFilter.measurementMatrix);
+				setIdentity(this->steveJobs.kalmanFilter.processNoiseCov, Scalar::all(1e-4));
+				setIdentity(this->steveJobs.kalmanFilter.measurementNoiseCov, Scalar::all(1));
+				setIdentity(this->steveJobs.kalmanFilter.errorCovPre, Scalar::all(0.1));
 			}
 		}
 	}

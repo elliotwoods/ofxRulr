@@ -48,8 +48,10 @@ namespace ofxRulr {
 					void drawWorld() override;
 					ofxCvGui::PanelPtr getView() override;
 					void addCapture();
+					void deleteLastCapture();
 					void calibrate();
 				protected:
+
 					vector<DataPoint> dataPoints;
 					float residual;
 

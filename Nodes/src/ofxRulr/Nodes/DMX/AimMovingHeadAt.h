@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Base.h"
+#include "ofxCvMin.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -20,10 +21,12 @@ namespace ofxRulr {
 
 				struct {
 					ofParameter<bool> enabled;
-					ofParameter<float> delay;
-					ofParameter<float> historySize;
-					map<float, ofVec3f> history;
-				} prediction;
+					ofParameter<float> steps;
+					bool objectSeen;
+					cv::KalmanFilter kalmanFilter;
+					cv::Mat measurmentVector;
+				} steveJobs;
+				void initPrediction(const ofVec3f & startPosition);
 			};
 		}
 	}

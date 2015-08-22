@@ -167,6 +167,39 @@ namespace ofxRulr {
 							}
 						}
 					};
+					view->onKeyboard += [this, viewWeak](KeyboardArguments & args) {
+						auto view = viewWeak.lock();
+						if (view) {
+							if (args.checkCurrentPanel(view.get())) {
+								if (args.action == KeyboardArguments::Action::Pressed) {
+									switch (args.key) {
+									case 'a':
+									{
+										bool success = false;
+										try {
+											this->addCapture();
+											success = true;
+										}
+										RULR_CATCH_ALL_TO_ALERT;
+										if (success) {
+											Utils::playSuccessSound();
+										}
+										break;
+									}
+
+									case 'd':
+									{
+										this->deleteLastCapture();
+										break;
+									}
+										
+									default:
+										break;
+									}
+								}
+							}
+						}
+					};
 					this->view = view;
 
 					this->lastFind = 0.0f;
@@ -306,6 +339,13 @@ namespace ofxRulr {
 					this->dataPoints.push_back(dataPoint);
 					this->lastFind = ofGetElapsedTimef();
 					Utils::playSuccessSound();
+				}
+
+				//---------
+				void MovingHeadToWorld::deleteLastCapture() {
+					if (!this->dataPoints.empty()) {
+						this->dataPoints.pop_back();
+					}
 				}
 
 				//---------

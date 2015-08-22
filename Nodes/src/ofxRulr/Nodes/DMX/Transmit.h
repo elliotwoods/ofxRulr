@@ -17,6 +17,8 @@ namespace ofxRulr {
 					void setChannels(ChannelIndex channelOffset, Value * values, ChannelIndex count);
 					const Value * getChannels() const;
 					const ofTexture & getTextureReference();
+					void clearChannels();
+					ofParameter<bool> blackoutEnabled;
 				protected:
 					Value values[513]; // 0th channel is unused
 					ofTexture preview;
@@ -28,6 +30,10 @@ namespace ofxRulr {
 				void update();
 				virtual string getTypeName() const override;
 				ofxCvGui::PanelPtr getView() override;
+
+				void serialize(Json::Value &);
+				void deserialize(const Json::Value &);
+				void populateInspector(ofxCvGui::ElementGroupPtr);
 
 				UniverseIndex getUniverseCount() const;
 				const vector<shared_ptr<Universe>> & getUniverses() const;

@@ -1,6 +1,8 @@
 #include "Transmit.h"
 #include "ofxCvGui/Panels/Scroll.h"
 #include "ofxCvGui/Widgets/Title.h"
+#include "ofxCvGui/Widgets/Toggle.h"
+#include "ofxCvGui/Utils/Utils.h"
 
 using namespace ofxCvGui;
 
@@ -10,10 +12,11 @@ namespace ofxRulr {
 #pragma mark Transmit::Universe
 			//----------
 			Transmit::Universe::Universe() {
-				memset(this->values, 0, 513);
+				this->clearChannels();
 				this->previewDirty = true;
 				this->preview.allocate(32, 16, GL_LUMINANCE);
 				this->preview.setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+				this->blackoutEnabled.set("Blackout enabled", false);
 			}
 
 			//----------
@@ -52,11 +55,19 @@ namespace ofxRulr {
 				return this->preview;
 			}
 
+			//----------
+			void Transmit::Universe::clearChannels() {
+				memset(this->values, 0, 513);
+				this->previewDirty = true;
+			}
+
 #pragma mark Transmit
 			//----------
 			Transmit::Transmit() {
 				RULR_NODE_INIT_LISTENER;
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_INSPECTOR_LISTENER;
+				RULR_NODE_SERIALIZATION_LISTENERS;
 			}
 
 			//----------
@@ -74,6 +85,9 @@ namespace ofxRulr {
 				}
 				else {
 					for (int i = 0; i < this->universes.size(); i++) {
+						if (this->universes[i]->blackoutEnabled) {
+							this->universes[i]->clearChannels();
+						}
 						this->sendUniverse(i, this->universes[i]);
 					}
 				}
@@ -87,6 +101,32 @@ namespace ofxRulr {
 			//----------
 			ofxCvGui::PanelPtr Transmit::getView() {
 				return this->view;
+			}
+
+			//----------
+			void Transmit::serialize(Json::Value & json) {
+				auto & jsonUniverses = json["universes"];
+				for (int i = 0; i < this->universes.size(); i++) {
+					auto & jsonUniverse = jsonUniverses[ofToString(i)];
+					Utils::Serializable::serialize(this->universes[i]->blackoutEnabled, jsonUniverse);
+				}
+			}
+
+			//----------
+			void Transmit::deserialize(const Json::Value & json) {
+				const auto & jsonUniverses = json["universes"];
+				for (int i = 0; i < this->universes.size(); i++) {
+					const auto & jsonUniverse = json[ofToString(i)];
+					Utils::Serializable::deserialize(this->universes[i]->blackoutEnabled, jsonUniverse);
+				}
+			}
+
+			//----------
+			void Transmit::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				for (int i = 0; i < this->universes.size(); i++) {
+					inspector->add(Widgets::Title::make("Univerese " + ofToString(i)));
+					inspector->add(Widgets::Toggle::make(this->universes[i]->blackoutEnabled));
+				}
 			}
 
 			//----------
@@ -131,6 +171,10 @@ namespace ofxRulr {
 					auto preview = make_shared<Element>();
 					preview->onDraw += [universe](DrawArguments & args) {
 						universe->getTextureReference().draw(args.localBounds);
+
+						if (universe->blackoutEnabled.get()) {
+							ofxCvGui::Utils::drawText("BLACKOUT", args.localBounds);
+						}
 					};
 					preview->setBounds(ofRectangle(0, 0, 300, 100));
 					this->view->add(preview);
