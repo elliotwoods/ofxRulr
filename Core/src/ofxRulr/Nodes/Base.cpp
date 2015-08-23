@@ -229,7 +229,7 @@ namespace ofxRulr {
 			if (this->parentPatch) {
 				pin->setParentPatch(this->parentPatch);
 			}
-			
+			pin->setParentNode(this);
 			this->inputPins.add(pin);
 			this->onAddInput(pin);
 		}

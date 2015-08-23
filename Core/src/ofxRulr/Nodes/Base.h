@@ -156,7 +156,6 @@ namespace ofxRulr {
 			template<typename NodeType>
 			shared_ptr<Graph::Pin<NodeType>> addInput(const string & pinName = NodeType().getTypeName()) {
 				auto inputPin = make_shared<Graph::Pin<NodeType>>(pinName);
-				inputPin->setParentNode(this);
 				this->addInput(inputPin);
 				return inputPin;
 			}

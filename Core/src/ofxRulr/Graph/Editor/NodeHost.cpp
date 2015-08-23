@@ -286,7 +286,20 @@ namespace ofxRulr {
 			
 			//----------
 			void NodeHost::rebuildInputs() {
-				this->visibleInputPins->clear();
+				//clear existing pins (and listeners on those pins)
+				{
+					auto pinElements = this->visibleInputPins->getElements();
+					for (auto pinElement : pinElements) {
+						auto pin = dynamic_pointer_cast<AbstractPin>(pinElement);
+						if (pin) {
+							pin->onBeginMakeConnection.removeListeners(this);
+							pin->onReleaseMakeConnection.removeListeners(this);
+							pin->onDeleteConnectionUntyped.removeListeners(this);
+						}
+					}
+					this->visibleInputPins->clear();
+				}
+
 				set<shared_ptr<AbstractPin>> pinsToExpose;
 
 				//add inputs from this node
@@ -311,27 +324,28 @@ namespace ofxRulr {
 					}
 				}
 
+				//add all the pins and add listeners too
 				for (auto inputPin : pinsToExpose) {
 					this->visibleInputPins->add(inputPin);
 					weak_ptr<AbstractPin> inputPinWeak = inputPin;
-					inputPin->onBeginMakeConnection += [this, inputPinWeak](ofEventArgs &) {
+					inputPin->onBeginMakeConnection.addListener([this, inputPinWeak](ofEventArgs &) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
 							this->onBeginMakeConnection(inputPin);
 						}
-					};
-					inputPin->onReleaseMakeConnection += [this, inputPinWeak](ofxCvGui::MouseArguments & args) {
+					}, this);
+					inputPin->onReleaseMakeConnection.addListener([this, inputPinWeak](ofxCvGui::MouseArguments & args) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
 							this->onReleaseMakeConnection(args);
 						}
-					};
-					inputPin->onDeleteConnectionUntyped += [this, inputPinWeak](shared_ptr<Nodes::Base> &) {
+					}, this);
+					inputPin->onDeleteConnectionUntyped.addListener([this, inputPinWeak](shared_ptr<Nodes::Base> &) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
 							this->onDropInputConnection(inputPin);
 						}
-					};
+					}, this);
 				}
 				this->visibleInputPins->arrange();
 			}

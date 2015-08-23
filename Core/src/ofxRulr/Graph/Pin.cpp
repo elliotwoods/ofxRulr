@@ -53,12 +53,12 @@ namespace ofxRulr {
 						ofFill();
 						ofSetLineWidth(0.0f);
 						ofSetColor(100, 200, 100);
-						ofCircle(20, 20, 9);
+						ofCircle(20, 30, 9);
 					}
 					ofSetLineWidth(1.0f);
 					ofNoFill();
 					ofSetColor(255);
-					ofCircle(20, 20, 9);
+					ofCircle(20, 30, 9);
 				}
 				ofPopStyle();
 			};
