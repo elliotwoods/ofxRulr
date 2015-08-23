@@ -110,6 +110,17 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void Sharpy::setColorIndex(int colorIndex) {
+				colorIndex = ofClamp(colorIndex, 0, 13);
+				this->channels[0]->value.set((float)colorIndex * 8.57f); //steps between colours
+			}
+
+			//----------
+			void Sharpy::reboot() {
+
+			}
+
+			//----------
 			void Sharpy::updateVectorChannelsEnabled() {
 				for (auto channel : this->vectorChannels) {
 					channel->enabled.set(this->vectorChannelsEnabled.get());

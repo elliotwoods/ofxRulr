@@ -15,6 +15,8 @@ namespace ofxRulr {
 				void deserialize(const Json::Value &);
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 
+				void setColorIndex(int);
+				void reboot();
 			protected:
 				void updateVectorChannelsEnabled();
 				vector<shared_ptr<Channel>> vectorChannels;

@@ -40,6 +40,7 @@ namespace ofxRulr {
 				typedef map<weak_ptr<AbstractPin>, ExposedPin, owner_less<std::weak_ptr<AbstractPin>>> ExposedPinSet;
 
 				Patch();
+				~Patch();
 				string getTypeName() const override;
 				void init();
 

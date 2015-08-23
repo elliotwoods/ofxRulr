@@ -25,6 +25,8 @@ namespace ofxRulr {
 
 				void setBrightness(float);
 				void setIris(float);
+				void setPower(bool);
+				void setHome();
 
 				void setTiltOffset(float);
 			protected:
