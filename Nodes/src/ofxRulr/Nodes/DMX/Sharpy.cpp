@@ -112,7 +112,9 @@ namespace ofxRulr {
 			//----------
 			void Sharpy::setColorIndex(int colorIndex) {
 				colorIndex = ofClamp(colorIndex, 0, 13);
-				this->channels[0]->value.set((float)colorIndex * 8.57f); //steps between colours
+				auto value = (float)colorIndex * 8.57f;
+				value = floor(value);
+				this->channels[0]->value.set(value); //steps between colours`
 			}
 
 			//----------

@@ -6,6 +6,7 @@
 #include "ofxCvGui/Widgets/Toggle.h"
 #include "ofxCvGui/Widgets/Slider.h"
 #include "ofxCvGui/Widgets/Title.h"
+#include "ofxCvGui/Widgets/LiveValue.h"
 
 #include "ofxRulr/Utils/PolyFit.h"
 
@@ -37,9 +38,13 @@ namespace ofxRulr {
 				{
 					this->steveJobs.enabled.set("Enabled", false);
 					this->steveJobs.steps.set("Steps", 10, 0, 1000);
+					this->steveJobs.minimumVelocity.set("Minimum velocity [m/s]", 1.0f, 0.0f, 20.0f);
+					this->steveJobs.maximumAcceleration.set("Maximum acceleration [m/s^2]", 1.0f, 0.0f, 10.0f);
 					this->steveJobs.kalmanFilter = KalmanFilter(6, 3, 0);
 					this->steveJobs.measurmentVector = Mat_<float>(3, 1);
-					this->steveJobs.objectSeen = false;
+					this->steveJobs.isTracking = false;
+					this->steveJobs.velocityOK = false;
+					this->steveJobs.accelerationOK = false;
 				}
 			}
 
@@ -54,87 +59,30 @@ namespace ofxRulr {
 				auto target = this->getInput<Item::RigidBody>("Target");
 				if (target && movingHead) {
 					try {
-						bool doIt = true;
-						ofVec3f targetPosition = target->getPosition();
-
 						//check if transform is blank before using it (blank can be an indicator of bad tracking)
 						if (this->ignoreBlankTransform) {
 							if (target->getTransform().isIdentity()) {
-								doIt = false;
-								this->steveJobs.objectSeen = false;
+								this->steveJobs.isTracking = false;
+								throw(Exception("Target has no position data"));
 							}
 						}
 
-						//steve jobs mode
-						if (this->steveJobs.enabled) {
-							//we presume a constant frame rate (necessary for Kalman filter)
-
-							//if it's the first time to see the object again
-							if (!this->steveJobs.objectSeen) {
-								//initialise the tracking
-								this->initPrediction(targetPosition);
-								this->steveJobs.objectSeen = true;
-							}
-
-
-
-							//--
-							//normal kalman operation
-							//--
-							//
-							auto prediction = this->steveJobs.kalmanFilter.predict();
-							for (int i = 0; i < 3; i++) {
-								this->steveJobs.measurmentVector.at<float>(i) = targetPosition[i];
-							}
-							auto corrected = this->steveJobs.kalmanFilter.correct(this->steveJobs.measurmentVector);
-							//
-							//--
-
-
-
-							//--
-							//calculate the future after 30 frames
-							//--
-							//
-							auto futureKalman = KalmanFilter(4, 2, 0);
-#define COPY_ATTRIB(TARGET, SOURCE, ATTRIBUTE) TARGET.ATTRIBUTE = SOURCE.ATTRIBUTE.clone()
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, errorCovPost);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, errorCovPre);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, gain);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, measurementMatrix);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, measurementNoiseCov);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, processNoiseCov);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, statePost);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, statePre);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, transitionMatrix);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp1);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp2);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp3);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp4);
-							COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp5);
-							for (int i = 0; i < this->steveJobs.steps; i++) {
-								futureKalman.statePost = futureKalman.predict();
-							}
-							auto theNextIPad = futureKalman.predict();
-							//
-							//--
-
-
-
-							//copy the future predicted state back into the measurement position we'll use
-							for (int i = 0; i < 3; i++) {
-								targetPosition[i] = theNextIPad.at<float>(i);
-							}
+						//get either the raw position or the predicted position
+						ofVec3f aimFor;
+						if(this->steveJobs.enabled) {
+							aimFor = this->doASteveJobs(target->getPosition());
 						}
-						//perform the move
-						if (doIt) {
-							movingHead->lookAt(targetPosition);
+						else {
+							aimFor = target->getPosition();
 						}
+
+						//perform the lookAt
+						movingHead->lookAt(aimFor);
 					}
 					RULR_CATCH_ALL_TO_ERROR;
 				}
 				else {
-					this->steveJobs.objectSeen = false;
+					this->steveJobs.isTracking = false;
 				}
 			}
 
@@ -144,8 +92,10 @@ namespace ofxRulr {
 
 				auto & jsonPrediction = json["prediction"];
 				{
-					Utils::Serializable::serialize(this->steveJobs.enabled, json["prediction"]);
-					Utils::Serializable::serialize(this->steveJobs.steps, json["prediction"]);
+					Utils::Serializable::serialize(this->steveJobs.enabled, jsonPrediction);
+					Utils::Serializable::serialize(this->steveJobs.steps, jsonPrediction);
+					Utils::Serializable::serialize(this->steveJobs.minimumVelocity, jsonPrediction);
+					Utils::Serializable::serialize(this->steveJobs.maximumAcceleration, jsonPrediction);
 				}
 			}
 
@@ -154,8 +104,10 @@ namespace ofxRulr {
 				Utils::Serializable::deserialize(this->ignoreBlankTransform, json);
 				const auto & jsonPrediction = json["prediction"];
 				{
-					Utils::Serializable::deserialize(this->steveJobs.enabled, json["prediction"]);
-					Utils::Serializable::deserialize(this->steveJobs.steps, json["prediction"]);
+					Utils::Serializable::deserialize(this->steveJobs.enabled, jsonPrediction);
+					Utils::Serializable::deserialize(this->steveJobs.steps, jsonPrediction);
+					Utils::Serializable::deserialize(this->steveJobs.minimumVelocity, jsonPrediction);
+					Utils::Serializable::deserialize(this->steveJobs.maximumAcceleration, jsonPrediction);
 				}
 			}
 
@@ -168,7 +120,130 @@ namespace ofxRulr {
 					inspector->add(Widgets::Title::make("Prediction", Widgets::Title::Level::H3));
 					inspector->add(Widgets::Toggle::make(this->steveJobs.enabled));
 					inspector->add(Widgets::Slider::make(this->steveJobs.steps));
+
+					inspector->add(Widgets::Title::make("Velocity", Widgets::Title::Level::H3));
+					{
+						inspector->add(Widgets::Slider::make(this->steveJobs.minimumVelocity));
+						auto velocityWidget = Widgets::LiveValueHistory::make("Velocity", [this]() {
+							return this->steveJobs.velocity.length();
+						});
+						velocityWidget->onDraw += [this](DrawArguments & args) {
+							if (this->steveJobs.velocityOK) {
+								ofPushStyle();
+								ofFill();
+								ofSetColor(100, 200, 100);
+								ofCircle(args.localBounds.width - 10, 10, 8.0f);
+								ofPopStyle();
+							}
+						};
+						inspector->add(velocityWidget);
+					}
+
+					inspector->add(Widgets::Title::make("Acceleration", Widgets::Title::Level::H3));
+					{
+						inspector->add(Widgets::Slider::make(this->steveJobs.maximumAcceleration));
+						auto accelerationWidget = Widgets::LiveValueHistory::make("Acceleration", [this]() {
+							return this->steveJobs.acceleration.length();
+						});
+						accelerationWidget->onDraw += [this](DrawArguments & args) {
+							if (this->steveJobs.accelerationOK) {
+								ofPushStyle();
+								ofFill();
+								ofSetColor(100, 200, 100);
+								ofCircle(args.localBounds.width - 10, 10, 8.0f);
+								ofPopStyle();
+							}
+						};
+						inspector->add(accelerationWidget);
+					}
 				}
+			}
+
+			//----------
+			ofVec3f AimMovingHeadAt::doASteveJobs(const ofVec3f & targetPosition) {
+				//we presume a constant frame rate (necessary for Kalman filter)
+
+				auto dt = ofGetLastFrameTime();
+
+				if (!this->steveJobs.isTracking) {
+					//initialise the tracking
+					this->initPrediction(targetPosition);
+					this->steveJobs.isTracking = true;
+					this->steveJobs.position = targetPosition;
+				}
+				else {
+					//update the velocity and acceleration
+					auto newVelocity = (targetPosition - this->steveJobs.position) / dt;
+					this->steveJobs.acceleration = (newVelocity - this->steveJobs.velocity) / dt;
+					this->steveJobs.velocity = newVelocity;
+					this->steveJobs.position = targetPosition;
+				}
+
+
+
+				//--
+				//normal kalman operation
+				//--
+				//
+				auto prediction = this->steveJobs.kalmanFilter.predict();
+				for (int i = 0; i < 3; i++) {
+					this->steveJobs.measurmentVector.at<float>(i) = targetPosition[i];
+				}
+				auto corrected = this->steveJobs.kalmanFilter.correct(this->steveJobs.measurmentVector);
+				//
+				//--
+
+
+
+				//--
+				//if we dont' meet the thresholds, just pass through the raw tracking data
+				//--
+				//
+				this->steveJobs.velocityOK = this->steveJobs.velocity.length() > this->steveJobs.minimumVelocity;
+				this->steveJobs.accelerationOK = this->steveJobs.acceleration.length() < this->steveJobs.maximumAcceleration;
+				if(!this->steveJobs.velocityOK && this->steveJobs.accelerationOK) {
+					return targetPosition;
+				}
+				//
+				//--
+
+
+
+				//--
+				//calculate the future after 30 frames
+				//--
+				//
+				auto futureKalman = KalmanFilter(4, 2, 0);
+#define COPY_ATTRIB(TARGET, SOURCE, ATTRIBUTE) TARGET.ATTRIBUTE = SOURCE.ATTRIBUTE.clone()
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, errorCovPost);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, errorCovPre);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, gain);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, measurementMatrix);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, measurementNoiseCov);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, processNoiseCov);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, statePost);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, statePre);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, transitionMatrix);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp1);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp2);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp3);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp4);
+				COPY_ATTRIB(futureKalman, this->steveJobs.kalmanFilter, temp5);
+				for (int i = 0; i < this->steveJobs.steps; i++) {
+					futureKalman.statePost = futureKalman.predict();
+				}
+				auto theNextIPad = futureKalman.predict();
+				//
+				//--
+
+
+
+				//copy the future predicted state back into the measurement position we'll use
+				ofVec3f futurePosition;
+				for (int i = 0; i < 3; i++) {
+					futurePosition[i] = theNextIPad.at<float>(i);
+				}
+				return futurePosition;
 			}
 
 			//----------
@@ -197,6 +272,11 @@ namespace ofxRulr {
 				setIdentity(this->steveJobs.kalmanFilter.processNoiseCov, Scalar::all(1e-4));
 				setIdentity(this->steveJobs.kalmanFilter.measurementNoiseCov, Scalar::all(1));
 				setIdentity(this->steveJobs.kalmanFilter.errorCovPre, Scalar::all(0.1));
+
+				this->steveJobs.isTracking = true;
+				this->steveJobs.position = ofVec3f();
+				this->steveJobs.velocity = ofVec3f();
+				this->steveJobs.acceleration = ofVec3f();
 			}
 		}
 	}

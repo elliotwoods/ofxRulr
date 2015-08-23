@@ -17,16 +17,27 @@ namespace ofxRulr {
 				void deserialize(const Json::Value &);
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 			protected:
+				ofVec3f doASteveJobs(const ofVec3f & targetPosition);
+				void initPrediction(const ofVec3f & startPosition);
+
 				ofParameter<bool> ignoreBlankTransform;
 
 				struct {
 					ofParameter<bool> enabled;
 					ofParameter<float> steps;
-					bool objectSeen;
+					ofParameter<float> minimumVelocity;
+					ofParameter<float> maximumAcceleration;
+
+					bool isTracking;
+					ofVec3f position;
+					ofVec3f velocity;
+					ofVec3f acceleration;
+					bool velocityOK;
+					bool accelerationOK;
+
 					cv::KalmanFilter kalmanFilter;
 					cv::Mat measurmentVector;
 				} steveJobs;
-				void initPrediction(const ofVec3f & startPosition);
 			};
 		}
 	}
