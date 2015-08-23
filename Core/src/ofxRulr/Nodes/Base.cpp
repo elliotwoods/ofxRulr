@@ -14,6 +14,9 @@ namespace ofxRulr {
 	namespace Nodes {
 		//----------
 		Base::Base() {
+			this->parentPatch = nullptr;
+			this->nodeHost = nullptr; 
+			
 			this->initialized = false;
 			this->lastFrameUpdate = 0;
 			this->updateAllInputsFirst = true;

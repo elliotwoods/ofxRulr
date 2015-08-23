@@ -39,7 +39,7 @@ namespace ofxRulr {
 				};
 				typedef map<weak_ptr<AbstractPin>, ExposedPin, owner_less<std::weak_ptr<AbstractPin>>> ExposedPinSet;
 
-				Patch(bool isRootPatch = false);
+				Patch();
 				string getTypeName() const override;
 				void init();
 
@@ -74,8 +74,13 @@ namespace ofxRulr {
 
 				void exposePin(shared_ptr<AbstractPin>, Nodes::Base *);
 				void unexposePin(shared_ptr<AbstractPin>);
-
 				const ExposedPinSet & getExposedPins() const;
+
+				//delayed connection means perform the link on next Patch::update
+				//this is useful when you are deserialising, so all subpatches deserialise before performing linking
+				void connectPin(shared_ptr<AbstractPin>, NodeHost::Index nodeHostIndex, bool delayConnection);
+
+				bool isRootPatch() const;
 			protected:
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 
@@ -90,9 +95,10 @@ namespace ofxRulr {
 
 				shared_ptr<TemporaryLinkHost> newLink;
 				weak_ptr<NodeHost> selection;
-
-				bool isRootPatch;
+				
 				ExposedPinSet exposedPinSet;
+
+				map<weak_ptr<AbstractPin>, NodeHost::Index, owner_less<weak_ptr<AbstractPin>>> delayedConnections;
 			};
 		}
 	}

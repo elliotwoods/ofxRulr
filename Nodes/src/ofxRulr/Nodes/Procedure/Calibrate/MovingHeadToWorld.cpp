@@ -206,6 +206,7 @@ namespace ofxRulr {
 
 					this->lastFindTime = 0.0f;
 					this->residual = 0.0f;
+					this->calibrateOnAdd.set("Calibrate on add", true);
 					this->continuouslyTrack.set("Continuously track", false);
 				}
 
@@ -234,6 +235,8 @@ namespace ofxRulr {
 
 				//---------
 				void MovingHeadToWorld::serialize(Json::Value & json) {
+					Utils::Serializable::serialize(this->calibrateOnAdd, json);
+
 					auto & jsonDataPoints = json["dataPoints"];
 					for (int i = 0; i < this->dataPoints.size(); i++) {
 						jsonDataPoints[i]["world"] << this->dataPoints[i].world;
@@ -246,6 +249,8 @@ namespace ofxRulr {
 
 				//---------
 				void MovingHeadToWorld::deserialize(const Json::Value & json) {
+					Utils::Serializable::deserialize(this->calibrateOnAdd, json);
+					
 					this->dataPoints.clear();
 					const auto & jsonDataPoints = json["dataPoints"];
 					for (const auto & jsonDataPoint : jsonDataPoints) {
@@ -284,6 +289,7 @@ namespace ofxRulr {
 					inspector->add(Widgets::Button::make("Clear captures", [this]() {
 						this->dataPoints.clear();
 					}));
+					inspector->add(Widgets::Toggle::make(this->calibrateOnAdd));
 
 					auto calibrateButton = Widgets::Button::make("Calibrate", [this]() {
 						try {
@@ -306,7 +312,7 @@ namespace ofxRulr {
 								this->performAim();
 							}
 							RULR_CATCH_ALL_TO_ALERT;
-						}));
+						}, 't'));
 						inspector->add(Widgets::Toggle::make(this->continuouslyTrack));
 					}
 				}

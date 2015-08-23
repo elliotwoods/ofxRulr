@@ -19,6 +19,8 @@ namespace ofxRulr {
 				typedef unsigned int Index;
 
 				NodeHost(shared_ptr<Nodes::Base>);
+				Index getIndex() const;
+				void setIndex(Index);
 				shared_ptr<Nodes::Base> getNodeInstance();
 				ofVec2f getInputPinPosition(shared_ptr<AbstractPin>) const;
 				ofVec2f getOutputPinPositionGlobal() const;
@@ -32,6 +34,7 @@ namespace ofxRulr {
 			protected:
 				void rebuildInputs();
 				ofVec2f getOutputPinPosition() const;
+				Index index;
 				shared_ptr<Nodes::Base> node;
 				ofVec2f outputPinPosition;
 

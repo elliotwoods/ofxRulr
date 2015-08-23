@@ -57,6 +57,7 @@ namespace ofxRulr {
 
 					ofxCvGui::PanelPtr view;
 					float lastFindTime;
+					ofParameter<bool> calibrateOnAdd;
 					ofParameter<bool> continuouslyTrack;
 				};
 			}

@@ -168,6 +168,7 @@ namespace ofxRulr {
 		private:
 			friend Graph::Editor::Patch;
 			Graph::Editor::NodeHost * nodeHost;
+			Graph::Editor::Patch * parentPatch;
 
 			Graph::PinSet inputPins;
 			shared_ptr<ofImage> icon;
@@ -177,8 +178,6 @@ namespace ofxRulr {
 			bool initialized;
 			uint64_t lastFrameUpdate;
 			bool updateAllInputsFirst; // flag to say call update on all nodes connected to input pins before update this node
-
-			Graph::Editor::Patch * parentPatch;
 		};
 	}
 }

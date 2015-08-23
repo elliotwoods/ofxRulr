@@ -8,7 +8,7 @@ namespace ofxRulr {
 	namespace Graph {
 #pragma mark FactoryRegister
 		//----------
-		shared_ptr<Editor::NodeHost> FactoryRegister::make(const Json::Value & json) {
+		shared_ptr<Editor::NodeHost> FactoryRegister::make(const Json::Value & json, Graph::Editor::Patch * parentPatch) {
 			const auto nodeTypeName = json["NodeTypeName"].asString();
 
 			auto factory = FactoryRegister::X().get(nodeTypeName);
@@ -17,6 +17,7 @@ namespace ofxRulr {
 			}
 
 			auto node = factory->makeUntyped();
+			node->setParentPatch(parentPatch);
 			node->init();
 
 			node->setName(json["Name"].asString());

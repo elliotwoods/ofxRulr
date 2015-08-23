@@ -244,6 +244,18 @@ namespace ofxRulr {
 					this->rebuildInputs();
 				};
 				this->rebuildInputs();
+
+				this->index = 0;
+			}
+
+			//----------
+			NodeHost::Index NodeHost::getIndex() const {
+				return this->index;
+			}
+
+			//----------
+			void NodeHost::setIndex(Index index) {
+				this->index = index;
 			}
 
 			//----------

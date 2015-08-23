@@ -202,9 +202,8 @@ namespace ofxRulr {
 
 #pragma mark Patch
 			//----------
-			Patch::Patch(bool isRootPatch) {
+			Patch::Patch() {
 				RULR_NODE_INIT_LISTENER;
-				this->isRootPatch = isRootPatch;
 			}
 
 			//----------
@@ -223,8 +222,6 @@ namespace ofxRulr {
 
 			//----------
 			void Patch::serialize(Json::Value & json) {
-				map<shared_ptr<Nodes::Base>, NodeHost::Index> reverseNodeMap;
-
 				//Serialize the nodes
 				auto & nodesJson = json["Nodes"];
 				for (auto & nodeHost : this->nodeHosts) {
@@ -234,10 +231,6 @@ namespace ofxRulr {
 
 					//serialize the ID seperately (since the nodeHost doesn't know this information)
 					nodeHostJson["ID"] = nodeHost.first;
-
-					//add the node to the reverse map (we'll use this when building links in the next section)
-					auto node = nodeHost.second->getNodeInstance();
-					reverseNodeMap.insert(pair<shared_ptr<Nodes::Base>, NodeHost::Index>(node, nodeHost.first));
 				}
 
 				//Serialize the links
@@ -249,10 +242,16 @@ namespace ofxRulr {
 
 					for (auto & input : node->getInputPins()) {
 						auto & inputPinJson = inputPinsJson[input->getName()];
+						if (input->getIsExposedThroughParentPatch()) {
+							inputPinJson["Exposed"] = true;
+						}
 						if (input->isConnected()) {
 							auto linkSource = input->getConnectionUntyped();
-							auto linkSourceIndex = reverseNodeMap[linkSource];
+							auto linkSourceIndex = linkSource->getNodeHost()->getIndex();
 							inputPinJson["SourceNode"] = linkSourceIndex;
+						}
+						else {
+							inputPinJson["SourceNode"] = Json::Value();
 						}
 					}
 				}
@@ -268,9 +267,9 @@ namespace ofxRulr {
 				this->insertPatchlet(json, false);
 
 				const auto & canvasJson = json["Canvas"];
-				ofVec2f canvasScrollPosiition;
-				canvasJson["Scroll"] >> canvasScrollPosiition;
-				this->view->setScrollPosition(canvasScrollPosiition);
+				ofVec2f canvasScrollPosition;
+				canvasJson["Scroll"] >> canvasScrollPosition;
+				this->view->setScrollPosition(canvasScrollPosition);
 
 			}
 
@@ -285,12 +284,13 @@ namespace ofxRulr {
 					auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
 					if (useNewIDs) {
 						//use a new ID instead, store a reference to what we changed
+						//new ID's are generally used for paste operation
 						auto newID = this->getNextFreeNodeHostIndex();
 						reassignIDs.insert(pair<int, int>(ID, newID));
 						ID = newID;
 					}
 					try {
-						auto nodeHost = FactoryRegister::X().make(nodeJson);
+						auto nodeHost = FactoryRegister::X().make(nodeJson, this);
 						if (hasOffset) {
 							auto bounds = nodeHost->getBounds();
 							bounds.x += offset.x;
@@ -302,6 +302,8 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ERROR
 				}
 
+
+
 				//Deserialise links into the nodes
 				for (const auto & nodeJson : nodesJson) {
 					auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
@@ -309,37 +311,52 @@ namespace ofxRulr {
 						ID = reassignIDs.at(ID);
 					}
 
-					//check we successfully created this node before continuing
-					if (this->nodeHosts.find(ID) != this->nodeHosts.end()) {
-						auto nodeHost = this->getNodeHost(ID);
-						if (nodeHost) {
-							auto node = nodeHost->getNodeInstance();
-							const auto & inputPinsJson = nodeJson["InputsPins"];
+					auto nodeHost = this->getNodeHost(ID);
+					if (nodeHost) { // e.g. if this node has been deleted then link needs to be ignored
+						auto node = nodeHost->getNodeInstance();
+						const auto & inputPinsJson = nodeJson["InputsPins"];
 
-							//go through all the input pins
-							for (auto & inputPin : node->getInputPins()) {
-								const auto & inputPinJson = inputPinsJson[inputPin->getName()];
-								if (!inputPinJson.isNull()) { //check this pin has been serialised to a node ID
-									auto sourceNodeHostIndex = (NodeHost::Index) inputPinJson["SourceNode"].asInt();
-									if (useNewIDs) {
-										sourceNodeHostIndex = reassignIDs.at(sourceNodeHostIndex);
-									}
-									auto sourceNodeHost = this->getNodeHost(sourceNodeHostIndex);
+						//go through all the input pins
+						for (auto & inputPin : node->getInputPins()) {
+							const auto & inputPinJson = inputPinsJson[inputPin->getName()];
 
-									//check the node index we want to connect to exists in the patch
-									if (sourceNodeHost) {
-										auto sourceNode = sourceNodeHost->getNodeInstance();
-
-										//make the connection
-										inputPin->connect(sourceNode);
-									}
+							if (!inputPinJson.isNull()) { //check this pin has been serialised
+								if (inputPinJson["SourceNode"].isNull()) {
+									//no connection
+									continue;
 								}
+
+								Patch * patchWhereLinkIsMade;
+								
+								//check if it's been exposed, in which case connection happens in host patch
+								auto inputPinExposedJson = inputPinJson["Exposed"];
+								if (!inputPinExposedJson.isNull() && inputPinExposedJson.asBool()) {
+									//this pin has been exposed to the parent patch
+									inputPin->setIsExposedThroughParentPatch(true);
+									//the expoed pin may then also be connected in the parent patch
+									patchWhereLinkIsMade = this->getParentPatch();
+								}
+								else {
+									patchWhereLinkIsMade = this;
+								}
+
+								//get the source ID. WARNING : doesn't support paste operations + exposed pins
+								auto sourceNodeHostIndex = (NodeHost::Index) inputPinJson["SourceNode"].asInt();
+								if (useNewIDs) {
+									if (patchWhereLinkIsMade != this) {
+										throw(Exception("Patch::insertPatchlet : connecting exposed links isn't currently supported for reassigned ID's"));
+									}
+									sourceNodeHostIndex = reassignIDs.at(sourceNodeHostIndex);
+								}
+								
+								//make the connnection (actually make it later)
+								patchWhereLinkIsMade->connectPin(inputPin, sourceNodeHostIndex, true);
 							}
 						}
 					}
 				}
 
-				this->rebuildLinkHosts();
+				//we rebuild link hosts later since we're using delayed connections
 				this->view->resync();
 			}
 
@@ -350,13 +367,28 @@ namespace ofxRulr {
 
 			//----------
 			void Patch::update() {
-				//update selection
+				//update selection to whatever is being inspected
 				this->selection.reset();
 				for (auto nodeHost : this->nodeHosts) {
 					if (ofxCvGui::isBeingInspected(nodeHost.second->getNodeInstance())) {
 						this->selection = nodeHost.second;
 						break;
 					}
+				}
+
+				//deal with delayed connections
+				if (!this->delayedConnections.empty()) {
+					for (const auto & delayedConnection : this->delayedConnections) {
+						auto pin = delayedConnection.first.lock();
+						if (pin) {
+							try {
+								this->connectPin(pin, delayedConnection.second, false);
+							}
+							RULR_CATCH_ALL_TO_ERROR;
+						}
+					}
+					this->delayedConnections.clear();
+					this->rebuildLinkHosts();
 				}
 			}
 
@@ -388,7 +420,6 @@ namespace ofxRulr {
 
 					//build all links as exposed
 					auto nodeAsPatch = dynamic_pointer_cast<Patch>(targetNode);
-					cout << targetNode->getTypeName();
 					if (nodeAsPatch) {
 						//it's a patch, and might have exposed pins we need to handle
 						const auto & exposedInputs = nodeAsPatch->getExposedPins();
@@ -446,10 +477,9 @@ namespace ofxRulr {
 			void Patch::addNodeHost(shared_ptr<ofxRulr::Graph::Editor::NodeHost> nodeHost, int index) {
 				//all add's go through here or FactoryRegister::add
 				auto node = nodeHost->getNodeInstance();
-				if (!this->isRootPatch) {
-					node->setParentPatch(this);
-				}
-				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
+				node->setParentPatch(this);
+				nodeHost->setIndex(index);
+
 				weak_ptr<NodeHost> nodeHostWeak = nodeHost;
 				nodeHost->onBeginMakeConnection += [this, nodeHostWeak](const shared_ptr<AbstractPin> & inputPin) {
 					auto nodeHost = nodeHostWeak.lock();
@@ -466,6 +496,9 @@ namespace ofxRulr {
 				nodeHost->getNodeInstance()->onAnyInputConnectionChanged += [this]() {
 					this->rebuildLinkHosts();
 				};
+
+				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
+
 				this->view->resync();
 			}
 			
@@ -520,24 +553,8 @@ namespace ofxRulr {
 
 				//if we got something
 				if (json.isObject()) {
-					//let's make it
-					auto nodeHost = FactoryRegister::X().make(json);
-
-					//and add it to the patch
-					this->addNodeHost(nodeHost);
-
-					//and let's offset the bounds in the clipboard for the next paste
-					ofRectangle bounds;
-					json["Bounds"] >> bounds;
-					bounds.x += 20;
-					bounds.y += 20;
-					json["Bounds"] << bounds;
-
-					//push the updated copy into the clipboard
-					stringstream jsonString;
-					Json::StyledStreamWriter styledWriter;
-					styledWriter.write(jsonString, json);
-					ofxClipboard::copy(jsonString.str());
+					//insert it with an offset
+					this->insertPatchlet(json, true, ofVec2f(20, 20));
 				}
 			}
 
@@ -591,6 +608,34 @@ namespace ofxRulr {
 				return this->exposedPinSet;
 			}
 
+			//----------
+			void Patch::connectPin(shared_ptr<AbstractPin> pin, NodeHost::Index nodeHostIndex, bool delayConnection) {
+				if (!delayConnection) {
+					//perform now
+					auto nodeHost = this->getNodeHost(nodeHostIndex);
+					if (!nodeHost) {
+						throw(Exception("Patch::connectPin : nodeHost with index [" + ofToString(nodeHostIndex) + "] not found"));
+					}
+					pin->connect(nodeHost->getNodeInstance()); 
+				}
+				else {
+					//store to perform later
+					pair<weak_ptr<AbstractPin>, NodeHost::Index> inserter;
+					inserter.first = pin;
+					inserter.second = nodeHostIndex;
+					this->delayedConnections.insert(inserter);
+				}
+			}
+
+			//----------
+			bool Patch::isRootPatch() const {
+				if (this->parentPatch) {
+					return false;
+				}
+				else {
+					return true;
+				}
+			}
 			//----------
 			void Patch::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Button::make("Duplicate patch down", [this]() {
