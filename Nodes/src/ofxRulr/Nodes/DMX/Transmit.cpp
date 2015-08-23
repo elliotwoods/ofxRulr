@@ -124,7 +124,7 @@ namespace ofxRulr {
 			//----------
 			void Transmit::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				for (int i = 0; i < this->universes.size(); i++) {
-					inspector->add(Widgets::Title::make("Univerese " + ofToString(i)));
+					inspector->add(Widgets::Title::make("Universe " + ofToString(i)));
 					inspector->add(Widgets::Toggle::make(this->universes[i]->blackoutEnabled));
 				}
 			}

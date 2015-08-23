@@ -186,6 +186,17 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void MovingHead::setPower(bool power) {
+				this->power = power;
+			}
+
+			//----------
+			void MovingHead::setHome() {
+				this->pan.set(0.0f);
+				this->tilt.set(0.0f);
+			}
+
+			//----------
 			void MovingHead::setTiltOffset(float tiltOffset) {
 				this->tiltOffset = tiltOffset;
 			}
@@ -196,8 +207,7 @@ namespace ofxRulr {
 				inspector->add(Widgets::Slider::make(this->pan));
 				inspector->add(Widgets::Slider::make(this->tilt));
 				inspector->add(Widgets::Button::make("Home", [this]() {
-					this->pan.set(0.0f);
-					this->tilt.set(0.0f);
+					this->setHome();
 				}));
 				inspector->add(Widgets::Slider::make(this->brightness));
 				inspector->add(Widgets::Slider::make(this->iris));
