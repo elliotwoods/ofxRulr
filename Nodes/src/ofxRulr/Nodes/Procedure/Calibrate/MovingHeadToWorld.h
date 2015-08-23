@@ -50,13 +50,14 @@ namespace ofxRulr {
 					void addCapture();
 					void deleteLastCapture();
 					void calibrate();
+					void performAim();
 				protected:
-
 					vector<DataPoint> dataPoints;
 					float residual;
 
 					ofxCvGui::PanelPtr view;
-					float lastFind;
+					float lastFindTime;
+					ofParameter<bool> continuouslyTrack;
 				};
 			}
 		}

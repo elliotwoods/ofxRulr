@@ -7,6 +7,8 @@
 
 #include "ofxCvGui/Widgets/LiveValue.h"
 #include "ofxCvGui/Widgets/Button.h"
+#include "ofxCvGui/Widgets/Title.h"
+#include "ofxCvGui/Widgets/Toggle.h"
 
 #include "../../../addons/ofxGLM/src/ofxGLM.h"
 
@@ -202,8 +204,9 @@ namespace ofxRulr {
 					};
 					this->view = view;
 
-					this->lastFind = 0.0f;
+					this->lastFindTime = 0.0f;
 					this->residual = 0.0f;
+					this->continuouslyTrack.set("Continuously track", false);
 				}
 
 				//---------
@@ -216,8 +219,16 @@ namespace ofxRulr {
 					auto movingHead = this->getInput<DMX::MovingHead>();
 					if (movingHead) {
 						//fade the brightness based on last find time
-						float ageOfLastFind = ofGetElapsedTimef() - lastFind;
+						float ageOfLastFind = ofGetElapsedTimef() - lastFindTime;
 						movingHead->setBrightness(ofMap(ageOfLastFind, 0, 1.0f, 1.0f, 0.2f, true));
+
+						if (this->continuouslyTrack) {
+							try {
+								this->throwIfMissingAConnection<Item::RigidBody>();
+								movingHead->lookAt(this->getInput<Item::RigidBody>()->getPosition());
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+						}
 					}
 				}
 
@@ -284,9 +295,20 @@ namespace ofxRulr {
 					calibrateButton->setHeight(100.0f);
 					inspector->add(calibrateButton);
 
-					inspector->add(Widgets::LiveValue<float>::make("Residual", [this]() {
-						return this->residual;
-					}));
+					inspector->add(Widgets::Title::make("Tracking", Widgets::Title::Level::H2));
+					{
+						inspector->add(Widgets::LiveValue<float>::make("Residual", [this]() {
+							return this->residual;
+						}));
+
+						inspector->add(Widgets::Button::make("Aim at target", [this]() {
+							try {
+								this->performAim();
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+						}));
+						inspector->add(Widgets::Toggle::make(this->continuouslyTrack));
+					}
 				}
 
 				//---------
@@ -337,7 +359,7 @@ namespace ofxRulr {
 					};
 
 					this->dataPoints.push_back(dataPoint);
-					this->lastFind = ofGetElapsedTimef();
+					this->lastFindTime = ofGetElapsedTimef();
 					Utils::playSuccessSound();
 				}
 
@@ -372,6 +394,14 @@ namespace ofxRulr {
 					}
 
 					Utils::playSuccessSound();
+				}
+
+				//---------
+				void MovingHeadToWorld::performAim() {
+					this->throwIfMissingAnyConnection();
+					auto movingHead = this->getInput<DMX::MovingHead>();
+					auto target = this->getInput<Item::RigidBody>();
+					movingHead->lookAt(target->getPosition());
 				}
 			}
 		}
