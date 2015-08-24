@@ -7,6 +7,8 @@
 
 #include "ofxCvGui/Widgets/LiveValue.h"
 #include "ofxCvGui/Widgets/Button.h"
+#include "ofxCvGui/Widgets/Title.h"
+#include "ofxCvGui/Widgets/Toggle.h"
 
 #include "../../../addons/ofxGLM/src/ofxGLM.h"
 
@@ -202,8 +204,10 @@ namespace ofxRulr {
 					};
 					this->view = view;
 
-					this->lastFind = 0.0f;
+					this->lastFindTime = 0.0f;
 					this->residual = 0.0f;
+					this->calibrateOnAdd.set("Calibrate on add", true);
+					this->continuouslyTrack.set("Continuously track", false);
 				}
 
 				//---------
@@ -216,13 +220,23 @@ namespace ofxRulr {
 					auto movingHead = this->getInput<DMX::MovingHead>();
 					if (movingHead) {
 						//fade the brightness based on last find time
-						float ageOfLastFind = ofGetElapsedTimef() - lastFind;
+						float ageOfLastFind = ofGetElapsedTimef() - lastFindTime;
 						movingHead->setBrightness(ofMap(ageOfLastFind, 0, 1.0f, 1.0f, 0.2f, true));
+
+						if (this->continuouslyTrack) {
+							try {
+								this->throwIfMissingAConnection<Item::RigidBody>();
+								movingHead->lookAt(this->getInput<Item::RigidBody>()->getPosition());
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+						}
 					}
 				}
 
 				//---------
 				void MovingHeadToWorld::serialize(Json::Value & json) {
+					Utils::Serializable::serialize(this->calibrateOnAdd, json);
+
 					auto & jsonDataPoints = json["dataPoints"];
 					for (int i = 0; i < this->dataPoints.size(); i++) {
 						jsonDataPoints[i]["world"] << this->dataPoints[i].world;
@@ -235,6 +249,8 @@ namespace ofxRulr {
 
 				//---------
 				void MovingHeadToWorld::deserialize(const Json::Value & json) {
+					Utils::Serializable::deserialize(this->calibrateOnAdd, json);
+					
 					this->dataPoints.clear();
 					const auto & jsonDataPoints = json["dataPoints"];
 					for (const auto & jsonDataPoint : jsonDataPoints) {
@@ -273,6 +289,7 @@ namespace ofxRulr {
 					inspector->add(Widgets::Button::make("Clear captures", [this]() {
 						this->dataPoints.clear();
 					}));
+					inspector->add(Widgets::Toggle::make(this->calibrateOnAdd));
 
 					auto calibrateButton = Widgets::Button::make("Calibrate", [this]() {
 						try {
@@ -284,9 +301,20 @@ namespace ofxRulr {
 					calibrateButton->setHeight(100.0f);
 					inspector->add(calibrateButton);
 
-					inspector->add(Widgets::LiveValue<float>::make("Residual", [this]() {
-						return this->residual;
-					}));
+					inspector->add(Widgets::Title::make("Tracking", Widgets::Title::Level::H2));
+					{
+						inspector->add(Widgets::LiveValue<float>::make("Residual", [this]() {
+							return this->residual;
+						}));
+
+						inspector->add(Widgets::Button::make("Aim at target", [this]() {
+							try {
+								this->performAim();
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+						}, 't'));
+						inspector->add(Widgets::Toggle::make(this->continuouslyTrack));
+					}
 				}
 
 				//---------
@@ -337,7 +365,7 @@ namespace ofxRulr {
 					};
 
 					this->dataPoints.push_back(dataPoint);
-					this->lastFind = ofGetElapsedTimef();
+					this->lastFindTime = ofGetElapsedTimef();
 					Utils::playSuccessSound();
 				}
 
@@ -372,6 +400,14 @@ namespace ofxRulr {
 					}
 
 					Utils::playSuccessSound();
+				}
+
+				//---------
+				void MovingHeadToWorld::performAim() {
+					this->throwIfMissingAnyConnection();
+					auto movingHead = this->getInput<DMX::MovingHead>();
+					auto target = this->getInput<Item::RigidBody>();
+					movingHead->lookAt(target->getPosition());
 				}
 			}
 		}
