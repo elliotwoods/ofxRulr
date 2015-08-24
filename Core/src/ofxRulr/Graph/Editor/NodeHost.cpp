@@ -9,6 +9,8 @@ namespace ofxRulr {
 		namespace Editor {
 			//----------
 			NodeHost::NodeHost(shared_ptr<Nodes::Base> node) {
+				node->setNodeHost(this);
+
 				/*
 				The NodeHost Gui element is a tree of elements:
 

@@ -33,6 +33,12 @@
 	}
 
 namespace ofxRulr {
+	namespace Graph {
+		namespace Editor {
+			class NodeHost;
+		}
+	}
+
 	namespace Nodes {
 		class Base : public ofxCvGui::IInspectable, public Utils::Serializable {
 		public:
@@ -46,7 +52,10 @@ namespace ofxRulr {
 
 			string getName() const override;
 			void setName(const string);
-			
+
+			void setNodeHost(Graph::Editor::NodeHost *);
+			Graph::Editor::NodeHost * getNodeHost() const;
+
 			///Calling getIcon caches the icon and the color
 			shared_ptr<ofImage> getIcon();
 			const ofColor & getColor();
@@ -155,6 +164,7 @@ namespace ofxRulr {
 			void setUpdateAllInputsFirst(bool);
 			bool getUpdateAllInputsFirst() const;
 		private:
+			Graph::Editor::NodeHost * nodeHost;
 			Graph::PinSet inputPins;
 			shared_ptr<ofImage> icon;
 			shared_ptr<ofColor> color;

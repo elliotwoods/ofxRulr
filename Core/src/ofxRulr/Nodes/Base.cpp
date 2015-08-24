@@ -1,5 +1,6 @@
 #include "Base.h"
 
+#include "ofxRulr/Graph/Editor/NodeHost.h"
 #include "../Exception.h"
 #include "Graphics.h"
 
@@ -73,6 +74,16 @@ namespace ofxRulr {
 		//----------
 		void Base::setName(const string name) {
 			this->name = name;
+		}
+
+		//----------
+		void Base::setNodeHost(Graph::Editor::NodeHost * nodeHost) {
+			this->nodeHost = nodeHost;
+		}
+
+		//----------
+		Graph::Editor::NodeHost * Base::getNodeHost() const {
+			return this->nodeHost;
 		}
 
 		//----------

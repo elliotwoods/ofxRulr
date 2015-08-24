@@ -19,8 +19,8 @@ namespace ofxRulr {
 			}
 
 			//----------
-			Fixture::Channel::Channel(string name) {
-				this->value.set(name, 0, 0, 255);
+			Fixture::Channel::Channel(string name, DMX::Value defaultValue) {
+				this->value.set(name, defaultValue, 0, 255);
 				this->enabled.set("Enabled", true);
 			}
 
@@ -28,6 +28,11 @@ namespace ofxRulr {
 			Fixture::Channel::Channel(string name, function<DMX::Value()> generateValue) : 
 			Channel(name) {
 				this->generateValue = generateValue;
+			}
+
+			//----------
+			void Fixture::Channel::set(DMX::Value value) {
+				this->value.set(ofClamp(value, 0, 255));
 			}
 
 #pragma mark Fixture
@@ -108,8 +113,28 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void Fixture::setChannelIndex(DMX::ChannelIndex channelIndex) {
+				this->channelIndex = channelIndex;
+			}
+
+			//----------
 			const vector<shared_ptr<Fixture::Channel>> & Fixture::getChannels() const {
 				return this->channels;
+			}
+
+			//----------
+			shared_ptr<Fixture::Channel> Fixture::getChannel(DMX::ChannelIndex index) {
+				return this->channels[index];
+			}
+
+			//----------
+			shared_ptr<Fixture::Channel> Fixture::getChannel(string name) {
+				for (auto channel : this->channels) {
+					if (channel->value.getName() == name) {
+						return channel;
+					}
+				}
+				return shared_ptr<Fixture::Channel>();
 			}
 
 			//----------

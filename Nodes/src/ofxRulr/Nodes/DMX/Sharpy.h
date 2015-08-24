@@ -17,6 +17,8 @@ namespace ofxRulr {
 
 				void setColorIndex(int);
 				void reboot();
+
+				
 			protected:
 				void updateVectorChannelsEnabled();
 				vector<shared_ptr<Channel>> vectorChannels;

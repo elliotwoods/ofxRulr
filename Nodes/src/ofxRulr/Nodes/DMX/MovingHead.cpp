@@ -4,6 +4,7 @@
 #include "ofxCvGui/Widgets/EditableValue.h"
 #include "ofxCvGui/Widgets/Title.h"
 #include "ofxCvGui/Widgets/Toggle.h"
+#include "ofxCvGui/Widgets/Indicator.h"
 #include "ofxCvGui/Widgets/Button.h"
 
 using namespace ofxCvGui;
@@ -28,7 +29,7 @@ namespace ofxRulr {
 				this->iris.set("Iris", 1.0f, 0.0f, 1.0f);
 				this->power.set("Power", false);
 				this->powerCircuit.set("Power circuit (mutex)", "main ring");
-				this->pauseBetweenPowerUps.set("Pause between power ups [s]", 5);
+				this->pauseBetweenPowerUps.set("Pause between power ups [s]", 2);
 				this->tiltOffset.set("Tilt offset", 0.0f, -90.0f, 90.0f);
 
 				this->powerStateSignal = false;
@@ -64,9 +65,11 @@ namespace ofxRulr {
 								//ok it's time, let's boot
 								this->powerStateSignal = true;
 								lastPowerUpOnThisCircuit = now;
+								cout << "Powering up " << this->getName() << " at " << now << "s" << endl;
 							}
 							else {
 								//no let's wait and have another see next frame
+								float x = 0.0f; //in case we want to put a break point here
 							}
 						}
 						lastPowerUpPerCircuitMutex.unlock();
@@ -202,6 +205,18 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void MovingHead::copyFrom(shared_ptr<MovingHead> other) {
+				this->pan = other->pan;
+				this->tilt = other->tilt;
+				this->brightness = other->brightness;
+				this->iris = other->iris;
+				this->power = other->power;
+				this->powerCircuit = other->powerCircuit;
+				this->pauseBetweenPowerUps = other->pauseBetweenPowerUps;
+				this->tiltOffset = other->tiltOffset;
+			}
+
+			//----------
 			void MovingHead::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Title::make("DMX::MovingHead", Widgets::Title::Level::H2));
 				inspector->add(Widgets::Slider::make(this->pan));
@@ -214,6 +229,9 @@ namespace ofxRulr {
 				inspector->add(Widgets::Toggle::make(this->power));
 				inspector->add(Widgets::EditableValue<string>::make(this->powerCircuit));
 				inspector->add(Widgets::EditableValue<int>::make(this->pauseBetweenPowerUps));
+				inspector->add(Widgets::Indicator::make("Power status", [this]() {
+					return (Widgets::Indicator::Status) this->powerStateSignal;
+				}));
 				inspector->add(Widgets::Slider::make(this->tiltOffset));
 				
 			}

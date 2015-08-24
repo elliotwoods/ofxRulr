@@ -29,6 +29,7 @@ namespace ofxRulr {
 				void setHome();
 
 				void setTiltOffset(float);
+				void copyFrom(shared_ptr<MovingHead>);
 			protected:
 				void populateInspector(ofxCvGui::ElementGroupPtr);
 
