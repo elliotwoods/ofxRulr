@@ -9,6 +9,8 @@ namespace ofxRulr {
 			public:
 				Sharpy();
 				void init();
+				void update();
+
 				string getTypeName() const;
 
 				void serialize(Json::Value &);
@@ -17,12 +19,15 @@ namespace ofxRulr {
 
 				void setColorIndex(int);
 				void reboot();
-
-				
 			protected:
 				void updateVectorChannelsEnabled();
 				vector<shared_ptr<Channel>> vectorChannels;
 				ofParameter<bool> vectorChannelsEnabled;
+			
+				struct {
+					bool rebooting;
+					float rebootBeginTime;
+				} rebootState;
 			};
 		}
 	}

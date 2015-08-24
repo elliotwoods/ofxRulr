@@ -14,6 +14,7 @@ namespace ofxRulr {
 
 			//----------
 			void Sharpy::init() {
+				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
@@ -81,11 +82,19 @@ namespace ofxRulr {
 				}
 
 				this->vectorChannelsEnabled.set("Vector channels enabled", false);
+
+				this->rebootState.rebooting = false;
+				this->rebootState.rebootBeginTime = 0.0f;
 			}
 
 			//----------
 			string Sharpy::getTypeName() const {
 				return "DMX::Sharpy";
+			}
+
+			//----------
+			void Sharpy::update() {
+
 			}
 
 			//----------
@@ -119,7 +128,8 @@ namespace ofxRulr {
 
 			//----------
 			void Sharpy::reboot() {
-
+				this->rebootState.rebooting = true;
+				this->rebootState.rebootBeginTime = ofGetElapsedTimef();
 			}
 
 			//----------
