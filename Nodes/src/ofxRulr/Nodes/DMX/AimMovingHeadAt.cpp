@@ -174,8 +174,9 @@ namespace ofxRulr {
 				else {
 					//update the velocity and acceleration
 					auto newVelocity = (targetPosition - this->steveJobs.position) / dt;
-					this->steveJobs.acceleration = (newVelocity - this->steveJobs.velocity) / dt;
-					this->steveJobs.velocity = newVelocity;
+					auto newAcceleration = ((newVelocity - this->steveJobs.velocity) / dt) / ofGetFrameRate();
+					this->steveJobs.acceleration = this->steveJobs.acceleration * 0.99f + newAcceleration * 0.01f;
+					this->steveJobs.velocity = this->steveJobs.velocity * 0.99f + newVelocity * 0.01f;
 					this->steveJobs.position = targetPosition;
 				}
 
