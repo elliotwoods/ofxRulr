@@ -94,7 +94,15 @@ namespace ofxRulr {
 
 			//----------
 			void Sharpy::update() {
-
+				if (this->rebootState.rebooting) {
+					this->getChannel("Reset")->set(255);
+					if (ofGetElapsedTimef() - this->rebootState.rebootBeginTime > 10.0f) {
+						this->rebootState.rebooting = false;
+					}
+				}
+				else {
+					this->getChannel("Reset")->set(0);
+				}
 			}
 
 			//----------
