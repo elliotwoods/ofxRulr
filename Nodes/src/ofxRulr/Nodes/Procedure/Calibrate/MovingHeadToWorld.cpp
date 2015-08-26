@@ -43,7 +43,7 @@ namespace ofxRulr {
 					//first check for nan's
 					bool foundNan = false;
 					for (int i = 0; i < 3; i++) {
-						if (isnan(this->initialPosition[i]) || isnan(this->initialRotationEuler[i]) {
+						if (isnan(this->initialPosition[i]) || isnan(this->initialRotationEuler[i])) {
 							foundNan |= true;
 							break;
 						}
