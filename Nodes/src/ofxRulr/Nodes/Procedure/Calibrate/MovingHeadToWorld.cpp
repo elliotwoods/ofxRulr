@@ -39,14 +39,37 @@ namespace ofxRulr {
 				//---------
 				void MovingHeadToWorld::Model::resetParameters() {
 					auto parameters = this->getParameters();
-					*parameters++ = this->initialPosition[0];
-					*parameters++ = this->initialPosition[1];
-					*parameters++ = this->initialPosition[2];
+					
+					//first check for nan's
+					bool foundNan = false;
+					for (int i = 0; i < 3; i++) {
+						if (isnan(this->initialPosition[i]) || isnan(this->initialRotationEuler[i]) {
+							foundNan |= true;
+							break;
+						}
+					}
 
-					*parameters++ = this->initialRotationEuler[0];
-					*parameters++ = this->initialRotationEuler[1];
-					*parameters++ = this->initialRotationEuler[2];
+					//if our input is valid then use it
+					if (!foundNan) {
+						*parameters++ = this->initialPosition[0];
+						*parameters++ = this->initialPosition[1];
+						*parameters++ = this->initialPosition[2];
 
+						*parameters++ = this->initialRotationEuler[0];
+						*parameters++ = this->initialRotationEuler[1];
+						*parameters++ = this->initialRotationEuler[2];
+					}
+					else {
+						//use zeros otherwise
+						*parameters++ = 0.0;
+						*parameters++ = 0.0;
+						*parameters++ = 0.0;
+
+						*parameters++ = 0.0;
+						*parameters++ = 0.0;
+						*parameters++ = 0.0;
+					}
+					
 					*parameters++ = 0.0; // tiltOffset
 				}
 
@@ -293,7 +316,12 @@ namespace ofxRulr {
 
 					auto calibrateButton = Widgets::Button::make("Calibrate", [this]() {
 						try {
-							this->calibrate();
+							if (this->calibrate()) {
+								Utils::playSuccessSound();
+							}
+							else {
+								Utils::playFailSound();
+							}
 						}
 						RULR_CATCH_ALL_TO_ALERT
 
@@ -377,29 +405,47 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void MovingHeadToWorld::calibrate() {
+				bool MovingHeadToWorld::calibrate(int iterations) {
 					this->throwIfMissingAConnection<DMX::MovingHead>();
 					auto movingHead = this->getInput<DMX::MovingHead>();
 
-					auto fit = ofxNonLinearFit::Fit<Model>();
-					auto model = Model(movingHead->getPosition(), movingHead->getRotationEuler());
+					bool valid = true;
 
-					double residual;
-					fit.optimise(model, &this->dataPoints, &residual);
+					//perform calibrate multiple times (sometimes it takes more than once to get the result)
+					for (int i = 0; i < 5; i++) {
+						auto fit = ofxNonLinearFit::Fit<Model>();
+						auto model = Model(movingHead->getPosition(), movingHead->getRotationEuler());
 
-					movingHead->setTransform(model.getTransform());
-					movingHead->setTiltOffset(model.getTiltOffset());
+						double residual;
+						fit.optimise(model, &this->dataPoints, &residual);
 
-					this->residual = residual;
+						//get out the result
+						const auto & resultTransform = model.getTransform();
+						const auto resultTiltOffset = model.getTiltOffset();
 
-					for (auto & dataPoint : this->dataPoints) {
-						auto dataPointEvaluated = dataPoint;
-						model.evaluate(dataPointEvaluated);
-						dataPoint.residual = model.getResidual(dataPoint);
-						dataPoint.panTiltEvaluated = dataPointEvaluated.panTilt;
+						//check if result is valid
+						auto valid = !resultTransform.isNaN() && !isnan(resultTiltOffset);
+
+						if (valid) {
+							movingHead->setTransform(resultTransform);
+							movingHead->setTiltOffset(resultTiltOffset);
+
+							this->residual = residual;
+
+							for (auto & dataPoint : this->dataPoints) {
+								auto dataPointEvaluated = dataPoint;
+								model.evaluate(dataPointEvaluated);
+								dataPoint.residual = model.getResidual(dataPoint);
+								dataPoint.panTiltEvaluated = dataPointEvaluated.panTilt;
+							}
+						}
+						else {
+							valid = false;
+							break;
+						}
 					}
-
-					Utils::playSuccessSound();
+					
+					return valid;
 				}
 
 				//---------

@@ -49,7 +49,7 @@ namespace ofxRulr {
 					ofxCvGui::PanelPtr getView() override;
 					void addCapture();
 					void deleteLastCapture();
-					void calibrate();
+					bool calibrate(int iterations = 3);
 					void performAim();
 				protected:
 					vector<DataPoint> dataPoints;
