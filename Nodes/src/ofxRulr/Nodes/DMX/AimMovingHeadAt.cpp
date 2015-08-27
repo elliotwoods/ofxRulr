@@ -34,6 +34,12 @@ namespace ofxRulr {
 
 				this->ignoreBlankTransform.set("Ignore blank transform", true);
 
+				{
+					this->objectPositionOffset[0].set("Position offset X", 0.0f, -1.0f, 1.0f);
+					this->objectPositionOffset[1].set("Position offset Y", 0.0f, -1.0f, 1.0f);
+					this->objectPositionOffset[2].set("Position offset Z", 0.0f, -1.0f, 1.0f);
+				}
+
 				//prediction
 				{
 					this->steveJobs.enabled.set("Enabled", false);
@@ -76,8 +82,12 @@ namespace ofxRulr {
 							aimFor = target->getPosition();
 						}
 
+						//calculate the position offset in target coords
+						const auto objectRotation = target->getRotationQuat();
+						const auto offset = this->getObjectPositionOffset() * objectRotation;
+
 						//perform the lookAt
-						movingHead->lookAt(aimFor);
+						movingHead->lookAt(aimFor + offset);
 					}
 					RULR_CATCH_ALL_TO_ERROR;
 				}
@@ -89,6 +99,10 @@ namespace ofxRulr {
 			//----------
 			void AimMovingHeadAt::serialize(Json::Value & json) {
 				Utils::Serializable::serialize(this->ignoreBlankTransform, json);
+
+				for (int i = 0; i < 3; i++) {
+					Utils::Serializable::serialize(this->objectPositionOffset[i], json);
+				}
 
 				auto & jsonPrediction = json["prediction"];
 				{
@@ -102,6 +116,11 @@ namespace ofxRulr {
 			//----------
 			void AimMovingHeadAt::deserialize(const Json::Value & json) {
 				Utils::Serializable::deserialize(this->ignoreBlankTransform, json);
+
+				for (int i = 0; i < 3; i++) {
+					Utils::Serializable::deserialize(this->objectPositionOffset[i], json);
+				}
+
 				const auto & jsonPrediction = json["prediction"];
 				{
 					Utils::Serializable::deserialize(this->steveJobs.enabled, jsonPrediction);
@@ -114,6 +133,11 @@ namespace ofxRulr {
 			//----------
 			void AimMovingHeadAt::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
 				inspector->add(Widgets::Toggle::make(this->ignoreBlankTransform));
+
+				inspector->add(Widgets::Title::make("Position offset", Widgets::Title::Level::H2));
+				for (int i = 0; i < 3; i++) {
+					inspector->add(Widgets::Slider::make(this->objectPositionOffset[i]));
+				}
 
 				inspector->add(Widgets::Title::make("Steve Jobs Mode", Widgets::Title::Level::H2));
 				{
@@ -156,6 +180,18 @@ namespace ofxRulr {
 						};
 						inspector->add(accelerationWidget);
 					}
+				}
+			}
+
+			//----------
+			const ofVec3f & AimMovingHeadAt::getObjectPositionOffset() const {
+				return ofVec3f(this->objectPositionOffset[0], this->objectPositionOffset[1], this->objectPositionOffset[2]);
+			}
+
+			//----------
+			void AimMovingHeadAt::setObjectPositionOffset(const ofVec3f & objectPositionOffset) {
+				for (int i = 0; i < 3; i++) {
+					this->objectPositionOffset[i] = objectPositionOffset[i];
 				}
 			}
 

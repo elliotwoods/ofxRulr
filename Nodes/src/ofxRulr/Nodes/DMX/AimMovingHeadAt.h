@@ -16,11 +16,17 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 				void populateInspector(ofxCvGui::ElementGroupPtr);
+
+				//A position offset within the objects coordinates
+				//We will apply the object's rotation to this
+				const ofVec3f & getObjectPositionOffset() const;
+				void setObjectPositionOffset(const ofVec3f &);
 			protected:
 				ofVec3f doASteveJobs(const ofVec3f & targetPosition);
 				void initPrediction(const ofVec3f & startPosition);
 
 				ofParameter<bool> ignoreBlankTransform;
+				ofParameter<float> objectPositionOffset[3];
 
 				struct {
 					ofParameter<bool> enabled;
