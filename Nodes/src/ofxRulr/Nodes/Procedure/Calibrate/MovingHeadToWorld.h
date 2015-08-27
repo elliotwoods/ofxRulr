@@ -52,11 +52,13 @@ namespace ofxRulr {
 					bool calibrate(int iterations = 3);
 					void performAim();
 				protected:
+					void setPanTiltOrAlert(const ofVec2f &);
 					vector<DataPoint> dataPoints;
 					float residual;
 
 					ofxCvGui::PanelPtr view;
 					float lastFindTime;
+					ofParameter<float> beamBrightness;
 					ofParameter<bool> calibrateOnAdd;
 					ofParameter<bool> continuouslyTrack;
 				};
