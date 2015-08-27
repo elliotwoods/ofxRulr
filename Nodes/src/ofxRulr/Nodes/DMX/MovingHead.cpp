@@ -162,6 +162,10 @@ namespace ofxRulr {
 			//----------
 			ofVec2f MovingHead::getPanTiltForTargetInObjectSpace(const ofVec3f & objectSpacePoint, float tiltOffset) {
 				auto pan = atan2(objectSpacePoint.z, objectSpacePoint.x) * RAD_TO_DEG - 90.0f;
+				if (pan < -180.0f) {
+					pan += 360.0f;
+				}
+
 				auto tilt = acos(-objectSpacePoint.y / objectSpacePoint.length()) * RAD_TO_DEG; // will always produce positive tilt
 				return ofVec2f(pan, tilt + tiltOffset);
 			}
