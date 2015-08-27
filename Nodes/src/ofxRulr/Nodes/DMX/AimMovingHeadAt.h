@@ -21,6 +21,9 @@ namespace ofxRulr {
 				//We will apply the object's rotation to this
 				const ofVec3f & getObjectPositionOffset() const;
 				void setObjectPositionOffset(const ofVec3f &);
+
+				string getTargetName();
+
 			protected:
 				ofVec3f doASteveJobs(const ofVec3f & targetPosition);
 				void initPrediction(const ofVec3f & startPosition);
