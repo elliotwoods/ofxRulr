@@ -38,6 +38,7 @@ namespace ofxRulr {
 					ofParameter<float> maximumAcceleration;
 
 					bool isTracking;
+					ofQuaternion rotation;
 					ofVec3f position;
 					ofVec3f velocity;
 					ofVec3f acceleration;

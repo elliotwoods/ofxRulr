@@ -19,6 +19,7 @@ namespace ofxRulr {
 
 				void setColorIndex(int);
 				void reboot();
+				void lampOn(bool on = true);
 			protected:
 				void updateVectorChannelsEnabled();
 				vector<shared_ptr<Channel>> vectorChannels;
@@ -28,6 +29,12 @@ namespace ofxRulr {
 					bool rebooting;
 					float rebootBeginTime;
 				} rebootState;
+
+				struct {
+					bool changing;
+					float beginTime;
+					int value;
+				} lampState;
 			};
 		}
 	}

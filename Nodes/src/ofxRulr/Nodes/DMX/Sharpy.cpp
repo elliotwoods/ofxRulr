@@ -63,12 +63,7 @@ namespace ofxRulr {
 				this->channels.push_back(make_shared<Channel>("Function"));
 				this->channels.push_back(make_shared<Channel>("Reset"));
 				this->channels.push_back(make_shared<Channel>("Lamp Control", [this]() {
-					if (this->powerStateSignal) {
-						return 255;
-					}
-					else {
-						return 50;
-					}
+					return (this->lampState.value);
 				}));
 				
 				//vector channels
@@ -85,6 +80,9 @@ namespace ofxRulr {
 
 				this->rebootState.rebooting = false;
 				this->rebootState.rebootBeginTime = 0.0f;
+
+				this->lampState.changing = false;
+				this->lampState.beginTime = 0.0f;
 			}
 
 			//----------
@@ -102,6 +100,13 @@ namespace ofxRulr {
 				}
 				else {
 					this->getChannel("Reset")->set(0);
+				}
+				// lamp
+				if (this->lampState.changing) {
+					this->getChannel("Lamp Control")->set(this->lampState.value);
+					if (ofGetElapsedTimef() - this->lampState.beginTime > 6.0f) {
+						this->lampState.changing = false;
+					}
 				}
 			}
 
@@ -138,6 +143,12 @@ namespace ofxRulr {
 			void Sharpy::reboot() {
 				this->rebootState.rebooting = true;
 				this->rebootState.rebootBeginTime = ofGetElapsedTimef();
+			}
+
+			void Sharpy::lampOn(bool on) {
+				this->lampState.changing = true;
+				this->lampState.beginTime = ofGetElapsedTimef();
+				this->lampState.value = (on) ? 255 : 26;
 			}
 
 			//----------

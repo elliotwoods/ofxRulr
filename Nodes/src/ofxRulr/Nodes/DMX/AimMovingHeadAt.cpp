@@ -83,11 +83,13 @@ namespace ofxRulr {
 						}
 
 						//calculate the position offset in target coords
-						const auto objectRotation = target->getRotationQuat();
-						const auto offset = this->getObjectPositionOffset() * objectRotation;
+						steveJobs.rotation = this->steveJobs.rotation * 0.9f + target->getRotationQuat() * 0.1f;
+						ofVec3f posOffset = this->getObjectPositionOffset();
+						const auto offset = posOffset * steveJobs.rotation;
 
 						//perform the lookAt
-						movingHead->lookAt(aimFor + offset);
+						movingHead->lookAt(aimFor + posOffset);
+						//movingHead->lookAt(aimFor + offset);
 					}
 					RULR_CATCH_ALL_TO_ERROR;
 				}
