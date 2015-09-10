@@ -31,7 +31,6 @@ namespace ofxRulr {
 				} rebootState;
 
 				struct {
-					bool changing;
 					float beginTime;
 					int value;
 				} lampState;

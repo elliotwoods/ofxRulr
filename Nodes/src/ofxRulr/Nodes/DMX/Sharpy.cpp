@@ -81,8 +81,8 @@ namespace ofxRulr {
 				this->rebootState.rebooting = false;
 				this->rebootState.rebootBeginTime = 0.0f;
 
-				this->lampState.changing = false;
 				this->lampState.beginTime = 0.0f;
+				this->lampState.value = 0;
 			}
 
 			//----------
@@ -102,11 +102,12 @@ namespace ofxRulr {
 					this->getChannel("Reset")->set(0);
 				}
 				// lamp
-				if (this->lampState.changing) {
+				float nowTime = ofGetElapsedTimef();
+				if (nowTime - this->lampState.beginTime < 10.0f) {
 					this->getChannel("Lamp Control")->set(this->lampState.value);
-					if (ofGetElapsedTimef() - this->lampState.beginTime > 6.0f) {
-						this->lampState.changing = false;
-					}
+				}
+				else {
+					this->getChannel("Lamp Control")->set(0);
 				}
 			}
 
@@ -146,9 +147,8 @@ namespace ofxRulr {
 			}
 
 			void Sharpy::lampOn(bool on) {
-				this->lampState.changing = true;
 				this->lampState.beginTime = ofGetElapsedTimef();
-				this->lampState.value = (on) ? 255 : 26;
+				this->lampState.value = (on) ? 255 : 100;
 			}
 
 			//----------
