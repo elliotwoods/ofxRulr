@@ -10,6 +10,8 @@
 
 using namespace ofxCvGui;
 
+OFXSINGLETON_DEFINE(ofxRulr::Graph::World);
+
 namespace ofxRulr {
 	namespace Graph {
 		//-----------
@@ -100,7 +102,8 @@ namespace ofxRulr {
 			//--
 			// SUMMARY VIEW
 			//
-			auto summary = MAKE(Summary, *this);
+			auto summary = make_shared<Summary>();
+			summary->setWorld(*this);
 			summary->init();
 			summary->setName("World");
 			this->add(summary); // we intentionally do this after building the Node grid

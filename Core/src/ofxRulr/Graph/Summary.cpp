@@ -10,9 +10,15 @@ using namespace ofxCvGui;
 namespace ofxRulr {
 	namespace Graph {
 		//----------
-		Summary::Summary(const Utils::Set<Nodes::Base> & world) :
-		world(world) {
+		Summary::Summary() :
+		world() {
 			RULR_NODE_INIT_LISTENER;
+			this->world = nullptr;
+		}
+
+		//----------
+		string Summary::getTypeName() const {
+			return "Summary";
 		}
 
 		//----------
@@ -20,15 +26,19 @@ namespace ofxRulr {
 			RULR_NODE_UPDATE_LISTENER;
 			RULR_NODE_INSPECTOR_LISTENER;
 			RULR_NODE_SERIALIZATION_LISTENERS;
-		
+
 			this->view = MAKE(ofxCvGui::Panels::World);
 			this->view->onDrawWorld += [this](ofCamera &) {
 				if (this->showGrid) {
 					this->drawGrid();
 				}
-				for (const auto node : this->world) {
-					node->drawWorld();
+				if (this->world) {
+					auto & world = *this->world;
+					for (const auto node : world) {
+						node->drawWorld();
+					}
 				}
+
 			};
 
 			this->grid = &ofxAssets::image("ofxRulr::grid-10");
@@ -44,8 +54,8 @@ namespace ofxRulr {
 		}
 
 		//----------
-		string Summary::getTypeName() const {
-			return "Summary";
+		void Summary::setWorld(const Utils::Set<Nodes::Base> & world) {
+			this->world = &world;
 		}
 
 		//----------

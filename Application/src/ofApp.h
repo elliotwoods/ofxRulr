@@ -28,6 +28,5 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		ofxCvGui::Builder gui;
-		ofxRulr::Graph::World world;
 		ofxSplashScreen splashScreen;
 };

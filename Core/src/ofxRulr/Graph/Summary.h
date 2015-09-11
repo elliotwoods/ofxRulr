@@ -10,9 +10,12 @@ namespace ofxRulr {
 	namespace Graph {
 		class Summary : public Nodes::Base {
 		public:
-			Summary(const Utils::Set<Nodes::Base> & world);
-			void init();
+			Summary();
 			string getTypeName() const override;
+			void init();
+
+			void setWorld(const Utils::Set<Nodes::Base> &);
+
 			void update();
 			ofxCvGui::PanelPtr getView() override;
 		protected:
@@ -32,7 +35,7 @@ namespace ofxRulr {
 			ofParameter<ofVec3f> roomMinimum;
 			ofParameter<ofVec3f> roomMaximum;
 
-			const Utils::Set<Nodes::Base> & world;
+			const Utils::Set<Nodes::Base> * world;
 
 			ofImage * grid;
 			ofLight light;

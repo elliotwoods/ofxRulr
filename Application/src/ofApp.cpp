@@ -8,6 +8,8 @@ using namespace ofxAssets;
 void ofApp::setup2(){
 	ofSetEscapeQuitsApp(false);
 	
+	auto & world = ofxRulr::Graph::World::X();
+
 	//--
 	//Start splash screen
 	//--
@@ -34,7 +36,7 @@ void ofApp::setup2(){
 	//--
 	//
 	auto patchInstance = MAKE(ofxRulr::Graph::Editor::Patch);
-	this->world.add(patchInstance);
+	world.add(patchInstance);
 	//
 	//--
 
@@ -44,8 +46,8 @@ void ofApp::setup2(){
 	//--
 	//
 	this->gui.init();
-	this->world.init(this->gui.getController());
-	this->world.loadAll();
+	world.init(this->gui.getController());
+	world.loadAll();
 	//
 	//--
 
@@ -61,7 +63,7 @@ void ofApp::setup2(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	this->world.update();
+	ofxRulr::Graph::World::X().update();
 }
 
 //--------------------------------------------------------------

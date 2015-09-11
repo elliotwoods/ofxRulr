@@ -5,10 +5,11 @@
 
 #include "ofxCvGui/Controller.h"
 #include "ofxCvGui/Panels/SharedView.h"
+#include "ofxSingleton.h"
 
 namespace ofxRulr {
 	namespace Graph {
-		class World : public Utils::Set<Nodes::Base> {
+		class World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
 		public:
 			void init(ofxCvGui::Controller &);
 			void loadAll(bool printDebug = false);
