@@ -52,6 +52,7 @@ namespace ofxRulr {
 					this->steveJobs.velocityOK = false;
 					this->steveJobs.accelerationOK = false;
 				}
+				this->enabled.set("Enabled", true);
 			}
 
 			//----------
@@ -61,6 +62,8 @@ namespace ofxRulr {
 
 			//----------
 			void AimMovingHeadAt::update() {
+				if (!enabled) return;
+
 				auto movingHead = this->getInput<MovingHead>();
 				auto target = this->getInput<Item::RigidBody>("Target");
 				if (target && movingHead) {
@@ -100,6 +103,7 @@ namespace ofxRulr {
 
 			//----------
 			void AimMovingHeadAt::serialize(Json::Value & json) {
+				Utils::Serializable::serialize(this->enabled, json);
 				Utils::Serializable::serialize(this->ignoreBlankTransform, json);
 
 				for (int i = 0; i < 3; i++) {
@@ -117,6 +121,7 @@ namespace ofxRulr {
 
 			//----------
 			void AimMovingHeadAt::deserialize(const Json::Value & json) {
+				Utils::Serializable::deserialize(this->enabled, json);
 				Utils::Serializable::deserialize(this->ignoreBlankTransform, json);
 
 				for (int i = 0; i < 3; i++) {
@@ -134,6 +139,7 @@ namespace ofxRulr {
 
 			//----------
 			void AimMovingHeadAt::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				inspector->add(Widgets::Toggle::make(this->enabled));
 				inspector->add(Widgets::Toggle::make(this->ignoreBlankTransform));
 
 				inspector->add(Widgets::Title::make("Position offset", Widgets::Title::Level::H2));

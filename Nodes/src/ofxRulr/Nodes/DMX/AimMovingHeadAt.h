@@ -24,6 +24,8 @@ namespace ofxRulr {
 
 				string getTargetName();
 
+				ofParameter<bool> enabled;
+
 			protected:
 				ofVec3f doASteveJobs(const ofVec3f & targetPosition);
 				void initPrediction(const ofVec3f & startPosition);
