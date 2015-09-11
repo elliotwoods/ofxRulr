@@ -196,6 +196,13 @@ namespace ofxRulr {
 			}
 
 			//----------
+			string AimMovingHeadAt::getTargetName() {
+				auto target = this->getInput<Item::RigidBody>("Target");
+				if (target) return target->getName();
+				else return "";
+			}
+
+			//----------
 			ofVec3f AimMovingHeadAt::doASteveJobs(const ofVec3f & targetPosition) {
 				//we presume a constant frame rate (necessary for Kalman filter)
 
