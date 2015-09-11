@@ -19,7 +19,7 @@ namespace ofxRulr {
 			* Implement deserializeFrame(const Json::Value &)
 			* Probably inherit another class which provides data of your type to output the recording
 			**/
-			class Recorder : virtual public ofxRulr::Nodes::Base, public std::enable_shared_from_this<Recorder> {
+			class Recorder : virtual public ofxRulr::Nodes::Base {
 			public:
 				typedef ofxRulr::Utils::Serializable AbstractFrame;
 				typedef map<chrono::microseconds, shared_ptr<AbstractFrame>> Frames;
@@ -82,9 +82,9 @@ namespace ofxRulr {
 				//returns an empty pointer if can't deserialize
 				virtual shared_ptr<AbstractFrame> deserializeFrame(const Json::Value &) const;
 
-				void registerSlave(shared_ptr<Recorder>);
-				void unregisterSlave(shared_ptr<Recorder>);
-				void performOnFamily(function<void(Recorder &)>);
+				void registerSlave(Recorder *);
+				void unregisterSlave(Recorder *);
+				void performOnFamily(function<void(Recorder *)>);
 
 				void rebuildView();
 
@@ -101,7 +101,7 @@ namespace ofxRulr {
 				ofParameter<bool> loopPlayback;
 
 				shared_ptr<AbstractFrame> currentFrame;
-				set<weak_ptr<Recorder>, owner_less<weak_ptr<Recorder>>> slaves;
+				set<Recorder *> slaves;
 
 				shared_ptr<ofxCvGui::Panels::Scroll> view;
 				ofxCvGui::ElementPtr trackView;

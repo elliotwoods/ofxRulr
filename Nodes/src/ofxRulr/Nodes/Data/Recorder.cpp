@@ -74,18 +74,18 @@ namespace ofxRulr {
 
 				auto masterRecorderPin = this->addInput<Recorder>("Master");
 				masterRecorderPin->onNewConnection += [this](shared_ptr<Recorder> master) {
-					master->registerSlave(this->shared_from_this());
+					master->registerSlave(this);
 					this->flagRebuildView = true;
-					this->performOnFamily([](Recorder & recorder) {
-						recorder.stop(); // always stop all recorders if a sync network is changed
+					this->performOnFamily([](Recorder * recorder) {
+						recorder->stop(); // always stop all recorders if a sync network is changed
 					});
 				};
 				masterRecorderPin->onDeleteConnection += [this](shared_ptr<Recorder> master) {
-					this->performOnFamily([](Recorder & recorder) {
-						recorder.stop(); // always stop all recorders if a sync network is changed
+					master->unregisterSlave(this);
+					this->performOnFamily([](Recorder * recorder) {
+						recorder->stop(); // always stop all recorders if a sync network is changed
 					});
 					this->flagRebuildView = true;
-					master->unregisterSlave(this->shared_from_this());
 				};
 
 				this->view = make_shared<Panels::Scroll>();
@@ -190,8 +190,8 @@ namespace ofxRulr {
 				inspector->add(Widgets::Toggle::make(this->loopPlayback));
 				inspector->add(Widgets::Button::make("Erase blank before first frame", [this]() {
 					try {
-						this->performOnFamily([](Recorder & recorder) {
-							recorder.eraseBlankBeforeFirstFrame();
+						this->performOnFamily([](Recorder * recorder) {
+							recorder->eraseBlankBeforeFirstFrame();
 						});
 					}
 					RULR_CATCH_ALL_TO_ALERT;
@@ -200,8 +200,8 @@ namespace ofxRulr {
 					auto factorString = ofSystemTextBoxDialog("Stretch factor [1x]");
 					auto factor = ofToFloat(factorString);
 					try {
-						this->performOnFamily([factor](Recorder & recorder) {
-							recorder.stretchDurationByFactor((double) factor);
+						this->performOnFamily([factor](Recorder * recorder) {
+							recorder->stretchDurationByFactor((double) factor);
 						});
 					}
 					RULR_CATCH_ALL_TO_ALERT;
@@ -386,26 +386,23 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Recorder::registerSlave(shared_ptr<Recorder> slave) {
-				auto weakSlave = weak_ptr<Recorder>(slave);
-				this->slaves.insert(weakSlave);
+			void Recorder::registerSlave(Recorder * slave) {
+				this->slaves.insert(slave);
 				this->flagRebuildView = true;
 			}
 
 			//----------
-			void Recorder::unregisterSlave(shared_ptr<Recorder> slave) {
-				auto weakSlave = weak_ptr<Recorder>(slave);
-				this->slaves.erase(weakSlave);
+			void Recorder::unregisterSlave(Recorder * slave) {
+				this->slaves.erase(slave);
 				this->flagRebuildView = true;
 			}
 
 			//----------
-			void Recorder::performOnFamily(function<void(Recorder &)> action) {
-				action(*this);
-				for (auto slaveWeak : this->slaves) {
-					auto slave = slaveWeak.lock();
-					if (slave) {
-						action(*slave);
+			void Recorder::performOnFamily(function<void(Recorder *)> action) {
+				action(this);
+				if (!this->slaves.empty()) {
+					for (auto slave : this->slaves) {
+						action(slave);
 					}
 				}
 			}
@@ -436,13 +433,13 @@ namespace ofxRulr {
 						return this->getState() == State::Playing;
 					}, [this](bool play) {
 						if (play) {
-							this->performOnFamily([](Recorder & recorder) {
-								recorder.play();
+							this->performOnFamily([](Recorder * recorder) {
+								recorder->play();
 							});
 						}
 						else {
-							this->performOnFamily([](Recorder & recorder) {
-								recorder.stop();
+							this->performOnFamily([](Recorder * recorder) {
+								recorder->stop();
 							});
 						}
 					}));
@@ -450,25 +447,25 @@ namespace ofxRulr {
 						return this->getState() == State::Recording;
 					}, [this](bool record) {
 						if (record) {
-							this->performOnFamily([](Recorder & recorder) {
-								recorder.record();
+							this->performOnFamily([](Recorder * recorder) {
+								recorder->record();
 							});
 						}
 						else {
-							this->performOnFamily([](Recorder & recorder) {
-								recorder.stop();
+							this->performOnFamily([](Recorder * recorder) {
+								recorder->stop();
 							});
 						}
 					}));
 					this->view->add(Widgets::Button::make("Clear", [this]() {
-						this->performOnFamily([](Recorder & recorder) {
-							recorder.clear();
+						this->performOnFamily([](Recorder * recorder) {
+							recorder->clear();
 						});
 					}));
 
 					//add our track and child tracks
-					this->performOnFamily([this](Recorder & recorder) {
-						this->view->add(recorder.getTrackView());
+					this->performOnFamily([this](Recorder * recorder) {
+						this->view->add(recorder->getTrackView());
 					});
 				}
 			}
