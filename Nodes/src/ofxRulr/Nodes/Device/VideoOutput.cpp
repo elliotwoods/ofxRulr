@@ -1,4 +1,5 @@
 #include "VideoOutput.h"
+#include "ofxRulr/Utils/Constants.h"
 
 #include "ofxCvGui.h"
 
@@ -500,6 +501,10 @@ namespace ofxRulr {
 
 				//check we have a valid index selected
 				if ((unsigned int) this->videoOutputSelection < this->videoOutputs.size()) {
+					//--
+					//calculate window shape
+					//--
+					//
 					const auto & videoOutput = this->getVideoOutputSelectionObject();
 					int x, y;
 
@@ -510,18 +515,69 @@ namespace ofxRulr {
 
 					this->videoMode = glfwGetVideoMode(videoOutput.monitor);
 					this->calculateSplit();
+					//
+					//--
 
-					glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+
+					//--
+					//apply glfw hints
+					//--
+					//
+					glfwDefaultWindowHints();
+					auto windowSettings = ofGLFWWindowSettings();
+					windowSettings.decorated = false;
+					windowSettings.resizable = false;
+
+					//glfwWindowHint(GLFW_RED_BITS, windowSettings.redBits);
+					//glfwWindowHint(GLFW_GREEN_BITS, windowSettings.greenBits);
+					//glfwWindowHint(GLFW_BLUE_BITS, windowSettings.blueBits);
+					//glfwWindowHint(GLFW_ALPHA_BITS, windowSettings.alphaBits);
+					//glfwWindowHint(GLFW_DEPTH_BITS, windowSettings.depthBits);
+					//glfwWindowHint(GLFW_STENCIL_BITS, windowSettings.stencilBits);
+					//glfwWindowHint(GLFW_STEREO, windowSettings.stereo);
+					glfwWindowHint(GLFW_VISIBLE, true);
+#ifndef TARGET_OSX
+					glfwWindowHint(GLFW_AUX_BUFFERS, windowSettings.doubleBuffering ? 1 : 0);
+#endif
+					//glfwWindowHint(GLFW_SAMPLES, windowSettings.numSamples);
+					glfwWindowHint(GLFW_RESIZABLE, windowSettings.resizable);
+					glfwWindowHint(GLFW_DECORATED, windowSettings.decorated);
+					//glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+					//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, RULR_GL_VERSION_MAJOR);
+					//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, RULR_GL_VERSION_MINOR);
+					//if ((RULR_GL_VERSION_MAJOR == 3 && RULR_GL_VERSION_MINOR >= 2) || RULR_GL_VERSION_MAJOR >= 4) {
+					//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+					//}
+					//if (RULR_GL_VERSION_MAJOR >= 3) {
+					//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+					//}
+					//
+					//--
+
+
+
+					//--
+					//create the window
+					//--
+					//
 					this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), NULL, glfwGetCurrentContext());
-					glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 					glfwSetWindowPos(this->window, x, y);
+					glfwSetWindowTitle(this->window, this->getName().c_str());
+					//
+					//--
 
+
+
+					//--
 					//allocate fbo to match the window
+					//--
+					//
 					ofFbo::Settings fboSettings;
 					fboSettings.width = this->width;
 					fboSettings.height = this->height;
-					auto mainContext = glfwGetCurrentContext();
 					this->fbo.allocate(fboSettings);
+					//
+					//--
 				}
 				else {
 					this->showWindow = false;
