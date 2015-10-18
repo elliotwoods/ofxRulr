@@ -60,7 +60,7 @@ namespace ofxRulr {
 
 		//----------
 		void Summary::update() {
-			auto camera = view->getCamera();
+			auto & camera = view->getCamera();
 			this->light.setPosition(camera.getPosition());
 			this->light.lookAt(camera.getCursorWorld());
 		}
