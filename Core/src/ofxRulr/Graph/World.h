@@ -11,7 +11,7 @@ namespace ofxRulr {
 	namespace Graph {
 		class World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
 		public:
-			void init(ofxCvGui::Controller &);
+			void init(ofxCvGui::Controller &, bool enableSummaryView = true);
 			void loadAll(bool printDebug = false);
 			void saveAll() const;
 			static ofxCvGui::Controller & getGuiController();

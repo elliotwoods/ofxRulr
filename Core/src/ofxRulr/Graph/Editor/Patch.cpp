@@ -32,6 +32,7 @@ namespace ofxRulr {
 					}
 					auto selection = this->patchInstance.selection.lock();
 					if (selection) {
+						//draw outline
 						ofPushStyle();
 						ofSetLineWidth(1.0f);
 						ofNoFill();

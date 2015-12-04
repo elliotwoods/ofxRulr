@@ -10,6 +10,9 @@
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp">
       <Filter>addons\ofxSplashScreen\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRDevice.cpp">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -24,6 +27,15 @@
     <Filter Include="addons\ofxSplashScreen\src">
       <UniqueIdentifier>{16605a73-ca0f-476f-abda-9458b54e79f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pairs">
+      <UniqueIdentifier>{6a4e7b4c-ca4b-40ed-a1cf-9eadf6c8cb23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk">
+      <UniqueIdentifier>{177ec21d-aef5-4978-9e9d-49fc9a078907}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk\ofxMachineVision">
+      <UniqueIdentifier>{3b2b293d-e91a-475a-8691-f052bd789367}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -33,6 +45,9 @@
       <Filter>addons\ofxSplashScreen\src</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRDevice.h">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Rulr.rc" />

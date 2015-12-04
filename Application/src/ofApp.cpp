@@ -1,5 +1,5 @@
 #include "../../../addons/ofxRulr/Nodes/src/ofxRulr/Nodes/DeclareNodes.h"
-
+#include "../../../addons/ofxEdsdk/pairs/ofxMachineVision/CanonDSLRDevice.h"
 #include "ofApp.h"
 
 using namespace ofxAssets;
@@ -22,11 +22,12 @@ void ofApp::setup2(){
 
 
 	//--
-	//Initialise nodes
+	//Initialise nodes and plugins
 	//--
 	//
 	ofxRulr::Nodes::loadCoreNodes();
 	ofxRulr::Nodes::loadPluginNodes();
+	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRDevice>();
 	//
 	//--
 

@@ -18,7 +18,7 @@ namespace ofxRulr {
 		ofxCvGui::Controller * World::gui = 0;
 
 		//-----------
-		void World::init(Controller & controller) {
+		void World::init(Controller & controller, bool enableSummaryView) {
 			Utils::initialiser.checkInitialised();
 
 			ofSetWindowTitle("Rulr v" + RULR_VERSION_STRING);
@@ -102,12 +102,14 @@ namespace ofxRulr {
 			//--
 			// SUMMARY VIEW
 			//
-			auto summary = make_shared<Summary>();
-			summary->setWorld(*this);
-			summary->init();
-			summary->setName("World");
-			this->add(summary); // we intentionally do this after building the Node grid
-			gridGroup->add(summary->getView());
+			if (enableSummaryView) {
+				auto summary = make_shared<Summary>();
+				summary->setWorld(*this);
+				summary->init();
+				summary->setName("World");
+				this->add(summary); // we intentionally do this after building the Node grid
+				gridGroup->add(summary->getView());
+			}
 			//
 			//--
 			

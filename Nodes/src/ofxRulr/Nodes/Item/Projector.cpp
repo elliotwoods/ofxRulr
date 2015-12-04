@@ -37,6 +37,7 @@ namespace ofxRulr {
 			void Projector::projectorParameterCallback(float &) {
 				this->rebuildViewFromParameters();
 			}
+
 			//----------
 			void Projector::populateInspector(ElementGroupPtr inspector) {
 				inspector->add(Widgets::EditableValue<float>::make("Resolution width", [this]() {

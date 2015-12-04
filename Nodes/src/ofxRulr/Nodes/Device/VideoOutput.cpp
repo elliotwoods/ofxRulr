@@ -28,6 +28,7 @@ namespace ofxRulr {
 				glfwGetMonitorPhysicalSize(monitor, &this->width, &this->height);
 				this->name = glfwGetMonitorName(monitor);
 			}
+
 #pragma mark VideoOutput
 
 			//----------
