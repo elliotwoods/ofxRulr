@@ -2,6 +2,6 @@
 
 #include "ofxRulr/Nodes/DMX/EnttecUsbPro.h"
 
-OFXPLUGIN_INIT_BEGIN(ofxRulr::Nodes::Base)
-	OFXPLUGIN_REGISTER(ofxRulr::Nodes::DMX::EnttecUsbPro);
-OFXPLUGIN_INIT_END
+OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::DMX::EnttecUsbPro);
+OFXPLUGIN_PLUGIN_MODULES_END
