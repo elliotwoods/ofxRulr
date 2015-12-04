@@ -82,6 +82,7 @@ namespace ofxRulr {
 				ofParameter<float> splitVertical;
 				ofParameter<float> splitUseIndex;
 				ofParameter<int> testPattern; // 0 = none, 1 = grid, 2 = white
+				ofParameter<bool> mute;
 
 				ofFbo fbo;
 				float width, height;

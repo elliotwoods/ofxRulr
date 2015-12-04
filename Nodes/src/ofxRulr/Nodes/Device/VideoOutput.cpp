@@ -50,6 +50,12 @@ namespace ofxRulr {
 
 				auto previewView = make_shared<ofxCvGui::Panels::Draws>(this->fbo);
 				previewView->setCaption("Preview");
+				previewView->onDraw += [this](ofxCvGui::DrawArguments & args) {
+					if (this->mute) {
+						ofxCvGui::Utils::drawText("MUTE [SPACE]", args.localBounds);
+					}
+				};
+
 				this->monitorSelectionView = MAKE(ofxCvGui::Panels::ElementHost);
 				this->monitorSelectionView->getElementGroup()->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
 					//arrange buttons and subview for fbo
@@ -120,6 +126,7 @@ namespace ofxRulr {
 
 				this->showWindow.set("Show window", false);
 				this->testPattern.set("Test Pattern", 1);
+				this->mute.set("Mute", false);
 				this->splitHorizontal.set("Split Horizontal", 1, 1, 8);
 				this->splitVertical.set("Split Vertical", 1, 1, 8);
 				this->splitUseIndex.set("Selected portion", 0, 0, 8);
@@ -153,6 +160,7 @@ namespace ofxRulr {
 				ofxRulr::Utils::Serializable::serialize(this->splitVertical, json);
 				ofxRulr::Utils::Serializable::serialize(this->splitUseIndex, json);
 				ofxRulr::Utils::Serializable::serialize(this->testPattern, json);
+				ofxRulr::Utils::Serializable::serialize(this->mute, json);
 			}
 
 			//----------
@@ -164,6 +172,7 @@ namespace ofxRulr {
 				ofxRulr::Utils::Serializable::deserialize(this->splitVertical, json);
 				ofxRulr::Utils::Serializable::deserialize(this->splitUseIndex, json);
 				ofxRulr::Utils::Serializable::deserialize(this->testPattern, json);
+				ofxRulr::Utils::Serializable::deserialize(this->mute, json);
 			}
 
 			//----------
@@ -221,6 +230,11 @@ namespace ofxRulr {
 					this->testPattern = selection;
 				};
 				inspector->add(testPatternSelector);
+
+				auto muteToggle = ofxCvGui::Widgets::Toggle::make(this->mute);
+				muteToggle->setHotKey(' ');
+				muteToggle->setHeight(100.0f);
+				inspector->add(muteToggle);
 			}
 
 			//----------
@@ -381,22 +395,25 @@ namespace ofxRulr {
 				//clear the entire video output
 				ofClear(0, 0);
 
-				//set the drawing matrices to normalised coordinates
-				glMatrixMode(GL_PROJECTION);
-				glPushMatrix();
-				glLoadIdentity();
-				glMatrixMode(GL_MODELVIEW);
-				glPushMatrix();
-				glLoadIdentity();
+				//draw the fbo if mute is disbaled
+				if (!this->mute) {
+					//set the drawing matrices to normalised coordinates
+					glMatrixMode(GL_PROJECTION);
+					glPushMatrix();
+					glLoadIdentity();
+					glMatrixMode(GL_MODELVIEW);
+					glPushMatrix();
+					glLoadIdentity();
 
-				this->fbo.draw(-1, +1, 2, -2);
+					this->fbo.draw(-1, +1, 2, -2);
 
-				//reset all transforms
-				glMatrixMode(GL_PROJECTION);
-				glPopMatrix();
-				glMatrixMode(GL_MODELVIEW);
-				glPopMatrix();
-
+					//reset all transforms
+					glMatrixMode(GL_PROJECTION);
+					glPopMatrix();
+					glMatrixMode(GL_MODELVIEW);
+					glPopMatrix();
+				}
+				
 				glfwSwapBuffers(this->window);
 				glFlush();
 
