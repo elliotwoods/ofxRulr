@@ -40,13 +40,8 @@ namespace ofxRulr {
 				this->view->onDraw += [this](DrawArguments & args) {
 					auto camera = this->getInput<Item::Camera>();
 					if (camera) {
-						if (!this->isBeingInspected()) {
-							//if we're not selected
-							auto grabber = camera->getGrabber();
-							//and we're dealing with a freerun camera
-							if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
-								ofxCvGui::Utils::drawText("Select this node to enable demo...", args.localBounds);
-							}
+						if (!this->getRunFinder()) {
+							ofxCvGui::Utils::drawText("Select this node to enable demo...", args.localBounds);
 						}
 					}
 					else {
@@ -96,11 +91,8 @@ namespace ofxRulr {
 					auto grabber = camera->getGrabber();
 					if (grabber->isFrameNew()) {
 						//if we're not using freerun, then we presume we're using single shot (since there's a frame available)
-						if (this->activewhen == 1 || this->isBeingInspected() || !grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
-							//run if:
-							//	activeWhen == always
-							//	freerun && is selected
-							//	single shot
+						if (this->getRunFinder()) {
+	
 
 							//allocate the undistorted image and fbo when required
 							auto distorted = grabber->getPixels();
@@ -247,15 +239,11 @@ namespace ofxRulr {
 							{
 								ofPushMatrix();
 								{
-									auto scale = board->getSpacing() * 3.0f;
+									auto scale = board->getSpacing() * 4.0f;
 									ofScale(scale, scale, scale);
 									ofPushStyle();
 									{
 										ofFill();
-										this->cube.draw();
-
-										ofNoFill();
-										ofSetLineWidth(3.0f);
 										this->cube.draw();
 									}
 									ofPopStyle();
@@ -269,6 +257,31 @@ namespace ofxRulr {
 					}
 					ofPopStyle();
 				}
+			}
+
+			//----------
+			bool ARCube::getRunFinder() const {
+				if (this->activewhen == 1) {
+					//find when we're set to always find
+					return true;
+				}
+				else if (this->isBeingInspected()) {
+					//find when we're selected
+					return true;
+				}
+				else {
+					auto camera = this->getInput<Item::Camera>();
+					if (camera) {
+						auto grabber = camera->getGrabber();
+						if (!grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+							//find when the camera is a single shot camera
+							return true;
+						}
+					}
+				}
+
+				//if nothing was good, then return false
+				return false;
 			}
 
 			//----------
