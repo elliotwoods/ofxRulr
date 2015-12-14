@@ -182,6 +182,16 @@ namespace ofxRulr {
 						return Widgets::Indicator::Status::Error;
 					}
 				}));
+				inspector->add(Widgets::LiveValue<string>::make("Board position", [this]() {
+					if (this->foundBoard) {
+						stringstream ss;
+						ss << (ofVec3f() * this->boardTransform);
+						return ss.str();
+					}
+					else {
+						return string("");
+					}
+				}));
 
 				auto drawStyleSelector = Widgets::MultipleChoice::make("Draw style");
 				drawStyleSelector->addOption("Axes");
@@ -224,7 +234,6 @@ namespace ofxRulr {
 								auto position = ofVec3f() * this->boardTransform;
 								ofPushStyle();
 								{
-									//ofSetDrawBitmapMode(ofDrawBitmapMode::OF_BITMAPMODE_MODEL_BILLBOARD);
 									ofDrawBitmapString(ofToString(position), ofVec3f());
 								}
 								ofPopStyle();
