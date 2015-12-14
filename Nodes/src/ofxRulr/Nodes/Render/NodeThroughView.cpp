@@ -1,7 +1,7 @@
 #include "NodeThroughView.h"
 
-#include "../Item/View.h"
-#include "../Device/VideoOutput.h"
+#include "ofxRulr/Nodes/Item/View.h"
+#include "ofxRulr/Nodes/System/VideoOutput.h"
 
 using namespace ofxRulr::Nodes;
 
@@ -21,14 +21,14 @@ namespace ofxRulr {
 		void NodeThroughView::init() {
 			this->addInput<Nodes::Base>();
 			this->addInput<Item::View>();
-			auto videoOutputInput = this->addInput<Device::VideoOutput>();
+			auto videoOutputInput = this->addInput<System::VideoOutput>();
 
-			videoOutputInput->onNewConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+			videoOutputInput->onNewConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
 				videoOutput->onDrawOutput.addListener([this](ofRectangle & videoBounds) {
 					this->drawOnVideoOutput(videoBounds);
 				}, this);
 			};
-			videoOutputInput->onDeleteConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+			videoOutputInput->onDeleteConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
 				if (videoOutput) {
 					videoOutput->onDrawOutput.removeListeners(this);
 				}

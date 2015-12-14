@@ -1,7 +1,7 @@
 #include "Graycode.h"
 
-#include "../../Item/Camera.h"
-#include "../../Device/VideoOutput.h"
+#include "ofxRulr/Nodes/Item/Camera.h"
+#include "ofxRulr/Nodes/System/VideoOutput.h"
 #include "ofxRulr/Exception.h"
 
 #include "ofxCvGui.h"
@@ -28,7 +28,7 @@ namespace ofxRulr {
 					RULR_NODE_INSPECTOR_LISTENER;
 
 					this->addInput(MAKE(Pin<Item::Camera>));
-					auto videoOutputPin = MAKE(Pin<Device::VideoOutput>);
+					auto videoOutputPin = MAKE(Pin<System::VideoOutput>);
 					this->addInput(videoOutputPin);
 
 					this->threshold.set("Threshold", 10.0f, 0.0f, 255.0f);
@@ -42,7 +42,7 @@ namespace ofxRulr {
 
 					this->view = MAKE(Panels::Image, this->decoder.getProjectorInCamera());
 
-					videoOutputPin->onNewConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+					videoOutputPin->onNewConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
 						videoOutput->onDrawOutput.addListener([this](ofRectangle & rectangle) {
 							if (this->enablePreviewOnVideoOutput) {
 								this->drawPreviewOnVideoOutput(rectangle);
@@ -50,7 +50,7 @@ namespace ofxRulr {
 						}, this);
 					};
 
-					videoOutputPin->onDeleteConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+					videoOutputPin->onDeleteConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
 						if (videoOutput) {
 							videoOutput->onDrawOutput.removeListeners(this);
 						}
@@ -99,7 +99,7 @@ namespace ofxRulr {
 
 				//----------
 				bool Graycode::isReady() {
-					return (this->getInput<Item::Camera>() && this->getInput<Device::VideoOutput>() && this->payload.isAllocated());
+					return (this->getInput<Item::Camera>() && this->getInput<System::VideoOutput>() && this->payload.isAllocated());
 				}
 
 				//----------
@@ -109,7 +109,7 @@ namespace ofxRulr {
 
 					//get variables
 					auto camera = this->getInput<Item::Camera>();
-					auto videoOutput = this->getInput<Device::VideoOutput>();
+					auto videoOutput = this->getInput<System::VideoOutput>();
 					auto videoOutputSize = videoOutput->getSize();
 					auto grabber = camera->getGrabber();
 

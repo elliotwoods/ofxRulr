@@ -3,7 +3,7 @@
 #include "ofxRulr/Nodes/Item/KinectV2.h"
 
 #include "ofxRulr/Nodes/Item/Projector.h"
-#include "ofxRulr/Nodes/Device/VideoOutput.h"
+#include "ofxRulr/Nodes/System/VideoOutput.h"
 #include "ofxRulr/Utils/Utils.h"
 
 #include "ofxCvGui/Panels/Groups/Grid.h"
@@ -45,7 +45,7 @@ namespace ofxRulr {
 					auto kinectPin = MAKE(Pin<Item::KinectV2>);
 					this->addInput(kinectPin);
 					this->addInput(MAKE(Pin<Item::Projector>));
-					this->addInput(MAKE(Pin<Device::VideoOutput>));
+					this->addInput(MAKE(Pin<System::VideoOutput>));
 
 					this->view = MAKE(ofxCvGui::Panels::Draws);
 					this->view->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
@@ -91,7 +91,7 @@ namespace ofxRulr {
 
 				//----------
 				void ProjectorFromKinectV2::update() {
-					auto projectorOutput = this->getInput<Device::VideoOutput>();
+					auto projectorOutput = this->getInput<System::VideoOutput>();
 					if (projectorOutput) {
 						if (projectorOutput->isWindowOpen()) {
 							projectorOutput->getFbo().begin();
@@ -227,7 +227,7 @@ namespace ofxRulr {
 					this->throwIfMissingAnyConnection();
 
 					auto projector = this->getInput<Item::Projector>();
-					auto videoOutput = this->getInput<Device::VideoOutput>();
+					auto videoOutput = this->getInput<System::VideoOutput>();
 
 					//update projector width and height to match the video output
 					projector->setWidth(videoOutput->getWidth());
