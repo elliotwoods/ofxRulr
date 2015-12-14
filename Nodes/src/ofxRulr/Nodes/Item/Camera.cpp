@@ -40,6 +40,12 @@ namespace ofxRulr {
 
 				//this sets up the GUI for selecting a device
 				this->setDevice("");
+
+				this->onDrawObject += [this]() {
+					if (this->grabber->getIsDeviceOpen()) {
+						this->getViewInObjectSpace().drawOnNearPlane(* this->getGrabber());
+					}
+				};
 			}
 
 			//----------

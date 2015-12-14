@@ -16,7 +16,6 @@ namespace ofxRulr {
 			//---------
 			View::View(bool hasDistortion) : hasDistortion(hasDistortion) {
 				RULR_NODE_INIT_LISTENER;
-				this->testCamera = nullptr;
 			}
 
 			//---------
@@ -64,10 +63,7 @@ namespace ofxRulr {
 			//----------
 			void View::drawObject() {
 				this->viewInObjectSpace.draw();
-
-				if (this->testCamera) {
-					this->testCamera->draw();
-				}
+				this->onDrawObject.notifyListeners();
 			}
 
 			//---------

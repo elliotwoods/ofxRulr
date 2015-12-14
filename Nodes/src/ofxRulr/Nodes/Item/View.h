@@ -19,9 +19,6 @@ namespace ofxRulr {
 				void update();
 				void drawObject() override;
 
-				void setDistortionEnabled(bool);
-				bool getDistortionEnabled() const;
-
 				void setWidth(float);
 				void setHeight(float);
 				float getWidth() const;
@@ -37,6 +34,8 @@ namespace ofxRulr {
 
 				const ofxRay::Camera & getViewInObjectSpace() const;
 				ofxRay::Camera getViewInWorldSpace() const;
+
+				ofxLiquidEvent<void> onDrawObject;
 			protected:
 				void rebuildViewFromParameters();
 
