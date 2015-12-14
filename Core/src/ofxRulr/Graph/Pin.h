@@ -54,7 +54,7 @@ namespace ofxRulr {
 			Pin(string name) : AbstractPin(name) {
 				this->pinView->template setup<NodeType>();
 				auto tempNode = NodeType();
-				this->color = tempNode.getColor();			}
+				this->color = tempNode.getColor();				this->connectionMade = false;			}
 
 			Pin() : Pin(this->getNodeTypeName()) { }
 
@@ -73,10 +73,20 @@ namespace ofxRulr {
 			void connectTyped(shared_ptr<NodeType> node) {
 				this->resetConnection();
 
+				//trigger new connection events
 				this->connection = node;
 				this->onNewConnection(node);
 				auto untypedNode = shared_ptr<Nodes::Base>(node);
 				this->onNewConnectionUntyped(untypedNode);
+
+				//if the node is deleted (whilst connected), then disconnect it
+				//this ensures that onDeleteConnection is called
+				//(note that because we use weak_ptr this isn't necessary for acceess violations)
+				node->onDestroy.addListener([this]() {
+					this->resetConnection();
+				}, this);
+
+				this->connectionMade = true;
 			}
 
 			void connect(shared_ptr<Nodes::Base> node) override {
@@ -91,17 +101,28 @@ namespace ofxRulr {
 				auto node = this->getConnection(); // cache the connected node before removing connection
 				this->connection.reset(); //we clear the state before firing the event (e.g. for rebuilding link list)
 
-				if (node) {
-					this->onDeleteConnection.notifyListeners(node);
-					auto untypedNode = shared_ptr<Nodes::Base>(node);
-					this->onDeleteConnectionUntyped.notifyListeners(untypedNode);
-				}	
+				if (this->connectionMade) {
+					if (node) {
+						this->onDeleteConnection.notifyListeners(node);
+						auto untypedNode = shared_ptr<Nodes::Base>(node);
+						this->onDeleteConnectionUntyped.notifyListeners(untypedNode);
+
+						node->onDestroy.removeListeners(this);
+					}
+					else {
+						//even if the node no longer exists, we still need to fire the event
+						this->onDeleteConnection.notifyListeners(shared_ptr<NodeType>());
+						this->onDeleteConnectionUntyped.notifyListeners(shared_ptr<Nodes::Base>());
+					}
+					this->connectionMade = false;
+				}
 			}
 			
 			shared_ptr<NodeType> getConnection() {
 				return this->connection.lock();
 			}
 			
+			/// Will return false if connected node is being destroyed even if the connection has not been fully destroyed
 			bool isConnected() const override {
 				return !this->connection.expired();
 			}
@@ -129,6 +150,7 @@ namespace ofxRulr {
 			ofxLiquidEvent<shared_ptr<NodeType> > onDeleteConnection; /// remember to check if the pointer is still valid
 		protected:
 			weak_ptr<NodeType> connection;
+			bool connectionMade; // this will stay true temporarily to handle the case where connected node is deleted and weak_ptr becomes invalid
 			shared_ptr<ofImage> icon;
 			ofColor color;
 		};
