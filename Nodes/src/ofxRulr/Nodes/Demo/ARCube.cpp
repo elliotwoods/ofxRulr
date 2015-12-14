@@ -150,9 +150,10 @@ namespace ofxRulr {
 								//draw the 3D world on top
 								const auto & view = camera->getViewInObjectSpace();
 								view.beginAsCamera(true);
-								glEnable(GL_DEPTH);
+								glEnable(GL_DEPTH_TEST);
+								glClear(GL_DEPTH_BUFFER_BIT);
 								this->drawWorld();
-								glDisable(GL_DEPTH);
+								glDisable(GL_DEPTH_TEST);
 								view.endAsCamera();
 							}
 							this->fbo.end();
