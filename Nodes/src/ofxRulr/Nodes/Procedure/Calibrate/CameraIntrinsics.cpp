@@ -103,14 +103,16 @@ namespace ofxRulr {
 
 				//----------
 				void CameraIntrinsics::update() {
-					if (this->getRunFinderEnabled()) {
+					if (this->isBeingInspected()) {
 						auto camera = this->getInput<Item::Camera>();
 						if (camera) {
 							auto grabber = camera->getGrabber();
-							try {
-								this->findBoard();
+							if (grabber->isFrameNew() && grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+								try {
+									this->findBoard();
+								}
+								RULR_CATCH_ALL_TO_ERROR
 							}
-							RULR_CATCH_ALL_TO_ERROR
 						}
 					}
 				}
@@ -220,6 +222,9 @@ namespace ofxRulr {
 					auto frame = grabber->getFrame();
 
 					//copy the frame out
+					if (!frame) {
+						throw(Exception("No camera frame available"));
+					}
 					frame->lockForReading();
 					auto & pixels = frame->getPixels();
 					if (!pixels.isAllocated()) {
