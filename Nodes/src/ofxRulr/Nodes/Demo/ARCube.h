@@ -25,7 +25,7 @@ namespace ofxRulr {
 
 				ofxCvGui::PanelPtr getView() override;
 
-				bool getRunFinder() const;
+				bool getRunFinderEnabled() const;
 			protected:
 				shared_ptr<ofxCvGui::Panels::Draws> view;
 				ofImage undistorted;

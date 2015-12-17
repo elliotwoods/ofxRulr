@@ -99,12 +99,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp" />
     <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRDevice.cpp" />
+    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRLiveViewDevice.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.h" />
     <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRDevice.h" />
+    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRLiveViewDevice.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\ofApp.h" />
   </ItemGroup>

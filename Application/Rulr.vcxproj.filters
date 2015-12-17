@@ -13,6 +13,9 @@
     <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRDevice.cpp">
       <Filter>pairs\ofxEdsdk\ofxMachineVision</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRLiveViewDevice.cpp">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRDevice.h">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRLiveViewDevice.h">
       <Filter>pairs\ofxEdsdk\ofxMachineVision</Filter>
     </ClInclude>
   </ItemGroup>

@@ -40,7 +40,7 @@ namespace ofxRulr {
 				this->view->onDraw += [this](DrawArguments & args) {
 					auto camera = this->getInput<Item::Camera>();
 					if (camera) {
-						if (!this->getRunFinder()) {
+						if (!this->getRunFinderEnabled()) {
 							ofxCvGui::Utils::drawText("Select this node to enable demo...", args.localBounds);
 						}
 					}
@@ -91,7 +91,7 @@ namespace ofxRulr {
 					auto grabber = camera->getGrabber();
 					if (grabber->isFrameNew()) {
 						//if we're not using freerun, then we presume we're using single shot (since there's a frame available)
-						if (this->getRunFinder()) {
+						if (this->getRunFinderEnabled()) {
 	
 
 							//allocate the undistorted image and fbo when required
@@ -270,7 +270,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			bool ARCube::getRunFinder() const {
+			bool ARCube::getRunFinderEnabled() const {
 				if (this->activewhen == 1) {
 					//find when we're set to always find
 					return true;
