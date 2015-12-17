@@ -64,9 +64,6 @@
     <Filter Include="src\ofxRulr\Nodes">
       <UniqueIdentifier>{d1ab085f-2d05-40c9-b439-cd87aa6f5cfd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Device">
-      <UniqueIdentifier>{2a5d8ca9-8f34-40f8-9392-cff08f1cee5d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Nodes\Item">
       <UniqueIdentifier>{e6b681c9-4fc8-48da-bbb6-9fc460bd8c2d}</UniqueIdentifier>
     </Filter>
