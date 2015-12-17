@@ -326,7 +326,7 @@ namespace ofxRulr {
 					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_OneShot)) {
 						inspector->add(MAKE(Widgets::Button, "Take Photo", [this]() {
 							this->getGrabber()->singleShot();
-						}));
+						}, ' '));
 					}
 				}
 			}

@@ -92,8 +92,6 @@ namespace ofxRulr {
 					if (grabber->isFrameNew()) {
 						//if we're not using freerun, then we presume we're using single shot (since there's a frame available)
 						if (this->getRunFinderEnabled()) {
-	
-
 							//allocate the undistorted image and fbo when required
 							auto distorted = grabber->getPixels();
 							auto & undistorted = this->undistorted.getPixels();
