@@ -15,6 +15,14 @@ namespace ofxRulr {
                 virtual ofPixels * getColorPixels() {
                     return nullptr;
                 }
+				
+				virtual ofPixels * getIRPixels() {
+					return nullptr;
+				}
+				
+				virtual ofShortPixels * getIRPixelsShort() {
+					return nullptr;
+				}
                 
                 virtual ofShortPixels * getDepthPixelsShort() {
                     return nullptr;
@@ -27,6 +35,16 @@ namespace ofxRulr {
                 virtual ofFloatPixels * getWorldPixels() {
                     return nullptr;
                 }
+				
+				//textures
+				virtual ofTexture * getIRTexture() {
+					return nullptr;
+				}
+				
+				//registeration
+				virtual ofImage * getColorInDepthImage() {
+					return nullptr;
+				}
             };
         }
     }

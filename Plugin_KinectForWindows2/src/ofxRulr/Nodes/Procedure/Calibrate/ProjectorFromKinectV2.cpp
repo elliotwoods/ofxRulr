@@ -328,11 +328,6 @@ namespace ofxRulr {
 					glPointSize(10.0f);
 					preview.drawVertices();
 					glPopAttrib();
-
-
-					if (projector) {
-						projector->drawWorld();
-					}
 				}
 			}
 		}

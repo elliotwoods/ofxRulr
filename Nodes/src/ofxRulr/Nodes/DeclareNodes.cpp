@@ -18,6 +18,8 @@
 #include "ofxRulr/Nodes/Procedure/Calibrate/HomographyFromGraycode.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/ViewToVertices.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/MovingHeadToWorld.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromDepthCamera.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/CameraFromDepthCamera.h"
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Procedure/Triangulate.h"
 
@@ -48,6 +50,8 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Procedure::Calibrate::HomographyFromGraycode);
 			RULR_DECLARE_NODE(Procedure::Calibrate::ViewToVertices);
 			RULR_DECLARE_NODE(Procedure::Calibrate::MovingHeadToWorld);
+			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromDepthCamera);
+			RULR_DECLARE_NODE(Procedure::Calibrate::CameraFromDepthCamera);
 			RULR_DECLARE_NODE(Procedure::Scan::Graycode);
 			RULR_DECLARE_NODE(Procedure::Triangulate);
 
