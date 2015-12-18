@@ -315,14 +315,17 @@ namespace ofxRulr {
 
 			//----------
 			void View::exportYaml() {
-				//adapted from https://github.com/Itseez/opencv/blob/master/samples/cpp/calibration.cpp#L170
-				cv::FileStorage fs;
+				auto result = ofSystemSaveDialog(this->getName() + ".yml", "Export Camera Calibration YML");
+				if (result.bSuccess) {
+					//adapted from https://github.com/Itseez/opencv/blob/master/samples/cpp/calibration.cpp#L170
+					cv::FileStorage fs(result.filePath, cv::FileStorage::WRITE);
 
-				fs << "image_width" << this->getWidth();
-				fs << "image_height" << this->getHeight();
+					fs << "image_width" << this->getWidth();
+					fs << "image_height" << this->getHeight();
 
-				fs << "camera_matrix" << this->getCameraMatrix();
-				fs << "distortion_coefficients" << this->getDistortionCoefficients();
+					fs << "camera_matrix" << this->getCameraMatrix();
+					fs << "distortion_coefficients" << this->getDistortionCoefficients();
+				}
 			}
 
 			//---------
