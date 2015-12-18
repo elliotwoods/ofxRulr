@@ -41,6 +41,7 @@ namespace ofxRulr {
 
 				void exportViewMatrix();
 				void exportRayCamera();
+				void exportYaml();
 
 				ofParameter<float> focalLengthX, focalLengthY;
 				ofParameter<float> principalPointX, principalPointY;

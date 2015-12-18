@@ -188,6 +188,13 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ALERT
 				}));
 
+				inspector->add(Widgets::Button::make("Export YML...", [this]() {
+					try {
+						this->exportYaml();
+					}
+					RULR_CATCH_ALL_TO_ALERT
+				}));
+
 				inspector->add(make_shared<Widgets::Spacer>());
 			}
 
@@ -304,6 +311,26 @@ namespace ofxRulr {
 					fileout << view;
 					fileout.close();
 				}
+			}
+
+			//----------
+			void View::exportYaml() {
+				//adapted from https://github.com/Itseez/opencv/blob/master/samples/cpp/calibration.cpp#L170
+				cv::FileStorage fs;
+
+				time_t tt;
+				time(&tt);
+				struct tm *t2 = localtime(&tt);
+				char buf[1024];
+				strftime(buf, sizeof(buf) - 1, "%c", t2);
+
+				fs << "calibration_time" << buf;
+
+				fs << "image_width" << this->getWidth();
+				fs << "image_height" << this->getHeight();
+
+				fs << "camera_matrix" << this->getCameraMatrix();
+				fs << "distortion_coefficients" << this->getDistortionCoefficients();
 			}
 
 			//---------
