@@ -4,6 +4,11 @@
 #include "../../../addons/ofxEdsdk/pairs/ofxRulr/Nodes/Monitor/CanonLiveView.h"
 #include "ofApp.h"
 
+
+#ifdef TARGET_OSX
+#include "../../../addons/ofxRulr/Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h"
+#endif
+
 using namespace ofxAssets;
 
 //--------------------------------------------------------------
@@ -22,7 +27,17 @@ void ofApp::setup2(){
 	//
 	//--
 
-
+#ifdef TARGET_OSX
+    //--
+    //Setup OSX nodes
+    //--
+    //
+    RULR_DECLARE_NODE(Nodes::Item::KinectV2OSX);
+    //
+    //--
+#endif
+    
+    
 	//--
 	//Initialise nodes and plugins
 	//--

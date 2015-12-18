@@ -14,6 +14,35 @@
 		BD5A1AE21C23EC7100E794E0 /* CanonLiveView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE01C23EC7100E794E0 /* CanonLiveView.cpp */; };
 		BD5A1AE81C23ED8900E794E0 /* CanonDSLRDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE41C23ED8900E794E0 /* CanonDSLRDevice.cpp */; };
 		BD5A1AE91C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE61C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp */; };
+		BDF8EF771C23F5930089E0CE /* usb-1.0.0-superspeed.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF8EF341C23F5930089E0CE /* usb-1.0.0-superspeed.a */; };
+		BDF8EF781C23F5930089E0CE /* ofProtonect2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF531C23F5930089E0CE /* ofProtonect2.cpp */; };
+		BDF8EF791C23F5930089E0CE /* command_transaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF561C23F5930089E0CE /* command_transaction.cpp */; };
+		BDF8EF7A1C23F5930089E0CE /* depth_packet_processor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF571C23F5930089E0CE /* depth_packet_processor.cpp */; };
+		BDF8EF7B1C23F5930089E0CE /* depth_packet_stream_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF581C23F5930089E0CE /* depth_packet_stream_parser.cpp */; };
+		BDF8EF7C1C23F5930089E0CE /* double_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF591C23F5930089E0CE /* double_buffer.cpp */; };
+		BDF8EF7D1C23F5930089E0CE /* event_loop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF5A1C23F5930089E0CE /* event_loop.cpp */; };
+		BDF8EF7E1C23F5930089E0CE /* frame_listener_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF5C1C23F5930089E0CE /* frame_listener_impl.cpp */; };
+		BDF8EF7F1C23F5930089E0CE /* libfreenect2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF5D1C23F5930089E0CE /* libfreenect2.cpp */; };
+		BDF8EF801C23F5930089E0CE /* opencl_depth_packet_processor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF5F1C23F5930089E0CE /* opencl_depth_packet_processor.cpp */; };
+		BDF8EF811C23F5930089E0CE /* packet_pipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF601C23F5930089E0CE /* packet_pipeline.cpp */; };
+		BDF8EF821C23F5930089E0CE /* registration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF611C23F5930089E0CE /* registration.cpp */; };
+		BDF8EF831C23F5930089E0CE /* resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF621C23F5930089E0CE /* resource.cpp */; };
+		BDF8EF841C23F5930089E0CE /* resources.inc in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF631C23F5930089E0CE /* resources.inc */; };
+		BDF8EF851C23F5930089E0CE /* rgb_packet_processor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF641C23F5930089E0CE /* rgb_packet_processor.cpp */; };
+		BDF8EF861C23F5930089E0CE /* rgb_packet_stream_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF651C23F5930089E0CE /* rgb_packet_stream_parser.cpp */; };
+		BDF8EF871C23F5930089E0CE /* timer_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF661C23F5930089E0CE /* timer_util.cpp */; };
+		BDF8EF881C23F5930089E0CE /* tinythread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF691C23F5930089E0CE /* tinythread.cpp */; };
+		BDF8EF891C23F5930089E0CE /* transfer_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF6B1C23F5930089E0CE /* transfer_pool.cpp */; };
+		BDF8EF8A1C23F5930089E0CE /* usb_control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF6C1C23F5930089E0CE /* usb_control.cpp */; };
+		BDF8EF8B1C23F5930089E0CE /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF6D1C23F5930089E0CE /* README.md */; };
+		BDF8EF8C1C23F5930089E0CE /* ofxMultiKinectV2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF6F1C23F5930089E0CE /* ofxMultiKinectV2.cpp */; };
+		BDF8EF8D1C23F5930089E0CE /* GpuRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF721C23F5930089E0CE /* GpuRegistration.cpp */; };
+		BDF8EFB61C23F64D0089E0CE /* libturbojpeg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF8EFAF1C23F64D0089E0CE /* libturbojpeg.dylib */; };
+		BDF8EFB71C23F64D0089E0CE /* Readme.md in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EFB01C23F64D0089E0CE /* Readme.md */; };
+		BDF8EFB81C23F64D0089E0CE /* ofxTurboJpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EFB21C23F64D0089E0CE /* ofxTurboJpeg.cpp */; };
+		BDF8EFBD1C23F7280089E0CE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF8EFBC1C23F7280089E0CE /* OpenCL.framework */; };
+		BDF8EFC31C23F8030089E0CE /* libturbojpeg.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = BDF8EFC21C23F8030089E0CE /* libturbojpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		BDF8EFC71C23F8760089E0CE /* KinectV2OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EFC51C23F8760089E0CE /* KinectV2OSX.cpp */; };
 		C11CBDE91C22068100CAB9D0 /* DPP.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = E7E0E9901C21E3AE00A8D4EC /* DPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C11CBDEA1C22068100CAB9D0 /* EDSDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = E7E0E9911C21E3AE00A8D4EC /* EDSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E74620211C21C34F00614A1D /* libopencv_calib3d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7461FAD1C21C34F00614A1D /* libopencv_calib3d.a */; };
@@ -330,6 +359,7 @@
 			files = (
 				C11CBDE91C22068100CAB9D0 /* DPP.framework in CopyFiles */,
 				C11CBDEA1C22068100CAB9D0 /* EDSDK.framework in CopyFiles */,
+				BDF8EFC31C23F8030089E0CE /* libturbojpeg.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,6 +376,85 @@
 		BD5A1AE51C23ED8900E794E0 /* CanonDSLRDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonDSLRDevice.h; sourceTree = "<group>"; };
 		BD5A1AE61C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanonDSLRLiveViewDevice.cpp; sourceTree = "<group>"; };
 		BD5A1AE71C23ED8900E794E0 /* CanonDSLRLiveViewDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonDSLRLiveViewDevice.h; sourceTree = "<group>"; };
+		BD97E0E61C24050D0076BFA7 /* IDepthCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDepthCamera.h; sourceTree = "<group>"; };
+		BDF8EF1F1C23F5930089E0CE /* libfreenect2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libfreenect2.h; sourceTree = "<group>"; };
+		BDF8EF231C23F5930089E0CE /* hotplug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hotplug.h; sourceTree = "<group>"; };
+		BDF8EF241C23F5930089E0CE /* libusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
+		BDF8EF251C23F5930089E0CE /* libusbi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libusbi.h; sourceTree = "<group>"; };
+		BDF8EF271C23F5930089E0CE /* darwin_usb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = darwin_usb.h; sourceTree = "<group>"; };
+		BDF8EF281C23F5930089E0CE /* linux_usbfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linux_usbfs.h; sourceTree = "<group>"; };
+		BDF8EF291C23F5930089E0CE /* poll_posix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = poll_posix.h; sourceTree = "<group>"; };
+		BDF8EF2A1C23F5930089E0CE /* poll_windows.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = poll_windows.h; sourceTree = "<group>"; };
+		BDF8EF2B1C23F5930089E0CE /* threads_posix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threads_posix.h; sourceTree = "<group>"; };
+		BDF8EF2C1C23F5930089E0CE /* threads_windows.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threads_windows.h; sourceTree = "<group>"; };
+		BDF8EF2D1C23F5930089E0CE /* wince_usb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wince_usb.h; sourceTree = "<group>"; };
+		BDF8EF2E1C23F5930089E0CE /* windows_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = windows_common.h; sourceTree = "<group>"; };
+		BDF8EF2F1C23F5930089E0CE /* windows_usb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = windows_usb.h; sourceTree = "<group>"; };
+		BDF8EF301C23F5930089E0CE /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		BDF8EF311C23F5930089E0CE /* version_nano.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version_nano.h; sourceTree = "<group>"; };
+		BDF8EF341C23F5930089E0CE /* usb-1.0.0-superspeed.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "usb-1.0.0-superspeed.a"; sourceTree = "<group>"; };
+		BDF8EF381C23F5930089E0CE /* async_packet_processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async_packet_processor.h; sourceTree = "<group>"; };
+		BDF8EF391C23F5930089E0CE /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		BDF8EF3A1C23F5930089E0CE /* data_callback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = data_callback.h; sourceTree = "<group>"; };
+		BDF8EF3B1C23F5930089E0CE /* depth_packet_processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = depth_packet_processor.h; sourceTree = "<group>"; };
+		BDF8EF3C1C23F5930089E0CE /* depth_packet_stream_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = depth_packet_stream_parser.h; sourceTree = "<group>"; };
+		BDF8EF3D1C23F5930089E0CE /* double_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = double_buffer.h; sourceTree = "<group>"; };
+		BDF8EF3E1C23F5930089E0CE /* frame_listener.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = frame_listener.hpp; sourceTree = "<group>"; };
+		BDF8EF3F1C23F5930089E0CE /* frame_listener_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = frame_listener_impl.h; sourceTree = "<group>"; };
+		BDF8EF401C23F5930089E0CE /* libfreenect2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libfreenect2.hpp; sourceTree = "<group>"; };
+		BDF8EF411C23F5930089E0CE /* opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opengl.h; sourceTree = "<group>"; };
+		BDF8EF421C23F5930089E0CE /* packet_pipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = packet_pipeline.h; sourceTree = "<group>"; };
+		BDF8EF431C23F5930089E0CE /* packet_processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = packet_processor.h; sourceTree = "<group>"; };
+		BDF8EF451C23F5930089E0CE /* command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = command.h; sourceTree = "<group>"; };
+		BDF8EF461C23F5930089E0CE /* command_transaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = command_transaction.h; sourceTree = "<group>"; };
+		BDF8EF471C23F5930089E0CE /* response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = response.h; sourceTree = "<group>"; };
+		BDF8EF481C23F5930089E0CE /* usb_control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = usb_control.h; sourceTree = "<group>"; };
+		BDF8EF491C23F5930089E0CE /* registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = registration.h; sourceTree = "<group>"; };
+		BDF8EF4A1C23F5930089E0CE /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
+		BDF8EF4B1C23F5930089E0CE /* rgb_packet_processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rgb_packet_processor.h; sourceTree = "<group>"; };
+		BDF8EF4C1C23F5930089E0CE /* rgb_packet_stream_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rgb_packet_stream_parser.h; sourceTree = "<group>"; };
+		BDF8EF4D1C23F5930089E0CE /* threading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threading.h; sourceTree = "<group>"; };
+		BDF8EF4F1C23F5930089E0CE /* event_loop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event_loop.h; sourceTree = "<group>"; };
+		BDF8EF501C23F5930089E0CE /* transfer_pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = transfer_pool.h; sourceTree = "<group>"; };
+		BDF8EF521C23F5930089E0CE /* cl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cl.hpp; sourceTree = "<group>"; };
+		BDF8EF531C23F5930089E0CE /* ofProtonect2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofProtonect2.cpp; sourceTree = "<group>"; };
+		BDF8EF541C23F5930089E0CE /* ofProtonect2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofProtonect2.h; sourceTree = "<group>"; };
+		BDF8EF561C23F5930089E0CE /* command_transaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = command_transaction.cpp; sourceTree = "<group>"; };
+		BDF8EF571C23F5930089E0CE /* depth_packet_processor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = depth_packet_processor.cpp; sourceTree = "<group>"; };
+		BDF8EF581C23F5930089E0CE /* depth_packet_stream_parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = depth_packet_stream_parser.cpp; sourceTree = "<group>"; };
+		BDF8EF591C23F5930089E0CE /* double_buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = double_buffer.cpp; sourceTree = "<group>"; };
+		BDF8EF5A1C23F5930089E0CE /* event_loop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = event_loop.cpp; sourceTree = "<group>"; };
+		BDF8EF5B1C23F5930089E0CE /* flextGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flextGL.h; sourceTree = "<group>"; };
+		BDF8EF5C1C23F5930089E0CE /* frame_listener_impl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = frame_listener_impl.cpp; sourceTree = "<group>"; };
+		BDF8EF5D1C23F5930089E0CE /* libfreenect2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libfreenect2.cpp; sourceTree = "<group>"; };
+		BDF8EF5E1C23F5930089E0CE /* libusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
+		BDF8EF5F1C23F5930089E0CE /* opencl_depth_packet_processor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opencl_depth_packet_processor.cpp; sourceTree = "<group>"; };
+		BDF8EF601C23F5930089E0CE /* packet_pipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packet_pipeline.cpp; sourceTree = "<group>"; };
+		BDF8EF611C23F5930089E0CE /* registration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = registration.cpp; sourceTree = "<group>"; };
+		BDF8EF621C23F5930089E0CE /* resource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource.cpp; sourceTree = "<group>"; };
+		BDF8EF631C23F5930089E0CE /* resources.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = resources.inc; sourceTree = "<group>"; };
+		BDF8EF641C23F5930089E0CE /* rgb_packet_processor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rgb_packet_processor.cpp; sourceTree = "<group>"; };
+		BDF8EF651C23F5930089E0CE /* rgb_packet_stream_parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rgb_packet_stream_parser.cpp; sourceTree = "<group>"; };
+		BDF8EF661C23F5930089E0CE /* timer_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timer_util.cpp; sourceTree = "<group>"; };
+		BDF8EF671C23F5930089E0CE /* timer_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer_util.h; sourceTree = "<group>"; };
+		BDF8EF691C23F5930089E0CE /* tinythread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinythread.cpp; sourceTree = "<group>"; };
+		BDF8EF6A1C23F5930089E0CE /* tinythread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinythread.h; sourceTree = "<group>"; };
+		BDF8EF6B1C23F5930089E0CE /* transfer_pool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = transfer_pool.cpp; sourceTree = "<group>"; };
+		BDF8EF6C1C23F5930089E0CE /* usb_control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = usb_control.cpp; sourceTree = "<group>"; };
+		BDF8EF6D1C23F5930089E0CE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		BDF8EF6F1C23F5930089E0CE /* ofxMultiKinectV2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMultiKinectV2.cpp; sourceTree = "<group>"; };
+		BDF8EF701C23F5930089E0CE /* ofxMultiKinectV2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMultiKinectV2.h; sourceTree = "<group>"; };
+		BDF8EF721C23F5930089E0CE /* GpuRegistration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GpuRegistration.cpp; sourceTree = "<group>"; };
+		BDF8EF731C23F5930089E0CE /* GpuRegistration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GpuRegistration.h; sourceTree = "<group>"; };
+		BDF8EFAC1C23F64D0089E0CE /* turbojpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = turbojpeg.h; sourceTree = "<group>"; };
+		BDF8EFAF1C23F64D0089E0CE /* libturbojpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libturbojpeg.dylib; sourceTree = "<group>"; };
+		BDF8EFB01C23F64D0089E0CE /* Readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
+		BDF8EFB21C23F64D0089E0CE /* ofxTurboJpeg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTurboJpeg.cpp; sourceTree = "<group>"; };
+		BDF8EFB31C23F64D0089E0CE /* ofxTurboJpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTurboJpeg.h; sourceTree = "<group>"; };
+		BDF8EFBC1C23F7280089E0CE /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		BDF8EFC21C23F8030089E0CE /* libturbojpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libturbojpeg.dylib; path = "../../ofxTurboJpeg/libs/turbo-jpeg/lib/osx/libturbojpeg.dylib"; sourceTree = "<group>"; };
+		BDF8EFC51C23F8760089E0CE /* KinectV2OSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KinectV2OSX.cpp; path = ../Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.cpp; sourceTree = "<group>"; };
+		BDF8EFC61C23F8760089E0CE /* KinectV2OSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KinectV2OSX.h; path = ../Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E4B69B5B0A3A1756003C02F2 /* RulrDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RulrDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
@@ -1140,6 +1249,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDF8EFBD1C23F7280089E0CE /* OpenCL.framework in Frameworks */,
 				E7E0E9AD1C21E61600A8D4EC /* libAddons.a in Frameworks */,
 				E74624371C21D41800614A1D /* libCore.a in Frameworks */,
 				E74624381C21D41800614A1D /* libNodes.a in Frameworks */,
@@ -1147,6 +1257,7 @@
 				E746202D1C21C34F00614A1D /* libopencv_objdetect.a in Frameworks */,
 				E746202E1C21C34F00614A1D /* libopencv_ocl.a in Frameworks */,
 				E74620241C21C34F00614A1D /* libopencv_features2d.a in Frameworks */,
+				BDF8EFB61C23F64D0089E0CE /* libturbojpeg.dylib in Frameworks */,
 				E74620331C21C35000614A1D /* libopencv_video.a in Frameworks */,
 				E74620221C21C34F00614A1D /* libopencv_contrib.a in Frameworks */,
 				E74620311C21C35000614A1D /* libopencv_superres.a in Frameworks */,
@@ -1163,6 +1274,7 @@
 				E74620341C21C35000614A1D /* libopencv_videostab.a in Frameworks */,
 				E74620321C21C35000614A1D /* libopencv_ts.a in Frameworks */,
 				E74620301C21C35000614A1D /* libopencv_stitching.a in Frameworks */,
+				BDF8EF771C23F5930089E0CE /* usb-1.0.0-superspeed.a in Frameworks */,
 				E7C0F7D21C21B9E100AF4CC1 /* openFrameworksDebug.a in Frameworks */,
 				E74620211C21C34F00614A1D /* libopencv_calib3d.a in Frameworks */,
 				E74620261C21C34F00614A1D /* libopencv_gpu.a in Frameworks */,
@@ -1284,6 +1396,331 @@
 			path = Device;
 			sourceTree = "<group>";
 		};
+		BDF8EEF01C23F4F30089E0CE /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EEF11C23F5430089E0CE /* Plugin_ofxMultiKinectV2 */,
+			);
+			name = Plugins;
+			sourceTree = "<group>";
+		};
+		BDF8EEF11C23F5430089E0CE /* Plugin_ofxMultiKinectV2 */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EFC41C23F84A0089E0CE /* src */,
+				BDF8EEF21C23F54E0089E0CE /* addons */,
+			);
+			name = Plugin_ofxMultiKinectV2;
+			sourceTree = "<group>";
+		};
+		BDF8EEF21C23F54E0089E0CE /* addons */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF971C23F64D0089E0CE /* ofxTurboJpeg */,
+				BDF8EEF31C23F5920089E0CE /* ofxMultiKinectV2 */,
+			);
+			name = addons;
+			sourceTree = "<group>";
+		};
+		BDF8EEF31C23F5920089E0CE /* ofxMultiKinectV2 */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF1C1C23F5930089E0CE /* libs */,
+				BDF8EF6D1C23F5930089E0CE /* README.md */,
+				BDF8EF6E1C23F5930089E0CE /* src */,
+			);
+			name = ofxMultiKinectV2;
+			path = ../../ofxMultiKinectV2;
+			sourceTree = "<group>";
+		};
+		BDF8EF1C1C23F5930089E0CE /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF1D1C23F5930089E0CE /* libfreenect2 */,
+				BDF8EF201C23F5930089E0CE /* libusb */,
+				BDF8EF351C23F5930089E0CE /* protonect */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		BDF8EF1D1C23F5930089E0CE /* libfreenect2 */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF1E1C23F5930089E0CE /* include */,
+			);
+			path = libfreenect2;
+			sourceTree = "<group>";
+		};
+		BDF8EF1E1C23F5930089E0CE /* include */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF1F1C23F5930089E0CE /* libfreenect2.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		BDF8EF201C23F5930089E0CE /* libusb */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF211C23F5930089E0CE /* include */,
+				BDF8EF321C23F5930089E0CE /* lib */,
+			);
+			path = libusb;
+			sourceTree = "<group>";
+		};
+		BDF8EF211C23F5930089E0CE /* include */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF221C23F5930089E0CE /* libusb */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		BDF8EF221C23F5930089E0CE /* libusb */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF231C23F5930089E0CE /* hotplug.h */,
+				BDF8EF241C23F5930089E0CE /* libusb.h */,
+				BDF8EF251C23F5930089E0CE /* libusbi.h */,
+				BDF8EF261C23F5930089E0CE /* os */,
+				BDF8EF301C23F5930089E0CE /* version.h */,
+				BDF8EF311C23F5930089E0CE /* version_nano.h */,
+			);
+			path = libusb;
+			sourceTree = "<group>";
+		};
+		BDF8EF261C23F5930089E0CE /* os */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF271C23F5930089E0CE /* darwin_usb.h */,
+				BDF8EF281C23F5930089E0CE /* linux_usbfs.h */,
+				BDF8EF291C23F5930089E0CE /* poll_posix.h */,
+				BDF8EF2A1C23F5930089E0CE /* poll_windows.h */,
+				BDF8EF2B1C23F5930089E0CE /* threads_posix.h */,
+				BDF8EF2C1C23F5930089E0CE /* threads_windows.h */,
+				BDF8EF2D1C23F5930089E0CE /* wince_usb.h */,
+				BDF8EF2E1C23F5930089E0CE /* windows_common.h */,
+				BDF8EF2F1C23F5930089E0CE /* windows_usb.h */,
+			);
+			path = os;
+			sourceTree = "<group>";
+		};
+		BDF8EF321C23F5930089E0CE /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF331C23F5930089E0CE /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		BDF8EF331C23F5930089E0CE /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF341C23F5930089E0CE /* usb-1.0.0-superspeed.a */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		BDF8EF351C23F5930089E0CE /* protonect */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF361C23F5930089E0CE /* include */,
+				BDF8EF531C23F5930089E0CE /* ofProtonect2.cpp */,
+				BDF8EF541C23F5930089E0CE /* ofProtonect2.h */,
+				BDF8EF551C23F5930089E0CE /* src */,
+			);
+			path = protonect;
+			sourceTree = "<group>";
+		};
+		BDF8EF361C23F5930089E0CE /* include */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF371C23F5930089E0CE /* libfreenect2 */,
+				BDF8EF511C23F5930089E0CE /* OpenCL */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		BDF8EF371C23F5930089E0CE /* libfreenect2 */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF381C23F5930089E0CE /* async_packet_processor.h */,
+				BDF8EF391C23F5930089E0CE /* config.h */,
+				BDF8EF3A1C23F5930089E0CE /* data_callback.h */,
+				BDF8EF3B1C23F5930089E0CE /* depth_packet_processor.h */,
+				BDF8EF3C1C23F5930089E0CE /* depth_packet_stream_parser.h */,
+				BDF8EF3D1C23F5930089E0CE /* double_buffer.h */,
+				BDF8EF3E1C23F5930089E0CE /* frame_listener.hpp */,
+				BDF8EF3F1C23F5930089E0CE /* frame_listener_impl.h */,
+				BDF8EF401C23F5930089E0CE /* libfreenect2.hpp */,
+				BDF8EF411C23F5930089E0CE /* opengl.h */,
+				BDF8EF421C23F5930089E0CE /* packet_pipeline.h */,
+				BDF8EF431C23F5930089E0CE /* packet_processor.h */,
+				BDF8EF441C23F5930089E0CE /* protocol */,
+				BDF8EF491C23F5930089E0CE /* registration.h */,
+				BDF8EF4A1C23F5930089E0CE /* resource.h */,
+				BDF8EF4B1C23F5930089E0CE /* rgb_packet_processor.h */,
+				BDF8EF4C1C23F5930089E0CE /* rgb_packet_stream_parser.h */,
+				BDF8EF4D1C23F5930089E0CE /* threading.h */,
+				BDF8EF4E1C23F5930089E0CE /* usb */,
+			);
+			path = libfreenect2;
+			sourceTree = "<group>";
+		};
+		BDF8EF441C23F5930089E0CE /* protocol */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF451C23F5930089E0CE /* command.h */,
+				BDF8EF461C23F5930089E0CE /* command_transaction.h */,
+				BDF8EF471C23F5930089E0CE /* response.h */,
+				BDF8EF481C23F5930089E0CE /* usb_control.h */,
+			);
+			path = protocol;
+			sourceTree = "<group>";
+		};
+		BDF8EF4E1C23F5930089E0CE /* usb */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF4F1C23F5930089E0CE /* event_loop.h */,
+				BDF8EF501C23F5930089E0CE /* transfer_pool.h */,
+			);
+			path = usb;
+			sourceTree = "<group>";
+		};
+		BDF8EF511C23F5930089E0CE /* OpenCL */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF521C23F5930089E0CE /* cl.hpp */,
+			);
+			path = OpenCL;
+			sourceTree = "<group>";
+		};
+		BDF8EF551C23F5930089E0CE /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF561C23F5930089E0CE /* command_transaction.cpp */,
+				BDF8EF571C23F5930089E0CE /* depth_packet_processor.cpp */,
+				BDF8EF581C23F5930089E0CE /* depth_packet_stream_parser.cpp */,
+				BDF8EF591C23F5930089E0CE /* double_buffer.cpp */,
+				BDF8EF5A1C23F5930089E0CE /* event_loop.cpp */,
+				BDF8EF5B1C23F5930089E0CE /* flextGL.h */,
+				BDF8EF5C1C23F5930089E0CE /* frame_listener_impl.cpp */,
+				BDF8EF5D1C23F5930089E0CE /* libfreenect2.cpp */,
+				BDF8EF5E1C23F5930089E0CE /* libusb.h */,
+				BDF8EF5F1C23F5930089E0CE /* opencl_depth_packet_processor.cpp */,
+				BDF8EF601C23F5930089E0CE /* packet_pipeline.cpp */,
+				BDF8EF611C23F5930089E0CE /* registration.cpp */,
+				BDF8EF621C23F5930089E0CE /* resource.cpp */,
+				BDF8EF631C23F5930089E0CE /* resources.inc */,
+				BDF8EF641C23F5930089E0CE /* rgb_packet_processor.cpp */,
+				BDF8EF651C23F5930089E0CE /* rgb_packet_stream_parser.cpp */,
+				BDF8EF661C23F5930089E0CE /* timer_util.cpp */,
+				BDF8EF671C23F5930089E0CE /* timer_util.h */,
+				BDF8EF681C23F5930089E0CE /* tinythread */,
+				BDF8EF6B1C23F5930089E0CE /* transfer_pool.cpp */,
+				BDF8EF6C1C23F5930089E0CE /* usb_control.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		BDF8EF681C23F5930089E0CE /* tinythread */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF691C23F5930089E0CE /* tinythread.cpp */,
+				BDF8EF6A1C23F5930089E0CE /* tinythread.h */,
+			);
+			path = tinythread;
+			sourceTree = "<group>";
+		};
+		BDF8EF6E1C23F5930089E0CE /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF6F1C23F5930089E0CE /* ofxMultiKinectV2.cpp */,
+				BDF8EF701C23F5930089E0CE /* ofxMultiKinectV2.h */,
+				BDF8EF711C23F5930089E0CE /* opt */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		BDF8EF711C23F5930089E0CE /* opt */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EF721C23F5930089E0CE /* GpuRegistration.cpp */,
+				BDF8EF731C23F5930089E0CE /* GpuRegistration.h */,
+			);
+			path = opt;
+			sourceTree = "<group>";
+		};
+		BDF8EF971C23F64D0089E0CE /* ofxTurboJpeg */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EFA91C23F64D0089E0CE /* libs */,
+				BDF8EFB01C23F64D0089E0CE /* Readme.md */,
+				BDF8EFB11C23F64D0089E0CE /* src */,
+			);
+			name = ofxTurboJpeg;
+			path = ../../ofxTurboJpeg;
+			sourceTree = "<group>";
+		};
+		BDF8EFA91C23F64D0089E0CE /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EFAA1C23F64D0089E0CE /* turbo-jpeg */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		BDF8EFAA1C23F64D0089E0CE /* turbo-jpeg */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EFAB1C23F64D0089E0CE /* include */,
+				BDF8EFAD1C23F64D0089E0CE /* lib */,
+			);
+			path = "turbo-jpeg";
+			sourceTree = "<group>";
+		};
+		BDF8EFAB1C23F64D0089E0CE /* include */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EFAC1C23F64D0089E0CE /* turbojpeg.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		BDF8EFAD1C23F64D0089E0CE /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EFAE1C23F64D0089E0CE /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		BDF8EFAE1C23F64D0089E0CE /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EFAF1C23F64D0089E0CE /* libturbojpeg.dylib */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		BDF8EFB11C23F64D0089E0CE /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EFB21C23F64D0089E0CE /* ofxTurboJpeg.cpp */,
+				BDF8EFB31C23F64D0089E0CE /* ofxTurboJpeg.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		BDF8EFC41C23F84A0089E0CE /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BDF8EFC51C23F8760089E0CE /* KinectV2OSX.cpp */,
+				BDF8EFC61C23F8760089E0CE /* KinectV2OSX.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
 		C11CBDE31C22065000CAB9D0 /* pairs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1304,11 +1741,14 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
+				BDF8EFC21C23F8030089E0CE /* libturbojpeg.dylib */,
+				BDF8EFBC1C23F7280089E0CE /* OpenCL.framework */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E74624391C21D43A00614A1D /* Application */,
 				E74623D21C21D36300614A1D /* Core */,
 				E74620881C21C52D00614A1D /* Nodes */,
+				BDF8EEF01C23F4F30089E0CE /* Plugins */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
 				6948EE371B920CB800B5AC1A /* local_addons */,
@@ -2433,6 +2873,7 @@
 				E74620B31C21C52D00614A1D /* RigidBody.h */,
 				E74620B41C21C52D00614A1D /* View.cpp */,
 				E74620B51C21C52D00614A1D /* View.h */,
+				BD97E0E61C24050D0076BFA7 /* IDepthCamera.h */,
 			);
 			path = Item;
 			sourceTree = "<group>";
@@ -3548,11 +3989,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDF8EF7D1C23F5930089E0CE /* event_loop.cpp in Sources */,
+				BDF8EF881C23F5930089E0CE /* tinythread.cpp in Sources */,
+				BDF8EF831C23F5930089E0CE /* resource.cpp in Sources */,
+				BDF8EF781C23F5930089E0CE /* ofProtonect2.cpp in Sources */,
+				BDF8EFC71C23F8760089E0CE /* KinectV2OSX.cpp in Sources */,
+				BDF8EF7B1C23F5930089E0CE /* depth_packet_stream_parser.cpp in Sources */,
+				BDF8EF8A1C23F5930089E0CE /* usb_control.cpp in Sources */,
+				BDF8EF8C1C23F5930089E0CE /* ofxMultiKinectV2.cpp in Sources */,
+				BDF8EF841C23F5930089E0CE /* resources.inc in Sources */,
+				BDF8EF851C23F5930089E0CE /* rgb_packet_processor.cpp in Sources */,
+				BDF8EF801C23F5930089E0CE /* opencl_depth_packet_processor.cpp in Sources */,
+				BDF8EF8B1C23F5930089E0CE /* README.md in Sources */,
+				BDF8EF7C1C23F5930089E0CE /* double_buffer.cpp in Sources */,
+				BDF8EF891C23F5930089E0CE /* transfer_pool.cpp in Sources */,
+				BDF8EF791C23F5930089E0CE /* command_transaction.cpp in Sources */,
+				BDF8EF8D1C23F5930089E0CE /* GpuRegistration.cpp in Sources */,
+				BDF8EF7F1C23F5930089E0CE /* libfreenect2.cpp in Sources */,
+				BDF8EF7A1C23F5930089E0CE /* depth_packet_processor.cpp in Sources */,
 				BD5A1AE81C23ED8900E794E0 /* CanonDSLRDevice.cpp in Sources */,
+				BDF8EFB81C23F64D0089E0CE /* ofxTurboJpeg.cpp in Sources */,
 				BD5A1AE21C23EC7100E794E0 /* CanonLiveView.cpp in Sources */,
+				BDF8EFB71C23F64D0089E0CE /* Readme.md in Sources */,
 				E7E0E9A61C21E60600A8D4EC /* ofApp.cpp in Sources */,
 				E7E0E9A51C21E60300A8D4EC /* main.cpp in Sources */,
+				BDF8EF7E1C23F5930089E0CE /* frame_listener_impl.cpp in Sources */,
 				BD5A1AE91C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp in Sources */,
+				BDF8EF811C23F5930089E0CE /* packet_pipeline.cpp in Sources */,
+				BDF8EF871C23F5930089E0CE /* timer_util.cpp in Sources */,
+				BDF8EF821C23F5930089E0CE /* registration.cpp in Sources */,
+				BDF8EF861C23F5930089E0CE /* rgb_packet_stream_parser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3811,11 +4277,38 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
+				HEADER_SEARCH_PATHS = (
+					"$(OF_CORE_HEADERS)",
+					src,
+					../../../addons,
+					../../../addons/ofxCvMin/libs/opencv/include,
+					../../../addons/ofxCvMin/src,
+					../../../addons/ofxCvGui,
+					../../../addons/ofxCvGui/src,
+					../../../addons/ofxSingleton/src,
+					../../../addons/ofxMachineVision/src,
+					../../../addons/ofxJSON/libs/jsoncpp/include,
+					../../../addons/ofxRulr/Core/src,
+					../../../addons/ofxEdsdk/libs/EDSDK/include,
+					../../../addons/ofxAssimpModelLoader/libs/assimp/include,
+					../../../addons/ofxNonLinearFit/src,
+					../../../addons/ofxNonLinearFit/libs/NLopt/include,
+					../../../addons/ofxRay/src,
+					../../../addons/ofxGraycode/src,
+					../../../addons/ofxGLM/libs,
+					../Nodes/src,
+					../../../addons/ofxMultiKinectV2/libs/protonect/include,
+					../../../addons/ofxMultiKinectV2/libs/libusb/include,
+					../../../addons/ofxMultiKinectV2/libs/libfreenect2/include,
+				);
 				ICON = "$(ICON_NAME_DEBUG)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"../../../addons/ofxTurboJpeg/libs/turbo-jpeg/lib/osx",
+				);
 				PRODUCT_NAME = RulrDebug;
 				WRAPPER_EXTENSION = app;
 			};
@@ -3835,11 +4328,38 @@
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
+				HEADER_SEARCH_PATHS = (
+					"$(OF_CORE_HEADERS)",
+					src,
+					../../../addons,
+					../../../addons/ofxCvMin/libs/opencv/include,
+					../../../addons/ofxCvMin/src,
+					../../../addons/ofxCvGui,
+					../../../addons/ofxCvGui/src,
+					../../../addons/ofxSingleton/src,
+					../../../addons/ofxMachineVision/src,
+					../../../addons/ofxJSON/libs/jsoncpp/include,
+					../../../addons/ofxRulr/Core/src,
+					../../../addons/ofxEdsdk/libs/EDSDK/include,
+					../../../addons/ofxAssimpModelLoader/libs/assimp/include,
+					../../../addons/ofxNonLinearFit/src,
+					../../../addons/ofxNonLinearFit/libs/NLopt/include,
+					../../../addons/ofxRay/src,
+					../../../addons/ofxGraycode/src,
+					../../../addons/ofxGLM/libs,
+					../Nodes/src,
+					../../../addons/ofxMultiKinectV2/libs/protonect/include,
+					../../../addons/ofxMultiKinectV2/libs/libusb/include,
+					../../../addons/ofxMultiKinectV2/libs/libfreenect2/include,
+				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"../../../addons/ofxTurboJpeg/libs/turbo-jpeg/lib/osx",
+				);
 				PRODUCT_NAME = Rulr;
 				WRAPPER_EXTENSION = app;
 				baseConfigurationReference = E4EB6923138AFD0F00A09F29;
