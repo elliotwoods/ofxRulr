@@ -7,8 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C11CBDE71C22065000CAB9D0 /* CanonDSLRDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C11CBDE51C22065000CAB9D0 /* CanonDSLRDevice.cpp */; };
-		C11CBDE81C22065000CAB9D0 /* CanonDSLRDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = C11CBDE61C22065000CAB9D0 /* CanonDSLRDevice.h */; };
+		BD5A1AD91C23EBE800E794E0 /* ARCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AD41C23EBE800E794E0 /* ARCube.cpp */; };
+		BD5A1ADA1C23EBE800E794E0 /* ARCube.h in Headers */ = {isa = PBXBuildFile; fileRef = BD5A1AD51C23EBE800E794E0 /* ARCube.h */; };
+		BD5A1ADB1C23EBE800E794E0 /* VideoOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AD71C23EBE800E794E0 /* VideoOutput.cpp */; };
+		BD5A1ADC1C23EBE800E794E0 /* VideoOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = BD5A1AD81C23EBE800E794E0 /* VideoOutput.h */; };
+		BD5A1AE21C23EC7100E794E0 /* CanonLiveView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE01C23EC7100E794E0 /* CanonLiveView.cpp */; };
+		BD5A1AE81C23ED8900E794E0 /* CanonDSLRDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE41C23ED8900E794E0 /* CanonDSLRDevice.cpp */; };
+		BD5A1AE91C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE61C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp */; };
 		C11CBDE91C22068100CAB9D0 /* DPP.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = E7E0E9901C21E3AE00A8D4EC /* DPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C11CBDEA1C22068100CAB9D0 /* EDSDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = E7E0E9911C21E3AE00A8D4EC /* EDSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E74620211C21C34F00614A1D /* libopencv_calib3d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7461FAD1C21C34F00614A1D /* libopencv_calib3d.a */; };
@@ -33,7 +38,6 @@
 		E74620341C21C35000614A1D /* libopencv_videostab.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7461FC01C21C34F00614A1D /* libopencv_videostab.a */; };
 		E74620CE1C21C52D00614A1D /* Recorder.h in Headers */ = {isa = PBXBuildFile; fileRef = E74620951C21C52D00614A1D /* Recorder.h */; };
 		E74620D01C21C52D00614A1D /* DeclareNodes.h in Headers */ = {isa = PBXBuildFile; fileRef = E74620971C21C52D00614A1D /* DeclareNodes.h */; };
-		E74620D21C21C52D00614A1D /* VideoOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = E746209A1C21C52D00614A1D /* VideoOutput.h */; };
 		E74620D41C21C52D00614A1D /* AimMovingHeadAt.h in Headers */ = {isa = PBXBuildFile; fileRef = E746209D1C21C52D00614A1D /* AimMovingHeadAt.h */; };
 		E74620D61C21C52D00614A1D /* Base.h in Headers */ = {isa = PBXBuildFile; fileRef = E746209F1C21C52D00614A1D /* Base.h */; };
 		E74620D81C21C52D00614A1D /* Fixture.h in Headers */ = {isa = PBXBuildFile; fileRef = E74620A11C21C52D00614A1D /* Fixture.h */; };
@@ -255,7 +259,6 @@
 		E7E0EA051C21E6B700A8D4EC /* ofxCvGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E715FC251C2035A10020A52F /* ofxCvGui.cpp */; };
 		E7E0EA061C21E85C00A8D4EC /* Recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E74620941C21C52D00614A1D /* Recorder.cpp */; };
 		E7E0EA071C21E85C00A8D4EC /* DeclareNodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E74620961C21C52D00614A1D /* DeclareNodes.cpp */; };
-		E7E0EA081C21E85C00A8D4EC /* VideoOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E74620991C21C52D00614A1D /* VideoOutput.cpp */; };
 		E7E0EA091C21E85C00A8D4EC /* AimMovingHeadAt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E746209C1C21C52D00614A1D /* AimMovingHeadAt.cpp */; };
 		E7E0EA0A1C21E85C00A8D4EC /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E746209E1C21C52D00614A1D /* Base.cpp */; };
 		E7E0EA0B1C21E85C00A8D4EC /* Fixture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E74620A01C21C52D00614A1D /* Fixture.cpp */; };
@@ -333,8 +336,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		C11CBDE51C22065000CAB9D0 /* CanonDSLRDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanonDSLRDevice.cpp; sourceTree = "<group>"; };
-		C11CBDE61C22065000CAB9D0 /* CanonDSLRDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonDSLRDevice.h; sourceTree = "<group>"; };
+		BD5A1AD41C23EBE800E794E0 /* ARCube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARCube.cpp; sourceTree = "<group>"; };
+		BD5A1AD51C23EBE800E794E0 /* ARCube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARCube.h; sourceTree = "<group>"; };
+		BD5A1AD71C23EBE800E794E0 /* VideoOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoOutput.cpp; sourceTree = "<group>"; };
+		BD5A1AD81C23EBE800E794E0 /* VideoOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoOutput.h; sourceTree = "<group>"; };
+		BD5A1AE01C23EC7100E794E0 /* CanonLiveView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanonLiveView.cpp; sourceTree = "<group>"; };
+		BD5A1AE11C23EC7100E794E0 /* CanonLiveView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonLiveView.h; sourceTree = "<group>"; };
+		BD5A1AE41C23ED8900E794E0 /* CanonDSLRDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanonDSLRDevice.cpp; sourceTree = "<group>"; };
+		BD5A1AE51C23ED8900E794E0 /* CanonDSLRDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonDSLRDevice.h; sourceTree = "<group>"; };
+		BD5A1AE61C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanonDSLRLiveViewDevice.cpp; sourceTree = "<group>"; };
+		BD5A1AE71C23ED8900E794E0 /* CanonDSLRLiveViewDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonDSLRLiveViewDevice.h; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E4B69B5B0A3A1756003C02F2 /* RulrDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RulrDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
@@ -716,8 +727,6 @@
 		E74620951C21C52D00614A1D /* Recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Recorder.h; sourceTree = "<group>"; };
 		E74620961C21C52D00614A1D /* DeclareNodes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeclareNodes.cpp; sourceTree = "<group>"; };
 		E74620971C21C52D00614A1D /* DeclareNodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclareNodes.h; sourceTree = "<group>"; };
-		E74620991C21C52D00614A1D /* VideoOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoOutput.cpp; sourceTree = "<group>"; };
-		E746209A1C21C52D00614A1D /* VideoOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoOutput.h; sourceTree = "<group>"; };
 		E746209C1C21C52D00614A1D /* AimMovingHeadAt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AimMovingHeadAt.cpp; sourceTree = "<group>"; };
 		E746209D1C21C52D00614A1D /* AimMovingHeadAt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AimMovingHeadAt.h; sourceTree = "<group>"; };
 		E746209E1C21C52D00614A1D /* Base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base.cpp; sourceTree = "<group>"; };
@@ -1221,9 +1230,64 @@
 			name = addons;
 			sourceTree = "<group>";
 		};
+		BD5A1AD31C23EBE800E794E0 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				BD5A1AD41C23EBE800E794E0 /* ARCube.cpp */,
+				BD5A1AD51C23EBE800E794E0 /* ARCube.h */,
+			);
+			path = Demo;
+			sourceTree = "<group>";
+		};
+		BD5A1AD61C23EBE800E794E0 /* System */ = {
+			isa = PBXGroup;
+			children = (
+				BD5A1AD71C23EBE800E794E0 /* VideoOutput.cpp */,
+				BD5A1AD81C23EBE800E794E0 /* VideoOutput.h */,
+			);
+			path = System;
+			sourceTree = "<group>";
+		};
+		BD5A1ADD1C23EC7100E794E0 /* ofxRulr */ = {
+			isa = PBXGroup;
+			children = (
+				BD5A1ADE1C23EC7100E794E0 /* Nodes */,
+			);
+			path = ofxRulr;
+			sourceTree = "<group>";
+		};
+		BD5A1ADE1C23EC7100E794E0 /* Nodes */ = {
+			isa = PBXGroup;
+			children = (
+				BD5A1ADF1C23EC7100E794E0 /* Monitor */,
+			);
+			path = Nodes;
+			sourceTree = "<group>";
+		};
+		BD5A1ADF1C23EC7100E794E0 /* Monitor */ = {
+			isa = PBXGroup;
+			children = (
+				BD5A1AE01C23EC7100E794E0 /* CanonLiveView.cpp */,
+				BD5A1AE11C23EC7100E794E0 /* CanonLiveView.h */,
+			);
+			path = Monitor;
+			sourceTree = "<group>";
+		};
+		BD5A1AE31C23ED8900E794E0 /* Device */ = {
+			isa = PBXGroup;
+			children = (
+				BD5A1AE41C23ED8900E794E0 /* CanonDSLRDevice.cpp */,
+				BD5A1AE51C23ED8900E794E0 /* CanonDSLRDevice.h */,
+				BD5A1AE61C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp */,
+				BD5A1AE71C23ED8900E794E0 /* CanonDSLRLiveViewDevice.h */,
+			);
+			path = Device;
+			sourceTree = "<group>";
+		};
 		C11CBDE31C22065000CAB9D0 /* pairs */ = {
 			isa = PBXGroup;
 			children = (
+				BD5A1ADD1C23EC7100E794E0 /* ofxRulr */,
 				C11CBDE41C22065000CAB9D0 /* ofxMachineVision */,
 			);
 			path = pairs;
@@ -1232,8 +1296,7 @@
 		C11CBDE41C22065000CAB9D0 /* ofxMachineVision */ = {
 			isa = PBXGroup;
 			children = (
-				C11CBDE51C22065000CAB9D0 /* CanonDSLRDevice.cpp */,
-				C11CBDE61C22065000CAB9D0 /* CanonDSLRDevice.h */,
+				BD5A1AE31C23ED8900E794E0 /* Device */,
 			);
 			path = ofxMachineVision;
 			sourceTree = "<group>";
@@ -2313,10 +2376,11 @@
 		E74620921C21C52D00614A1D /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
+				BD5A1AD31C23EBE800E794E0 /* Demo */,
+				BD5A1AD61C23EBE800E794E0 /* System */,
 				E74620931C21C52D00614A1D /* Data */,
 				E74620961C21C52D00614A1D /* DeclareNodes.cpp */,
 				E74620971C21C52D00614A1D /* DeclareNodes.h */,
-				E74620981C21C52D00614A1D /* Device */,
 				E746209B1C21C52D00614A1D /* DMX */,
 				E74620A81C21C52D00614A1D /* Item */,
 				E74620B61C21C52D00614A1D /* Procedure */,
@@ -2332,15 +2396,6 @@
 				E74620951C21C52D00614A1D /* Recorder.h */,
 			);
 			path = Data;
-			sourceTree = "<group>";
-		};
-		E74620981C21C52D00614A1D /* Device */ = {
-			isa = PBXGroup;
-			children = (
-				E74620991C21C52D00614A1D /* VideoOutput.cpp */,
-				E746209A1C21C52D00614A1D /* VideoOutput.h */,
-			);
-			path = Device;
 			sourceTree = "<group>";
 		};
 		E746209B1C21C52D00614A1D /* DMX */ = {
@@ -3218,7 +3273,6 @@
 				E74620E91C21C52D00614A1D /* RigidBody.h in Headers */,
 				E74621571C21C6AA00614A1D /* pstdint.h in Headers */,
 				E74620DC1C21C52D00614A1D /* Sharpy.h in Headers */,
-				E74620D21C21C52D00614A1D /* VideoOutput.h in Headers */,
 				E74621651C21C6AA00614A1D /* matrix3x3.h in Headers */,
 				E74620E31C21C52D00614A1D /* Camera.h in Headers */,
 				E74621611C21C6AA00614A1D /* light.h in Headers */,
@@ -3273,6 +3327,7 @@
 				E74620D01C21C52D00614A1D /* DeclareNodes.h in Headers */,
 				E74621541C21C6AA00614A1D /* cimport.h in Headers */,
 				E746216E1C21C6AA00614A1D /* texture.h in Headers */,
+				BD5A1ADC1C23EBE800E794E0 /* VideoOutput.h in Headers */,
 				E746217F1C21C6AA00614A1D /* ofxAssimpModelLoader.h in Headers */,
 				E74621641C21C6AA00614A1D /* material.h in Headers */,
 				E74620EB1C21C52D00614A1D /* View.h in Headers */,
@@ -3281,6 +3336,7 @@
 				E74621EC1C21C6E900614A1D /* Base.h in Headers */,
 				E74620CE1C21C52D00614A1D /* Recorder.h in Headers */,
 				E74621F61C21C6E900614A1D /* ofxRay.h in Headers */,
+				BD5A1ADA1C23EBE800E794E0 /* ARCube.h in Headers */,
 				E74620D81C21C52D00614A1D /* Fixture.h in Headers */,
 				E74623A31C21C78F00614A1D /* ofxGraycode.h in Headers */,
 				E74621661C21C6AA00614A1D /* matrix4x4.h in Headers */,
@@ -3334,7 +3390,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C11CBDE81C22065000CAB9D0 /* CanonDSLRDevice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3493,8 +3548,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD5A1AE81C23ED8900E794E0 /* CanonDSLRDevice.cpp in Sources */,
+				BD5A1AE21C23EC7100E794E0 /* CanonLiveView.cpp in Sources */,
 				E7E0E9A61C21E60600A8D4EC /* ofApp.cpp in Sources */,
 				E7E0E9A51C21E60300A8D4EC /* main.cpp in Sources */,
+				BD5A1AE91C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3502,9 +3560,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD5A1ADB1C23EBE800E794E0 /* VideoOutput.cpp in Sources */,
 				E7E0EA061C21E85C00A8D4EC /* Recorder.cpp in Sources */,
 				E7E0EA071C21E85C00A8D4EC /* DeclareNodes.cpp in Sources */,
-				E7E0EA081C21E85C00A8D4EC /* VideoOutput.cpp in Sources */,
 				E7E0EA091C21E85C00A8D4EC /* AimMovingHeadAt.cpp in Sources */,
 				E7E0EA0A1C21E85C00A8D4EC /* Base.cpp in Sources */,
 				E7E0EA0B1C21E85C00A8D4EC /* Fixture.cpp in Sources */,
@@ -3524,6 +3582,7 @@
 				E7E0EA191C21E85C00A8D4EC /* ViewToVertices.cpp in Sources */,
 				E7E0EA1A1C21E85C00A8D4EC /* Graycode.cpp in Sources */,
 				E7E0EA1B1C21E85C00A8D4EC /* Triangulate.cpp in Sources */,
+				BD5A1AD91C23EBE800E794E0 /* ARCube.cpp in Sources */,
 				E7E0EA1C1C21E85C00A8D4EC /* NodeThroughView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3581,7 +3640,6 @@
 				E7E0E9C21C21E6B600A8D4EC /* Utilities.cpp in Sources */,
 				E7E0E9C31C21E6B600A8D4EC /* Wrappers.cpp in Sources */,
 				E7E0E9C41C21E6B600A8D4EC /* ofxTextInputField.cpp in Sources */,
-				C11CBDE71C22065000CAB9D0 /* CanonDSLRDevice.cpp in Sources */,
 				E7E0E9C51C21E6B600A8D4EC /* ofxGrabCam.cpp in Sources */,
 				E7E0E9C61C21E6B600A8D4EC /* ofxSplashScreen.cpp in Sources */,
 				E7E0E9C81C21E6B600A8D4EC /* EdsExamples.cpp in Sources */,

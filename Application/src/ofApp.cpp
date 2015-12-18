@@ -28,7 +28,9 @@ void ofApp::setup2(){
 	//--
 	//
 	ofxRulr::Nodes::loadCoreNodes();
+#ifdef TARGET_WIN32
 	ofxRulr::Nodes::loadPluginNodes();
+#endif
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRDevice>();
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRLiveViewDevice>();
 	RULR_DECLARE_NODE(ofxRulr::Nodes::Monitor::CanonLiveView);

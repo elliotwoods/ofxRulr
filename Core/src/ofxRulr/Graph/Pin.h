@@ -54,9 +54,12 @@ namespace ofxRulr {
 			Pin(string name) : AbstractPin(name) {
 				this->pinView->template setup<NodeType>();
 				auto tempNode = NodeType();
-				this->color = tempNode.getColor();				this->connectionMade = false;			}
+				this->color = tempNode.getColor();
+				this->connectionMade = false;
+			}
 
-			Pin() : Pin(this->getNodeTypeName()) { }
+            //note we can't use 'this' in an argument to an inherited constructor
+			Pin() : Pin(NodeType().getTypeName()) { }
 
 			~Pin() {
 				this->resetConnection();
@@ -111,8 +114,10 @@ namespace ofxRulr {
 					}
 					else {
 						//even if the node no longer exists, we still need to fire the event
-						this->onDeleteConnection.notifyListeners(shared_ptr<NodeType>());
-						this->onDeleteConnectionUntyped.notifyListeners(shared_ptr<Nodes::Base>());
+                        auto emptyNode = shared_ptr<NodeType>();
+                        auto emptyNodeUntyped = shared_ptr<Nodes::Base>();
+						this->onDeleteConnection.notifyListeners(emptyNode);
+						this->onDeleteConnectionUntyped.notifyListeners(emptyNodeUntyped);
 					}
 					this->connectionMade = false;
 				}
