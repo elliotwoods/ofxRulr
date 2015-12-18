@@ -7,7 +7,7 @@
 
 namespace ofxRulr {
 	namespace Nodes {
-		namespace Device {
+		namespace System {
 			class VideoOutput : public ofxRulr::Nodes::Base {
 			public:
 				class Output {

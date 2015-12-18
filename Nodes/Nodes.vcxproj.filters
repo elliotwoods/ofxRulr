@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="src\ofxRulr\Nodes\Device">
-      <UniqueIdentifier>{60203297-2e3c-430c-9904-30b72dbc657a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Nodes\Item">
       <UniqueIdentifier>{3839fabc-d627-4b8e-a34b-9c3418c556eb}</UniqueIdentifier>
     </Filter>
@@ -67,9 +64,6 @@
     <Filter Include="src\ofxRulr\Nodes">
       <UniqueIdentifier>{d1ab085f-2d05-40c9-b439-cd87aa6f5cfd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Device">
-      <UniqueIdentifier>{2a5d8ca9-8f34-40f8-9392-cff08f1cee5d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Nodes\Item">
       <UniqueIdentifier>{e6b681c9-4fc8-48da-bbb6-9fc460bd8c2d}</UniqueIdentifier>
     </Filter>
@@ -90,6 +84,12 @@
     </Filter>
     <Filter Include="src\ofxRulr\Nodes\DMX">
       <UniqueIdentifier>{5ddb32e0-a6b3-430a-9faa-563cca4c9428}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Demo">
+      <UniqueIdentifier>{136a4e90-90b8-4803-83f7-411690cee5d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\System">
+      <UniqueIdentifier>{23b5c0d7-6fa1-481c-b2ac-8fc1602afc77}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -468,9 +468,6 @@
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h">
       <Filter>addons\ofxTriangulate\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Device\VideoOutput.h">
-      <Filter>src\ofxRulr\Nodes\Device</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h">
       <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClInclude>
@@ -543,6 +540,12 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Demo\ARCube.h">
+      <Filter>src\ofxRulr\Nodes\Demo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\System\VideoOutput.h">
+      <Filter>src\ofxRulr\Nodes\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -553,9 +556,6 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp">
       <Filter>addons\ofxTriangulate\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Device\VideoOutput.cpp">
-      <Filter>src\ofxRulr\Nodes\Device</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp">
       <Filter>src\ofxRulr\Nodes\Item</Filter>
@@ -622,6 +622,12 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Demo\ARCube.cpp">
+      <Filter>src\ofxRulr\Nodes\Demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\System\VideoOutput.cpp">
+      <Filter>src\ofxRulr\Nodes\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

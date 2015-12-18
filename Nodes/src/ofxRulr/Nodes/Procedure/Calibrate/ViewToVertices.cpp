@@ -1,7 +1,7 @@
 #include "ViewToVertices.h"
 
-#include "../../Item/View.h"
-#include "../../Device/VideoOutput.h"
+#include "ofxRulr/Nodes/Item/View.h"
+#include "ofxRulr/Nodes/System/VideoOutput.h"
 #include "IReferenceVertices.h"
 
 #include "ofxCvGui/Widgets/SelectFile.h"
@@ -77,7 +77,7 @@ namespace ofxRulr {
 					RULR_NODE_INSPECTOR_LISTENER;
 
 					this->addInput<Item::View>();
-					auto videoOutputPin = this->addInput<Device::VideoOutput>();
+					auto videoOutputPin = this->addInput<System::VideoOutput>();
 					auto referenceVerticesPin = this->addInput<IReferenceVertices>();
 
 					auto view = make_shared<Panels::Draws>(this->viewArea);
@@ -186,12 +186,12 @@ namespace ofxRulr {
 					this->projectorReferenceImageFilename.set("Projector reference image filename", "");
 					this->calibrateOnVertexChange.set("Calibrate on vertex change", true);
 
-					videoOutputPin->onNewConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+					videoOutputPin->onNewConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
 						videoOutput->onDrawOutput.addListener([this](ofRectangle & outputRectangle) {
 							this->drawOnProjector();
 						}, this);
 					};
-					videoOutputPin->onDeleteConnection += [this](shared_ptr<Device::VideoOutput> videoOutput) {
+					videoOutputPin->onDeleteConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
 						if (videoOutput) {
 							videoOutput->onDrawOutput.removeListeners(this);
 						}
@@ -373,7 +373,7 @@ namespace ofxRulr {
 					//check videoOutput has same size
 					//--
 					//
-					auto videoOutput = this->getInput<Device::VideoOutput>();
+					auto videoOutput = this->getInput<System::VideoOutput>();
 					if (videoOutput) {
 						if (videoOutput->getWidth() != viewSize.width || videoOutput->getHeight() != viewSize.height) {
 							ofLogWarning("ViewToVertices") << "VideoOutput's size does not match View's size";

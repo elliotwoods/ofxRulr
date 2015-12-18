@@ -26,7 +26,7 @@ namespace ofxRulr {
 
 				auto view = make_shared<ofxCvGui::Panels::World>();
 				view->onDrawWorld += [this](ofCamera &) {
-					this->previewMesh.draw();
+					this->drawObject();
 				};
 				view->setGridEnabled(false);
 #ifdef OFXCVGUI_USE_OFXGRABCAM
@@ -39,8 +39,8 @@ namespace ofxRulr {
 				auto distance = this->spacing * MAX(this->sizeX, this->sizeY);
 				camera.setPosition(0, 0, -distance);
 				camera.lookAt(ofVec3f(), ofVec3f(0, -1, 0));
-				camera.setNearClip(distance / 100.0f);
-				camera.setFarClip(distance * 100.0f);
+				camera.setNearClip(distance / 30.0f);
+				camera.setFarClip(distance * 10.0f);
 			}
 
 			//----------
@@ -89,8 +89,18 @@ namespace ofxRulr {
 			}
 
 			//----------
+			float Board::getSpacing() const {
+				return this->spacing.get();
+			}
+
+			//----------
 			vector<cv::Point3f> Board::getObjectPoints() const {
 				return ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->spacing);
+			}
+
+			//----------
+			void Board::drawObject() const {
+				this->previewMesh.draw();
 			}
 
 			//----------

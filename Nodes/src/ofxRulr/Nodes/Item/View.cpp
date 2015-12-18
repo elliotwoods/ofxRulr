@@ -16,7 +16,6 @@ namespace ofxRulr {
 			//---------
 			View::View(bool hasDistortion) : hasDistortion(hasDistortion) {
 				RULR_NODE_INIT_LISTENER;
-				this->testCamera = nullptr;
 			}
 
 			//---------
@@ -64,10 +63,7 @@ namespace ofxRulr {
 			//----------
 			void View::drawObject() {
 				this->viewInObjectSpace.draw();
-
-				if (this->testCamera) {
-					this->testCamera->draw();
-				}
+				this->onDrawObject.notifyListeners();
 			}
 
 			//---------
@@ -192,6 +188,13 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ALERT
 				}));
 
+				inspector->add(Widgets::Button::make("Export YML...", [this]() {
+					try {
+						this->exportYaml();
+					}
+					RULR_CATCH_ALL_TO_ALERT
+				}));
+
 				inspector->add(make_shared<Widgets::Spacer>());
 			}
 
@@ -307,6 +310,21 @@ namespace ofxRulr {
 					ofstream fileout(ofToDataPath(result.filePath), ios::out);
 					fileout << view;
 					fileout.close();
+				}
+			}
+
+			//----------
+			void View::exportYaml() {
+				auto result = ofSystemSaveDialog(this->getName() + ".yml", "Export Camera Calibration YML");
+				if (result.bSuccess) {
+					//adapted from https://github.com/Itseez/opencv/blob/master/samples/cpp/calibration.cpp#L170
+					cv::FileStorage fs(result.filePath, cv::FileStorage::WRITE);
+
+					fs << "image_width" << this->getWidth();
+					fs << "image_height" << this->getHeight();
+
+					fs << "camera_matrix" << this->getCameraMatrix();
+					fs << "distortion_coefficients" << this->getDistortionCoefficients();
 				}
 			}
 

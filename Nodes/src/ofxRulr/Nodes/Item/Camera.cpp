@@ -40,6 +40,12 @@ namespace ofxRulr {
 
 				//this sets up the GUI for selecting a device
 				this->setDevice("");
+
+				this->onDrawObject += [this]() {
+					if (this->grabber->getIsDeviceOpen()) {
+						this->getViewInObjectSpace().drawOnNearPlane(* this->getGrabber());
+					}
+				};
 			}
 
 			//----------
@@ -156,14 +162,23 @@ namespace ofxRulr {
 							throw(ofxRulr::Exception("Cannot start capture on device of type [" + device->getTypeName() + "] at deviceIndex [" + ofToString(this->deviceIndex) + "]"));
 						}
 
-						this->grabber->getFreshFrame(); // get the first frame to initialise the size of the frame
+						//this block of code should be a bit safer.
+						//it can happen that it's unclear to the user whether the Camera's width/height are valid or not
 						auto width = this->grabber->getWidth();
 						auto height = this->grabber->getHeight();
+						if (width == 0 || height == 0) {
+							width = grabber->getSensorWidth();
+							height = grabber->getSensorHeight();
+						}
 						if (width != 0 && height != 0) {
 							this->setWidth(width);
 							this->setHeight(height);
 							this->rebuildViewFromParameters(); // size will have changed
 						}
+						else {
+							ofSystemAlertDialog("Warning : Camera image size is not yet valid");
+						}
+						
 
 						this->setAllGrabberProperties();
 
@@ -211,6 +226,9 @@ namespace ofxRulr {
 							ofPopMatrix();
 							ofPopStyle();
 						};
+
+						const auto & deviceSpecification = this->getGrabber()->getDeviceSpecification();
+						cameraView->setCaption(deviceSpecification.getManufacturer() + " : " + deviceSpecification.getModelName());
 
 						this->placeholderView->clear();
 						this->placeholderView->add(cameraView);
@@ -308,7 +326,7 @@ namespace ofxRulr {
 					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_OneShot)) {
 						inspector->add(MAKE(Widgets::Button, "Take Photo", [this]() {
 							this->getGrabber()->singleShot();
-						}));
+						}, ' '));
 					}
 				}
 			}

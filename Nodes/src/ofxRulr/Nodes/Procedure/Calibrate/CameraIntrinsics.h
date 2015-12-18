@@ -17,6 +17,8 @@ namespace ofxRulr {
 
 					void serialize(Json::Value &);
 					void deserialize(const Json::Value &);
+
+					bool getRunFinderEnabled() const;
 				protected:
 					void populateInspector(ofxCvGui::ElementGroupPtr);
 					void findBoard();

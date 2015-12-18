@@ -5,7 +5,7 @@
 
 namespace ofxRulr {
 	namespace Nodes {
-		namespace Device {
+		namespace System {
 #pragma mark MonitorEventChangeListener
 			//----------
 			MonitorEventChangeListener monitorEventChangeListener = MonitorEventChangeListener();
@@ -147,7 +147,7 @@ namespace ofxRulr {
 
 			//----------
 			string VideoOutput::getTypeName() const {
-				return "Device::VideoOutput";
+				return "System::VideoOutput";
 			}
 
 			//----------

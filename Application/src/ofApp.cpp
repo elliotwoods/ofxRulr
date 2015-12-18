@@ -1,5 +1,7 @@
 #include "../../../addons/ofxRulr/Nodes/src/ofxRulr/Nodes/DeclareNodes.h"
-#include "../../../addons/ofxEdsdk/pairs/ofxMachineVision/CanonDSLRDevice.h"
+#include "../../../addons/ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRDevice.h"
+#include "../../../addons/ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRLiveViewDevice.h"
+#include "../../../addons/ofxEdsdk/pairs/ofxRulr/Nodes/Monitor/CanonLiveView.h"
 #include "ofApp.h"
 
 using namespace ofxAssets;
@@ -28,6 +30,8 @@ void ofApp::setup2(){
 	ofxRulr::Nodes::loadCoreNodes();
 	ofxRulr::Nodes::loadPluginNodes();
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRDevice>();
+	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRLiveViewDevice>();
+	RULR_DECLARE_NODE(ofxRulr::Nodes::Monitor::CanonLiveView);
 	//
 	//--
 

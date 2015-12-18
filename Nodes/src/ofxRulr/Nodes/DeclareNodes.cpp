@@ -2,7 +2,10 @@
 
 #include "ofxRulr/Nodes/Data/Recorder.h"
 
-#include "ofxRulr/Nodes/Device/VideoOutput.h"
+#include "ofxRulr/Nodes/Demo/ARCube.h"
+
+#include "ofxRulr/Nodes/DMX/Sharpy.h"
+#include "ofxRulr/Nodes/DMX/AimMovingHeadAt.h"
 
 #include "ofxRulr/Nodes/Item/Board.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
@@ -20,8 +23,7 @@
 
 #include "ofxRulr/Nodes/Render/NodeThroughView.h"
 
-#include "ofxRulr/Nodes/DMX/Sharpy.h"
-#include "ofxRulr/Nodes/DMX/AimMovingHeadAt.h"
+#include "ofxRulr/Nodes/System/VideoOutput.h"
 
 #include "ofxRulr/Graph/FactoryRegister.h"
 
@@ -30,7 +32,10 @@ namespace ofxRulr {
 		void loadCoreNodes() {
 			RULR_DECLARE_NODE(Data::Recorder);
 
-			RULR_DECLARE_NODE(Device::VideoOutput);
+			RULR_DECLARE_NODE(Demo::ARCube);
+
+			RULR_DECLARE_NODE(DMX::Sharpy);
+			RULR_DECLARE_NODE(DMX::AimMovingHeadAt);
 
 			RULR_DECLARE_NODE(Item::Board);
 			RULR_DECLARE_NODE(Item::Camera);
@@ -48,8 +53,7 @@ namespace ofxRulr {
 
 			RULR_DECLARE_NODE(Render::NodeThroughView);
 
-			RULR_DECLARE_NODE(DMX::Sharpy);
-			RULR_DECLARE_NODE(DMX::AimMovingHeadAt);
+			RULR_DECLARE_NODE(System::VideoOutput);
 		}
 
 		void loadPluginNodes() {

@@ -10,8 +10,14 @@
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp">
       <Filter>addons\ofxSplashScreen\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRDevice.cpp">
-      <Filter>pairs\ofxEdsdk\ofxMachineVision</Filter>
+    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxRulr\Nodes\Monitor\CanonLiveView.cpp">
+      <Filter>pairs\ofxEdsdk\ofxRulr\Nodes\Monitor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRLiveViewDevice.cpp">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.cpp">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision\Device</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -36,6 +42,18 @@
     <Filter Include="pairs\ofxEdsdk\ofxMachineVision">
       <UniqueIdentifier>{3b2b293d-e91a-475a-8691-f052bd789367}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pairs\ofxEdsdk\ofxRulr">
+      <UniqueIdentifier>{822936b8-806a-46be-983f-5818a8bc8d69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk\ofxRulr\Nodes">
+      <UniqueIdentifier>{b66a28e5-be33-4791-b82c-ee19f2995e9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk\ofxRulr\Nodes\Monitor">
+      <UniqueIdentifier>{12d9776b-7d33-44a6-9472-aedf0ac5d485}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxEdsdk\ofxMachineVision\Device">
+      <UniqueIdentifier>{8410aa53-fed8-4b58-b33c-d98b85af43ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -45,8 +63,14 @@
       <Filter>addons\ofxSplashScreen\src</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\CanonDSLRDevice.h">
-      <Filter>pairs\ofxEdsdk\ofxMachineVision</Filter>
+    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxRulr\Nodes\Monitor\CanonLiveView.h">
+      <Filter>pairs\ofxEdsdk\ofxRulr\Nodes\Monitor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.h">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRLiveViewDevice.h">
+      <Filter>pairs\ofxEdsdk\ofxMachineVision\Device</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

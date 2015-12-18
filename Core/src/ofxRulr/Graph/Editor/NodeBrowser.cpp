@@ -76,18 +76,25 @@ namespace ofxRulr {
 
 			//----------
 			void NodeBrowser::refreshResults() {
-				string searchTerm = ofToLower(this->textBox->getText());
+				//build seach tokens
+				auto searchTokens = ofSplitString(this->textBox->getText(), " ", true);
+				for (auto & searchToken : searchTokens) {
+					searchToken = ofToLower(searchToken);
+				}
 				
 				this->listBox->clear();
 
 				auto & factoryRegister = FactoryRegister::X();
 				for (auto factoryIterator : factoryRegister) {
-					bool matches = searchTerm == "";
-					if (!matches) {
-						const auto & factoryName = ofToLower(factoryIterator.first);
-						matches |= factoryName.find(searchTerm) != string::npos;
+					//make sure it matches all tokens within search string
+					bool matches = true;
+					const auto factoryNameLower = ofToLower(factoryIterator.first);
+					for (const auto & searchToken : searchTokens) {
+						matches &= factoryNameLower.find(searchToken) != string::npos;
 					}
+
 					if (matches) {
+						//create list items for matching factories
 						auto newListItem = make_shared<ListItem>(factoryIterator.second);
 						weak_ptr<ListItem> newListItemWeak = newListItem;
 						newListItem->onMouse += [this, newListItemWeak](ofxCvGui::MouseArguments & args) {

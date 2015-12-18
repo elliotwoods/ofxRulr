@@ -221,7 +221,7 @@
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Recorder.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DeclareNodes.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Device\VideoOutput.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Demo\ARCube.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Fixture.h" />
@@ -244,6 +244,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Triangulate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Render\NodeThroughView.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\System\VideoOutput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp" />
@@ -251,7 +252,7 @@
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Recorder.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DeclareNodes.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Device\VideoOutput.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Demo\ARCube.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Base.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Fixture.cpp" />
@@ -272,6 +273,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Render\NodeThroughView.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\System\VideoOutput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxGLM\libs\glm\core\func_common.inl" />

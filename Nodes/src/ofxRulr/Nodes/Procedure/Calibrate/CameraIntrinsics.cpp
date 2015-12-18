@@ -38,44 +38,47 @@ namespace ofxRulr {
 					this->view->onDraw += [this](DrawArguments & drawArgs) {
 						auto camera = this->getInput<Item::Camera>();
 						if (camera) {
-							auto grabber = camera->getGrabber();
-							if (this->grayscale.isAllocated()) {
-								this->grayscale.draw(drawArgs.localBounds);
-							}
+							if (this->getRunFinderEnabled()) {
+								auto grabber = camera->getGrabber();
+								if (this->grayscale.isAllocated()) {
+									this->grayscale.draw(drawArgs.localBounds);
+								}
 
-							ofPushMatrix();
-							{
-								ofScale(drawArgs.localBounds.getWidth() / camera->getWidth(), drawArgs.localBounds.getHeight() / camera->getHeight());
-
-								//draw current corners
-								ofxCv::drawCorners(this->currentCorners);
-
-								//draw past corners
-								ofPushStyle();
+								ofPushMatrix();
 								{
-									ofFill();
-									ofSetLineWidth(0.0f);
-									int boardIndex = 0;
-									ofColor boardColor(200, 100, 100);
-									for (auto & board : this->accumulatedCorners) {
-										boardColor.setHue(boardIndex++ * 30 % 360);
-										ofSetColor(boardColor);
-										for (auto & corner : board) {
-											ofCircle(corner, 3.0f);
+									//scale view to camera coordinates
+									auto grabber = camera->getGrabber();
+									auto cameraWidth = grabber->getWidth();
+									auto cameraHeight = grabber->getHeight();
+									ofScale(drawArgs.localBounds.getWidth() / cameraWidth, drawArgs.localBounds.getHeight() / cameraHeight);
+
+									//draw current corners
+									ofxCv::drawCorners(this->currentCorners);
+
+									//draw past corners
+									ofPushStyle();
+									{
+										ofFill();
+										ofSetLineWidth(0.0f);
+										int boardIndex = 0;
+										ofColor boardColor(200, 100, 100);
+										for (auto & board : this->accumulatedCorners) {
+											boardColor.setHue(boardIndex++ * 30 % 360);
+											ofSetColor(boardColor);
+											for (auto & corner : board) {
+												ofCircle(corner, 3.0f);
+											}
 										}
 									}
+									ofPopStyle();
 								}
-								ofPopStyle();
+								ofPopMatrix();
 							}
-							ofPopMatrix();
-
-							if (!this->isBeingInspected()) {
-								ofPushStyle(); 
+							else {
+								ofPushStyle();
 								{
 									ofSetColor(255, 100);
-									if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
-										ofxCvGui::Utils::drawText("Select node to enable board finder...", drawArgs.localBounds);
-									}
+									ofxCvGui::Utils::drawText("Select node to enable board finder...", drawArgs.localBounds);
 								}
 								ofPopStyle();
 							}
@@ -104,7 +107,7 @@ namespace ofxRulr {
 						auto camera = this->getInput<Item::Camera>();
 						if (camera) {
 							auto grabber = camera->getGrabber();
-							if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+							if (grabber->isFrameNew() && grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
 								try {
 									this->findBoard();
 								}
@@ -139,6 +142,27 @@ namespace ofxRulr {
 						this->accumulatedCorners.push_back(board);
 					}
 					Utils::Serializable::deserialize(this->error, json);
+				}
+
+				//----------
+				bool CameraIntrinsics::getRunFinderEnabled() const {
+					if (this->isBeingInspected()) {
+						//find when we're selected
+						return true;
+					}
+					else {
+						auto camera = this->getInput<Item::Camera>();
+						if (camera) {
+							auto grabber = camera->getGrabber();
+							if (!grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+								//find when the camera is a single shot camera
+								return true;
+							}
+						}
+					}
+
+					//if nothing was good, then return false
+					return false;
 				}
 
 				//----------
@@ -198,6 +222,9 @@ namespace ofxRulr {
 					auto frame = grabber->getFrame();
 
 					//copy the frame out
+					if (!frame) {
+						throw(Exception("No camera frame available"));
+					}
 					frame->lockForReading();
 					auto & pixels = frame->getPixels();
 					if (!pixels.isAllocated()) {
