@@ -18,6 +18,8 @@
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Procedure/Triangulate.h"
 
+#include "ofxRulr/Nodes/Render/NodeThroughView.h"
+
 #include "ofxRulr/Nodes/DMX/Sharpy.h"
 #include "ofxRulr/Nodes/DMX/AimMovingHeadAt.h"
 
@@ -43,6 +45,8 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Procedure::Calibrate::MovingHeadToWorld);
 			RULR_DECLARE_NODE(Procedure::Scan::Graycode);
 			RULR_DECLARE_NODE(Procedure::Triangulate);
+
+			RULR_DECLARE_NODE(Render::NodeThroughView);
 
 			RULR_DECLARE_NODE(DMX::Sharpy);
 			RULR_DECLARE_NODE(DMX::AimMovingHeadAt);

@@ -276,7 +276,7 @@ namespace ofxRulr {
 				}));
 				auto deviceIndexWidget = Widgets::EditableValue<int>::make("Device Index", [this]() {
 					return this->deviceIndex;
-				}, [this](string & deviceIndexSelection) {
+				}, [this](const string & deviceIndexSelection) {
 					this->deviceIndex = ofToInt(deviceIndexSelection);
 					this->reopenDevice();
 				});

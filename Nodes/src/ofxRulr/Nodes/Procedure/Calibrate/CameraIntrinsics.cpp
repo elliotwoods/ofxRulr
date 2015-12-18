@@ -31,8 +31,8 @@ namespace ofxRulr {
 					RULR_NODE_SERIALIZATION_LISTENERS;
 					RULR_NODE_INSPECTOR_LISTENER;
 
-					this->addInput(MAKE(Pin<Item::Board>));
 					this->addInput(MAKE(Pin<Item::Camera>));
+					this->addInput(MAKE(Pin<Item::Board>));
 
 					this->view = MAKE(ofxCvGui::Panels::Base);
 					this->view->onDraw += [this](DrawArguments & drawArgs) {

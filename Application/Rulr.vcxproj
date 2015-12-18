@@ -61,7 +61,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(KINECTSDK20_DIR)\inc;..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -79,7 +79,7 @@
       <PreprocessorDefinitions>__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(KINECTSDK20_DIR)\inc;..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>

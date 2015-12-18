@@ -75,7 +75,7 @@ namespace ofxRulr {
 
 			template<typename NodeType>
 			void connect(shared_ptr<NodeType> node) {
-				auto inputPin = this->getInputPins().get<Pin<NodeType>>();
+				auto inputPin = this->getInputPins().get<typename Graph::Pin<NodeType>>();
 				if (inputPin) {
 					inputPin->connect(node);
 				}

@@ -37,7 +37,7 @@ namespace ofxRulr {
 			//
 			string Recorder::formatTime(const microseconds & microseconds) {
 				stringstream result;
-				if (microseconds < 1ms) {
+				if (microseconds < chrono::milliseconds(1)) {
 					//if less than a microsecond
 					result << microseconds.count() << "us";
 				}
@@ -48,7 +48,7 @@ namespace ofxRulr {
 					stripMagnitude(remainingTime, minutes, result, "m ");
 					stripMagnitude(remainingTime, seconds, result, "s ");
 
-					if (remainingTime > 1ms) {
+					if (remainingTime > chrono::milliseconds(1)) {
 						result << setw(3);
 						result << duration_cast<milliseconds>(remainingTime).count() << "ms";
 					}
@@ -123,7 +123,7 @@ namespace ofxRulr {
 					this->playHeadPosition += Recorder::getLastAppFrameDuration();
 					if (this->playHeadPosition > this->getLastFrameTime()) {
 						if (this->loopPlayback) {
-							this->playHeadPosition = 0us;
+							this->playHeadPosition = chrono::microseconds(0);
 						}
 						else {
 							this->playHeadPosition = this->getLastFrameTime();
@@ -236,7 +236,7 @@ namespace ofxRulr {
 			//----------
 			void Recorder::stop() {
 				this->state = State::Stopped;
-				this->playHeadPosition = 0us;
+				this->playHeadPosition = chrono::microseconds(0);
 				this->paused = false;
 			}
 
@@ -292,7 +292,7 @@ namespace ofxRulr {
 			microseconds Recorder::getFirstFrameTime() const {
 				if (this->frames.empty()) {
 					// we return start and end as being at 0 in this case
-					return 0us;
+					return chrono::microseconds(0);
 				}
 				else {
 					return this->frames.begin()->first;
@@ -303,7 +303,7 @@ namespace ofxRulr {
 			microseconds Recorder::getLastFrameTime() const {
 				if (this->frames.empty()) {
 					// we return start and end as being at 0 in this case
-					return 0us;
+					return chrono::microseconds(0);
 				}
 				else {
 					auto lastFrame = this->frames.end();
@@ -340,7 +340,7 @@ namespace ofxRulr {
 
 			//----------
 			void Recorder::eraseBlankBeforeFirstFrame() {
-				this->erase(0us, this->getFirstFrameTime());
+				this->erase(chrono::microseconds(0), this->getFirstFrameTime());
 			}
 
 			//----------

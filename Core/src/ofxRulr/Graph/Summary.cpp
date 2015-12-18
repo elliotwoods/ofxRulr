@@ -80,7 +80,7 @@ namespace ofxRulr {
 			auto & camera = this->view->getCamera();
 			auto & cameraJson = json["Camera"];
 			cameraJson["position"] << camera.getPosition();
-			cameraJson["orientation"] << (ofVec4f&) camera.getOrientationQuat(); //cast as ofVec4f since ofQuaternion doesn't have serialisation
+			cameraJson["orientation"] << camera.getOrientationQuat().asVec4(); //cast as ofVec4f since ofQuaternion doesn't have serialisation
 		}
 
 		//----------
