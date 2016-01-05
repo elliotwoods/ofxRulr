@@ -76,6 +76,7 @@ namespace ofxRulr {
 				bool needsMonitorRefresh;
 
 				GLFWwindow * window;
+				string windowTitle;
 
 				ofParameter<bool> showWindow;
 				ofParameter<float> splitHorizontal;

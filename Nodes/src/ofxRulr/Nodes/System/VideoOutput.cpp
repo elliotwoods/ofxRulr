@@ -258,6 +258,12 @@ namespace ofxRulr {
 				//show and then clear the window
 				this->presentFbo();
 				this->clearFbo(true);
+				
+				//set the window title
+				if(this->window && this->windowTitle != this->getName()) {
+					glfwSetWindowTitle(this->window, this->getName().c_str());
+					this->windowTitle = this->getName();
+				}
 			}
 
 			//----------
@@ -580,9 +586,16 @@ namespace ofxRulr {
 					//create the window
 					//--
 					//
-					this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), NULL, glfwGetCurrentContext());
-					glfwSetWindowPos(this->window, x, y);
-					glfwSetWindowTitle(this->window, this->getName().c_str());
+					auto hasSplit = this->splitHorizontal > 1 || this->splitVertical > 1;
+					if(hasSplit) {
+						//windowed
+						this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), NULL, glfwGetCurrentContext());
+						glfwSetWindowPos(this->window, x, y);
+					} else {
+						//fullscreen
+						this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), videoOutput.monitor, glfwGetCurrentContext());
+						
+					}
 					//
 					//--
 
@@ -595,6 +608,8 @@ namespace ofxRulr {
 					ofFbo::Settings fboSettings;
 					fboSettings.width = this->width;
 					fboSettings.height = this->height;
+					fboSettings.minFilter = GL_NEAREST;
+					fboSettings.maxFilter = GL_NEAREST;
 					this->fbo.allocate(fboSettings);
 					//
 					//--

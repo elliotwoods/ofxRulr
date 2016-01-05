@@ -11,6 +11,12 @@ namespace ofxRulr {
 			namespace Scan {
 				class Graycode : public Procedure::Base {
 				public:
+					enum VideoOutputMode {
+						None = 0,
+						TestPattern = 1,
+						Data = 2
+					};
+					
 					enum PreviewMode {
 						CameraInProjector = 0,
 						ProjectorInCamera = 1,
@@ -39,6 +45,7 @@ namespace ofxRulr {
 					void drawPreviewOnVideoOutput(const ofRectangle &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 					void updatePreview();
+					void updateTestPattern();
 					string getPreviewModeString() const;
 					
 					ofxCvGui::PanelPtr view;
@@ -52,11 +59,13 @@ namespace ofxRulr {
 					ofParameter<float> delay;
 					ofParameter<float> brightness;
 					
-					// check enum PreviewMode
+					// check enum PreviewMode for reference
+					ofParameter<int> videoOutputMode;
 					ofParameter<int> previewMode;
-					ofParameter<bool> enablePreviewOnVideoOutput;
 					
+					ofTexture testPattern;
 					ofTexture preview;
+					uint8_t testPatternBrightness = 0;
 					bool previewDirty = true;
 				};
 			}
