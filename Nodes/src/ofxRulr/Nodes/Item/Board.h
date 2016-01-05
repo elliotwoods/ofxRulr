@@ -11,7 +11,7 @@ namespace ofxRulr {
 				Board();
 				void init();
 				string getTypeName() const override;
-				ofxCvGui::PanelPtr getView();
+				ofxCvGui::PanelPtr getView() override;
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
@@ -24,7 +24,7 @@ namespace ofxRulr {
 
 				bool findBoard(cv::Mat, vector<cv::Point2f> & result, bool useOptimisers = true) const;
 			protected:
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 				void updatePreviewMesh();
 
 				ofxCvGui::PanelPtr view;

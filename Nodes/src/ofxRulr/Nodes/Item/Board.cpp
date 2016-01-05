@@ -110,7 +110,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Board::populateInspector(ElementGroupPtr inspector) {
+			void Board::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				auto sliderCallback = [this](ofParameter<float> &) {
 					this->updatePreviewMesh();
 				};
@@ -126,8 +128,8 @@ namespace ofxRulr {
 
 				inspector->add(typeChooser);
 
-				Utils::Gui::addIntSlider(this->sizeX, inspector)->onValueChange += sliderCallback;
-				Utils::Gui::addIntSlider(this->sizeY, inspector)->onValueChange += sliderCallback;
+				Utils::Gui::addIntSlider(this->sizeX, inspector->getElementGroup())->onValueChange += sliderCallback;
+				Utils::Gui::addIntSlider(this->sizeY, inspector->getElementGroup())->onValueChange += sliderCallback;
 				inspector->add(Widgets::Title::make("NB : Checkerboard size is\n counted by number of\n inner corners", Widgets::Title::Level::H3));
 				
 				inspector->add(ofxCvGui::Widgets::LiveValue<string>::make("Warning", [this]() {

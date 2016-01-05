@@ -131,7 +131,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void AimMovingHeadAt::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void AimMovingHeadAt::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				inspector->add(Widgets::Toggle::make(this->ignoreBlankTransform));
 
 				inspector->add(Widgets::Title::make("Position offset", Widgets::Title::Level::H2));

@@ -62,7 +62,7 @@ namespace ofxRulr {
 						auto frame = this->grabber->getFrame();
 						frame->lockForReading();
 						const auto & pixels = frame->getPixels();
-						auto middleRow = pixels.getPixels() + pixels.getWidth() * pixels.getNumChannels() * pixels.getHeight() / 2;
+						auto middleRow = pixels.getData() + pixels.getWidth() * pixels.getNumChannels() * pixels.getHeight() / 2;
 
 						this->focusLineGraph.clear();
 						this->focusLineGraph.setMode(OF_PRIMITIVE_LINE_STRIP);
@@ -83,37 +83,44 @@ namespace ofxRulr {
 			//----------
 			void Camera::serialize(Json::Value & json) {
 				auto & jsonDevice = json["device"];
-				Utils::Serializable::serialize(this->deviceTypeName, jsonDevice);
-				Utils::Serializable::serialize(this->deviceIndex, jsonDevice);
-				jsonDevice["width"] = this->getWidth();
-				jsonDevice["height"] = this->getHeight();
+				{
+					Utils::Serializable::serialize(this->deviceTypeName, jsonDevice);
+					Utils::Serializable::serialize(this->deviceIndex, jsonDevice);
+					jsonDevice["width"] = this->getWidth();
+					jsonDevice["height"] = this->getHeight();
+					
+				}
 
 				auto & jsonSettings = json["properties"];
-				Utils::Serializable::serialize(this->exposure, jsonSettings);
-				Utils::Serializable::serialize(this->gain, jsonSettings);
-				Utils::Serializable::serialize(this->focus, jsonSettings);
-				Utils::Serializable::serialize(this->sharpness, jsonSettings);
-
-				auto & jsonResolution = json["resolution"];
+				{
+					Utils::Serializable::serialize(this->exposure, jsonSettings);
+					Utils::Serializable::serialize(this->gain, jsonSettings);
+					Utils::Serializable::serialize(this->focus, jsonSettings);
+					Utils::Serializable::serialize(this->sharpness, jsonSettings);
+				}
 			}
 
 			//----------
 			void Camera::deserialize(const Json::Value & json) {
 				auto & jsonDevice = json["device"];
-				this->setDeviceIndex(jsonDevice[this->deviceIndex.getName()].asInt());
-				this->setDevice(jsonDevice[this->deviceTypeName.getName()].asString());
-
-				//take in the saved resolution, this will be overwritten when the device is open and running
-				this->viewInObjectSpace.setWidth(jsonDevice["width"].asFloat());
-				this->viewInObjectSpace.setHeight(jsonDevice["height"].asFloat());
+				{
+					this->setDeviceIndex(jsonDevice[this->deviceIndex.getName()].asInt());
+					this->setDevice(jsonDevice[this->deviceTypeName.getName()].asString());
+					
+					//take in the saved resolution, this will be overwritten when the device is open and running
+					this->viewInObjectSpace.setWidth(jsonDevice["width"].asFloat());
+					this->viewInObjectSpace.setHeight(jsonDevice["height"].asFloat());
+				}
 
 				auto & jsonSettings = json["properties"];
-				Utils::Serializable::deserialize(this->exposure, jsonSettings);
-				Utils::Serializable::deserialize(this->gain, jsonSettings);
-				Utils::Serializable::deserialize(this->focus, jsonSettings);
-				Utils::Serializable::deserialize(this->sharpness, jsonSettings);
-
-				this->setAllGrabberProperties();
+				{
+					Utils::Serializable::deserialize(this->exposure, jsonSettings);
+					Utils::Serializable::deserialize(this->gain, jsonSettings);
+					Utils::Serializable::deserialize(this->focus, jsonSettings);
+					Utils::Serializable::deserialize(this->sharpness, jsonSettings);
+					
+					this->setAllGrabberProperties();
+				}
 			}
 
 			//----------
@@ -200,7 +207,7 @@ namespace ofxRulr {
 
 								ofTranslate(0, args.drawSize.y / 2.0f);
 								ofSetColor(100, 255, 100);
-								ofLine(0, 0, args.drawSize.x, 0);
+								ofDrawLine(0, 0, args.drawSize.x, 0);
 
 								ofTranslate(0, +128);
 								ofScale(1.0f, -1.0f);
@@ -221,8 +228,8 @@ namespace ofxRulr {
 							ofSetColor(255);
 							ofPushMatrix();
 							ofTranslate(args.drawSize.x / 2.0f, args.drawSize.y / 2.0f);
-							ofLine(-10, 0, 10, 0);
-							ofLine(0, -10, 0, 10);
+							ofDrawLine(-10, 0, 10, 0);
+							ofDrawLine(0, -10, 0, 10);
 							ofPopMatrix();
 							ofPopStyle();
 						};
@@ -284,7 +291,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Camera::populateInspector(ElementGroupPtr inspector) {
+			void Camera::populateInspector(InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				inspector->add(Widgets::Toggle::make(this->showSpecification));
 				inspector->add(Widgets::Toggle::make(this->showFocusLine));
 

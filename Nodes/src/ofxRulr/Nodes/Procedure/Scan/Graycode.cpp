@@ -185,7 +185,9 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Graycode::populateInspector(ElementGroupPtr inspector) {
+				void Graycode::populateInspector(InspectArguments & inspectArguments) {
+					auto inspector = inspectArguments.inspector;
+					
 					auto scanButton = Widgets::Button::make("SCAN", [this]() {
 						try {
 							this->runScan();

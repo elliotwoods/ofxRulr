@@ -20,7 +20,7 @@ namespace ofxRulr {
 
 					bool getRunFinderEnabled() const;
 				protected:
-					void populateInspector(ofxCvGui::ElementGroupPtr);
+					void populateInspector(ofxCvGui::InspectArguments &);
 					void findBoard();
 					void calibrate();
 

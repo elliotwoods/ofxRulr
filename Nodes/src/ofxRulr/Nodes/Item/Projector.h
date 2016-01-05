@@ -18,7 +18,7 @@ namespace ofxRulr {
 				void deserialize(const Json::Value &);
 
 			protected:
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 
 				void updateProjectorFromParameters();
 				void updateParametersFromProjector();

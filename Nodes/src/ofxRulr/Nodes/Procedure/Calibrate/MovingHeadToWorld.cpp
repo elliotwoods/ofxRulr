@@ -292,7 +292,9 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void MovingHeadToWorld::populateInspector(ElementGroupPtr inspector) {
+				void MovingHeadToWorld::populateInspector(InspectArguments & inspectArguments) {
+					auto inspector = inspectArguments.inspector;
+					
 					inspector->add(Widgets::Slider::make(this->beamBrightness));
 					auto addCaptureButton = Widgets::Button::make("Add capture", [this]() {
 						bool success = false;

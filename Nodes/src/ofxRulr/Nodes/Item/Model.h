@@ -22,7 +22,7 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 			protected:
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 
 				void updatePreviewMesh();
 

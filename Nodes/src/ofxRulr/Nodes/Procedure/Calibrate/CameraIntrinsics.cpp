@@ -166,7 +166,9 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraIntrinsics::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				void CameraIntrinsics::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+					auto inspector = inspectArguments.inspector;
+					
 					inspector->add(Widgets::Indicator::make("Points found", [this]() {
 						return (Widgets::Indicator::Status) !this->currentCorners.empty();
 					}));

@@ -108,8 +108,8 @@ namespace ofxRulr {
 								  ofSetColor((i % 2 == 0) ? 255 : 100);
 								  auto x = xStep * i + 0.5f;
 								  auto y = yStep * i + 0.5f;
-								  ofLine(x, 0, x, this->getHeight());
-								  ofLine(0, y, this->getWidth(), y);
+								  ofDrawLine(x, 0, x, this->getHeight());
+								  ofDrawLine(0, y, this->getWidth(), y);
 							  }
 							  ofDrawBitmapString(this->getName() + "\n" + ofToString(this->getWidth()) + "x" + ofToString(this->getHeight()), xStep * 2 + 10, yStep * 2 - 20);
 							  ofPopStyle();
@@ -181,7 +181,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void VideoOutput::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void VideoOutput::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				inspector->add(MAKE(ofxCvGui::Widgets::Button, "Refresh monitors", [this]() {
 					this->refreshMonitors();
 				}));

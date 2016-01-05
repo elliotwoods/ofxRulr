@@ -21,7 +21,7 @@ namespace ofxRulr {
 		protected:
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
-			void populateInspector(ofxCvGui::ElementGroupPtr);
+			void populateInspector(ofxCvGui::InspectArguments &);
 #ifdef OFXCVGUI_USE_OFXGRABCAM
 			void callbackShowCursor(bool &);
 #endif

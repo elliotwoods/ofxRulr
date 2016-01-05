@@ -161,7 +161,8 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void ARCube::populateInspector(ElementGroupPtr inspector) {
+			void ARCube::populateInspector(InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
 				auto activeWhenWidget = Widgets::MultipleChoice::make("Active");
 				activeWhenWidget->addOption("When selected");
 				activeWhenWidget->addOption("Always");

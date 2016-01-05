@@ -116,13 +116,14 @@ namespace ofxRulr {
 			void Transmit::deserialize(const Json::Value & json) {
 				const auto & jsonUniverses = json["universes"];
 				for (int i = 0; i < this->universes.size(); i++) {
-					const auto & jsonUniverse = json[ofToString(i)];
+					const auto & jsonUniverse = jsonUniverses[ofToString(i)];
 					Utils::Serializable::deserialize(this->universes[i]->blackoutEnabled, jsonUniverse);
 				}
 			}
 
 			//----------
-			void Transmit::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void Transmit::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
 				for (int i = 0; i < this->universes.size(); i++) {
 					inspector->add(Widgets::Title::make("Universe " + ofToString(i)));
 					inspector->add(Widgets::Toggle::make(this->universes[i]->blackoutEnabled));

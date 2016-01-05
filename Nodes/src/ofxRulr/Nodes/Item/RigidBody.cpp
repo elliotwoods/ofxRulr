@@ -82,7 +82,9 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void RigidBody::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void RigidBody::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				//NOTE : WHEN WE CHANGE THESE FROM SLIDERS, LETS ALSO GET RID OF THE RANGE ON THE PARAMETERS
 				// TRANSLATION SHOULDN'T BE BOUND to +/-100
 

@@ -30,7 +30,7 @@ namespace ofxRulr {
 					
 					void drawWorld() override;
 				protected:
-					void populateInspector(ofxCvGui::ElementGroupPtr);
+					void populateInspector(ofxCvGui::InspectArguments &);
 					void drawOnVideoOutput();
 					
 					shared_ptr<ofxCvGui::Panels::Draws> view;

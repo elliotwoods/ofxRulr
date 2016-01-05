@@ -278,7 +278,9 @@ namespace ofxRulr {
 				}
 				
 				//----------
-				void ProjectorFromDepthCamera::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				void ProjectorFromDepthCamera::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+					auto inspector = inspectArguments.inspector;
+					
 					auto slider = MAKE(ofxCvGui::Widgets::Slider, this->checkerboard.scale);
 					inspector->add(slider);
 					

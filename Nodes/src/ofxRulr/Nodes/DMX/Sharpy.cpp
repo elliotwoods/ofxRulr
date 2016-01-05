@@ -117,7 +117,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Sharpy::populateInspector(ElementGroupPtr inspector) {
+			void Sharpy::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				auto vectorChannelsEnabledWidget = Widgets::Toggle::make(this->vectorChannelsEnabled);
 				vectorChannelsEnabledWidget->onValueChange += [this](ofParameter<bool> &) {
 					this->updateVectorChannelsEnabled();

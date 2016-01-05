@@ -328,7 +328,9 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void HomographyFromGraycode::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				void HomographyFromGraycode::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+					auto inspector = inspectArguments.inspector;
+					
 					auto findHomographyButton = MAKE(ofxCvGui::Widgets::Button, "Find Homography", [this]() {
 						try {
 							this->findHomography();

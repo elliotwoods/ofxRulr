@@ -37,7 +37,7 @@ namespace ofxRulr {
 		//----------
 		void Base::init() {
 			this->onInspect.addListener([this](ofxCvGui::InspectArguments & args) {
-				this->populateInspector(args.inspector);
+				this->populateInspector(args);
 			}, 99999, this); // populate the instpector with this at the top. We call notify in reverse for inheritance
 
 			//notify the subclasses to init
@@ -118,7 +118,9 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Base::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+		void Base::populateInspector(ofxCvGui::InspectArguments &inspectArguments) {
+			auto inspector = inspectArguments.inspector;
+			
 			auto nameWidget = Widgets::Title::make(this->getName(), ofxCvGui::Widgets::Title::Level::H1);
 			auto nameWidgetWeak = weak_ptr<Element>(nameWidget);
 			nameWidget->onDraw += [this](ofxCvGui::DrawArguments & args) {

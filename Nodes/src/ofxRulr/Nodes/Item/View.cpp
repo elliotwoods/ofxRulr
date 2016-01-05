@@ -109,7 +109,9 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void View::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void View::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				inspector->add(Widgets::Title::make("View", Widgets::Title::Level::H2));
 				inspector->add(make_shared<Widgets::LiveValue<string>>("Resolution", [this](){
 					string msg;

@@ -130,7 +130,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Model::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void Model::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				auto loadButton = make_shared<ofxCvGui::Widgets::Button>("Load model...", [this]() {
 					auto result = ofSystemLoadDialog("Load model using Assimp");
 					if (result.bSuccess) {

@@ -28,7 +28,7 @@ namespace ofxRulr {
 
 				protected:
 					void drawPreviewOnVideoOutput(const ofRectangle &);
-					void populateInspector(ofxCvGui::ElementGroupPtr);
+					void populateInspector(ofxCvGui::InspectArguments &);
 					void switchIfLookingAtDirtyView();
 
 					shared_ptr<ofxCvGui::Panels::Image> view;

@@ -31,7 +31,7 @@ namespace ofxRulr {
 				void setTiltOffset(float);
 				void copyFrom(shared_ptr<MovingHead>);
 			protected:
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 
 				ofParameter<float> pan;
 				ofParameter<float> tilt;

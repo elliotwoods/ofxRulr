@@ -39,7 +39,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Projector::populateInspector(ElementGroupPtr inspector) {
+			void Projector::populateInspector(InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				inspector->add(Widgets::EditableValue<float>::make("Resolution width", [this]() {
 					return this->getWidth();
 				}, [this](string valueString) {

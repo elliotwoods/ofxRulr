@@ -15,7 +15,7 @@ namespace ofxRulr {
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 
 				//A position offset within the objects coordinates
 				//We will apply the object's rotation to this

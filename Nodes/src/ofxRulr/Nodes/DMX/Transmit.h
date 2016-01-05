@@ -33,7 +33,7 @@ namespace ofxRulr {
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 
 				UniverseIndex getUniverseCount() const;
 				const vector<shared_ptr<Universe>> & getUniverses() const;

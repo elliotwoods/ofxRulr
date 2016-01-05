@@ -23,7 +23,7 @@ namespace ofxRulr {
 					void findDistortionCoefficients();
 					void exportMappingImage(string filename = "") const;
 				protected:
-					void populateInspector(ofxCvGui::ElementGroupPtr);
+					void populateInspector(ofxCvGui::InspectArguments &);
 
 					shared_ptr<ofxCvGui::Panels::Image> view;
 

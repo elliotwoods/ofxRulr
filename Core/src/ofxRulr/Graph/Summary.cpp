@@ -109,7 +109,9 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Summary::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+		void Summary::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+			auto inspector = inspectArguments.inspector;
+			
 #ifdef OFXCVGUI_USE_OFXGRABCAM
 			inspector->add(Widgets::Title::make("Cursor", Widgets::Title::Level::H3));
 			inspector->add(Widgets::Toggle::make(this->showCursor));

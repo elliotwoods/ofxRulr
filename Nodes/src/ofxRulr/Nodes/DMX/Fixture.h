@@ -30,7 +30,7 @@ namespace ofxRulr {
 				shared_ptr<Channel> getChannel(DMX::ChannelIndex index);
 				shared_ptr<Channel> getChannel(string name);
 			protected:
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 
 				ofParameter<DMX::ChannelIndex> channelIndex;
 				ofParameter<DMX::UniverseIndex> universeIndex;

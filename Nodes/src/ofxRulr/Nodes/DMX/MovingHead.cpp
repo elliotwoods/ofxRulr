@@ -221,7 +221,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MovingHead::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void MovingHead::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				inspector->add(Widgets::Title::make("DMX::MovingHead", Widgets::Title::Level::H2));
 				inspector->add(Widgets::Slider::make(this->pan));
 				inspector->add(Widgets::Slider::make(this->tilt));

@@ -79,7 +79,6 @@ namespace ofxRulr {
 				//transmit DMX
 				auto transmit = this->getInput<DMX::Transmit>();
 				if (transmit) {
-					const auto & universes = transmit->getUniverses();
 					auto universe = transmit->getUniverse(this->universeIndex.get());
 					if (universe) {
 						universe->setChannels(this->channelIndex.get(), &output[0], output.size());
@@ -138,7 +137,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Fixture::populateInspector(ElementGroupPtr inspector) {
+			void Fixture::populateInspector(InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				inspector->add(Widgets::Title::make("DMX::Fixture", Widgets::Title::Level::H2));
 				inspector->add(Widgets::EditableValue<ChannelIndex>::make(this->channelIndex));
 				inspector->add(Widgets::EditableValue<ChannelIndex>::make(this->universeIndex));

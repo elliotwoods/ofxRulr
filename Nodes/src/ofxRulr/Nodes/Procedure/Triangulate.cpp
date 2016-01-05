@@ -67,7 +67,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Triangulate::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void Triangulate::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				auto triangulateButton = Widgets::Button::make("Triangulate", [this]() {
 					try {
 						this->triangulate();

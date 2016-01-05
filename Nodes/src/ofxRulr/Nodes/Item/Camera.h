@@ -33,7 +33,7 @@ namespace ofxRulr {
 
 				shared_ptr<ofxMachineVision::Frame> getFreshFrame();
 			protected:
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 				void setAllGrabberProperties();
 
 				void exposureCallback(float &);

@@ -20,7 +20,7 @@ namespace ofxRulr {
 
 				void triangulate();
 			protected:
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 				void drawWorld();
 
 				ofMesh mesh;

@@ -186,7 +186,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Recorder::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void Recorder::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				inspector->add(Widgets::Toggle::make(this->loopPlayback));
 				inspector->add(Widgets::Button::make("Erase blank before first frame", [this]() {
 					try {

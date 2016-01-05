@@ -251,7 +251,9 @@ namespace ofxRulr {
 				}
 				
 				//----------
-				void CameraFromDepthCamera::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				void CameraFromDepthCamera::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+					auto inspector = inspectArguments.inspector;
+					
 					inspector->add(ofxCvGui::Widgets::LiveValue<int>::make("Correspondences found", [this]() {
 						return (int) this->correspondences.size();
 					}));

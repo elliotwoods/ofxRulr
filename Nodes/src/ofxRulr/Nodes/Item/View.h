@@ -55,7 +55,7 @@ namespace ofxRulr {
 				void parameterCallback(float &);
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 
 				ofxRay::Camera * testCamera;
 			};

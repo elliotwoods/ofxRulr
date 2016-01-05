@@ -22,7 +22,7 @@
 	}
 #define RULR_NODE_INSPECTOR_LISTENER \
 	this->onInspect += [this](ofxCvGui::InspectArguments & args) { \
-		this->populateInspector(args.inspector); \
+		this->populateInspector(args); \
 	}
 #define RULR_NODE_SERIALIZATION_LISTENERS \
 	this->onSerialize += [this](Json::Value & json) { \
@@ -63,7 +63,7 @@ namespace ofxRulr {
 			void setColor(const ofColor &);
 
 			const Graph::PinSet & getInputPins() const;
-			void populateInspector(ofxCvGui::ElementGroupPtr);
+			void populateInspector(ofxCvGui::InspectArguments &);
 			virtual ofxCvGui::PanelPtr getView() { return ofxCvGui::PanelPtr(); };
 
 			///override this function for any node which can draw to the world

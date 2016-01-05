@@ -111,7 +111,7 @@ namespace ofxRulr {
 				ofNoFill();
 				ofSetLineWidth(3.0f);
 				ofSetColor(80);
-				ofRect(this->canvasExtents);
+				ofDrawRectangle(this->canvasExtents);
 
 				const int stepMinor = 20;
 				const int stepMajor = 100;
@@ -128,7 +128,7 @@ namespace ofxRulr {
 					else {
 						ofSetLineWidth(1.0f);
 					}
-					ofLine(x, canvasTopLeft.y, x, canvasBottomRight.y);
+					ofDrawLine(x, canvasTopLeft.y, x, canvasBottomRight.y);
 				}
 				for (int x = 0; x > canvasTopLeft.x; x -= stepMinor) {
 					if (x == 0) {
@@ -140,7 +140,7 @@ namespace ofxRulr {
 					else {
 						ofSetLineWidth(1.0f);
 					}
-					ofLine(x, canvasTopLeft.y, x, canvasBottomRight.y);
+					ofDrawLine(x, canvasTopLeft.y, x, canvasBottomRight.y);
 				}
 				for (int y = 0; y < canvasBottomRight.y; y += stepMinor) {
 					if (y == 0) {
@@ -152,7 +152,7 @@ namespace ofxRulr {
 					else {
 						ofSetLineWidth(1.0f);
 					}
-					ofLine(canvasTopLeft.x, y, canvasBottomRight.x, y);
+					ofDrawLine(canvasTopLeft.x, y, canvasBottomRight.x, y);
 				}
 				for (int y = 0; y > canvasTopLeft.y; y -= 10) {
 					if (y == 0) {
@@ -164,7 +164,7 @@ namespace ofxRulr {
 					else {
 						ofSetLineWidth(1.0f);
 					}
-					ofLine(canvasTopLeft.x, y, canvasBottomRight.x, y);
+					ofDrawLine(canvasTopLeft.x, y, canvasBottomRight.x, y);
 				}
 
 				ofPopStyle();
@@ -191,8 +191,7 @@ namespace ofxRulr {
 
 			//----------
 			const ofxCvGui::PanelPtr Patch::View::findScreen(const ofVec2f & xy, ofRectangle & currentPanelBounds) {
-				auto xyLocal = xy - currentPanelBounds.getTopLeft();
-
+				
 				auto nodeUnderCursor = this->getNodeHostUnderCursor();
 				if (nodeUnderCursor) {
 					return nodeUnderCursor->getNodeInstance()->getView(); // also this will return PanelPtr() if no screen available
@@ -537,7 +536,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Patch::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void Patch::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				inspector->add(Widgets::Button::make("Duplicate patch down", [this]() {
 					Json::Value json;
 					this->serialize(json);

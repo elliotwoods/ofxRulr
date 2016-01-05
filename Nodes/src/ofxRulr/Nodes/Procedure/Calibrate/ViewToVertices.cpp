@@ -255,7 +255,9 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void ViewToVertices::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				void ViewToVertices::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+					auto inspector = inspectArguments.inspector;
+					
 					inspector->add(Widgets::Toggle::make(this->dragVerticesEnabled));
 
 					inspector->add(Widgets::Title::make("Reference image", Widgets::Title::Level::H3));

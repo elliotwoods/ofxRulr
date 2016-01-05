@@ -151,7 +151,9 @@ namespace ofxRulr {
 			}
 			
 			//----------
-			void KinectV2OSX::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void KinectV2OSX::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				auto inspector = inspectArguments.inspector;
+				
 				auto deviceIndexWidget = Widgets::EditableValue<int>::make(this->deviceIndex);
 				deviceIndexWidget->onEditValue += [this](string deviceIndexString) {
 					this->deviceIndex = ofToInt(deviceIndexString);

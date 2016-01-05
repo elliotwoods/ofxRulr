@@ -27,7 +27,7 @@ namespace ofxRulr {
 				void deserialize(const Json::Value &);
 
 				ofxCvGui::PanelPtr getView() override;
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 				void update();
 
 				float getWidth() const;

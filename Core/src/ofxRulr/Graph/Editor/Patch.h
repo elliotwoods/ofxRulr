@@ -66,7 +66,7 @@ namespace ofxRulr {
 				shared_ptr<NodeHost> findNodeHost(shared_ptr<Nodes::Base>) const;
 				shared_ptr<NodeHost> getNodeHost(NodeHost::Index) const;
 			protected:
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 
 				NodeHost::Index getNextFreeNodeHostIndex() const;
 				LinkHost::Index getNextFreeLinkHostIndex() const;
