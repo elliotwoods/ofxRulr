@@ -383,6 +383,8 @@
 		BD5A1AE51C23ED8900E794E0 /* CanonDSLRDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonDSLRDevice.h; sourceTree = "<group>"; };
 		BD5A1AE61C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanonDSLRLiveViewDevice.cpp; sourceTree = "<group>"; };
 		BD5A1AE71C23ED8900E794E0 /* CanonDSLRLiveViewDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonDSLRLiveViewDevice.h; sourceTree = "<group>"; };
+		BD8290EA1C3B94B300F86328 /* rulr_icon */ = {isa = PBXFileReference; lastKnownFileType = file; path = rulr_icon; sourceTree = "<group>"; };
+		BD8290EC1C3B96C100F86328 /* rulr_icon_debug */ = {isa = PBXFileReference; lastKnownFileType = file; path = rulr_icon_debug; sourceTree = "<group>"; };
 		BD9673871C2584790033BAC9 /* EDSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EDSDK.framework; path = lib/osx/EDSDK.framework; sourceTree = "<group>"; };
 		BD97E0E61C24050D0076BFA7 /* IDepthCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDepthCamera.h; sourceTree = "<group>"; };
 		BD97E0E91C240EE60076BFA7 /* ProjectorFromDepthCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProjectorFromDepthCamera.cpp; sourceTree = "<group>"; };
@@ -1879,6 +1881,8 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
+				BD8290EA1C3B94B300F86328 /* rulr_icon */,
+				BD8290EC1C3B96C100F86328 /* rulr_icon_debug */,
 				BDF8EFC21C23F8030089E0CE /* libturbojpeg.dylib */,
 				BDF8EFBC1C23F7280089E0CE /* OpenCL.framework */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
@@ -4436,8 +4440,8 @@
 					../../../addons/ofxMultiKinectV2/libs/libusb/include,
 					../../../addons/ofxMultiKinectV2/libs/libfreenect2/include,
 				);
-				ICON = "$(ICON_NAME_DEBUG)";
-				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
+				ICON = rulr_icon_debug.icns;
+				ICON_FILE = "$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
@@ -4493,8 +4497,8 @@
 					../../../addons/ofxMultiKinectV2/libs/libusb/include,
 					../../../addons/ofxMultiKinectV2/libs/libfreenect2/include,
 				);
-				ICON = "$(ICON_NAME_RELEASE)";
-				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
+				ICON = rulr_icon.icns;
+				ICON_FILE = "$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
