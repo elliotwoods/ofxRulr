@@ -1350,6 +1350,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				E715FAEB1C2035A10020A52F /* ofxCvGui */,
 				E746249B1C21D55500614A1D /* ofxGLM */,
 				E74624821C21D54800614A1D /* ofxSpinCursor */,
 				E746243A1C21D53300614A1D /* ofxTriangulate */,
@@ -1370,7 +1371,6 @@
 				E715FCCC1C2036DF0020A52F /* ofxMachineVision */,
 				E715FCA71C2036A50020A52F /* ofxAssets */,
 				E715FC6B1C2036680020A52F /* ofxSingleton */,
-				E715FAEB1C2035A10020A52F /* ofxCvGui */,
 			);
 			name = addons;
 			sourceTree = "<group>";

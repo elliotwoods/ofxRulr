@@ -11,6 +11,14 @@ namespace ofxRulr {
 			namespace Scan {
 				class Graycode : public Procedure::Base {
 				public:
+					enum PreviewMode {
+						CameraInProjector = 0,
+						ProjectorInCamera = 1,
+						Median = 2,
+						MedianInverse = 3,
+						Active = 4
+					};
+					
 					Graycode();
 					void init();
 					string getTypeName() const override;
@@ -22,6 +30,7 @@ namespace ofxRulr {
 
 					bool isReady();
 					void runScan();
+					void clear();
 
 					ofxGraycode::Decoder & getDecoder();
 					const ofxGraycode::DataSet & getDataSet() const;
@@ -29,22 +38,26 @@ namespace ofxRulr {
 				protected:
 					void drawPreviewOnVideoOutput(const ofRectangle &);
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void switchIfLookingAtDirtyView();
-
-					shared_ptr<ofxCvGui::Panels::Image> view;
+					void updatePreview();
+					string getPreviewModeString() const;
+					
+					ofxCvGui::PanelPtr view;
 
 					ofxGraycode::PayloadGraycode payload;
 					ofxGraycode::Encoder encoder;
 					ofxGraycode::Decoder decoder;
 					ofImage message;
-
-					ofImage preview;
+					
 					ofParameter<float> threshold;
 					ofParameter<float> delay;
 					ofParameter<float> brightness;
+					
+					// check enum PreviewMode
+					ofParameter<int> previewMode;
 					ofParameter<bool> enablePreviewOnVideoOutput;
-
-					bool previewIsOfNonLivePixels;
+					
+					ofTexture preview;
+					bool previewDirty = true;
 				};
 			}
 		}

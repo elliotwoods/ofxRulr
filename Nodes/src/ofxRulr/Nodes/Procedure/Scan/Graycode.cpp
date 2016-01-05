@@ -40,7 +40,7 @@ namespace ofxRulr {
 					this->decoder.init(payload);
 					this->encoder.init(payload);
 
-					this->view = MAKE(Panels::Image, this->decoder.getProjectorInCamera());
+					this->view = MAKE(Panels::Draws, this->preview);
 
 					videoOutputPin->onNewConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
 						videoOutput->onDrawOutput.addListener([this](ofRectangle & rectangle) {
@@ -55,8 +55,6 @@ namespace ofxRulr {
 							videoOutput->onDrawOutput.removeListeners(this);
 						}
 					};
-
-					this->previewIsOfNonLivePixels = false;
 				}
 
 				//----------
@@ -72,6 +70,10 @@ namespace ofxRulr {
 				//----------
 				void Graycode::update() {
 					this->decoder.update();
+					
+					if(this->previewDirty) {
+						this->updatePreview();
+					}
 				}
 
 				//----------
@@ -95,6 +97,8 @@ namespace ofxRulr {
 					Utils::Serializable::deserialize(this->brightness, json);
 
 					Utils::Serializable::deserialize(this->enablePreviewOnVideoOutput, json);
+					
+					this->previewDirty = true;
 				}
 
 				//----------
@@ -132,6 +136,21 @@ namespace ofxRulr {
 					ofHideCursor();
 
 					while (this->encoder >> this->message) {
+#ifdef TARGET_OSX
+/*
+ something strange on OSX
+ We found that to flush the video output we need to call:
+ 
+ videoOutput->presentFbo()
+ some waiting
+ grabber->update();
+ some waiting
+ videoOutput->presentFbo();
+ 
+ so we just do this part twice
+ */
+						for(int i=0; i<2; i++) {
+#endif
 						videoOutput->clearFbo(false);
 						videoOutput->begin();
 						//
@@ -143,24 +162,33 @@ namespace ofxRulr {
 						//
 						videoOutput->end();
 						videoOutput->presentFbo();
-
+						
 						stringstream message;
 						message << this->getName() << " scanning " << this->encoder.getFrame() << "/" << this->encoder.getFrameCount();
 						ofxCvGui::Utils::drawProcessingNotice(message.str());
-
+						
 						auto startWait = ofGetElapsedTimeMillis();
 						while (ofGetElapsedTimeMillis() - startWait < this->delay) {
 							ofSleepMillis(1);
 							grabber->update();
 						}
 
+#ifdef TARGET_OSX
+						}
+#endif
 						auto frame = grabber->getFreshFrame();
 						this->decoder << frame->getPixels();
 					}
 
 					ofShowCursor();
 
-					this->switchIfLookingAtDirtyView();
+					this->previewDirty = true;
+				}
+				
+				//----------
+				void Graycode::clear() {
+					this->decoder.clear();
+					this->previewDirty = true;
 				}
 
 				//----------
@@ -178,10 +206,7 @@ namespace ofxRulr {
 
 				//----------
 				void Graycode::drawPreviewOnVideoOutput(const ofRectangle & rectangle) {
-					auto preview = this->view->getImage();
-					if (preview) {
-						preview->draw(rectangle);
-					}
+					this->preview.draw(rectangle);
 				}
 
 				//----------
@@ -197,8 +222,7 @@ namespace ofxRulr {
 					scanButton->setHeight(100.0f);
 					inspector->add(scanButton);
 					inspector->add(Widgets::Button::make("Clear", [this]() {
-						this->decoder.clear();
-						this->preview.clear();
+						this->clear();
 					}));
 					inspector->add(Widgets::Button::make("Save ofxGraycode::DataSet...", [this]() {
 						if (this->decoder.hasData()) {
@@ -222,7 +246,7 @@ namespace ofxRulr {
 					thresholdSlider->addIntValidator();
 					thresholdSlider->onValueChange += [this](ofParameter<float> &) {
 						this->decoder.setThreshold(this->threshold);
-						this->switchIfLookingAtDirtyView();
+						this->previewDirty = true;
 					};
 					inspector->add(thresholdSlider);
 					auto brightnessSlider = Widgets::Slider::make(this->brightness);
@@ -234,44 +258,76 @@ namespace ofxRulr {
 					inspector->add(Widgets::LiveValue<unsigned int>::make("Height", [this]() { return this->payload.getHeight(); }));
 
 					inspector->add(Widgets::Spacer::make());
-					inspector->add(Widgets::Title::make("Views", Widgets::Title::Level::H2));
-					inspector->add(Widgets::Button::make("Camera in Projector", [this]() {
-						this->view->setImage(this->decoder.getCameraInProjector());
-						this->previewIsOfNonLivePixels = false;
+					auto previewModeSelector = Widgets::MultipleChoice::make("Preview mode");
+					{
+						previewModeSelector->addOption("CinP");
+						previewModeSelector->addOption("PinC");
+						previewModeSelector->addOption("M");
+						previewModeSelector->addOption("MI");
+						previewModeSelector->addOption("A");
+						previewModeSelector->entangle(this->previewMode);
+						previewModeSelector->onValueChange += [this](const int) {
+							this->previewDirty = true;
+						};
+						inspector->add(previewModeSelector);
+						inspector->add(Widgets::Toggle::make(this->enablePreviewOnVideoOutput));
+					}
+					inspector->add(Widgets::LiveValue<string>::make("Mode name",[this](){
+						return this->getPreviewModeString();
 					}));
-					inspector->add(Widgets::Button::make("Projector in Camera", [this]() {
-						this->view->setImage(this->decoder.getProjectorInCamera());
-						this->previewIsOfNonLivePixels = false;
-					}));
-					inspector->add(Widgets::Button::make("Median", [this]() {
-						this->preview = this->decoder.getDataSet().getMedian();
-						this->preview.update();
-						this->view->setImage(this->preview);
-						this->previewIsOfNonLivePixels = true;
-					}));
-					inspector->add(Widgets::Button::make("Median Inverse", [this]() {
-						this->preview = this->decoder.getDataSet().getMedianInverse();
-						this->preview.update();
-						this->view->setImage(this->preview);
-						this->previewIsOfNonLivePixels = true;
-					}));
-					inspector->add(Widgets::Button::make("Active", [this]() {
-						this->preview = this->decoder.getDataSet().getActive();
-						this->preview.update();
-						this->view->setImage(this->preview);
-						this->previewIsOfNonLivePixels = true;
-					}));
-
-					inspector->add(Widgets::Spacer::make());
-
-					inspector->add(Widgets::Toggle::make(this->enablePreviewOnVideoOutput));
 				}
-
+				
 				//----------
-				void Graycode::switchIfLookingAtDirtyView() {
-					if (this->previewIsOfNonLivePixels) {
-						this->view->setImage(this->decoder.getProjectorInCamera());
-						this->previewIsOfNonLivePixels = false;
+				void Graycode::updatePreview() {
+					if(this->decoder.hasData()) {
+						auto previewMode = static_cast<PreviewMode>(this->previewMode.get());
+						switch (previewMode) {
+							case PreviewMode::CameraInProjector:
+							{
+								this->preview.loadData(this->decoder.getCameraInProjector().getPixels());
+								break;
+							}
+							case PreviewMode::ProjectorInCamera:
+							{
+								this->preview.loadData(this->decoder.getProjectorInCamera().getPixels());
+								break;
+							}
+							case PreviewMode::Median:
+							{
+								this->preview.loadData(this->decoder.getDataSet().getMedian());
+								break;
+							}
+							case PreviewMode::MedianInverse:
+							{
+								this->preview.loadData(this->decoder.getDataSet().getMedianInverse());
+								break;
+							}
+							case PreviewMode::Active:
+							{
+								this->preview.loadData(this->decoder.getDataSet().getActive());
+								break;
+							}
+							default:
+								break;
+						}
+						this->previewDirty = false;
+					} else {
+						this->preview.clear();
+					}
+				}
+				
+				//----------
+#define CASEMODESTRING(X) case X: return #X
+				string Graycode::getPreviewModeString() const {
+					auto previewMode = static_cast<PreviewMode>(this->previewMode.get());
+					switch (previewMode) {
+						CASEMODESTRING(CameraInProjector);
+						CASEMODESTRING(ProjectorInCamera);
+						CASEMODESTRING(Median);
+						CASEMODESTRING(MedianInverse);
+						CASEMODESTRING(Active);
+						deafult:
+							return "";
 					}
 				}
 			}
