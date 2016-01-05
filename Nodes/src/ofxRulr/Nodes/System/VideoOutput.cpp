@@ -117,6 +117,8 @@ namespace ofxRulr {
 						text << "Output " << this->videoOutputSelection << " [/" << this->videoOutputs.size() << "]" << endl;
 						if(this->splitHorizontal > 1 || this->splitVertical > 1) {
 							text << "Split portion " << this->splitUseIndex << " [" << this->splitHorizontal << "x" << this->splitVertical << "]";
+						} else {
+							text << "No split";
 						}
 						ofDrawBitmapString(text.str(), xStep * 2 + 10, yStep * 2 - 50);
 						ofPopStyle();
