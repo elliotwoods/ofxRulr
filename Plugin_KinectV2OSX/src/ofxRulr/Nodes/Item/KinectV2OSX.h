@@ -2,6 +2,7 @@
 
 #include "ofxRulr/Nodes/Item/IDepthCamera.h"
 #include "ofxMultiKinectV2.h"
+#include "ofxCvGui/Panels/Groups/Grid.h"
 #include "GpuRegistration.h"
 
 namespace ofxRulr {
@@ -17,7 +18,11 @@ namespace ofxRulr {
                 
                 void init();
                 void update();
-                
+				
+				void serialize(Json::Value &);
+				void deserialize(const Json::Value &);
+				void populateInspector(ofxCvGui::ElementGroupPtr);
+				
                 void drawObject() override;
                 
                 ofPixels * getColorPixels() override;
@@ -30,7 +35,13 @@ namespace ofxRulr {
 				
 				ofImage * getColorInDepthImage() override;
             protected:
-                ofxCvGui::PanelPtr view;
+				void openDevice();
+				void closeDevice();
+				
+				shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
+				
+				ofParameter<int> deviceIndex;
+				
                 shared_ptr<ofxMultiKinectV2> kinect;
 				shared_ptr<GpuRegistration> gpuRegistration;
 				

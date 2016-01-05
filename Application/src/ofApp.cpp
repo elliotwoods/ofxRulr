@@ -7,6 +7,7 @@
 
 #ifdef TARGET_OSX
 #include "../../../addons/ofxRulr/Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h"
+#include "../../../addons/ofxBlackmagic2/pairs/ofxMachineVision/Device/DeckLink.h"
 #endif
 
 using namespace ofxAssets;
@@ -33,6 +34,7 @@ void ofApp::setup2(){
     //--
     //
     RULR_DECLARE_NODE(Nodes::Item::KinectV2OSX);
+	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::DeckLink>();
     //
     //--
 #endif
