@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BD510ED91C26BA0800D8F378 /* TestNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD510ED71C26BA0800D8F378 /* TestNode.cpp */; };
 		BD5A1AD91C23EBE800E794E0 /* ARCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AD41C23EBE800E794E0 /* ARCube.cpp */; };
 		BD5A1ADA1C23EBE800E794E0 /* ARCube.h in Headers */ = {isa = PBXBuildFile; fileRef = BD5A1AD51C23EBE800E794E0 /* ARCube.h */; };
 		BD5A1ADB1C23EBE800E794E0 /* VideoOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AD71C23EBE800E794E0 /* VideoOutput.cpp */; };
@@ -374,8 +373,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		BD510ED71C26BA0800D8F378 /* TestNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestNode.cpp; sourceTree = "<group>"; };
-		BD510ED81C26BA0800D8F378 /* TestNode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TestNode.hpp; sourceTree = "<group>"; };
 		BD5A1AD41C23EBE800E794E0 /* ARCube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARCube.cpp; sourceTree = "<group>"; };
 		BD5A1AD51C23EBE800E794E0 /* ARCube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARCube.h; sourceTree = "<group>"; };
 		BD5A1AD71C23EBE800E794E0 /* VideoOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoOutput.cpp; sourceTree = "<group>"; };
@@ -1906,8 +1903,6 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
-				BD510ED71C26BA0800D8F378 /* TestNode.cpp */,
-				BD510ED81C26BA0800D8F378 /* TestNode.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -4156,7 +4151,6 @@
 				BD5A1AE91C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp in Sources */,
 				BDF8EF811C23F5930089E0CE /* packet_pipeline.cpp in Sources */,
 				BDF8EF871C23F5930089E0CE /* timer_util.cpp in Sources */,
-				BD510ED91C26BA0800D8F378 /* TestNode.cpp in Sources */,
 				BDF8EF821C23F5930089E0CE /* registration.cpp in Sources */,
 				BD97E0EB1C240EE60076BFA7 /* ProjectorFromDepthCamera.cpp in Sources */,
 				BDF8EF861C23F5930089E0CE /* rgb_packet_stream_parser.cpp in Sources */,
