@@ -98,22 +98,29 @@ namespace ofxRulr {
 					switch (this->testPattern.get()) {
 					case 1:
 					{
-							  // GRID
-							  ofPushStyle();
-							  ofNoFill();
-							  ofSetLineWidth(1.0f);
-							  auto xStep = (this->getWidth() - 1) / 4;
-							  auto yStep = (this->getHeight() - 1) / 4;
-							  for (int i = 0; i < 5; i++){
-								  ofSetColor((i % 2 == 0) ? 255 : 100);
-								  auto x = xStep * i + 0.5f;
-								  auto y = yStep * i + 0.5f;
-								  ofDrawLine(x, 0, x, this->getHeight());
-								  ofDrawLine(0, y, this->getWidth(), y);
-							  }
-							  ofDrawBitmapString(this->getName() + "\n" + ofToString(this->getWidth()) + "x" + ofToString(this->getHeight()), xStep * 2 + 10, yStep * 2 - 20);
-							  ofPopStyle();
-							  break;
+						// GRID
+						ofPushStyle();
+						ofNoFill();
+						ofSetLineWidth(1.0f);
+						auto xStep = (this->getWidth() - 1) / 4;
+						auto yStep = (this->getHeight() - 1) / 4;
+						for (int i = 0; i < 5; i++){
+							ofSetColor((i % 2 == 0) ? 255 : 100);
+							auto x = xStep * i + 0.5f;
+							auto y = yStep * i + 0.5f;
+							ofDrawLine(x, 0, x, this->getHeight());
+							ofDrawLine(0, y, this->getWidth(), y);
+						}
+						stringstream text;
+						text << this->getName() << endl;
+						text << this->getWidth() << "x" << this->getHeight() << endl;
+						text << "Output " << this->videoOutputSelection << " [/" << this->videoOutputs.size() << "]" << endl;
+						if(this->splitHorizontal > 1 || this->splitVertical > 1) {
+							text << "Split portion " << this->splitUseIndex << " [" << this->splitHorizontal << "x" << this->splitVertical << "]";
+						}
+						ofDrawBitmapString(text.str(), xStep * 2 + 10, yStep * 2 - 50);
+						ofPopStyle();
+						break;
 					}
 					case 2:
 						// WHITE
