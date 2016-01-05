@@ -279,6 +279,8 @@ namespace ofxRulr {
 				
 				//----------
 				void Graycode::updatePreview() {
+					this->preview.clear();
+					
 					if(this->decoder.hasData()) {
 						auto previewMode = static_cast<PreviewMode>(this->previewMode.get());
 						switch (previewMode) {
@@ -310,10 +312,9 @@ namespace ofxRulr {
 							default:
 								break;
 						}
-						this->previewDirty = false;
-					} else {
-						this->preview.clear();
 					}
+					
+					this->previewDirty = false;
 				}
 				
 				//----------
