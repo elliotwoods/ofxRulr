@@ -314,6 +314,12 @@ namespace ofxRulr {
 				inspector->add(Widgets::LiveValueHistory::make("Fps [Hz]", [this]() {
 					return this->grabber->getFps();
 				}, true));
+				inspector->add(Widgets::LiveValueHistory::make("Timestamp [us]", [this]() {
+					return this->grabber->getLastTimestamp();
+				}, false));
+				inspector->add(Widgets::LiveValueHistory::make("Frame index", [this]() {
+					return this->grabber->getLastFrameIndex();
+				}, false));
 
 				inspector->add(Widgets::Title::make("Properties", Widgets::Title::H2));
 				auto grabber = this->getGrabber();

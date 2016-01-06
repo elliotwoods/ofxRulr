@@ -146,12 +146,20 @@ namespace ofxRulr {
 
 				//----------
 				bool CameraIntrinsics::getRunFinderEnabled() const {
-					if (this->isBeingInspected()) {
+					auto camera = this->getInput<Item::Camera>();
+					if(!camera) {
+						return false;
+					}
+					auto grabber = camera->getGrabber();
+					if(!grabber->getIsDeviceOpen()) {
+						return false;
+					}
+
+					else if (this->isBeingInspected()) {
 						//find when we're selected
 						return true;
 					}
 					else {
-						auto camera = this->getInput<Item::Camera>();
 						if (camera) {
 							auto grabber = camera->getGrabber();
 							if (!grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
@@ -160,7 +168,7 @@ namespace ofxRulr {
 							}
 						}
 					}
-
+					
 					//if nothing was good, then return false
 					return false;
 				}

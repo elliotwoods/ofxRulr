@@ -16,7 +16,7 @@ using namespace ofxCv;
 
 namespace ofxRulr {
 	namespace Nodes {
-		namespace Demo {
+		namespace Test {
 			//----------
 			ARCube::ARCube() {
 				RULR_NODE_INIT_LISTENER;
@@ -24,7 +24,7 @@ namespace ofxRulr {
 
 			//----------
 			string ARCube::getTypeName() const {
-				return "Demo::ARCube";
+				return "Test::ARCube";
 			}
 
 			//----------
@@ -38,14 +38,8 @@ namespace ofxRulr {
 
 				this->view = make_shared<Panels::Draws>(this->fbo);
 				this->view->onDraw += [this](DrawArguments & args) {
-					auto camera = this->getInput<Item::Camera>();
-					if (camera) {
-						if (!this->getRunFinderEnabled()) {
-							ofxCvGui::Utils::drawText("Select this node to enable demo...", args.localBounds);
-						}
-					}
-					else {
-						ofxCvGui::Utils::drawText("Connect Camera and Board to enable demo...", args.localBounds);
+					if (!this->getRunFinderEnabled()) {
+						ofxCvGui::Utils::drawText("Select this node and connect active camera.", args.localBounds);
 					}
 				};
 
@@ -270,6 +264,15 @@ namespace ofxRulr {
 
 			//----------
 			bool ARCube::getRunFinderEnabled() const {
+				auto camera = this->getInput<Item::Camera>();
+				if(!camera) {
+					return false;
+				}
+				auto grabber = camera->getGrabber();
+				if(!grabber->getIsDeviceOpen()) {
+					return false;
+				}
+				
 				if (this->activewhen == 1) {
 					//find when we're set to always find
 					return true;
@@ -279,7 +282,6 @@ namespace ofxRulr {
 					return true;
 				}
 				else {
-					auto camera = this->getInput<Item::Camera>();
 					if (camera) {
 						auto grabber = camera->getGrabber();
 						if (!grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
@@ -288,7 +290,7 @@ namespace ofxRulr {
 						}
 					}
 				}
-
+				
 				//if nothing was good, then return false
 				return false;
 			}

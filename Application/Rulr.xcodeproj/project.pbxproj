@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BD5A1AD91C23EBE800E794E0 /* ARCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AD41C23EBE800E794E0 /* ARCube.cpp */; };
-		BD5A1ADA1C23EBE800E794E0 /* ARCube.h in Headers */ = {isa = PBXBuildFile; fileRef = BD5A1AD51C23EBE800E794E0 /* ARCube.h */; };
 		BD5A1ADB1C23EBE800E794E0 /* VideoOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AD71C23EBE800E794E0 /* VideoOutput.cpp */; };
 		BD5A1ADC1C23EBE800E794E0 /* VideoOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = BD5A1AD81C23EBE800E794E0 /* VideoOutput.h */; };
 		BD5A1AE21C23EC7100E794E0 /* CanonLiveView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE01C23EC7100E794E0 /* CanonLiveView.cpp */; };
 		BD5A1AE81C23ED8900E794E0 /* CanonDSLRDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE41C23ED8900E794E0 /* CanonDSLRDevice.cpp */; };
 		BD5A1AE91C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE61C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp */; };
+		BD8A3B671C3CEE3D00245529 /* Assets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B651C3CEE3D00245529 /* Assets.cpp */; };
+		BD8A3B6A1C3CFE6E00245529 /* TextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B681C3CFE6E00245529 /* TextField.cpp */; };
 		BD9673881C2584790033BAC9 /* EDSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD9673871C2584790033BAC9 /* EDSDK.framework */; };
 		BD9673891C2584800033BAC9 /* EDSDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BD9673871C2584790033BAC9 /* EDSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BD97E0EB1C240EE60076BFA7 /* ProjectorFromDepthCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD97E0E91C240EE60076BFA7 /* ProjectorFromDepthCamera.cpp */; };
@@ -46,6 +46,8 @@
 		BDAC03D41C2570FC003D6247 /* Iterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDAC03AE1C2570FC003D6247 /* Iterator.cpp */; };
 		BDAC03D51C2570FC003D6247 /* DeckLinkAPIDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDAC03B51C2570FC003D6247 /* DeckLinkAPIDispatch.cpp */; };
 		BDAC03D61C2570FC003D6247 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDAC03BA1C2570FC003D6247 /* Utils.cpp */; };
+		BDD17EA61C3BA98800AF77AB /* ARCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDD17EA41C3BA98800AF77AB /* ARCube.cpp */; };
+		BDD17EA91C3BA9CA00AF77AB /* Focus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDD17EA71C3BA9CA00AF77AB /* Focus.cpp */; };
 		BDF8EF771C23F5930089E0CE /* usb-1.0.0-superspeed.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF8EF341C23F5930089E0CE /* usb-1.0.0-superspeed.a */; };
 		BDF8EF781C23F5930089E0CE /* ofProtonect2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF531C23F5930089E0CE /* ofProtonect2.cpp */; };
 		BDF8EF791C23F5930089E0CE /* command_transaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EF561C23F5930089E0CE /* command_transaction.cpp */; };
@@ -373,8 +375,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		BD5A1AD41C23EBE800E794E0 /* ARCube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARCube.cpp; sourceTree = "<group>"; };
-		BD5A1AD51C23EBE800E794E0 /* ARCube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARCube.h; sourceTree = "<group>"; };
 		BD5A1AD71C23EBE800E794E0 /* VideoOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoOutput.cpp; sourceTree = "<group>"; };
 		BD5A1AD81C23EBE800E794E0 /* VideoOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoOutput.h; sourceTree = "<group>"; };
 		BD5A1AE01C23EC7100E794E0 /* CanonLiveView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanonLiveView.cpp; sourceTree = "<group>"; };
@@ -383,8 +383,10 @@
 		BD5A1AE51C23ED8900E794E0 /* CanonDSLRDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonDSLRDevice.h; sourceTree = "<group>"; };
 		BD5A1AE61C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanonDSLRLiveViewDevice.cpp; sourceTree = "<group>"; };
 		BD5A1AE71C23ED8900E794E0 /* CanonDSLRLiveViewDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonDSLRLiveViewDevice.h; sourceTree = "<group>"; };
-		BD8290EA1C3B94B300F86328 /* rulr_icon */ = {isa = PBXFileReference; lastKnownFileType = file; path = rulr_icon; sourceTree = "<group>"; };
-		BD8290EC1C3B96C100F86328 /* rulr_icon_debug */ = {isa = PBXFileReference; lastKnownFileType = file; path = rulr_icon_debug; sourceTree = "<group>"; };
+		BD8A3B651C3CEE3D00245529 /* Assets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Assets.cpp; path = Application/Assets.cpp; sourceTree = "<group>"; };
+		BD8A3B661C3CEE3D00245529 /* Assets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Assets.h; path = Application/Assets.h; sourceTree = "<group>"; };
+		BD8A3B681C3CFE6E00245529 /* TextField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextField.cpp; sourceTree = "<group>"; };
+		BD8A3B691C3CFE6E00245529 /* TextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextField.h; sourceTree = "<group>"; };
 		BD9673871C2584790033BAC9 /* EDSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EDSDK.framework; path = lib/osx/EDSDK.framework; sourceTree = "<group>"; };
 		BD97E0E61C24050D0076BFA7 /* IDepthCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDepthCamera.h; sourceTree = "<group>"; };
 		BD97E0E91C240EE60076BFA7 /* ProjectorFromDepthCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProjectorFromDepthCamera.cpp; sourceTree = "<group>"; };
@@ -435,6 +437,10 @@
 		BDAC03BA1C2570FC003D6247 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		BDAC03BB1C2570FC003D6247 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		BDAC03BF1C2570FC003D6247 /* ofxBlackMagic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBlackMagic.h; sourceTree = "<group>"; };
+		BDD17EA41C3BA98800AF77AB /* ARCube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARCube.cpp; sourceTree = "<group>"; };
+		BDD17EA51C3BA98800AF77AB /* ARCube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARCube.h; sourceTree = "<group>"; };
+		BDD17EA71C3BA9CA00AF77AB /* Focus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Focus.cpp; sourceTree = "<group>"; };
+		BDD17EA81C3BA9CA00AF77AB /* Focus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Focus.h; sourceTree = "<group>"; };
 		BDF8EF1F1C23F5930089E0CE /* libfreenect2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libfreenect2.h; sourceTree = "<group>"; };
 		BDF8EF231C23F5930089E0CE /* hotplug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hotplug.h; sourceTree = "<group>"; };
 		BDF8EF241C23F5930089E0CE /* libusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
@@ -1377,15 +1383,6 @@
 			name = addons;
 			sourceTree = "<group>";
 		};
-		BD5A1AD31C23EBE800E794E0 /* Demo */ = {
-			isa = PBXGroup;
-			children = (
-				BD5A1AD41C23EBE800E794E0 /* ARCube.cpp */,
-				BD5A1AD51C23EBE800E794E0 /* ARCube.h */,
-			);
-			path = Demo;
-			sourceTree = "<group>";
-		};
 		BD5A1AD61C23EBE800E794E0 /* System */ = {
 			isa = PBXGroup;
 			children = (
@@ -1429,6 +1426,15 @@
 				BD5A1AE71C23ED8900E794E0 /* CanonDSLRLiveViewDevice.h */,
 			);
 			path = Device;
+			sourceTree = "<group>";
+		};
+		BD8A3B641C3CEE1D00245529 /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				BD8A3B651C3CEE3D00245529 /* Assets.cpp */,
+				BD8A3B661C3CEE3D00245529 /* Assets.h */,
+			);
+			name = Application;
 			sourceTree = "<group>";
 		};
 		BDAC03011C25709F003D6247 /* Plugin_ofxBlackMagic2 */ = {
@@ -1525,6 +1531,17 @@
 				BDAC03B91C2570FC003D6247 /* DeckLinkAPIVersion.h */,
 			);
 			path = osx;
+			sourceTree = "<group>";
+		};
+		BDD17EA31C3BA98800AF77AB /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				BDD17EA41C3BA98800AF77AB /* ARCube.cpp */,
+				BDD17EA51C3BA98800AF77AB /* ARCube.h */,
+				BDD17EA71C3BA9CA00AF77AB /* Focus.cpp */,
+				BDD17EA81C3BA9CA00AF77AB /* Focus.h */,
+			);
+			path = Test;
 			sourceTree = "<group>";
 		};
 		BDDC4BB81C2580B2005A3947 /* osx */ = {
@@ -1881,8 +1898,6 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
-				BD8290EA1C3B94B300F86328 /* rulr_icon */,
-				BD8290EC1C3B96C100F86328 /* rulr_icon_debug */,
 				BDF8EFC21C23F8030089E0CE /* libturbojpeg.dylib */,
 				BDF8EFBC1C23F7280089E0CE /* OpenCL.framework */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
@@ -2046,6 +2061,8 @@
 				E715FC221C2035A10020A52F /* Title.h */,
 				E715FC231C2035A10020A52F /* Toggle.cpp */,
 				E715FC241C2035A10020A52F /* Toggle.h */,
+				BD8A3B681C3CFE6E00245529 /* TextField.cpp */,
+				BD8A3B691C3CFE6E00245529 /* TextField.h */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -2951,7 +2968,8 @@
 		E74620921C21C52D00614A1D /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
-				BD5A1AD31C23EBE800E794E0 /* Demo */,
+				BD8A3B641C3CEE1D00245529 /* Application */,
+				BDD17EA31C3BA98800AF77AB /* Test */,
 				BD5A1AD61C23EBE800E794E0 /* System */,
 				E74620931C21C52D00614A1D /* Data */,
 				E74620961C21C52D00614A1D /* DeclareNodes.cpp */,
@@ -3906,7 +3924,6 @@
 				E74621EC1C21C6E900614A1D /* Base.h in Headers */,
 				E74620CE1C21C52D00614A1D /* Recorder.h in Headers */,
 				E74621F61C21C6E900614A1D /* ofxRay.h in Headers */,
-				BD5A1ADA1C23EBE800E794E0 /* ARCube.h in Headers */,
 				E74620D81C21C52D00614A1D /* Fixture.h in Headers */,
 				E74623A31C21C78F00614A1D /* ofxGraycode.h in Headers */,
 				E74621661C21C6AA00614A1D /* matrix4x4.h in Headers */,
@@ -4151,12 +4168,16 @@
 				BDF8EFB71C23F64D0089E0CE /* Readme.md in Sources */,
 				E7E0E9A61C21E60600A8D4EC /* ofApp.cpp in Sources */,
 				E7E0E9A51C21E60300A8D4EC /* main.cpp in Sources */,
+				BDD17EA61C3BA98800AF77AB /* ARCube.cpp in Sources */,
+				BD8A3B671C3CEE3D00245529 /* Assets.cpp in Sources */,
+				BD8A3B6A1C3CFE6E00245529 /* TextField.cpp in Sources */,
 				BDF8EF7E1C23F5930089E0CE /* frame_listener_impl.cpp in Sources */,
 				BD5A1AE91C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp in Sources */,
 				BDF8EF811C23F5930089E0CE /* packet_pipeline.cpp in Sources */,
 				BDF8EF871C23F5930089E0CE /* timer_util.cpp in Sources */,
 				BDF8EF821C23F5930089E0CE /* registration.cpp in Sources */,
 				BD97E0EB1C240EE60076BFA7 /* ProjectorFromDepthCamera.cpp in Sources */,
+				BDD17EA91C3BA9CA00AF77AB /* Focus.cpp in Sources */,
 				BDF8EF861C23F5930089E0CE /* rgb_packet_stream_parser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4187,7 +4208,6 @@
 				E7E0EA191C21E85C00A8D4EC /* ViewToVertices.cpp in Sources */,
 				E7E0EA1A1C21E85C00A8D4EC /* Graycode.cpp in Sources */,
 				E7E0EA1B1C21E85C00A8D4EC /* Triangulate.cpp in Sources */,
-				BD5A1AD91C23EBE800E794E0 /* ARCube.cpp in Sources */,
 				E7E0EA1C1C21E85C00A8D4EC /* NodeThroughView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

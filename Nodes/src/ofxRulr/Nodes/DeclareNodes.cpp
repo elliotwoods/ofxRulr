@@ -1,8 +1,8 @@
 #include "DeclareNodes.h"
 
-#include "ofxRulr/Nodes/Data/Recorder.h"
+#include "ofxRulr/Nodes/Application/Assets.h"
 
-#include "ofxRulr/Nodes/Demo/ARCube.h"
+#include "ofxRulr/Nodes/Data/Recorder.h"
 
 #include "ofxRulr/Nodes/DMX/Sharpy.h"
 #include "ofxRulr/Nodes/DMX/AimMovingHeadAt.h"
@@ -27,14 +27,17 @@
 
 #include "ofxRulr/Nodes/System/VideoOutput.h"
 
+#include "ofxRulr/Nodes/Test/ARCube.h"
+#include "ofxRulr/Nodes/Test/Focus.h"
+
 #include "ofxRulr/Graph/FactoryRegister.h"
 
 namespace ofxRulr {
 	namespace Nodes {
 		void loadCoreNodes() {
+			RULR_DECLARE_NODE(Application::Assets);
+			
 			RULR_DECLARE_NODE(Data::Recorder);
-
-			RULR_DECLARE_NODE(Demo::ARCube);
 
 			RULR_DECLARE_NODE(DMX::Sharpy);
 			RULR_DECLARE_NODE(DMX::AimMovingHeadAt);
@@ -58,6 +61,9 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Render::NodeThroughView);
 
 			RULR_DECLARE_NODE(System::VideoOutput);
+			
+			RULR_DECLARE_NODE(Test::ARCube);
+			RULR_DECLARE_NODE(Test::Focus);
 		}
 
 		void loadPluginNodes() {

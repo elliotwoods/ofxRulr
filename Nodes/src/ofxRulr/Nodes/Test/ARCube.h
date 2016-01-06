@@ -8,7 +8,7 @@
 
 namespace ofxRulr {
 	namespace Nodes {
-		namespace Demo {
+		namespace Test {
 			class ARCube : public Nodes::Base {
 			public:
 				ARCube();
