@@ -2,6 +2,8 @@
 
 #include "ofxRulr/Nodes/Item/Camera.h"
 
+#include "ofxRulr/Utils/SoundEngine.h"
+
 #include "ofxCvMin.h"
 #include "ofxCvGui/Panels/ElementHost.h"
 #include "ofxCvGui/Widgets/LiveValue.h"
@@ -23,6 +25,7 @@ namespace ofxRulr {
 			//----------
 			Focus::Focus() {
 				RULR_NODE_INIT_LISTENER;
+				ofxRulr::Utils::SoundEngine::X();
 			}
 			
 			//----------
@@ -58,14 +61,23 @@ namespace ofxRulr {
 						}
 						this->resultMutex.unlock();
 						return value;
-					});
-					valueHistory->addListenersToParent(view, true);
+					}, false);
+					valueHistory->addListenersToParent(view);
 					this->widget = valueHistory; // we keep the shared_ptr
 					
 					view->onDraw += [this](DrawArguments & args) {
 						if (!this->getRunFinderEnabled()) {
 							ofxCvGui::Utils::drawText("Select this node and connect active camera.", args.localBounds);
 						}
+					};
+					view->onBoundsChange += [this](BoundsChangeArguments & args) {
+						auto bounds = args.localBounds;
+						bounds.x = 10;
+						bounds.width -= 20;
+						bounds.y = bounds.height - 50;
+						bounds.height = 40;
+
+						this->widget->setBounds(bounds);
 					};
 					this->view = view;
 				}
@@ -76,11 +88,12 @@ namespace ofxRulr {
 				this->preview.end();
 				
 				this->activewhen.set("Active when", 0, 0, 1);
-				this->blurSize.set("Blur size", 5, 1, 50);
-				this->highValue.set("High value", 0.05, 0, 1);
-				this->lowValue.set("Low value", 0.05, 0, 1);
+				this->blurSize.set("Blur size", 3, 1, 50);
+				this->highValue.set("High value", 0.01, 0, 1);
+				this->lowValue.set("Low value", 0.0, 0, 1);
 				
 				this->updateProcessSettings();
+				Utils::SoundEngine::X().addSource(this->shared_from_this());
 			}
 			
 			//----------
@@ -89,32 +102,39 @@ namespace ofxRulr {
 				
 				{
 					lock_guard<mutex> lock(this->resultMutex);
-					if(this->result.isFrameNew) {
-						this->result.highFrequency.update();
-						this->result.lowFrequency.update();
-						
-						if(this->preview.getWidth() != this->result.width || this->preview.getHeight() != this->result.height) {
-							this->preview.allocate(this->result.width, this->result.height, GL_RGBA);
+					if(this->getRunFinderEnabled()) {
+						if(this->result.isFrameNew) {
+							this->result.highFrequency.update();
+							this->result.lowFrequency.update();
+							
+							if(this->preview.getWidth() != this->result.width || this->preview.getHeight() != this->result.height) {
+								this->preview.allocate(this->result.width, this->result.height, GL_RGBA);
+							}
+							
+							//--
+							//Fill fbo
+							//--
+							//
+							this->preview.begin();
+							auto & shader = ofxAssets::shader("focusFinder");
+							shader.begin();
+							shader.setUniformTexture("highFrequency", this->result.highFrequency, 0);
+							shader.setUniformTexture("lowFrequency", this->result.lowFrequency, 1);
+							
+							this->result.highFrequency.draw(0, 0); //draw something with texture coordinates (goes into first texture slow)
+							
+							shader.end();
+							this->preview.end();
+							//
+							//--
+							
+							this->result.isFrameNew = false;
+							
+							this->result.active = true;
+							this->result.valueNormalised = ofMap(this->result.value, this->lowValue, this->highValue, 0.0f, 1.0f);
 						}
-						
-						//--
-						//Fill fbo
-						//--
-						//
-						this->preview.begin();
-						auto & shader = ofxAssets::shader("focusFinder");
-						shader.begin();
-						shader.setUniformTexture("highFrequency", this->result.highFrequency, 0);
-						shader.setUniformTexture("lowFrequency", this->result.lowFrequency, 1);
-						
-						this->result.highFrequency.draw(0, 0); //draw something with texture coordinates (goes into first texture slow)
-						
-						shader.end();
-						this->preview.end();
-						//
-						//--
-						
-						this->result.isFrameNew = false;
+					} else {
+						this->result.active = false;
 					}
 				}
 			}
@@ -138,11 +158,17 @@ namespace ofxRulr {
 			//----------
 			void Focus::serialize(Json::Value & json) {
 				Utils::Serializable::serialize(this->activewhen, json);
+				Utils::Serializable::serialize(this->blurSize, json);
+				Utils::Serializable::serialize(this->highValue, json);
+				Utils::Serializable::serialize(this->lowValue, json);
 			}
 			
 			//----------
 			void Focus::deserialize(const Json::Value & json) {
 				Utils::Serializable::deserialize(this->activewhen, json);
+				Utils::Serializable::deserialize(this->blurSize, json);
+				Utils::Serializable::deserialize(this->highValue, json);
+				Utils::Serializable::deserialize(this->lowValue, json);
 			}
 			
 			//----------
@@ -181,6 +207,53 @@ namespace ofxRulr {
 				
 				//if nothing was good, then return false
 				return false;
+			}
+			
+			//----------
+			void Focus::audioOut(ofSoundBuffer & out) {
+				int intervalFrames;
+				{
+					lock_guard<mutex> lock(this->resultMutex);
+					if(!this->result.active) {
+						return;
+					}
+					
+					auto interval = 1.0f / pow (2.0f, this->result.valueNormalised / 0.12f);
+					intervalFrames = int(interval * 44100.0f);
+				}
+				
+				auto & soundEngine = ofxRulr::Utils::SoundEngine::X();
+				auto & assetRegister = ofxAssets::Register::X();
+				
+				auto tickBig = assetRegister.getSoundPointer("ofxRulr::tick_big");
+				auto tickSmall = assetRegister.getSoundPointer("ofxRulr::tick_small");
+				
+				auto numFrames = out.getNumFrames();
+				
+				for(int i=0; i<numFrames; i++) {
+					//check if this frame we start a tick
+					if(this->ticks.framesUntilNext <= 0) {
+						//select the tick sound
+						auto isBigTick = this->ticks.index++ == 0;
+						this->ticks.index %= 6;
+
+						auto tickSoundAsset = isBigTick ? tickBig : tickSmall;
+						
+						//add it to the active sounds
+						soundEngine.play(tickSoundAsset);
+						
+						//set the next tick sound
+						this->ticks.framesUntilNext = intervalFrames;
+					}
+					
+					//check interval doesn't go too long
+					if(this->ticks.framesUntilNext > intervalFrames) {
+						//e.g. this might happen at next buffer fill
+						this->ticks.framesUntilNext = intervalFrames;
+					}
+					
+					this->ticks.framesUntilNext--;
+				}
 			}
 			
 			//----------
@@ -261,7 +334,7 @@ namespace ofxRulr {
 							auto cappedStdDev = max((int) stddev[0], 64); //cap the std deviation at 1/4 dynamic range
 							
 							//5. Caculate a normalized result value
-							auto normalized = total / (double(width * height) * cappedStdDev);
+							auto normalized = total / (double(width * height) * cappedStdDev * processSettings.blurSize);
 							
 							this->resultMutex.lock();
 							{

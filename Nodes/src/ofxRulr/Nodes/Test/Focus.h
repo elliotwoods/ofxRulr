@@ -10,7 +10,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Test {
-			class Focus : public Nodes::Base {
+			class Focus : public Nodes::Base, public ofBaseSoundOutput, public enable_shared_from_this<Focus> {
 			public:
 				Focus();
 				string getTypeName() const override;
@@ -25,6 +25,7 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr getView() override;
 				
 				bool getRunFinderEnabled() const;
+				void audioOut(ofSoundBuffer &) override;
 			protected:
 				void connect(shared_ptr<ofxMachineVision::Grabber::Simple> grabber);
 				void disconnect(shared_ptr<ofxMachineVision::Grabber::Simple> grabber);
@@ -63,6 +64,8 @@ namespace ofxRulr {
 					int height = 0;
 					
 					double value = 0.0;
+					float valueNormalised = 0.0f;
+					bool active = false;
 					bool isFrameNew = false;
 				} result;
 				mutex resultMutex;
@@ -75,6 +78,11 @@ namespace ofxRulr {
 				ofParameter<int> blurSize;
 				ofParameter<float> highValue;
 				ofParameter<float> lowValue;
+				
+				struct {
+					int framesUntilNext = 0;
+					int index = 0;
+				} ticks;
 			};
 		}
 	}

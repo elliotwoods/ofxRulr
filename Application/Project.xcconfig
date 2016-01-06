@@ -16,5 +16,5 @@ ICON_FILE_PATH = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/
 OTHER_LDFLAGS = $(OF_CORE_LIBS) $(OF_CORE_FRAMEWORKS) -L../../../addons/ofxCvMin/libs/opencv/lib/osx32 -L../../../addons/ofxNonLinearFit/libs/NLopt/lib/osx
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS) src ../../../addons ../../../addons/ofxCvMin/libs/opencv/include ../../../addons/ofxCvMin/src ../../../addons/ofxCvGui ../../../addons/ofxCvGui/src ../../../addons/ofxSingleton/src ../../../addons/ofxMachineVision/src ../../../addons/ofxJSON/libs/jsoncpp/include ../../../addons/ofxRulr/Core/src ../../../addons/ofxEdsdk/libs/EDSDK/include ../../../addons/ofxAssimpModelLoader/libs/assimp/include ../../../addons/ofxNonLinearFit/src ../../../addons/ofxNonLinearFit/libs/NLopt/include ../../../addons/ofxRay/src ../../../addons/ofxGraycode/src ../../../addons/ofxGLM/libs ../Nodes/src
 
-OTHER_CFLAGS = -D__MACOS__ -DHAS_OFXGRABCAM -DHAS_OFXSINGLETON
+OTHER_CFLAGS = -D__MACOS__ -DHAS_OFXGRABCAM -DHAS_OFXSINGLETON -DHAS_OFXAUDIODECODER
 

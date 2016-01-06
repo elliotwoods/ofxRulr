@@ -3,7 +3,7 @@
 #include "../../Item/Board.h"
 #include "../../Item/Camera.h"
 
-#include "ofxRulr/Utils/Utils.h"
+#include "ofxRulr/Utils/ScopedProcess.h"
 
 #include "ofConstants.h"
 #include "ofxCvGui.h"
@@ -66,7 +66,7 @@ namespace ofxRulr {
 											boardColor.setHue(boardIndex++ * 30 % 360);
 											ofSetColor(boardColor);
 											for (auto & corner : board) {
-												ofCircle(corner, 3.0f);
+												ofDrawCircle(corner, 3.0f);
 											}
 										}
 									}
@@ -184,23 +184,12 @@ namespace ofxRulr {
 						return (int)accumulatedCorners.size();
 					}));
 					inspector->add(Widgets::Button::make("Add board to calibration set", [this]() {
-						auto camera = this->getInput<Item::Camera>();
-						if (camera) {
-							//if it's a DSLR, let's take a single shot and find the board
-							const auto cameraSpecification = camera->getGrabber()->getDeviceSpecification();
-							if (cameraSpecification.supports(ofxMachineVision::Feature::Feature_OneShot) && !cameraSpecification.supports(ofxMachineVision::Feature::Feature_FreeRun)) {
-								//by calling getFreshFrame(), then update(), we should guarantee that the frame 
-								camera->getGrabber()->getFreshFrame();
-								this->findBoard();
-							}
+						try {
+							ofxRulr::Utils::ScopedProcess scopedProcess("Finding checkerboard");
+							this->addBoard();
+							scopedProcess.end();
 						}
-						if (this->currentCorners.empty()) {
-							Utils::playFailSound();
-						}
-						else {
-							Utils::playSuccessSound();
-							this->accumulatedCorners.push_back(currentCorners);
-						}
+						RULR_CATCH_ALL_TO_ERROR;
 					}, ' '));
 					inspector->add(Widgets::Button::make("Clear calibration set", [this]() {
 						this->accumulatedCorners.clear();
@@ -221,6 +210,24 @@ namespace ofxRulr {
 					}));
 				}
 
+				//----------
+				void CameraIntrinsics::addBoard() {
+					this->throwIfMissingAnyConnection();
+					
+					auto camera = this->getInput<Item::Camera>();
+					//if it's a DSLR, let's take a single shot and find the board
+					const auto cameraSpecification = camera->getGrabber()->getDeviceSpecification();
+					if (cameraSpecification.supports(ofxMachineVision::Feature::Feature_OneShot) && !cameraSpecification.supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+						//by calling getFreshFrame(), then update(), we should guarantee that the frame
+						camera->getGrabber()->getFreshFrame();
+						this->findBoard();
+					}
+					
+					if (this->currentCorners.empty()) {
+						throw(ofxRulr::Exception("No corners found"));
+					}
+					this->accumulatedCorners.push_back(currentCorners);
+				}
 				//----------
 				void CameraIntrinsics::findBoard() {
 					this->throwIfMissingAnyConnection();

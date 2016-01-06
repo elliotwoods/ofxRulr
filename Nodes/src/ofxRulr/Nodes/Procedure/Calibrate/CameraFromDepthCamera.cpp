@@ -5,7 +5,7 @@
 #include "ofxRulr/Nodes/Item/IDepthCamera.h"
 
 #include "ofxRulr/Exception.h"
-#include "ofxRulr/Utils/Utils.h"
+#include "ofxRulr/Utils/ScopedProcess.h"
 
 #include "ofxCvGui/Panels/Groups/Grid.h"
 #include "ofxCvGui/Panels/Draws.h"
@@ -176,39 +176,38 @@ namespace ofxRulr {
 					this->previewCornerFindsCamera.clear();
 					
 					//fill correspondences
-					if (foundInDepthCamera && foundInCamera) {
-						ofxRulr::Utils::playSuccessSound();
-						auto world = depthCameraNode->getWorldPixels();
-						auto depthMapWidth = irPixels->getWidth();
-						if(!world) {
-							throw(Exception("Cannot get world map"));
-						}
-						auto worldVectors = (ofVec3f*) world->getData();
-						int pointIndex = 0;
-						for (int i = 0; i < cameraPoints.size(); i++) {
-							this->previewCornerFindsDepthCamera.push_back(irPoints[i]);
-							this->previewCornerFindsCamera.push_back(cameraPoints[i]);
-							
-							auto & irPoint = irPoints[i];
-							auto & cameraPoint = cameraPoints[i];
-							
-							Correspondence correspondence;
-							
-							correspondence.depthCameraObject = worldVectors[(int)irPoint.x + (int)irPoint.y * depthMapWidth];
-							correspondence.camera = cameraPoint;
-							correspondence.cameraNormalized = ofVec2f(ofMap(cameraPoint.x, 0, cameraWidth, 0, 1),
-																	  ofMap(cameraPoint.y, 0, cameraHeight, 0, 1));
-							
-							if (correspondence.depthCameraObject.z > 0.1f) {
-								this->correspondences.push_back(correspondence);
-							}
-							
-							pointIndex++;
-						}
+					if (!foundInDepthCamera || !foundInCamera) {
+						stringstream errorstring;
+						errorstring << "Chesboard found in kinect [" << (foundInDepthCamera ? "X" : " ") << "], camera [" << (foundInCamera ? "X" : " ") << "]";
+						throw(ofxRulr::Exception(errorstring.str()));
 					}
-					else {
-						ofxRulr::Utils::playFailSound();
-						RULR_ERROR << "Chesboard found in kinect [" << (foundInDepthCamera ? "X" : " ") << "], camera [" << (foundInCamera ? "X" : " ") << "]";
+					
+					auto world = depthCameraNode->getWorldPixels();
+					auto depthMapWidth = irPixels->getWidth();
+					if(!world) {
+						throw(Exception("Cannot get world map"));
+					}
+					auto worldVectors = (ofVec3f*) world->getData();
+					int pointIndex = 0;
+					for (int i = 0; i < cameraPoints.size(); i++) {
+						this->previewCornerFindsDepthCamera.push_back(irPoints[i]);
+						this->previewCornerFindsCamera.push_back(cameraPoints[i]);
+						
+						auto & irPoint = irPoints[i];
+						auto & cameraPoint = cameraPoints[i];
+						
+						Correspondence correspondence;
+						
+						correspondence.depthCameraObject = worldVectors[(int)irPoint.x + (int)irPoint.y * depthMapWidth];
+						correspondence.camera = cameraPoint;
+						correspondence.cameraNormalized = ofVec2f(ofMap(cameraPoint.x, 0, cameraWidth, 0, 1),
+																  ofMap(cameraPoint.y, 0, cameraHeight, 0, 1));
+						
+						if (correspondence.depthCameraObject.z > 0.1f) {
+							this->correspondences.push_back(correspondence);
+						}
+						
+						pointIndex++;
 					}
 				}
 				
@@ -259,7 +258,9 @@ namespace ofxRulr {
 					}));
 					auto addButton = MAKE(ofxCvGui::Widgets::Button, "Add Capture", [this]() {
 						try {
+							Utils::ScopedProcess scopedProcess("CameraFromDepthCamera - addCapture");
 							this->addCapture();
+							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT
 					}, ' ');

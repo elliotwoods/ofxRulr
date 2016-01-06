@@ -193,7 +193,9 @@ namespace ofxRulr {
 					
 					//find the checkerboard
 					vector<ofVec2f> depthMapPoints;
-					bool success = ofxCv::findChessboardCornersPreTest(toCv(colorInDepth->getPixels()), cv::Size(this->checkerboard.cornersX, this->checkerboard.cornersY), toCv(depthMapPoints));
+					if (!ofxCv::findChessboardCornersPreTest(toCv(colorInDepth->getPixels()), cv::Size(this->checkerboard.cornersX, this->checkerboard.cornersY), toCv(depthMapPoints))) {
+						throw(ofxRulr::Exception("Couldn't find checkerboard in mapped color image"));
+					};
 					
 					//flip the results back again
 					const auto depthMapWidth = colorInDepth->getWidth();
@@ -203,28 +205,23 @@ namespace ofxRulr {
 					
 					this->previewCornerFinds.clear();
 					
-					if(success) {
-						ofxRulr::Utils::playSuccessSound();
-						auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->checkerboard.cornersX, this->checkerboard.cornersY), this->checkerboard.scale, true));
-						int pointIndex = 0;
+					auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->checkerboard.cornersX, this->checkerboard.cornersY), this->checkerboard.scale, true));
+					int pointIndex = 0;
 
-						const auto worldPoints = (ofVec3f*) world->getData();
-						for (auto depthMapPoint : depthMapPoints) {
-							this->previewCornerFinds.push_back(depthMapPoint);
-							Correspondence correspondence;
-							
-							correspondence.world = worldPoints[(int)depthMapPoint.x + (int)depthMapPoint.y * (int)depthMapWidth];
-							correspondence.projector = (ofVec2f)checkerboardCorners[pointIndex] + ofVec2f(this->checkerboard.positionX, this->checkerboard.positionY);
-							
-							//check correspondence has valid z coordinate before adding it to the calibration set
-							if (correspondence.world.z > 0.2f) {
-								this->correspondences.push_back(correspondence);
-							}
-							
-							pointIndex++;
+					const auto worldPoints = (ofVec3f*) world->getData();
+					for (auto depthMapPoint : depthMapPoints) {
+						this->previewCornerFinds.push_back(depthMapPoint);
+						Correspondence correspondence;
+						
+						correspondence.world = worldPoints[(int)depthMapPoint.x + (int)depthMapPoint.y * (int)depthMapWidth];
+						correspondence.projector = (ofVec2f)checkerboardCorners[pointIndex] + ofVec2f(this->checkerboard.positionX, this->checkerboard.positionY);
+						
+						//check correspondence has valid z coordinate before adding it to the calibration set
+						if (correspondence.world.z > 0.2f) {
+							this->correspondences.push_back(correspondence);
 						}
-					} else {
-						ofxRulr::Utils::playFailSound();
+						
+						pointIndex++;
 					}
 				}
 				

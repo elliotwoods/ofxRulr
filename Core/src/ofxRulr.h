@@ -11,4 +11,4 @@
 
 #include "ofxRulr/Utils/Initialiser.h"
 #include "ofxRulr/Utils/Gui.h"
-#include "ofxRulr/Utils/Utils.h"
+#include "ofxRulr/Utils/SoundEngine.h"

@@ -3,7 +3,8 @@
 #include "ofxRulr/Nodes/DMX/MovingHead.h"
 #include "ofxRulr/Nodes/DMX/Sharpy.h"
 #include "ofxRulr/Nodes/Item/RigidBody.h"
-#include "ofxRulr/Utils/Utils.h"
+
+#include "ofxRulr/Utils/ScopedProcess.h"
 
 #include "ofxCvGui/Widgets/Slider.h"
 #include "ofxCvGui/Widgets/LiveValue.h"
@@ -201,15 +202,12 @@ namespace ofxRulr {
 									switch (args.key) {
 									case 'a':
 									{
-										bool success = false;
 										try {
+											ofxRulr::Utils::ScopedProcess scopedProcess("MovingHeadToWorld - addCapture");
 											this->addCapture();
-											success = true;
+											scopedProcess.end();
 										}
 										RULR_CATCH_ALL_TO_ALERT;
-										if (success) {
-											Utils::playSuccessSound();
-										}
 										break;
 									}
 
@@ -297,19 +295,12 @@ namespace ofxRulr {
 					
 					inspector->add(Widgets::Slider::make(this->beamBrightness));
 					auto addCaptureButton = Widgets::Button::make("Add capture", [this]() {
-						bool success = false;
 						try {
+							ofxRulr::Utils::ScopedProcess scopedProcess("MovindHeadToWorld - addCapture");
 							this->addCapture();
-							success = true;
+							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ERROR;
-
-						if (success) {
-							Utils::playSuccessSound();
-						}
-						else {
-							Utils::playFailSound();
-						}
 					}, ' ');
 					addCaptureButton->setHeight(100.0f);
 					inspector->add(addCaptureButton);
@@ -323,11 +314,9 @@ namespace ofxRulr {
 
 					auto calibrateButton = Widgets::Button::make("Calibrate", [this]() {
 						try {
+							ofxRulr::Utils::ScopedProcess scopedProcess("Calibrate");
 							if (this->calibrate()) {
-								Utils::playSuccessSound();
-							}
-							else {
-								Utils::playFailSound();
+								scopedProcess.end();
 							}
 						}
 						RULR_CATCH_ALL_TO_ALERT
@@ -413,7 +402,6 @@ namespace ofxRulr {
 
 					this->dataPoints.push_back(dataPoint);
 					this->lastFindTime = ofGetElapsedTimef();
-					Utils::playSuccessSound();
 				}
 
 				//---------

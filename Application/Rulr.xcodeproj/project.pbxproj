@@ -14,6 +14,13 @@
 		BD5A1AE91C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE61C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp */; };
 		BD8A3B671C3CEE3D00245529 /* Assets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B651C3CEE3D00245529 /* Assets.cpp */; };
 		BD8A3B6A1C3CFE6E00245529 /* TextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B681C3CFE6E00245529 /* TextField.cpp */; };
+		BD8A3B6D1C3D2D6A00245529 /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B6B1C3D2D6A00245529 /* SoundEngine.cpp */; };
+		BD8A3B701C3D3BC900245529 /* ScopedProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B6E1C3D3BC900245529 /* ScopedProcess.cpp */; };
+		BD8A3B9B1C3D424E00245529 /* audiodecoderbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B911C3D424E00245529 /* audiodecoderbase.cpp */; };
+		BD8A3B9C1C3D424E00245529 /* audiodecodercoreaudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B921C3D424E00245529 /* audiodecodercoreaudio.cpp */; };
+		BD8A3B9D1C3D424E00245529 /* license.md in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B931C3D424E00245529 /* license.md */; };
+		BD8A3B9E1C3D424E00245529 /* readme.md in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B941C3D424E00245529 /* readme.md */; };
+		BD8A3B9F1C3D424E00245529 /* ofxAudioDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD8A3B961C3D424E00245529 /* ofxAudioDecoder.cpp */; };
 		BD9673881C2584790033BAC9 /* EDSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD9673871C2584790033BAC9 /* EDSDK.framework */; };
 		BD9673891C2584800033BAC9 /* EDSDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BD9673871C2584790033BAC9 /* EDSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BD97E0EB1C240EE60076BFA7 /* ProjectorFromDepthCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD97E0E91C240EE60076BFA7 /* ProjectorFromDepthCamera.cpp */; };
@@ -199,8 +206,6 @@
 		E746242B1C21D36300614A1D /* Serializable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E74624011C21D36300614A1D /* Serializable.cpp */; };
 		E746242C1C21D36300614A1D /* Serializable.h in Headers */ = {isa = PBXBuildFile; fileRef = E74624021C21D36300614A1D /* Serializable.h */; };
 		E746242D1C21D36300614A1D /* Set.h in Headers */ = {isa = PBXBuildFile; fileRef = E74624031C21D36300614A1D /* Set.h */; };
-		E746242E1C21D36300614A1D /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E74624041C21D36300614A1D /* Utils.cpp */; };
-		E746242F1C21D36300614A1D /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = E74624051C21D36300614A1D /* Utils.h */; };
 		E74624301C21D36300614A1D /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = E74624061C21D36300614A1D /* Version.h */; };
 		E74624311C21D36300614A1D /* ofxRulr.h in Headers */ = {isa = PBXBuildFile; fileRef = E74624071C21D36300614A1D /* ofxRulr.h */; };
 		E74624371C21D41800614A1D /* libCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E74623C71C21D35400614A1D /* libCore.a */; };
@@ -387,6 +392,21 @@
 		BD8A3B661C3CEE3D00245529 /* Assets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Assets.h; path = Application/Assets.h; sourceTree = "<group>"; };
 		BD8A3B681C3CFE6E00245529 /* TextField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextField.cpp; sourceTree = "<group>"; };
 		BD8A3B691C3CFE6E00245529 /* TextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextField.h; sourceTree = "<group>"; };
+		BD8A3B6B1C3D2D6A00245529 /* SoundEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundEngine.cpp; sourceTree = "<group>"; };
+		BD8A3B6C1C3D2D6A00245529 /* SoundEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundEngine.h; sourceTree = "<group>"; };
+		BD8A3B6E1C3D3BC900245529 /* ScopedProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedProcess.cpp; sourceTree = "<group>"; };
+		BD8A3B6F1C3D3BC900245529 /* ScopedProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedProcess.h; sourceTree = "<group>"; };
+		BD8A3B8B1C3D424E00245529 /* CADebugMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CADebugMacros.h; sourceTree = "<group>"; };
+		BD8A3B8C1C3D424E00245529 /* CAStreamBasicDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAStreamBasicDescription.h; sourceTree = "<group>"; };
+		BD8A3B8D1C3D424E00245529 /* audiodecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audiodecoder.h; sourceTree = "<group>"; };
+		BD8A3B8E1C3D424E00245529 /* audiodecoderbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audiodecoderbase.h; sourceTree = "<group>"; };
+		BD8A3B8F1C3D424E00245529 /* audiodecodercoreaudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audiodecodercoreaudio.h; sourceTree = "<group>"; };
+		BD8A3B911C3D424E00245529 /* audiodecoderbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audiodecoderbase.cpp; sourceTree = "<group>"; };
+		BD8A3B921C3D424E00245529 /* audiodecodercoreaudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audiodecodercoreaudio.cpp; sourceTree = "<group>"; };
+		BD8A3B931C3D424E00245529 /* license.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = license.md; sourceTree = "<group>"; };
+		BD8A3B941C3D424E00245529 /* readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
+		BD8A3B961C3D424E00245529 /* ofxAudioDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAudioDecoder.cpp; sourceTree = "<group>"; };
+		BD8A3B971C3D424E00245529 /* ofxAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAudioDecoder.h; sourceTree = "<group>"; };
 		BD9673871C2584790033BAC9 /* EDSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EDSDK.framework; path = lib/osx/EDSDK.framework; sourceTree = "<group>"; };
 		BD97E0E61C24050D0076BFA7 /* IDepthCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDepthCamera.h; sourceTree = "<group>"; };
 		BD97E0E91C240EE60076BFA7 /* ProjectorFromDepthCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProjectorFromDepthCamera.cpp; sourceTree = "<group>"; };
@@ -1045,8 +1065,6 @@
 		E74624011C21D36300614A1D /* Serializable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Serializable.cpp; sourceTree = "<group>"; };
 		E74624021C21D36300614A1D /* Serializable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Serializable.h; sourceTree = "<group>"; };
 		E74624031C21D36300614A1D /* Set.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Set.h; sourceTree = "<group>"; };
-		E74624041C21D36300614A1D /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
-		E74624051C21D36300614A1D /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		E74624061C21D36300614A1D /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		E74624071C21D36300614A1D /* ofxRulr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxRulr.h; sourceTree = "<group>"; };
 		E74624791C21D53300614A1D /* ofxTriangulate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTriangulate.cpp; sourceTree = "<group>"; };
@@ -1358,6 +1376,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				BD8A3B711C3D424E00245529 /* ofxAudioDecoder */,
 				E715FAEB1C2035A10020A52F /* ofxCvGui */,
 				E746249B1C21D55500614A1D /* ofxGLM */,
 				E74624821C21D54800614A1D /* ofxSpinCursor */,
@@ -1435,6 +1454,64 @@
 				BD8A3B661C3CEE3D00245529 /* Assets.h */,
 			);
 			name = Application;
+			sourceTree = "<group>";
+		};
+		BD8A3B711C3D424E00245529 /* ofxAudioDecoder */ = {
+			isa = PBXGroup;
+			children = (
+				BD8A3B881C3D424E00245529 /* lib */,
+				BD8A3B931C3D424E00245529 /* license.md */,
+				BD8A3B941C3D424E00245529 /* readme.md */,
+				BD8A3B951C3D424E00245529 /* src */,
+			);
+			path = ofxAudioDecoder;
+			sourceTree = "<group>";
+		};
+		BD8A3B881C3D424E00245529 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				BD8A3B891C3D424E00245529 /* include */,
+				BD8A3B901C3D424E00245529 /* src */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		BD8A3B891C3D424E00245529 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				BD8A3B8A1C3D424E00245529 /* apple */,
+				BD8A3B8D1C3D424E00245529 /* audiodecoder.h */,
+				BD8A3B8E1C3D424E00245529 /* audiodecoderbase.h */,
+				BD8A3B8F1C3D424E00245529 /* audiodecodercoreaudio.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		BD8A3B8A1C3D424E00245529 /* apple */ = {
+			isa = PBXGroup;
+			children = (
+				BD8A3B8B1C3D424E00245529 /* CADebugMacros.h */,
+				BD8A3B8C1C3D424E00245529 /* CAStreamBasicDescription.h */,
+			);
+			path = apple;
+			sourceTree = "<group>";
+		};
+		BD8A3B901C3D424E00245529 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BD8A3B911C3D424E00245529 /* audiodecoderbase.cpp */,
+				BD8A3B921C3D424E00245529 /* audiodecodercoreaudio.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		BD8A3B951C3D424E00245529 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BD8A3B961C3D424E00245529 /* ofxAudioDecoder.cpp */,
+				BD8A3B971C3D424E00245529 /* ofxAudioDecoder.h */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		BDAC03011C25709F003D6247 /* Plugin_ofxBlackMagic2 */ = {
@@ -3458,8 +3535,10 @@
 				E74624011C21D36300614A1D /* Serializable.cpp */,
 				E74624021C21D36300614A1D /* Serializable.h */,
 				E74624031C21D36300614A1D /* Set.h */,
-				E74624041C21D36300614A1D /* Utils.cpp */,
-				E74624051C21D36300614A1D /* Utils.h */,
+				BD8A3B6B1C3D2D6A00245529 /* SoundEngine.cpp */,
+				BD8A3B6C1C3D2D6A00245529 /* SoundEngine.h */,
+				BD8A3B6E1C3D3BC900245529 /* ScopedProcess.cpp */,
+				BD8A3B6F1C3D3BC900245529 /* ScopedProcess.h */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -3965,7 +4044,6 @@
 				E74624111C21D36300614A1D /* NodeHost.h in Headers */,
 				E74624191C21D36300614A1D /* Pin.h in Headers */,
 				E746241D1C21D36300614A1D /* World.h in Headers */,
-				E746242F1C21D36300614A1D /* Utils.h in Headers */,
 				E746242C1C21D36300614A1D /* Serializable.h in Headers */,
 				E74624211C21D36300614A1D /* Graphics.h in Headers */,
 				E746241B1C21D36300614A1D /* Summary.h in Headers */,
@@ -4146,6 +4224,7 @@
 				BDF8EF7B1C23F5930089E0CE /* depth_packet_stream_parser.cpp in Sources */,
 				BDAC03D51C2570FC003D6247 /* DeckLinkAPIDispatch.cpp in Sources */,
 				BDF8EF8A1C23F5930089E0CE /* usb_control.cpp in Sources */,
+				BD8A3B9D1C3D424E00245529 /* license.md in Sources */,
 				BDAC03D61C2570FC003D6247 /* Utils.cpp in Sources */,
 				BDAC03CF1C2570FC003D6247 /* DeckLink.cpp in Sources */,
 				BDAC03D21C2570FC003D6247 /* Frame.cpp in Sources */,
@@ -4155,10 +4234,14 @@
 				BDF8EF801C23F5930089E0CE /* opencl_depth_packet_processor.cpp in Sources */,
 				BDF8EF8B1C23F5930089E0CE /* README.md in Sources */,
 				BDF8EF7C1C23F5930089E0CE /* double_buffer.cpp in Sources */,
+				BD8A3B9F1C3D424E00245529 /* ofxAudioDecoder.cpp in Sources */,
 				BDF8EF891C23F5930089E0CE /* transfer_pool.cpp in Sources */,
+				BD8A3B701C3D3BC900245529 /* ScopedProcess.cpp in Sources */,
+				BD8A3B9B1C3D424E00245529 /* audiodecoderbase.cpp in Sources */,
 				BDAC03D31C2570FC003D6247 /* Input.cpp in Sources */,
 				BDF8EF791C23F5930089E0CE /* command_transaction.cpp in Sources */,
 				BDF8EF8D1C23F5930089E0CE /* GpuRegistration.cpp in Sources */,
+				BD8A3B6D1C3D2D6A00245529 /* SoundEngine.cpp in Sources */,
 				BDF8EF7F1C23F5930089E0CE /* libfreenect2.cpp in Sources */,
 				BDF8EF7A1C23F5930089E0CE /* depth_packet_processor.cpp in Sources */,
 				BD5A1AE81C23ED8900E794E0 /* CanonDSLRDevice.cpp in Sources */,
@@ -4170,7 +4253,9 @@
 				E7E0E9A51C21E60300A8D4EC /* main.cpp in Sources */,
 				BDD17EA61C3BA98800AF77AB /* ARCube.cpp in Sources */,
 				BD8A3B671C3CEE3D00245529 /* Assets.cpp in Sources */,
+				BD8A3B9C1C3D424E00245529 /* audiodecodercoreaudio.cpp in Sources */,
 				BD8A3B6A1C3CFE6E00245529 /* TextField.cpp in Sources */,
+				BD8A3B9E1C3D424E00245529 /* readme.md in Sources */,
 				BDF8EF7E1C23F5930089E0CE /* frame_listener_impl.cpp in Sources */,
 				BD5A1AE91C23ED8900E794E0 /* CanonDSLRLiveViewDevice.cpp in Sources */,
 				BDF8EF811C23F5930089E0CE /* packet_pipeline.cpp in Sources */,
@@ -4223,7 +4308,6 @@
 				E74624161C21D36300614A1D /* FactoryRegister.cpp in Sources */,
 				E746240C1C21D36300614A1D /* LinkHost.cpp in Sources */,
 				E74624201C21D36300614A1D /* Graphics.cpp in Sources */,
-				E746242E1C21D36300614A1D /* Utils.cpp in Sources */,
 				E74624141C21D36300614A1D /* PinView.cpp in Sources */,
 				E746241C1C21D36300614A1D /* World.cpp in Sources */,
 				E746241A1C21D36300614A1D /* Summary.cpp in Sources */,
@@ -4459,6 +4543,7 @@
 					../../../addons/ofxMultiKinectV2/libs/protonect/include,
 					../../../addons/ofxMultiKinectV2/libs/libusb/include,
 					../../../addons/ofxMultiKinectV2/libs/libfreenect2/include,
+					../../../addons/ofxAudioDecoder/lib/include,
 				);
 				ICON = rulr_icon_debug.icns;
 				ICON_FILE = "$(ICON)";
@@ -4516,6 +4601,7 @@
 					../../../addons/ofxMultiKinectV2/libs/protonect/include,
 					../../../addons/ofxMultiKinectV2/libs/libusb/include,
 					../../../addons/ofxMultiKinectV2/libs/libfreenect2/include,
+					../../../addons/ofxAudioDecoder/lib/include,
 				);
 				ICON = rulr_icon.icns;
 				ICON_FILE = "$(ICON)";
