@@ -239,8 +239,11 @@ namespace ofxRulr {
 
 						auto tickSoundAsset = isBigTick ? tickBig : tickSmall;
 						
-						//add it to the active sounds
-						soundEngine.play(tickSoundAsset);
+						//add it to the active sounds (delayed by 1 buffer always)
+						ofxRulr::Utils::SoundEngine::ActiveSound activeSound;
+						activeSound.delay = i;
+						activeSound.sound = tickSoundAsset;
+						soundEngine.play(activeSound);
 						
 						//set the next tick sound
 						this->ticks.framesUntilNext = intervalFrames;
