@@ -5,7 +5,7 @@
 #include "ofxRulr/Nodes/Item/KinectV2.h"
 
 #include "ofxRulr/Exception.h"
-#include "ofxRulr/Utils/Utils.h"
+#include "ofxRulr/Utils/ScopedProcess.h"
 
 #include "ofxCvGui/Panels/Groups/Grid.h"
 #include "ofxCvGui/Panels/Draws.h"
@@ -169,36 +169,34 @@ namespace ofxRulr {
 					this->previewCornerFindsKinect.clear();
 					this->previewCornerFindsCamera.clear();
 
-					if (foundInKinect && foundInCamera) {
-						ofxRulr::Utils::playSuccessSound();
-						auto kinectCameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
-						auto kinectCameraToWorldPointer = (ofVec3f*)kinectCameraToWorldMap.getPixels();
-						auto kinectCameraWidth = kinectCameraToWorldMap.getWidth();
-						int pointIndex = 0;
-						for (int i = 0; i < cameraPoints.size(); i++) {
-							this->previewCornerFindsKinect.push_back(kinectCameraPoints[i]);
-							this->previewCornerFindsCamera.push_back(cameraPoints[i]);
-
-							auto & kinectCameraPoint = kinectCameraPoints[i];
-							auto & cameraPoint = cameraPoints[i];
-
-							Correspondence correspondence;
-
-							correspondence.kinectObject = kinectCameraToWorldPointer[(int)kinectCameraPoint.x + (int)kinectCameraPoint.y * kinectCameraWidth];
-							correspondence.camera = cameraPoint;
-							correspondence.cameraNormalized = ofVec2f(ofMap(cameraPoint.x, 0, cameraWidth, 0, 1),
-								ofMap(cameraPoint.y, 0, cameraHeight, 0, 1));
-
-							if (correspondence.kinectObject.z > 0.5f) {
-								this->correspondences.push_back(correspondence);
-							}
-
-							pointIndex++;
-						}
+					if (!foundInKinect || !foundInCamera) {
+						stringstream error;
+						error << "Chesboard found in kinect [" << (foundInKinect ? "X" : " ") << "], camera [" << (foundInCamera ? "X" : " ") << "]";
+						throw(ofxRulr::Exception(error.str()));
 					}
-					else {
-						ofxRulr::Utils::playFailSound();
-						RULR_ERROR << "Chesboard found in kinect [" << (foundInKinect ? "X" : " ") << "], camera [" << (foundInCamera ? "X" : " ") << "]";
+					auto kinectCameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
+					auto kinectCameraToWorldPointer = (ofVec3f*)kinectCameraToWorldMap.getPixels();
+					auto kinectCameraWidth = kinectCameraToWorldMap.getWidth();
+					int pointIndex = 0;
+					for (int i = 0; i < cameraPoints.size(); i++) {
+						this->previewCornerFindsKinect.push_back(kinectCameraPoints[i]);
+						this->previewCornerFindsCamera.push_back(cameraPoints[i]);
+
+						auto & kinectCameraPoint = kinectCameraPoints[i];
+						auto & cameraPoint = cameraPoints[i];
+
+						Correspondence correspondence;
+
+						correspondence.kinectObject = kinectCameraToWorldPointer[(int)kinectCameraPoint.x + (int)kinectCameraPoint.y * kinectCameraWidth];
+						correspondence.camera = cameraPoint;
+						correspondence.cameraNormalized = ofVec2f(ofMap(cameraPoint.x, 0, cameraWidth, 0, 1),
+							ofMap(cameraPoint.y, 0, cameraHeight, 0, 1));
+
+						if (correspondence.kinectObject.z > 0.5f) {
+							this->correspondences.push_back(correspondence);
+						}
+
+						pointIndex++;
 					}
 				}
 
@@ -241,13 +239,18 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraFromKinectV2::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				void CameraFromKinectV2::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
+					auto inspector = inspectArgs.inspector;
+
 					inspector->add(ofxCvGui::Widgets::LiveValue<int>::make("Correspondences found", [this]() {
 						return (int) this->correspondences.size();
 					}));
+
 					auto addButton = MAKE(ofxCvGui::Widgets::Button, "Add Capture", [this]() {
 						try {
+							Utils::ScopedProcess scopedProcess("CameraFromKinectV2 - addCapture");
 							this->addCapture();
+							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT
 					}, ' ');

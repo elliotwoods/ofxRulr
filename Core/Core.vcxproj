@@ -32,8 +32,9 @@
     <ClCompile Include="src\ofxRulr\Utils\Gui.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\PolyFit.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\ScopedProcess.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp" />
-    <ClCompile Include="src\ofxRulr\Utils\Utils.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\SoundEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxClipboard\src\ofxClipboard.h" />
@@ -65,9 +66,10 @@
     <ClInclude Include="src\ofxRulr\Utils\Gui.h" />
     <ClInclude Include="src\ofxRulr\Utils\Initialiser.h" />
     <ClInclude Include="src\ofxRulr\Utils\PolyFit.h" />
+    <ClInclude Include="src\ofxRulr\Utils\ScopedProcess.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serializable.h" />
     <ClInclude Include="src\ofxRulr\Utils\Set.h" />
-    <ClInclude Include="src\ofxRulr\Utils\Utils.h" />
+    <ClInclude Include="src\ofxRulr\Utils\SoundEngine.h" />
     <ClInclude Include="src\ofxRulr\Version.h" />
   </ItemGroup>
   <ItemGroup>

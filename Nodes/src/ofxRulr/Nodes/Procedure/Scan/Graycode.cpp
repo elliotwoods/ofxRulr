@@ -382,7 +382,7 @@ namespace ofxRulr {
 						CASEMODESTRING(Median);
 						CASEMODESTRING(MedianInverse);
 						CASEMODESTRING(Active);
-						deafult:
+						default:
 							return "";
 					}
 				}

@@ -219,9 +219,9 @@
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h" />
     <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Application\Assets.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Recorder.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DeclareNodes.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Demo\ARCube.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Fixture.h" />
@@ -236,23 +236,27 @@
     <ClInclude Include="src\ofxRulr\Nodes\Item\RigidBody.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\View.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Base.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Triangulate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Render\NodeThroughView.h" />
     <ClInclude Include="src\ofxRulr\Nodes\System\VideoOutput.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Test\ARCube.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Test\Focus.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp" />
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp" />
     <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Application\Assets.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Recorder.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DeclareNodes.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Demo\ARCube.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Base.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Fixture.cpp" />
@@ -265,15 +269,19 @@
     <ClCompile Include="src\ofxRulr\Nodes\Item\Projector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\RigidBody.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\View.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Render\NodeThroughView.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\System\VideoOutput.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Test\ARCube.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Test\Focus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxGLM\libs\glm\core\func_common.inl" />

@@ -103,7 +103,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void EnttecUsbPro::populateInspector(ElementGroupPtr inspector) {
+			void EnttecUsbPro::populateInspector(InspectArguments & inspectArgs) {
+				auto inspector = inspectArgs.inspector;
+
 				auto portNameWidget = Widgets::EditableValue<string>::make(this->portName);
 				portNameWidget->onEditValue += [this](string & portName) {
 					this->connect();

@@ -81,9 +81,6 @@
     <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Utils.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\Gui.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
@@ -123,6 +120,12 @@
     <ClCompile Include="src\ofxRulr\Utils\PolyFit.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\ScopedProcess.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\SoundEngine.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -153,9 +156,6 @@
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\Set.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Utils.h">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\Constants.h">
@@ -222,6 +222,12 @@
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\PolyFit.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\ScopedProcess.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\SoundEngine.h">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,32 @@ namespace ofxRulr {
 	namespace Utils {
 		//----------
 		SoundEngine::SoundEngine() {
-			this->soundStream.setup(2, 0, 44100, 1024, 1);
+			//try default output device
+			bool success = false;
+			auto devices = this->soundStream.getDeviceList();
+			for (auto & device : devices) {
+				if (device.isDefaultOutput) {
+					this->soundStream.setDevice(device);
+					this->soundStream.setup(2, 0, 44100, 1024, 1);
+				}
+			}
+			//if that didn't work
+			success = this->soundStream.getNumOutputChannels() > 0;
+			//try again. just look for any that works
+			if (!success) {
+				for (auto & device : devices) {
+					if (device.outputChannels >= 2) {
+						this->soundStream.setDevice(device);
+						this->soundStream.setup(2, 0, 44100, 1024, 1);
+						success = true;
+						break;
+					}
+				}
+			}
+			if (!success) {
+				ofLogError("ofxRulr::Utils::SondEngine") << "No workable sound output device detected. If you are on Windows you may need to install ASIO4All";
+			}
+
 			this->soundStream.setOutput(this);
 		}
 		

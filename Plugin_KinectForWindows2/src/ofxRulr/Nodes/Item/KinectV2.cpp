@@ -115,7 +115,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void KinectV2::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+			void KinectV2::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
+				auto inspector = inspectArgs.inspector;
+
 				auto selectPlayState = make_shared<ofxCvGui::Widgets::MultipleChoice>("Play state");
 				selectPlayState->addOption("Play");
 				selectPlayState->addOption("Pause");

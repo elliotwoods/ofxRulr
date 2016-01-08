@@ -20,7 +20,7 @@ namespace ofxRulr {
 
 				void sendUniverse(UniverseIndex, shared_ptr<Universe>) override;
 
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 
 				shared_ptr<ofSerial> sender;
 

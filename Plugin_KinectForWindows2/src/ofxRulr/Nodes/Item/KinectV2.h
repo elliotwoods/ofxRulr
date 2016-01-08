@@ -30,7 +30,7 @@ namespace ofxRulr {
 				shared_ptr<ofxKinectForWindows2::Device> getDevice();
 
 			protected:
-				void populateInspector(ofxCvGui::ElementGroupPtr);
+				void populateInspector(ofxCvGui::InspectArguments &);
 				shared_ptr<ofxKinectForWindows2::Device> device;
 				shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
 

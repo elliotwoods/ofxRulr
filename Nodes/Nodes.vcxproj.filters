@@ -85,11 +85,14 @@
     <Filter Include="src\ofxRulr\Nodes\DMX">
       <UniqueIdentifier>{5ddb32e0-a6b3-430a-9faa-563cca4c9428}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Demo">
-      <UniqueIdentifier>{136a4e90-90b8-4803-83f7-411690cee5d8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Nodes\System">
       <UniqueIdentifier>{23b5c0d7-6fa1-481c-b2ac-8fc1602afc77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Test">
+      <UniqueIdentifier>{05501dd1-f962-45bb-a58b-f41a946f2846}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Application">
+      <UniqueIdentifier>{fcc96b4b-64e7-42e4-9583-9d71d7a2bf83}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -540,11 +543,23 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Demo\ARCube.h">
-      <Filter>src\ofxRulr\Nodes\Demo</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\System\VideoOutput.h">
       <Filter>src\ofxRulr\Nodes\System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Test\ARCube.h">
+      <Filter>src\ofxRulr\Nodes\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Test\Focus.h">
+      <Filter>src\ofxRulr\Nodes\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Application\Assets.h">
+      <Filter>src\ofxRulr\Nodes\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -623,11 +638,23 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Demo\ARCube.cpp">
-      <Filter>src\ofxRulr\Nodes\Demo</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\System\VideoOutput.cpp">
       <Filter>src\ofxRulr\Nodes\System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Test\ARCube.cpp">
+      <Filter>src\ofxRulr\Nodes\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Test\Focus.cpp">
+      <Filter>src\ofxRulr\Nodes\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Application\Assets.cpp">
+      <Filter>src\ofxRulr\Nodes\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

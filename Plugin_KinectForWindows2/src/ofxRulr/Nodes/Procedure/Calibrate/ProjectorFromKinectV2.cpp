@@ -4,7 +4,8 @@
 
 #include "ofxRulr/Nodes/Item/Projector.h"
 #include "ofxRulr/Nodes/System/VideoOutput.h"
-#include "ofxRulr/Utils/Utils.h"
+
+#include "ofxRulr/Utils/ScopedProcess.h"
 
 #include "ofxCvGui/Panels/Groups/Grid.h"
 #include "ofxCvGui/Panels/World.h"
@@ -184,7 +185,9 @@ namespace ofxRulr {
 					cv::flip(colorImage, colorImage, 1);
 
 					vector<ofVec2f> cameraPoints;
-					bool success = ofxCv::findChessboardCornersPreTest(colorImage, cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), toCv(cameraPoints));
+					if (!ofxCv::findChessboardCornersPreTest(colorImage, cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), toCv(cameraPoints))) {
+						throw(ofxRulr::Exception("Checkerboard not found in color image"));
+					}
 
 					//flip the results back again
 					int colorWidth = colorPixels.getWidth();
@@ -194,31 +197,25 @@ namespace ofxRulr {
 
 					this->previewCornerFinds.clear();
 
-					if (success) {
-						ofxRulr::Utils::playSuccessSound();
-						auto cameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
-						auto cameraToWorldPointer = (ofVec3f*)cameraToWorldMap.getPixels();
-						auto cameraWidth = cameraToWorldMap.getWidth();
-						auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), this->checkerboardScale, true));
-						int pointIndex = 0;
-						for (auto cameraPoint : cameraPoints) {
-							this->previewCornerFinds.push_back(cameraPoint);
+					auto cameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
+					auto cameraToWorldPointer = (ofVec3f*)cameraToWorldMap.getPixels();
+					auto cameraWidth = cameraToWorldMap.getWidth();
+					auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), this->checkerboardScale, true));
+					int pointIndex = 0;
+					for (auto cameraPoint : cameraPoints) {
+						this->previewCornerFinds.push_back(cameraPoint);
 
-							Correspondence correspondence;
+						Correspondence correspondence;
 
-							correspondence.world = cameraToWorldPointer[(int)cameraPoint.x + (int)cameraPoint.y * cameraWidth];
-							correspondence.projector = (ofVec2f)checkerboardCorners[pointIndex] + ofVec2f(this->checkerboardPositionX, this->checkerboardPositionY);
+						correspondence.world = cameraToWorldPointer[(int)cameraPoint.x + (int)cameraPoint.y * cameraWidth];
+						correspondence.projector = (ofVec2f)checkerboardCorners[pointIndex] + ofVec2f(this->checkerboardPositionX, this->checkerboardPositionY);
 
-							//check correspondence has valid z coordinate before adding it to the calibration set
-							if (correspondence.world.z > 0.5f) {
-								this->correspondences.push_back(correspondence);
-							}
-
-							pointIndex++;
+						//check correspondence has valid z coordinate before adding it to the calibration set
+						if (correspondence.world.z > 0.5f) {
+							this->correspondences.push_back(correspondence);
 						}
-					}
-					else {
-						ofxRulr::Utils::playFailSound();
+
+						pointIndex++;
 					}
 				}
 
@@ -252,7 +249,9 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void ProjectorFromKinectV2::populateInspector(ofxCvGui::ElementGroupPtr inspector) {
+				void ProjectorFromKinectV2::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
+					auto inspector = inspectArgs.inspector;
+
 					auto slider = MAKE(ofxCvGui::Widgets::Slider, this->checkerboardScale);
 					inspector->add(slider);
 
@@ -284,7 +283,9 @@ namespace ofxRulr {
 
 					auto addButton = MAKE(ofxCvGui::Widgets::Button, "Add Capture", [this]() {
 						try {
+							Utils::ScopedProcess scopedProcess("ProjectorFromKinectV2 - addCapture");
 							this->addCapture();
+							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT
 					}, ' ');
