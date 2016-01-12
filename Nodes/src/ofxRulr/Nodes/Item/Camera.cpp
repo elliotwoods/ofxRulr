@@ -1,4 +1,6 @@
+#include "pch_RulrNodes.h"
 #include "Camera.h"
+
 #include "ofxCvGui.h"
 
 using namespace ofxCvGui;

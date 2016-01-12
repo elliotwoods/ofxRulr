@@ -1,6 +1,7 @@
+#include "pch_Plugin_KinectForWindows2.h"
 #include "KinectV2.h"
 
-#include "ofxCvGui/Panels/Draws.h"
+#include "ofxCvGui/Panels/Texture.h"
 #include "ofxCvGui/Widgets/MultipleChoice.h"
 
 using namespace ofxCvGui;
@@ -19,23 +20,18 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
-				auto view = MAKE(ofxCvGui::Panels::Groups::Grid);
+				auto view = MAKE(ofxCvGui::Panels::Groups::Strip);
 				this->view = view;
 
 				this->device = MAKE(ofxKinectForWindows2::Device);
 				this->device->open();
 
 				if (this->device->isOpen()) {
-					this->device->initDepthSource();
 					this->device->initColorSource();
+					this->device->initDepthSource();
+					this->device->initInfraredSource();
 					this->device->initBodySource();
-
-					auto rgbView = make_shared<ofxCvGui::Panels::Draws>(this->device->getColorSource()->getTexture());
-					auto depthView = make_shared<ofxCvGui::Panels::Draws>(this->device->getDepthSource()->getTexture());
-					rgbView->setCaption("RGB");
-					depthView->setCaption("Depth");
-					this->view->add(rgbView);
-					this->view->add(depthView);
+					this->device->initBodyIndexSource();
 				}
 				else {
 					throw(Exception("Cannot initialise Kinect device. We should find a way to fail elegantly here (and retry later)."));
@@ -43,6 +39,13 @@ namespace ofxRulr {
 
 				this->playState.set("Play state", 0, 0, 1);
 				this->viewType.set("View type", 3, 0, 3);
+
+				{
+					this->enabledViews.rgb.set("RGB", true);
+					this->enabledViews.depth.set("Depth", true);
+					this->enabledViews.ir.set("IR", false);
+					this->enabledViews.body.set("Body", false);
+				}
 			}
 
 			//----------
@@ -65,11 +68,26 @@ namespace ofxRulr {
 			//----------
 			void KinectV2::serialize(Json::Value & json) {
 				ofxRulr::Utils::Serializable::serialize(this->viewType, json);
+				auto & jsonEnabledViews = json["enabledViews"];
+				{
+					ofxRulr::Utils::Serializable::serialize(this->enabledViews.rgb, jsonEnabledViews);
+					ofxRulr::Utils::Serializable::serialize(this->enabledViews.depth, jsonEnabledViews);
+					ofxRulr::Utils::Serializable::serialize(this->enabledViews.ir, jsonEnabledViews);
+					ofxRulr::Utils::Serializable::serialize(this->enabledViews.body, jsonEnabledViews);
+				}
 			}
 
 			//----------
 			void KinectV2::deserialize(const Json::Value & json) {
 				ofxRulr::Utils::Serializable::deserialize(this->viewType, json);
+				const auto & jsonEnabledViews = json["enabledViews"];
+				{
+					ofxRulr::Utils::Serializable::deserialize(this->enabledViews.rgb, jsonEnabledViews);
+					ofxRulr::Utils::Serializable::deserialize(this->enabledViews.depth, jsonEnabledViews);
+					ofxRulr::Utils::Serializable::deserialize(this->enabledViews.ir, jsonEnabledViews);
+					ofxRulr::Utils::Serializable::deserialize(this->enabledViews.body, jsonEnabledViews);
+				}
+				this->rebuildView();
 			}
 
 			//----------
@@ -130,6 +148,64 @@ namespace ofxRulr {
 				selectViewType->addOption("All");
 				selectViewType->entangle(this->viewType);
 				inspector->add(selectViewType);
+
+				inspector->add(Widgets::Title::make("Enabled views", Widgets::Title::Level::H2));
+				{
+					auto changeViewsCallback = [this](ofParameter<bool> &) {
+						this->rebuildView();
+					};
+					inspector->add(this->enabledViews.rgb)->onValueChange += changeViewsCallback;
+					inspector->add(this->enabledViews.depth)->onValueChange += changeViewsCallback;
+					inspector->add(this->enabledViews.ir)->onValueChange += changeViewsCallback;
+					inspector->add(this->enabledViews.body)->onValueChange += changeViewsCallback;
+				}
+			}
+
+			//----------
+			void KinectV2::rebuildView() {
+				this->view->clear();
+
+				if(this->enabledViews.rgb) {
+					auto rgbView = make_shared<ofxCvGui::Panels::Texture>(this->device->getColorSource()->getTexture());
+					rgbView->setCaption("RGB");
+					this->view->add(rgbView);
+				}
+
+				if (this->enabledViews.depth) {
+					auto depthView = make_shared<ofxCvGui::Panels::Texture>(this->device->getDepthSource()->getTexture());
+					depthView->setCaption("Depth");
+					
+					auto style = Panels::Texture::Style();
+					style.rangeMaximum = 16384.0f / pow(2.0f, 16); // range is drawn as 0...16384mm (0..0.25 pixel value)
+					//depthView->setStyle(style); //can't use shader because we're a dll
+
+					this->view->add(depthView);
+				}
+
+				if (this->enabledViews.ir) {
+					auto irView = make_shared<ofxCvGui::Panels::Texture>(this->device->getInfraredSource()->getTexture());
+					irView->setCaption("IR");
+					this->view->add(irView);
+				}
+
+				if (this->enabledViews.body) {
+					auto & texture = this->device->getBodyIndexSource()->getTexture();
+					auto bodyView = make_shared<ofxCvGui::Panels::Texture>(texture);
+					bodyView->setCaption("Body");
+					
+					auto style = Panels::Texture::Style();
+					style.rangeMaximum = 5.0f;
+					//bodyView->setStyle(style); //can't use shader because we're a dll
+
+					auto width = texture.getWidth();
+					auto height = texture.getHeight();
+					bodyView->onDrawCropped += [this, width, height](Panels::BaseImage::DrawCroppedArguments & args) {
+						auto bodySource = this->device->getBodySource();
+						bodySource->drawProjected(0, 0, width, height, ofxKinectForWindows2::ProjectionCoordinates::DepthCamera);
+					};
+
+					this->view->add(bodyView);
+				}
 			}
 		}
 	}

@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "Focus.h"
 
 #include "ofxRulr/Nodes/Item/Camera.h"

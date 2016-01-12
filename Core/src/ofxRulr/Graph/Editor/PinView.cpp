@@ -1,5 +1,6 @@
+#include "pch_RulrCore.h"
 #include "PinView.h"
-#include "ofxAssets.h"
+
 #include "../../Nodes/Base.h"
 
 namespace ofxRulr {

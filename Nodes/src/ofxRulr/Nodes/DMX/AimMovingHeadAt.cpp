@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "AimMovingHeadAt.h"
 
 #include "ofxRulr/Nodes/Item/RigidBody.h"
@@ -158,7 +159,7 @@ namespace ofxRulr {
 								ofPushStyle();
 								ofFill();
 								ofSetColor(100, 200, 100);
-								ofCircle(args.localBounds.width - 10, 10, 8.0f);
+								ofDrawCircle(args.localBounds.width - 10, 10, 8.0f);
 								ofPopStyle();
 							}
 						};
@@ -176,7 +177,7 @@ namespace ofxRulr {
 								ofPushStyle();
 								ofFill();
 								ofSetColor(100, 200, 100);
-								ofCircle(args.localBounds.width - 10, 10, 8.0f);
+								ofDrawCircle(args.localBounds.width - 10, 10, 8.0f);
 								ofPopStyle();
 							}
 						};

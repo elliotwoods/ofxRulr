@@ -1,5 +1,5 @@
+#include "pch_RulrCore.h"
 #include "Graphics.h"
-#include "ofxAssets.h"
 
 //----------
 OFXSINGLETON_DEFINE(ofxRulr::Nodes::Graphics);

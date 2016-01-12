@@ -1,3 +1,4 @@
+#include "pch_RulrCore.h"
 #include "SoundEngine.h"
 
 OFXSINGLETON_DEFINE(ofxRulr::Utils::SoundEngine);

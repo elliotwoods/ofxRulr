@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "VideoOutput.h"
 #include "ofxRulr/Utils/Constants.h"
 
@@ -483,13 +484,13 @@ namespace ofxRulr {
 						}
 						ofFill();
 						const auto radius = 5.0f;
-						ofRectRounded(args.localBounds, radius, radius, radius, radius);
+						ofDrawRectRounded(args.localBounds, radius, radius, radius, radius);
 
 						//outline
 						if (selectButton->isMouseOver()) {
 							ofNoFill();
 							ofSetColor(!selected ? 80 : 50);
-							ofRectRounded(args.localBounds, radius, radius, radius, radius);
+							ofDrawRectRounded(args.localBounds, radius, radius, radius, radius);
 						}
 
 						//split
@@ -499,11 +500,11 @@ namespace ofxRulr {
 							ofSetColor(50);
 							for (int borderIndex = 0; borderIndex < this->splitHorizontal - 1; borderIndex++) {
 								const float x = selectButton->getWidth() / this->splitHorizontal * (borderIndex + 1);
-								ofLine(x, 0, x, args.localBounds.height);
+								ofDrawLine(x, 0, x, args.localBounds.height);
 							}
 							for (int borderIndex = 0; borderIndex < this->splitVertical - 1; borderIndex++) {
 								const float y = selectButton->getHeight() / this->splitVertical * (borderIndex + 1);
-								ofLine(0, y, args.localBounds.width, y);
+								ofDrawLine(0, y, args.localBounds.width, y);
 							}
 							ofPopStyle();
 						}

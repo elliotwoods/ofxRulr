@@ -1,3 +1,4 @@
+#include "pch_Plugin_KinectForWindows2.h"
 #include "ofxPlugin.h"
 
 #include "ofxRulr/Nodes/Item/KinectV2.h"

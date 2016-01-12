@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "HomographyFromGraycode.h"
 
 #include "ofxRulr/Exception.h"
@@ -288,8 +289,8 @@ namespace ofxRulr {
 					mappingImage.end();
 
 					ofFloatImage saveImage;
-					mappingImage.readToPixels(saveImage.getPixelsRef());
-					saveImage.saveImage(filePath + ".exr");
+					mappingImage.readToPixels(saveImage.getPixels());
+					saveImage.save(filePath + ".exr");
 
 
 					//save matrix

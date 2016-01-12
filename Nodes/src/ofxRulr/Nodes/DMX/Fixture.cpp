@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "Fixture.h"
 
 #include "ofxRulr/Nodes/DMX/Transmit.h"

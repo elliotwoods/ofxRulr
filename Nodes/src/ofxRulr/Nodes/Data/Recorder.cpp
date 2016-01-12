@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "Recorder.h"
 
 #include "ofxCvGui/Widgets/Button.h"

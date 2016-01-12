@@ -1,4 +1,6 @@
+#include "pch_RulrCore.h"
 #include "LinkHost.h"
+
 #include "ofPolyline.h"
 
 namespace ofxRulr {

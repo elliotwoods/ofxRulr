@@ -58,6 +58,8 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch_RulrNodes.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -79,6 +81,8 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch_RulrNodes.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -219,7 +223,12 @@
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h" />
     <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
+    <ClInclude Include="src\ofxRulr\Data\Channels\Address.h" />
+    <ClInclude Include="src\ofxRulr\Data\Channels\Channel.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Application\Assets.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Database.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Recorder.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DeclareNodes.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.h" />
@@ -249,12 +258,27 @@
     <ClInclude Include="src\ofxRulr\Nodes\System\VideoOutput.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\ARCube.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\Focus.h" />
+    <ClInclude Include="src\pch_RulrNodes.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp" />
-    <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp" />
-    <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp" />
+    <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxTriangulate\src\ofxTriangulate.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\Channels\Address.cpp" />
+    <ClCompile Include="src\ofxRulr\Data\Channels\Channel.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Application\Assets.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Database.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Base.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Recorder.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DeclareNodes.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.cpp" />
@@ -282,6 +306,10 @@
     <ClCompile Include="src\ofxRulr\Nodes\System\VideoOutput.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\ARCube.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\Focus.cpp" />
+    <ClCompile Include="src\pch_RulrNodes.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxGLM\libs\glm\core\func_common.inl" />

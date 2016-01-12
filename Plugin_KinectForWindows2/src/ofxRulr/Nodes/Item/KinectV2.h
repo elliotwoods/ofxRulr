@@ -4,7 +4,7 @@
 
 #include "ofxKinectForWindows2.h"
 
-#include "ofxCvGui/Panels/Groups/Grid.h"
+#include "ofxCvGui/Panels/Groups/Strip.h"
 
 #ifdef  Plugin_KinectForWindows2_Exports 
 	#define DLLEXPORT __declspec(dllexport)  
@@ -31,11 +31,20 @@ namespace ofxRulr {
 
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
+				void rebuildView();
+
 				shared_ptr<ofxKinectForWindows2::Device> device;
-				shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
+				shared_ptr<ofxCvGui::Panels::Groups::Strip> view;
 
 				ofParameter<int> playState;
 				ofParameter<int> viewType;
+
+				struct {
+					ofParameter<bool> rgb;
+					ofParameter<bool> depth;
+					ofParameter<bool> ir;
+					ofParameter<bool> body;
+				} enabledViews;
 			};
 		}
 	}

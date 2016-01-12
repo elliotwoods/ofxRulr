@@ -1,4 +1,6 @@
+#include "pch_RulrNodes.h"
 #include "Board.h"
+
 #include "ofxCvGui.h"
 #include "ofxCvMin.h"
 #include "ofxRulr/Utils/Gui.h"

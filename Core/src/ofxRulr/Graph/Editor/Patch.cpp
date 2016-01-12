@@ -1,7 +1,5 @@
+#include "pch_RulrCore.h"
 #include "Patch.h"
-#include "ofxAssets.h"
-#include "ofSystemUtils.h"
-#include "ofxClipboard.h"
 
 #include "ofxCvGui/Widgets/Button.h"
 
@@ -36,7 +34,7 @@ namespace ofxRulr {
 						ofPushStyle();
 						ofSetLineWidth(1.0f);
 						ofNoFill();
-						ofRect(selection->getBounds());
+						ofDrawRectangle(selection->getBounds());
 						ofPopStyle();
 					}
 					if (this->patchInstance.getNodeHosts().empty()) {

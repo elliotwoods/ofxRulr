@@ -1,9 +1,5 @@
+#include "pch_RulrCore.h"
 #include "Summary.h"
-
-#include "ofxCvGui/Widgets/Toggle.h"
-#include "ofxCvGui/Widgets/LiveValue.h"
-#include "ofxCvGui/Widgets/EditableValue.h"
-#include "ofxCvGui/Widgets/Title.h"
 
 using namespace ofxCvGui;
 
@@ -152,16 +148,16 @@ namespace ofxRulr {
 			ofSetColor(200, 100, 100);
 			ofPushMatrix();
 			ofTranslate(0, roomMaximum.y, roomMaximum.z);
-			ofLine(roomMinimum.x, 0, roomMaximum.x, 0);
+			ofDrawLine(roomMinimum.x, 0, roomMaximum.x, 0);
 			ofPopMatrix();
 			//
 			//y
 			ofSetColor(100, 200, 100);
-			ofLine(0, roomMaximum.y, roomMaximum.z, 0, roomMinimum.y, roomMaximum.z);
+			ofDrawLine(0, roomMaximum.y, roomMaximum.z, 0, roomMinimum.y, roomMaximum.z);
 			//
 			//z
 			ofSetColor(100, 200, 100);
-			ofLine(0, roomMaximum.y, roomMaximum.z, 0, roomMaximum.y, roomMinimum.z);
+			ofDrawLine(0, roomMaximum.y, roomMaximum.z, 0, roomMaximum.y, roomMinimum.z);
 			//
 			ofPopStyle();
 			//
@@ -180,12 +176,12 @@ namespace ofxRulr {
 			ofSetColor(0);
 			ofSetLineWidth(2.0f);
 			//back wall
-			ofLine(cursorPosition.x, roomMaximum.y, roomMaximum.z, cursorPosition.x, roomMinimum.y, roomMaximum.z); //x
-			ofLine(roomMinimum.x, cursorPosition.y, roomMaximum.z, roomMaximum.x, cursorPosition.y, roomMaximum.z); //y
+			ofDrawLine(cursorPosition.x, roomMaximum.y, roomMaximum.z, cursorPosition.x, roomMinimum.y, roomMaximum.z); //x
+			ofDrawLine(roomMinimum.x, cursorPosition.y, roomMaximum.z, roomMaximum.x, cursorPosition.y, roomMaximum.z); //y
 			//
 			//floor
-			ofLine(cursorPosition.x, roomMaximum.y, roomMinimum.z, cursorPosition.x, roomMaximum.y, roomMaximum.z); //x
-			ofLine(roomMinimum.x, roomMaximum.y, cursorPosition.z, roomMaximum.x, roomMaximum.y, cursorPosition.z); //z
+			ofDrawLine(cursorPosition.x, roomMaximum.y, roomMinimum.z, cursorPosition.x, roomMaximum.y, roomMaximum.z); //x
+			ofDrawLine(roomMinimum.x, roomMaximum.y, cursorPosition.z, roomMaximum.x, roomMaximum.y, cursorPosition.z); //z
 			//
 			ofPopStyle();
 			//

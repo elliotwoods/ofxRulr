@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "IReferenceVertices.h"
 
 namespace ofxRulr {
@@ -27,9 +28,9 @@ namespace ofxRulr {
 
 				//----------
 				void IReferenceVertices::Vertex::drawObjectLines() {
-					ofLine(-ofVec3f(0.1f, 0.0f, 0.0f), ofVec3f(0.1f, 0.0f, 0.0f));
-					ofLine(-ofVec3f(0.0f, 0.1f, 0.0f), ofVec3f(0.0f, 0.1f, 0.0f));
-					ofLine(-ofVec3f(0.0f, 0.0f, 0.1f), ofVec3f(0.0f, 0.0f, 0.1f));
+					ofDrawLine(-ofVec3f(0.1f, 0.0f, 0.0f), ofVec3f(0.1f, 0.0f, 0.0f));
+					ofDrawLine(-ofVec3f(0.0f, 0.1f, 0.0f), ofVec3f(0.0f, 0.1f, 0.0f));
+					ofDrawLine(-ofVec3f(0.0f, 0.0f, 0.1f), ofVec3f(0.0f, 0.0f, 0.1f));
 				}
 
 #pragma mark ISelectTargetVertex

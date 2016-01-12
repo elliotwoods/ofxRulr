@@ -1,3 +1,4 @@
+#include "pch_RulrCore.h"
 #include "World.h"
 
 #include "Summary.h"
@@ -5,8 +6,6 @@
 #include "../Exception.h"
 #include "../Utils/Initialiser.h"
 #include "../Version.h"
-
-#include "ofxCvGui.h"
 
 using namespace ofxCvGui;
 
@@ -54,25 +53,14 @@ namespace ofxRulr {
 			// SETUP GUI GRID
 			//--
 			//
-			auto rootGroup = dynamic_pointer_cast<ofxCvGui::Panels::Groups::Grid>(controller.getRootGroup());
-			if (rootGroup) {
-				weak_ptr<ofxCvGui::Panels::Groups::Grid> rootGroupWeakPtr = rootGroup;
-				//set widths before the rearrangement happens
-				rootGroup->onBoundsChange.addListener([rootGroupWeakPtr] (ofxCvGui::BoundsChangeArguments & args) {
-					auto rootGroup = rootGroupWeakPtr.lock();
-					if (rootGroup) {
-						const float inspectorWidth = 300.0f;
-						vector<float> widths;
-						widths.push_back(args.bounds.getWidth() - inspectorWidth);
-						widths.push_back(inspectorWidth);
-						rootGroup->setWidths(widths);
-					}
-				}, -1, this);
-			}
-			auto gridGroup = MAKE(ofxCvGui::Panels::Groups::Grid);
-			gridGroup->setColsCount(1);
-			rootGroup->add(gridGroup);
-			this->guiGrid = gridGroup;
+			auto horizontalGroup = make_shared<Panels::Groups::Strip>(Panels::Groups::Strip::Direction::Horizontal);
+			controller.add(horizontalGroup);
+			horizontalGroup->setCellSizes({ -1, 300 });
+			horizontalGroup->setHandlesEnabled(true);
+
+			auto verticalGroup = make_shared<Panels::Groups::Strip>(Panels::Groups::Strip::Direction::Vertical);
+			verticalGroup->setHandlesEnabled(true);
+			horizontalGroup->add(verticalGroup);
 			//
 			//--
 
@@ -85,7 +73,7 @@ namespace ofxRulr {
 			//--
 			//
 			auto nodeGrid = MAKE(ofxCvGui::Panels::Groups::Grid);
-			guiGrid->add(nodeGrid);
+			verticalGroup->add(nodeGrid);
 			for(auto node : *this) {
 				auto nodeView = node->getView();
 				if (nodeView) {
@@ -108,7 +96,7 @@ namespace ofxRulr {
 				summary->init();
 				summary->setName("World");
 				this->add(summary); // we intentionally do this after building the Node grid
-				gridGroup->add(summary->getView());
+				verticalGroup->add(summary->getView());
 			}
 			//
 			//--
@@ -121,7 +109,7 @@ namespace ofxRulr {
 			//--
 			//
 			auto inspector = ofxCvGui::Builder::makeInspector();
-			rootGroup->add(inspector);
+			horizontalGroup->add(inspector);
 			inspector->setTitleEnabled(false);
 
 			//whenever the instpector clears, setup default elements
@@ -168,7 +156,7 @@ namespace ofxRulr {
 							ofSetColor(255);
 							ofSetLineWidth(3.0f);
 							ofNoFill();
-							ofRect(drawArgs.localBounds);
+							ofDrawRectangle(drawArgs.localBounds);
 							ofPopStyle();
 						}
 					};

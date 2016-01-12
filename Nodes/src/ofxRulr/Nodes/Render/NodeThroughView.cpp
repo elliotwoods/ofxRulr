@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "NodeThroughView.h"
 
 #include "ofxRulr/Nodes/Item/View.h"

@@ -1,6 +1,5 @@
+#include "pch_RulrCore.h"
 #include "Initialiser.h"
-
-#include "ofxAssets.h"
 
 namespace ofxRulr {
 	namespace Utils {

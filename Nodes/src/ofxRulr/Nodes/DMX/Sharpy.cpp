@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "Sharpy.h"
 
 #include "ofxCvGui/Widgets/Toggle.h"

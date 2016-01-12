@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "MovingHeadToWorld.h"
 
 #include "ofxRulr/Nodes/DMX/MovingHead.h"
@@ -159,16 +160,16 @@ namespace ofxRulr {
 								};
 
 								ofFill();
-								ofCircle(panTiltToView(movingHead->getPanTilt()), 5.0f);
+								ofDrawCircle(panTiltToView(movingHead->getPanTilt()), 5.0f);
 								ofNoFill();
 								ofSetLineWidth(2.0f);
 								for (const auto & dataPoint : this->dataPoints) {
 									const auto positionInView = panTiltToView(dataPoint.panTilt);
 									if (dataPoint.residual != 0) {
 										ofDrawBitmapString(ofToString(dataPoint.residual, 3), positionInView);
-										ofLine(positionInView, panTiltToView(dataPoint.panTiltEvaluated));
+										ofDrawLine(positionInView, panTiltToView(dataPoint.panTiltEvaluated));
 									}
-									ofCircle(positionInView, 5.0f);
+									ofDrawCircle(positionInView, 5.0f);
 								}
 							}
 							ofPopStyle();

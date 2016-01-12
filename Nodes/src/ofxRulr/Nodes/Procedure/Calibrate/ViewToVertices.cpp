@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "ViewToVertices.h"
 
 #include "ofxRulr/Nodes/Item/View.h"
@@ -106,13 +107,13 @@ namespace ofxRulr {
 							//surround
 							ofSetLineWidth(3.0f);
 							ofSetColor(0);
-							ofLine(-10, 0, 10, 0);
-							ofLine(0, -10, 0, 10);
+							ofDrawLine(-10, 0, 10, 0);
+							ofDrawLine(0, -10, 0, 10);
 							//inner
 							ofSetLineWidth(1.0f);
 							ofSetColor(vertex->isSelected() ? ofxCvGui::Utils::getBeatingSelectionColor() : ofColor(100));
-							ofLine(-10, 0, 10, 0);
-							ofLine(0, -10, 0, 10);
+							ofDrawLine(-10, 0, 10, 0);
+							ofDrawLine(0, -10, 0, 10);
 							ofPopStyle();
 
 							ofPopMatrix();
@@ -246,7 +247,7 @@ namespace ofxRulr {
 						this->projectorReferenceImage.clear();
 					}
 					else {
-						this->projectorReferenceImage.loadImage(this->projectorReferenceImageFilename.get());
+						this->projectorReferenceImage.load(this->projectorReferenceImageFilename.get());
 					}
 
 					ofxRulr::Utils::Serializable::deserialize(this->dragVerticesEnabled, json);
@@ -265,7 +266,7 @@ namespace ofxRulr {
 						return this->projectorReferenceImageFilename.get();
 					}, [this](string & newFilename) {
 						this->projectorReferenceImageFilename = newFilename;
-						this->projectorReferenceImage.loadImage(newFilename);
+						this->projectorReferenceImage.load(newFilename);
 					}));
 					inspector->add(Widgets::Button::make("Clear iamge", [this]() {
 						this->projectorReferenceImage.clear();

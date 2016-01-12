@@ -126,6 +126,9 @@
     <ClCompile Include="src\ofxRulr\Utils\SoundEngine.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\pch_RulrCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\SoundEngine.h">
       <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch_RulrCore.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

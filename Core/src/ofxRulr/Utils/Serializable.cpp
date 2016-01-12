@@ -1,8 +1,8 @@
+#include "pch_RulrCore.h"
 #include "Serializable.h"
+
 #include "../Exception.h"
 
-#include "ofSystemUtils.h"
-#include <string>
 using namespace std;
 
 namespace ofxRulr {

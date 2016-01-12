@@ -1,3 +1,4 @@
+#include "pch_Plugin_KinectForWindows2.h"
 #include "ProjectorFromKinectV2.h"
 
 #include "ofxRulr/Nodes/Item/KinectV2.h"
@@ -52,7 +53,7 @@ namespace ofxRulr {
 					this->view->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
 						ofPolyline previewLine;
 						if (!this->previewCornerFinds.empty()) {
-							ofCircle(this->previewCornerFinds.front(), 10.0f);
+							ofDrawCircle(this->previewCornerFinds.front(), 10.0f);
 							for (const auto & previewCornerFind : this->previewCornerFinds) {
 								previewLine.addVertex(previewCornerFind);
 							}
@@ -103,7 +104,7 @@ namespace ofxRulr {
 
 							ofPushStyle();
 							ofSetColor(255.0f * this->checkerboardBrightness);
-							ofRect(-1, -1, 2, 2);
+							ofDrawRectangle(-1, -1, 2, 2);
 							ofPopStyle();
 
 							ofTranslate(this->checkerboardPositionX, this->checkerboardPositionY);
@@ -198,7 +199,7 @@ namespace ofxRulr {
 					this->previewCornerFinds.clear();
 
 					auto cameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
-					auto cameraToWorldPointer = (ofVec3f*)cameraToWorldMap.getPixels();
+					auto cameraToWorldPointer = (ofVec3f*)cameraToWorldMap.getData();
 					auto cameraWidth = cameraToWorldMap.getWidth();
 					auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), this->checkerboardScale, true));
 					int pointIndex = 0;

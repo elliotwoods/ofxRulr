@@ -1,4 +1,6 @@
+#include "pch_RulrCore.h"
 #include "Pin.h"
+
 #include "../../../addons/ofxCvGui/src/ofxCvGui/Utils/Utils.h"
 
 namespace ofxRulr {
@@ -13,7 +15,7 @@ namespace ofxRulr {
 					ofPushStyle();
 					{
 						ofSetColor(100);
-						ofRect(args.localBounds);
+						ofDrawRectangle(args.localBounds);
 					}
 					ofPopStyle();
 				}

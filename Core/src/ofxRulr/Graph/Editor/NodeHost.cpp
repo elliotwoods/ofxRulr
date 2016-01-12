@@ -1,6 +1,5 @@
+#include "pch_RulrCore.h"
 #include "NodeHost.h"
-#include "ofxAssets.h"
-#include "ofxCvGui.h"
 
 using namespace ofxAssets;
 
@@ -41,8 +40,8 @@ namespace ofxRulr {
 					ofPushStyle();
 					ofSetLineWidth(1.0f);
 					ofSetColor(50);
-					ofLine(0, 0, 0, args.localBounds.height);
-					ofLine(args.localBounds.width - 1, 0, args.localBounds.width - 1, args.localBounds.height); //-1 because of scissor
+					ofDrawLine(0, 0, 0, args.localBounds.height);
+					ofDrawLine(args.localBounds.width - 1, 0, args.localBounds.width - 1, args.localBounds.height); //-1 because of scissor
 					ofPopStyle();
 
 					//draw text
@@ -145,7 +144,7 @@ namespace ofxRulr {
 							first = false;
 						}
 						else {
-							ofLine(pin->getBounds().getTopLeft(), pin->getBounds().getTopRight());
+							ofDrawLine(pin->getBounds().getTopLeft(), pin->getBounds().getTopRight());
 						}
 					}
 					ofPopStyle();
@@ -192,18 +191,18 @@ namespace ofxRulr {
 						ofPushMatrix();
 						{
 							ofTranslate(5, 5);
-							ofRect(this->getLocalBounds());
+							ofDrawRectangle(this->getLocalBounds());
 						}
 						ofPopMatrix();
 
 						//background for node
 						ofSetColor(80);
-						ofRect(this->getLocalBounds());
+						ofDrawRectangle(this->getLocalBounds());
 
 						if (this->nodeView) {
 							//background for nodeView
 							ofSetColor(30);
-							ofRect(this->nodeView->getBounds());
+							ofDrawRectangle(this->nodeView->getBounds());
 						}
 					}
 					ofPopStyle();
@@ -218,7 +217,7 @@ namespace ofxRulr {
 							//
 							ofSetColor(this->getNodeInstance()->getColor());
 							ofSetLineWidth(0.0f);
-							ofRect(-10, -3, 10, 6);
+							ofDrawRectangle(-10, -3, 10, 6);
 							//
 						}
 						ofPopMatrix();

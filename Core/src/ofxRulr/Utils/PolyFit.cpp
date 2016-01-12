@@ -1,13 +1,5 @@
-#pragma once
-
+#include "pch_RulrCore.h"
 #include "PolyFit.h"
-
-#include <vector>
-#include <tuple>
-#include <stdexcept>
-#include <algorithm>
-#include <iostream>
-#include <math.h>
 
 //from http://vilipetek.com/2013/10/17/polynomial-fitting-in-c-not-using-boost/
 

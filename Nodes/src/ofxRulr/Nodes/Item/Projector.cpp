@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "Projector.h"
 
 #include "ofxCvGui.h"

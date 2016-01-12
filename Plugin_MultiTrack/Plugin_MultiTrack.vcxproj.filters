@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{b859839d-46da-43da-b6da-cf5bec84f57b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{f69eb000-c72a-4717-9639-98671cfc41b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{717c6f3d-a06a-42aa-acad-661ab017ee39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\MultiTrack">
+      <UniqueIdentifier>{782805c1-23d2-4976-86f5-6063ac9ee111}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator">
+      <UniqueIdentifier>{bb63126f-5f4a-40bc-99d1-1b89c1c5f77c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_MultiTrack.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\LocalKinect.h">
+      <Filter>src\ofxRulr\Nodes\MultiTrack\ChannelGenerator</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\pch_MultiTrack.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\LocalKinect.cpp">
+      <Filter>src\ofxRulr\Nodes\MultiTrack\ChannelGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

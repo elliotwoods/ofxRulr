@@ -1,3 +1,4 @@
+#include "pch_RulrCore.h"
 #include "ScopedProcess.h"
 
 namespace ofxRulr {

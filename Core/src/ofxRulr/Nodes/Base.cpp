@@ -1,10 +1,9 @@
+#include "pch_RulrCore.h"
 #include "Base.h"
 
 #include "ofxRulr/Graph/Editor/NodeHost.h"
 #include "../Exception.h"
 #include "Graphics.h"
-
-#include "ofxCvGui.h"
 
 using namespace ofxCvGui;
 

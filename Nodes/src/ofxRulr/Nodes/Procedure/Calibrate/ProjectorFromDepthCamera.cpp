@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "ProjectorFromDepthCamera.h"
 
 #include "ofxRulr/Nodes/Item/IDepthCamera.h"

@@ -1,3 +1,4 @@
+#include "pch_RulrCore.h"
 #include "NodeBrowser.h"
 
 namespace ofxRulr {
@@ -16,7 +17,7 @@ namespace ofxRulr {
 					ofPushStyle();
 					ofSetColor(80);
 					ofFill();
-					ofRect(args.localBounds);
+					ofDrawRectangle(args.localBounds);
 					ofPopStyle();
 
 					this->icon->draw(10, 10, 48, 48);
@@ -125,7 +126,7 @@ namespace ofxRulr {
 				this->background->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					ofPushStyle();
 					ofSetColor(0, 200);
-					ofRect(args.localBounds);
+					ofDrawRectangle(args.localBounds);
 					ofPopStyle();
 				};
 				this->background->onMouse += [this](ofxCvGui::MouseArguments & args) {
@@ -156,17 +157,17 @@ namespace ofxRulr {
 					ofSetColor(0, 100);
 					ofPushMatrix();
 					ofTranslate(5, 5);
-					ofRect(args.localBounds);
+					ofDrawRectangle(args.localBounds);
 					ofPopMatrix();
 
 					//background for dialog
 					ofSetColor(80);
-					ofRect(args.localBounds);
+					ofDrawRectangle(args.localBounds);
 
 					//line between text box and list
 					ofSetLineWidth(1.0f);
 					ofSetColor(50);
-					ofLine(0, LIST_Y, args.localBounds.width, LIST_Y);
+					ofDrawLine(0, LIST_Y, args.localBounds.width, LIST_Y);
 					ofPopStyle();
 
 					//icon if selected
@@ -289,7 +290,7 @@ namespace ofxRulr {
 						ofPushStyle();
 						ofFill();
 						ofSetColor(255, 20);
-						ofRect(currentSelection->getBounds());
+						ofDrawRectangle(currentSelection->getBounds());
 						ofPopStyle();
 					}
 				};

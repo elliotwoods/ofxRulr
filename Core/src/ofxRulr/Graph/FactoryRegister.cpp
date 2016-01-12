@@ -1,6 +1,7 @@
+#include "pch_RulrCore.h"
 #include "FactoryRegister.h"
+
 #include "ofxRulr/Exception.h"
-#include "ofSystemUtils.h"
 
 OFXSINGLETON_DEFINE(ofxRulr::Graph::FactoryRegister);
 

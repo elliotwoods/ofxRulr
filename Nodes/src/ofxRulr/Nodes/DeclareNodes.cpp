@@ -1,7 +1,10 @@
+#include "pch_RulrNodes.h"
 #include "DeclareNodes.h"
 
 #include "ofxRulr/Nodes/Application/Assets.h"
 
+#include "ofxRulr/Nodes/Data/Channels/Database.h"
+#include "ofxRulr/Nodes/Data/Channels/Generator/Application.h"
 #include "ofxRulr/Nodes/Data/Recorder.h"
 
 #include "ofxRulr/Nodes/DMX/Sharpy.h"
@@ -38,6 +41,8 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Application::Assets);
 			
 			RULR_DECLARE_NODE(Data::Recorder);
+			RULR_DECLARE_NODE(Data::Channels::Database);
+			RULR_DECLARE_NODE(Data::Channels::Generator::Application);
 
 			RULR_DECLARE_NODE(DMX::Sharpy);
 			RULR_DECLARE_NODE(DMX::AimMovingHeadAt);

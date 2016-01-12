@@ -94,6 +94,18 @@
     <Filter Include="src\ofxRulr\Nodes\Application">
       <UniqueIdentifier>{fcc96b4b-64e7-42e4-9583-9d71d7a2bf83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Data\Channels">
+      <UniqueIdentifier>{6984404a-b0ee-4781-93a0-ef265e829c94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Data">
+      <UniqueIdentifier>{43badc5c-8081-4173-8a53-fb9cbc29c3cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Data\Channels">
+      <UniqueIdentifier>{55e3fd34-c81b-4782-95e5-5e4e9935add9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Data\Channels\Generator">
+      <UniqueIdentifier>{8f8ef269-fbcf-420a-9cb9-1ce43874f795}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h">
@@ -561,6 +573,24 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Database.h">
+      <Filter>src\ofxRulr\Nodes\Data\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Data\Channels\Channel.h">
+      <Filter>src\ofxRulr\Data\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Data\Channels\Address.h">
+      <Filter>src\ofxRulr\Data\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch_RulrNodes.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Base.h">
+      <Filter>src\ofxRulr\Nodes\Data\Channels\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.h">
+      <Filter>src\ofxRulr\Nodes\Data\Channels\Generator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -617,9 +647,6 @@
     <ClCompile Include="src\ofxRulr\Nodes\Data\Recorder.cpp">
       <Filter>src\ofxRulr\Nodes\Data</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\DMX\Transmit.cpp">
-      <Filter>src\ofxRulr\Nodes\DMX</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Base.cpp">
       <Filter>src\ofxRulr\Nodes\DMX</Filter>
     </ClCompile>
@@ -655,6 +682,27 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Database.cpp">
+      <Filter>src\ofxRulr\Nodes\Data\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\Channels\Channel.cpp">
+      <Filter>src\ofxRulr\Data\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\Channels\Address.cpp">
+      <Filter>src\ofxRulr\Data\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\DMX\Transmit.cpp">
+      <Filter>src\ofxRulr\Nodes\DMX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch_RulrNodes.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Base.cpp">
+      <Filter>src\ofxRulr\Nodes\Data\Channels\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.cpp">
+      <Filter>src\ofxRulr\Nodes\Data\Channels\Generator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,3 +1,4 @@
+#include "pch_RulrCore.h"
 #include "Exception.h"
 
 namespace ofxRulr {

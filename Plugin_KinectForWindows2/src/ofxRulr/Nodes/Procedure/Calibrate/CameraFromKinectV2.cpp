@@ -1,3 +1,4 @@
+#include "pch_Plugin_KinectForWindows2.h"
 #include "CameraFromKinectV2.h"
 
 #include "ofxRulr/Nodes/Item/Camera.h"
@@ -175,7 +176,7 @@ namespace ofxRulr {
 						throw(ofxRulr::Exception(error.str()));
 					}
 					auto kinectCameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
-					auto kinectCameraToWorldPointer = (ofVec3f*)kinectCameraToWorldMap.getPixels();
+					auto kinectCameraToWorldPointer = (ofVec3f*)kinectCameraToWorldMap.getData();
 					auto kinectCameraWidth = kinectCameraToWorldMap.getWidth();
 					int pointIndex = 0;
 					for (int i = 0; i < cameraPoints.size(); i++) {
@@ -310,7 +311,7 @@ namespace ofxRulr {
 						kinectColorView->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
 							ofPolyline previewLine;
 							if (!this->previewCornerFindsKinect.empty()) {
-								ofCircle(this->previewCornerFindsKinect.front(), 10.0f);
+								ofDrawCircle(this->previewCornerFindsKinect.front(), 10.0f);
 								for (const auto & previewCornerFind : this->previewCornerFindsKinect) {
 									previewLine.addVertex(previewCornerFind);
 								}
@@ -327,7 +328,7 @@ namespace ofxRulr {
 						cameraColorView->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
 							ofPolyline previewLine;
 							if (!this->previewCornerFindsCamera.empty()) {
-								ofCircle(this->previewCornerFindsCamera.front(), 10.0f);
+								ofDrawCircle(this->previewCornerFindsCamera.front(), 10.0f);
 								for (const auto & previewCornerFind : this->previewCornerFindsCamera) {
 									previewLine.addVertex(previewCornerFind);
 								}

@@ -1,3 +1,4 @@
+#include "pch_RulrNodes.h"
 #include "MovingHead.h"
 
 #include "ofxCvGui/Widgets/Slider.h"

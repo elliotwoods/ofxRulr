@@ -1,4 +1,6 @@
+#include "pch_RulrCore.h"
 #include "Base64.h"
+
 #include <iostream>
 
 //modified from http://www.adp-gmbh.ch/cpp/common/base64.html
