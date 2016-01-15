@@ -31,7 +31,7 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 
 				this->onTransformChange += [this]() {
-					this->rebuildViewFromParameters();
+					this->markViewDirty();
 				};
 
 				this->focalLengthX.set("Focal Length X", 1024.0f, 1.0f, 50000.0f);
@@ -53,12 +53,14 @@ namespace ofxRulr {
 				this->viewInObjectSpace.setDefaultFar(20.0f);
 				this->viewInObjectSpace.color = this->getColor();
 
-				this->rebuildViewFromParameters();
+				this->markViewDirty();
 			}
 
 			//---------
 			void View::update() {
-
+				if (this->viewIsDirty) {
+					this->rebuildView();
+				}
 			}
 
 			//----------
@@ -124,7 +126,7 @@ namespace ofxRulr {
 				auto addCameraMatrixParameter = [this, inspector](ofParameter<float> & parameter) {
 					auto slider = Widgets::Slider::make(parameter);
 					slider->onValueChange += [this](ofParameter<float> &) {
-						this->rebuildViewFromParameters();
+						this->markViewDirty();
 					};
 					inspector->add(slider);
 				};
@@ -142,7 +144,7 @@ namespace ofxRulr {
 						auto pixelAspectRatio = this->focalLengthY / this->focalLengthX;
 						this->focalLengthX = this->getWidth() * newThrowRatio;
 						this->focalLengthY = this->focalLengthX / pixelAspectRatio;
-						this->rebuildViewFromParameters();
+						this->markViewDirty();
 					}
 				}));
 				inspector->add(Widgets::EditableValue<float>::make("Pixel aspect ratio", [this]() {
@@ -151,7 +153,7 @@ namespace ofxRulr {
 					auto newPixelAspectRatio = ofToFloat(newValueString);
 					if (newPixelAspectRatio > 0.0f) {
 						this->focalLengthY = this->focalLengthX / newPixelAspectRatio;
-						this->rebuildViewFromParameters();
+						this->markViewDirty();
 					}
 				}));
 
@@ -162,7 +164,7 @@ namespace ofxRulr {
 					if (newValueStrings.size() == 2) {
 						this->principalPointX = ofMap(ofToFloat(newValueStrings[0]), +0.5f, -0.5f, 0, this->getWidth());
 						this->principalPointY = ofMap(ofToFloat(newValueStrings[1]), -0.5f, +0.5f, 0, this->getHeight());
-						this->rebuildViewFromParameters();
+						this->markViewDirty();
 					}
 				}));
 
@@ -204,13 +206,13 @@ namespace ofxRulr {
 			//----------
 			void View::setWidth(float width) {
 				this->viewInObjectSpace.setWidth(width);
-				this->rebuildViewFromParameters();
+				this->markViewDirty();
 			}
 
 			//----------
 			void View::setHeight(float height) {
 				this->viewInObjectSpace.setHeight(height);
-				this->rebuildViewFromParameters();
+				this->markViewDirty();
 			}
 
 			//----------
@@ -232,7 +234,7 @@ namespace ofxRulr {
 				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 					this->distortion[i] = distortionCoefficients.at<double>(i);
 				}
-				this->rebuildViewFromParameters();
+				this->markViewDirty();
 			}
 
 			//----------
@@ -281,17 +283,8 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void View::rebuildViewFromParameters() {
-				auto projection = ofxCv::makeProjectionMatrix(this->getCameraMatrix(), this->getSize());
-				this->viewInObjectSpace.setProjection(projection);
-
-				if (this->hasDistortion) {
-					auto distortionVector = vector<float>(RULR_VIEW_DISTORTION_COEFFICIENT_COUNT);
-					for (int i = 0; i < RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-						distortionVector[i] = this->distortion[i].get();
-					}
-					this->viewInObjectSpace.distortion = distortionVector;
-				}
+			void View::markViewDirty() {
+				this->viewIsDirty = true;
 			}
 
 			//----------
@@ -331,9 +324,25 @@ namespace ofxRulr {
 				}
 			}
 
+			//----------
+			void View::rebuildView() {
+				auto projection = ofxCv::makeProjectionMatrix(this->getCameraMatrix(), this->getSize());
+				this->viewInObjectSpace.setProjection(projection);
+
+				if (this->hasDistortion) {
+					auto distortionVector = vector<float>(RULR_VIEW_DISTORTION_COEFFICIENT_COUNT);
+					for (int i = 0; i < RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
+						distortionVector[i] = this->distortion[i].get();
+					}
+					this->viewInObjectSpace.distortion = distortionVector;
+				}
+
+				this->viewIsDirty = false;
+			}
+
 			//---------
 			void View::parameterCallback(float &) {
-				this->rebuildViewFromParameters();
+				this->markViewDirty();
 			}
 		}
 	}

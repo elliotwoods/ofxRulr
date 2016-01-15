@@ -35,11 +35,6 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Projector::projectorParameterCallback(float &) {
-				this->rebuildViewFromParameters();
-			}
-
-			//----------
 			void Projector::populateInspector(InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				

@@ -182,7 +182,7 @@ namespace ofxRulr {
 						if (width != 0 && height != 0) {
 							this->setWidth(width);
 							this->setHeight(height);
-							this->rebuildViewFromParameters(); // size will have changed
+							this->markViewDirty(); // size will have changed
 						}
 						else {
 							ofSystemAlertDialog("Warning : Camera image size is not yet valid");

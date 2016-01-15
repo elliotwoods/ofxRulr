@@ -20,10 +20,6 @@ namespace ofxRulr {
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
 
-				void updateProjectorFromParameters();
-				void updateParametersFromProjector();
-				void projectorParameterCallback(float &);
-
 				ofxRay::Projector projector;
 			};
 		}

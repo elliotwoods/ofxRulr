@@ -312,7 +312,7 @@ namespace ofxRulr {
 						try {
 							this->addCapture();
 						}
-						RULR_CATCH_ALL_TO_ALERT
+						RULR_CATCH_ALL_TO_ERROR
 					}, ' ');
 					addButton->setHeight(100.0f);
 					inspector->add(addButton);

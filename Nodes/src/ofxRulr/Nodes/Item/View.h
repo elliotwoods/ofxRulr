@@ -37,7 +37,7 @@ namespace ofxRulr {
 
 				ofxLiquidEvent<void> onDrawObject;
 			protected:
-				void rebuildViewFromParameters();
+				void markViewDirty();
 
 				void exportViewMatrix();
 				void exportRayCamera();
@@ -51,7 +51,10 @@ namespace ofxRulr {
 
 				//Versions of this view as an ofxRay::Camera in world space and object space
 				ofxRay::Camera viewInObjectSpace;
+				
+				bool viewIsDirty = false;
 			private:
+				void rebuildView();
 				void parameterCallback(float &);
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);

@@ -597,7 +597,12 @@ namespace ofxRulr {
 					//--
 					//
 					auto hasSplit = this->splitHorizontal > 1 || this->splitVertical > 1;
-					if(hasSplit) {
+#ifdef TARGET_WIN32
+					const bool neverUseFullscreen = true;
+#else
+					const bool neverUseFullscreen = true;
+#endif
+					if(hasSplit || neverUseFullscreen) {
 						//windowed
 						this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), NULL, glfwGetCurrentContext());
 						glfwSetWindowPos(this->window, x, y);
