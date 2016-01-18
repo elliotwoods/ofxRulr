@@ -50,7 +50,8 @@ namespace ofxRulr {
 					this->distortion[i].addListener(this, &View::parameterCallback);
 				}
 
-				this->viewInObjectSpace.setDefaultFar(20.0f);
+				this->viewInObjectSpace.setDefaultNear(0.05f);
+				this->viewInObjectSpace.setDefaultFar(50.0f);
 				this->viewInObjectSpace.color = this->getColor();
 
 				this->markViewDirty();

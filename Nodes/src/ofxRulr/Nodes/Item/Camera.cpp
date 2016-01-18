@@ -64,13 +64,15 @@ namespace ofxRulr {
 						auto frame = this->grabber->getFrame();
 						frame->lockForReading();
 						const auto & pixels = frame->getPixels();
-						auto middleRow = pixels.getData() + pixels.getWidth() * pixels.getNumChannels() * pixels.getHeight() / 2;
+						if (pixels.isAllocated()) {
+							auto middleRow = pixels.getData() + pixels.getWidth() * pixels.getNumChannels() * pixels.getHeight() / 2;
 
-						this->focusLineGraph.clear();
-						this->focusLineGraph.setMode(OF_PRIMITIVE_LINE_STRIP);
-						for (int i = 0; i<pixels.getWidth(); i++) {
-							this->focusLineGraph.addVertex(ofVec3f(i, *middleRow, 0));
-							middleRow += pixels.getNumChannels();
+							this->focusLineGraph.clear();
+							this->focusLineGraph.setMode(OF_PRIMITIVE_LINE_STRIP);
+							for (int i = 0; i<pixels.getWidth(); i++) {
+								this->focusLineGraph.addVertex(ofVec3f(i, *middleRow, 0));
+								middleRow += pixels.getNumChannels();
+							}
 						}
 						frame->unlock();
 					}
