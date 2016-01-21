@@ -484,7 +484,7 @@
    </LINK>
    <LINK srcnodeid="116" srcpinname="Buffers" dstnodeid="37" dstpinname="Input Node">
    </LINK>
-   <NODE systemname="Data_CS_BuildPcb_Kinect (DX11.Effect)" filename="%VVVV%\packs\dx11-pointcloud\nodes\dx11\Data_CS_BuildPcb_Kinect.fx" nodename="Data_CS_BuildPcb_Kinect (DX11.Effect)" componentmode="Hidden" id="140">
+   <NODE systemname="Data_CS_BuildPcb_Kinect_World (DX11.Effect)" filename="dx11\Data_CS_BuildPcb_Kinect_World.fx" nodename="Data_CS_BuildPcb_Kinect_World (DX11.Effect)" componentmode="Hidden" id="140">
    <BOUNDS type="Node" left="1845" top="5415" width="5820" height="270">
    </BOUNDS>
    <PIN pinname="RayTable" visible="1" slicecount="1" values="||">
@@ -500,12 +500,6 @@
    <PIN pinname="World" visible="1" slicecount="1" values="||">
    </PIN>
    </NODE>
-   <LINK srcnodeid="2" srcpinname="Output Node" dstnodeid="140" dstpinname="Depth" linkstyle="Bezier" hiddenwhenlocked="1">
-   <LINKPOINT x="3840" y="3135">
-   </LINKPOINT>
-   <LINKPOINT x="5970" y="3135">
-   </LINKPOINT>
-   </LINK>
    <LINK srcnodeid="0" srcpinname="Output Node" dstnodeid="140" dstpinname="RGB" linkstyle="Bezier" hiddenwhenlocked="1">
    <LINKPOINT x="3315" y="3135">
    </LINKPOINT>
