@@ -35,7 +35,7 @@ namespace ofxRulr {
 					
 					//grid view
 					this->view = make_shared<Panels::Groups::Strip>(Panels::Groups::Strip::Direction::Vertical);
-					this->view->setCellSizes({ -1, 100 });
+					this->view->setCellSizes({ -1, 180 });
 					this->view->add(this->treeView);
 					this->view->add(this->detailView);
 
@@ -126,7 +126,7 @@ namespace ofxRulr {
 						case Channel::Type::Int:
 						{
 							auto & parameter = selectedChannel->getParameter<int>();
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "int"; }));
+							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Int"; }));
 							this->detailView->add(Widgets::EditableValue<int>::make(*parameter));
 							break;
 						}
@@ -134,7 +134,7 @@ namespace ofxRulr {
 						case Channel::Type::Float:
 						{
 							auto & parameter = selectedChannel->getParameter<float>();
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "string"; }));
+							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Float"; }));
 							this->detailView->add(Widgets::EditableValue<float>::make(*parameter));
 							break;
 						}
@@ -142,16 +142,29 @@ namespace ofxRulr {
 						case Channel::Type::String:
 						{
 							auto & parameter = selectedChannel->getParameter<string>();
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "string"; }));
+							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "String"; }));
 							this->detailView->add(Widgets::EditableValue<string>::make(*parameter));
+							break;
+						}
+
+						case Channel::Type::Vec3f:
+						{
+							auto & parameter = selectedChannel->getParameter<ofVec3f>();
+							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Vec3f"; }));
+							this->detailView->add(Widgets::EditableValue<ofVec3f>::make(*parameter));
 							break;
 						}
 
 						case Channel::Type::Vec4f:
 						{
 							auto & parameter = selectedChannel->getParameter<ofVec4f>();
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "ofVec4f"; }));
+							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Vec4f"; }));
 							this->detailView->add(Widgets::EditableValue<ofVec4f>::make(*parameter));
+							break;
+						}
+						case Channel::Type::Undefined:
+						{
+							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Undefined"; }));
 							break;
 						}
 						default:

@@ -23,42 +23,70 @@ namespace ofxRulr {
 				void LocalKinect::init() {
 					RULR_NODE_UPDATE_LISTENER;
 
-					this->frameChannel = make_shared<Channel>("Frame");
+					this->nodesChannel = make_shared<Channel>("nodes");
 
 					this->addInput<Item::KinectV2>();
 				}
 
 				//----------
 				void LocalKinect::update() {
+					
+				}
+
+				//----------
+				void LocalKinect::populateData(Channel & channel) {
 					auto kinectNode = this->getInput<Item::KinectV2>();
 					if (kinectNode) {
 						auto & kinect = kinectNode->getDevice();
 						if (kinect) {
 							if (kinect->isFrameNew()) {
-								auto & frameChannel = *this->frameChannel;
+								channel["count"] = 1;
+
+								auto & nodeChannel = channel["0"];
+								nodeChannel["position"] = kinectNode->getPosition(); /**HACK**/
+								nodeChannel["orientation"] = kinectNode->getRotationQuat().asVec4(); /**HACK**/
 
 								auto bodySource = kinect->getBodySource();
 								auto & bodies = bodySource->getBodies();
-								auto & bodiesChannel = frameChannel["bodies"];
+
+								auto & bodiesChannel = nodeChannel["bodies"];
+								bodiesChannel["count"] = bodies.size();
 
 								for (int i = 0; i < bodies.size(); i++) {
 									auto & bodyChannel = bodiesChannel[ofToString(i)];
 									auto & body = bodies[i];
 
-									for (auto & joint : body.joints) {
-										auto jointName = ofxKinectForWindows2::toString(joint.first);
-										auto & jointChannel = bodyChannel[jointName];
-										jointChannel["position"] = joint.second.getPosition();
+									bodyChannel["tracked"] = body.tracked;
+
+									if (!body.tracked) {
+										bodyChannel.removeSubChannel("centroid");
+										bodyChannel.removeSubChannel("joints");
+									}
+									else {
+										/**HACK**/
+										auto findSpineBase = body.joints.find(JointType::JointType_SpineBase);
+										if (findSpineBase != body.joints.end()) {
+											bodyChannel["centroid"] = findSpineBase->second.getPosition();
+										}
+										else {
+											bodyChannel.removeSubChannel("centroid");
+										}
+
+										auto & jointChannel = bodyChannel["joints"];
+										jointChannel["count"] = body.joints.size();
+
+										for (auto & joint : body.joints) {
+											auto jointName = ofxKinectForWindows2::toString(joint.first);
+											auto & jointChannel = bodyChannel[jointName];
+											jointChannel["position"] = joint.second.getPosition();
+											jointChannel["orientation"] = joint.second.getOrientation().asVec4();
+											jointChannel["trackingState"] = joint.second.getTrackingState();
+										}
 									}
 								}
 							}
 						}
 					}
-				}
-
-				//----------
-				void LocalKinect::populateData(Channel & channel) {
-					channel.setSubChannel(this->frameChannel);
 				}
 			}
 		}
