@@ -35,7 +35,7 @@ namespace ofxRulr {
 					
 					//grid view
 					this->view = make_shared<Panels::Groups::Strip>(Panels::Groups::Strip::Direction::Vertical);
-					this->view->setCellSizes({ -1, 100 });
+					this->view->setCellSizes({ -1, 180 });
 					this->view->add(this->treeView);
 					this->view->add(this->detailView);
 
@@ -147,11 +147,24 @@ namespace ofxRulr {
 							break;
 						}
 
+						case Channel::Type::Vec3f:
+						{
+							auto & parameter = selectedChannel->getParameter<ofVec3f>();
+							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Vec3f"; }));
+							this->detailView->add(Widgets::EditableValue<ofVec3f>::make(*parameter));
+							break;
+						}
+
 						case Channel::Type::Vec4f:
 						{
 							const auto & parameter = selectedChannel->getParameter<ofVec4f>();
 							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "ofVec4f"; }));
 							this->detailView->add(Widgets::EditableValue<ofVec4f>::make(*parameter));
+							break;
+						}
+						case Channel::Type::Undefined:
+						{
+							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Undefined"; }));
 							break;
 						}
 						default:

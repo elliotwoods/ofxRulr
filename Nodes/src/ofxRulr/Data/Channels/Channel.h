@@ -22,6 +22,7 @@ namespace ofxRulr {
 					Int,
 					Float,
 					String,
+					Vec3f,
 					Vec4f,
 					Unknown
 				};
@@ -42,6 +43,16 @@ namespace ofxRulr {
 				template<typename Type>
 				shared_ptr<ofParameter<Type>> getParameter() {
 					return dynamic_pointer_cast<ofParameter<Type>>(this->parameter);
+				}
+
+				template<typename Type>
+				shared_ptr<ofParameter<Type>> getParameter() const {
+					return dynamic_pointer_cast<ofParameter<Type>>(this->parameter);
+				}
+
+				template<typename Type>
+				const Type & getValue() const {
+					return this->getParameter<Type>()->get();
 				}
 
 				shared_ptr<ofAbstractParameter> getParameterUntyped();
@@ -69,6 +80,9 @@ namespace ofxRulr {
 					}
 					else if (typeid(T) == typeid(string)) {
 						this->type = Type::String;
+					}
+					else if (typeid(T) == typeid(ofVec3f)) {
+						this->type = Type::Vec3f;
 					}
 					else if (typeid(T) == typeid(ofVec4f)) {
 						this->type = Type::Vec4f;

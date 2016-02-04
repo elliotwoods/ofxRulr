@@ -17,7 +17,7 @@ namespace ofxRulr {
 
 					void populateData(ofxRulr::Data::Channels::Channel &) override;
 				protected:
-					shared_ptr<ofxRulr::Data::Channels::Channel> frameChannel;
+					shared_ptr<ofxRulr::Data::Channels::Channel> nodesChannel;
 				};
 			}
 		}
