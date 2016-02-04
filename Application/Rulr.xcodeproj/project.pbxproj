@@ -7,6 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BD4222501C51207E00677575 /* Address.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD42224C1C51207E00677575 /* Address.cpp */; };
+		BD4222511C51207E00677575 /* Address.h in Headers */ = {isa = PBXBuildFile; fileRef = BD42224D1C51207E00677575 /* Address.h */; };
+		BD4222521C51207E00677575 /* Channel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD42224E1C51207E00677575 /* Channel.cpp */; };
+		BD4222531C51207E00677575 /* Channel.h in Headers */ = {isa = PBXBuildFile; fileRef = BD42224F1C51207E00677575 /* Channel.h */; };
+		BD42225F1C51208900677575 /* Database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD4222561C51208900677575 /* Database.cpp */; };
+		BD4222601C51208900677575 /* Database.h in Headers */ = {isa = PBXBuildFile; fileRef = BD4222571C51208900677575 /* Database.h */; };
+		BD4222611C51208900677575 /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD4222591C51208900677575 /* Application.cpp */; };
+		BD4222621C51208900677575 /* Application.h in Headers */ = {isa = PBXBuildFile; fileRef = BD42225A1C51208900677575 /* Application.h */; };
+		BD4222631C51208900677575 /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD42225B1C51208900677575 /* Base.cpp */; };
+		BD4222641C51208900677575 /* Base.h in Headers */ = {isa = PBXBuildFile; fileRef = BD42225C1C51208900677575 /* Base.h */; };
+		BD4222651C51208900677575 /* Recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD42225D1C51208900677575 /* Recorder.cpp */; };
+		BD4222661C51208900677575 /* Recorder.h in Headers */ = {isa = PBXBuildFile; fileRef = BD42225E1C51208900677575 /* Recorder.h */; };
+		BD4222691C5120E400677575 /* Strip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD4222671C5120E400677575 /* Strip.cpp */; };
+		BD42226A1C5120E400677575 /* Strip.h in Headers */ = {isa = PBXBuildFile; fileRef = BD4222681C5120E400677575 /* Strip.h */; };
+		BD42226D1C5120F900677575 /* Tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD42226B1C5120F900677575 /* Tree.cpp */; };
+		BD42226E1C5120F900677575 /* Tree.h in Headers */ = {isa = PBXBuildFile; fileRef = BD42226C1C5120F900677575 /* Tree.h */; };
+		BD4222701C51211100677575 /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD42226F1C51211100677575 /* Base.cpp */; };
 		BD5A1ADB1C23EBE800E794E0 /* VideoOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AD71C23EBE800E794E0 /* VideoOutput.cpp */; };
 		BD5A1ADC1C23EBE800E794E0 /* VideoOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = BD5A1AD81C23EBE800E794E0 /* VideoOutput.h */; };
 		BD5A1AE21C23EC7100E794E0 /* CanonLiveView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD5A1AE01C23EC7100E794E0 /* CanonLiveView.cpp */; };
@@ -84,7 +101,6 @@
 		BDF8EFBD1C23F7280089E0CE /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF8EFBC1C23F7280089E0CE /* OpenCL.framework */; };
 		BDF8EFC31C23F8030089E0CE /* libturbojpeg.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = BDF8EFC21C23F8030089E0CE /* libturbojpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BDF8EFC71C23F8760089E0CE /* KinectV2OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BDF8EFC51C23F8760089E0CE /* KinectV2OSX.cpp */; };
-		E74620CE1C21C52D00614A1D /* Recorder.h in Headers */ = {isa = PBXBuildFile; fileRef = E74620951C21C52D00614A1D /* Recorder.h */; };
 		E74620D01C21C52D00614A1D /* DeclareNodes.h in Headers */ = {isa = PBXBuildFile; fileRef = E74620971C21C52D00614A1D /* DeclareNodes.h */; };
 		E74620D41C21C52D00614A1D /* AimMovingHeadAt.h in Headers */ = {isa = PBXBuildFile; fileRef = E746209D1C21C52D00614A1D /* AimMovingHeadAt.h */; };
 		E74620D61C21C52D00614A1D /* Base.h in Headers */ = {isa = PBXBuildFile; fileRef = E746209F1C21C52D00614A1D /* Base.h */; };
@@ -301,7 +317,6 @@
 		E7E0EA031C21E6B700A8D4EC /* Title.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E715FC211C2035A10020A52F /* Title.cpp */; };
 		E7E0EA041C21E6B700A8D4EC /* Toggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E715FC231C2035A10020A52F /* Toggle.cpp */; };
 		E7E0EA051C21E6B700A8D4EC /* ofxCvGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E715FC251C2035A10020A52F /* ofxCvGui.cpp */; };
-		E7E0EA061C21E85C00A8D4EC /* Recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E74620941C21C52D00614A1D /* Recorder.cpp */; };
 		E7E0EA071C21E85C00A8D4EC /* DeclareNodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E74620961C21C52D00614A1D /* DeclareNodes.cpp */; };
 		E7E0EA091C21E85C00A8D4EC /* AimMovingHeadAt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E746209C1C21C52D00614A1D /* AimMovingHeadAt.cpp */; };
 		E7E0EA0A1C21E85C00A8D4EC /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E746209E1C21C52D00614A1D /* Base.cpp */; };
@@ -380,6 +395,23 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BD42224C1C51207E00677575 /* Address.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Address.cpp; sourceTree = "<group>"; };
+		BD42224D1C51207E00677575 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
+		BD42224E1C51207E00677575 /* Channel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Channel.cpp; sourceTree = "<group>"; };
+		BD42224F1C51207E00677575 /* Channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Channel.h; sourceTree = "<group>"; };
+		BD4222561C51208900677575 /* Database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Database.cpp; sourceTree = "<group>"; };
+		BD4222571C51208900677575 /* Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
+		BD4222591C51208900677575 /* Application.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Application.cpp; sourceTree = "<group>"; };
+		BD42225A1C51208900677575 /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
+		BD42225B1C51208900677575 /* Base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base.cpp; sourceTree = "<group>"; };
+		BD42225C1C51208900677575 /* Base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
+		BD42225D1C51208900677575 /* Recorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Recorder.cpp; sourceTree = "<group>"; };
+		BD42225E1C51208900677575 /* Recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Recorder.h; sourceTree = "<group>"; };
+		BD4222671C5120E400677575 /* Strip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Strip.cpp; sourceTree = "<group>"; };
+		BD4222681C5120E400677575 /* Strip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Strip.h; sourceTree = "<group>"; };
+		BD42226B1C5120F900677575 /* Tree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tree.cpp; sourceTree = "<group>"; };
+		BD42226C1C5120F900677575 /* Tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tree.h; sourceTree = "<group>"; };
+		BD42226F1C51211100677575 /* Base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base.cpp; sourceTree = "<group>"; };
 		BD5A1AD71C23EBE800E794E0 /* VideoOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoOutput.cpp; sourceTree = "<group>"; };
 		BD5A1AD81C23EBE800E794E0 /* VideoOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoOutput.h; sourceTree = "<group>"; };
 		BD5A1AE01C23EC7100E794E0 /* CanonLiveView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanonLiveView.cpp; sourceTree = "<group>"; };
@@ -896,8 +928,6 @@
 		E7461FFF1C21C34F00614A1D /* Wrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wrappers.h; sourceTree = "<group>"; };
 		E74620001C21C34F00614A1D /* ofxCvMin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxCvMin.h; sourceTree = "<group>"; };
 		E746207D1C21C50F00614A1D /* libNodes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNodes.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		E74620941C21C52D00614A1D /* Recorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Recorder.cpp; sourceTree = "<group>"; };
-		E74620951C21C52D00614A1D /* Recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Recorder.h; sourceTree = "<group>"; };
 		E74620961C21C52D00614A1D /* DeclareNodes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeclareNodes.cpp; sourceTree = "<group>"; };
 		E74620971C21C52D00614A1D /* DeclareNodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclareNodes.h; sourceTree = "<group>"; };
 		E746209C1C21C52D00614A1D /* AimMovingHeadAt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AimMovingHeadAt.cpp; sourceTree = "<group>"; };
@@ -1400,6 +1430,56 @@
 				E715FC6B1C2036680020A52F /* ofxSingleton */,
 			);
 			name = addons;
+			sourceTree = "<group>";
+		};
+		BD42224A1C51207E00677575 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				BD42224B1C51207E00677575 /* Channels */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		BD42224B1C51207E00677575 /* Channels */ = {
+			isa = PBXGroup;
+			children = (
+				BD42224C1C51207E00677575 /* Address.cpp */,
+				BD42224D1C51207E00677575 /* Address.h */,
+				BD42224E1C51207E00677575 /* Channel.cpp */,
+				BD42224F1C51207E00677575 /* Channel.h */,
+			);
+			path = Channels;
+			sourceTree = "<group>";
+		};
+		BD4222541C51208900677575 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				BD4222551C51208900677575 /* Channels */,
+				BD42225D1C51208900677575 /* Recorder.cpp */,
+				BD42225E1C51208900677575 /* Recorder.h */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		BD4222551C51208900677575 /* Channels */ = {
+			isa = PBXGroup;
+			children = (
+				BD4222561C51208900677575 /* Database.cpp */,
+				BD4222571C51208900677575 /* Database.h */,
+				BD4222581C51208900677575 /* Generator */,
+			);
+			path = Channels;
+			sourceTree = "<group>";
+		};
+		BD4222581C51208900677575 /* Generator */ = {
+			isa = PBXGroup;
+			children = (
+				BD4222591C51208900677575 /* Application.cpp */,
+				BD42225A1C51208900677575 /* Application.h */,
+				BD42225B1C51208900677575 /* Base.cpp */,
+				BD42225C1C51208900677575 /* Base.h */,
+			);
+			path = Generator;
 			sourceTree = "<group>";
 		};
 		BD5A1AD61C23EBE800E794E0 /* System */ = {
@@ -2058,6 +2138,8 @@
 		E715FBE51C2035A10020A52F /* Panels */ = {
 			isa = PBXGroup;
 			children = (
+				BD42226B1C5120F900677575 /* Tree.cpp */,
+				BD42226C1C5120F900677575 /* Tree.h */,
 				E715FBE61C2035A10020A52F /* Base.cpp */,
 				E715FBE71C2035A10020A52F /* Base.h */,
 				E715FBE81C2035A10020A52F /* BaseImage.cpp */,
@@ -2094,6 +2176,9 @@
 		E715FBF01C2035A10020A52F /* Groups */ = {
 			isa = PBXGroup;
 			children = (
+				BD42226F1C51211100677575 /* Base.cpp */,
+				BD4222671C5120E400677575 /* Strip.cpp */,
+				BD4222681C5120E400677575 /* Strip.h */,
 				E715FBF11C2035A10020A52F /* Base.h */,
 				E715FBF21C2035A10020A52F /* Grid.cpp */,
 				E715FBF31C2035A10020A52F /* Grid.h */,
@@ -3037,6 +3122,7 @@
 		E74620911C21C52D00614A1D /* ofxRulr */ = {
 			isa = PBXGroup;
 			children = (
+				BD42224A1C51207E00677575 /* Data */,
 				E74620921C21C52D00614A1D /* Nodes */,
 			);
 			path = ofxRulr;
@@ -3045,10 +3131,10 @@
 		E74620921C21C52D00614A1D /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
+				BD4222541C51208900677575 /* Data */,
 				BD8A3B641C3CEE1D00245529 /* Application */,
 				BDD17EA31C3BA98800AF77AB /* Test */,
 				BD5A1AD61C23EBE800E794E0 /* System */,
-				E74620931C21C52D00614A1D /* Data */,
 				E74620961C21C52D00614A1D /* DeclareNodes.cpp */,
 				E74620971C21C52D00614A1D /* DeclareNodes.h */,
 				E746209B1C21C52D00614A1D /* DMX */,
@@ -3057,15 +3143,6 @@
 				E74620C81C21C52D00614A1D /* Render */,
 			);
 			path = Nodes;
-			sourceTree = "<group>";
-		};
-		E74620931C21C52D00614A1D /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				E74620941C21C52D00614A1D /* Recorder.cpp */,
-				E74620951C21C52D00614A1D /* Recorder.h */,
-			);
-			path = Data;
 			sourceTree = "<group>";
 		};
 		E746209B1C21C52D00614A1D /* DMX */ = {
@@ -3940,6 +4017,7 @@
 				E74620E91C21C52D00614A1D /* RigidBody.h in Headers */,
 				E74621571C21C6AA00614A1D /* pstdint.h in Headers */,
 				E74620DC1C21C52D00614A1D /* Sharpy.h in Headers */,
+				BD4222621C51208900677575 /* Application.h in Headers */,
 				E74621651C21C6AA00614A1D /* matrix3x3.h in Headers */,
 				E74620E31C21C52D00614A1D /* Camera.h in Headers */,
 				E74621611C21C6AA00614A1D /* light.h in Headers */,
@@ -3956,6 +4034,7 @@
 				E74622A51C21C73400614A1D /* ofxNonLinearFit.h in Headers */,
 				E746215A1C21C6AA00614A1D /* DefaultLogger.hpp in Headers */,
 				E74621811C21C6AA00614A1D /* ofxAssimpTexture.h in Headers */,
+				BD4222601C51208900677575 /* Database.h in Headers */,
 				E746217D1C21C6AA00614A1D /* ofxAssimpMeshHelper.h in Headers */,
 				E74621561C21C6AA00614A1D /* poppack1.h in Headers */,
 				E74621671C21C6AA00614A1D /* mesh.h in Headers */,
@@ -3969,6 +4048,7 @@
 				E74622981C21C73400614A1D /* nlopt.h in Headers */,
 				E74620F81C21C52D00614A1D /* Graycode.h in Headers */,
 				E74620F61C21C52D00614A1D /* ViewToVertices.h in Headers */,
+				BD4222531C51207E00677575 /* Channel.h in Headers */,
 				E74623A11C21C78F00614A1D /* ProjectorPixel.h in Headers */,
 				E746216C1C21C6AA00614A1D /* quaternion.h in Headers */,
 				E746217B1C21C6AA00614A1D /* ofxAssimpAnimation.h in Headers */,
@@ -3986,6 +4066,7 @@
 				E74622A31C21C73400614A1D /* RigidBody.h in Headers */,
 				E74621551C21C6AA00614A1D /* color4.h in Headers */,
 				E74620F41C21C52D00614A1D /* MovingHeadToWorld.h in Headers */,
+				BD4222661C51208900677575 /* Recorder.h in Headers */,
 				E74621711C21C6AA00614A1D /* vector3.h in Headers */,
 				E74620EC1C21C52D00614A1D /* Base.h in Headers */,
 				E74620E51C21C52D00614A1D /* Model.h in Headers */,
@@ -3996,16 +4077,17 @@
 				E746216E1C21C6AA00614A1D /* texture.h in Headers */,
 				BD5A1ADC1C23EBE800E794E0 /* VideoOutput.h in Headers */,
 				E746217F1C21C6AA00614A1D /* ofxAssimpModelLoader.h in Headers */,
+				BD4222511C51207E00677575 /* Address.h in Headers */,
 				E74621641C21C6AA00614A1D /* material.h in Headers */,
 				E74620EB1C21C52D00614A1D /* View.h in Headers */,
 				E74620EE1C21C52D00614A1D /* CameraIntrinsics.h in Headers */,
 				E74620D41C21C52D00614A1D /* AimMovingHeadAt.h in Headers */,
 				E74621EC1C21C6E900614A1D /* Base.h in Headers */,
-				E74620CE1C21C52D00614A1D /* Recorder.h in Headers */,
 				E74621F61C21C6E900614A1D /* ofxRay.h in Headers */,
 				E74620D81C21C52D00614A1D /* Fixture.h in Headers */,
 				E74623A31C21C78F00614A1D /* ofxGraycode.h in Headers */,
 				E74621661C21C6AA00614A1D /* matrix4x4.h in Headers */,
+				BD4222641C51208900677575 /* Base.h in Headers */,
 				E74620FC1C21C52D00614A1D /* NodeThroughView.h in Headers */,
 				E74621701C21C6AA00614A1D /* vector2.h in Headers */,
 				E746229F1C21C73400614A1D /* Algorithm.h in Headers */,
@@ -4055,6 +4137,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD42226E1C5120F900677575 /* Tree.h in Headers */,
+				BD42226A1C5120E400677575 /* Strip.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4272,27 +4356,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD5A1ADB1C23EBE800E794E0 /* VideoOutput.cpp in Sources */,
-				E7E0EA061C21E85C00A8D4EC /* Recorder.cpp in Sources */,
 				E7E0EA071C21E85C00A8D4EC /* DeclareNodes.cpp in Sources */,
 				E7E0EA091C21E85C00A8D4EC /* AimMovingHeadAt.cpp in Sources */,
+				BD42225F1C51208900677575 /* Database.cpp in Sources */,
 				E7E0EA0A1C21E85C00A8D4EC /* Base.cpp in Sources */,
 				E7E0EA0B1C21E85C00A8D4EC /* Fixture.cpp in Sources */,
 				E7E0EA0C1C21E85C00A8D4EC /* MovingHead.cpp in Sources */,
 				E7E0EA0D1C21E85C00A8D4EC /* Sharpy.cpp in Sources */,
 				E7E0EA0E1C21E85C00A8D4EC /* Transmit.cpp in Sources */,
 				E7E0EA0F1C21E85C00A8D4EC /* Board.cpp in Sources */,
+				BD4222611C51208900677575 /* Application.cpp in Sources */,
+				BD4222501C51207E00677575 /* Address.cpp in Sources */,
 				E7E0EA101C21E85C00A8D4EC /* Camera.cpp in Sources */,
 				E7E0EA111C21E85C00A8D4EC /* Model.cpp in Sources */,
 				E7E0EA121C21E85C00A8D4EC /* Projector.cpp in Sources */,
 				E7E0EA131C21E85C00A8D4EC /* RigidBody.cpp in Sources */,
 				E7E0EA141C21E85C00A8D4EC /* View.cpp in Sources */,
+				BD4222651C51208900677575 /* Recorder.cpp in Sources */,
 				E7E0EA151C21E85C00A8D4EC /* CameraIntrinsics.cpp in Sources */,
 				E7E0EA161C21E85C00A8D4EC /* HomographyFromGraycode.cpp in Sources */,
+				BD4222631C51208900677575 /* Base.cpp in Sources */,
 				E7E0EA171C21E85C00A8D4EC /* IReferenceVertices.cpp in Sources */,
 				E7E0EA181C21E85C00A8D4EC /* MovingHeadToWorld.cpp in Sources */,
 				E7E0EA191C21E85C00A8D4EC /* ViewToVertices.cpp in Sources */,
 				E7E0EA1A1C21E85C00A8D4EC /* Graycode.cpp in Sources */,
 				E7E0EA1B1C21E85C00A8D4EC /* Triangulate.cpp in Sources */,
+				BD4222521C51207E00677575 /* Channel.cpp in Sources */,
 				E7E0EA1C1C21E85C00A8D4EC /* NodeThroughView.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4337,6 +4426,7 @@
 				E7E0E9B71C21E6B600A8D4EC /* Base.cpp in Sources */,
 				E7E0E9B81C21E6B600A8D4EC /* Camera.cpp in Sources */,
 				E7E0E9B91C21E6B600A8D4EC /* Plane.cpp in Sources */,
+				BD4222701C51211100677575 /* Base.cpp in Sources */,
 				E7E0E9BA1C21E6B600A8D4EC /* Plane_fitToPoints.cpp in Sources */,
 				E7E0E9BB1C21E6B600A8D4EC /* Projector.cpp in Sources */,
 				E7E0E9BC1C21E6B600A8D4EC /* Ray.cpp in Sources */,
@@ -4398,6 +4488,7 @@
 				E7E0E9F31C21E6B600A8D4EC /* Scroll.cpp in Sources */,
 				E7E0E9F41C21E6B600A8D4EC /* SharedView.cpp in Sources */,
 				E7E0E9F51C21E6B600A8D4EC /* Text.cpp in Sources */,
+				BD42226D1C5120F900677575 /* Tree.cpp in Sources */,
 				E7E0E9F61C21E6B600A8D4EC /* World.cpp in Sources */,
 				E7E0E9F71C21E6B600A8D4EC /* Types.cpp in Sources */,
 				E7E0E9F81C21E6B600A8D4EC /* Button.cpp in Sources */,
@@ -4405,6 +4496,7 @@
 				E7E0E9FA1C21E6B600A8D4EC /* TextField.cpp in Sources */,
 				E7E0E9FB1C21E6B600A8D4EC /* Utils.cpp in Sources */,
 				E7E0E9FC1C21E6B700A8D4EC /* Button.cpp in Sources */,
+				BD4222691C5120E400677575 /* Strip.cpp in Sources */,
 				E7E0E9FD1C21E6B700A8D4EC /* Indicator.cpp in Sources */,
 				E7E0E9FE1C21E6B700A8D4EC /* LiveValue.cpp in Sources */,
 				E7E0E9FF1C21E6B700A8D4EC /* MultipleChoice.cpp in Sources */,

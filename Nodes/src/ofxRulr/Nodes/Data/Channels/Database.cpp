@@ -125,7 +125,7 @@ namespace ofxRulr {
 						switch (type) {
 						case Channel::Type::Int:
 						{
-							auto & parameter = selectedChannel->getParameter<int>();
+							const auto & parameter = selectedChannel->getParameter<int>();
 							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "int"; }));
 							this->detailView->add(Widgets::EditableValue<int>::make(*parameter));
 							break;
@@ -133,7 +133,7 @@ namespace ofxRulr {
 							
 						case Channel::Type::Float:
 						{
-							auto & parameter = selectedChannel->getParameter<float>();
+							const auto & parameter = selectedChannel->getParameter<float>();
 							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "string"; }));
 							this->detailView->add(Widgets::EditableValue<float>::make(*parameter));
 							break;
@@ -141,7 +141,7 @@ namespace ofxRulr {
 
 						case Channel::Type::String:
 						{
-							auto & parameter = selectedChannel->getParameter<string>();
+							const auto & parameter = selectedChannel->getParameter<string>();
 							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "string"; }));
 							this->detailView->add(Widgets::EditableValue<string>::make(*parameter));
 							break;
@@ -149,7 +149,7 @@ namespace ofxRulr {
 
 						case Channel::Type::Vec4f:
 						{
-							auto & parameter = selectedChannel->getParameter<ofVec4f>();
+							const auto & parameter = selectedChannel->getParameter<ofVec4f>();
 							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "ofVec4f"; }));
 							this->detailView->add(Widgets::EditableValue<ofVec4f>::make(*parameter));
 							break;
