@@ -117,7 +117,7 @@ namespace ofxRulr {
 							//--
 							//
 							this->preview.begin();
-							auto & shader = ofxAssets::shader("focusFinder");
+							auto & shader = ofxAssets::shader("ofxRulr::focusFinder");
 							shader.begin();
 							shader.setUniformTexture("highFrequency", this->result.highFrequency, 0);
 							shader.setUniformTexture("lowFrequency", this->result.lowFrequency, 1);

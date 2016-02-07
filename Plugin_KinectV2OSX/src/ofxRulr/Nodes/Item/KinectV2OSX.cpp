@@ -1,6 +1,7 @@
 #include "KinectV2OSX.h"
 #include "ofxCvGui/Panels/Groups/Grid.h"
 #include "ofxCvGui/Panels/Draws.h"
+#include "ofxCvGui/Panels/Texture.h"
 
 #include "ofxCvGui/Widgets/EditableValue.h"
 
@@ -236,17 +237,26 @@ namespace ofxRulr {
 				//
 				auto view = make_shared<Panels::Groups::Grid>();
 				
-				auto colorPanel = make_shared<Panels::Draws>(this->colorPreview);
-				colorPanel->setCaption("Color");
-				view->add(colorPanel);
+				{
+					auto colorPanel = make_shared<Panels::Draws>(this->colorPreview);
+					colorPanel->setCaption("Color");
+					view->add(colorPanel);					
+				}
 				
-				auto depthPanel = make_shared<Panels::Draws>(this->depthPreview);
-				depthPanel->setCaption("Depth");
-				view->add(depthPanel);
-				
-				auto irPanel = make_shared<Panels::Draws>(this->irImage);
-				irPanel->setCaption("IR");
-				view->add(irPanel);
+				{
+					auto depthPanel = make_shared<Panels::Texture>(this->depthPreview);
+					depthPanel->setCaption("Depth");
+					auto style = make_shared<Panels::Texture::Style>();
+					style->shader = ofxAssets::Register::X().getShaderPointer("ofxRulr::OSXKinectDepth");
+					depthPanel->setStyle(style);
+					view->add(depthPanel);
+				}
+
+				{
+					auto irPanel = make_shared<Panels::Draws>(this->irImage);
+					irPanel->setCaption("IR");
+					view->add(irPanel);
+				}
 				
 				view->setColsCount(3);
 				

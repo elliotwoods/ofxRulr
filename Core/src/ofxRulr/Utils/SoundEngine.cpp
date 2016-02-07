@@ -64,7 +64,7 @@ namespace ofxRulr {
 						auto & activeSound = *it;
 						
 						//check if needs deleting
-						if(activeSound.frameIndex >= activeSound.sound->buffer.getNumFrames()) {
+						if(activeSound.frameIndex >= activeSound.sound->getSoundBuffer().getNumFrames()) {
 							it = this->activeSounds.erase(it);
 							continue; // skip to next sound
 						} else {
@@ -78,8 +78,8 @@ namespace ofxRulr {
 						}
 						
 						//play it otherwise
-						left += activeSound.sound->buffer.getSample(activeSound.frameIndex, 0);
-						right += activeSound.sound->buffer.getSample(activeSound.frameIndex, 1);
+						left += activeSound.sound->getSoundBuffer().getSample(activeSound.frameIndex, 0);
+						right += activeSound.sound->getSoundBuffer().getSample(activeSound.frameIndex, 1);
 						
 						//progress the playhead
 						activeSound.frameIndex++;
@@ -120,7 +120,7 @@ namespace ofxRulr {
 		}
 		
 		//----------
-		void SoundEngine::play(shared_ptr<ofxAssets::Register::Sound> sound) {
+		void SoundEngine::play(shared_ptr<ofxAssets::Sound> sound) {
 			if(sound) {
 				ActiveSound activeSound;
 				activeSound.sound = sound;
@@ -143,7 +143,7 @@ namespace ofxRulr {
 		}
 		
 		//----------
-		void SoundEngine::stopAll(shared_ptr<ofxAssets::Register::Sound> sound) {
+		void SoundEngine::stopAll(shared_ptr<ofxAssets::Sound> sound) {
 			if (sound) {
 				this->soundsToAddMutex.lock();
 				{
@@ -173,7 +173,7 @@ namespace ofxRulr {
 		}
 		
 		//----------
-		bool SoundEngine::isSoundActive(shared_ptr<ofxAssets::Register::Sound> sound) {
+		bool SoundEngine::isSoundActive(shared_ptr<ofxAssets::Sound> sound) {
 			lock_guard<mutex> lock(this->activeSoundsMutex);
 			
 			for(const auto & activeSound : this->activeSounds) {
@@ -186,8 +186,8 @@ namespace ofxRulr {
 		}
 
 		//----------
-		size_t SoundEngine::getRemainingNumFrames(shared_ptr<ofxAssets::Register::Sound> sound) {
-			auto numFrames = sound->buffer.getNumFrames();
+		size_t SoundEngine::getRemainingNumFrames(shared_ptr<ofxAssets::Sound> sound) {
+			auto numFrames = sound->getSoundBuffer().getNumFrames();
 
 			size_t result = 0;
 			

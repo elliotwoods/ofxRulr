@@ -13,7 +13,7 @@ namespace ofxRulr {
 		public:
 			struct ActiveSound {
 				//since we use shared_ptr, we keep the sound even if it is unloaded elsewhere
-				shared_ptr<ofxAssets::Register::Sound> sound;
+				shared_ptr<ofxAssets::Sound> sound;
 				size_t frameIndex = 0;
 				size_t delay = 0;
 			};
@@ -24,14 +24,14 @@ namespace ofxRulr {
 			void addSource(weak_ptr<ofBaseSoundOutput>);
 			
 			void play(const string & soundAssetName);
-			void play(shared_ptr<ofxAssets::Register::Sound>);
+			void play(shared_ptr<ofxAssets::Sound>);
 			void play(ActiveSound);
 			
 			void stopAll(const string & soundAssetName);
-			void stopAll(shared_ptr<ofxAssets::Register::Sound>);
+			void stopAll(shared_ptr<ofxAssets::Sound>);
 			
-			bool isSoundActive(shared_ptr<ofxAssets::Register::Sound>);
-			size_t getRemainingNumFrames(shared_ptr<ofxAssets::Register::Sound>);
+			bool isSoundActive(shared_ptr<ofxAssets::Sound>);
+			size_t getRemainingNumFrames(shared_ptr<ofxAssets::Sound>);
 		protected:
 			ofSoundStream soundStream;
 			

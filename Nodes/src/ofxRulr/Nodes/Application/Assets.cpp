@@ -13,6 +13,14 @@ namespace ofxRulr {
 			//----------
 			Assets::Assets() {
 				RULR_NODE_INIT_LISTENER;
+				
+				//if the assets refresh, then we should refresh our view
+				ofAddListener(ofxAssets::Register::X().evtLoad, this, &Assets::flagRefreshView);
+			}
+			
+			//----------
+			Assets::~Assets() {
+				ofRemoveListener(ofxAssets::Register::X().evtLoad, this, &Assets::flagRefreshView);
 			}
 			
 			//----------
@@ -22,15 +30,19 @@ namespace ofxRulr {
 			
 			//----------
 			void Assets::init() {
+				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 				
 				this->view = make_shared<Panels::Widgets>();
 				
-				//if the assets refresh, then we should refresh our view
-				ofAddListener(ofxAssets::Register::X().evtLoad, this, &Assets::refreshView);
-				
 				this->filter.setName("Filter");
-				this->refreshView();
+			}
+
+			//----------
+			void Assets::update() {
+				if(this->viewDirty) {
+					this->refreshView();
+				}
 			}
 			
 			//----------
@@ -58,6 +70,11 @@ namespace ofxRulr {
 			}
 			
 			//----------
+			void Assets::flagRefreshView() {
+				this->viewDirty = true;
+			}
+			
+			//----------
 			void Assets::refreshView() {
 				auto filterString = ofToLower(this->filter.get());
 				this->view->clear();
@@ -71,113 +88,148 @@ namespace ofxRulr {
 				};
 				this->view->add(filterWidget);
 
+				auto addReloadButton = [this](ElementPtr element, shared_ptr<ofxAssets::BaseAsset> asset) {
+					auto button = Widgets::Button::make("Reload",
+															[asset]() {
+																asset->reload();
+															});
+					this->ownedElements.push_back(button);
+					button->addListenersToParent(element);
+					element->onBoundsChange += [button](BoundsChangeArguments & args) {
+						auto bounds = args.localBounds;
+						const int width = 80;
+						bounds.width = width;
+						bounds.x = args.localBounds.width - width;
+						button->setBounds(bounds);
+					};
+				};
+				
 				auto & assetRegister = ofxAssets::Register::X();
 				
 				this->view->add("Images");
 				{
-					auto imageNames = assetRegister.getImageNames();
-					for(const auto & imageName : imageNames) {
+					const auto & images = assetRegister.getImages();
+					const auto & names = images.getNames();
+					for(const auto & name : names) {
 						if (!filterString.empty()) {
-							if(ofToLower(imageName).find(filterString) == string::npos) {
+							if(ofToLower(name).find(filterString) == string::npos) {
 								continue;
 							}
 						}
 						
-						auto asset = assetRegister.getImagePointer(imageName);
+						auto asset = images[name];
+						auto & image = asset->get();
+						auto width = image.getWidth();
+						auto height = image.getHeight();
+						
 						auto element = make_shared<Element>();
 						
-						float longestAxis = max(asset->getWidth(), asset->getHeight());
+						float longestAxis = max(width, height);
 						auto scaleFactor = 48.0f / longestAxis;
-						auto drawWidth = asset->getWidth() * scaleFactor;
-						auto drawHeight = asset->getHeight() * scaleFactor;
+						auto drawWidth = width * scaleFactor;
+						auto drawHeight = height * scaleFactor;
 						
-						element->onDraw += [asset, imageName, drawWidth, drawHeight](DrawArguments & args) {
+						element->onDraw += [asset, name, width, height, drawWidth, drawHeight](DrawArguments & args) {
 							stringstream text;
-							text << imageName << endl;
-							text << asset->getWidth() << "x" << asset->getHeight();
+							text << name << endl;
+							text << width << "x" << height;
 							ofxCvGui::Utils::drawText(text.str(), 58, 0);
 							
-							asset->draw(5, 0, drawWidth, drawHeight);
+							asset->get().draw(5, 0, drawWidth, drawHeight);
 						};
 						element->setHeight(58.0f);
 						this->view->add(element);
+						
+						addReloadButton(element, asset);
 					}
 				}
 				
 				this->view->add("Shaders");
 				{
-					auto shaderNames = assetRegister.getShaderNames();
-					for(const auto & shaderName : shaderNames) {
+					const auto & shaders = assetRegister.getShaders();
+					const auto & names = shaders.getNames();
+					
+					for(const auto & name : names) {
 						if (!filterString.empty()) {
-							if(ofToLower(shaderName).find(filterString) == string::npos) {
+							if(ofToLower(name).find(filterString) == string::npos) {
 								continue;
 							}
 						}
 						
-						auto asset = assetRegister.getShaderPointer(shaderName);
+						auto asset = shaders[name];
+						auto & shader = asset->get();
+						bool loaded = shader.isLoaded();
+						
 						auto element = make_shared<Element>();
 						
-						bool loaded = asset->isLoaded();
-						element->onDraw += [shaderName, asset, loaded](DrawArguments & args) {
+						element->onDraw += [name, loaded](DrawArguments & args) {
 							stringstream text;
-							text << shaderName << endl;
+							text << name << endl;
 							text << "Loaded : " << (loaded ? "true" : "false");
 							ofxCvGui::Utils::drawText(text.str(), 5, 0);
 						};
 						element->setHeight(58.0f);
 						this->view->add(element);
+						
+						addReloadButton(element, asset);
 					}
 				}
 				
 				this->view->add("Fonts");
 				{
-					auto fontFileNames = assetRegister.getFontFilenames();
-					for(const auto & fontFileName : fontFileNames) {
-						auto fontSizes = assetRegister.getFontSizes(fontFileName);
+					auto fonts = assetRegister.getFonts();
+					auto names = fonts.getNames();
+					
+					for(const auto & name : names) {
+						auto sizes = assetRegister.getFontSizes(name);
 						
-						for(const auto & fontSize : fontSizes) {
-							auto fontSizeString = ofToString(fontSize);
+						for(const auto & size : sizes) {
+							auto sizeString = ofToString(size);
 							if (!filterString.empty()) {
-								if(ofToLower(fontFileName).find(filterString) == string::npos && filterString != fontSizeString) {
+								if(ofToLower(name).find(filterString) == string::npos && filterString != sizeString) {
 									continue;
 								}
 							}
 							
-							auto asset = assetRegister.getFontPointer(fontFileName, fontSize);
+							auto asset = fonts[name];
 							
 							auto element = make_shared<Element>();
-							element->onDraw += [fontFileName, fontSize, asset](DrawArguments & args) {
+							element->onDraw += [name, size, asset](DrawArguments & args) {
 								stringstream text;
-								text << fontFileName << ", size " << fontSize;
+								text << name << ", size " << size;
 								ofxCvGui::Utils::drawText(text.str(), 5, 38);
 								
-								asset->drawString("AaBbCcDdEeFf0123456789", 5, 35);
+								asset->get(size).drawString("AaBbCcDdEeFf0123456789", 5, 35);
 							};
 							element->setScissor(true);
 							element->setHeight(58.0f);
 							this->view->add(element);
+							
+							addReloadButton(element, asset);
 						}
 					}
 				}
 				
 				this->view->add("Sounds");
 				{
-					auto soundNames = assetRegister.getSoundNames();
-					for(const auto & soundName : soundNames) {
+					auto sounds = assetRegister.getSounds();
+					auto names = sounds.getNames();
+					for(const auto & name : names) {
 						if (!filterString.empty()) {
-							if(ofToLower(soundName).find(filterString) == string::npos) {
+							if(ofToLower(name).find(filterString) == string::npos) {
 								continue;
 							}
 						}
 						
-						auto asset = assetRegister.getSoundPointer(soundName);
-						auto duration = asset->buffer.getDurationMS();
-						auto channels = asset->buffer.getNumChannels();
+						auto asset = sounds[name];
+						auto & buffer = asset->getSoundBuffer();
+						auto duration = buffer.getDurationMS();
+						auto channels = buffer.getNumChannels();
 						
 						auto element = make_shared<Element>();
-						element->onDraw += [soundName, asset, duration, channels](DrawArguments & args) {
+						element->onDraw += [name, duration, channels](DrawArguments & args) {
 							stringstream text;
-							text << soundName << endl;
+							text << name << endl;
 							text << "Duration = " << duration << ". Channels = " << channels;
 							
 							ofxCvGui::Utils::drawText(text.str(), 0, 5);
@@ -185,11 +237,13 @@ namespace ofxRulr {
 						element->setHeight(58.0f);
 						this->view->add(element);
 						
-						auto playButton = Widgets::Toggle::make("Play", [asset]() {
-							return asset->player.isPlaying();
-						}, [asset](bool play) {
+						auto playButton = Widgets::Toggle::make("Play",
+						[asset]() {
+							return asset->getSoundPlayer().isPlaying();
+						},
+						[asset](bool play) {
 							if(play) {
-								asset->player.play();
+								asset->getSoundPlayer().play();
 							}
 						});
 						this->ownedElements.push_back(playButton);
@@ -198,12 +252,16 @@ namespace ofxRulr {
 						element->onBoundsChange += [playButton](BoundsChangeArguments & args) {
 							auto bounds = args.localBounds;
 							bounds.width = 64;
-							bounds.x = args.localBounds.width - bounds.width;
+							bounds.x = args.localBounds.width - (80 + 64);
 							playButton->setBounds(bounds);
 						};
+						
+						addReloadButton(element, asset);
 					}
 				}
+				this->viewDirty = false;
 			}
+			
 		}
 	}
 }

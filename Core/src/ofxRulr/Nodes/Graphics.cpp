@@ -19,11 +19,13 @@ namespace ofxRulr {
 				auto imageName = "ofxRulr::Nodes::" + nodeTypeName;
 
 				pair<string, shared_ptr<ofImage>> inserter;
-				if (!ofxAssets::Register::X().hasImage(imageName)) {
+				if (!ofxAssets::hasImage(imageName)) {
 					//the image file doesn't exist, let's use default icon
 					imageName = "ofxRulr::Nodes::Default";
 				}
-				inserter.second = ofxAssets::Register::X().getImagePointer(imageName);
+				auto image = make_shared<ofImage>();
+				image->clone(ofxAssets::image(imageName));
+				inserter.second = image;
 				this->icons.insert(inserter);
 				return inserter.second;
 			}
@@ -54,11 +56,8 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Graphics::setIcon(const string & nodeTypeName, const ofImage & icon) {
-			// change existing image instance rather than replacing it
-			// so that existing references will also be updated
-			auto & storedIcon = this->icons[nodeTypeName];
-			storedIcon->clone(icon);
+		void Graphics::setIcon(const string & nodeTypeName, shared_ptr<ofImage> icon) {
+			this->icons[nodeTypeName] = icon;
 		}
 
 		//----------

@@ -149,7 +149,7 @@ namespace ofxRulr {
 
 						case Channel::Type::Vec3f:
 						{
-							auto & parameter = selectedChannel->getParameter<ofVec3f>();
+							const auto & parameter = selectedChannel->getParameter<ofVec3f>();
 							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Vec3f"; }));
 							this->detailView->add(Widgets::EditableValue<ofVec3f>::make(*parameter));
 							break;

@@ -8,7 +8,7 @@ namespace ofxRulr {
 		namespace DMX {
 			//----------
 			Base::Base() {
-				this->setIcon(ofxAssets::Register::X().getImagePointer("ofxRulr::Nodes::DMX::Base"));
+
 			}
 		}
 	}
