@@ -108,7 +108,7 @@ namespace ofxRulr {
 			// INSPECTOR
 			//--
 			//
-			auto inspector = ofxCvGui::Builder::makeInspector();
+			auto inspector = ofxCvGui::makeInspector();
 			horizontalGroup->add(inspector);
 			inspector->setTitleEnabled(false);
 
