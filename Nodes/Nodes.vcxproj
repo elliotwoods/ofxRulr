@@ -414,6 +414,20 @@
     <None Include="..\..\ofxGLM\libs\glm\gtx\verbose_operator.inl" />
     <None Include="..\..\ofxGLM\libs\glm\gtx\wrap.inl" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ofxGraycode\ofxGraycodeLib\ofxGraycodeLib.vcxproj">
+      <Project>{ba65a9dd-2be2-4ff8-a9c6-6ac6624cddc3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj">
+      <Project>{cd4455e0-0454-4c3c-bb42-9d15d16a34dd}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxNonLinearFit\ofxNonLinearFitLib\ofxNonLinearFit.vcxproj">
+      <Project>{c087079e-2a0e-4b85-a479-c28e2d01a048}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxRay\ofxRayLib\ofxRayLib.vcxproj">
+      <Project>{048e1ec4-64fe-4aac-b524-1bd56a1fc726}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

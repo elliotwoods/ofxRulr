@@ -41,7 +41,7 @@ namespace ofxRulr {
 					void Base::populateInspector(InspectArguments & inspectArgs) {
 						auto inspector = inspectArgs.inspector;
 
-						inspector->add(this->addressParameter);
+						inspector->addEditableValue(this->addressParameter);
 					}
 
 					//----------

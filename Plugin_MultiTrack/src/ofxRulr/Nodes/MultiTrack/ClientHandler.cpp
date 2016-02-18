@@ -185,21 +185,21 @@ namespace ofxRulr {
 			void ClientHandler::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 				auto inspector = inspectArgs.inspector;
 
-				inspector->add(this->port);
-				inspector->add(this->enabled);
+				inspector->addEditableValue(this->port);
+				inspector->addEditableValue(this->enabled);
 
-				inspector->add(Widgets::Indicator::make("Server bound", [this]() {
+				inspector->addIndicator("Server bound", [this]() {
 					if (this->socketServer) {
-						return Widgets::Indicator::Status::Good;
+						return true;
 					}
 					else {
-						return Widgets::Indicator::Status::Clear;
+						return false;
 					}
-				}));
+				});
 
-				inspector->add(Widgets::LiveValue<size_t>::make("Client count", [this]() {
+				inspector->addLiveValue<size_t>("Client count", [this]() {
 					return this->clients.size();
-				}));
+				});
 			}
 
 			//----------
@@ -226,9 +226,11 @@ namespace ofxRulr {
 					ofLogError("MultiTrack::ClientHandler") << "Failed to bind server on port " << this->port;
 					this->socketServer.reset();
 				}
+				else {
+					this->needsReopenServer = false;
+				}
 
 				this->lastReopenAttempt = now;
-				this->needsReopenServer = false;
 			}
 
 			//----------

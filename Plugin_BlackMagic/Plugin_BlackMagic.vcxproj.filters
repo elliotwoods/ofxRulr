@@ -10,14 +10,8 @@
     <Filter Include="src">
       <UniqueIdentifier>{7cb23bcc-0fb3-4499-b761-25860287bbd0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Procedure">
-      <UniqueIdentifier>{faa2746c-f704-43a1-bcb3-f2eb4fca83e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
       <UniqueIdentifier>{376e1462-6366-4f47-8372-53cc30de8df6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Item">
-      <UniqueIdentifier>{adae8927-d19a-4f23-b894-73994d05d55c}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\pairs">
       <UniqueIdentifier>{21588390-1379-4634-9dd9-a3ea2fe04e61}</UniqueIdentifier>

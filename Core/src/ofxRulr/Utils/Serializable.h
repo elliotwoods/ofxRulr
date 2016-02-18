@@ -5,21 +5,7 @@
 
 #include <json/json.h>
 #include <string>
-
-template<typename T>
-Json::Value & operator<< (Json::Value & json, const T & streamSerializableObject) {
-	stringstream stream;
-	stream << streamSerializableObject;
-	json = stream.str();
-	return json;
-}
-
-template<typename T>
-const Json::Value & operator>> (const Json::Value & json, T & streamSerializableObject) {
-	stringstream stream(json.asString());
-	stream >> streamSerializableObject;
-	return json;
-}
+#include <type_traits>
 
 namespace ofxRulr {
 	namespace Utils {
@@ -62,3 +48,50 @@ namespace ofxRulr {
 		};
 	}
 }
+
+
+
+//--
+// Parameters
+//--
+//
+// json >> parameter; //deserialize
+// json << parameter; //serialize
+template<typename T>
+void operator>> (const Json::Value & json, ofParameter<T> & parameter) {
+	ofxRulr::Utils::Serializable::deserialize(parameter, json);
+}
+
+template<typename T>
+void operator<< (Json::Value & json, const ofParameter<T> & parameter) {
+	ofxRulr::Utils::Serializable::serialize(parameter, json);
+}
+//
+//--
+
+
+
+//--
+// Raw values
+//--
+//
+// json >> value; //deserialize
+// json << value; //serialize
+//
+// since the json object is useless after the stream, we return void
+template<class T,
+	typename = std::enable_if_t<!std::is_base_of<ofAbstractParameter, T>::value> >
+void operator>> (const Json::Value & json, T & streamSerializableObject) {
+	stringstream stream(json.asString());
+	stream >> streamSerializableObject;
+}
+
+template<class T,
+	typename = std::enable_if_t<!std::is_base_of<ofAbstractParameter, T>::value> >
+	void operator<< (Json::Value & json, const T & streamSerializableObject) {
+	stringstream stream;
+	stream << streamSerializableObject;
+	json = stream.str();
+}
+//
+//--

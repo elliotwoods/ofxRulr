@@ -413,7 +413,7 @@ namespace ofxRulr {
 				//clear the entire video output
 				ofClear(0, 0);
 
-				//draw the fbo if mute is disbaled
+				//draw the fbo if mute is disabled
 				if (!this->mute) {
 					//set the drawing matrices to normalised coordinates
 					glMatrixMode(GL_PROJECTION);
@@ -433,7 +433,6 @@ namespace ofxRulr {
 				}
 				
 				glfwSwapBuffers(this->window);
-				glFlush();
 
 				//return to main window
 				glfwMakeContextCurrent(mainWindow);
@@ -563,6 +562,7 @@ namespace ofxRulr {
 					auto windowSettings = ofGLFWWindowSettings();
 					windowSettings.decorated = false;
 					windowSettings.resizable = false;
+					windowSettings.doubleBuffering = false;
 
 					//glfwWindowHint(GLFW_RED_BITS, windowSettings.redBits);
 					//glfwWindowHint(GLFW_GREEN_BITS, windowSettings.greenBits);

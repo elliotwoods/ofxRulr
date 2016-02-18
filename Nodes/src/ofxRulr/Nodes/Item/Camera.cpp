@@ -193,7 +193,7 @@ namespace ofxRulr {
 
 						this->setAllGrabberProperties();
 
-						auto cameraView = ofxCvGui::makePanel(*this->grabber);
+						auto cameraView = ofxCvGui::Panels::make(*this->grabber);
 						cameraView->onDraw += [this](ofxCvGui::DrawArguments & args) {
 							if (this->showSpecification) {
 								stringstream status;

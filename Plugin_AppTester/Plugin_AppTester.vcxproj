@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{DFE9EE67-8247-43D6-A957-813EFAD6111E}</ProjectGuid>
-    <RootNamespace>Plugin_MultiTrack</RootNamespace>
+    <ProjectGuid>{09FAF69E-1054-477B-8CF6-B5349771197C}</ProjectGuid>
+    <RootNamespace>Plugin_AppTester</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -57,25 +57,21 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="..\ofxRulr_Plugin.props" />
-    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="..\ofxRulr_Plugin.props" />
-    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="..\ofxRulr_Plugin.props" />
-    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="..\ofxRulr_Plugin.props" />
-    <Import Project="..\..\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -87,9 +83,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>libs/oscpkt/include;../../../addons/ofxRulr/Plugin_KinectForWindows2/src;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch_MultiTrack.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>pch_AppTester.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -100,8 +96,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>libs/oscpkt/include;../../../addons/ofxRulr/Plugin_KinectForWindows2/src;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch_AppTester.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -115,9 +112,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>libs/oscpkt/include;../../../addons/ofxRulr/Plugin_KinectForWindows2/src;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch_MultiTrack.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>pch_AppTester.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -132,8 +129,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>libs/oscpkt/include;../../../addons/ofxRulr/Plugin_KinectForWindows2/src;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch_AppTester.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -145,36 +143,27 @@
   <ItemGroup>
     <ClInclude Include="libs\oscpkt\include\oscpkt\oscpkt.hh" />
     <ClInclude Include="libs\oscpkt\include\oscpkt\udp.hh" />
-    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\LocalKinect.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.h" />
-    <ClInclude Include="src\pch_MultiTrack.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\AppTester\ListProjects.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\AppTester\Project.h" />
+    <ClInclude Include="src\pch_AppTester.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\LocalKinect.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\plugin.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.cpp" />
-    <ClCompile Include="src\pch_MultiTrack.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\AppTester\ListProjects.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\AppTester\Project.cpp" />
+    <ClCompile Include="src\pch_AppTester.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj">
-      <Project>{f6008d6a-6d39-4b68-840e-e7ac8ed855da}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Core\Core.vcxproj">
       <Project>{9201d4e8-8b5a-44d4-baa6-23229a1871a7}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Nodes\Nodes.vcxproj">
       <Project>{33d577f9-86e9-4f15-81f1-256a00bbe3ea}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Plugin_KinectForWindows2\Plugin_KinectForWindows2.vcxproj">
-      <Project>{cbfc3d47-1e57-4291-90b6-c344b836b8da}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

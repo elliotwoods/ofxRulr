@@ -119,7 +119,7 @@ namespace ofxRulr {
 
 					auto selectedChannel = this->selectedChannel.lock();
 					if (selectedChannel) {
-						this->detailView->add(selectedChannel->getName());
+						this->detailView->addTitle(selectedChannel->getName());
 						selectedChannel->getParameterUntyped();
 						auto type = selectedChannel->getValueType();
 						switch (type) {

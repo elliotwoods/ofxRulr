@@ -152,8 +152,8 @@ namespace ofxRulr {
 				
 				inspector->add(Widgets::EditableValue<int>::make(this->blurSize));
 				
-				inspector->add(this->highValue);
-				inspector->add(this->lowValue);
+				inspector->addSlider(this->highValue);
+				inspector->addSlider(this->lowValue);
 			}
 			
 			//----------

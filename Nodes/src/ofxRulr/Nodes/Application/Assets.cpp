@@ -106,7 +106,7 @@ namespace ofxRulr {
 				
 				auto & assetRegister = ofxAssets::Register::X();
 				
-				this->view->add("Images");
+				this->view->addTitle("Images");
 				{
 					const auto & images = assetRegister.getImages();
 					const auto & names = images.getNames();
@@ -144,7 +144,7 @@ namespace ofxRulr {
 					}
 				}
 				
-				this->view->add("Shaders");
+				this->view->addTitle("Shaders");
 				{
 					const auto & shaders = assetRegister.getShaders();
 					const auto & names = shaders.getNames();
@@ -175,7 +175,7 @@ namespace ofxRulr {
 					}
 				}
 				
-				this->view->add("Fonts");
+				this->view->addTitle("Fonts");
 				{
 					auto fonts = assetRegister.getFonts();
 					auto names = fonts.getNames();
@@ -210,7 +210,7 @@ namespace ofxRulr {
 					}
 				}
 				
-				this->view->add("Sounds");
+				this->view->addTitle("Sounds");
 				{
 					auto sounds = assetRegister.getSounds();
 					auto names = sounds.getNames();

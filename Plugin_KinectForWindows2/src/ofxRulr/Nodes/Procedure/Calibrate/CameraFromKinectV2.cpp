@@ -175,7 +175,10 @@ namespace ofxRulr {
 						error << "Chesboard found in kinect [" << (foundInKinect ? "X" : " ") << "], camera [" << (foundInCamera ? "X" : " ") << "]";
 						throw(ofxRulr::Exception(error.str()));
 					}
-					auto kinectCameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
+
+					ofFloatPixels kinectCameraToWorldMap;
+					kinectDevice->getDepthSource()->getWorldInColorFrame(kinectCameraToWorldMap);
+
 					auto kinectCameraToWorldPointer = (ofVec3f*)kinectCameraToWorldMap.getData();
 					auto kinectCameraWidth = kinectCameraToWorldMap.getWidth();
 					int pointIndex = 0;

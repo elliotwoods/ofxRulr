@@ -198,7 +198,8 @@ namespace ofxRulr {
 
 					this->previewCornerFinds.clear();
 
-					auto cameraToWorldMap = kinectDevice->getDepthSource()->getColorToWorldMap();
+					ofFloatPixels cameraToWorldMap;
+					kinectDevice->getDepthSource()->getWorldInColorFrame(cameraToWorldMap);
 					auto cameraToWorldPointer = (ofVec3f*)cameraToWorldMap.getData();
 					auto cameraWidth = cameraToWorldMap.getWidth();
 					auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->checkerboardCornersX, this->checkerboardCornersY), this->checkerboardScale, true));

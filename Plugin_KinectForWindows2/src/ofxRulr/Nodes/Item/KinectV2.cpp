@@ -154,10 +154,10 @@ namespace ofxRulr {
 					auto changeViewsCallback = [this](ofParameter<bool> &) {
 						this->rebuildView();
 					};
-					inspector->add(this->enabledViews.rgb)->onValueChange += changeViewsCallback;
-					inspector->add(this->enabledViews.depth)->onValueChange += changeViewsCallback;
-					inspector->add(this->enabledViews.ir)->onValueChange += changeViewsCallback;
-					inspector->add(this->enabledViews.body)->onValueChange += changeViewsCallback;
+					inspector->addToggle(this->enabledViews.rgb)->onValueChange += changeViewsCallback;
+					inspector->addToggle(this->enabledViews.depth)->onValueChange += changeViewsCallback;
+					inspector->addToggle(this->enabledViews.ir)->onValueChange += changeViewsCallback;
+					inspector->addToggle(this->enabledViews.body)->onValueChange += changeViewsCallback;
 				}
 			}
 
