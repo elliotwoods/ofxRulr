@@ -10,6 +10,16 @@
     <PostBuildEvent>
       <Command />
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>Rulr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <Link>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RulrLibrary_$(Platform)_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

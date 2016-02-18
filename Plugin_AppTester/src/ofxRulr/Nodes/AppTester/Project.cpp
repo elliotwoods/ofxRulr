@@ -25,7 +25,7 @@ namespace ofxRulr {
 					ofPopStyle();
 
 					//title
-					ofxCvGui::Utils::drawText(this->relativePath.string(), 55, 5, false);
+					ofxCvGui::Utils::drawText(this->relativePath.string(), 85, 5, false);
 				};
 
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
@@ -37,7 +37,7 @@ namespace ofxRulr {
 				this->elements->add(buildButton);
 
 				this->onBoundsChange += [this, buildButton](BoundsChangeArguments & args) {
-					buildButton->setBounds(ofRectangle(0, 0, 50, args.localBounds.height));
+					buildButton->setBounds(ofRectangle(0, 0, 80, args.localBounds.height));
 				};
 
 				this->setHeight(50.0f);

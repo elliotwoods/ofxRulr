@@ -167,12 +167,6 @@
     <ProjectReference Include="..\..\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj">
       <Project>{f6008d6a-6d39-4b68-840e-e7ac8ed855da}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Core.vcxproj">
-      <Project>{9201d4e8-8b5a-44d4-baa6-23229a1871a7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Nodes\Nodes.vcxproj">
-      <Project>{33d577f9-86e9-4f15-81f1-256a00bbe3ea}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Plugin_KinectForWindows2\Plugin_KinectForWindows2.vcxproj">
       <Project>{cbfc3d47-1e57-4291-90b6-c344b836b8da}</Project>
     </ProjectReference>

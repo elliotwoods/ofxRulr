@@ -4,6 +4,7 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rulr", "Rulr.vcxproj", "{7FD42DF7-442E-479A-BA76-D0022F99702A}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
 		{CBFC3D47-1E57-4291-90B6-C344B836B8DA} = {CBFC3D47-1E57-4291-90B6-C344B836B8DA}
 		{4172965B-8375-4DF7-B213-A242DC92BC90} = {4172965B-8375-4DF7-B213-A242DC92BC90}
 		{DFE9EE67-8247-43D6-A957-813EFAD6111E} = {DFE9EE67-8247-43D6-A957-813EFAD6111E}
@@ -34,6 +35,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "..\Core\Core.vcxproj", "{9201D4E8-8B5A-44D4-BAA6-23229A1871A7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_KinectForWindows2", "..\Plugin_KinectForWindows2\Plugin_KinectForWindows2.vcxproj", "{CBFC3D47-1E57-4291-90B6-C344B836B8DA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Nodes", "..\Nodes\Nodes.vcxproj", "{33D577F9-86E9-4F15-81F1-256A00BBE3EA}"
 EndProject
@@ -50,6 +54,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EnttecUsbPro", "EnttecUsbPro", "{8A40CBDF-2E1C-40FA-8CF6-B5E4C8904278}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_EnttecUsbPro", "..\Plugin_EnttecUsbPro\Plugin_EnttecUsbPro.vcxproj", "{5688EFFC-E727-4032-9CC3-2697085BEC57}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxNonLinearFit", "..\..\ofxNonLinearFit\ofxNonLinearFitLib\ofxNonLinearFit.vcxproj", "{C087079E-2A0E-4B85-A479-C28E2D01A048}"
 EndProject
@@ -58,14 +65,25 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{148566DA-E924-4085-B479-ACA0D1601C9A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_BlackMagic", "..\Plugin_BlackMagic\Plugin_BlackMagic.vcxproj", "{4172965B-8375-4DF7-B213-A242DC92BC90}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MultiTrack", "MultiTrack", "{2F26710F-B29A-4F48-866E-15E096F59C82}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_MultiTrack", "..\Plugin_MultiTrack\Plugin_MultiTrack.vcxproj", "{DFE9EE67-8247-43D6-A957-813EFAD6111E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_AppTester", "..\Plugin_AppTester\Plugin_AppTester.vcxproj", "{09FAF69E-1054-477B-8CF6-B5349771197C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppTester", "AppTester", "{CDED796E-4480-4114-8F51-7C34707A4467}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RulrLibrary", "..\RulrLibrary\RulrLibrary.vcxproj", "{C400D413-78E4-4F60-B5E2-7965FCAC0EEC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -243,6 +261,12 @@ Global
 		{09FAF69E-1054-477B-8CF6-B5349771197C}.Release|x64.Build.0 = Release|x64
 		{09FAF69E-1054-477B-8CF6-B5349771197C}.Release|x86.ActiveCfg = Release|Win32
 		{09FAF69E-1054-477B-8CF6-B5349771197C}.Release|x86.Build.0 = Release|Win32
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC}.Debug|x64.ActiveCfg = Debug|x64
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC}.Debug|x64.Build.0 = Debug|x64
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC}.Debug|x86.ActiveCfg = Debug|x64
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC}.Release|x64.ActiveCfg = Release|x64
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC}.Release|x64.Build.0 = Release|x64
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -275,5 +299,6 @@ Global
 		{DFE9EE67-8247-43D6-A957-813EFAD6111E} = {2F26710F-B29A-4F48-866E-15E096F59C82}
 		{09FAF69E-1054-477B-8CF6-B5349771197C} = {CDED796E-4480-4114-8F51-7C34707A4467}
 		{CDED796E-4480-4114-8F51-7C34707A4467} = {148566DA-E924-4085-B479-ACA0D1601C9A}
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {B60F2E08-1FFC-406D-99B2-D446B968362D}
 	EndGlobalSection
 EndGlobal

@@ -1,7 +1,4 @@
 #include "../../../addons/ofxRulr/Nodes/src/ofxRulr/Nodes/DeclareNodes.h"
-#include "../../../addons/ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRDevice.h"
-#include "../../../addons/ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRLiveViewDevice.h"
-#include "../../../addons/ofxEdsdk/pairs/ofxRulr/Nodes/Monitor/CanonLiveView.h"
 #include "ofApp.h"
 
 
@@ -48,9 +45,6 @@ void ofApp::setup2(){
 #ifdef TARGET_WIN32
 	ofxRulr::Nodes::loadPluginNodes();
 #endif
-	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRDevice>();
-	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRLiveViewDevice>();
-	RULR_DECLARE_NODE(ofxRulr::Nodes::Monitor::CanonLiveView);
 	//
 	//--
 
@@ -87,6 +81,7 @@ void ofApp::setup2(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	ofDrawBitmapString(50, 10, 10);
 	ofxRulr::Graph::World::X().update();
 }
 
