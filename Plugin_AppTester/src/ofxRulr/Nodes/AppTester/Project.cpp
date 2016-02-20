@@ -25,7 +25,7 @@ namespace ofxRulr {
 					ofPopStyle();
 
 					//title
-					ofxCvGui::Utils::drawText(this->relativePath.string(), 85, 5, false);
+					ofxCvGui::Utils::drawText(this->relativePath.string(), 90, 5, false);
 				};
 
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
