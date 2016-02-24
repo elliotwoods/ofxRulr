@@ -58,7 +58,7 @@ namespace ofxRulr {
 				vector<shared_ptr<BuildConfiguration>> buildConfigurations;
 
 				ofxCvGui::ElementGroupPtr elements;
-				ofxCvGui::ElementSet buildConfigurationElements;
+				ofxCvGui::ElementGroupPtr buildConfigurationElements;
 			};
 		}
 	}

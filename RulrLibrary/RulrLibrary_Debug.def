@@ -54,6 +54,7 @@ EXPORTS
 	??0Title@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4Level@012@@Z
 	??0Toggle@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@_N@@D@Z
 	??0Transmit@DMX@Nodes@ofxRulr@@QEAA@XZ
+	??0Value@Json@@QEAA@_N@Z
 	??0Value@Json@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0Value@Json@@QEAA@H@Z
 	??0Value@Json@@QEAA@N@Z
@@ -104,6 +105,7 @@ EXPORTS
 	?allocate@?$ofPixels_@E@@QEAAXHHW4ofPixelFormat@@@Z
 	?allocate@?$ofPixels_@G@@QEAAXHHW4ofImageType@@@Z
 	?allocate@?$ofPixels_@M@@QEAAXHHW4ofPixelFormat@@@Z
+	?asBool@Value@Json@@QEBA_NXZ
 	?asFloat@Value@Json@@QEBAMXZ
 	?asInt@Value@Json@@QEBAHXZ
 	?asString@Value@Json@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -119,6 +121,7 @@ EXPORTS
 	?boom@ofNode@@QEAAXM@Z
 	?calibrateProjector@ofxCv@@YAMAEAVMat@cv@@00V?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@V?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@5@HHMM_NH@Z
 	?clear@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXXZ
+	?clear@?$ElementGroup_@VElement@ofxCvGui@@@ofxCvGui@@QEAAXXZ
 	?clear@ofTexture@@QEAAXXZ
 	?clear@Scroll@Panels@ofxCvGui@@QEAAXXZ
 	?clearDrawObject@Draws@Panels@ofxCvGui@@QEAAXXZ
@@ -132,6 +135,7 @@ EXPORTS
 	?disableIndices@ofMesh@@UEAAXXZ
 	?disableNormals@ofMesh@@UEAAXXZ
 	?disableTextures@ofMesh@@UEAAXXZ
+	?draw@?$ofImage_@E@@QEBAXMMM@Z
 	?draw@ofMesh@@QEBAXXZ
 	?draw@ofMesh@@UEBAXW4ofPolyRenderMode@@@Z
 	?draw@ofPolyline@@QEBAXXZ
@@ -156,6 +160,8 @@ EXPORTS
 	?font@ofxAssets@@YAAEAVofTrueTypeFont@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
 	?fromString@ofParameterGroup@@UEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?getBottomRight@ofRectangle@@QEBA?AVofVec3f@@XZ
+	?getBounds@Element@ofxCvGui@@QEBAAEBVofRectangle@@XZ
 	?getBytesPerChannel@?$ofPixels_@E@@QEBAHXZ
 	?getCameraMatrix@View@Item@Nodes@ofxRulr@@QEBA?AVMat@cv@@XZ
 	?getCaption@Element@ofxCvGui@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -167,6 +173,7 @@ EXPORTS
 	?getData@?$ofPixels_@M@@QEAAPEAMXZ
 	?getDefaultTypeface@ofxCvGui@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getDistortionCoefficients@View@Item@Nodes@ofxRulr@@QEBA?AVMat@cv@@XZ
+	?getElements@?$ElementGroup_@VElement@ofxCvGui@@@ofxCvGui@@QEAAAEAV?$vector@V?$shared_ptr@VElement@ofxCvGui@@@std@@V?$allocator@V?$shared_ptr@VElement@ofxCvGui@@@std@@@2@@std@@XZ
 	?getEscapedName@ofAbstractParameter@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getEscapedName@ofParameterGroup@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getFbo@VideoOutput@System@Nodes@ofxRulr@@QEAAAEAVofFbo@@XZ
@@ -205,6 +212,7 @@ EXPORTS
 	?getSubChannels@Channel@Channels@Data@ofxRulr@@QEAAAEAV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$shared_ptr@VChannel@Channels@Data@ofxRulr@@@2@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$shared_ptr@VChannel@Channels@Data@ofxRulr@@@2@@std@@@2@@std@@XZ
 	?getTexCoords@ofMesh@@QEAAAEAV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@std@@XZ
 	?getTexCoordsPointer@ofMesh@@QEAAPEAVofVec2f@@XZ
+	?getTopRight@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?getTransform@RigidBody@Item@Nodes@ofxRulr@@QEBA?AVofMatrix4x4@@XZ
 	?getTypeName@Base@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getTypeName@RigidBody@Item@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -242,6 +250,7 @@ EXPORTS
 	?makeButton@Widgets@ofxCvGui@@YA?AV?$shared_ptr@VButton@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@AEBV?$function@$$A6AXXZ@4@@Z
 	?makeCheckerboardMesh@ofxCv@@YA?AVofMesh@@V?$Size_@H@cv@@M_N@Z
 	?makeCheckerboardPoints@ofxCv@@YA?AV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@V?$Size_@H@cv@@M_N@Z
+	?makeElement@ofxCvGui@@YA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
 	?makeMatrix@ofxCv@@YA?AVofMatrix4x4@@VMat@cv@@0@Z
 	?makeWidgets@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWidgets@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?newReference@ofParameterGroup@@UEBA?AV?$shared_ptr@VofAbstractParameter@@@std@@XZ
@@ -254,6 +263,7 @@ EXPORTS
 	?ofDisableAlphaBlending@@YAXXZ
 	?ofDrawCircle@@YAXAEBVofVec3f@@M@Z
 	?ofDrawGridPlane@@YAXM_K_N@Z
+	?ofDrawLine@@YAXAEBVofVec3f@@0@Z
 	?ofDrawLine@@YAXMMMM@Z
 	?ofDrawRectangle@@YAXAEBVofRectangle@@@Z
 	?ofDrawRectangle@@YAXMMMM@Z

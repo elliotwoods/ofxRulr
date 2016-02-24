@@ -18,7 +18,7 @@ namespace ofxRulr {
 			//----------
 			Project::Project() {
 				this->onDraw += [this](DrawArguments & args) {
-					//background
+					//side line
 					ofPushStyle();
 					{
 						switch (this->locationType) {
@@ -29,17 +29,19 @@ namespace ofxRulr {
 							ofSetColor(100, 150, 100);
 							break;
 						}
-						ofDrawRectangle(args.localBounds);
+						ofDrawLine(args.localBounds.getTopRight(), args.localBounds.getBottomRight());
 					}
 					ofPopStyle();
 
 					//title
-					ofxCvGui::Utils::drawText(this->relativePath.string(), 5, 5, false);
+					auto & font = ofxAssets::font(ofxCvGui::getDefaultTypeface(), 20);
+					font.drawString(this->relativePath.string(), 5, 20);
 				};
 
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
 				this->elements->addListenersToParent(this, true);
-
+				this->buildConfigurationElements = make_shared<ofxCvGui::ElementGroup>();
+				this->buildConfigurationElements->addListenersToParent(this, true);
 				this->rebuildGui();
 			}
 
@@ -174,6 +176,8 @@ namespace ofxRulr {
 					for (const auto & jsonError : jsonConfiguration["errors"]) {
 						buildConfiguration->errors.push_back(jsonError.asString());
 					}
+
+					this->buildConfigurations.push_back(buildConfiguration);
 				}
 
 				this->rebuildGui();
@@ -207,7 +211,7 @@ namespace ofxRulr {
 			void Project::rebuildGui() {
 				this->elements->clear();
 
-				auto height = 20.0f;
+				auto height = 40.0f;
 
 				auto buildButton = ofxCvGui::Widgets::makeButton("Build", [this]() {
 					this->build();
@@ -222,23 +226,24 @@ namespace ofxRulr {
 						ofxCvGui::Utils::drawText(toString(buildConfiguration->configuration), 50, 0, false);
 
 						if (!buildConfiguration->warnings.empty()) {
-							ofxAssets::image("ofxRulr::AppTester::warning").draw(100, 20, 20);
-							ofxCvGui::Utils::drawText(toString(buildConfiguration->platform), 120, 0, false);
+							ofxAssets::image("ofxRulr::AppTester::warning").draw(120, 1, 16, 16);
+							ofxCvGui::Utils::drawText(ofToString(buildConfiguration->warnings.size()), 135, 0, false);
 						}
 
 						if (!buildConfiguration->errors.empty()) {
-							ofxAssets::image("ofxRulr::AppTester::error").draw(160, 20, 20);
-							ofxCvGui::Utils::drawText(toString(buildConfiguration->platform), 180, 0, false);
+							ofxAssets::image("ofxRulr::AppTester::error").draw(180, 1, 16, 16);
+							ofxCvGui::Utils::drawText(ofToString(buildConfiguration->errors.size()), 195, 0, false);
 						}
 					};
 					element->setHeight(20.0f);
+					this->buildConfigurationElements->add(element);
 					height += 20.0f;
 				}
 
 				this->onBoundsChange += [this, buildButton](BoundsChangeArguments & args) {
-					buildButton->setBounds(ofRectangle(0, 20, 80, args.localBounds.height - 20));
-					auto y = 20.0f;
-					for (auto buildConfigurationElement : this->buildConfigurationElements) {
+					buildButton->setBounds(ofRectangle(0, 40, 80, args.localBounds.height - 40));
+					auto y = 40.0f;
+					for (auto buildConfigurationElement : this->buildConfigurationElements->getElements()) {
 						auto bounds = buildConfigurationElement->getBounds();
 						bounds.x = buildButton->getWidth();
 						bounds.width = args.localBounds.width - bounds.x;
