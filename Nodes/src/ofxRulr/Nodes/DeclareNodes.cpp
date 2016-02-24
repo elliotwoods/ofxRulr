@@ -10,6 +10,8 @@
 #include "ofxRulr/Nodes/DMX/Sharpy.h"
 #include "ofxRulr/Nodes/DMX/AimMovingHeadAt.h"
 
+#include "ofxRulr/Nodes/Export/Mesh.h"
+
 #include "ofxRulr/Nodes/Item/Board.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
 //#include "Nodes/Item/Model.h"
@@ -19,6 +21,7 @@
 
 #include "ofxRulr/Nodes/Procedure/Calibrate/CameraIntrinsics.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/HomographyFromGraycode.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/Mesh2DFromGraycode.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/ViewToVertices.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/MovingHeadToWorld.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromDepthCamera.h"
@@ -47,6 +50,8 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(DMX::Sharpy);
 			RULR_DECLARE_NODE(DMX::AimMovingHeadAt);
 
+			RULR_DECLARE_NODE(Export::Mesh);
+
 			RULR_DECLARE_NODE(Item::Board);
 			RULR_DECLARE_NODE(Item::Camera);
 			//RULR_DECLARE_NODE(Item::Model);
@@ -56,6 +61,7 @@ namespace ofxRulr {
 
 			RULR_DECLARE_NODE(Procedure::Calibrate::CameraIntrinsics);
 			RULR_DECLARE_NODE(Procedure::Calibrate::HomographyFromGraycode);
+			RULR_DECLARE_NODE(Procedure::Calibrate::Mesh2DFromGraycode);
 			RULR_DECLARE_NODE(Procedure::Calibrate::ViewToVertices);
 			RULR_DECLARE_NODE(Procedure::Calibrate::MovingHeadToWorld);
 			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromDepthCamera);

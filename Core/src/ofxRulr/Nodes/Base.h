@@ -4,6 +4,7 @@
 #include "../Utils/Constants.h"
 #include "../Utils/Serializable.h"
 #include "../Exception.h"
+#include "../Version.h"
 
 #include "../../../addons/ofxCvGui/src/ofxCvGui/InspectController.h"
 
@@ -173,6 +174,12 @@ namespace ofxRulr {
 			bool initialized;
 			uint64_t lastFrameUpdate;
 			bool updateAllInputsFirst;
+		};
+
+		template<typename What>
+		class Gives : public Base {
+		public:
+			virtual void get(What &) const {	};
 		};
 	}
 }

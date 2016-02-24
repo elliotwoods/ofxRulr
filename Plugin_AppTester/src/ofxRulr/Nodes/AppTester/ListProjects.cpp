@@ -134,7 +134,7 @@ namespace ofxRulr {
 					}
 					else {
 						auto extension = ofToLower(path.extension().string());
-						if (extension == ".vcxproj") {
+						if (extension == ".sln") {
 							this->projects.insert(make_pair(path, make_shared<Project>(path, locationType, relativePath)));
 							ofxCvGui::Utils::drawProcessingNotice("Found " + ofToString(this->projects.size()) + " projects...");
 						}

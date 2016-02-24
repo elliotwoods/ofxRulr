@@ -37,14 +37,14 @@
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="ofxRulr_Nodes.props" />
     <Import Project="..\Core\ofxRulr_Core.props" />
-    <Import Project="..\..\ofxAddonLib\ofxAddonLib.props" />
+    <Import Project="..\..\..\addons\ofxAddonLib\ofxAddonLib.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="ofxRulr_Nodes.props" />
     <Import Project="..\Core\ofxRulr_Core.props" />
-    <Import Project="..\..\ofxAddonLib\ofxAddonLib.props" />
+    <Import Project="..\..\..\addons\ofxAddonLib\ofxAddonLib.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -222,6 +222,12 @@
     <ClInclude Include="..\..\ofxGLM\libs\glm\virtrev\xstream.hpp" />
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h" />
     <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h" />
+    <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\assert.hpp" />
+    <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\del_interface.hpp" />
+    <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\dpoint.hpp" />
+    <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\triangle.h" />
+    <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\triangle_impl.hpp" />
+    <ClInclude Include="..\..\ofxTriangle\src\ofxTriangle.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
     <ClInclude Include="src\ofxRulr\Data\Channels\Address.h" />
     <ClInclude Include="src\ofxRulr\Data\Channels\Channel.h" />
@@ -237,6 +243,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\DMX\MovingHead.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Sharpy.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Transmit.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Export\Mesh.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Board.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h" />
@@ -249,6 +256,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h" />
@@ -266,6 +274,18 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxTriangle\libs\Triangle\src\assert.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxTriangle\libs\Triangle\src\del_impl.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxTriangle\src\ofxTriangle.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -287,6 +307,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\DMX\MovingHead.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Sharpy.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Transmit.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Export\Mesh.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Board.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Model.cpp" />
@@ -297,6 +318,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp" />
@@ -415,16 +437,16 @@
     <None Include="..\..\ofxGLM\libs\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ofxGraycode\ofxGraycodeLib\ofxGraycodeLib.vcxproj">
+    <ProjectReference Include="..\..\..\addons\ofxGraycode\ofxGraycodeLib\ofxGraycodeLib.vcxproj">
       <Project>{ba65a9dd-2be2-4ff8-a9c6-6ac6624cddc3}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj">
+    <ProjectReference Include="..\..\..\addons\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj">
       <Project>{cd4455e0-0454-4c3c-bb42-9d15d16a34dd}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\ofxNonLinearFit\ofxNonLinearFitLib\ofxNonLinearFit.vcxproj">
+    <ProjectReference Include="..\..\..\addons\ofxNonLinearFit\ofxNonLinearFitLib\ofxNonLinearFit.vcxproj">
       <Project>{c087079e-2a0e-4b85-a479-c28e2d01a048}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\ofxRay\ofxRayLib\ofxRayLib.vcxproj">
+    <ProjectReference Include="..\..\..\addons\ofxRay\ofxRayLib\ofxRayLib.vcxproj">
       <Project>{048e1ec4-64fe-4aac-b524-1bd56a1fc726}</Project>
     </ProjectReference>
   </ItemGroup>

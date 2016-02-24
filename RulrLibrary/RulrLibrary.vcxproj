@@ -105,7 +105,7 @@
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
       <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj">
+    <ProjectReference Include="..\..\..\addons\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj">
       <Project>{630936f8-c65f-4ab9-92ad-80569eaa7782}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.vcxproj">
@@ -114,6 +114,10 @@
     <ProjectReference Include="..\Nodes\Nodes.vcxproj">
       <Project>{33d577f9-86e9-4f15-81f1-256a00bbe3ea}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RulrLibrary_Debug.def" />
+    <None Include="RulrLibrary_Release.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -7,6 +7,15 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace AppTester{
 			//----------
+			Project::BuildConfiguration::BuildConfiguration(Platform platform, Configuration configuration) {
+				this->platform = platform;
+				this->configuration = configuration;
+
+				this->errors.push_back("Test error");
+				this->warnings.push_back("Test error");
+			}
+
+			//----------
 			Project::Project() {
 				this->onDraw += [this](DrawArguments & args) {
 					//background
@@ -25,22 +34,13 @@ namespace ofxRulr {
 					ofPopStyle();
 
 					//title
-					ofxCvGui::Utils::drawText(this->relativePath.string(), 90, 5, false);
+					ofxCvGui::Utils::drawText(this->relativePath.string(), 5, 5, false);
 				};
 
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
 				this->elements->addListenersToParent(this, true);
 
-				auto buildButton = ofxCvGui::Widgets::makeButton("Build", [this]() {
-					this->build();
-				});
-				this->elements->add(buildButton);
-
-				this->onBoundsChange += [this, buildButton](BoundsChangeArguments & args) {
-					buildButton->setBounds(ofRectangle(0, 0, 80, args.localBounds.height));
-				};
-
-				this->setHeight(50.0f);
+				this->rebuildGui();
 			}
 
 			//----------
@@ -50,10 +50,12 @@ namespace ofxRulr {
 				this->locationType = locationType;
 				this->relativePath = relativePath;
 
-				this->configurations.insert(make_pair(Platform::Win32, Configuration::Debug));
-				this->configurations.insert(make_pair(Platform::Win32, Configuration::Release));
-				this->configurations.insert(make_pair(Platform::x64, Configuration::Debug));
-				this->configurations.insert(make_pair(Platform::x64, Configuration::Release));
+				this->buildConfigurations.push_back(make_shared<BuildConfiguration>(Platform::Win32, Configuration::Debug));
+				this->buildConfigurations.push_back(make_shared<BuildConfiguration>(Platform::Win32, Configuration::Release));
+				this->buildConfigurations.push_back(make_shared<BuildConfiguration>(Platform::x64, Configuration::Debug));
+				this->buildConfigurations.push_back(make_shared<BuildConfiguration>(Platform::x64, Configuration::Release));
+
+				this->rebuildGui();
 			}
 
 			//----------
@@ -65,20 +67,21 @@ namespace ofxRulr {
 			void Project::build() {
 				auto buildExe = Project::getMSBuildLocation().get();
 
-				for (auto configuration : this->configurations) {
+				for (auto buildConfiguration : this->buildConfigurations) {
 					stringstream execString;
-					execString << "cmd /S /c \"" << buildExe << "\" \"" << this->path.string() << "\"";
-					
-					switch (configuration.first) {
+					execString << "cmd /c";
+					execString << " \"" << buildExe << "\"";
+
+					switch (buildConfiguration->platform) {
 					case Win32:
-						execString << " /pPlatform=Win32";
+						execString << " /p:Platform=Win32";
 						break;
 					case x64:
-						execString << " /pPlatform=x64";
+						execString << " /p:Platform=x64";
 						break;
 					}
 
-					switch (configuration.second) {
+					switch (buildConfiguration->configuration) {
 					case Debug:
 						execString << " /p:Configuration=Debug";
 						break;
@@ -86,14 +89,36 @@ namespace ofxRulr {
 						execString << " /p:Configuration=Release";
 						break;
 					}
-					
+
+					execString << " /verbosity:Quiet";
+
+					execString << " " << this->path.string();
+
 					cout << execString << endl;
 
-					ofSystem(execString.str().c_str());
-				}
-				
+					ofxCvGui::Utils::drawProcessingNotice("Building [" + this->relativePath.string() + "] " + toString(buildConfiguration->platform) + "|" + toString(buildConfiguration->configuration));
+					{
+#ifdef TARGET_WIN32
+						auto handle = _popen(execString.str().c_str(), "r");
+#else
+						auto handle = popen(execString.str().c_str(), "r");
+#endif
+						if (!handle) {
+							throw(Exception("Failed to execute command [" + execString.str() + "]"));
+						}
 
-				system(buildExe.c_str());
+						auto charachter = fgetc(handle);
+						while (charachter != EOF) {
+							cout << (char) charachter;
+							charachter = fgetc(handle);
+						}
+#ifdef TARGET_WIN32
+						_pclose(handle);
+#else
+						pclose(handle);
+#endif
+					}
+				}
 			}
 
 			//----------
@@ -105,29 +130,125 @@ namespace ofxRulr {
 			//----------
 			void Project::serialize(Json::Value & json) {
 				json["LocationType"] = this->locationType;
+				json["path"] = this->path.string();
 				json["relativePath"] = this->relativePath.string();
 
-				auto & jsonConfigurations = json["configurations"];
+				auto & jsonConfigurations = json["buildConfigurations"];
 				int i = 0;
-				for (const auto & configuration : this->configurations) {
+				for (const auto & buildConfiguration : this->buildConfigurations) {
 					auto & jsonConfiguration = jsonConfigurations[i++];
-					jsonConfiguration["Platform"] = configuration.first;
-					jsonConfiguration["Configuration"] = configuration.second;
+					jsonConfiguration["platform"] = buildConfiguration->platform;
+					jsonConfiguration["configuration"] = buildConfiguration->configuration;
+
+					auto warningIndex = 0;
+					for (auto warning : buildConfiguration->warnings) {
+						jsonConfiguration["warnings"][warningIndex] = warning;
+					}
+
+					auto errorIndex = 0;
+					for (auto error : buildConfiguration->errors) {
+						jsonConfiguration["errors"][errorIndex] = error;
+					}
+
+					jsonConfiguration["enabled"] = buildConfiguration->enabled;
 				}
 			}
 
 			//----------
 			void Project::deserialize(const Json::Value & json) {
 				this->locationType = (LocationType) json["LocationType"].asInt();
+				this->path = filesystem::path(json["path"].asString());
 				this->relativePath = filesystem::path(json["relativePath"].asString());
 
-				this->configurations.clear();
-				const auto & jsonConfigurations= json["configurations"];
+				this->buildConfigurations.clear();
+				const auto & jsonConfigurations= json["buildConfigurations"];
 				for (auto & jsonConfiguration : jsonConfigurations) {
-					auto platform = (Platform) jsonConfiguration["Platform"].asInt();
-					auto configuration = (Configuration) jsonConfiguration["Configuration"].asInt();
-					this->configurations.insert(make_pair(platform, configuration));
+					auto platform = (Platform) jsonConfiguration["platform"].asInt();
+					auto configuration = (Configuration) jsonConfiguration["configuration"].asInt();
+					auto buildConfiguration = make_shared<BuildConfiguration>(platform, configuration);
+					buildConfiguration->enabled = jsonConfiguration["enabled"].asBool();
+
+					for (const auto & jsonWarning : jsonConfiguration["warnings"]) {
+						buildConfiguration->warnings.push_back(jsonWarning.asString());
+					}
+					for (const auto & jsonError : jsonConfiguration["errors"]) {
+						buildConfiguration->errors.push_back(jsonError.asString());
+					}
 				}
+
+				this->rebuildGui();
+			}
+
+			//----------
+			string Project::toString(Platform platform) {
+				switch (platform) {
+				case Win32:
+					return "Win32";
+				case x64:
+					return "x64";
+				default:
+					return "Unsupported";
+				}
+			}
+
+			//----------
+			string Project::toString(Configuration configuration) {
+				switch (configuration) {
+				case Release:
+					return "Release";
+				case Debug:
+					return "Debug";
+				default:
+					return "Unsupported";
+				}
+			}
+
+			//----------
+			void Project::rebuildGui() {
+				this->elements->clear();
+
+				auto height = 20.0f;
+
+				auto buildButton = ofxCvGui::Widgets::makeButton("Build", [this]() {
+					this->build();
+				});
+				this->elements->add(buildButton);
+
+				for (auto buildConfiguration : this->buildConfigurations) {
+					auto element = ofxCvGui::makeElement();
+
+					element->onDraw += [buildConfiguration](ofxCvGui::DrawArguments & args) {
+						ofxCvGui::Utils::drawText(toString(buildConfiguration->platform), 0, 0, false);
+						ofxCvGui::Utils::drawText(toString(buildConfiguration->configuration), 50, 0, false);
+
+						if (!buildConfiguration->warnings.empty()) {
+							ofxAssets::image("ofxRulr::AppTester::warning").draw(100, 20, 20);
+							ofxCvGui::Utils::drawText(toString(buildConfiguration->platform), 120, 0, false);
+						}
+
+						if (!buildConfiguration->errors.empty()) {
+							ofxAssets::image("ofxRulr::AppTester::error").draw(160, 20, 20);
+							ofxCvGui::Utils::drawText(toString(buildConfiguration->platform), 180, 0, false);
+						}
+					};
+					element->setHeight(20.0f);
+					height += 20.0f;
+				}
+
+				this->onBoundsChange += [this, buildButton](BoundsChangeArguments & args) {
+					buildButton->setBounds(ofRectangle(0, 20, 80, args.localBounds.height - 20));
+					auto y = 20.0f;
+					for (auto buildConfigurationElement : this->buildConfigurationElements) {
+						auto bounds = buildConfigurationElement->getBounds();
+						bounds.x = buildButton->getWidth();
+						bounds.width = args.localBounds.width - bounds.x;
+						bounds.y = y;
+						buildConfigurationElement->setBounds(bounds);
+						y += bounds.height;
+					}
+				};
+
+				this->setHeight(height);
 			}
 		}
 	}

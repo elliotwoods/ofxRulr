@@ -19,6 +19,15 @@ namespace ofxRulr {
 					Debug
 				};
 
+				struct BuildConfiguration {
+					BuildConfiguration(Platform, Configuration);
+					Platform platform;
+					Configuration configuration;
+					vector<string> warnings;
+					vector<string> errors;
+					bool enabled = true;
+				};
+
 				enum LocationType {
 					Addons = 0,
 					Apps
@@ -35,16 +44,21 @@ namespace ofxRulr {
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
+
+				static string toString(Platform);
+				static string toString(Configuration);
 			protected:
+				void rebuildGui();
+
 				filesystem::path path;
 				LocationType locationType;
 				filesystem::path relativePath;
 
-
 				bool ignore = false;
-				set<pair<Platform, Configuration>> configurations;
+				vector<shared_ptr<BuildConfiguration>> buildConfigurations;
 
 				ofxCvGui::ElementGroupPtr elements;
+				ofxCvGui::ElementSet buildConfigurationElements;
 			};
 		}
 	}

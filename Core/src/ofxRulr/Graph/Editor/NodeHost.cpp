@@ -101,7 +101,7 @@ namespace ofxRulr {
 
 					this->outputPinPosition = ofVec2f(this->getWidth(), this->getHeight() / 2.0f);
 					const auto iconSize = 48;
-					outputPinView->setBounds(ofRectangle(this->getOutputPinPosition() - ofVec2f(iconSize + 16, iconSize / 2), iconSize, iconSize));
+					outputPinView->setBounds(ofRectangle(this->getOutputPinPosition() - ofVec2f(iconSize + 20, iconSize / 2), iconSize, iconSize));
 
 					auto & resizeImage = image("ofxRulr::resizeHandle");
 					resizeHandle->setBounds(ofRectangle(args.localBounds.width - resizeImage.getWidth(), args.localBounds.height - resizeImage.getHeight(), resizeImage.getWidth(), resizeImage.getHeight()));

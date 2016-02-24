@@ -56,25 +56,25 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
-    <Import Project="..\..\ofxBlackMagic2\ofxBlackmagicLib\ofxBlackMagic.props" />
+    <Import Project="..\..\..\addons\ofxBlackMagic2\ofxBlackmagicLib\ofxBlackMagic.props" />
     <Import Project="..\ofxRulr_Plugin.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
-    <Import Project="..\..\ofxBlackMagic2\ofxBlackmagicLib\ofxBlackMagic.props" />
+    <Import Project="..\..\..\addons\ofxBlackMagic2\ofxBlackmagicLib\ofxBlackMagic.props" />
     <Import Project="..\ofxRulr_Plugin.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
-    <Import Project="..\..\ofxBlackMagic2\ofxBlackmagicLib\ofxBlackMagic.props" />
+    <Import Project="..\..\..\addons\ofxBlackMagic2\ofxBlackmagicLib\ofxBlackMagic.props" />
     <Import Project="..\ofxRulr_Plugin.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
-    <Import Project="..\..\ofxBlackMagic2\ofxBlackmagicLib\ofxBlackMagic.props" />
+    <Import Project="..\..\..\addons\ofxBlackMagic2\ofxBlackmagicLib\ofxBlackMagic.props" />
     <Import Project="..\ofxRulr_Plugin.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -141,7 +141,7 @@
     <ClCompile Include="src\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ofxBlackmagic2\ofxBlackmagicLib\ofxBlackmagicLib.vcxproj">
+    <ProjectReference Include="..\..\..\addons\ofxBlackmagic2\ofxBlackmagicLib\ofxBlackmagicLib.vcxproj">
       <Project>{e57be93f-5ba0-4165-8861-df6653f11a37}</Project>
     </ProjectReference>
   </ItemGroup>
