@@ -116,16 +116,16 @@ namespace ofxRulr {
 			void View::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				inspector->add(Widgets::Title::make("View", Widgets::Title::Level::H2));
+				inspector->add(new Widgets::Title("View", Widgets::Title::Level::H2));
 				inspector->add(make_shared<Widgets::LiveValue<string>>("Resolution", [this](){
 					string msg;
 					msg = ofToString((int)this->getWidth()) + ", " + ofToString((int)this->getHeight());
 					return msg;
 				}));
 
-				inspector->add(Widgets::Title::make("Camera matrix", Widgets::Title::Level::H3));
+				inspector->add(new Widgets::Title("Camera matrix", Widgets::Title::Level::H3));
 				auto addCameraMatrixParameter = [this, inspector](ofParameter<float> & parameter) {
-					auto slider = Widgets::Slider::make(parameter);
+					auto slider = new Widgets::Slider(parameter);
 					slider->onValueChange += [this](ofParameter<float> &) {
 						this->markViewDirty();
 					};
@@ -137,7 +137,7 @@ namespace ofxRulr {
 				addCameraMatrixParameter(this->principalPointX);
 				addCameraMatrixParameter(this->principalPointY);
 
-				inspector->add(Widgets::EditableValue<float>::make("Throw ratio X", [this]() {
+				inspector->add(new Widgets::EditableValue<float>("Throw ratio X", [this]() {
 					return this->viewInObjectSpace.getThrowRatio();
 				}, [this](string newValueString) {
 					auto newThrowRatio = ofToFloat(newValueString);
@@ -148,7 +148,7 @@ namespace ofxRulr {
 						this->markViewDirty();
 					}
 				}));
-				inspector->add(Widgets::EditableValue<float>::make("Pixel aspect ratio", [this]() {
+				inspector->add(new Widgets::EditableValue<float>("Pixel aspect ratio", [this]() {
 					return this->focalLengthY / this->focalLengthX;
 				}, [this](string newValueString) {
 					auto newPixelAspectRatio = ofToFloat(newValueString);
@@ -158,7 +158,7 @@ namespace ofxRulr {
 					}
 				}));
 
-				inspector->add(Widgets::EditableValue<ofVec2f>::make("Lens offset", [this]() {
+				inspector->add(new Widgets::EditableValue<ofVec2f>("Lens offset", [this]() {
 					return this->getViewInObjectSpace().getLensOffset();
 				}, [this](string newValueString) {
 					auto newValueStrings = ofSplitString(newValueString, ",");
@@ -170,31 +170,31 @@ namespace ofxRulr {
 				}));
 
 				if (this->hasDistortion) {
-					inspector->add(Widgets::Spacer::make());
+					inspector->add(new Widgets::Spacer());
 
-					inspector->add(Widgets::Title::make("Distortion coefficients", Widgets::Title::Level::H3));
+					inspector->add(new Widgets::Title("Distortion coefficients", Widgets::Title::Level::H3));
 					for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-						inspector->add(Widgets::Slider::make(this->distortion[i]));
+						inspector->add(new Widgets::Slider(this->distortion[i]));
 					}
 				}
 
-				inspector->add(Widgets::Spacer::make());
+				inspector->add(new Widgets::Spacer());
 
-				inspector->add(Widgets::Button::make("Export View matrix...", [this]() {
+				inspector->add(new Widgets::Button("Export View matrix...", [this]() {
 					try {
 						this->exportViewMatrix();
 					}
 					RULR_CATCH_ALL_TO_ALERT
 				}));
 
-				inspector->add(Widgets::Button::make("Export ofxRay::Camera...", [this]() {
+				inspector->add(new Widgets::Button("Export ofxRay::Camera...", [this]() {
 					try {
 						this->exportRayCamera();
 					}
 					RULR_CATCH_ALL_TO_ALERT
 				}));
 
-				inspector->add(Widgets::Button::make("Export YML...", [this]() {
+				inspector->add(new Widgets::Button("Export YML...", [this]() {
 					try {
 						this->exportYaml();
 					}

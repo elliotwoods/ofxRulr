@@ -290,7 +290,7 @@ namespace ofxRulr {
 					slider->addIntValidator();
 					inspector->add(slider);
 					
-					inspector->add(ofxCvGui::Widgets::LiveValue<string>::make("Warning", [this]() {
+					inspector->add(new ofxCvGui::Widgets::LiveValue<string>("Warning", [this]() {
 						bool xOdd = (int) this->checkerboard.cornersX & 1;
 						bool yOdd = (int) this->checkerboard.cornersY & 1;
 						if (xOdd && yOdd) {

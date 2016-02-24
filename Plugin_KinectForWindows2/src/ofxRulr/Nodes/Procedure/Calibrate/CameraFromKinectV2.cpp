@@ -246,11 +246,11 @@ namespace ofxRulr {
 				void CameraFromKinectV2::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 					auto inspector = inspectArgs.inspector;
 
-					inspector->add(ofxCvGui::Widgets::LiveValue<int>::make("Correspondences found", [this]() {
+					inspector->add(new ofxCvGui::Widgets::LiveValue<int>("Correspondences found", [this]() {
 						return (int) this->correspondences.size();
 					}));
 
-					auto addButton = MAKE(ofxCvGui::Widgets::Button, "Add Capture", [this]() {
+					auto addButton = new ofxCvGui::Widgets::Button("Add Capture", [this]() {
 						try {
 							Utils::ScopedProcess scopedProcess("CameraFromKinectV2 - addCapture");
 							this->addCapture();
@@ -265,7 +265,7 @@ namespace ofxRulr {
 						this->correspondences.clear();
 					}));
 
-					auto calibrateButton = MAKE(ofxCvGui::Widgets::Button, "Calibrate", [this]() {
+					auto calibrateButton = new ofxCvGui::Widgets::Button("Calibrate", [this]() {
 						try {
 							this->calibrate();
 						}
@@ -273,10 +273,10 @@ namespace ofxRulr {
 					}, OF_KEY_RETURN);
 					calibrateButton->setHeight(100.0f);
 					inspector->add(calibrateButton);
-					inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<float>, "Reprojection error", [this]() {
+					inspector->add(new ofxCvGui::Widgets::LiveValue<float>("Reprojection error", [this]() {
 						return this->error;
 					}));
-					inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->usePreTest));
+					inspector->add(new ofxCvGui::Widgets::Toggle(this->usePreTest));
 				}
 
 				//----------

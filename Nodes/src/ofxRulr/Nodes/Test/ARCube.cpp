@@ -158,13 +158,11 @@ namespace ofxRulr {
 			//----------
 			void ARCube::populateInspector(InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
-				auto activeWhenWidget = Widgets::MultipleChoice::make("Active");
-				activeWhenWidget->addOption("When selected");
-				activeWhenWidget->addOption("Always");
+				auto activeWhenWidget = new Widgets::MultipleChoice("Active", { "When Selected", "Always" });
 				activeWhenWidget->entangle(this->activewhen);
 				inspector->add(activeWhenWidget);
 
-				inspector->add(Widgets::Indicator::make("Found board", [this]() {
+				inspector->add(new Widgets::Indicator("Found board", [this]() {
 					if (this->getInputPin<Item::Board>()->isConnected() && this->getInputPin<Item::Camera>()->isConnected()) {
 						if (this->foundBoard) {
 							return Widgets::Indicator::Status::Good;
@@ -177,7 +175,7 @@ namespace ofxRulr {
 						return Widgets::Indicator::Status::Error;
 					}
 				}));
-				inspector->add(Widgets::LiveValue<string>::make("Board position", [this]() {
+				inspector->add(new Widgets::LiveValue<string>("Board position", [this]() {
 					if (this->foundBoard) {
 						stringstream ss;
 						ss << (ofVec3f() * this->boardTransform);
@@ -188,12 +186,13 @@ namespace ofxRulr {
 					}
 				}));
 
-				auto drawStyleSelector = Widgets::MultipleChoice::make("Draw style");
-				drawStyleSelector->addOption("Axes");
-				drawStyleSelector->addOption("Board");
-				drawStyleSelector->addOption("Cube");
-				drawStyleSelector->entangle(this->drawStyle);
-				inspector->add(drawStyleSelector);
+				auto drawStyleSelector = inspector->add(new Widgets::MultipleChoice("Draw style"));
+				{
+					drawStyleSelector->addOption("Axes");
+					drawStyleSelector->addOption("Board");
+					drawStyleSelector->addOption("Cube");
+					drawStyleSelector->entangle(this->drawStyle);
+				}
 			}
 
 			//----------

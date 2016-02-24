@@ -141,9 +141,9 @@ namespace ofxRulr {
 			void Fixture::populateInspector(InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				inspector->add(Widgets::Title::make("DMX::Fixture", Widgets::Title::Level::H2));
-				inspector->add(Widgets::EditableValue<ChannelIndex>::make(this->channelIndex));
-				inspector->add(Widgets::EditableValue<ChannelIndex>::make(this->universeIndex));
+				inspector->add(new Widgets::Title("DMX::Fixture", Widgets::Title::Level::H2));
+				inspector->add(new Widgets::EditableValue<ChannelIndex>(this->channelIndex));
+				inspector->add(new Widgets::EditableValue<ChannelIndex>(this->universeIndex));
 				
 				for (int i = 0; i < this->channels.size(); i++) {
 					auto channel = this->channels[i];
@@ -155,21 +155,20 @@ namespace ofxRulr {
 					if (i % 8 == 0) {
 						auto rangeMin = i + 1;
 						auto rangeMax = MIN(i + 8, this->channels.size());
-						inspector->add(Widgets::Spacer::make());
-						inspector->add(Widgets::Title::make("Channels " + ofToString(rangeMin) + "..." + ofToString(rangeMax), Widgets::Title::Level::H3));
+						inspector->add(new Widgets::Spacer());
+						inspector->add(new Widgets::Title("Channels " + ofToString(rangeMin) + "..." + ofToString(rangeMax), Widgets::Title::Level::H3));
 					}
 
 					if (channel->generateValue) {
 						//if it has a value generator, make a live value
-						inspector->add(Widgets::LiveValue<int>::make(channel->value.getName(), [this, channel]() {
+						inspector->add(new Widgets::LiveValue<int>(channel->value.getName(), [this, channel]() {
 							return channel->value.get();
 						}));
 					}
 					else {
 						//make a slider
-						auto slider = Widgets::Slider::make(this->channels[i]->value);
+						auto slider = inspector->add(new Widgets::Slider(this->channels[i]->value));
 						slider->addIntValidator();
-						inspector->add(slider);
 					}
 				}
 			}

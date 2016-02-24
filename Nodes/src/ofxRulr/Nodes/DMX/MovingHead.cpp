@@ -225,21 +225,21 @@ namespace ofxRulr {
 			void MovingHead::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				inspector->add(Widgets::Title::make("DMX::MovingHead", Widgets::Title::Level::H2));
-				inspector->add(Widgets::Slider::make(this->pan));
-				inspector->add(Widgets::Slider::make(this->tilt));
-				inspector->add(Widgets::Button::make("Home", [this]() {
+				inspector->add(new Widgets::Title("DMX::MovingHead", Widgets::Title::Level::H2));
+				inspector->add(new Widgets::Slider(this->pan));
+				inspector->add(new Widgets::Slider(this->tilt));
+				inspector->add(new Widgets::Button("Home", [this]() {
 					this->setHome();
 				}));
-				inspector->add(Widgets::Slider::make(this->brightness));
-				inspector->add(Widgets::Slider::make(this->iris));
-				inspector->add(Widgets::Toggle::make(this->power));
-				inspector->add(Widgets::EditableValue<string>::make(this->powerCircuit));
-				inspector->add(Widgets::EditableValue<int>::make(this->pauseBetweenPowerUps));
-				inspector->add(Widgets::Indicator::make("Power status", [this]() {
+				inspector->add(new Widgets::Slider(this->brightness));
+				inspector->add(new Widgets::Slider(this->iris));
+				inspector->add(new Widgets::Toggle(this->power));
+				inspector->add(new Widgets::EditableValue<string>(this->powerCircuit));
+				inspector->add(new Widgets::EditableValue<int>(this->pauseBetweenPowerUps));
+				inspector->add(new Widgets::Indicator("Power status", [this]() {
 					return (Widgets::Indicator::Status) this->powerStateSignal;
 				}));
-				inspector->add(Widgets::Slider::make(this->tiltOffset));
+				inspector->add(new Widgets::Slider(this->tiltOffset));
 				
 			}
 		}

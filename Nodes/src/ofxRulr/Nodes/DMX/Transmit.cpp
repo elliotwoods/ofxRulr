@@ -127,8 +127,8 @@ namespace ofxRulr {
 			void Transmit::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				for (int i = 0; i < this->universes.size(); i++) {
-					inspector->add(Widgets::Title::make("Universe " + ofToString(i)));
-					inspector->add(Widgets::Toggle::make(this->universes[i]->blackoutEnabled));
+					inspector->add(new Widgets::Title("Universe " + ofToString(i)));
+					inspector->add(new Widgets::Toggle(this->universes[i]->blackoutEnabled));
 				}
 			}
 
@@ -169,7 +169,7 @@ namespace ofxRulr {
 				for (int i = 0; i < this->universes.size(); i++) {
 					auto universe = universes[i];
 
-					this->view->add(Widgets::Title::make("Universe " + ofToString(i) + ":", Widgets::Title::Level::H3));
+					this->view->add(new Widgets::Title("Universe " + ofToString(i) + ":", Widgets::Title::Level::H3));
 
 					auto preview = make_shared<Element>();
 					preview->onDraw += [universe](DrawArguments & args) {

@@ -121,12 +121,11 @@ namespace ofxRulr {
 			void Sharpy::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				auto vectorChannelsEnabledWidget = Widgets::Toggle::make(this->vectorChannelsEnabled);
+				auto vectorChannelsEnabledWidget = inspector->add(new Widgets::Toggle(this->vectorChannelsEnabled));
 				vectorChannelsEnabledWidget->onValueChange += [this](ofParameter<bool> &) {
 					this->updateVectorChannelsEnabled();
 					InspectController::X().refresh();
 				};
-				inspector->add(vectorChannelsEnabledWidget);
 			}
 
 			//----------

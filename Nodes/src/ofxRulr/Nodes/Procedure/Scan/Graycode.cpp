@@ -231,9 +231,9 @@ namespace ofxRulr {
 				void Graycode::populateInspector(InspectArguments & inspectArguments) {
 					auto inspector = inspectArguments.inspector;
 					
-					inspector->add(Widgets::Title::make("Scan", Widgets::Title::Level::H2));
+					inspector->add(new Widgets::Title("Scan", Widgets::Title::Level::H2));
 					{
-						auto scanButton = Widgets::Button::make("SCAN", [this]() {
+						auto scanButton = new Widgets::Button("SCAN", [this]() {
 							try {
 								this->runScan();
 							}
@@ -241,10 +241,11 @@ namespace ofxRulr {
 						}, OF_KEY_RETURN);
 						scanButton->setHeight(100.0f);
 						inspector->add(scanButton);
-						inspector->add(Widgets::Button::make("Clear", [this]() {
+
+						inspector->add(new Widgets::Button("Clear", [this]() {
 							this->clear();
 						}));
-						inspector->add(Widgets::Button::make("Save ofxGraycode::DataSet...", [this]() {
+						inspector->add(new Widgets::Button("Save ofxGraycode::DataSet...", [this]() {
 							if (this->decoder.hasData()) {
 								this->decoder.saveDataSet();
 								this->decoder.savePreviews();
@@ -253,46 +254,47 @@ namespace ofxRulr {
 								ofSystemAlertDialog("No data to save yet. Have you scanned?");
 							}
 						}));
-						inspector->add(Widgets::Button::make("Load ofxGraycode::DataSet...", [this]() {
+						inspector->add(new Widgets::Button("Load ofxGraycode::DataSet...", [this]() {
 							this->decoder.loadDataSet();
 						}));
 						
-						inspector->add(Widgets::Title::make("Decoder", Widgets::Title::Level::H2));
-						inspector->add(Widgets::LiveValue<string>::make("Has data", [this]() {
+						inspector->add(new Widgets::Title("Decoder", Widgets::Title::Level::H2));
+						inspector->add(new Widgets::LiveValue<string>("Has data", [this]() {
 							return this->decoder.hasData() ? "True" : "False";
 						}));
-						inspector->add(Widgets::Slider::make(this->delay));
-						auto thresholdSlider = Widgets::Slider::make(this->threshold);
+						inspector->add(new Widgets::Slider(this->delay));
+
+						auto thresholdSlider = new Widgets::Slider(this->threshold);
 						thresholdSlider->addIntValidator();
 						thresholdSlider->onValueChange += [this](ofParameter<float> &) {
 							this->decoder.setThreshold(this->threshold);
 							this->previewDirty = true;
 						};
 						inspector->add(thresholdSlider);
-						auto brightnessSlider = Widgets::Slider::make(this->brightness);
+
+						auto brightnessSlider = new Widgets::Slider(this->brightness);
 						brightnessSlider->addIntValidator();
 						inspector->add(brightnessSlider);
 					}
 
-					inspector->add(Widgets::Title::make("Payload", Widgets::Title::Level::H2));
+					inspector->add(new Widgets::Title("Payload", Widgets::Title::Level::H2));
 					{
-						inspector->add(Widgets::LiveValue<unsigned int>::make("Width", [this]() { return this->payload.getWidth(); }));
-						inspector->add(Widgets::LiveValue<unsigned int>::make("Height", [this]() { return this->payload.getHeight(); }));
+						inspector->add(new Widgets::LiveValue<unsigned int>("Width", [this]() { return this->payload.getWidth(); }));
+						inspector->add(new Widgets::LiveValue<unsigned int>("Height", [this]() { return this->payload.getHeight(); }));
 					}
 
-					inspector->add(Widgets::Spacer::make());
+					inspector->add(new Widgets::Spacer());
 					
-					inspector->add(Widgets::Title::make("Preview", Widgets::Title::Level::H2));
+					inspector->add(new Widgets::Title("Preview", Widgets::Title::Level::H2));
 					{
-						auto videoOutputModeSelector = Widgets::MultipleChoice::make("Video output mode");
+						auto videoOutputModeSelector = inspector->add(new Widgets::MultipleChoice("Video output mode"));
 						{
 							videoOutputModeSelector->addOption("None");
 							videoOutputModeSelector->addOption("Test Patt..");
 							videoOutputModeSelector->addOption("Data");
 							videoOutputModeSelector->entangle(this->videoOutputMode);
-							inspector->add(videoOutputModeSelector);
 						}
-						auto previewModeSelector = Widgets::MultipleChoice::make("Preview mode");
+						auto previewModeSelector = inspector->add(new Widgets::MultipleChoice("Preview mode"));
 						{
 							previewModeSelector->addOption("CinP");
 							previewModeSelector->addOption("PinC");
@@ -303,9 +305,8 @@ namespace ofxRulr {
 							previewModeSelector->onValueChange += [this](const int) {
 								this->previewDirty = true;
 							};
-							inspector->add(previewModeSelector);
 						}
-						inspector->add(Widgets::LiveValue<string>::make("Mode name",[this](){
+						inspector->add(new Widgets::LiveValue<string>("Mode name",[this](){
 							return this->getPreviewModeString();
 						}));
 					}

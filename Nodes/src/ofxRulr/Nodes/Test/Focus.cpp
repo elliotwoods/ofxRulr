@@ -54,7 +54,7 @@ namespace ofxRulr {
 				
 				auto view = make_shared<Panels::Draws>(this->preview);
 				{
-					auto valueHistory = Widgets::LiveValueHistory::make("Focus value", [this](){
+					auto valueHistory = make_shared<Widgets::LiveValueHistory>("Focus value", [this](){
 						float value;
 						this->resultMutex.lock();
 						{
@@ -144,13 +144,14 @@ namespace ofxRulr {
 			void Focus::populateInspector(InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				auto activeWhenWidget = Widgets::MultipleChoice::make("Active");
-				activeWhenWidget->addOption("When selected");
-				activeWhenWidget->addOption("Always");
-				activeWhenWidget->entangle(this->activewhen);
-				inspector->add(activeWhenWidget);
+				auto activeWhenWidget = inspector->add(new Widgets::MultipleChoice("Active"));
+				{
+					activeWhenWidget->addOption("When selected");
+					activeWhenWidget->addOption("Always");
+					activeWhenWidget->entangle(this->activewhen);
+				}
 				
-				inspector->add(Widgets::EditableValue<int>::make(this->blurSize));
+				inspector->add(new Widgets::EditableValue<int>(this->blurSize));
 				
 				inspector->addSlider(this->highValue);
 				inspector->addSlider(this->lowValue);

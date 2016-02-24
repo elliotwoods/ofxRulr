@@ -49,7 +49,7 @@ namespace ofxRulr {
 			void Assets::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 				auto inspector = inspectArgs.inspector;
 				
-				inspector->add(Widgets::Button::make("Reload assets", [this]() {
+				inspector->add(new Widgets::Button("Reload assets", [this]() {
 					ofxAssets::Register::X().refresh();
 				}));
 			}
@@ -80,7 +80,7 @@ namespace ofxRulr {
 				this->view->clear();
 				this->ownedElements.clear();
 				
-				auto filterWidget = Widgets::EditableValue<string>::make(this->filter);
+				auto filterWidget = make_shared<Widgets::EditableValue<string>>(this->filter);
 				auto filterWidgetWeak = weak_ptr<Element>(filterWidget);
 				filterWidget->onValueChange += [this, filterWidgetWeak](const string &) {
 					auto filterWidget = filterWidgetWeak.lock();
@@ -89,7 +89,7 @@ namespace ofxRulr {
 				this->view->add(filterWidget);
 
 				auto addReloadButton = [this](ElementPtr element, shared_ptr<ofxAssets::BaseAsset> asset) {
-					auto button = Widgets::Button::make("Reload",
+					auto button = make_shared<Widgets::Button>("Reload",
 															[asset]() {
 																asset->reload();
 															});
@@ -237,7 +237,7 @@ namespace ofxRulr {
 						element->setHeight(58.0f);
 						this->view->add(element);
 						
-						auto playButton = Widgets::Toggle::make("Play",
+						auto playButton = make_shared<Widgets::Toggle>("Play",
 						[asset]() {
 							return asset->getSoundPlayer().isPlaying();
 						},

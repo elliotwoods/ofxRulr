@@ -254,7 +254,7 @@ namespace ofxRulr {
 				void CameraFromDepthCamera::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 					auto inspector = inspectArguments.inspector;
 					
-					inspector->add(ofxCvGui::Widgets::LiveValue<int>::make("Correspondences found", [this]() {
+					inspector->add(new ofxCvGui::Widgets::LiveValue<int>("Correspondences found", [this]() {
 						return (int) this->correspondences.size();
 					}));
 					auto addButton = MAKE(ofxCvGui::Widgets::Button, "Add Capture", [this]() {

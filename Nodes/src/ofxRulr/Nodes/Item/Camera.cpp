@@ -252,12 +252,12 @@ namespace ofxRulr {
 				else {
 					//there is no device, and we want to setup a view to select the device
 					auto cameraSelectorView = make_shared<Panels::Scroll>();
-					cameraSelectorView->add(Widgets::EditableValue<int>::make(this->deviceIndex));
-					cameraSelectorView->add(Widgets::Title::make("Select device type:", Widgets::Title::Level::H3));
+					cameraSelectorView->add(new Widgets::EditableValue<int>(this->deviceIndex));
+					cameraSelectorView->add(new Widgets::Title("Select device type:", Widgets::Title::Level::H3));
 
 					auto & factories = ofxMachineVision::Device::FactoryRegister::X();
 					for (auto factory : factories) {
-						auto makeButton = Widgets::Button::make(factory.first, [this, factory]() {
+						auto makeButton = make_shared<Widgets::Button>(factory.first, [this, factory]() {
 							this->setDevice(factory.first);
 						});
 						cameraSelectorView->add(makeButton);
@@ -298,49 +298,48 @@ namespace ofxRulr {
 			void Camera::populateInspector(InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				inspector->add(Widgets::Toggle::make(this->showSpecification));
-				inspector->add(Widgets::Toggle::make(this->showFocusLine));
+				inspector->add(new Widgets::Toggle(this->showSpecification));
+				inspector->add(new Widgets::Toggle(this->showFocusLine));
 
-				inspector->add(Widgets::Title::make("Device", Widgets::Title::H2));
-				inspector->add(Widgets::LiveValue<string>::make("Device Type", [this]() {
+				inspector->add(new Widgets::Title("Device", Widgets::Title::H2));
+				inspector->add(new Widgets::LiveValue<string>("Device Type", [this]() {
 					return this->deviceTypeName;
 				}));
-				auto deviceIndexWidget = Widgets::EditableValue<int>::make("Device Index", [this]() {
+				inspector->add(new Widgets::EditableValue<int>("Device Index", [this]() {
 					return this->deviceIndex;
 				}, [this](const string & deviceIndexSelection) {
 					this->deviceIndex = ofToInt(deviceIndexSelection);
 					this->reopenDevice();
-				});
-				inspector->add(deviceIndexWidget);
-				inspector->add(Widgets::Button::make("Clear device", [this]() {
+				}));
+				inspector->add(new Widgets::Button("Clear device", [this]() {
 					this->clearDevice();
 				}));
-				inspector->add(Widgets::LiveValueHistory::make("Fps [Hz]", [this]() {
+				inspector->add(new Widgets::LiveValueHistory("Fps [Hz]", [this]() {
 					return this->grabber->getFps();
 				}, true));
-				inspector->add(Widgets::LiveValueHistory::make("Timestamp [us]", [this]() {
+				inspector->add(new Widgets::LiveValueHistory("Timestamp [us]", [this]() {
 					return this->grabber->getLastTimestamp();
 				}, false));
-				inspector->add(Widgets::LiveValueHistory::make("Frame index", [this]() {
+				inspector->add(new Widgets::LiveValueHistory("Frame index", [this]() {
 					return this->grabber->getLastFrameIndex();
 				}, false));
 
-				inspector->add(Widgets::Title::make("Properties", Widgets::Title::H2));
+				inspector->add(new Widgets::Title("Properties", Widgets::Title::H2));
 				auto grabber = this->getGrabber();
 				if (grabber) {
 					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Exposure)) {
-						auto exposureSlider = Widgets::Slider::make(this->exposure);
+						auto exposureSlider = new Widgets::Slider(this->exposure);
 						exposureSlider->addIntValidator();
 						inspector->add(exposureSlider);
 					}
 					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Gain)) {
-						inspector->add(Widgets::Slider::make(this->gain));
+						inspector->add(new Widgets::Slider(this->gain));
 					}
 					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Focus)) {
-						inspector->add(Widgets::Slider::make(this->focus));
+						inspector->add(new Widgets::Slider(this->focus));
 					}
 					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Sharpness)) {
-						inspector->add(Widgets::Slider::make(this->sharpness));
+						inspector->add(new Widgets::Slider(this->sharpness));
 					}
 					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_OneShot)) {
 						inspector->add(MAKE(Widgets::Button, "Take Photo", [this]() {

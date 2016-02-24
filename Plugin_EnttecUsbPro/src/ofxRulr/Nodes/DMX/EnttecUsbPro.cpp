@@ -106,7 +106,7 @@ namespace ofxRulr {
 			void EnttecUsbPro::populateInspector(InspectArguments & inspectArgs) {
 				auto inspector = inspectArgs.inspector;
 
-				auto portNameWidget = Widgets::EditableValue<string>::make(this->portName);
+				auto portNameWidget = new Widgets::EditableValue<string>(this->portName);
 				portNameWidget->onEditValue += [this](string & portName) {
 					this->connect();
 				};

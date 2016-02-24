@@ -69,7 +69,7 @@ namespace ofxRulr {
 				void Database::populateInspector(ofxCvGui::InspectArguments & args) {
 					auto inspector = args.inspector;
 
-					inspector->add(Widgets::Button::make("Clear", [this]() {
+					inspector->add(new Widgets::Button("Clear", [this]() {
 						this->clear();
 					}));
 				}
@@ -126,50 +126,50 @@ namespace ofxRulr {
 						case Channel::Type::Int:
 						{
 							const auto & parameter = selectedChannel->getParameter<int>();
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "int"; }));
-							this->detailView->add(Widgets::EditableValue<int>::make(*parameter));
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "int"; }));
+							this->detailView->add(new Widgets::EditableValue<int>(*parameter));
 							break;
 						}
 							
 						case Channel::Type::Float:
 						{
 							const auto & parameter = selectedChannel->getParameter<float>();
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "string"; }));
-							this->detailView->add(Widgets::EditableValue<float>::make(*parameter));
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "string"; }));
+							this->detailView->add(new Widgets::EditableValue<float>(*parameter));
 							break;
 						}
 
 						case Channel::Type::String:
 						{
 							const auto & parameter = selectedChannel->getParameter<string>();
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "string"; }));
-							this->detailView->add(Widgets::EditableValue<string>::make(*parameter));
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "string"; }));
+							this->detailView->add(new Widgets::EditableValue<string>(*parameter));
 							break;
 						}
 
 						case Channel::Type::Vec3f:
 						{
 							const auto & parameter = selectedChannel->getParameter<ofVec3f>();
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Vec3f"; }));
-							this->detailView->add(Widgets::EditableValue<ofVec3f>::make(*parameter));
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "Vec3f"; }));
+							this->detailView->add(new Widgets::EditableValue<ofVec3f>(*parameter));
 							break;
 						}
 
 						case Channel::Type::Vec4f:
 						{
 							const auto & parameter = selectedChannel->getParameter<ofVec4f>();
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "ofVec4f"; }));
-							this->detailView->add(Widgets::EditableValue<ofVec4f>::make(*parameter));
+							this->detailView->add(new Widgets::EditableValue<ofVec4f>(*parameter));
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "ofVec4f"; }));
 							break;
 						}
 						case Channel::Type::Undefined:
 						{
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Undefined"; }));
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "Undefined"; }));
 							break;
 						}
 						default:
 						{
-							this->detailView->add(Widgets::LiveValue<string>::make("Type", []() {return "Unknown"; }));
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "Unknown"; }));
 							break;
 						}
 						}

@@ -59,6 +59,7 @@ namespace ofxRulr {
 
 				ofxCvGui::ElementGroupPtr elements;
 				ofxCvGui::ElementGroupPtr buildConfigurationElements;
+				ofxCvGui::ElementPtr buildButton;
 			};
 		}
 	}

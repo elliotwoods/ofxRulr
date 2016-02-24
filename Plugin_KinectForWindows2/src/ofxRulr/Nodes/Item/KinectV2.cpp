@@ -149,7 +149,7 @@ namespace ofxRulr {
 				selectViewType->entangle(this->viewType);
 				inspector->add(selectViewType);
 
-				inspector->add(Widgets::Title::make("Enabled views", Widgets::Title::Level::H2));
+				inspector->add(new Widgets::Title("Enabled views", Widgets::Title::Level::H2));
 				{
 					auto changeViewsCallback = [this](ofParameter<bool> &) {
 						this->rebuildView();

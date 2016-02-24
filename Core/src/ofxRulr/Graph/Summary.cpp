@@ -109,18 +109,18 @@ namespace ofxRulr {
 			auto inspector = inspectArguments.inspector;
 			
 #ifdef OFXCVGUI_USE_OFXGRABCAM
-			inspector->add(Widgets::Title::make("Cursor", Widgets::Title::Level::H3));
-			inspector->add(Widgets::Toggle::make(this->showCursor));
+			inspector->add(new Widgets::Title("Cursor", Widgets::Title::Level::H3));
+			inspector->add(new Widgets::Toggle(this->showCursor));
 
-			inspector->add(Widgets::LiveValue<ofVec3f>::make("Position", [this]() {
+			inspector->add(new Widgets::LiveValue<ofVec3f>("Position", [this]() {
 				return this->view->getCamera().getCursorWorld();
 			}));
 #endif
 
-			inspector->add(Widgets::Title::make("Grid", Widgets::Title::Level::H3));
-			inspector->add(Widgets::Toggle::make(this->showGrid));
-			inspector->add(Widgets::EditableValue<ofVec3f>::make(this->roomMinimum));
-			inspector->add(Widgets::EditableValue<ofVec3f>::make(this->roomMaximum));
+			inspector->add(new Widgets::Title("Grid", Widgets::Title::Level::H3));
+			inspector->add(new Widgets::Toggle(this->showGrid));
+			inspector->add(new Widgets::EditableValue<ofVec3f>(this->roomMinimum));
+			inspector->add(new Widgets::EditableValue<ofVec3f>(this->roomMaximum));
 		}
 
 

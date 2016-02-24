@@ -190,8 +190,8 @@ namespace ofxRulr {
 			void Recorder::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				inspector->add(Widgets::Toggle::make(this->loopPlayback));
-				inspector->add(Widgets::Button::make("Erase blank before first frame", [this]() {
+				inspector->add(new Widgets::Toggle(this->loopPlayback));
+				inspector->add(new Widgets::Button("Erase blank before first frame", [this]() {
 					try {
 						this->performOnFamily([](Recorder * recorder) {
 							recorder->eraseBlankBeforeFirstFrame();
@@ -199,7 +199,7 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 				}));
-				inspector->add(Widgets::Button::make("Stretch recording by factor", [this]() {
+				inspector->add(new Widgets::Button("Stretch recording by factor", [this]() {
 					auto factorString = ofSystemTextBoxDialog("Stretch factor [1x]");
 					auto factor = ofToFloat(factorString);
 					try {
@@ -416,23 +416,23 @@ namespace ofxRulr {
 				
 				if (this->getInput<Recorder>("Master")) {
 					// we have a master attached, so no transport controls
-					this->view->add(Widgets::Title::make("Use Master to control", Widgets::Title::Level::H3));
+					this->view->add(new Widgets::Title("Use Master to control", Widgets::Title::Level::H3));
 				}
 				else {
-					this->view->add(Widgets::Indicator::make("Playing", [this]() {
+					this->view->add(new Widgets::Indicator("Playing", [this]() {
 						if (this->getState() == State::Playing) {
 							return this->getPaused() ? Widgets::Indicator::Status::Warning : Widgets::Indicator::Status::Good;
 						}
 						return Widgets::Indicator::Status::Clear;
 					}));
-					this->view->add(Widgets::Indicator::make("Recording", [this]() {
+					this->view->add(new Widgets::Indicator("Recording", [this]() {
 						if (this->getState() == State::Recording) {
 							return this->getPaused() ? Widgets::Indicator::Status::Warning : Widgets::Indicator::Status::Good;
 						}
 						return Widgets::Indicator::Status::Clear;
 					}));
 
-					this->view->add(Widgets::Toggle::make("Play", [this]() {
+					this->view->add(new Widgets::Toggle("Play", [this]() {
 						return this->getState() == State::Playing;
 					}, [this](bool play) {
 						if (play) {
@@ -446,7 +446,7 @@ namespace ofxRulr {
 							});
 						}
 					}));
-					this->view->add(Widgets::Toggle::make("Record", [this]() {
+					this->view->add(new Widgets::Toggle("Record", [this]() {
 						return this->getState() == State::Recording;
 					}, [this](bool record) {
 						if (record) {
@@ -460,7 +460,7 @@ namespace ofxRulr {
 							});
 						}
 					}));
-					this->view->add(Widgets::Button::make("Clear", [this]() {
+					this->view->add(new Widgets::Button("Clear", [this]() {
 						this->performOnFamily([](Recorder * recorder) {
 							recorder->clear();
 						});

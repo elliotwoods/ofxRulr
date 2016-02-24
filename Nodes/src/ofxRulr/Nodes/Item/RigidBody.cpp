@@ -90,14 +90,14 @@ namespace ofxRulr {
 				//NOTE : WHEN WE CHANGE THESE FROM SLIDERS, LETS ALSO GET RID OF THE RANGE ON THE PARAMETERS
 				// TRANSLATION SHOULDN'T BE BOUND to +/-100
 
-				inspector->add(Widgets::Title::make("RigidBody", Widgets::Title::Level::H2));
+				inspector->add(new Widgets::Title("RigidBody", Widgets::Title::Level::H2));
 
 				inspector->add(make_shared<Widgets::Button>("Clear Transform", [this]() {
 					this->clearTransform();
 				}));
 
 				for (int i = 0; i < 3; i++) {
-					auto slider = Widgets::Slider::make(this->translation[i]);
+					auto slider = new Widgets::Slider(this->translation[i]);
 					slider->onValueChange += [this](ofParameter<float> &) {
 						this->onTransformChange.notifyListeners();
 					};
@@ -105,14 +105,14 @@ namespace ofxRulr {
 
 				}
 				for (int i = 0; i < 3; i++) {
-					auto slider = Widgets::Slider::make(this->rotationEuler[i]);
+					auto slider = new Widgets::Slider(this->rotationEuler[i]);
 					slider->onValueChange += [this](ofParameter<float> &) {
 						this->onTransformChange.notifyListeners();
 					};
 					inspector->add(slider);
 				}
 
-				inspector->add(Widgets::Button::make("Export RigidBody matrix...", [this]() {
+				inspector->add(new Widgets::Button("Export RigidBody matrix...", [this]() {
 					try {
 						this->exportRigidBodyMatrix();
 					}

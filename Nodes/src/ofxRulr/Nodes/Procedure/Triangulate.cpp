@@ -71,7 +71,7 @@ namespace ofxRulr {
 			void Triangulate::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				auto triangulateButton = Widgets::Button::make("Triangulate", [this]() {
+				auto triangulateButton = new Widgets::Button("Triangulate", [this]() {
 					try {
 						this->triangulate();
 					}
@@ -81,17 +81,18 @@ namespace ofxRulr {
 				}, OF_KEY_RETURN);
 				triangulateButton->setHeight(100.0f);
 				inspector->add(triangulateButton);
-				inspector->add(Widgets::Slider::make(this->maxLength));
-				inspector->add(Widgets::Toggle::make(this->giveColor));
-				inspector->add(Widgets::Toggle::make(this->giveTexCoords));
-				inspector->add(Widgets::Slider::make(this->drawPointSize));
-				inspector->add(Widgets::Button::make("Save ofMesh...", [this]() {
+
+				inspector->add(new Widgets::Slider(this->maxLength));
+				inspector->add(new Widgets::Toggle(this->giveColor));
+				inspector->add(new Widgets::Toggle(this->giveTexCoords));
+				inspector->add(new Widgets::Slider(this->drawPointSize));
+				inspector->add(new Widgets::Button("Save ofMesh...", [this]() {
 					auto result = ofSystemSaveDialog("mesh.ply", "Save mesh as PLY");
 					if (result.bSuccess) {
 						this->mesh.save(result.filePath);
 					}
 				}));
-				inspector->add(Widgets::Button::make("Save binary mesh...", [this]() {
+				inspector->add(new Widgets::Button("Save binary mesh...", [this]() {
 					auto result = ofSystemSaveDialog("mesh.bin", "Save mesh as PLY");
 					if (result.bSuccess) {
 						ofstream save(ofToDataPath(result.filePath).c_str(), ios::binary);

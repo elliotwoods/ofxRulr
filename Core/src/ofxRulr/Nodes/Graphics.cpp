@@ -38,17 +38,9 @@ namespace ofxRulr {
 		ofColor Graphics::getColor(const string & nodeTypeName) {
 			auto findColor = this->colors.find(nodeTypeName);
 			if (findColor == this->colors.end()) {
-				//no color yet, let's calculate it
-				auto hash = std::hash<string>()(nodeTypeName);
-				auto hue = hash % 256;
-				auto saturation = (hash >> 8) % 128;
-				auto brightness = (hash >> 12) % 64 + 192;
-
-				pair<string, ofColor> inserter;
-				inserter.second.setHsb(hue, saturation, brightness);
-				this->colors.insert(inserter);
-
-				return inserter.second;
+				auto color = ofxCvGui::Utils::toColor(nodeTypeName);
+				this->colors.emplace(nodeTypeName, color);
+				return color;
 			}
 			else {
 				return findColor->second;

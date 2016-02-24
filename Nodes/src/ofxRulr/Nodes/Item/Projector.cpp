@@ -38,7 +38,7 @@ namespace ofxRulr {
 			void Projector::populateInspector(InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				inspector->add(Widgets::EditableValue<float>::make("Resolution width", [this]() {
+				inspector->add(new Widgets::EditableValue<float>("Resolution width", [this]() {
 					return this->getWidth();
 				}, [this](string valueString) {
 					const auto value = ofToFloat(valueString);
@@ -46,7 +46,7 @@ namespace ofxRulr {
 						this->setWidth(value);
 					}
 				}));
-				inspector->add(Widgets::EditableValue<float>::make("Resolution height", [this]() {
+				inspector->add(new Widgets::EditableValue<float>("Resolution height", [this]() {
 					return this->getHeight();
 				}, [this](string valueString) {
 					const auto value = ofToFloat(valueString);

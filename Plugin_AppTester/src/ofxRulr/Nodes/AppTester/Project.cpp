@@ -38,6 +38,21 @@ namespace ofxRulr {
 					font.drawString(this->relativePath.string(), 5, 20);
 				};
 
+				this->onBoundsChange += [this](BoundsChangeArguments & args) {
+					if (this->buildButton) {
+						this->buildButton->setBounds(ofRectangle(0, 40, 80, args.localBounds.height - 40));
+						auto y = 40.0f;
+						for (auto buildConfigurationElement : this->buildConfigurationElements->getElements()) {
+							auto bounds = buildConfigurationElement->getBounds();
+							bounds.x = buildButton->getWidth();
+							bounds.width = args.localBounds.width - bounds.x;
+							bounds.y = y;
+							buildConfigurationElement->setBounds(bounds);
+							y += bounds.height;
+						}
+					}
+				};
+
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
 				this->elements->addListenersToParent(this, true);
 				this->buildConfigurationElements = make_shared<ofxCvGui::ElementGroup>();
@@ -213,10 +228,11 @@ namespace ofxRulr {
 
 				auto height = 40.0f;
 
-				auto buildButton = ofxCvGui::Widgets::makeButton("Build", [this]() {
+				auto buildButton = make_shared<ofxCvGui::Widgets::Button>("Build", [this]() {
 					this->build();
 				});
 				this->elements->add(buildButton);
+				this->buildButton = buildButton;
 
 				for (auto buildConfiguration : this->buildConfigurations) {
 					auto element = ofxCvGui::makeElement();
@@ -239,19 +255,6 @@ namespace ofxRulr {
 					this->buildConfigurationElements->add(element);
 					height += 20.0f;
 				}
-
-				this->onBoundsChange += [this, buildButton](BoundsChangeArguments & args) {
-					buildButton->setBounds(ofRectangle(0, 40, 80, args.localBounds.height - 40));
-					auto y = 40.0f;
-					for (auto buildConfigurationElement : this->buildConfigurationElements->getElements()) {
-						auto bounds = buildConfigurationElement->getBounds();
-						bounds.x = buildButton->getWidth();
-						bounds.width = args.localBounds.width - bounds.x;
-						bounds.y = y;
-						buildConfigurationElement->setBounds(bounds);
-						y += bounds.height;
-					}
-				};
 
 				this->setHeight(height);
 			}

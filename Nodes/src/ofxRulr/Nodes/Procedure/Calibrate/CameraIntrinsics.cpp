@@ -178,13 +178,13 @@ namespace ofxRulr {
 				void CameraIntrinsics::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 					auto inspector = inspectArguments.inspector;
 					
-					inspector->add(Widgets::Indicator::make("Points found", [this]() {
+					inspector->add(new Widgets::Indicator("Points found", [this]() {
 						return (Widgets::Indicator::Status) !this->currentCorners.empty();
 					}));
-					inspector->add(Widgets::LiveValue<int>::make("Calibration set count", [this]() {
+					inspector->add(new Widgets::LiveValue<int>("Calibration set count", [this]() {
 						return (int)accumulatedCorners.size();
 					}));
-					inspector->add(Widgets::Button::make("Add board to calibration set", [this]() {
+					inspector->add(new Widgets::Button("Add board to calibration set", [this]() {
 						try {
 							ofxRulr::Utils::ScopedProcess scopedProcess("Finding checkerboard");
 							this->addBoard();
@@ -192,13 +192,13 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ERROR;
 					}, ' '));
-					inspector->add(Widgets::Button::make("Clear calibration set", [this]() {
+					inspector->add(new Widgets::Button("Clear calibration set", [this]() {
 						this->accumulatedCorners.clear();
 					}));
 
-					inspector->add(Widgets::Spacer::make());
+					inspector->add(new Widgets::Spacer());
 
-					auto calibrateButton = Widgets::Button::make("Calibrate", [this]() {
+					auto calibrateButton = new Widgets::Button("Calibrate", [this]() {
 						try {
 							this->calibrate();
 						}
@@ -206,7 +206,7 @@ namespace ofxRulr {
 					}, OF_KEY_RETURN);
 					calibrateButton->setHeight(100.0f);
 					inspector->add(calibrateButton);
-					inspector->add(Widgets::LiveValue<float>::make("Reprojection error [px]", [this]() {
+					inspector->add(new Widgets::LiveValue<float>("Reprojection error [px]", [this]() {
 						return this->error;
 					}));
 				}

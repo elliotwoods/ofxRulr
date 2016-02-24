@@ -120,7 +120,7 @@ namespace ofxRulr {
 		void Base::populateInspector(ofxCvGui::InspectArguments &inspectArguments) {
 			auto inspector = inspectArguments.inspector;
 			
-			auto nameWidget = Widgets::Title::make(this->getName(), ofxCvGui::Widgets::Title::Level::H1);
+			auto nameWidget = inspector->add(new Widgets::Title(this->getName(), ofxCvGui::Widgets::Title::Level::H1));
 			auto nameWidgetWeak = weak_ptr<Element>(nameWidget);
 			nameWidget->onDraw += [this](ofxCvGui::DrawArguments & args) {
 				ofxAssets::image("ofxCvGui::edit").draw(ofRectangle(args.localBounds.width - 20, 5, 15, 15));
@@ -135,11 +135,10 @@ namespace ofxRulr {
 					}
 				}
 			};
-			inspector->add(nameWidget);
 
-			inspector->add(Widgets::Title::make(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H3));
+			inspector->add(new Widgets::Title(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H3));
 
-			inspector->add(Widgets::Button::make("Save Node...", [this] () {
+			inspector->add(new Widgets::Button("Save Node...", [this] () {
 				try {
 					auto result = ofSystemSaveDialog(this->getDefaultFilename(), "Save node [" + this->getName() + "] as json");
 					if (result.bSuccess) {
@@ -149,7 +148,7 @@ namespace ofxRulr {
 				RULR_CATCH_ALL_TO_ALERT
 			}));
 
-			inspector->add(Widgets::Button::make("Load Node...", [this] () {
+			inspector->add(new Widgets::Button("Load Node...", [this] () {
 				try {
 					auto result = ofSystemLoadDialog("Load node [" + this->getName() + "] from json");
 					if (result.bSuccess) {
@@ -161,13 +160,13 @@ namespace ofxRulr {
 
 			//pin status
 			for (auto inputPin : this->getInputPins()) {
-				inspector->add(Widgets::Indicator::make(inputPin->getName(), [inputPin]() {
+				inspector->add(new Widgets::Indicator(inputPin->getName(), [inputPin]() {
 					return (Widgets::Indicator::Status) inputPin->isConnected();
 				}));
 			}
 
 			//node parameters
-			inspector->add(Widgets::Spacer::make());
+			inspector->add(new Widgets::Spacer());
 		}
 
 		//----------

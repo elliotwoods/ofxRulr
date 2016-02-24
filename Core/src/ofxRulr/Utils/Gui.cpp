@@ -7,7 +7,7 @@ namespace ofxRulr {
 	namespace Utils {
 		namespace Gui {
 			shared_ptr<ofxCvGui::Widgets::Slider> addIntSlider(ofParameter<float> & parameter, ElementGroupPtr inspector) {
-				auto slider = Widgets::Slider::make(parameter);
+				auto slider = make_shared<Widgets::Slider>(parameter);
 				slider->addIntValidator();
 				inspector->add(slider);
 				return slider;

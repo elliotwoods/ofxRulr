@@ -537,12 +537,12 @@ namespace ofxRulr {
 			void Patch::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				inspector->add(Widgets::Button::make("Duplicate patch down", [this]() {
+				inspector->add(new Widgets::Button("Duplicate patch down", [this]() {
 					Json::Value json;
 					this->serialize(json);
 					this->insertPatchlet(json, true, this->view->getCanvasExtents().getBottomLeft());
 				}));
-				inspector->add(Widgets::Button::make("Duplicate patch right", [this]() {
+				inspector->add(new Widgets::Button("Duplicate patch right", [this]() {
 					Json::Value json;
 					this->serialize(json);
 					this->insertPatchlet(json, true, this->view->getCanvasExtents().getTopRight());

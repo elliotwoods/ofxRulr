@@ -259,24 +259,25 @@ namespace ofxRulr {
 				void ViewToVertices::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 					auto inspector = inspectArguments.inspector;
 					
-					inspector->add(Widgets::Toggle::make(this->dragVerticesEnabled));
+					inspector->add(new Widgets::Toggle(this->dragVerticesEnabled));
 
-					inspector->add(Widgets::Title::make("Reference image", Widgets::Title::Level::H3));
-					inspector->add(Widgets::SelectFile::make(this->projectorReferenceImageFilename.getName(), [this](){
+					inspector->add(new Widgets::Title("Reference image", Widgets::Title::Level::H3));
+					inspector->add(new Widgets::SelectFile(this->projectorReferenceImageFilename.getName(), [this](){
 						return this->projectorReferenceImageFilename.get();
 					}, [this](string & newFilename) {
 						this->projectorReferenceImageFilename = newFilename;
 						this->projectorReferenceImage.load(newFilename);
 					}));
-					inspector->add(Widgets::Button::make("Clear iamge", [this]() {
+					inspector->add(new Widgets::Button("Clear iamge", [this]() {
 						this->projectorReferenceImage.clear();
 						this->projectorReferenceImageFilename.set("");
 					}));
 
-					inspector->add(Widgets::Spacer::make());
+					inspector->add(new Widgets::Spacer());
 
-					inspector->add(Widgets::Title::make("Calibrate", Widgets::Title::Level::H3));
-					auto calibrateButton = Widgets::Button::make("Calibrate", [this]() {
+					inspector->add(new Widgets::Title("Calibrate", Widgets::Title::Level::H3));
+
+					auto calibrateButton = new Widgets::Button("Calibrate", [this]() {
 						try {
 							this->calibrate();
 						}
@@ -284,12 +285,13 @@ namespace ofxRulr {
 					}, OF_KEY_RETURN);
 					calibrateButton->setHeight(100.0f);
 					inspector->add(calibrateButton);
-					inspector->add(Widgets::Toggle::make(this->calibrateOnVertexChange));
-					inspector->add(Widgets::Toggle::make(this->useExistingParametersAsInitial));
-					inspector->add(Widgets::LiveValue<float>::make("Reprojection error", [this]() {
+
+					inspector->add(new Widgets::Toggle(this->calibrateOnVertexChange));
+					inspector->add(new Widgets::Toggle(this->useExistingParametersAsInitial));
+					inspector->add(new Widgets::LiveValue<float>("Reprojection error", [this]() {
 						return this->reprojectionError;
 					}));
-					inspector->add(Widgets::Indicator::make("Calibration success", [this]() {
+					inspector->add(new Widgets::Indicator("Calibration success", [this]() {
 						return (Widgets::Indicator::Status) this->success;
 					}));
 				}

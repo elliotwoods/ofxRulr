@@ -294,8 +294,9 @@ namespace ofxRulr {
 				void MovingHeadToWorld::populateInspector(InspectArguments & inspectArguments) {
 					auto inspector = inspectArguments.inspector;
 					
-					inspector->add(Widgets::Slider::make(this->beamBrightness));
-					auto addCaptureButton = Widgets::Button::make("Add capture", [this]() {
+					inspector->add(new Widgets::Slider(this->beamBrightness));
+
+					auto addCaptureButton = new Widgets::Button("Add capture", [this]() {
 						try {
 							ofxRulr::Utils::ScopedProcess scopedProcess("MovindHeadToWorld - addCapture");
 							this->addCapture();
@@ -305,15 +306,16 @@ namespace ofxRulr {
 					}, ' ');
 					addCaptureButton->setHeight(100.0f);
 					inspector->add(addCaptureButton);
-					inspector->add(Widgets::LiveValue<size_t>::make("Data points", [this]() {
+
+					inspector->add(new Widgets::LiveValue<size_t>("Data points", [this]() {
 						return this->dataPoints.size();
 					}));
-					inspector->add(Widgets::Button::make("Clear captures", [this]() {
+					inspector->add(new Widgets::Button("Clear captures", [this]() {
 						this->dataPoints.clear();
 					}));
-					inspector->add(Widgets::Toggle::make(this->calibrateOnAdd));
+					inspector->add(new Widgets::Toggle(this->calibrateOnAdd));
 
-					auto calibrateButton = Widgets::Button::make("Calibrate", [this]() {
+					auto calibrateButton = new Widgets::Button("Calibrate", [this]() {
 						try {
 							ofxRulr::Utils::ScopedProcess scopedProcess("Calibrate");
 							if (this->calibrate()) {
@@ -325,30 +327,31 @@ namespace ofxRulr {
 					}, OF_KEY_RETURN);
 					calibrateButton->setHeight(100.0f);
 					inspector->add(calibrateButton);
-					inspector->add(Widgets::LiveValue<float>::make("Residual", [this]() {
+
+					inspector->add(new Widgets::LiveValue<float>("Residual", [this]() {
 						return this->residual;
 					}));
 
-					inspector->add(Widgets::Title::make("Tracking", Widgets::Title::Level::H2));
+					inspector->add(new Widgets::Title("Tracking", Widgets::Title::Level::H2));
 					{
-						inspector->add(Widgets::Button::make("Aim at target", [this]() {
+						inspector->add(new Widgets::Button("Aim at target", [this]() {
 							try {
 								this->performAim();
 							}
 							RULR_CATCH_ALL_TO_ALERT;
 						}, 't'));
-						inspector->add(Widgets::Toggle::make(this->continuouslyTrack));
+						inspector->add(new Widgets::Toggle(this->continuouslyTrack));
 					}
 
-					inspector->add(Widgets::Title::make("Aim beam", Widgets::Title::Level::H2));
+					inspector->add(new Widgets::Title("Aim beam", Widgets::Title::Level::H2));
 					{
-						inspector->add(Widgets::Button::make("Forwards", [this]() {
+						inspector->add(new Widgets::Button("Forwards", [this]() {
 							this->setPanTiltOrAlert(ofVec2f(0, 90));
 						}));
-						inspector->add(Widgets::Button::make("20 degree incline", [this]() {
+						inspector->add(new Widgets::Button("20 degree incline", [this]() {
 							this->setPanTiltOrAlert(ofVec2f(0, 70));
 						}));
-						inspector->add(Widgets::Button::make("Upwards", [this]() {
+						inspector->add(new Widgets::Button("Upwards", [this]() {
 							this->setPanTiltOrAlert(ofVec2f(0, 0));
 						}));
 					}

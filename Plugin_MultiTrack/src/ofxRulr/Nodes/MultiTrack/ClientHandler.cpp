@@ -449,7 +449,7 @@ namespace ofxRulr {
 			//----------
 			void ClientHandler::rebuildView() {
 				this->view->clear();
-				this->view->add(Widgets::Title::make("Clients", Widgets::Title::Level::H2));
+				this->view->add(new Widgets::Title("Clients", Widgets::Title::Level::H2));
 				for (auto client : this->clients) {
 					this->view->add(client.second);
 				}

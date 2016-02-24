@@ -243,7 +243,7 @@ namespace ofxRulr {
 				};
 				inspector->add(testPatternSelector);
 
-				auto muteToggle = ofxCvGui::Widgets::Toggle::make(this->mute);
+				auto muteToggle = new ofxCvGui::Widgets::Toggle(this->mute);
 				muteToggle->setHotKey(' ');
 				muteToggle->setHeight(100.0f);
 				inspector->add(muteToggle);

@@ -115,16 +115,16 @@ namespace ofxRulr {
 			//whenever the instpector clears, setup default elements
 			InspectController::X().onClear += [this] (InspectArguments & args) {
 				auto inspector = args.inspector;
-				inspector->add(Widgets::LiveValueHistory::make("Application fps [Hz]", [] () {
+				inspector->add(new Widgets::LiveValueHistory("Application fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));
-				inspector->add(Widgets::Button::make("Save all", [this]() {
+				inspector->add(new Widgets::Button("Save all", [this]() {
 					this->saveAll();
 				}));
-				inspector->add(Widgets::Button::make("Load all", [this]() {
+				inspector->add(new Widgets::Button("Load all", [this]() {
 					this->loadAll();
 				}));
-				inspector->add(Widgets::Spacer::make());
+				inspector->add(new Widgets::Spacer());
 			};
 			//
 			//--

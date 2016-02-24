@@ -135,23 +135,23 @@ namespace ofxRulr {
 			void AimMovingHeadAt::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				inspector->add(Widgets::Toggle::make(this->ignoreBlankTransform));
+				inspector->add(new Widgets::Toggle(this->ignoreBlankTransform));
 
-				inspector->add(Widgets::Title::make("Position offset", Widgets::Title::Level::H2));
+				inspector->add(new Widgets::Title("Position offset", Widgets::Title::Level::H2));
 				for (int i = 0; i < 3; i++) {
-					inspector->add(Widgets::Slider::make(this->objectPositionOffset[i]));
+					inspector->add(new Widgets::Slider(this->objectPositionOffset[i]));
 				}
 
-				inspector->add(Widgets::Title::make("Steve Jobs Mode", Widgets::Title::Level::H2));
+				inspector->add(new Widgets::Title("Steve Jobs Mode", Widgets::Title::Level::H2));
 				{
-					inspector->add(Widgets::Title::make("Prediction", Widgets::Title::Level::H3));
-					inspector->add(Widgets::Toggle::make(this->steveJobs.enabled));
-					inspector->add(Widgets::Slider::make(this->steveJobs.steps));
+					inspector->add(new Widgets::Title("Prediction", Widgets::Title::Level::H3));
+					inspector->add(new Widgets::Toggle(this->steveJobs.enabled));
+					inspector->add(new Widgets::Slider(this->steveJobs.steps));
 
-					inspector->add(Widgets::Title::make("Velocity", Widgets::Title::Level::H3));
+					inspector->add(new Widgets::Title("Velocity", Widgets::Title::Level::H3));
 					{
-						inspector->add(Widgets::Slider::make(this->steveJobs.minimumVelocity));
-						auto velocityWidget = Widgets::LiveValueHistory::make("Velocity", [this]() {
+						inspector->add(new Widgets::Slider(this->steveJobs.minimumVelocity));
+						auto velocityWidget = new Widgets::LiveValueHistory("Velocity", [this]() {
 							return this->steveJobs.velocity.length();
 						});
 						velocityWidget->onDraw += [this](DrawArguments & args) {
@@ -166,10 +166,10 @@ namespace ofxRulr {
 						inspector->add(velocityWidget);
 					}
 
-					inspector->add(Widgets::Title::make("Acceleration", Widgets::Title::Level::H3));
+					inspector->add(new Widgets::Title("Acceleration", Widgets::Title::Level::H3));
 					{
-						inspector->add(Widgets::Slider::make(this->steveJobs.maximumAcceleration));
-						auto accelerationWidget = Widgets::LiveValueHistory::make("Acceleration", [this]() {
+						inspector->add(new Widgets::Slider(this->steveJobs.maximumAcceleration));
+						auto accelerationWidget = new Widgets::LiveValueHistory("Acceleration", [this]() {
 							return this->steveJobs.acceleration.length();
 						});
 						accelerationWidget->onDraw += [this](DrawArguments & args) {

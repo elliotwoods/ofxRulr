@@ -132,9 +132,9 @@ namespace ofxRulr {
 
 				Utils::Gui::addIntSlider(this->sizeX, inspector->getElementGroup())->onValueChange += sliderCallback;
 				Utils::Gui::addIntSlider(this->sizeY, inspector->getElementGroup())->onValueChange += sliderCallback;
-				inspector->add(Widgets::Title::make("NB : Checkerboard size is\n counted by number of\n inner corners", Widgets::Title::Level::H3));
+				inspector->add(new Widgets::Title("NB : Checkerboard size is\n counted by number of\n inner corners", Widgets::Title::Level::H3));
 				
-				inspector->add(ofxCvGui::Widgets::LiveValue<string>::make("Warning", [this]() {
+				inspector->add(new ofxCvGui::Widgets::LiveValue<string>("Warning", [this]() {
 					if (this->boardType == 0) {
 						//CHECKERBOARD
 
@@ -156,9 +156,9 @@ namespace ofxRulr {
 						return "";
 					}
 				}));
-				inspector->add(Widgets::Spacer::make());
+				inspector->add(new Widgets::Spacer());
 
-				auto spacingSlider = Widgets::Slider::make(this->spacing);
+				auto spacingSlider = new Widgets::Slider(this->spacing);
 				spacingSlider->onValueChange += sliderCallback;
 				inspector->add(spacingSlider);
 			}
