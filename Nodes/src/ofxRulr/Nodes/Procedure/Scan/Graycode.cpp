@@ -201,8 +201,8 @@ namespace ofxRulr {
 						}
 					}
 					catch (...) {
-						ofShowCursor();
 					}
+					ofShowCursor();
 
 					this->previewDirty = true;
 				}
