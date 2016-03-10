@@ -101,27 +101,30 @@ namespace ofxRulr {
 					{
 						// GRID
 						ofPushStyle();
-						ofNoFill();
-						ofSetLineWidth(1.0f);
-						auto xStep = (this->getWidth() - 1) / 4;
-						auto yStep = (this->getHeight() - 1) / 4;
-						for (int i = 0; i < 5; i++){
-							ofSetColor((i % 2 == 0) ? 255 : 100);
-							auto x = xStep * i + 0.5f;
-							auto y = yStep * i + 0.5f;
-							ofDrawLine(x, 0, x, this->getHeight());
-							ofDrawLine(0, y, this->getWidth(), y);
+						{
+							ofNoFill();
+							ofSetLineWidth(1.0f);
+							auto xStep = (this->getWidth() - 1) / 4;
+							auto yStep = (this->getHeight() - 1) / 4;
+							for (int i = 0; i < 5; i++) {
+								ofSetColor((i % 2 == 0) ? 255 : 100);
+								auto x = xStep * i + 0.5f;
+								auto y = yStep * i + 0.5f;
+								ofDrawLine(x, 0, x, this->getHeight());
+								ofDrawLine(0, y, this->getWidth(), y);
+							}
+							stringstream text;
+							text << this->getName() << endl;
+							text << this->getWidth() << "x" << this->getHeight() << endl;
+							text << "Output " << this->videoOutputSelection << " [/" << this->videoOutputs.size() << "]" << endl;
+							if (this->splitHorizontal > 1 || this->splitVertical > 1) {
+								text << "Split portion " << this->splitUseIndex << " [" << this->splitHorizontal << "x" << this->splitVertical << "]";
+							}
+							else {
+								text << "No split";
+							}
+							ofDrawBitmapString(text.str(), xStep * 2 + 10, yStep * 2 - 50);
 						}
-						stringstream text;
-						text << this->getName() << endl;
-						text << this->getWidth() << "x" << this->getHeight() << endl;
-						text << "Output " << this->videoOutputSelection << " [/" << this->videoOutputs.size() << "]" << endl;
-						if(this->splitHorizontal > 1 || this->splitVertical > 1) {
-							text << "Split portion " << this->splitUseIndex << " [" << this->splitHorizontal << "x" << this->splitVertical << "]";
-						} else {
-							text << "No split";
-						}
-						ofDrawBitmapString(text.str(), xStep * 2 + 10, yStep * 2 - 50);
 						ofPopStyle();
 						break;
 					}
@@ -468,50 +471,52 @@ namespace ofxRulr {
 						auto & font = ofxAssets::Register::X().getFont(ofxCvGui::getDefaultTypeface(), 12);
 
 						ofPushStyle();
-
-						//fill
-						if (selected ^ selectButton->isMouseDown()) {
-							if (this->window) {
-								ofSetColor(80, 120, 80);
+						{
+							//fill
+							if (selected ^ selectButton->isMouseDown()) {
+								if (this->window) {
+									ofSetColor(80, 120, 80);
+								}
+								else {
+									ofSetColor(80);
+								}
 							}
 							else {
-								ofSetColor(80);
+								ofSetColor(50);
 							}
-						}
-						else {
-							ofSetColor(50);
-						}
-						ofFill();
-						const auto radius = 5.0f;
-						ofDrawRectRounded(args.localBounds, radius, radius, radius, radius);
-
-						//outline
-						if (selectButton->isMouseOver()) {
-							ofNoFill();
-							ofSetColor(!selected ? 80 : 50);
+							ofFill();
+							const auto radius = 5.0f;
 							ofDrawRectRounded(args.localBounds, radius, radius, radius, radius);
-						}
 
-						//split
-						if (selected) {
-							ofPushStyle();
-							ofSetLineWidth(1.0f);
-							ofSetColor(50);
-							for (int borderIndex = 0; borderIndex < this->splitHorizontal - 1; borderIndex++) {
-								const float x = selectButton->getWidth() / this->splitHorizontal * (borderIndex + 1);
-								ofDrawLine(x, 0, x, args.localBounds.height);
+							//outline
+							if (selectButton->isMouseOver()) {
+								ofNoFill();
+								ofSetColor(!selected ? 80 : 50);
+								ofDrawRectRounded(args.localBounds, radius, radius, radius, radius);
 							}
-							for (int borderIndex = 0; borderIndex < this->splitVertical - 1; borderIndex++) {
-								const float y = selectButton->getHeight() / this->splitVertical * (borderIndex + 1);
-								ofDrawLine(0, y, args.localBounds.width, y);
+
+							//split
+							if (selected) {
+								ofPushStyle();
+								{
+									ofSetLineWidth(1.0f);
+									ofSetColor(50);
+									for (int borderIndex = 0; borderIndex < this->splitHorizontal - 1; borderIndex++) {
+										const float x = selectButton->getWidth() / this->splitHorizontal * (borderIndex + 1);
+										ofDrawLine(x, 0, x, args.localBounds.height);
+									}
+									for (int borderIndex = 0; borderIndex < this->splitVertical - 1; borderIndex++) {
+										const float y = selectButton->getHeight() / this->splitVertical * (borderIndex + 1);
+										ofDrawLine(0, y, args.localBounds.width, y);
+									}
+								}
+								ofPopStyle();
 							}
-							ofPopStyle();
+
+							ofSetColor(255);
+							const auto textBounds = font.getStringBoundingBox(videoOutput.name, 0, 0);
+							font.drawString(videoOutput.name, (int)((selectButton->getWidth() - textBounds.width) / 2.0f), (int)((selectButton->getHeight() + textBounds.height) / 2.0f));
 						}
-
-						ofSetColor(255);
-						const auto textBounds = font.getStringBoundingBox(videoOutput.name, 0, 0);
-						font.drawString(videoOutput.name, (int)((selectButton->getWidth() - textBounds.width) / 2.0f), (int)((selectButton->getHeight() + textBounds.height) / 2.0f));
-
 						ofPopStyle();
 					};
 

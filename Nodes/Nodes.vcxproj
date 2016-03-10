@@ -221,6 +221,8 @@
     <ClInclude Include="..\..\ofxGLM\libs\glm\gtx\wrap.hpp" />
     <ClInclude Include="..\..\ofxGLM\libs\glm\virtrev\xstream.hpp" />
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h" />
+    <ClInclude Include="..\..\ofxObjLoader\libs\glm.h" />
+    <ClInclude Include="..\..\ofxObjLoader\src\ofxObjLoader.h" />
     <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h" />
     <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\assert.hpp" />
     <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\del_interface.hpp" />
@@ -235,6 +237,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Database.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Base.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Mesh.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Recorder.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DeclareNodes.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.h" />
@@ -243,7 +246,6 @@
     <ClInclude Include="src\ofxRulr\Nodes\DMX\MovingHead.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Sharpy.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Transmit.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Export\Mesh.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Board.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h" />
@@ -273,6 +275,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\ofxObjLoader\libs\glm.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxObjLoader\src\ofxObjLoader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -299,6 +309,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Database.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Base.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Mesh.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Recorder.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DeclareNodes.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.cpp" />
@@ -307,7 +318,6 @@
     <ClCompile Include="src\ofxRulr\Nodes\DMX\MovingHead.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Sharpy.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Transmit.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Export\Mesh.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Board.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Model.cpp" />

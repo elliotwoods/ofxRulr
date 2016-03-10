@@ -124,8 +124,14 @@
     <Filter Include="addons\ofxTriangle\libs\Triangle\src">
       <UniqueIdentifier>{983f696e-bb63-42b2-9bb5-109a870fab75}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Export">
-      <UniqueIdentifier>{9468ac5a-1db1-4d7f-9a59-ed867c37a682}</UniqueIdentifier>
+    <Filter Include="addons\ofxObjLoader">
+      <UniqueIdentifier>{c2a09506-3578-4925-9adc-928adf032b09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxObjLoader\src">
+      <UniqueIdentifier>{ab3070ce-6e22-4e67-8d69-bcc9accdfc6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxObjLoader\libs">
+      <UniqueIdentifier>{ed074027-ab4f-4be2-8199-4e7e3b3dbff5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -612,7 +618,6 @@
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.h">
       <Filter>src\ofxRulr\Nodes\Data\Channels\Generator</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.h" />
     <ClInclude Include="..\..\ofxTriangle\src\ofxTriangle.h">
       <Filter>addons\ofxTriangle\src</Filter>
     </ClInclude>
@@ -631,8 +636,17 @@
     <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\del_interface.hpp">
       <Filter>addons\ofxTriangle\libs\Triangle\include</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Export\Mesh.h">
-      <Filter>src\ofxRulr\Nodes\Export</Filter>
+    <ClInclude Include="..\..\ofxObjLoader\src\ofxObjLoader.h">
+      <Filter>addons\ofxObjLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxObjLoader\libs\glm.h">
+      <Filter>addons\ofxObjLoader\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Data\Mesh.h">
+      <Filter>src\ofxRulr\Nodes\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -759,7 +773,15 @@
     <ClCompile Include="..\..\ofxTriangle\libs\Triangle\src\assert.cpp">
       <Filter>addons\ofxTriangle\libs\Triangle\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Export\Mesh.cpp" />
+    <ClCompile Include="..\..\ofxObjLoader\src\ofxObjLoader.cpp">
+      <Filter>addons\ofxObjLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxObjLoader\libs\glm.c">
+      <Filter>addons\ofxObjLoader\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Data\Mesh.cpp">
+      <Filter>src\ofxRulr\Nodes\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxGLM\libs\glm\core\func_common.inl">

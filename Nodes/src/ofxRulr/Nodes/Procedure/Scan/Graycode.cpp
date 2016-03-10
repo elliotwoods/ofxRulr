@@ -153,52 +153,56 @@ namespace ofxRulr {
 
 					ofHideCursor();
 
-					while (this->encoder >> this->message) {
+					try {
+
+						while (this->encoder >> this->message) {
 #ifdef TARGET_OSX
-/*
- something strange on OSX
- We found that to flush the video output we need to call:
- 
- videoOutput->presentFbo()
- some waiting
- grabber->update();
- some waiting
- videoOutput->presentFbo();
- 
- so we just do this part twice
- */
-						for(int i=0; i<2; i++) {
+							/*
+							 something strange on OSX
+							 We found that to flush the video output we need to call:
+
+							 videoOutput->presentFbo()
+							 some waiting
+							 grabber->update();
+							 some waiting
+							 videoOutput->presentFbo();
+
+							 so we just do this part twice
+							 */
+							for (int i = 0; i < 2; i++) {
 #endif
-						videoOutput->clearFbo(false);
-						videoOutput->begin();
-						//
-						ofPushStyle();
-						auto brightness = this->brightness;
-						ofSetColor(brightness);
-						this->message.draw(0, 0);
-						ofPopStyle();
-						//
-						videoOutput->end();
-						videoOutput->presentFbo();
-						
-						stringstream message;
-						message << this->getName() << " scanning " << this->encoder.getFrame() << "/" << this->encoder.getFrameCount();
-						ofxCvGui::Utils::drawProcessingNotice(message.str());
-						
-						auto startWait = ofGetElapsedTimeMillis();
-						while (ofGetElapsedTimeMillis() - startWait < this->delay) {
-							ofSleepMillis(1);
-							grabber->update();
-						}
+								videoOutput->clearFbo(false);
+								videoOutput->begin();
+								//
+								ofPushStyle();
+								auto brightness = this->brightness;
+								ofSetColor(brightness);
+								this->message.draw(0, 0);
+								ofPopStyle();
+								//
+								videoOutput->end();
+								videoOutput->presentFbo();
+
+								stringstream message;
+								message << this->getName() << " scanning " << this->encoder.getFrame() << "/" << this->encoder.getFrameCount();
+								ofxCvGui::Utils::drawProcessingNotice(message.str());
+
+								auto startWait = ofGetElapsedTimeMillis();
+								while (ofGetElapsedTimeMillis() - startWait < this->delay) {
+									ofSleepMillis(1);
+									grabber->update();
+								}
 
 #ifdef TARGET_OSX
-						}
+							}
 #endif
-						auto frame = grabber->getFreshFrame();
-						this->decoder << frame->getPixels();
+							auto frame = grabber->getFreshFrame();
+							this->decoder << frame->getPixels();
+						}
 					}
-
-					ofShowCursor();
+					catch (...) {
+						ofShowCursor();
+					}
 
 					this->previewDirty = true;
 				}
@@ -281,6 +285,12 @@ namespace ofxRulr {
 					{
 						inspector->add(new Widgets::LiveValue<unsigned int>("Width", [this]() { return this->payload.getWidth(); }));
 						inspector->add(new Widgets::LiveValue<unsigned int>("Height", [this]() { return this->payload.getHeight(); }));
+					}
+
+					inspector->add(new Widgets::Title("Scan camera", Widgets::Title::Level::H2));
+					{
+						inspector->add(new Widgets::LiveValue<unsigned int>("Width", [this]() { return this->getDataSet().getWidth(); }));
+						inspector->add(new Widgets::LiveValue<unsigned int>("Height", [this]() { return this->getDataSet().getHeight(); }));
 					}
 
 					inspector->add(new Widgets::Spacer());

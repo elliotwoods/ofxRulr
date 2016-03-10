@@ -5,12 +5,11 @@
 
 #include "ofxRulr/Nodes/Data/Channels/Database.h"
 #include "ofxRulr/Nodes/Data/Channels/Generator/Application.h"
+#include "ofxRulr/Nodes/Data/Mesh.h"
 #include "ofxRulr/Nodes/Data/Recorder.h"
 
 #include "ofxRulr/Nodes/DMX/Sharpy.h"
 #include "ofxRulr/Nodes/DMX/AimMovingHeadAt.h"
-
-#include "ofxRulr/Nodes/Export/Mesh.h"
 
 #include "ofxRulr/Nodes/Item/Board.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
@@ -43,14 +42,13 @@ namespace ofxRulr {
 		void loadCoreNodes() {
 			RULR_DECLARE_NODE(Application::Assets);
 			
-			RULR_DECLARE_NODE(Data::Recorder);
 			RULR_DECLARE_NODE(Data::Channels::Database);
 			RULR_DECLARE_NODE(Data::Channels::Generator::Application);
+			RULR_DECLARE_NODE(Data::Mesh);
+			RULR_DECLARE_NODE(Data::Recorder);
 
 			RULR_DECLARE_NODE(DMX::Sharpy);
 			RULR_DECLARE_NODE(DMX::AimMovingHeadAt);
-
-			RULR_DECLARE_NODE(Export::Mesh);
 
 			RULR_DECLARE_NODE(Item::Board);
 			RULR_DECLARE_NODE(Item::Camera);

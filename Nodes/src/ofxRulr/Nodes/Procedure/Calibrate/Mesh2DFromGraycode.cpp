@@ -2,6 +2,7 @@
 #include "Mesh2DFromGraycode.h"
 
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
+#include "ofxRulr/Nodes/Data/Mesh.h"
 
 #include "ofxTriangle.h"
 
@@ -25,10 +26,14 @@ namespace ofxRulr {
 					RULR_NODE_SERIALIZATION_LISTENERS;
 
 					auto graycodeInput = this->addInput<Scan::Graycode>();
+					auto meshInput = this->addInput<Data::Mesh>();
 
 					auto view = make_shared<ofxCvGui::Panels::Draws>();
 					view->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
-						this->mesh.drawWireframe();
+						auto meshNode = this->getInput<Data::Mesh>();
+						if (meshNode) {
+							meshNode->getMesh().drawWireframe();
+						}
 					};
 					graycodeInput->onNewConnection += [this, view](shared_ptr<Scan::Graycode> graycodeNode) {
 						view->setDrawObject(graycodeNode->getDecoder().getCameraInProjector());
@@ -42,11 +47,6 @@ namespace ofxRulr {
 				//----------
 				ofxCvGui::PanelPtr Mesh2DFromGraycode::getView() {
 					return this->view;
-				}
-
-				//----------
-				void Mesh2DFromGraycode::get(ofMesh & mesh) const {
-					mesh = this->mesh;
 				}
 
 				//----------
@@ -162,7 +162,7 @@ namespace ofxRulr {
 							mesh.addIndex(delauney->Apex(it));
 						}
 					}
-					swap(this->mesh, mesh);
+					swap(this->getInput<Data::Mesh>()->getMesh(), mesh);
 				}
 			}
 		}

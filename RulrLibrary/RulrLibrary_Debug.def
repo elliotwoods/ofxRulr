@@ -10,6 +10,9 @@ EXPORTS
 	??0?$ofPixels_@E@@QEAA@XZ
 	??0?$ofPixels_@G@@QEAA@XZ
 	??0?$ofPixels_@M@@QEAA@XZ
+	?getData@?$ofPixels_@G@@QEBAPEBGXZ
+	?size@?$ofPixels_@M@@QEBAHXZ
+	?size@?$ofPixels_@G@@QEBAHXZ
 	??0AbstractPin@Graph@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0Base@Generator@Channels@Data@Nodes@ofxRulr@@QEAA@XZ
 	??0Base@Nodes@ofxRulr@@QEAA@XZ
