@@ -50,7 +50,7 @@ namespace ofxRulr {
 					this->addInput(MAKE(Pin<System::VideoOutput>));
 
 					this->view = MAKE(ofxCvGui::Panels::Draws);
-					this->view->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
+					this->view->onDrawCropped += [this](ofxCvGui::DrawCroppedArguments & args) {
 						ofPolyline previewLine;
 						if (!this->previewCornerFinds.empty()) {
 							ofDrawCircle(this->previewCornerFinds.front(), 10.0f);

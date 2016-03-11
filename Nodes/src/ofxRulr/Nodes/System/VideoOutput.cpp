@@ -138,11 +138,12 @@ namespace ofxRulr {
 				};
 
 				this->showWindow.set("Show window", false);
-				this->testPattern.set("Test Pattern", 1);
-				this->mute.set("Mute", false);
+				this->useFullScreenMode.set("Use real fullscreen", false);
 				this->splitHorizontal.set("Split Horizontal", 1, 1, 8);
 				this->splitVertical.set("Split Vertical", 1, 1, 8);
 				this->splitUseIndex.set("Selected portion", 0, 0, 8);
+				this->testPattern.set("Test Pattern", 1);
+				this->mute.set("Mute", false);
 
 				this->splitHorizontal.addListener(this, &VideoOutput::callbackChangeSplit);
 				this->splitVertical.addListener(this, &VideoOutput::callbackChangeSplit);
@@ -202,11 +203,13 @@ namespace ofxRulr {
 				}));
 
 				auto showWindowToggle = MAKE(ofxCvGui::Widgets::Toggle, this->showWindow, OF_KEY_RETURN);
-				showWindowToggle->setHeight(100.0f);
-				inspector->add(showWindowToggle);
-				showWindowToggle->onValueChange += [this](ofParameter<bool> & value) {
-					this->setWindowOpen(value);
-				};
+				{
+					showWindowToggle->setHeight(100.0f);
+					inspector->add(showWindowToggle);
+					showWindowToggle->onValueChange += [this](ofParameter<bool> & value) {
+						this->setWindowOpen(value);
+					};
+				}
 
 				inspector->add(make_shared<ofxCvGui::Widgets::LiveValue<string>>("Monitor selection", [this]() {
 					return ofToString(this->videoOutputSelection) + " of " + ofToString(this->videoOutputs.size());
@@ -221,35 +224,42 @@ namespace ofxRulr {
 					}
 				}));
 
+				inspector->addToggle(this->useFullScreenMode);
+
 				inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<ofVec2f>, "Output Size", [this]() {
 					return ofVec2f(this->getWidth(), this->getHeight());
 				}));
 
 				inspector->add(MAKE(ofxCvGui::Widgets::Title, "Split output", ofxCvGui::Widgets::Title::Level::H3));
-				auto splitHorizontalSlider = MAKE(ofxCvGui::Widgets::Slider, this->splitHorizontal);
-				auto splitVerticalSlider = MAKE(ofxCvGui::Widgets::Slider, this->splitVertical);
-				auto splitUseIndexSlider = MAKE(ofxCvGui::Widgets::Slider, this->splitUseIndex);
-				splitHorizontalSlider->addIntValidator();
-				splitVerticalSlider->addIntValidator();
-				splitUseIndexSlider->addIntValidator();
-				inspector->add(splitHorizontalSlider);
-				inspector->add(splitVerticalSlider);
-				inspector->add(splitUseIndexSlider);
+				{
+					auto splitHorizontalSlider = MAKE(ofxCvGui::Widgets::Slider, this->splitHorizontal);
+					auto splitVerticalSlider = MAKE(ofxCvGui::Widgets::Slider, this->splitVertical);
+					auto splitUseIndexSlider = MAKE(ofxCvGui::Widgets::Slider, this->splitUseIndex);
+					splitHorizontalSlider->addIntValidator();
+					splitVerticalSlider->addIntValidator();
+					splitUseIndexSlider->addIntValidator();
+					inspector->add(splitHorizontalSlider);
+					inspector->add(splitVerticalSlider);
+					inspector->add(splitUseIndexSlider);
+				}
 
 				auto testPatternSelector = make_shared<ofxCvGui::Widgets::MultipleChoice>("Test pattern");
-				testPatternSelector->addOption("None");
-				testPatternSelector->addOption("Grid");
-				testPatternSelector->addOption("White");
-				testPatternSelector->setSelection(this->testPattern.get());
-				testPatternSelector->onValueChange += [this](const int & selection){
-					this->testPattern = selection;
-				};
-				inspector->add(testPatternSelector);
-
-				auto muteToggle = new ofxCvGui::Widgets::Toggle(this->mute);
-				muteToggle->setHotKey(' ');
-				muteToggle->setHeight(100.0f);
-				inspector->add(muteToggle);
+				{
+					testPatternSelector->addOption("None");
+					testPatternSelector->addOption("Grid");
+					testPatternSelector->addOption("White");
+					testPatternSelector->setSelection(this->testPattern.get());
+					testPatternSelector->onValueChange += [this](const int & selection) {
+						this->testPattern = selection;
+					};
+					inspector->add(testPatternSelector);
+				}
+				
+				auto muteToggle = inspector->addToggle(this->mute);
+				{
+					muteToggle->setHotKey(' ');
+					muteToggle->setHeight(100.0f);
+				}
 			}
 
 			//----------
@@ -409,7 +419,7 @@ namespace ofxRulr {
 				//Open and draw to the window
 				auto mainWindow = glfwGetCurrentContext();
 				glfwMakeContextCurrent(this->window);
-
+				
 				//switch to window viewport
 				glViewport(0, 0, this->width, this->height); //ofViewport would poll the wrong window resolution, so need to use gl
 
@@ -434,7 +444,7 @@ namespace ofxRulr {
 					glMatrixMode(GL_MODELVIEW);
 					glPopMatrix();
 				}
-				
+
 				glfwSwapBuffers(this->window);
 
 				//return to main window
@@ -563,35 +573,38 @@ namespace ofxRulr {
 					//apply glfw hints
 					//--
 					//
-					glfwDefaultWindowHints();
-					auto windowSettings = ofGLFWWindowSettings();
-					windowSettings.decorated = false;
-					windowSettings.resizable = false;
-					windowSettings.doubleBuffering = false;
+					auto mainContext = glfwGetCurrentContext();
+					{
+						ofGLFWWindowSettings windowSettings;
+						windowSettings.glVersionMajor = glfwGetWindowAttrib(mainContext, GLFW_CONTEXT_VERSION_MAJOR);
+						windowSettings.glVersionMinor = glfwGetWindowAttrib(mainContext, GLFW_CONTEXT_VERSION_MINOR);
 
-					//glfwWindowHint(GLFW_RED_BITS, windowSettings.redBits);
-					//glfwWindowHint(GLFW_GREEN_BITS, windowSettings.greenBits);
-					//glfwWindowHint(GLFW_BLUE_BITS, windowSettings.blueBits);
-					//glfwWindowHint(GLFW_ALPHA_BITS, windowSettings.alphaBits);
-					//glfwWindowHint(GLFW_DEPTH_BITS, windowSettings.depthBits);
-					//glfwWindowHint(GLFW_STENCIL_BITS, windowSettings.stencilBits);
-					//glfwWindowHint(GLFW_STEREO, windowSettings.stereo);
-					glfwWindowHint(GLFW_VISIBLE, true);
-#ifndef TARGET_OSX
-					glfwWindowHint(GLFW_AUX_BUFFERS, windowSettings.doubleBuffering ? 1 : 0);
-#endif
-					//glfwWindowHint(GLFW_SAMPLES, windowSettings.numSamples);
-					glfwWindowHint(GLFW_RESIZABLE, windowSettings.resizable);
-					glfwWindowHint(GLFW_DECORATED, windowSettings.decorated);
-					//glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-					//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, RULR_GL_VERSION_MAJOR);
-					//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, RULR_GL_VERSION_MINOR);
-					//if ((RULR_GL_VERSION_MAJOR == 3 && RULR_GL_VERSION_MINOR >= 2) || RULR_GL_VERSION_MAJOR >= 4) {
-					//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-					//}
-					//if (RULR_GL_VERSION_MAJOR >= 3) {
-					//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-					//}
+						/*alternatively in the future*/
+						// 					auto mainWindowRaw = ofGetMainLoop()->getCurrentWindow();
+						// 					auto mainWindow = dynamic_pointer_cast<ofAppGLFWWindow>(mainWindowRaw);
+						// 					if (!mainWindow) {
+						// 						ofLogError("ofxRulr") << "GLFW window not found";
+						// 						return;
+						// 					}					
+						//					auto windowSettings = mainWindow->getSettings();
+
+						windowSettings.decorated = false;
+						windowSettings.resizable = false;
+						windowSettings.doubleBuffering = false;
+
+						/*
+						glfwDefaultWindowHints();
+						glfwWindowHint(GLFW_VISIBLE, true);
+						#ifndef TARGET_OSX
+						glfwWindowHint(GLFW_AUX_BUFFERS, windowSettings.doubleBuffering ? 1 : 0);
+						#endif
+						*/
+						glfwWindowHint(GLFW_RESIZABLE, windowSettings.resizable);
+						glfwWindowHint(GLFW_DECORATED, windowSettings.decorated);
+						glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, windowSettings.glVersionMajor);
+						glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, windowSettings.glVersionMinor);
+						glfwWindowHint(GLFW_VISIBLE, true);
+					}
 					//
 					//--
 
@@ -601,20 +614,15 @@ namespace ofxRulr {
 					//create the window
 					//--
 					//
-					auto hasSplit = this->splitHorizontal > 1 || this->splitVertical > 1;
-#ifdef TARGET_WIN32
-					const bool neverUseFullscreen = true;
-#else
-					const bool neverUseFullscreen = true;
-#endif
-					if(hasSplit || neverUseFullscreen) {
-						//windowed
-						this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), NULL, glfwGetCurrentContext());
-						glfwSetWindowPos(this->window, x, y);
-					} else {
-						//fullscreen
-						this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), videoOutput.monitor, glfwGetCurrentContext());
-						
+					{
+						auto hasSplit = this->splitHorizontal > 1 || this->splitVertical > 1;
+
+						bool useFullScreen = !hasSplit && this->useFullScreenMode;
+						auto monitor = useFullScreen ? videoOutput.monitor : NULL;
+						this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), monitor, mainContext);
+						if (!useFullScreen) {
+							glfwSetWindowPos(this->window, x, y);
+						}
 					}
 					//
 					//--

@@ -204,7 +204,7 @@ namespace ofxRulr {
 								ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
 							}
 						};
-						cameraView->onDrawCropped += [this](Panels::BaseImage::DrawCroppedArguments & args) {
+						cameraView->onDrawCropped += [this](DrawCroppedArguments & args) {
 							if (this->showFocusLine) {
 								ofPushMatrix();
 								ofPushStyle();

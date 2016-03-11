@@ -39,7 +39,7 @@ namespace ofxRulr {
 					auto videoOutputPin = this->addInput<System::VideoOutput>();
 					
 					this->view = make_shared<Panels::Draws>();
-					this->view->onDrawCropped += [this](Panels::Draws::DrawCroppedArguments & args) {
+					this->view->onDrawCropped += [this](DrawCroppedArguments & args) {
 						ofPolyline previewLine;
 						if (!this->previewCornerFinds.empty()) {
 							ofDrawCircle(this->previewCornerFinds.front(), 10.0f);

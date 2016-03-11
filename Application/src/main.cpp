@@ -2,9 +2,9 @@
 #include "ofApp.h"
 
 //========================================================================
-int main( ){
+int main() {
 	ofGLFWWindowSettings windowSettings;
-	windowSettings.setGLVersion(3, 2);
+	windowSettings.setGLVersion(RULR_GL_VERSION_MAJOR, RULR_GL_VERSION_MINOR);
 	windowSettings.width = 1920;
 	windowSettings.height = 1080;
 	auto window = ofCreateWindow(windowSettings);

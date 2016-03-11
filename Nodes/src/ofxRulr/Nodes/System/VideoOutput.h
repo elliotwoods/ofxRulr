@@ -79,6 +79,7 @@ namespace ofxRulr {
 				string windowTitle;
 
 				ofParameter<bool> showWindow;
+				ofParameter<bool> useFullScreenMode;
 				ofParameter<float> splitHorizontal;
 				ofParameter<float> splitVertical;
 				ofParameter<float> splitUseIndex;

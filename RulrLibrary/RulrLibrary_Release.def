@@ -331,8 +331,6 @@ EXPORTS
 	?setVertexData@ofVbo@@QEAAXPEBVofVec2f@@HH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec3f@@HH@Z
 	?setWidth@View@Item@Nodes@ofxRulr@@QEAAXM@Z
-	?singletonStore@?$Singleton@VRegister@ofxAssets@@@ofxSingleton@@0PEAVSingletonStore@12@EA
-	?singletonStore@?$Singleton@VWorld@Graph@ofxRulr@@@ofxSingleton@@0PEAVSingletonStore@12@EA
 	?size@?$ofPixels_@E@@QEBAHXZ
 	?throwIfMissingAnyConnection@Base@Nodes@ofxRulr@@QEBAXXZ
 	?toCv@ofxCv@@YAAEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@AEAV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@3@@Z
@@ -350,3 +348,10 @@ EXPORTS
 	?usingTextures@ofMesh@@UEBA_NXZ
 	?what@Exception@ofxRulr@@UEBAPEBDXZ
 	?writeBytes@ofSerial@@QEAAHPEAEH@Z
+	?ofClear@@YAXMM@Z
+	?ofDrawCircle@@YAXMMM@Z
+	??0ScissorManager@Utils@ofxCvGui@@QEAA@XZ
+	?setScissorEnabled@ScissorManager@Utils@ofxCvGui@@QEAAX_N@Z
+	??0World@Graph@ofxRulr@@QEAA@XZ
+	?getSingletonStore@?$Singleton@VRegister@ofxAssets@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
+	?X@?$Singleton@VWorld@Graph@ofxRulr@@@ofxSingleton@@SAAEAVWorld@Graph@ofxRulr@@XZ

@@ -83,7 +83,7 @@ namespace ofxRulr {
 
 					auto view = make_shared<Panels::Draws>(this->viewArea);
 					auto viewWeak = weak_ptr<Panels::Draws>(view);
-					view->onDrawCropped += [this](Panels::Draws::DrawCroppedArguments & args) {
+					view->onDrawCropped += [this](DrawCroppedArguments & args) {
 						//draw a label at each vertex
 						auto referenceVertices = this->getInput<IReferenceVertices>();
 						if (!referenceVertices) {

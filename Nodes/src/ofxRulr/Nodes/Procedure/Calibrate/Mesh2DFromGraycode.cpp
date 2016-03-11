@@ -29,7 +29,7 @@ namespace ofxRulr {
 					auto meshInput = this->addInput<Data::Mesh>();
 
 					auto view = make_shared<ofxCvGui::Panels::Draws>();
-					view->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
+					view->onDrawCropped += [this](ofxCvGui::DrawCroppedArguments & args) {
 						auto meshNode = this->getInput<Data::Mesh>();
 						if (meshNode) {
 							meshNode->getMesh().drawWireframe();

@@ -17,10 +17,17 @@ namespace ofxRulr {
 		ofxCvGui::Controller * World::gui = 0;
 
 		//-----------
+		World::World() {
+
+		}
+
+		//-----------
 		void World::init(Controller & controller, bool enableSummaryView) {
 			Utils::initialiser.checkInitialised();
 
 			ofSetWindowTitle("Rulr v" + RULR_VERSION_STRING);
+
+
 
 			//--
 			// INIITALISE NODES
@@ -48,7 +55,6 @@ namespace ofxRulr {
 
 
 
-
 			//--
 			// SETUP GUI GRID
 			//--
@@ -63,8 +69,6 @@ namespace ofxRulr {
 			horizontalGroup->add(verticalGroup);
 			//
 			//--
-
-
 
 
 
@@ -85,8 +89,6 @@ namespace ofxRulr {
 
 
 
-
-
 			//--
 			// SUMMARY VIEW
 			//
@@ -100,7 +102,6 @@ namespace ofxRulr {
 			}
 			//
 			//--
-			
 
 
 
@@ -128,7 +129,6 @@ namespace ofxRulr {
 			};
 			//
 			//--
-
 
 
 
@@ -164,7 +164,6 @@ namespace ofxRulr {
 			}
 			//
 			//--
-
 
 
 

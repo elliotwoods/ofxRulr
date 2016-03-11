@@ -40,7 +40,7 @@ namespace ofxRulr {
 					this->addInput(MAKE(Graph::Pin<Item::Camera>));
 
 					auto view = MAKE(ofxCvGui::Panels::Image, this->dummy);
-					view->onDrawCropped += [this](ofxCvGui::Panels::BaseImage::DrawCroppedArguments & args) {
+					view->onDrawCropped += [this](ofxCvGui::DrawCroppedArguments & args) {
 						try {
 							auto graycodeNode = this->getInput<Scan::Graycode>();
 							if (graycodeNode) {
