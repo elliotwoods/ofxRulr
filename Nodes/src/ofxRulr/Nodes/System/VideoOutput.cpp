@@ -35,7 +35,6 @@ namespace ofxRulr {
 			//----------
 			VideoOutput::VideoOutput() {
 				RULR_NODE_INIT_LISTENER;
-				this->window = nullptr;
 				this->videoMode = nullptr;
 			}
 
@@ -148,6 +147,7 @@ namespace ofxRulr {
 				this->splitHorizontal.addListener(this, &VideoOutput::callbackChangeSplit);
 				this->splitVertical.addListener(this, &VideoOutput::callbackChangeSplit);
 				this->splitUseIndex.addListener(this, &VideoOutput::callbackChangeSplit);
+				this->useFullScreenMode.addListener(this, &VideoOutput::callbackChangeFullscreenMode);
 
 				monitorEventChangeListener.onMonitorChange += [this](GLFWmonitor *) {
 					this->needsMonitorRefresh = true;
@@ -284,7 +284,7 @@ namespace ofxRulr {
 				
 				//set the window title
 				if(this->window && this->windowTitle != this->getName()) {
-					glfwSetWindowTitle(this->window, this->getName().c_str());
+					this->window->setWindowTitle(this->getName());
 					this->windowTitle = this->getName();
 				}
 			}
@@ -360,7 +360,7 @@ namespace ofxRulr {
 
 			//----------
 			bool VideoOutput::isWindowOpen() const {
-				return this->window;
+				return this->window != nullptr;
 			}
 
 			//----------
@@ -370,7 +370,7 @@ namespace ofxRulr {
 
 			//----------
 			GLFWwindow * VideoOutput::getWindow() const {
-				return this->window;
+				return this->window->getGLFWWindow();
 			}
 
 			//----------
@@ -417,8 +417,10 @@ namespace ofxRulr {
 				auto mainViewport = ofGetCurrentViewport();
 
 				//Open and draw to the window
-				auto mainWindow = glfwGetCurrentContext();
-				glfwMakeContextCurrent(this->window);
+				auto mainWindow = std::static_pointer_cast<ofAppGLFWWindow>(ofGetCurrentWindow());
+				this->window->update();
+				this->window->makeCurrent();
+				this->window->renderer()->startRender();
 				
 				//switch to window viewport
 				glViewport(0, 0, this->width, this->height); //ofViewport would poll the wrong window resolution, so need to use gl
@@ -445,10 +447,13 @@ namespace ofxRulr {
 					glPopMatrix();
 				}
 
-				glfwSwapBuffers(this->window);
+
+				// TODO: add swap buffers method to window
+				this->window->swapBuffers();
 
 				//return to main window
-				glfwMakeContextCurrent(mainWindow);
+				this->window->renderer()->finishRender();
+				mainWindow->makeCurrent();
 				ofViewport(mainViewport);
 
 				if (scissorEnabled) {
@@ -570,77 +575,57 @@ namespace ofxRulr {
 
 
 					//--
-					//apply glfw hints
+					//create window and fbo
 					//--
 					//
-					auto mainContext = glfwGetCurrentContext();
+					auto mainWindow = std::static_pointer_cast<ofAppGLFWWindow>(ofGetCurrentWindow());
 					{
 						ofGLFWWindowSettings windowSettings;
-						windowSettings.glVersionMajor = glfwGetWindowAttrib(mainContext, GLFW_CONTEXT_VERSION_MAJOR);
-						windowSettings.glVersionMinor = glfwGetWindowAttrib(mainContext, GLFW_CONTEXT_VERSION_MINOR);
-
-						/*alternatively in the future*/
-						// 					auto mainWindowRaw = ofGetMainLoop()->getCurrentWindow();
-						// 					auto mainWindow = dynamic_pointer_cast<ofAppGLFWWindow>(mainWindowRaw);
-						// 					if (!mainWindow) {
-						// 						ofLogError("ofxRulr") << "GLFW window not found";
-						// 						return;
-						// 					}					
-						//					auto windowSettings = mainWindow->getSettings();
-
-						windowSettings.decorated = false;
-						windowSettings.resizable = false;
+						windowSettings.glVersionMajor = mainWindow->getSettings().glVersionMajor;
+						windowSettings.glVersionMinor = mainWindow->getSettings().glVersionMinor;
+						
 						windowSettings.doubleBuffering = false;
+						windowSettings.shareContextWith = mainWindow;
 
-						/*
-						glfwDefaultWindowHints();
-						glfwWindowHint(GLFW_VISIBLE, true);
-						#ifndef TARGET_OSX
-						glfwWindowHint(GLFW_AUX_BUFFERS, windowSettings.doubleBuffering ? 1 : 0);
-						#endif
-						*/
-						glfwWindowHint(GLFW_RESIZABLE, windowSettings.resizable);
-						glfwWindowHint(GLFW_DECORATED, windowSettings.decorated);
-						glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, windowSettings.glVersionMajor);
-						glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, windowSettings.glVersionMinor);
-						glfwWindowHint(GLFW_VISIBLE, true);
-					}
-					//
-					//--
-
-
-
-					//--
-					//create the window
-					//--
-					//
-					{
 						auto hasSplit = this->splitHorizontal > 1 || this->splitVertical > 1;
-
 						bool useFullScreen = !hasSplit && this->useFullScreenMode;
-						auto monitor = useFullScreen ? videoOutput.monitor : NULL;
-						this->window = glfwCreateWindow(this->width, this->height, this->getName().c_str(), monitor, mainContext);
-						if (!useFullScreen) {
-							glfwSetWindowPos(this->window, x, y);
+						if (useFullScreen) {
+							windowSettings.monitor = videoOutput.index;
+							windowSettings.width = this->videoMode->width;
+							windowSettings.height = this->videoMode->height;
+							windowSettings.windowMode = OF_GAME_MODE;
 						}
+						else {
+							windowSettings.decorated = false;
+							windowSettings.resizable = false;
+							windowSettings.windowMode = OF_WINDOW;
+							windowSettings.width = this->width;
+							windowSettings.height = this->height;
+							windowSettings.setPosition(ofVec2f(x, y));
+						}
+
+						//--
+						//allocate fbo to match the window
+						//--
+						//
+						ofFbo::Settings fboSettings;
+						fboSettings.width = this->width;
+						fboSettings.height = this->height;
+						fboSettings.minFilter = GL_NEAREST;
+						fboSettings.maxFilter = GL_NEAREST;
+						this->fbo.allocate(fboSettings);
+
+						//--
+						//create the window
+						//--
+						//
+						this->window.reset(new ofAppGLFWWindow);
+						this->window->setup(windowSettings);
+						this->window->update();
 					}
 					//
 					//--
-
-
-
-					//--
-					//allocate fbo to match the window
-					//--
-					//
-					ofFbo::Settings fboSettings;
-					fboSettings.width = this->width;
-					fboSettings.height = this->height;
-					fboSettings.minFilter = GL_NEAREST;
-					fboSettings.maxFilter = GL_NEAREST;
-					this->fbo.allocate(fboSettings);
-					//
-					//--
+					mainWindow->makeCurrent();
 				}
 				else {
 					this->showWindow = false;
@@ -649,10 +634,7 @@ namespace ofxRulr {
 
 			//----------
 			void VideoOutput::destroyWindow() {
-				if (this->window) {
-					glfwDestroyWindow(this->window);
-					this->window = nullptr;
-				}
+				this->window.reset();
 			}
 
 			//----------
@@ -692,6 +674,13 @@ namespace ofxRulr {
 			//----------
 			void VideoOutput::callbackChangeSplit(float &) {
 				this->calculateSplit();
+				if (this->isWindowOpen()) {
+					this->createWindow();
+				}
+			}
+
+			//----------
+			void VideoOutput::callbackChangeFullscreenMode(bool &) {
 				if (this->isWindowOpen()) {
 					this->createWindow();
 				}
