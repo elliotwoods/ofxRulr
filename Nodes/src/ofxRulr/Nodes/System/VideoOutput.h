@@ -65,6 +65,7 @@ namespace ofxRulr {
 
 				void calculateSplit();
 				void callbackChangeSplit(float &);
+				void callbackChangeFullscreenMode(bool &);
 
 				ofxCvGui::PanelPtr view;
 				shared_ptr<ofxCvGui::Panels::ElementHost> monitorSelectionView;
@@ -75,7 +76,7 @@ namespace ofxRulr {
 				int videoOutputSelection;
 				bool needsMonitorRefresh;
 
-				GLFWwindow * window;
+				std::unique_ptr<ofAppGLFWWindow> window;
 				string windowTitle;
 
 				ofParameter<bool> showWindow;
