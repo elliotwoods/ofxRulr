@@ -431,24 +431,22 @@ namespace ofxRulr {
 				//draw the fbo if mute is disabled
 				if (!this->mute) {
 					//set the drawing matrices to normalised coordinates
-					glMatrixMode(GL_PROJECTION);
-					glPushMatrix();
-					glLoadIdentity();
-					glMatrixMode(GL_MODELVIEW);
-					glPushMatrix();
-					glLoadIdentity();
+					ofSetMatrixMode(OF_MATRIX_PROJECTION);
+					ofPushMatrix();
+					ofLoadMatrix(ofMatrix4x4());
+					ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+					ofPushMatrix();
+					ofLoadMatrix(ofMatrix4x4());
 
 					this->fbo.draw(-1, +1, 2, -2);
 
 					//reset all transforms
-					glMatrixMode(GL_PROJECTION);
-					glPopMatrix();
-					glMatrixMode(GL_MODELVIEW);
-					glPopMatrix();
+					ofSetMatrixMode(OF_MATRIX_PROJECTION);
+					ofPopMatrix();
+					ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+					ofPopMatrix();
 				}
 
-
-				// TODO: add swap buffers method to window
 				this->window->swapBuffers();
 
 				//return to main window
