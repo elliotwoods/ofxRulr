@@ -14,13 +14,13 @@ namespace ofxRulr {
 				if (device.isDefaultOutput) {
 					ofSoundStreamSettings settings;
 					settings.setOutDevice(device);
-					settings.bufferSize = 1024;
-					settings.numBuffers = 1;
+					settings.setInDevice(device);
 					settings.numOutputChannels = 2;
 					settings.numInputChannels = 0;
 					settings.sampleRate = 44100;
+					settings.bufferSize = 1024;
+					settings.numBuffers = 1;
 					this->soundStream.setup(settings);
-					break;
 				}
 			}
 			//if that didn't work
@@ -31,11 +31,12 @@ namespace ofxRulr {
 					if (device.outputChannels >= 2) {
 						ofSoundStreamSettings settings;
 						settings.setOutDevice(device);
-						settings.bufferSize = 1024;
-						settings.numBuffers = 1;
+						settings.setInDevice(device);
 						settings.numOutputChannels = 2;
 						settings.numInputChannels = 0;
 						settings.sampleRate = 44100;
+						settings.bufferSize = 1024;
+						settings.numBuffers = 1;
 						this->soundStream.setup(settings);
 						success = true;
 						break;

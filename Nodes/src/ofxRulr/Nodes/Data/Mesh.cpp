@@ -74,11 +74,6 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Mesh::get(ofMesh & mesh) const {
-				mesh = this->mesh;
-			}
-
-			//----------
 			ofMesh & Mesh::getMesh() {
 				return this->mesh;
 			}

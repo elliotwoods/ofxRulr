@@ -5,7 +5,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Data {
-			class Mesh : public Gives<ofMesh> {
+			class Mesh : public Nodes::Base {
 			public:
 				Mesh();
 				string getTypeName() const override;
@@ -16,7 +16,6 @@ namespace ofxRulr {
 				void deserialize(const Json::Value &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
-				void get(ofMesh &) const override;
 				ofMesh & getMesh();
 				const ofMesh & getMesh() const;
 

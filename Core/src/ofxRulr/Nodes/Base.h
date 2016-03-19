@@ -175,11 +175,5 @@ namespace ofxRulr {
 			uint64_t lastFrameUpdate;
 			bool updateAllInputsFirst;
 		};
-
-		template<typename What>
-		class Gives : public Base {
-		public:
-			virtual void get(What &) const {	};
-		};
 	}
 }
