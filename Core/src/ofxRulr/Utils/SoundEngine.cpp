@@ -12,8 +12,15 @@ namespace ofxRulr {
 			auto devices = this->soundStream.getDeviceList();
 			for (auto & device : devices) {
 				if (device.isDefaultOutput) {
-					this->soundStream.setDevice(device);
-					this->soundStream.setup(2, 0, 44100, 1024, 1);
+					ofSoundStreamSettings settings;
+					settings.setOutDevice(device);
+					settings.bufferSize = 1024;
+					settings.numBuffers = 1;
+					settings.numOutputChannels = 2;
+					settings.numInputChannels = 0;
+					settings.sampleRate = 44100;
+					this->soundStream.setup(settings);
+					break;
 				}
 			}
 			//if that didn't work
@@ -22,8 +29,14 @@ namespace ofxRulr {
 			if (!success) {
 				for (auto & device : devices) {
 					if (device.outputChannels >= 2) {
-						this->soundStream.setDevice(device);
-						this->soundStream.setup(2, 0, 44100, 1024, 1);
+						ofSoundStreamSettings settings;
+						settings.setOutDevice(device);
+						settings.bufferSize = 1024;
+						settings.numBuffers = 1;
+						settings.numOutputChannels = 2;
+						settings.numInputChannels = 0;
+						settings.sampleRate = 44100;
+						this->soundStream.setup(settings);
 						success = true;
 						break;
 					}
