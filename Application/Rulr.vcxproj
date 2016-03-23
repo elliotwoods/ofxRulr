@@ -57,7 +57,7 @@
       <MinimalRebuild>
       </MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <PreprocessorDefinitions>__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__x86_64__;EXPORT_RULR_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -69,7 +69,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>RulrLibrary_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application\bin;..\..\..\addons\ofxMessagePack\libs\msgpack-c\lib\win64;F:\openFrameworks\addons\ofxNonLinearFit\libs\NLopt\lib\vs\x64;..\..\..\addons\ofxUeye\libs\ueye\vs2012;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -78,7 +77,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__x86_64__;EXPORT_RULR_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>$(KINECTSDK20_DIR)\inc;..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -92,7 +91,6 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>RulrLibrary_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application\bin;..\..\..\addons\ofxMessagePack\libs\msgpack-c\lib\win64;..\..\..\addons\ofxNonLinearFit\libs\NLopt\lib\win64;..\..\..\addons\ofxUeye\libs\ueye\vs2012;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AssemblyDebug>
       </AssemblyDebug>
@@ -115,6 +113,17 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="main_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
+      <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Core.vcxproj">
+      <Project>{9201d4e8-8b5a-44d4-baa6-23229a1871a7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Nodes\Nodes.vcxproj">
+      <Project>{33d577f9-86e9-4f15-81f1-256a00bbe3ea}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ofxRulr/Utils/Constants.h"
 #include <exception>
 #include <string>
 #include "opencv2/core/core.hpp"

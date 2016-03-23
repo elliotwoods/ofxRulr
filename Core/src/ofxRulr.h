@@ -9,6 +9,7 @@
 #include "ofxRulr/Graph/FactoryRegister.h"
 #include "ofxRulr/Graph/Editor/Patch.h"
 
+#include "ofxRulr/Utils/Constants.h"
 #include "ofxRulr/Utils/Initialiser.h"
 #include "ofxRulr/Utils/Gui.h"
 #include "ofxRulr/Utils/SoundEngine.h"

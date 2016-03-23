@@ -160,6 +160,11 @@
     </ClCompile>
     <ClCompile Include="src\plugin.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Rulr.vcxproj">
+      <Project>{7fd42df7-442e-479a-ba76-d0022f99702a}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
