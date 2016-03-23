@@ -14,23 +14,23 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rulr", "Rulr.vcxproj", "{7F
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openframeworksLib", "..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj", "{5837595D-ACA9-485C-8E76-729040CE4B0B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxMachineVisionLib", "..\..\..\addons\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj", "{CD4455E0-0454-4C3C-BB42-9D15D16A34DD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxMachineVisionLib", "..\..\ofxMachineVision\ofxMachineVisionLib\ofxMachineVisionLib.vcxproj", "{CD4455E0-0454-4C3C-BB42-9D15D16A34DD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvMinLib", "..\..\..\addons\ofxCvMin\ofxCvMinLib\ofxCvMinLib.vcxproj", "{FAA73572-FD12-41FA-8FBE-CB47482D2D87}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvMinLib", "..\..\ofxCvMin\ofxCvMinLib\ofxCvMinLib.vcxproj", "{FAA73572-FD12-41FA-8FBE-CB47482D2D87}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxRayLib", "..\..\..\addons\ofxRay\ofxRayLib\ofxRayLib.vcxproj", "{048E1EC4-64FE-4AAC-B524-1BD56A1FC726}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxRayLib", "..\..\ofxRay\ofxRayLib\ofxRayLib.vcxproj", "{048E1EC4-64FE-4AAC-B524-1BD56A1FC726}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxGraycodeLib", "..\..\..\addons\ofxGraycode\ofxGraycodeLib\ofxGraycodeLib.vcxproj", "{BA65A9DD-2BE2-4FF8-A9C6-6AC6624CDDC3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxGraycodeLib", "..\..\ofxGraycode\ofxGraycodeLib\ofxGraycodeLib.vcxproj", "{BA65A9DD-2BE2-4FF8-A9C6-6AC6624CDDC3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxEdsdkLib", "..\..\..\addons\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj", "{630936F8-C65F-4AB9-92AD-80569EAA7782}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxEdsdkLib", "..\..\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj", "{630936F8-C65F-4AB9-92AD-80569EAA7782}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxKinectForWindows2Lib", "..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj", "{F6008D6A-6D39-4B68-840E-E7AC8ED855DA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxKinectForWindows2Lib", "..\..\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj", "{F6008D6A-6D39-4B68-840E-E7AC8ED855DA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvGuiLib", "..\..\..\addons\ofxCvGui\ofxCvGuiLib\ofxCvGuiLib.vcxproj", "{6F0DDB4F-4014-4433-919B-9D956C034BAD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvGuiLib", "..\..\ofxCvGui\ofxCvGuiLib\ofxCvGuiLib.vcxproj", "{6F0DDB4F-4014-4433-919B-9D956C034BAD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxUeyeLib", "..\..\..\addons\ofxUeye\ofxUeyeLib\ofxUeyeLib.vcxproj", "{8D6B518C-D891-4907-8BC1-3232914BAB97}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxUeyeLib", "..\..\ofxUeye\ofxUeyeLib\ofxUeyeLib.vcxproj", "{8D6B518C-D891-4907-8BC1-3232914BAB97}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxBlackmagicLib", "..\..\..\addons\ofxBlackmagic2\ofxBlackmagicLib\ofxBlackmagicLib.vcxproj", "{E57BE93F-5BA0-4165-8861-DF6653F11A37}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxBlackmagicLib", "..\..\ofxBlackmagic2\ofxBlackmagicLib\ofxBlackmagicLib.vcxproj", "{E57BE93F-5BA0-4165-8861-DF6653F11A37}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "..\Core\Core.vcxproj", "{9201D4E8-8B5A-44D4-BAA6-23229A1871A7}"
 EndProject
@@ -43,13 +43,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Nodes", "..\Nodes\Nodes.vcx
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addons", "Addons", "{16F575BF-69CD-4DE7-886A-F1E871E4D5B1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxPluginLib", "..\..\..\addons\ofxPlugin\ofxPluginLib\ofxPluginLib.vcxproj", "{68B9239B-5AE6-45C0-B1CB-6FC6B58BB6EE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxPluginLib", "..\..\ofxPlugin\ofxPluginLib\ofxPluginLib.vcxproj", "{68B9239B-5AE6-45C0-B1CB-6FC6B58BB6EE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{B60F2E08-1FFC-406D-99B2-D446B968362D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KinectForWindows2", "KinectForWindows2", "{E02D4FA5-079D-4D3F-805D-AB62A37E77FA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxSingleton", "..\..\..\addons\ofxSingleton\ofxSingletonLib\ofxSingleton.vcxproj", "{4D3BCFDD-E65D-4247-B303-E0839CAEC6A6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxSingleton", "..\..\ofxSingleton\ofxSingletonLib\ofxSingleton.vcxproj", "{4D3BCFDD-E65D-4247-B303-E0839CAEC6A6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EnttecUsbPro", "EnttecUsbPro", "{8A40CBDF-2E1C-40FA-8CF6-B5E4C8904278}"
 EndProject
@@ -58,7 +58,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_EnttecUsbPro", "..\P
 		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxNonLinearFit", "..\..\..\addons\ofxNonLinearFit\ofxNonLinearFitLib\ofxNonLinearFit.vcxproj", "{C087079E-2A0E-4B85-A479-C28E2D01A048}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxNonLinearFit", "..\..\ofxNonLinearFit\ofxNonLinearFitLib\ofxNonLinearFit.vcxproj", "{C087079E-2A0E-4B85-A479-C28E2D01A048}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BlackMagic", "BlackMagic", "{5ED22A72-EE8F-4D92-BA9D-0C8FD342A5D9}"
 EndProject
@@ -83,7 +83,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_AppTester", "..\Plug
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppTester", "AppTester", "{CDED796E-4480-4114-8F51-7C34707A4467}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RulrLibrary", "..\RulrLibrary\RulrLibrary.vcxproj", "{C400D413-78E4-4F60-B5E2-7965FCAC0EEC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RulrLibrary", "..\CreateDLLs\CreateDLLs.vcxproj", "{C400D413-78E4-4F60-B5E2-7965FCAC0EEC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

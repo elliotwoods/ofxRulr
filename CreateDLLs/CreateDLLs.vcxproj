@@ -72,7 +72,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\addons\ofxMessagePack\libs\msgpack-c\lib\win64;F:\openFrameworks\addons\ofxNonLinearFit\libs\NLopt\lib\vs\x64;..\..\..\addons\ofxUeye\libs\ueye\vs2012;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>RulrLibrary_$(Configuration).def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>CreateDLLs_$(Configuration)_$(Platform).def</ModuleDefinitionFile>
       <NoEntryPoint>false</NoEntryPoint>
     </Link>
   </ItemDefinitionGroup>
@@ -114,9 +114,6 @@
     <ProjectReference Include="..\Nodes\Nodes.vcxproj">
       <Project>{33d577f9-86e9-4f15-81f1-256a00bbe3ea}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\CreateDLLs\CreateDLLs_Debug_x64.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
