@@ -6,7 +6,7 @@
 #include "../Exception.h"
 #include "../Version.h"
 
-#include "../../../addons/ofxCvGui/src/ofxCvGui/InspectController.h"
+#include "ofxCvGui/InspectController.h"
 
 #include "ofImage.h"
 #include "ofxAssets.h"

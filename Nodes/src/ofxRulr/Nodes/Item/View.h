@@ -2,7 +2,7 @@
 
 #include "RigidBody.h"
 
-#include "../../../addons/ofxRay/src/ofxRay.h"
+#include "ofxRay.h"
 #include <opencv2/calib3d/calib3d.hpp>
 
 #define RULR_VIEW_DISTORTION_COEFFICIENT_COUNT 4

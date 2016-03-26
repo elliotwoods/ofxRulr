@@ -5,7 +5,7 @@
 #include "../Item/Projector.h"
 #include "./Scan/Graycode.h"
 
-#include "../../../addons/ofxTriangulate/src/ofxTriangulate.h"
+#include "ofxTriangulate.h"
 #include "ofxCvGui.h"
 
 using namespace ofxRulr::Nodes;

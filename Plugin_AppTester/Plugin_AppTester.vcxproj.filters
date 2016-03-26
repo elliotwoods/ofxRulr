@@ -10,29 +10,11 @@
     <Filter Include="src\ofxRulr\Nodes">
       <UniqueIdentifier>{717c6f3d-a06a-42aa-acad-661ab017ee39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="libs">
-      <UniqueIdentifier>{33474ee7-ae63-412f-a4ea-448128e1d7c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libs\oscpkt">
-      <UniqueIdentifier>{fb4fefb5-9ab4-4ce4-b8ec-b3d7b6b5e8e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libs\oscpkt\include">
-      <UniqueIdentifier>{9193e087-85a4-4e02-899f-3ee0630a26a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libs\oscpkt\include\oscpkt">
-      <UniqueIdentifier>{d0849f69-25e0-4a34-b25b-bbc5afdb263b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Nodes\AppTester">
       <UniqueIdentifier>{b9ee24f4-29d3-45fa-ac53-cf1d6b45604e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="libs\oscpkt\include\oscpkt\udp.hh">
-      <Filter>libs\oscpkt\include\oscpkt</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\oscpkt\include\oscpkt\oscpkt.hh">
-      <Filter>libs\oscpkt\include\oscpkt</Filter>
-    </ClInclude>
     <ClInclude Include="src\pch_AppTester.h">
       <Filter>src</Filter>
     </ClInclude>

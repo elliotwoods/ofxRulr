@@ -13,7 +13,7 @@
 #include "ofxCvGui/Widgets/Title.h"
 #include "ofxCvGui/Widgets/Toggle.h"
 
-#include "../../../addons/ofxGLM/src/ofxGLM.h"
+#include "ofxGLM.h"
 
 using namespace ofxCvGui;
 using namespace ofxGLM;

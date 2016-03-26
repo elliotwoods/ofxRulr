@@ -8,7 +8,7 @@
 #include "ofxCvGui/Widgets/SelectFile.h"
 #include "ofxCvGui/Widgets/Indicator.h"
 #include "ofxCvGui/Widgets/Button.h"
-#include "../../../addons/ofxSpinCursor/src/ofxSpinCursor.h"
+#include "ofxSpinCursor.h"
 
 #include "ofxCvMin.h"
 

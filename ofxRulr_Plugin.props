@@ -3,9 +3,12 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="Core\ofxRulr_Core.props" />
     <Import Project="Nodes\ofxRulr_Nodes.props" />
+    <Import Project="..\ofxAddonLib\openFrameworksIncludePathsOnly.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <PostBuildEvent>
       <Command />

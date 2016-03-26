@@ -6,7 +6,7 @@
 #include "ofxCvGui/Widgets/Slider.h"
 #include "ofxCvGui/Widgets/Title.h"
 
-#include "../../../addons/ofxGLM/src/ofxGLM.h"
+#include "ofxGLM.h"
 
 using namespace ofxCvGui;
 using namespace ofxCv;

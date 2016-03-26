@@ -2,7 +2,7 @@
 
 #include "../Base.h"
 
-#include "../../../addons/ofxGraycode/src/ofxGraycode.h"
+#include "ofxGraycode.h"
 #include "ofxCvGui/Panels/Image.h"
 
 namespace ofxRulr {

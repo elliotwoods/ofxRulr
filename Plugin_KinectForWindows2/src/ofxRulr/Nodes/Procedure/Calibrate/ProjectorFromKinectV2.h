@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../addons/ofxCvGui/src/ofxCvGui/Panels/Draws.h"
+#include "ofxCvGui/Panels/Draws.h"
 #include "ofxRulr/Nodes/Procedure/Base.h"
 
 namespace ofxRulr {

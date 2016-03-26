@@ -1,9 +1,9 @@
-#include "../../../addons/ofxRulr/Nodes/src/ofxRulr/Nodes/DeclareNodes.h"
+#include "ofxRulr/Nodes/DeclareNodes.h"
 #include "ofApp.h"
 
 
 #ifdef TARGET_OSX
-#include "../../../addons/ofxRulr/Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h"
+#include "../Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h"
 #include "../../../addons/ofxBlackmagic2/pairs/ofxMachineVision/Device/DeckLink.h"
 #endif
 

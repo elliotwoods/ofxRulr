@@ -4,7 +4,7 @@
 
 #include "ofxCvGui/Panels/World.h"
 
-#include "../../../addons/ofxRay/src/ofxRay.h"
+#include "ofxRay.h"
 
 namespace ofxRulr {
 	namespace Nodes {

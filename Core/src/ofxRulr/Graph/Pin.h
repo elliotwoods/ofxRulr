@@ -2,8 +2,8 @@
 
 #include "../Utils/Set.h"
 
-#include "../../../addons/ofxLiquidEvent/src/ofxLiquidEvent.h"
-#include "../../../addons/ofxCvGui/src/ofxCvGui/Element.h"
+#include "ofxLiquidEvent.h"
+#include "ofxCvGui/Element.h"
 
 #include <string>
 #include <memory>
