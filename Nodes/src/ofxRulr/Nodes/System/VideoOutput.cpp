@@ -402,7 +402,7 @@ namespace ofxRulr {
 					ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(true);
 				}
 			}
-
+			
 			//----------
 			void VideoOutput::presentFbo() {
 				if (!this->window) {
@@ -423,7 +423,7 @@ namespace ofxRulr {
 				this->window->renderer()->startRender();
 				
 				//switch to window viewport
-				glViewport(0, 0, this->width, this->height); //ofViewport would poll the wrong window resolution, so need to use gl
+				ofViewport(0, 0, this->width, this->height); //ofViewport would poll the wrong window resolution, so need to use gl
 
 				//clear the entire video output
 				ofClear(0, 0);
@@ -438,7 +438,7 @@ namespace ofxRulr {
 					ofPushMatrix();
 					ofLoadMatrix(ofMatrix4x4());
 
-					this->fbo.draw(-1, +1, 2, -2);
+					this->fbo.draw(-1, -1, 2, +2);
 
 					//reset all transforms
 					ofSetMatrixMode(OF_MATRIX_PROJECTION);
