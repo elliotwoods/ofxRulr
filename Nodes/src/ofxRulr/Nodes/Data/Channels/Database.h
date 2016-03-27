@@ -26,7 +26,7 @@ namespace ofxRulr {
 					void update();
 					void populateInspector(ofxCvGui::InspectArguments &);
 
-					ofxCvGui::PanelPtr getView();
+					ofxCvGui::PanelPtr getPanel();
 
 					shared_ptr<Channel> getRootChannel();
 					void clear();

@@ -22,7 +22,7 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 				
-				ofxCvGui::PanelPtr getView() override;
+				ofxCvGui::PanelPtr getPanel() override;
 				
 				bool getRunFinderEnabled() const;
 				void audioOut(ofSoundBuffer &) override;

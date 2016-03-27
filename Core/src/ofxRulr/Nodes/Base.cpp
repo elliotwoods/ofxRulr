@@ -35,7 +35,7 @@ namespace ofxRulr {
 
 		//----------
 		void Base::init() {
-			this->onInspect.addListener([this](ofxCvGui::InspectArguments & args) {
+			this->onPopulateInspector.addListener([this](ofxCvGui::InspectArguments & args) {
 				this->populateInspector(args);
 			}, 99999, this); // populate the instpector with this at the top. We call notify in reverse for inheritance
 

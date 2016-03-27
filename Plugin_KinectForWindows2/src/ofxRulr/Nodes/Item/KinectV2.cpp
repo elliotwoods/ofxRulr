@@ -61,7 +61,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofxCvGui::PanelPtr KinectV2::getView() {
+			ofxCvGui::PanelPtr KinectV2::getPanel() {
 				return this->view;
 			}
 

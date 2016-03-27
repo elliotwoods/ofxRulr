@@ -75,7 +75,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				PanelPtr Database::getView() {
+				PanelPtr Database::getPanel() {
 					return this->view;
 				}
 

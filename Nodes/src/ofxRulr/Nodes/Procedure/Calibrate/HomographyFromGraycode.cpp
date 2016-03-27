@@ -76,7 +76,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				ofxCvGui::PanelPtr HomographyFromGraycode::getView() {
+				ofxCvGui::PanelPtr HomographyFromGraycode::getPanel() {
 					return this->view;
 				}
 

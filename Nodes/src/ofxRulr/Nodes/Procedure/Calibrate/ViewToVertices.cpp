@@ -223,7 +223,7 @@ namespace ofxRulr {
 				}
 
 				//---------
-				ofxCvGui::PanelPtr ViewToVertices::getView() {
+				ofxCvGui::PanelPtr ViewToVertices::getPanel() {
 					return this->view;
 				}
 

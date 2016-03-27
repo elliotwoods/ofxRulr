@@ -14,7 +14,7 @@ namespace ofxRulr {
 				Model();
 				string getTypeName() const override;
 				void init();
-				ofxCvGui::PanelPtr getView() override;
+				ofxCvGui::PanelPtr getPanel() override;
 
 				void update();
 				void drawWorld() override;

@@ -79,9 +79,9 @@ namespace ofxRulr {
 			auto nodeGrid = MAKE(ofxCvGui::Panels::Groups::Grid);
 			verticalGroup->add(nodeGrid);
 			for(auto node : *this) {
-				auto nodeView = node->getView();
-				if (nodeView) {
-					nodeGrid->add(nodeView);
+				auto nodePanel = node->getPanel();
+				if (nodePanel) {
+					nodeGrid->add(nodePanel);
 				}
 			}
 			//
@@ -98,7 +98,7 @@ namespace ofxRulr {
 				summary->init();
 				summary->setName("World");
 				this->add(summary); // we intentionally do this after building the Node grid
-				verticalGroup->add(summary->getView());
+				verticalGroup->add(summary->getPanel());
 			}
 			//
 			//--
@@ -137,20 +137,20 @@ namespace ofxRulr {
 			//--
 			//
 			for (auto node : *this) {
-				auto nodeView = node->getView();
-				if (nodeView) {
+				auto nodePanel = node->getPanel();
+				if (nodePanel) {
 					//if we click inside the panel, (regardless of what takes the click), then inspect this node
 
 					//we add the listener to be LATE (remember that the mouse stack is notified in reverse)
 					//this ensures that anything nested is called first
-					nodeView->onMouse.addListener([node, this](MouseArguments & mouse) {
+					nodePanel->onMouse.addListener([node, this](MouseArguments & mouse) {
 						if (mouse.action == ofxCvGui::MouseArguments::Action::Pressed) {
 							ofxCvGui::inspect(node);
 						}
 					}, -100, this);
 
 					//draw outlines on gui panels if node is selected
-					nodeView->onDraw += [node](DrawArguments & drawArgs) {
+					nodePanel->onDraw += [node](DrawArguments & drawArgs) {
 						if (isBeingInspected(*node)) {
 							ofPushStyle();
 							ofSetColor(255);

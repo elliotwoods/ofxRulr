@@ -87,7 +87,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				ofxCvGui::PanelPtr ProjectorFromKinectV2::getView() {
+				ofxCvGui::PanelPtr ProjectorFromKinectV2::getPanel() {
 					return view;
 				}
 

@@ -24,7 +24,7 @@ namespace ofxRulr {
 				}
 				
 				//----------
-				PanelPtr ProjectorFromDepthCamera::getView() {
+				PanelPtr ProjectorFromDepthCamera::getPanel() {
 					return this->view;
 				}
 

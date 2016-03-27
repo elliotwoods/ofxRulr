@@ -41,7 +41,7 @@ namespace ofxRulr {
 				void init();
 				void update();
 
-				ofxCvGui::PanelPtr getView() override;
+				ofxCvGui::PanelPtr getPanel() override;
 				ofxCvGui::ElementPtr getTrackView();
 
 				void serialize(Json::Value &);

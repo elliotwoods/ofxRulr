@@ -296,7 +296,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofxCvGui::PanelPtr ARCube::getView() {
+			ofxCvGui::PanelPtr ARCube::getPanel() {
 				return this->view;
 			}
 		}

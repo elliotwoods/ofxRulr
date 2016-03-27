@@ -59,7 +59,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				ofxCvGui::PanelPtr CameraFromKinectV2::getView() {
+				ofxCvGui::PanelPtr CameraFromKinectV2::getPanel() {
 					return view;
 				}
 

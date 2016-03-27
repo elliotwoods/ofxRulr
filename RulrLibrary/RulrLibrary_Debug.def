@@ -252,7 +252,6 @@ EXPORTS
 	?getValueType@Channel@Channels@Data@ofxRulr@@QEBA?AW4Type@1234@XZ
 	?getVertices@ofMesh@@QEAAAEAV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@XZ
 	?getVerticesPointer@ofMesh@@QEAAPEAVofVec3f@@XZ
-	?getView@Transmit@DMX@Nodes@ofxRulr@@UEAA?AV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@XZ
 	?getWidth@?$ofPixels_@E@@QEBAHXZ
 	?getWidth@?$ofPixels_@G@@QEBAHXZ
 	?getWidth@?$ofPixels_@M@@QEBAHXZ
@@ -404,3 +403,4 @@ EXPORTS
 	?add@ofParameterGroup@@QEAAXAEAVofAbstractParameter@@@Z
 	??0ofParameterGroup@@QEAA@XZ
 	??0ofLogNotice@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?getPanel@Transmit@DMX@Nodes@ofxRulr@@UEAA?AV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@XZ

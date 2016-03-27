@@ -11,7 +11,7 @@ namespace ofxRulr {
 				Board();
 				void init();
 				string getTypeName() const override;
-				ofxCvGui::PanelPtr getView() override;
+				ofxCvGui::PanelPtr getPanel() override;
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);

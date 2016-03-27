@@ -18,7 +18,7 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 
-				ofxCvGui::PanelPtr getView();
+				ofxCvGui::PanelPtr getPanel();
 
 				void refresh();
 				void clear();

@@ -62,7 +62,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		ofxCvGui::PanelPtr Summary::getView() {
+		ofxCvGui::PanelPtr Summary::getPanel() {
 			return this->view;
 		}
 

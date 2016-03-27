@@ -62,7 +62,7 @@ namespace ofxRulr {
 				}
 				
 				//----------
-				ofxCvGui::PanelPtr CameraFromDepthCamera::getView() {
+				ofxCvGui::PanelPtr CameraFromDepthCamera::getPanel() {
 					return view;
 				}
 				

@@ -23,7 +23,7 @@ namespace ofxRulr {
 
 				void drawWorld() override;
 
-				ofxCvGui::PanelPtr getView() override;
+				ofxCvGui::PanelPtr getPanel() override;
 
 				bool getRunFinderEnabled() const;
 			protected:

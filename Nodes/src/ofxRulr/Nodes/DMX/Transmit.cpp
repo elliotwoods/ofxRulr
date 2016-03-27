@@ -101,7 +101,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofxCvGui::PanelPtr Transmit::getView() {
+			ofxCvGui::PanelPtr Transmit::getPanel() {
 				return this->view;
 			}
 

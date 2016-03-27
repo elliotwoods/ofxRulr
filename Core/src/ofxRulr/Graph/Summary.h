@@ -17,7 +17,7 @@ namespace ofxRulr {
 			void setWorld(const Utils::Set<Nodes::Base> &);
 
 			void update();
-			ofxCvGui::PanelPtr getView() override;
+			ofxCvGui::PanelPtr getPanel() override;
 		protected:
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);

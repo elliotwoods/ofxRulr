@@ -75,7 +75,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				PanelPtr Graycode::getView() {
+				PanelPtr Graycode::getPanel() {
 					return this->view;
 				}
 

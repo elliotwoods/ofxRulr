@@ -12,7 +12,7 @@ namespace ofxRulr {
 					CameraIntrinsics();
 					void init();
 					string getTypeName() const override;
-					ofxCvGui::PanelPtr getView() override;
+					ofxCvGui::PanelPtr getPanel() override;
 					void update();
 
 					void serialize(Json::Value &);

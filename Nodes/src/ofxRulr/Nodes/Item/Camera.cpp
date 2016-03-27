@@ -77,7 +77,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofxCvGui::PanelPtr Camera::getView() {
+			ofxCvGui::PanelPtr Camera::getPanel() {
 				return this->placeholderPanel;
 			}
 
@@ -130,8 +130,11 @@ namespace ofxRulr {
 				shared_ptr<Device::Base> device;
 				if (factory) {
 					device = factory->makeUntyped();
+					this->setDevice(device);
 				}
-				this->setDevice(device); //setting to null is also valid
+				else {
+					this->clearDevice();
+				}
 			}
 
 			//----------
@@ -219,6 +222,7 @@ namespace ofxRulr {
 					this->rebuildOpenCameraPanel();
 					this->placeholderPanel->add(this->cameraOpenPanel);
 				}
+				ofxCvGui::InspectController::X().refresh(this);
 			}
 
 			//----------

@@ -27,7 +27,7 @@ namespace ofxRulr {
 				ofxCvGui::ElementPtr title;
 
 				this->node = node;
-				this->nodeView = node->getView();
+				this->nodeView = node->getPanel();
 				//check if this node has a view
 				if (nodeView) {
 					this->elements->add(nodeView);

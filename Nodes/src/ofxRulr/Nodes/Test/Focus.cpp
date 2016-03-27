@@ -174,7 +174,7 @@ namespace ofxRulr {
 			}
 			
 			//----------
-			ofxCvGui::PanelPtr Focus::getView() {
+			ofxCvGui::PanelPtr Focus::getPanel() {
 				return this->view;
 			}
 			

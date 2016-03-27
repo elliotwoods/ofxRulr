@@ -98,7 +98,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				ofxCvGui::PanelPtr CameraIntrinsics::getView() {
+				ofxCvGui::PanelPtr CameraIntrinsics::getPanel() {
 					return this->view;
 				}
 

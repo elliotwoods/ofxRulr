@@ -384,7 +384,7 @@ namespace ofxRulr {
 				}
 
 				//---------
-				ofxCvGui::PanelPtr MovingHeadToWorld::getView() {
+				ofxCvGui::PanelPtr MovingHeadToWorld::getPanel() {
 					return this->view;
 				}
 

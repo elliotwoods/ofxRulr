@@ -150,7 +150,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			PanelPtr Recorder::getView() {
+			PanelPtr Recorder::getPanel() {
 				return this->view;
 			}
 

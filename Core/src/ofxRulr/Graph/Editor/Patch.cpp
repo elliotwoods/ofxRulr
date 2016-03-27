@@ -192,7 +192,7 @@ namespace ofxRulr {
 				
 				auto nodeUnderCursor = this->getNodeHostUnderCursor();
 				if (nodeUnderCursor) {
-					return nodeUnderCursor->getNodeInstance()->getView(); // also this will return PanelPtr() if no screen available
+					return nodeUnderCursor->getNodeInstance()->getPanel(); // also this will return PanelPtr() if no screen available
 				}
 
 				return ofxCvGui::PanelPtr();
@@ -341,7 +341,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofxCvGui::PanelPtr Patch::getView() {
+			ofxCvGui::PanelPtr Patch::getPanel() {
 				return this->view;
 			}
 

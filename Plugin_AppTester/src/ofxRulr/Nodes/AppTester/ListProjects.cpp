@@ -65,7 +65,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofxCvGui::PanelPtr ListProjects::getView() {
+			ofxCvGui::PanelPtr ListProjects::getPanel() {
 				return this->view;
 			}
 

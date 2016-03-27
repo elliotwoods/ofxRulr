@@ -45,7 +45,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				ofxCvGui::PanelPtr Mesh2DFromGraycode::getView() {
+				ofxCvGui::PanelPtr Mesh2DFromGraycode::getPanel() {
 					return this->view;
 				}
 

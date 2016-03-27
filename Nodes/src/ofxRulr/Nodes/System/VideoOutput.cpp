@@ -190,7 +190,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofxCvGui::PanelPtr VideoOutput::getView() {
+			ofxCvGui::PanelPtr VideoOutput::getPanel() {
 				return this->view;
 			}
 

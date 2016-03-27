@@ -42,7 +42,7 @@ namespace ofxRulr {
 
 				void insertPatchlet(const Json::Value &, bool useNewIDs, ofVec2f offset = ofVec2f());
 
-				ofxCvGui::PanelPtr getView() override;
+				ofxCvGui::PanelPtr getPanel() override;
 				void update();
 				void drawWorld() override;
 

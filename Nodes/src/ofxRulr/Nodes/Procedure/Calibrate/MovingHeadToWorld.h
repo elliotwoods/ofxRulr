@@ -46,7 +46,7 @@ namespace ofxRulr {
 					void populateInspector(ofxCvGui::InspectArguments &);
 
 					void drawWorld() override;
-					ofxCvGui::PanelPtr getView() override;
+					ofxCvGui::PanelPtr getPanel() override;
 					void addCapture();
 					void deleteLastCapture();
 					bool calibrate(int iterations = 3);

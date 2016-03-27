@@ -18,7 +18,7 @@ namespace ofxRulr {
 					CameraFromDepthCamera();
 					string getTypeName() const override;
 					void init();
-					ofxCvGui::PanelPtr getView() override;
+					ofxCvGui::PanelPtr getPanel() override;
 					void update();
 					
 					void serialize(Json::Value &);

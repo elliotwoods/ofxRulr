@@ -132,7 +132,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			PanelPtr ClientHandler::getView() {
+			PanelPtr ClientHandler::getPanel() {
 				return this->view;
 			}
 			

@@ -29,7 +29,7 @@ namespace ofxRulr {
 				void init();
 				void update();
 				virtual string getTypeName() const override;
-				ofxCvGui::PanelPtr getView() override;
+				ofxCvGui::PanelPtr getPanel() override;
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);

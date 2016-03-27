@@ -51,7 +51,7 @@ namespace ofxRulr {
 
 				ClientHandler();
 				string getTypeName() const override;
-				ofxCvGui::PanelPtr getView() override;
+				ofxCvGui::PanelPtr getPanel() override;
 
 				void init();
 				void update();

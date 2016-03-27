@@ -17,7 +17,7 @@ namespace ofxRulr {
 					
 					ProjectorFromDepthCamera();
 					string getTypeName() const override;
-					ofxCvGui::PanelPtr getView() override;
+					ofxCvGui::PanelPtr getPanel() override;
 					
 					void init();
 					void update();
