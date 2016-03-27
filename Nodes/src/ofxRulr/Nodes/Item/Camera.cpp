@@ -21,11 +21,6 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
-				this->placeholderView = make_shared<Panels::Groups::Grid>();
-
-				this->deviceIndex.set("Device index", 0);
-				this->deviceTypeName.set("Device type name", "uninitialised"); // this should be different from the setDevice("") call below
-
 				this->showSpecification.set("Show specification", false);
 				this->showFocusLine.set("Show focus line", true);
 				this->exposure.set("Exposure [us]", 500.0f, 0.0f, 1000000.0f);
@@ -39,9 +34,11 @@ namespace ofxRulr {
 				this->sharpness.addListener(this, &Camera::sharpnessCallback);
 
 				this->grabber = make_shared<ofxMachineVision::Grabber::Simple>();
-
-				//this sets up the GUI for selecting a device
-				this->setDevice("");
+				
+				this->placeholderPanel = make_shared<Panels::Groups::Strip>();
+				this->cameraOpenPanel = make_shared<ofxCvGui::Panels::Widgets>();
+				this->buildGrabberPanel();
+				this->rebuildPanel();
 
 				this->onDrawObject += [this]() {
 					if (this->grabber->getIsDeviceOpen()) {
@@ -81,15 +78,13 @@ namespace ofxRulr {
 
 			//----------
 			ofxCvGui::PanelPtr Camera::getView() {
-				return this->placeholderView;
+				return this->placeholderPanel;
 			}
 
 			//----------
 			void Camera::serialize(Json::Value & json) {
 				auto & jsonDevice = json["device"];
 				{
-					Utils::Serializable::serialize(this->deviceTypeName, jsonDevice);
-					Utils::Serializable::serialize(this->deviceIndex, jsonDevice);
 					jsonDevice["width"] = this->getWidth();
 					jsonDevice["height"] = this->getHeight();
 					
@@ -108,9 +103,6 @@ namespace ofxRulr {
 			void Camera::deserialize(const Json::Value & json) {
 				auto & jsonDevice = json["device"];
 				{
-					this->setDeviceIndex(jsonDevice[this->deviceIndex.getName()].asInt());
-					this->setDevice(jsonDevice[this->deviceTypeName.getName()].asString());
-					
 					//take in the saved resolution, this will be overwritten when the device is open and running
 					this->viewInObjectSpace.setWidth(jsonDevice["width"].asFloat());
 					this->viewInObjectSpace.setHeight(jsonDevice["height"].asFloat());
@@ -128,27 +120,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Camera::setDeviceIndex(int deviceIndex) {
-				if (this->deviceIndex.get() == deviceIndex) {
-					//do nothing
-					return;
-				}
-
-				this->deviceIndex = deviceIndex;
-				if (this->grabber->getIsDeviceOpen()) {
-					//if we have a device open, let's reopen it
-					this->setDevice(this->grabber->getDevice());
-				}
-			}
-
-			//----------
 			void Camera::setDevice(const string & deviceTypeName) {
-				if (this->deviceTypeName.get() == deviceTypeName) {
+				if (this->grabber->getDeviceTypeName() == deviceTypeName) {
 					//do nothing
 					return;
 				}
 
-				this->deviceTypeName = deviceTypeName;
 				auto factory = ofxMachineVision::Device::FactoryRegister::X().get(deviceTypeName);
 				shared_ptr<Device::Base> device;
 				if (factory) {
@@ -160,123 +137,61 @@ namespace ofxRulr {
 			//----------
 			void Camera::setDevice(DevicePtr device) {
 				this->grabber->setDevice(device);
-
-				if (device) {
-					try
-					{
-						this->grabber->open(this->deviceIndex);
-						if (!this->grabber->getIsDeviceOpen()) {
-							throw(ofxRulr::Exception("Cannot open device of type [" + device->getTypeName() + "] at deviceIndex [" + ofToString(this->deviceIndex) + "]"));
-						}
-						this->grabber->startCapture();
-						if (!this->grabber->getIsDeviceOpen()) {
-							throw(ofxRulr::Exception("Cannot start capture on device of type [" + device->getTypeName() + "] at deviceIndex [" + ofToString(this->deviceIndex) + "]"));
-						}
-
-						//this block of code should be a bit safer.
-						//it can happen that it's unclear to the user whether the Camera's width/height are valid or not
-						auto width = this->grabber->getWidth();
-						auto height = this->grabber->getHeight();
-						if (width == 0 || height == 0) {
-							width = grabber->getSensorWidth();
-							height = grabber->getSensorHeight();
-						}
-						if (width != 0 && height != 0) {
-							this->setWidth(width);
-							this->setHeight(height);
-							this->markViewDirty(); // size will have changed
-						}
-						else {
-							ofSystemAlertDialog("Warning : Camera image size is not yet valid");
-						}
-						
-
-						this->setAllGrabberProperties();
-
-						auto cameraView = ofxCvGui::Panels::make(*this->grabber);
-						cameraView->onDraw += [this](ofxCvGui::DrawArguments & args) {
-							if (this->showSpecification) {
-								stringstream status;
-								status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
-								status << endl;
-								status << this->getGrabber()->getDeviceSpecification().toString() << endl;
-
-								ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
-							}
-						};
-						cameraView->onDrawCropped += [this](DrawCroppedArguments & args) {
-							if (this->showFocusLine) {
-								ofPushMatrix();
-								ofPushStyle();
-
-								ofTranslate(0, args.drawSize.y / 2.0f);
-								ofSetColor(100, 255, 100);
-								ofDrawLine(0, 0, args.drawSize.x, 0);
-
-								ofTranslate(0, +128);
-								ofScale(1.0f, -1.0f);
-								ofSetColor(0, 0, 0);
-								ofSetLineWidth(2.0f);
-								this->focusLineGraph.draw();
-								ofSetLineWidth(1.0f);
-								ofSetColor(255, 100, 100);
-								this->focusLineGraph.draw();
-
-								ofPopStyle();
-								ofPopMatrix();
-							}
-
-							//crosshair
-							ofPushStyle();
-							ofSetLineWidth(1);
-							ofSetColor(255);
-							ofPushMatrix();
-							ofTranslate(args.drawSize.x / 2.0f, args.drawSize.y / 2.0f);
-							ofDrawLine(-10, 0, 10, 0);
-							ofDrawLine(0, -10, 0, 10);
-							ofPopMatrix();
-							ofPopStyle();
-						};
-
-						const auto & deviceSpecification = this->getGrabber()->getDeviceSpecification();
-						cameraView->setCaption(deviceSpecification.getManufacturer() + " : " + deviceSpecification.getModelName());
-
-						this->placeholderView->clear();
-						this->placeholderView->add(cameraView);
-					}
-					RULR_CATCH_ALL_TO({
-						this->deviceTypeName = "";
-						ofSystemAlertDialog(e.what());
-					});
-				}
-				else {
-					//there is no device, and we want to setup a view to select the device
-					auto cameraSelectorView = make_shared<Panels::Scroll>();
-					cameraSelectorView->add(new Widgets::EditableValue<int>(this->deviceIndex));
-					cameraSelectorView->add(new Widgets::Title("Select device type:", Widgets::Title::Level::H3));
-
-					auto & factories = ofxMachineVision::Device::FactoryRegister::X();
-					for (auto factory : factories) {
-						auto makeButton = make_shared<Widgets::Button>(factory.first, [this, factory]() {
-							this->setDevice(factory.first);
-						});
-						cameraSelectorView->add(makeButton);
-					}
-
-					this->placeholderView->clear();
-					this->placeholderView->add(cameraSelectorView);
-				}
+				this->rebuildPanel();
 			}
 
 			//----------
 			void Camera::clearDevice() {
-				this->setDevice(DevicePtr());
-				this->deviceTypeName.set("uninitialised");
+				this->grabber->clearDevice();
+				this->rebuildPanel();
 			}
 
 			//----------
-			void Camera::reopenDevice() {
-				this->setDevice(this->getGrabber()->getDevice());
+			void Camera::openDevice() {
+				auto device = this->grabber->getDevice();
+				if (device) {
+					this->grabber->open(this->initialisationSettings);
+					if (!this->grabber->getIsDeviceOpen()) {
+						throw(ofxRulr::Exception("Cannot open device of type [" + device->getTypeName() + "]"));
+					}
+					this->grabber->startCapture();
+					if (!this->grabber->getIsDeviceOpen()) {
+						throw(ofxRulr::Exception("Cannot start capture on device of type [" + device->getTypeName() + "]"));
+					}
+
+					//this block of code should be a bit safer.
+					//it can happen that it's unclear to the user whether the Camera's width/height are valid or not
+					auto width = this->grabber->getWidth();
+					auto height = this->grabber->getHeight();
+					if (width == 0 || height == 0) {
+						width = grabber->getCaptureWidth();
+						height = grabber->getCaptureHeight();
+					}
+					if (width != 0 && height != 0) {
+						this->setWidth(width);
+						this->setHeight(height);
+						this->markViewDirty(); // size will have changed
+					}
+					else {
+						ofSystemAlertDialog("Warning : Camera image size is not yet valid");
+					}
+
+					this->setAllGrabberProperties();
+
+					const auto & deviceSpecification = this->getGrabber()->getDeviceSpecification();
+					this->grabberPanel->setCaption(deviceSpecification.getManufacturer() + " : " + deviceSpecification.getModelName());
+
+				}
+				else {
+					throw(ofxRulr::Exception("Cannot open device until one is set."));
+				}
+				this->rebuildPanel();
+			}
+
+			//----------
+			void Camera::closeDevice() {
+				grabber->close();
+				this->rebuildPanel();
 			}
 
 			//----------
@@ -295,6 +210,113 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void Camera::rebuildPanel() {
+				this->placeholderPanel->clear();
+				if (this->grabber->getIsDeviceOpen()) {
+					this->placeholderPanel->add(this->grabberPanel);
+				}
+				else {
+					this->rebuildOpenCameraPanel();
+					this->placeholderPanel->add(this->cameraOpenPanel);
+				}
+			}
+
+			//----------
+			void Camera::buildGrabberPanel() {
+				this->grabberPanel = ofxCvGui::Panels::make(*this->grabber);
+				this->grabberPanel->onDraw += [this](ofxCvGui::DrawArguments & args) {
+					if (this->showSpecification) {
+						stringstream status;
+						status << "Device ID : " << this->getGrabber()->getDeviceID() << endl;
+						status << endl;
+						status << this->getGrabber()->getDeviceSpecification().toString() << endl;
+
+						ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
+					}
+				};
+				this->grabberPanel->onDrawCropped += [this](DrawCroppedArguments & args) {
+					if (this->showFocusLine) {
+						ofPushMatrix();
+						ofPushStyle();
+
+						ofTranslate(0, args.drawSize.y / 2.0f);
+						ofSetColor(100, 255, 100);
+						ofDrawLine(0, 0, args.drawSize.x, 0);
+
+						ofTranslate(0, +128);
+						ofScale(1.0f, -1.0f);
+						ofSetColor(0, 0, 0);
+						ofSetLineWidth(2.0f);
+						this->focusLineGraph.draw();
+						ofSetLineWidth(1.0f);
+						ofSetColor(255, 100, 100);
+						this->focusLineGraph.draw();
+
+						ofPopStyle();
+						ofPopMatrix();
+					}
+
+					//crosshair
+					ofPushStyle();
+					ofSetLineWidth(1);
+					ofSetColor(255);
+					ofPushMatrix();
+					ofTranslate(args.drawSize.x / 2.0f, args.drawSize.y / 2.0f);
+					ofDrawLine(-10, 0, 10, 0);
+					ofDrawLine(0, -10, 0, 10);
+					ofPopMatrix();
+					ofPopStyle();
+				};
+			}
+
+			//----------
+			void Camera::rebuildOpenCameraPanel() {
+				this->cameraOpenPanel->clear();
+
+				this->cameraOpenPanel->addTitle("Select device type:");
+				{
+					auto & factories = ofxMachineVision::Device::FactoryRegister::X();
+					for (auto factory : factories) {
+						auto toggle = this->cameraOpenPanel->addToggle(factory.first,
+							[this, factory]() {
+								auto device = this->grabber->getDevice();
+								if (device) {
+									return device->getTypeName() == factory.first;
+								}
+								else {
+									return false;
+								}
+							},
+							[this, factory](bool set) {
+								if (set) {
+									this->grabber->setDevice(factory.second->makeUntyped());
+									this->initialisationSettings = this->grabber->getDefaultInitialisationSettings();
+									this->rebuildOpenCameraPanel();
+								}
+							});
+					}
+				}
+
+				auto device = this->grabber->getDevice();
+				if (device) {
+					this->cameraOpenPanel->addTitle("Initialisation settings:");
+					if (this->initialisationSettings) {
+						this->cameraOpenPanel->addParameterGroup(*this->initialisationSettings);
+					}
+
+					auto openButton = this->cameraOpenPanel->addButton("Open", [this]() {
+						try {
+							this->openDevice();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+					});
+					openButton->setHeight(100.0f);
+				}
+
+				this->cameraOpenPanel->arrange();
+			}
+
+			//----------
 			void Camera::populateInspector(InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
@@ -303,13 +325,10 @@ namespace ofxRulr {
 
 				inspector->add(new Widgets::Title("Device", Widgets::Title::H2));
 				inspector->add(new Widgets::LiveValue<string>("Device Type", [this]() {
-					return this->deviceTypeName;
+					return this->grabber->getDeviceTypeName();
 				}));
-				inspector->add(new Widgets::EditableValue<int>("Device Index", [this]() {
-					return this->deviceIndex;
-				}, [this](const string & deviceIndexSelection) {
-					this->deviceIndex = ofToInt(deviceIndexSelection);
-					this->reopenDevice();
+				inspector->add(new Widgets::Button("Close device", [this]() {
+					this->closeDevice();
 				}));
 				inspector->add(new Widgets::Button("Clear device", [this]() {
 					this->clearDevice();

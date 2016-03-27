@@ -24,16 +24,23 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 
-				void setDeviceIndex(int);
 				void setDevice(const string & deviceTypeName);
 				void setDevice(ofxMachineVision::DevicePtr);
 				void clearDevice();
-				void reopenDevice();
+
+				void openDevice();
+				void closeDevice();
+
 				shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
 
 				shared_ptr<ofxMachineVision::Frame> getFreshFrame();
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
+
+				void rebuildPanel();
+				void buildGrabberPanel();
+				void rebuildOpenCameraPanel();
+
 				void setAllGrabberProperties();
 
 				void exposureCallback(float &);
@@ -41,12 +48,12 @@ namespace ofxRulr {
 				void focusCallback(float &);
 				void sharpnessCallback(float &);
 
-				shared_ptr<ofxCvGui::Panels::Groups::Grid> placeholderView;
+				shared_ptr<ofxCvGui::Panels::Groups::Strip> placeholderPanel;
+				shared_ptr<ofxCvGui::Panels::Widgets> cameraOpenPanel;
+				shared_ptr<ofxCvGui::Panels::Draws> grabberPanel;
 
 				shared_ptr<ofxMachineVision::Grabber::Simple> grabber;
-
-				ofParameter<int> deviceIndex;
-				ofParameter<string> deviceTypeName;
+				shared_ptr<ofxMachineVision::Device::Base::InitialisationSettings> initialisationSettings;
 
 				ofParameter<bool> showSpecification;
 				ofParameter<bool> showFocusLine;
