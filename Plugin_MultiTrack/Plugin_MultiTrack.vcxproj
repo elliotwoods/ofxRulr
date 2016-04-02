@@ -58,6 +58,18 @@
     <Import Project="..\..\ofxRulr\ofxRulr_Plugin.props" />
     <Import Project="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="..\..\ofxMultiTrack\ofxMultiTrackLib\ofxMultiTrack.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\..\ofxMultiTrack\ofxMultiTrackLib\ofxMultiTrack.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="..\..\ofxMultiTrack\ofxMultiTrackLib\ofxMultiTrack.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\..\ofxMultiTrack\ofxMultiTrackLib\ofxMultiTrack.props" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
@@ -128,6 +140,7 @@
     <ClInclude Include="libs\oscpkt\include\oscpkt\udp.hh" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\LocalKinect.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Receiver.h" />
     <ClInclude Include="src\pch_MultiTrack.h" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +150,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Receiver.cpp" />
     <ClCompile Include="src\pch_MultiTrack.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -145,8 +159,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj">
+    <ProjectReference Include="..\..\ofxAsio\ofxAsioLib\ofxAsioLib.vcxproj">
+      <Project>{25c92b0b-e070-47be-a6a7-665ce9713e3a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj">
       <Project>{f6008d6a-6d39-4b68-840e-e7ac8ed855da}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxMultiTrack\ofxMultiTrackLib\ofxMultiTrack.vcxproj">
+      <Project>{1977ccba-fab0-4037-8e67-018de0022e7c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxSquashBuddies\ofxSquashBuddiesLib\ofxSquashBuddies.vcxproj">
+      <Project>{1ac26b68-becb-44e7-89f4-210ae5e4c06c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxSquash\ofxSquashLib\ofxSquashLib.vcxproj">
+      <Project>{c5348207-a7ab-4078-85fa-ed5b98a75e87}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Plugin_KinectForWindows2\Plugin_KinectForWindows2.vcxproj">
       <Project>{cbfc3d47-1e57-4291-90b6-c344b836b8da}</Project>

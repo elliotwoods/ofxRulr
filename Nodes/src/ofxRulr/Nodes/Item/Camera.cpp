@@ -16,6 +16,11 @@ namespace ofxRulr {
 			}
 
 			//----------
+			Camera::~Camera() {
+				this->closeDevice();
+			}
+
+			//----------
 			void Camera::init() {
 				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
@@ -153,6 +158,7 @@ namespace ofxRulr {
 			void Camera::openDevice() {
 				auto device = this->grabber->getDevice();
 				if (device) {
+					ofxCvGui::Utils::drawProcessingNotice("Opening grabber device...");
 					this->grabber->open(this->initialisationSettings);
 					if (!this->grabber->getIsDeviceOpen()) {
 						throw(ofxRulr::Exception("Cannot open device of type [" + device->getTypeName() + "]"));
@@ -193,8 +199,11 @@ namespace ofxRulr {
 
 			//----------
 			void Camera::closeDevice() {
-				grabber->close();
-				this->rebuildPanel();
+				if (this->grabber) {
+					ofxCvGui::Utils::drawProcessingNotice("Closing grabber device...");
+					grabber->close();
+					this->rebuildPanel();
+				}
 			}
 
 			//----------

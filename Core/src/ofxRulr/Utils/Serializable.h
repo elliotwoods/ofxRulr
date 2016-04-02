@@ -23,14 +23,38 @@ namespace ofxRulr {
 			void load(std::string filename = "");
 			std::string getDefaultFilename() const;
 		
-			template<typename T>
-			static void serialize(const ofParameter<T> & parameter, Json::Value & json) {
+			//////////////////////////////////////////////////////////////////////////
+
+			template<typename Number>
+			static void serializeNumber(const ofParameter<Number> & parameter, Json::Value & json) {
+				const auto & value = parameter.get();
+				if (value == value) { // don't serialize a NaN
+					json[parameter.getName()] = parameter.get();
+				}
+			}
+#define SERIALIZE_NUMBER(Type) static void serialize(const ofParameter<Type> & parameter, Json::Value & json) { serializeNumber(parameter, json); }
+			SERIALIZE_NUMBER(uint8_t);
+			SERIALIZE_NUMBER(uint16_t);
+			SERIALIZE_NUMBER(uint32_t);
+			SERIALIZE_NUMBER(uint64_t);
+			SERIALIZE_NUMBER(int8_t);
+			SERIALIZE_NUMBER(int16_t);
+			SERIALIZE_NUMBER(int32_t);
+			SERIALIZE_NUMBER(int64_t);
+			SERIALIZE_NUMBER(bool);
+			SERIALIZE_NUMBER(float);
+			SERIALIZE_NUMBER(double);
+			
+			static void serialize(const ofParameter<string> &, Json::Value &);
+			static void serialize(const ofParameterGroup &, Json::Value &);
+			
+			template<typename NotNumber,
+				typename = enable_if<!is_arithmetic<NotNumber>::value, bool>::type>
+			static void serialize(const ofParameter<NotNumber> & parameter, Json::Value & json) {
 				json[parameter.getName()] << parameter.get();
 			}
-			static void serialize(const ofParameter<int> &, Json::Value &);
-			static void serialize(const ofParameter<float> &, Json::Value &);
-			static void serialize(const ofParameter<bool> &, Json::Value &);
-			static void serialize(const ofParameter<string> &, Json::Value &);
+
+			//////////////////////////////////////////////////////////////////////////
 
 			template<typename T>
 			static void deserialize(ofParameter<T> & parameter, const Json::Value & json) {
@@ -45,6 +69,7 @@ namespace ofxRulr {
 			static void deserialize(ofParameter<float> &, const Json::Value &);
 			static void deserialize(ofParameter<bool> &, const Json::Value &);
 			static void deserialize(ofParameter<string> &, const Json::Value &);
+			static void deserialize(ofParameterGroup &, const Json::Value &);
 		};
 	}
 }

@@ -220,9 +220,6 @@ namespace ofxRulr {
 
 				//----------
 				const ofxGraycode::DataSet & Graycode::getDataSet() const {
-					if (!this->decoder.hasData()) {
-						throw(Exception("Can't get DataSet from Graycode node, no data available"));
-					}
 					return this->decoder.getDataSet();
 				}
 

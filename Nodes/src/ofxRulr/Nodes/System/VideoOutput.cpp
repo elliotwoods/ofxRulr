@@ -423,7 +423,7 @@ namespace ofxRulr {
 				this->window->renderer()->startRender();
 				
 				//switch to window viewport
-				ofViewport(0, 0, this->width, this->height); //ofViewport would poll the wrong window resolution, so need to use gl
+				glViewport(0, 0, this->width, this->height); //ofViewport would poll the wrong window resolution, so need to use gl
 
 				//clear the entire video output
 				ofClear(0, 0);
@@ -437,6 +437,11 @@ namespace ofxRulr {
 					ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 					ofPushMatrix();
 					ofLoadMatrix(ofMatrix4x4());
+
+					//check if we need to invert y
+					if (this->window->getSettings().glVersionMajor > 2) {
+						ofScale(1.0f, -1.0f, 1.0f);
+					}
 
 					this->fbo.draw(-1, -1, 2, +2);
 

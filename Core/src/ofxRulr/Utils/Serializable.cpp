@@ -8,32 +8,52 @@ using namespace std;
 namespace ofxRulr {
 	namespace Utils {
 		//----------
-		void Serializable::serialize(const ofParameter<int> & parameter, Json::Value & json) {
-			const auto & value = parameter.get();
-			if (value == value) { // don't serialize a NaN
-				json[parameter.getName()] = parameter.get();
-			}
-		}
-
-		//----------
-		void Serializable::serialize(const ofParameter<float> & parameter, Json::Value & json) {
-			const auto & value = parameter.get();
-			if (value == value) { // don't serialize a NaN
-				json[parameter.getName()] = parameter.get();
-			}
-		}
-
-		//----------
-		void Serializable::serialize(const ofParameter<bool> & parameter, Json::Value & json) {
-			const auto & value = parameter.get();
-			if (value == value) { // don't serialize a NaN
-				json[parameter.getName()] = parameter.get();
-			}
-		}
-
-		//----------
 		void Serializable::serialize(const ofParameter<string> & parameter, Json::Value & json) {
 			json[parameter.getName()] = parameter.get();
+		}
+
+		//----------
+		template<typename Type>
+		bool trySerialize(Json::Value & json, shared_ptr<ofAbstractParameter> abstractParameter) {
+			auto typedParameter = dynamic_pointer_cast<ofParameter<Type>>(abstractParameter);
+			if (typedParameter) {
+				const auto & parameter = *typedParameter;
+				Serializable::serialize(parameter, json);
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+		//----------
+		void Serializable::serialize(const ofParameterGroup & group, Json::Value & json) {
+			const auto name = group.getName();
+			auto & jsonGroup = name.empty() ? json : json[name];
+			for (const auto & parameter : group) {
+				if (trySerialize<uint8_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<uint16_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<uint32_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<uint64_t>(jsonGroup, parameter)) continue;
+
+				if (trySerialize<int8_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<int16_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<int32_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<int64_t>(jsonGroup, parameter)) continue;
+
+				if (trySerialize<bool>(jsonGroup, parameter)) continue;
+				if (trySerialize<float>(jsonGroup, parameter)) continue;
+				if (trySerialize<double>(jsonGroup, parameter)) continue;
+
+				if (trySerialize<string>(jsonGroup, parameter)) continue;
+
+				{
+					auto typedParameter = dynamic_pointer_cast<ofParameterGroup>(parameter);
+					if (typedParameter) {
+						serialize(*typedParameter, jsonGroup);
+					}
+				}
+			}
 		}
 
 		//----------
@@ -65,6 +85,56 @@ namespace ofxRulr {
 			const auto name = parameter.getName();
 			if (json.isMember(name)) {
 				parameter.set(json[parameter.getName()].asString());
+			}
+		}
+		//----------
+		template<typename Type>
+		bool tryDeserialize(const Json::Value & json, shared_ptr<ofAbstractParameter> abstractParameter) {
+			auto typedParameter = dynamic_pointer_cast<ofParameter<Type>>(abstractParameter);
+			if (typedParameter) {
+				auto & parameter = *typedParameter;
+				Serializable::deserialize(parameter, json);
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+		//----------
+		void Serializable::deserialize(ofParameterGroup & group, const Json::Value & json) {
+			const auto name = group.getName();
+			auto & jsonGroup = name.empty() ? json : json[name];
+			for (const auto & parameter : group) {
+				if (!parameter) {
+					continue;
+				}
+
+				if (tryDeserialize<int>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<float>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<bool>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<string>(jsonGroup, parameter)) continue;
+			
+				if (tryDeserialize<string>(jsonGroup, parameter)) continue;
+
+				//group
+				{
+					auto typedParameter = dynamic_pointer_cast<ofParameterGroup>(parameter);
+					if (typedParameter) {
+						deserialize(*typedParameter, jsonGroup);
+						continue;
+					}
+				}
+
+				//anything else
+				{
+					const auto name = parameter->getName();
+					if (json.isMember(name)) {
+						string valueString;
+						jsonGroup[name] >> valueString;
+						parameter->fromString(valueString);
+					}
+				}
 			}
 		}
 

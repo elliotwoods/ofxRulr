@@ -19,15 +19,6 @@
     <Filter Include="src\ofxRulr\Nodes">
       <UniqueIdentifier>{5298b00f-faab-425c-b58d-8fc893f88157}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Procedure">
-      <UniqueIdentifier>{faa2746c-f704-43a1-bcb3-f2eb4fca83e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
-      <UniqueIdentifier>{376e1462-6366-4f47-8372-53cc30de8df6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Item">
-      <UniqueIdentifier>{adae8927-d19a-4f23-b894-73994d05d55c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Nodes\DMX">
       <UniqueIdentifier>{c83ac613-1b93-4aff-a408-cf460a2fb10b}</UniqueIdentifier>
     </Filter>

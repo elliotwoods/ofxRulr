@@ -15,6 +15,7 @@ namespace ofxRulr {
 			class Camera : public View {
 			public:
 				Camera();
+				virtual ~Camera();
 
 				void init();
 				string getTypeName() const override;

@@ -236,6 +236,9 @@
     <ClInclude Include="src\pch_RulrCore.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\ParameterGroup.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl">

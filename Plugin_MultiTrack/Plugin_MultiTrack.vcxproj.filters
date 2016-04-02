@@ -45,6 +45,9 @@
     <ClInclude Include="libs\oscpkt\include\oscpkt\oscpkt.hh">
       <Filter>libs\oscpkt\include\oscpkt</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Receiver.h">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch_MultiTrack.cpp">
@@ -57,6 +60,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.cpp">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Receiver.cpp">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClCompile>
   </ItemGroup>
