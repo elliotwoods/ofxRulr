@@ -28,6 +28,9 @@
     <Filter Include="libs\oscpkt\include\oscpkt">
       <UniqueIdentifier>{d0849f69-25e0-4a34-b25b-bbc5afdb263b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\MultiTrack\Test">
+      <UniqueIdentifier>{f4dc4931-127e-4d92-816f-29e9062c414e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_MultiTrack.h">
@@ -48,6 +51,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Receiver.h">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.h">
+      <Filter>src\ofxRulr\Nodes\MultiTrack\Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch_MultiTrack.cpp">
@@ -64,6 +70,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Receiver.cpp">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.cpp">
+      <Filter>src\ofxRulr\Nodes\MultiTrack\Test</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

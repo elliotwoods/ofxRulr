@@ -1,8 +1,10 @@
 #region usings
 using System;
 using System.IO;
+using System.Linq;
 using System.ComponentModel.Composition;
 using System.Collections.Generic;
+using System.Collections;
 
 using VVVV.PluginInterfaces.V1;
 using VVVV.PluginInterfaces.V2;
@@ -41,6 +43,9 @@ namespace VVVV.Nodes
 		[Output("Symbols")]
 		public ISpread<string> FOutSymbols;
 
+		[Output("Namespaces")]
+		public ISpread<string> FOutNamespaces;
+
 		[Output("DEF String")]
 		public ISpread<string> FOutDEFString;
 		
@@ -48,10 +53,51 @@ namespace VVVV.Nodes
 		public ILogger FLogger;
 		#endregion fields & pins
 
+		public class NamespaceSort : IComparer<string>
+		{
+			CaseInsensitiveComparer caseiComp = new CaseInsensitiveComparer();
+			
+			public List<string> getNamespaces(string x)
+			{
+				var endOfNamespace = x.IndexOf("@@");
+				if(endOfNamespace < 2) {
+					return new List<string>();
+				}
+				
+				var namespaces = new List<string>(x.Substring(0, endOfNamespace).Split('@'));
+				
+				namespaces.Reverse();
+				return namespaces;
+			}
+			
+			public string getNamespaceString(List<string> namespaces) {
+				return string.Join("::", namespaces.ToArray());
+			}
+			
+			public int Compare(List<string> xNamespaces, List<string> yNamespaces)
+			{
+				return caseiComp.Compare(getNamespaceString(xNamespaces), getNamespaceString(yNamespaces));
+			}
+			
+			public int Compare(string x, string y)
+			{	
+				//first check if it has a namespace
+				var xNamespaces = getNamespaces(x);
+				var yNamespaces = getNamespaces(y);
+				
+				int namespaceCompare = Compare(xNamespaces, yNamespaces);
+				if(namespaceCompare != 0) {
+					return namespaceCompare;
+				} else {
+					return caseiComp.Compare(x, y);
+				}
+			}
+		}
+		
 		//called when data for any output pin is requested
 		public void Evaluate(int SpreadMax)
 		{
-			var symbols = new SortedSet<string>();
+			var symbols = new List<string>();
 			
 			//take symbols from previous frame
 			foreach(var symbol in FPrevious) {
@@ -92,26 +138,37 @@ namespace VVVV.Nodes
 			
 			//trim all whitespace
 			{
-				var trimmed = new SortedSet<string>();
+				var trimmed = new List<string>();
 				foreach(var symbol in symbols) {
 					trimmed.Add(symbol.Trim());
 				}
 				symbols = trimmed;
 			}
 			
-			//strip empty symbols
-			symbols.RemoveWhere(symbol => String.IsNullOrEmpty(symbol));
-
+			//trim all empty
+			symbols = symbols.Where(symbol => !String.IsNullOrEmpty(symbol)).ToList();
+			
 			//clear all symbols on request
 			if(FInClear[0]) {
 				symbols.Clear();
 			}
 			
-			//output symbols
+			
+			
+			//build dictionary
+			var namespaceSort = new NamespaceSort();
+			symbols = symbols.Distinct().ToList();
+			symbols.Sort(namespaceSort);
+			
+			
+			//output symbols and namespaces
 			FOutSymbols.SliceCount = 0;
+			FOutNamespaces.SliceCount = 0;
 			foreach(var symbol in symbols) {
 				FOutSymbols.Add(symbol);
+				FOutNamespaces.Add(namespaceSort.getNamespaceString(namespaceSort.getNamespaces(symbol)));
 			}
+			
 			
 			//output DEF string
 			string defString;

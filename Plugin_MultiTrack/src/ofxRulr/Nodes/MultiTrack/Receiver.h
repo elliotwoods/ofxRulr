@@ -17,13 +17,15 @@ namespace ofxRulr {
 
 				ofxCvGui::PanelPtr getPanel() override;
 
-				void drawWorld() override;
+				void drawWorld();
 
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
+
+				shared_ptr<ofxMultiTrack::Receiver> getReceiver() const;
 			protected:
-				void rebuildPreviews();
+				void rebuildGui();
 
 				void previewsChangeCallback(ofParameter<bool> &);
 				shared_ptr<ofxCvGui::Panels::Groups::Strip> panel;
