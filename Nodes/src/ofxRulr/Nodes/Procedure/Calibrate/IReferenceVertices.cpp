@@ -36,12 +36,17 @@ namespace ofxRulr {
 #pragma mark ISelectTargetVertex
 				//----------
 				IReferenceVertices::IReferenceVertices() {
-
+					RULR_NODE_INIT_LISTENER;
 				}
 
 				//----------
 				string IReferenceVertices::getTypeName() const {
 					return "Procedure::Calibrate::ISelectTargetVertex";
+				}
+
+				//----------
+				void IReferenceVertices::init() {
+					RULR_NODE_DRAW_WORLD_LISTENER;
 				}
 
 				//----------

@@ -17,7 +17,7 @@ namespace ofxRulr {
 
 				void init();
 				void update();
-				void drawObject() override;
+				void drawObject();
 
 				void setWidth(float);
 				void setHeight(float);
@@ -34,8 +34,6 @@ namespace ofxRulr {
 
 				const ofxRay::Camera & getViewInObjectSpace() const;
 				ofxRay::Camera getViewInWorldSpace() const;
-
-				ofxLiquidEvent<void> onDrawObject;
 			protected:
 				void markViewDirty();
 

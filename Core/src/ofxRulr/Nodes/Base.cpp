@@ -170,6 +170,16 @@ namespace ofxRulr {
 		}
 
 		//----------
+		void Base::drawWorld() {
+			this->onDrawWorld.notifyListeners();
+		}
+
+		//----------
+		void Base::drawStencil() {
+			this->onDrawStencil.notifyListeners();
+		}
+
+		//----------
 		void Base::throwIfMissingAnyConnection() const {
 			const auto inputPins = this->getInputPins();
 			for(auto & inputPin : inputPins) {

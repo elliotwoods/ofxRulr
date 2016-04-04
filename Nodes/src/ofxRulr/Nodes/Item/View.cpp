@@ -27,6 +27,7 @@ namespace ofxRulr {
 			//---------
 			void View::init() {
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_RIGIDBODY_DRAW_OBJECT_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
@@ -67,7 +68,6 @@ namespace ofxRulr {
 			//----------
 			void View::drawObject() {
 				this->viewInObjectSpace.draw();
-				this->onDrawObject.notifyListeners();
 			}
 
 			//---------

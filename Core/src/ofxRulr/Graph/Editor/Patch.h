@@ -44,7 +44,7 @@ namespace ofxRulr {
 
 				ofxCvGui::PanelPtr getPanel() override;
 				void update();
-				void drawWorld() override;
+				void drawWorld();
 
 				void rebuildLinkHosts();
 				const NodeHostSet & getNodeHosts() const;

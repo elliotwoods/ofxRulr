@@ -30,6 +30,7 @@ namespace ofxRulr {
 			//----------
 			void Model::init() {
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_DRAW_WORLD_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 

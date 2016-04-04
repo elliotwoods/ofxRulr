@@ -28,7 +28,7 @@ namespace ofxRulr {
 					void addCapture();
 					void calibrate();
 					
-					void drawWorld() override;
+					void drawWorld();
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
 					void drawOnVideoOutput();

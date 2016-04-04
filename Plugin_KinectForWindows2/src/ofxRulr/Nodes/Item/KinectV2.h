@@ -26,7 +26,7 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 
-				void drawObject() override;
+				void drawObject();
 				shared_ptr<ofxKinectForWindows2::Device> getDevice();
 
 			protected:

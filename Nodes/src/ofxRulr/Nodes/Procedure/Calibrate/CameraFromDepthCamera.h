@@ -28,7 +28,7 @@ namespace ofxRulr {
 					void calibrate();
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void drawWorld() override;
+					void drawWorld();
 					void rebuildView();
 					shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
 					

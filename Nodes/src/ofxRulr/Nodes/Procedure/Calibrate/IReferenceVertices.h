@@ -23,7 +23,8 @@ namespace ofxRulr {
 
 					IReferenceVertices();
 					string getTypeName() const override;
-					void drawWorld() override;
+					void init();
+					void drawWorld();
 
 					const vector<shared_ptr<Vertex>> & getVertices() const;
 

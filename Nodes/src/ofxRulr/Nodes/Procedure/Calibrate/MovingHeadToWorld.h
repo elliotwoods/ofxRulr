@@ -45,7 +45,7 @@ namespace ofxRulr {
 					void deserialize(const Json::Value &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 
-					void drawWorld() override;
+					void drawWorld();
 					ofxCvGui::PanelPtr getPanel() override;
 					void addCapture();
 					void deleteLastCapture();

@@ -79,7 +79,7 @@ namespace ofxRulr {
 								ofPushStyle();
 								{
 									ofSetColor(255, 100);
-									ofxCvGui::Utils::drawText("Select node to enable board finder...", drawArgs.localBounds);
+									ofxCvGui::Utils::drawText("Select this node and connect active camera.", drawArgs.localBounds);
 								}
 								ofPopStyle();
 							}

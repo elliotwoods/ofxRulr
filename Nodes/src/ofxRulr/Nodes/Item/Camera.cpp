@@ -236,7 +236,7 @@ namespace ofxRulr {
 
 			//----------
 			void Camera::buildGrabberPanel() {
-				this->grabberPanel = ofxCvGui::Panels::make(*this->grabber);
+				this->grabberPanel = ofxCvGui::Panels::makeBaseDraws(*this->grabber);
 				this->grabberPanel->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					if (this->showSpecification) {
 						stringstream status;

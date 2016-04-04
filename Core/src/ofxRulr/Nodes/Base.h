@@ -21,6 +21,10 @@
 	this->onUpdate += [this]() { \
 		this->update(); \
 	}
+#define RULR_NODE_DRAW_WORLD_LISTENER \
+	this->onDrawWorld += [this]() { \
+		this->drawWorld(); \
+	}
 #define RULR_NODE_INSPECTOR_LISTENER \
 	this->onPopulateInspector += [this](ofxCvGui::InspectArguments & args) { \
 		this->populateInspector(args); \
@@ -67,12 +71,8 @@ namespace ofxRulr {
 			void populateInspector(ofxCvGui::InspectArguments &);
 			virtual ofxCvGui::PanelPtr getPanel() { return ofxCvGui::PanelPtr(); };
 
-			///override this function for any node which can draw to the world
-			virtual void drawWorld() { }
-			///override this function to specifically define how the stencil of this layer will be drawn
-			virtual void drawStencil() {
-				this->drawWorld();
-			}
+			void drawWorld();
+			void drawStencil();
 
 			template<typename NodeType>
 			void connect(shared_ptr<NodeType> node) {
@@ -137,6 +137,9 @@ namespace ofxRulr {
 			ofxLiquidEvent<void> onInit;
 			ofxLiquidEvent<void> onDestroy;
 			ofxLiquidEvent<void> onUpdate;
+			ofxLiquidEvent<void> onDrawWorld;
+			ofxLiquidEvent<void> onDrawStencil;
+
 
 			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onConnect;
 			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onDisconnect;

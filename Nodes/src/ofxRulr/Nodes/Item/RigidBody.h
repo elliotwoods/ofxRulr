@@ -3,6 +3,11 @@
 #include "ofxRulr/Nodes/Base.h"
 #include "ofxCvMin/src/ofxCvMin.h"
 
+#define RULR_RIGIDBODY_DRAW_OBJECT_LISTENER \
+	this->onDrawObject += [this]() { \
+		this->drawObject(); \
+	}
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
@@ -11,8 +16,7 @@ namespace ofxRulr {
 				RigidBody();
 				virtual string getTypeName() const override;
 				void init();
-				void drawWorld() override;
-				virtual void drawObject() { }
+				void drawWorld();
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
@@ -29,6 +33,7 @@ namespace ofxRulr {
 				void setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse = false);
 				void clearTransform();
 
+				ofxLiquidEvent<void> onDrawObject;
 				ofxLiquidEvent<void> onTransformChange;
 			protected:
 				void exportRigidBodyMatrix();

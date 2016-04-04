@@ -32,6 +32,7 @@ namespace ofxRulr {
 
 			//---------
 			void RigidBody::init() {
+				RULR_NODE_DRAW_WORLD_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
@@ -49,7 +50,7 @@ namespace ofxRulr {
 				ofMultMatrix(this->getTransform());
 				ofDrawAxis(0.3f);
 				ofDrawBitmapString(this->getName(), ofVec3f());
-				this->drawObject();
+				this->onDrawObject.notifyListeners();
 				ofPopMatrix();
 			}
 

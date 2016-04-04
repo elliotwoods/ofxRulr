@@ -31,6 +31,7 @@ namespace ofxRulr {
 			//----------
 			void ARCube::init() {
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_DRAW_WORLD_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
@@ -141,7 +142,7 @@ namespace ofxRulr {
 								this->undistorted.draw(0, 0);
 
 								//draw the 3D world on top
-								const auto & view = camera->getViewInObjectSpace();
+								const auto & view = camera->getViewInWorldSpace();
 								view.beginAsCamera(true);
 								glEnable(GL_DEPTH_TEST);
 								glClear(GL_DEPTH_BUFFER_BIT);

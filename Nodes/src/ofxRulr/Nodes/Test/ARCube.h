@@ -21,7 +21,7 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 
-				void drawWorld() override;
+				void drawWorld();
 
 				ofxCvGui::PanelPtr getPanel() override;
 
