@@ -423,6 +423,7 @@ EXPORTS
 	?getSize@Board@Item@Nodes@ofxRulr@@QEBA?AV?$Size_@H@cv@@XZ
 	?getFreshFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getGrabber@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VSimple@Grabber@ofxMachineVision@@@std@@XZ
+	?drawWorld@RigidBody@Item@Nodes@ofxRulr@@QEAAXXZ
 	?getPosition@RigidBody@Item@Nodes@ofxRulr@@QEBA?AVofVec3f@@XZ
 	?getRotationQuat@RigidBody@Item@Nodes@ofxRulr@@QEBA?AVofQuaternion@@XZ
 	?getTransform@RigidBody@Item@Nodes@ofxRulr@@QEBA?AVofMatrix4x4@@XZ
@@ -442,6 +443,8 @@ EXPORTS
 	?getHeight@VideoOutput@System@Nodes@ofxRulr@@QEBAMXZ
 	?getWidth@VideoOutput@System@Nodes@ofxRulr@@QEBAMXZ
 	?isWindowOpen@VideoOutput@System@Nodes@ofxRulr@@QEBA_NXZ
+	?getTypeName@Template@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?init@Template@Nodes@ofxRulr@@AEAAXXZ
 	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??1ScopedProcess@Utils@ofxRulr@@QEAA@XZ
 	?end@ScopedProcess@Utils@ofxRulr@@QEAAX_N@Z
@@ -458,4 +461,3 @@ EXPORTS
 	??$ofFromString@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV01@@Z
 	??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEBVofAbstractParameter@@@Z
 	??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEBVofBuffer@@@Z
-	?drawWorld@RigidBody@Item@Nodes@ofxRulr@@QEAAXXZ

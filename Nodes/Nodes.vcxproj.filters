@@ -648,6 +648,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Template.h">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -781,6 +784,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Data\Mesh.cpp">
       <Filter>src\ofxRulr\Nodes\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Template.cpp">
+      <Filter>src\ofxRulr\Nodes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

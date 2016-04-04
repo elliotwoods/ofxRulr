@@ -1,6 +1,5 @@
 #include "pch_MultiTrack.h"
 
-
 #include "ofxRulr/Nodes/MultiTrack/ChannelGenerator/LocalKinect.h"
 #include "ofxRulr/Nodes/MultiTrack/ClientHandler.h"
 #include "ofxRulr/Nodes/MultiTrack/Receiver.h"

@@ -266,6 +266,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Triangulate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Render\NodeThroughView.h" />
     <ClInclude Include="src\ofxRulr\Nodes\System\VideoOutput.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Template.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\ARCube.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\Focus.h" />
     <ClInclude Include="src\pch_RulrNodes.h" />
@@ -336,6 +337,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Render\NodeThroughView.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\System\VideoOutput.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Template.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\ARCube.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\Focus.cpp" />
     <ClCompile Include="src\pch_RulrNodes.cpp">

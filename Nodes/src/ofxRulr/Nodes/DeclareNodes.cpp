@@ -1,6 +1,8 @@
 #include "pch_RulrNodes.h"
 #include "DeclareNodes.h"
 
+#include "ofxRulr/Nodes/Template.h"
+
 #include "ofxRulr/Nodes/Application/Assets.h"
 
 #include "ofxRulr/Nodes/Data/Channels/Database.h"
@@ -40,6 +42,8 @@
 namespace ofxRulr {
 	namespace Nodes {
 		void loadCoreNodes() {
+			RULR_DECLARE_NODE(Template);
+
 			RULR_DECLARE_NODE(Application::Assets);
 			
 			RULR_DECLARE_NODE(Data::Channels::Database);
