@@ -37,7 +37,13 @@ namespace ofxRulr {
 
 			};
 
-			this->grid = &ofxAssets::image("ofxRulr::grid-10");
+			auto wasArbTex = ofGetUsingArbTex();
+			ofDisableArbTex();
+			this->grid = new ofTexture();
+			this->grid->enableMipmap();
+			this->grid->loadData(ofxAssets::image("ofxRulr::grid-10").getPixels());
+			this->grid->setTextureWrap(GL_REPEAT, GL_REPEAT);
+			if (wasArbTex) ofEnableArbTex();
 
 #ifdef OFXCVGUI_USE_OFXGRABCAM
 			this->showCursor.addListener(this, &Summary::callbackShowCursor);
@@ -45,7 +51,7 @@ namespace ofxRulr {
 			this->showCursor.set("Show Cursor", false);
 			this->showGrid.set("Show Grid", true);
 			this->roomMinimum.set("Room minimum", ofVec3f(-5.0f, -4.0f, 0.0f));
-			this->roomMaximum.set("Room maxmimim", ofVec3f(+5.0f, 0.0f, 6.0f));
+			this->roomMaximum.set("Room maximum", ofVec3f(+5.0f, 0.0f, 6.0f));
 			this->view->setGridEnabled(false);
 		}
 
@@ -135,6 +141,7 @@ namespace ofxRulr {
 		void Summary::drawGrid() {
 			const auto & roomMinimum = this->roomMinimum.get();
 			const auto & roomMaximum = this->roomMaximum.get();
+			const auto roomSpan = roomMaximum - roomMinimum;
 			auto & camera = this->view->getCamera();
 
 			//--
@@ -175,6 +182,9 @@ namespace ofxRulr {
 			//
 			ofSetColor(0);
 			ofSetLineWidth(2.0f);
+			//front wall
+			ofDrawLine(cursorPosition.x, roomMaximum.y, roomMinimum.z, cursorPosition.x, roomMinimum.y, roomMinimum.z); //x
+			ofDrawLine(roomMinimum.x, cursorPosition.y, roomMinimum.z, roomMaximum.x, cursorPosition.y, roomMinimum.z); //y
 			//back wall
 			ofDrawLine(cursorPosition.x, roomMaximum.y, roomMaximum.z, cursorPosition.x, roomMinimum.y, roomMaximum.z); //x
 			ofDrawLine(roomMinimum.x, cursorPosition.y, roomMaximum.z, roomMaximum.x, cursorPosition.y, roomMaximum.z); //y
@@ -182,6 +192,16 @@ namespace ofxRulr {
 			//floor
 			ofDrawLine(cursorPosition.x, roomMaximum.y, roomMinimum.z, cursorPosition.x, roomMaximum.y, roomMaximum.z); //x
 			ofDrawLine(roomMinimum.x, roomMaximum.y, cursorPosition.z, roomMaximum.x, roomMaximum.y, cursorPosition.z); //z
+			//ceiling
+			ofDrawLine(cursorPosition.x, roomMinimum.y, roomMinimum.z, cursorPosition.x, roomMinimum.y, roomMaximum.z); //x
+			ofDrawLine(roomMinimum.x, roomMinimum.y, cursorPosition.z, roomMaximum.x, roomMinimum.y, cursorPosition.z); //z
+			//
+			//left wall
+			ofDrawLine(roomMinimum.x, cursorPosition.y, roomMinimum.z, roomMinimum.x, cursorPosition.y, roomMaximum.z); //y
+			ofDrawLine(roomMinimum.x, roomMinimum.y, cursorPosition.z, roomMinimum.x, roomMaximum.y, cursorPosition.z); //z
+			//right wall
+			ofDrawLine(roomMaximum.x, cursorPosition.y, roomMinimum.z, roomMaximum.x, cursorPosition.y, roomMaximum.z); //y
+			ofDrawLine(roomMaximum.x, roomMinimum.y, cursorPosition.z, roomMaximum.x, roomMaximum.y, cursorPosition.z); //z
 			//
 			ofPopStyle();
 			//
@@ -194,37 +214,78 @@ namespace ofxRulr {
 			//grid
 			//--
 			//
-			//glEnable(GL_CULL_FACE);
-			ofPushMatrix();
-			//
-			//back wall
-			ofPushMatrix();
+			glEnable(GL_CULL_FACE);
+			this->grid->bind();
 			{
-				this->light.enable();
-				ofTranslate(0, 0, roomMaximum.z);
-				for (int x = roomMinimum.x; x < roomMaximum.x; x++) {
-					for (int y = roomMinimum.y; y < roomMaximum.y; y++) {
-						this->grid->draw((float)x, (float)y, 1.0f, 1.0f);
-					}
+				//
+				//front/back walls
+				ofPushMatrix();
+				{
+					this->light.enable();
+
+					auto planeXY = ofPlanePrimitive(roomSpan.x, roomSpan.y, 2, 2);
+					planeXY.mapTexCoords(roomMinimum.x, roomSpan.y, roomMaximum.x, 0);
+
+					//front
+					glCullFace(GL_FRONT);
+					ofTranslate(roomMinimum.x + roomSpan.x * 0.5, roomMaximum.y - roomSpan.y * 0.5, roomMinimum.z);
+					planeXY.draw();
+
+					//back
+					glCullFace(GL_BACK);
+					ofTranslate(0, 0, roomSpan.z);
+					planeXY.draw();
+
+					this->light.disable();
+					ofDisableLighting();
 				}
-				this->light.disable();
-				ofDisableLighting();
-			}
-			ofPopMatrix();
-			//
-			//floor
-			ofTranslate(0, roomMaximum.y, roomMaximum.z); // y = 0 is the floor
-			//also translate so rotation is around start of room
-			ofRotate(90, -1, 0, 0);
-			ofTranslate(0, -roomMinimum.z, 0); // offset drawing to begin earlier
-			for (int x = roomMinimum.x; x < roomMaximum.x; x++) {
-				for (int z = roomMinimum.z; z < roomMaximum.z; z++) {
-					this->grid->draw((float) x, (float)z, +1.0f, 1.0f);
+				ofPopMatrix();
+				//
+				//floor/ceiling
+				ofPushMatrix();
+				{
+					auto planeXZ = ofPlanePrimitive(roomSpan.x, roomSpan.z, 2, 2);
+					planeXZ.mapTexCoords(roomMinimum.x, roomSpan.z, roomMaximum.x, 0);
+
+					ofTranslate(roomMinimum.x + roomSpan.x * 0.5, roomMaximum.y, 0);
+					ofRotate(90, -1, 0, 0);
+
+					//floor
+					glCullFace(GL_BACK);
+					ofTranslate(0, roomSpan.z * 0.5 - roomMaximum.z, 0);
+					planeXZ.draw();
+
+					//ceiling
+					glCullFace(GL_FRONT);
+					ofTranslate(0, 0, -roomSpan.y);
+					planeXZ.draw();
 				}
+				ofPopMatrix();
+				//
+				//side walls
+				ofPushMatrix();
+				{
+					auto planeYZ = ofPlanePrimitive(roomSpan.z, roomSpan.y, 2, 2);
+					planeYZ.mapTexCoords(roomMinimum.z, roomSpan.y, roomMaximum.z, 0);
+
+					ofTranslate(0, roomMaximum.y - roomSpan.y * 0.5, roomMaximum.z - roomSpan.z * 0.5);
+					ofRotate(-90, 0, 1, 0);
+
+					//left wall
+					glCullFace(GL_BACK);
+					ofTranslate(0, 0, -roomMinimum.x);
+					planeYZ.draw();
+
+					//right wall
+					glCullFace(GL_FRONT);
+					ofTranslate(0, 0, -roomSpan.x);
+					planeYZ.draw();
+				}
+				ofPopMatrix();
+				//
 			}
-			//
-			ofPopMatrix();
-			//glDisable(GL_CULL_FACE);
+			this->grid->unbind();
+			glDisable(GL_CULL_FACE);
 			//
 			//--
 

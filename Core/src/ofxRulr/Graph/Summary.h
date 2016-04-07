@@ -37,7 +37,7 @@ namespace ofxRulr {
 
 			const Utils::Set<Nodes::Base> * world;
 
-			ofImage * grid;
+			ofTexture * grid;
 			ofLight light;
 		};
 	}

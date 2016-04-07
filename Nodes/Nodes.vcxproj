@@ -234,6 +234,7 @@
     <ClInclude Include="src\ofxRulr\Data\Channels\Address.h" />
     <ClInclude Include="src\ofxRulr\Data\Channels\Channel.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Application\Assets.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Application\openFrameworks.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Database.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Base.h" />
@@ -307,6 +308,7 @@
     <ClCompile Include="src\ofxRulr\Data\Channels\Address.cpp" />
     <ClCompile Include="src\ofxRulr\Data\Channels\Channel.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Application\Assets.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Application\openFrameworks.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Database.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Base.cpp" />
