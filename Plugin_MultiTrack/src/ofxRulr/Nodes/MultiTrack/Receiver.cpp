@@ -25,11 +25,14 @@ namespace ofxRulr {
 
 				this->panel = ofxCvGui::Panels::Groups::makeStrip();
 
+				this->controlSocket = make_unique<Utils::ControlSocket>();
 				//this->parameters.previews.enabled.addListener(this, &Receiver::previewsChangeCallback);
 			}
 
 			//----------
 			void Receiver::update() {
+				this->controlSocket->update();
+
 				bool changeConnection = false;
 				if (this->receiver && !this->parameters.connection.connect) {
 					//disconnect

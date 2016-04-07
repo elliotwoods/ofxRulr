@@ -332,7 +332,7 @@ namespace ofxRulr {
 							throw(Exception("Needs IR texture"));
 						}
 						auto irView = make_shared<Panels::Draws>(*depthCameraIRTexture);
-						irView->onDrawCropped += [this](ofxCvGui::DrawCroppedArguments & args) {
+						irView->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 							ofPolyline previewLine;
 							if (!this->previewCornerFindsDepthCamera.empty()) {
 								ofDrawCircle(this->previewCornerFindsDepthCamera.front(), 10.0f);
@@ -349,7 +349,7 @@ namespace ofxRulr {
 						this->view->add(irView);
 						
 						auto cameraColorView = MAKE(ofxCvGui::Panels::Draws, camera->getGrabber()->getTexture());
-						cameraColorView->onDrawCropped += [this](ofxCvGui::DrawCroppedArguments & args) {
+						cameraColorView->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 							ofPolyline previewLine;
 							if (!this->previewCornerFindsCamera.empty()) {
 								ofDrawCircle(this->previewCornerFindsCamera.front(), 10.0f);

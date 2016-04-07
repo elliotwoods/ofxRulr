@@ -200,7 +200,7 @@ namespace ofxRulr {
 
 					auto width = texture.getWidth();
 					auto height = texture.getHeight();
-					bodyView->onDrawCropped += [this, width, height](DrawCroppedArguments & args) {
+					bodyView->onDrawImage += [this, width, height](DrawImageArguments & args) {
 						auto bodySource = this->device->getBodySource();
 						bodySource->drawProjected(0, 0, width, height, ofxKinectForWindows2::ProjectionCoordinates::DepthCamera);
 					};

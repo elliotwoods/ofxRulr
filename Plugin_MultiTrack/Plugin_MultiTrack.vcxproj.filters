@@ -31,6 +31,9 @@
     <Filter Include="src\ofxRulr\Nodes\MultiTrack\Test">
       <UniqueIdentifier>{f4dc4931-127e-4d92-816f-29e9062c414e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Utils">
+      <UniqueIdentifier>{ba469132-582d-4d49-9e8b-3b2da0f0e0a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_MultiTrack.h">
@@ -54,6 +57,12 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.h">
       <Filter>src\ofxRulr\Nodes\MultiTrack\Test</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Sender.h">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\ControlSocket.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch_MultiTrack.cpp">
@@ -73,6 +82,12 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.cpp">
       <Filter>src\ofxRulr\Nodes\MultiTrack\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Sender.cpp">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\ControlSocket.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

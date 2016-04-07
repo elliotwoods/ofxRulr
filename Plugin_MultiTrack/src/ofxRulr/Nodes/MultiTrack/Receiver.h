@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Item/IDepthCamera.h"
-#include "ofxMultiTrack.h"
+#include "ofxRulr/Utils/ControlSocket.h"
 
-#include "ofxRulr/Utils/ParameterGroup.h"
+#include "ofxMultiTrack.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -30,9 +30,10 @@ namespace ofxRulr {
 				void previewsChangeCallback(ofParameter<bool> &);
 				shared_ptr<ofxCvGui::Panels::Groups::Strip> panel;
 
+
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
-						ofParameter<int> portNumber{ "Port number", 4444 };
+						ofParameter<int> portNumber{ "Port number",  2147};
 						ofParameter<bool> connect{ "Connect", false };
 
 						PARAM_DECLARE("Connection", portNumber, connect);
@@ -48,6 +49,7 @@ namespace ofxRulr {
 				} parameters;
 
 				shared_ptr<ofxMultiTrack::Receiver> receiver;
+				unique_ptr<Utils::ControlSocket> controlSocket;
 			};
 		}
 	}

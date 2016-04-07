@@ -37,10 +37,19 @@ namespace ofxRulr {
 
 			// Generally the first thing we do is add listeners for our other usual activities
 			RULR_NODE_UPDATE_LISTENER; // activate update()
+			RULR_NODE_SERIALIZATION_LISTENERS;
+			RULR_NODE_INSPECTOR_LISTENER;
 
-			this->addInput<Nodes::Item::Camera>();
+			this->addInput<Nodes::Item::Camera>("Camera 1");
 
-			this->panel = ofxCvGui::Panels::makeImage(this->image, "Inverted");
+			auto panel = ofxCvGui::Panels::makeImage(this->image, "Inverted");
+			panel->onDraw += [](ofxCvGui::DrawArguments & args) {
+				ofDrawBitmapStringHighlight("drawing in panel space", 20, 100);
+			};
+			panel->onDrawImage += [](ofxCvGui::DrawImageArguments& args) {
+				ofDrawBitmapStringHighlight("drawing in image space", 500, 100);
+			};
+			this->panel = panel;
 		}
 
 		//----------
@@ -50,7 +59,10 @@ namespace ofxRulr {
 			// for an input which doesn't exist).
 			auto cameraNode = this->getInput<Item::Camera>();
 
+			// First check it's not empty (i.e. make sure something is attached)
 			if (cameraNode) {
+
+				// Some simple code to create a local inverted image
 				this->image = cameraNode->getGrabber()->getPixels();
 
 				for (auto & pixel : image.getPixels()) {
@@ -59,6 +71,43 @@ namespace ofxRulr {
 
 				this->image.update();
 			}
+		}
+
+		//----------
+		void Template::serialize(Json::Value & json) {
+			// This code is run whenever we save.
+			// `Json::Value & json` is our own personal json value to write to
+
+			// We can use a utility function to do the writing for us
+			Utils::Serializable::serialize(this->parameters, json);
+
+			// Or we can write manually
+			json["something"] = 10;
+		}
+
+		//----------
+		void Template::deserialize(const Json::Value & json) {
+			// This code is run whenever we load.
+			// `const Json::Value & json` is our own personal json value to read from
+
+			// We can use a utility function to do the reading for us
+			Utils::Serializable::deserialize(this->parameters, json);
+
+			// Or we can read manually
+			auto something = json["something"].asInt();
+		}
+
+		//----------
+		void Template::populateInspector(ofxCvGui::InspectArguments & args) {
+			// This function is called when we are selected in the Patch
+			// It allows us to fill out the widgets on the right hand Inspector panel
+
+			// First get the inspector itself from the arguments
+			auto inspector = args.inspector;
+			// This inherits type ofxCvGui::Panels::Widgets, so it's easy to add widgets to
+
+			// This utility function will add parameters from a group (and its subgroups) to the interface
+			inspector->addParameterGroup(this->parameters);
 		}
 	}
 }

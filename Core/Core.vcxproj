@@ -84,7 +84,6 @@
     <ClInclude Include="src\ofxRulr\Utils\Constants.h" />
     <ClInclude Include="src\ofxRulr\Utils\Gui.h" />
     <ClInclude Include="src\ofxRulr\Utils\Initialiser.h" />
-    <ClInclude Include="src\ofxRulr\Utils\ParameterGroup.h" />
     <ClInclude Include="src\ofxRulr\Utils\PolyFit.h" />
     <ClInclude Include="src\ofxRulr\Utils\ScopedProcess.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serializable.h" />

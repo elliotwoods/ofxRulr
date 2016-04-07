@@ -15,6 +15,7 @@ EXPORTS
 	glfwSwapBuffers
 	glfwWindowHint
 	??0ofBuffer@@QEAA@AEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
+	??0ofLog@@QEAA@W4ofLogLevel@@PEBDZZ
 	??0ofLogError@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogNotice@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogWarning@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -47,6 +48,7 @@ EXPORTS
 	?ofDrawLine@@YAXAEBVofVec3f@@0@Z
 	?ofDrawRectangle@@YAXMMMM@Z
 	?ofEnableAlphaBlending@@YAXXZ
+	?ofGetCurrentWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@XZ
 	?ofGetElapsedTimef@@YAMXZ
 	?ofGetElapsedTimeMicros@@YA_KXZ
 	?ofGetElapsedTimeMillis@@YA_KXZ
@@ -176,11 +178,15 @@ EXPORTS
 	??0?$ofPixels_@G@@QEAA@XZ
 	??1?$ofPixels_@G@@QEAA@XZ
 	??4?$ofPixels_@G@@QEAAAEAV0@AEBV0@@Z
+	??0FastWriter@Json@@QEAA@XZ
+	??0Reader@Json@@QEAA@XZ
 	??0Value@Json@@QEAA@_N@Z
 	??0Value@Json@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0Value@Json@@QEAA@H@Z
 	??0Value@Json@@QEAA@N@Z
+	??0Value@Json@@QEAA@W4ValueType@1@@Z
 	??1Value@Json@@QEAA@XZ
+	??1Writer@Json@@UEAA@XZ
 	??4Value@Json@@QEAAAEAV01@AEBV01@@Z
 	??AValue@Json@@QEAAAEAV01@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??AValue@Json@@QEAAAEAV01@H@Z
@@ -188,11 +194,14 @@ EXPORTS
 	??AValue@Json@@QEBAAEBV01@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??AValue@Json@@QEBAAEBV01@H@Z
 	??AValue@Json@@QEBAAEBV01@PEBD@Z
+	?write@FastWriter@Json@@UEAA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVValue@2@@Z
+	?parse@Reader@Json@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAVValue@2@_N@Z
 	?asBool@Value@Json@@QEBA_NXZ
 	?asFloat@Value@Json@@QEBAMXZ
 	?asInt@Value@Json@@QEBAHXZ
 	?asString@Value@Json@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?begin@Value@Json@@QEBA?AVValueConstIterator@2@XZ
+	?empty@Value@Json@@QEBA_NXZ
 	?end@Value@Json@@QEBA?AVValueConstIterator@2@XZ
 	?getMemberNames@Value@Json@@QEBA?AV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$allocator@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@std@@XZ
 	?deref@ValueIteratorBase@Json@@IEBAAEAVValue@2@XZ
@@ -216,6 +225,10 @@ EXPORTS
 	?audioOut@ofBaseSoundOutput@@UEAAXAEAVofSoundBuffer@@@Z
 	?audioOut@ofBaseSoundOutput@@UEAAXPEAMHH@Z
 	?audioOut@ofBaseSoundOutput@@UEAAXPEAMHHH_K@Z
+	?clear@ofBuffer@@QEAAXXZ
+	?getBinaryBuffer@ofBuffer@@QEBAPEBDXZ
+	?set@ofBuffer@@QEAA_NAEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
+	?size@ofBuffer@@QEBA_KXZ
 	?begin@ofFbo@@QEBAX_N@Z
 	?end@ofFbo@@QEBAXXZ
 	?getPadding@ofLog@@CAAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -321,6 +334,7 @@ EXPORTS
 	??0InspectController@ofxCvGui@@QEAA@XZ
 	?getDefaultTypeface@ofxCvGui@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?makeElement@ofxCvGui@@YA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
+	?refreshInspector@ofxCvGui@@YAXPEAVIInspectable@1@@Z
 	?init@Builder@ofxCvGui@@QEAAXXZ
 	?addListenersToParent@Element@ofxCvGui@@QEAAXPEAV12@_N@Z
 	?getBounds@Element@ofxCvGui@@QEBAAEBVofRectangle@@XZ

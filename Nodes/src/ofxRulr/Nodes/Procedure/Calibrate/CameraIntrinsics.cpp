@@ -200,6 +200,7 @@ namespace ofxRulr {
 
 					auto calibrateButton = new Widgets::Button("Calibrate", [this]() {
 						try {
+							ofxCvGui::Utils::drawProcessingNotice("Computing camera calibration...");
 							this->calibrate();
 						}
 						RULR_CATCH_ALL_TO_ALERT

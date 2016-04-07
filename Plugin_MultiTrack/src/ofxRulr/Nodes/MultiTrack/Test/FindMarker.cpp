@@ -35,7 +35,7 @@ namespace ofxRulr {
 					panel->add(resultPanel);
 					this->panel = panel;
 
-					resultPanel->onDrawCropped += [this](DrawCroppedArguments & args) {
+					resultPanel->onDrawImage += [this](DrawImageArguments & args) {
 						int index = 0;
 						for (const auto & marker : this->markers) {
 							ofPushStyle();

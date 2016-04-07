@@ -247,7 +247,7 @@ namespace ofxRulr {
 						ofDrawBitmapStringHighlight(status.str(), 30, 90, ofColor(0x46, 200), ofColor::white);
 					}
 				};
-				this->grabberPanel->onDrawCropped += [this](DrawCroppedArguments & args) {
+				this->grabberPanel->onDrawImage += [this](DrawImageArguments & args) {
 					if (this->showFocusLine) {
 						ofPushMatrix();
 						ofPushStyle();
