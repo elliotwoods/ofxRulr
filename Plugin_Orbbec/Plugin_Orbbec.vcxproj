@@ -68,7 +68,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>kinec;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch_$(TargetName).h</PrecompiledHeaderFile>
     </ClCompile>
@@ -126,7 +126,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Color.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Device.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.cpp" />
     <ClCompile Include="src\pch_Plugin_Orbbec.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -144,7 +147,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Color.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Device.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.h" />
     <ClInclude Include="src\pch_Plugin_Orbbec.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

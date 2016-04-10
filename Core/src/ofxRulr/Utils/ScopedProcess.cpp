@@ -7,6 +7,8 @@ namespace ofxRulr {
 		ScopedProcess::ScopedProcess(const string & activityName) {
 			SoundEngine::X().play("ofxRulr::start");
 			this->idling = true;
+
+			ofxCvGui::Utils::drawProcessingNotice(activityName);
 			
 			this->idleThread = thread([this]() {
 				auto & soundEngine = SoundEngine::X();

@@ -5,8 +5,17 @@
     <ClCompile Include="src\pch_Plugin_Orbbec.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec.cpp">
-      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Device.cpp">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Color.cpp">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.cpp">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -34,13 +43,25 @@
     <Filter Include="src\ofxRulr\Nodes\Item">
       <UniqueIdentifier>{9c5ec4e8-c4f8-4bb2-9ac6-49a520481531}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Item\Orbbec">
+      <UniqueIdentifier>{1bcbb061-4091-4a7c-b7d0-3f563c296367}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec.h">
-      <Filter>src\ofxRulr\Nodes\Item</Filter>
-    </ClInclude>
     <ClInclude Include="src\pch_Plugin_Orbbec.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Device.h">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Color.h">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.h">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
