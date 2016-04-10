@@ -25,15 +25,24 @@ namespace ofxRulr {
 #ifdef OFXCVGUI_USE_OFXGRABCAM
 			void callbackShowCursor(bool &);
 #endif
+			void callbackGridDark(bool &);
 
 			void drawGrid();
 
 			shared_ptr<ofxCvGui::Panels::World> view;
 
-			ofParameter<bool> showCursor;
-			ofParameter<bool> showGrid;
-			ofParameter<ofVec3f> roomMinimum;
-			ofParameter<ofVec3f> roomMaximum;
+			struct : ofParameterGroup {
+				ofParameter<bool> showCursor{ "Show cursor",false };
+				struct : ofParameterGroup {
+					ofParameter<bool> enabled{ "Enabled", true };
+					ofParameter<ofVec3f> roomMinimum{ "Room minimum", ofVec3f(-5, -4, 0) };
+					ofParameter<ofVec3f> roomMaximum{ "Room maximum", ofVec3f(+5, 0, 6) };
+					ofParameter<bool> dark{ "Dark", false };
+					PARAM_DECLARE("Grid", enabled, roomMinimum, roomMaximum, dark);
+				} grid;
+				
+				PARAM_DECLARE("Summary", showCursor, grid);
+			} parameters;
 
 			const Utils::Set<Nodes::Base> * world;
 

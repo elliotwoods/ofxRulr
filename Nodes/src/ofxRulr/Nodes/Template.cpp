@@ -79,7 +79,7 @@ namespace ofxRulr {
 			// `Json::Value & json` is our own personal json value to write to
 
 			// We can use a utility function to do the writing for us
-			Utils::Serializable::serialize(this->parameters, json);
+			Utils::Serializable::serialize(json, this->parameters);
 
 			// Or we can write manually
 			json["something"] = 10;
@@ -91,7 +91,7 @@ namespace ofxRulr {
 			// `const Json::Value & json` is our own personal json value to read from
 
 			// We can use a utility function to do the reading for us
-			Utils::Serializable::deserialize(this->parameters, json);
+			Utils::Serializable::deserialize(json, this->parameters);
 
 			// Or we can read manually
 			auto something = json["something"].asInt();

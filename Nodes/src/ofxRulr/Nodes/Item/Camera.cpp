@@ -97,10 +97,10 @@ namespace ofxRulr {
 
 				auto & jsonSettings = json["properties"];
 				{
-					Utils::Serializable::serialize(this->exposure, jsonSettings);
-					Utils::Serializable::serialize(this->gain, jsonSettings);
-					Utils::Serializable::serialize(this->focus, jsonSettings);
-					Utils::Serializable::serialize(this->sharpness, jsonSettings);
+					Utils::Serializable::serialize(jsonSettings, this->exposure);
+					Utils::Serializable::serialize(jsonSettings, this->gain);
+					Utils::Serializable::serialize(jsonSettings, this->focus);
+					Utils::Serializable::serialize(jsonSettings, this->sharpness);
 				}
 			}
 
@@ -115,10 +115,10 @@ namespace ofxRulr {
 
 				auto & jsonSettings = json["properties"];
 				{
-					Utils::Serializable::deserialize(this->exposure, jsonSettings);
-					Utils::Serializable::deserialize(this->gain, jsonSettings);
-					Utils::Serializable::deserialize(this->focus, jsonSettings);
-					Utils::Serializable::deserialize(this->sharpness, jsonSettings);
+					Utils::Serializable::deserialize(jsonSettings, this->exposure);
+					Utils::Serializable::deserialize(jsonSettings, this->gain);
+					Utils::Serializable::deserialize(jsonSettings, this->focus);
+					Utils::Serializable::deserialize(jsonSettings, this->sharpness);
 					
 					this->setAllGrabberProperties();
 				}

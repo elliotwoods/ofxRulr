@@ -73,10 +73,10 @@ namespace ofxRulr {
 			//---------
 			void View::serialize(Json::Value & json) {
 				auto & jsonCalibration = json["calibration"];
-				Utils::Serializable::serialize(this->focalLengthX, jsonCalibration);
-				Utils::Serializable::serialize(this->focalLengthY, jsonCalibration);
-				Utils::Serializable::serialize(this->principalPointX, jsonCalibration);
-				Utils::Serializable::serialize(this->principalPointY, jsonCalibration);
+				Utils::Serializable::serialize(jsonCalibration, this->focalLengthX);
+				Utils::Serializable::serialize(jsonCalibration, this->focalLengthY);
+				Utils::Serializable::serialize(jsonCalibration, this->principalPointX);
+				Utils::Serializable::serialize(jsonCalibration, this->principalPointY);
 
 				auto & jsonResolution = json["resolution"];
 				jsonResolution["width"] = this->viewInObjectSpace.getWidth();
@@ -84,17 +84,17 @@ namespace ofxRulr {
 
 				auto & jsonDistortion = jsonCalibration["distortion"];
 				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-					Utils::Serializable::serialize(this->distortion[i], jsonDistortion);
+					Utils::Serializable::serialize(jsonDistortion, this->distortion[i]);
 				}
 			}
 
 			//---------
 			void View::deserialize(const Json::Value & json) {
 				const auto & jsonCalibration = json["calibration"];
-				Utils::Serializable::deserialize(this->focalLengthX, jsonCalibration);
-				Utils::Serializable::deserialize(this->focalLengthY, jsonCalibration);
-				Utils::Serializable::deserialize(this->principalPointX, jsonCalibration);
-				Utils::Serializable::deserialize(this->principalPointY, jsonCalibration);
+				Utils::Serializable::deserialize(jsonCalibration, this->focalLengthX);
+				Utils::Serializable::deserialize(jsonCalibration, this->focalLengthY);
+				Utils::Serializable::deserialize(jsonCalibration, this->principalPointX);
+				Utils::Serializable::deserialize(jsonCalibration, this->principalPointY);
 
 				const auto & jsonResolution = json["resolution"];
 				if (!jsonResolution.isNull()) {
@@ -108,7 +108,7 @@ namespace ofxRulr {
 
 				auto & jsonDistortion = jsonCalibration["distortion"];
 				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-					Utils::Serializable::deserialize(this->distortion[i], jsonDistortion);
+					Utils::Serializable::deserialize(jsonDistortion, this->distortion[i]);
 				}
 			}
 

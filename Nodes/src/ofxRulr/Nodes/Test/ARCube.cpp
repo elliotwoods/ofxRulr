@@ -198,14 +198,14 @@ namespace ofxRulr {
 
 			//----------
 			void ARCube::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(this->activewhen, json);
-				Utils::Serializable::serialize(this->drawStyle, json);
+				Utils::Serializable::serialize(json, this->activewhen);
+				Utils::Serializable::serialize(json, this->drawStyle);
 			}
 
 			//----------
 			void ARCube::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(this->activewhen, json);
-				Utils::Serializable::deserialize(this->drawStyle, json);
+				Utils::Serializable::deserialize(json, this->activewhen);
+				Utils::Serializable::deserialize(json, this->drawStyle);
 			}
 
 			//----------

@@ -122,14 +122,14 @@ namespace ofxRulr {
 
 				//----------
 				void ProjectorFromKinectV2::serialize(Json::Value & json) {
-					ofxRulr::Utils::Serializable::serialize(this->checkerboardScale, json);
-					ofxRulr::Utils::Serializable::serialize(this->checkerboardCornersX, json);
-					ofxRulr::Utils::Serializable::serialize(this->checkerboardCornersY, json);
-					ofxRulr::Utils::Serializable::serialize(this->checkerboardPositionX, json);
-					ofxRulr::Utils::Serializable::serialize(this->checkerboardPositionY, json);
-					ofxRulr::Utils::Serializable::serialize(this->checkerboardBrightness, json);
-					ofxRulr::Utils::Serializable::serialize(this->initialLensOffset, json);
-					ofxRulr::Utils::Serializable::serialize(this->trimOutliers, json);
+					ofxRulr::Utils::Serializable::serialize(json, this->checkerboardScale);
+					ofxRulr::Utils::Serializable::serialize(json, this->checkerboardCornersX);
+					ofxRulr::Utils::Serializable::serialize(json, this->checkerboardCornersY);
+					ofxRulr::Utils::Serializable::serialize(json, this->checkerboardPositionX);
+					ofxRulr::Utils::Serializable::serialize(json, this->checkerboardPositionY);
+					ofxRulr::Utils::Serializable::serialize(json, this->checkerboardBrightness);
+					ofxRulr::Utils::Serializable::serialize(json, this->initialLensOffset);
+					ofxRulr::Utils::Serializable::serialize(json, this->trimOutliers);
 
 					auto & jsonCorrespondences = json["correspondences"];
 					int index = 0;
@@ -148,14 +148,14 @@ namespace ofxRulr {
 
 				//----------
 				void ProjectorFromKinectV2::deserialize(const Json::Value & json) {
-					ofxRulr::Utils::Serializable::deserialize(this->checkerboardScale, json);
-					ofxRulr::Utils::Serializable::deserialize(this->checkerboardCornersX, json);
-					ofxRulr::Utils::Serializable::deserialize(this->checkerboardCornersY, json);
-					ofxRulr::Utils::Serializable::deserialize(this->checkerboardPositionX, json);
-					ofxRulr::Utils::Serializable::deserialize(this->checkerboardPositionY, json);
-					ofxRulr::Utils::Serializable::deserialize(this->checkerboardBrightness, json);
-					ofxRulr::Utils::Serializable::deserialize(this->initialLensOffset, json);
-					ofxRulr::Utils::Serializable::deserialize(this->trimOutliers, json);
+					ofxRulr::Utils::Serializable::deserialize(json, this->checkerboardScale);
+					ofxRulr::Utils::Serializable::deserialize(json, this->checkerboardCornersX);
+					ofxRulr::Utils::Serializable::deserialize(json, this->checkerboardCornersY);
+					ofxRulr::Utils::Serializable::deserialize(json, this->checkerboardPositionX);
+					ofxRulr::Utils::Serializable::deserialize(json, this->checkerboardPositionY);
+					ofxRulr::Utils::Serializable::deserialize(json, this->checkerboardBrightness);
+					ofxRulr::Utils::Serializable::deserialize(json, this->initialLensOffset);
+					ofxRulr::Utils::Serializable::deserialize(json, this->trimOutliers);
 
 					this->correspondences.clear();
 					auto & jsonCorrespondences = json["correspondences"];

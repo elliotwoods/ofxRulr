@@ -34,6 +34,9 @@ namespace VVVV.Nodes
 		[Input("Add", IsBang=true)]
 		public ISpread<bool> FInAdd;
 		
+		[Input("Remove", IsBang=true)]
+		public ISpread<bool> FInRemove;
+		
 		[Input("Filename", StringType=StringType.Filename)]
 		public IDiffSpread<string> FInFilename;
 		
@@ -132,6 +135,28 @@ namespace VVVV.Nodes
 						var lastWord = words[words.Length - 1];
 						var symbolName = lastWord.Trim(new Char[] {'(', ')', '\n', '\r'});
 						symbols.Add(symbolName);
+					}
+				}
+			}
+			
+			//remove symbols in error string (e.g. errors in building RulrLibrary
+			if(FInRemove[0]) {
+				var lines = FInput[0].Split('\n');
+				foreach(var line in lines) {
+					if (line.Contains("LNK2001") || line.Contains("LNK2019")) {
+						
+						var lineStripped = line;
+						
+						var toIgnore = " referenced in function";
+						var find = line.IndexOf(toIgnore);
+						if(find != -1) {
+							lineStripped = lineStripped.Substring(0, find);
+						}
+						
+						var words = lineStripped.Split(' ');
+						var lastWord = words[words.Length - 1];
+						var symbolName = lastWord.Trim(new Char[] {'(', ')', '\n', '\r'});
+						symbols.Remove(symbolName);
 					}
 				}
 			}

@@ -94,27 +94,27 @@ namespace ofxRulr {
 
 				//----------
 				void Graycode::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(this->threshold, json);
-					Utils::Serializable::serialize(this->delay, json);
-					Utils::Serializable::serialize(this->brightness, json);
+					Utils::Serializable::serialize(json, this->threshold);
+					Utils::Serializable::serialize(json, this->delay);
+					Utils::Serializable::serialize(json, this->brightness);
 					auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
 					this->decoder.saveDataSet(filename);
 
-					Utils::Serializable::serialize(this->videoOutputMode, json);
-					Utils::Serializable::serialize(this->previewMode, json);
+					Utils::Serializable::serialize(json, this->videoOutputMode);
+					Utils::Serializable::serialize(json, this->previewMode);
 				}
 
 				//----------
 				void Graycode::deserialize(const Json::Value & json) {
 					auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
 					this->decoder.loadDataSet(filename, false);
-					Utils::Serializable::deserialize(this->threshold, json);
+					Utils::Serializable::deserialize(json, this->threshold);
 					this->decoder.setThreshold(this->threshold);
-					Utils::Serializable::deserialize(this->delay, json);
-					Utils::Serializable::deserialize(this->brightness, json);
+					Utils::Serializable::deserialize(json, this->delay);
+					Utils::Serializable::deserialize(json, this->brightness);
 					
-					Utils::Serializable::deserialize(this->videoOutputMode, json);
-					Utils::Serializable::deserialize(this->previewMode, json);
+					Utils::Serializable::deserialize(json, this->videoOutputMode);
+					Utils::Serializable::deserialize(json, this->previewMode);
 					
 					this->previewDirty = true;
 				}

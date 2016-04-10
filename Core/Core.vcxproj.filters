@@ -114,9 +114,6 @@
     <ClCompile Include="src\ofxRulr\Graph\FactoryRegister.cpp">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Base64.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\PolyFit.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
@@ -220,9 +217,6 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\FactoryRegister.h">
       <Filter>src\ofxRulr\Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Base64.h">
-      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\PolyFit.h">
       <Filter>src\ofxRulr\Utils</Filter>

@@ -127,12 +127,12 @@ namespace ofxRulr {
 
 				//----------
 				void FindMarker::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(this->parameters, json);
+					Utils::Serializable::serialize(json, this->parameters);
 				}
 
 				//----------
 				void FindMarker::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(this->parameters, json);
+					Utils::Serializable::deserialize(json, this->parameters);
 				}
 			}
 		}

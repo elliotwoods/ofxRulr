@@ -127,7 +127,7 @@ namespace ofxRulr {
 							jsonCorners[i][j]["y"] = accumulatedCorners[i][j].y;
 						}
 					}
-					Utils::Serializable::serialize(this->error, json);
+					Utils::Serializable::serialize(json, this->error);
 				}
 
 				//----------
@@ -142,7 +142,7 @@ namespace ofxRulr {
 						}
 						this->accumulatedCorners.push_back(board);
 					}
-					Utils::Serializable::deserialize(this->error, json);
+					Utils::Serializable::deserialize(json, this->error);
 				}
 
 				//----------

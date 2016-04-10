@@ -170,14 +170,14 @@ namespace ofxRulr {
 
 			//----------
 			void ClientHandler::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(this->port, json);
-				Utils::Serializable::serialize(this->enabled, json);
+				Utils::Serializable::serialize(json, this->port);
+				Utils::Serializable::serialize(json, this->enabled);
 			}
 
 			//----------
 			void ClientHandler::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(this->port, json);
-				Utils::Serializable::deserialize(this->enabled, json);
+				Utils::Serializable::deserialize(json, this->port);
+				Utils::Serializable::deserialize(json, this->enabled);
 				this->needsReopenServer = true;
 			}
 

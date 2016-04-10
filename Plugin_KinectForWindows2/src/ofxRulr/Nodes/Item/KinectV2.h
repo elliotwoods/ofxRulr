@@ -39,11 +39,12 @@ namespace ofxRulr {
 				ofParameter<int> playState;
 				ofParameter<int> viewType;
 
-				struct {
+				struct : ofParameterGroup {
 					ofParameter<bool> rgb;
 					ofParameter<bool> depth;
 					ofParameter<bool> ir;
 					ofParameter<bool> body;
+					PARAM_DECLARE("Enabled views", rgb, depth, ir, body);
 				} enabledViews;
 			};
 		}

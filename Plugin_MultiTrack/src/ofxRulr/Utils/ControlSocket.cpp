@@ -4,47 +4,96 @@
 namespace ofxRulr {
 	namespace Utils {
 		//----------
-		ControlSocket::ControlSocket(int port) {
-			this->socket.bind("tcp://*:" + ofToString(port));
+		ControlSocket::ControlSocket() {
+			this->addHandler("heartbeat", [this](const Json::Value &) {
+				this->lastHeartbeatReceived = chrono::system_clock::now();
+			});
 		}
 
 		//----------
-		ControlSocket::ControlSocket(const string & address, int port) {
-			this->socket.connect("tcp://" + address + ":" + ofToString(port));
+		void ControlSocket::init(int port) {
+			this->type = Bind;
+			this->bind.port = port;
+			this->socket.reset();
+		}
+
+		//----------
+		void ControlSocket::init(const string & address, int port) {
+			this->type = Connect;
+			this->connect.address = address;
+			this->connect.port = port;
+			this->socket.reset();
 		}
 
 		//----------
 		void ControlSocket::update() {
-			if (this->socket.hasWaitingMessage()) {
-				string message;
-				while (this->socket.getNextMessage(message)) {
-					Json::Reader reader;
-					Json::Value json;
-					if (!reader.parse(message, json)) {
-						ofLogWarning("ContolSocket") << "Failed to parse message";
-						continue;
+			if (!this->socket) {
+				try {
+					auto socket = make_unique<ofxZmqPair>();
+					switch (this->type)
+					{
+					case Connect:
+						socket->connect("tcp://" + this->connect.address + ":" + ofToString(this->connect.port));
+						break;
+					case Bind:
+					default:
+						socket->bind("tcp://*:" + ofToString(this->bind.port));
+						break;
 					}
 
-					if (!json["actionName"].empty()) {
-						auto actionName = json["actionName"].asString();
-						const auto & arguments = json["arguments"];
+					this->socket = move(socket);
+					this->sendHeartbeat();
+				}
+				catch (...) {
+					ofLogError("ControlSocket") << "Failed to make connection";
+				}
+			}
 
-						auto findHandler = this->handlers.find(actionName);
-						if (findHandler == this->handlers.end()) {
-							ofLogWarning("ContolSocket") << "No handler found for action [" << actionName << "]";
-						}
+			if (!this->socket) {
+				return;
+			}
+
+			if (this->getTimeSinceLastHeartbeatSent() > chrono::milliseconds(Constants::HeartbeatPeriodMS)) {
+				this->sendHeartbeat();
+			}
+
+			while (this->socket->hasWaitingMessage()) {
+				string message;
+				this->socket->getNextMessage(message);
+				Json::Reader reader;
+				Json::Value json;
+				if (!reader.parse(message, json)) {
+					ofLogWarning("ContolSocket") << "Failed to parse message";
+					continue;
+				}
+
+				if (!json["actionName"].empty()) {
+					auto actionName = json["actionName"].asString();
+					const auto & arguments = json["arguments"];
+
+					auto findHandler = this->handlers.find(actionName);
+					if (findHandler == this->handlers.end()) {
+						ofLogWarning("ContolSocket") << "No handler found for action [" << actionName << "]";
+					}
+					else {
+						findHandler->second(arguments);
 					}
 				}
 			}
 		}
 
 		//----------
-		void ControlSocket::addHandler(const string & actionName, Handler && action) {
+		void ControlSocket::addHandler(const string & actionName, MessageHandler && action) {
 			this->handlers.emplace(actionName, action);
 		}
 
 		//----------
 		void ControlSocket::sendMessage(const string & actionName, const Json::Value & arguments) {
+			if (!this->socket) {
+				ofLogError("ControlSocket") << "Cannot send messages until socket is open";
+				return;
+			}
+			
 			Json::FastWriter writer;
 
 			Json::Value messageJson;
@@ -53,7 +102,32 @@ namespace ofxRulr {
 				messageJson["arguments"] = arguments;
 			}
 			const auto message = writer.write(messageJson);
-			this->socket.send(message);
+			this->socket->send(message);
+		}
+
+		//----------
+		chrono::system_clock::duration ControlSocket::getTimeSinceLastHeartbeatReceived() const {
+			return chrono::system_clock::now() - this->lastHeartbeatReceived;
+		}
+
+		//----------
+		chrono::system_clock::duration ControlSocket::getTimeSinceLastHeartbeatSent() const {
+			return chrono::system_clock::now() - this->lastHeartbeatSent;
+		}
+
+		//----------
+		void ControlSocket::sendHeartbeat() {
+			this->sendMessage("heartbeat");
+			this->lastHeartbeatSent = chrono::system_clock::now();
+		}
+
+		//----------
+		bool ControlSocket::isSocketActive() const {
+			if (this->socket) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 }

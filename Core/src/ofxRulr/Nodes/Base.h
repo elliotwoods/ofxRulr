@@ -7,6 +7,7 @@
 #include "../Version.h"
 
 #include "ofxCvGui/InspectController.h"
+#include "ofxCvGui/Utils/Sugar.h"
 
 #include "ofImage.h"
 #include "ofxAssets.h"
@@ -129,10 +130,12 @@ namespace ofxRulr {
 				if (!this->getInput<NodeType>()) {
 					stringstream message;
 					message << "Node [" << this->getTypeName() << "] is missing a connection to [" << NodeType().getTypeName() << "]";
-					throw(Exception(message.str()));
+					throw(ofxRulr::Exception(message.str()));
 				}
 			}
 			void throwIfMissingAnyConnection() const;
+
+			void manageParameters(ofParameterGroup &, bool addToInspector = true);
 
 			ofxLiquidEvent<void> onInit;
 			ofxLiquidEvent<void> onDestroy;

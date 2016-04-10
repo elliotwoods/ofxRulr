@@ -33,10 +33,12 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
-						ofParameter<int> portNumber{ "Port number",  2147};
+						ofParameter<string> senderAddress{ "Sender address", "127.0.0.1" };
+						ofParameter<int> controlPort{ "Control port",  ofxMultiTrack::Ports::NodeControl };
+						ofParameter<int> receivingPort{ "Receiving port",  ofxMultiTrack::Ports::NodeToServerDataRangeBegin };
 						ofParameter<bool> connect{ "Connect", false };
 
-						PARAM_DECLARE("Connection", portNumber, connect);
+						PARAM_DECLARE("Connection", controlPort, receivingPort, connect);
 					} connection;
 
 					struct : ofParameterGroup {
@@ -50,6 +52,8 @@ namespace ofxRulr {
 
 				shared_ptr<ofxMultiTrack::Receiver> receiver;
 				unique_ptr<Utils::ControlSocket> controlSocket;
+
+				ofFloatPixels depthToCameraRays;
 			};
 		}
 	}

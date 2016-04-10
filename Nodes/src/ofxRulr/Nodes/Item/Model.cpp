@@ -102,26 +102,26 @@ namespace ofxRulr {
 
 			//----------
 			void Model::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(this->filename, json);
-				Utils::Serializable::serialize(this->drawVertices, json);
-				Utils::Serializable::serialize(this->drawWireframe, json);
-				Utils::Serializable::serialize(this->drawFaces, json);
-				Utils::Serializable::serialize(this->flipX, json);
-				Utils::Serializable::serialize(this->flipY, json);
-				Utils::Serializable::serialize(this->flipZ, json);
-				Utils::Serializable::serialize(this->inputUnitScale, json);
+				Utils::Serializable::serialize(json, this->filename);
+				Utils::Serializable::serialize(json, this->drawVertices);
+				Utils::Serializable::serialize(json, this->drawWireframe);
+				Utils::Serializable::serialize(json, this->drawFaces);
+				Utils::Serializable::serialize(json, this->flipX);
+				Utils::Serializable::serialize(json, this->flipY);
+				Utils::Serializable::serialize(json, this->flipZ);
+				Utils::Serializable::serialize(json, this->inputUnitScale);
 			}
 
 			//----------
 			void Model::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(this->filename, json);
-				Utils::Serializable::deserialize(this->drawVertices, json);
-				Utils::Serializable::deserialize(this->drawWireframe, json);
-				Utils::Serializable::deserialize(this->drawFaces, json);
-				Utils::Serializable::deserialize(this->flipX, json);
-				Utils::Serializable::deserialize(this->flipY, json);
-				Utils::Serializable::deserialize(this->flipZ, json);
-				Utils::Serializable::deserialize(this->inputUnitScale, json);
+				Utils::Serializable::deserialize(json, this->filename);
+				Utils::Serializable::deserialize(json, this->drawVertices);
+				Utils::Serializable::deserialize(json, this->drawWireframe);
+				Utils::Serializable::deserialize(json, this->drawFaces);
+				Utils::Serializable::deserialize(json, this->flipX);
+				Utils::Serializable::deserialize(json, this->flipY);
+				Utils::Serializable::deserialize(json, this->flipZ);
+				Utils::Serializable::deserialize(json, this->inputUnitScale);
 
 				if (this->filename.get().empty()) {
 					this->modelLoader->clear();

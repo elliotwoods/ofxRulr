@@ -20,10 +20,10 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
-				this->boardType.set("Board Type", 0, 0, 1);
-				this->sizeX.set("Size X", 10.0f, 2.0f, 20.0f);
-				this->sizeY.set("Size Y", 7.0f, 2.0f, 20.0f);
-				this->spacing.set("Spacing [m]", 0.05f, 0.001f, 1.0f);
+				this->parameters.boardType.set("Board Type", 0, 0, 1);
+				this->parameters.sizeX.set("Size X", 10.0f, 2.0f, 20.0f);
+				this->parameters.sizeY.set("Size Y", 7.0f, 2.0f, 20.0f);
+				this->parameters.spacing.set("Spacing [m]", 0.05f, 0.001f, 1.0f);
 				this->updatePreviewMesh();
 
 				auto view = make_shared<ofxCvGui::Panels::World>();
@@ -33,12 +33,12 @@ namespace ofxRulr {
 				view->setGridEnabled(false);
 #ifdef OFXCVGUI_USE_OFXGRABCAM
 				view->getCamera().setCursorDrawEnabled(true);
-				view->getCamera().setCursorDrawSize(this->spacing / 5.0f);
+				view->getCamera().setCursorDrawSize(this->parameters.spacing / 5.0f);
 #endif
 				this->view = view;
 
 				auto & camera = view->getCamera();
-				auto distance = this->spacing * MAX(this->sizeX, this->sizeY);
+				auto distance = this->parameters.spacing * MAX(this->parameters.sizeX, this->parameters.sizeY);
 				camera.setPosition(0, 0, -distance);
 				camera.lookAt(ofVec3f(), ofVec3f(0, -1, 0));
 				camera.setNearClip(distance / 30.0f);
@@ -57,25 +57,19 @@ namespace ofxRulr {
 
 			//----------
 			void Board::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(this->boardType, json);
-				Utils::Serializable::serialize(this->sizeX, json);
-				Utils::Serializable::serialize(this->sizeY, json);
-				Utils::Serializable::serialize(this->spacing, json);
+				Utils::Serializable::serialize(json, this->parameters);
 			}
 
 			//----------
 			void Board::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(this->boardType, json);
-				Utils::Serializable::deserialize(this->sizeX, json);
-				Utils::Serializable::deserialize(this->sizeY, json);
-				Utils::Serializable::deserialize(this->spacing, json);
+				Utils::Serializable::deserialize(json, this->parameters);
 
 				this->updatePreviewMesh();
 			}
 
 			//----------
 			ofxCv::BoardType Board::getBoardType() const {
-				switch (this->boardType) {
+				switch (this->parameters.boardType) {
 				case 0:
 					return ofxCv::BoardType::Checkerboard;
 				case 1:
@@ -87,17 +81,17 @@ namespace ofxRulr {
 
 			//----------
 			cv::Size Board::getSize() const {
-				return cv::Size(this->sizeX, this->sizeY);
+				return cv::Size(this->parameters.sizeX, this->parameters.sizeY);
 			}
 
 			//----------
 			float Board::getSpacing() const {
-				return this->spacing.get();
+				return this->parameters.spacing.get();
 			}
 
 			//----------
 			vector<cv::Point3f> Board::getObjectPoints() const {
-				return ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->spacing);
+				return ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing());
 			}
 
 			//----------
@@ -122,24 +116,24 @@ namespace ofxRulr {
 				auto typeChooser = make_shared<Widgets::MultipleChoice>("Board type");
 				typeChooser->addOption("Checkerboard");
 				typeChooser->addOption("Circles");
-				typeChooser->setSelection(this->boardType);
+				typeChooser->setSelection(this->parameters.boardType);
 				typeChooser->onValueChange += [this](const int & selectionIndex) {
-					this->boardType = selectionIndex;
+					this->parameters.boardType = selectionIndex;
 					this->updatePreviewMesh();
 				};
 
 				inspector->add(typeChooser);
 
-				Utils::Gui::addIntSlider(this->sizeX, inspector->getElementGroup())->onValueChange += sliderCallback;
-				Utils::Gui::addIntSlider(this->sizeY, inspector->getElementGroup())->onValueChange += sliderCallback;
+				Utils::Gui::addIntSlider(this->parameters.sizeX, inspector->getElementGroup())->onValueChange += sliderCallback;
+				Utils::Gui::addIntSlider(this->parameters.sizeY, inspector->getElementGroup())->onValueChange += sliderCallback;
 				inspector->add(new Widgets::Title("NB : Checkerboard size is\n counted by number of\n inner corners", Widgets::Title::Level::H3));
 				
 				inspector->add(new ofxCvGui::Widgets::LiveValue<string>("Warning", [this]() {
-					if (this->boardType == 0) {
+					if (this->parameters.boardType == 0) {
 						//CHECKERBOARD
 
-						bool xOdd = (int) this->sizeX & 1;
-						bool yOdd = (int) this->sizeY & 1;
+						bool xOdd = (int) this->parameters.sizeX & 1;
+						bool yOdd = (int) this->parameters.sizeY & 1;
 						if (xOdd && yOdd) {
 							return "Size X and Size Y are both odd";
 						}
@@ -158,14 +152,14 @@ namespace ofxRulr {
 				}));
 				inspector->add(new Widgets::Spacer());
 
-				auto spacingSlider = new Widgets::Slider(this->spacing);
+				auto spacingSlider = new Widgets::Slider(this->parameters.spacing);
 				spacingSlider->onValueChange += sliderCallback;
 				inspector->add(spacingSlider);
 			}
 
 			//----------
 			void Board::updatePreviewMesh() {
-				this->previewMesh = ofxCv::makeBoardMesh(this->getBoardType(), this->getSize(), this->spacing, true);
+				this->previewMesh = ofxCv::makeBoardMesh(this->getBoardType(), this->getSize(), this->getSpacing(), true);
 			}
 		}
 	}

@@ -148,7 +148,7 @@ namespace ofxRulr {
 						}
 					}
 					ofPopStyle();
-				}, -1, this);
+				}, this, -1);
 
 				this->onUpdate += [this](ofxCvGui::UpdateArguments & args) {
 					this->getNodeInstance()->update();

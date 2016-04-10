@@ -159,18 +159,18 @@ namespace ofxRulr {
 			
 			//----------
 			void Focus::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(this->activewhen, json);
-				Utils::Serializable::serialize(this->blurSize, json);
-				Utils::Serializable::serialize(this->highValue, json);
-				Utils::Serializable::serialize(this->lowValue, json);
+				Utils::Serializable::serialize(json, this->activewhen);
+				Utils::Serializable::serialize(json, this->blurSize);
+				Utils::Serializable::serialize(json, this->highValue);
+				Utils::Serializable::serialize(json, this->lowValue);
 			}
 			
 			//----------
 			void Focus::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(this->activewhen, json);
-				Utils::Serializable::deserialize(this->blurSize, json);
-				Utils::Serializable::deserialize(this->highValue, json);
-				Utils::Serializable::deserialize(this->lowValue, json);
+				Utils::Serializable::deserialize(json, this->activewhen);
+				Utils::Serializable::deserialize(json, this->blurSize);
+				Utils::Serializable::deserialize(json, this->highValue);
+				Utils::Serializable::deserialize(json, this->lowValue);
 			}
 			
 			//----------

@@ -234,15 +234,15 @@ namespace ofxRulr {
 
 				//---------
 				void ViewToVertices::serialize(Json::Value & json) {
-					ofxRulr::Utils::Serializable::serialize(this->projectorReferenceImageFilename, json);
-					ofxRulr::Utils::Serializable::serialize(this->dragVerticesEnabled, json);
-					ofxRulr::Utils::Serializable::serialize(this->calibrateOnVertexChange, json);
-					ofxRulr::Utils::Serializable::serialize(this->useExistingParametersAsInitial, json);
+					ofxRulr::Utils::Serializable::serialize(json, this->projectorReferenceImageFilename);
+					ofxRulr::Utils::Serializable::serialize(json, this->dragVerticesEnabled);
+					ofxRulr::Utils::Serializable::serialize(json, this->calibrateOnVertexChange);
+					ofxRulr::Utils::Serializable::serialize(json, this->useExistingParametersAsInitial);
 				}
 
 				//---------
 				void ViewToVertices::deserialize(const Json::Value & json) {
-					ofxRulr::Utils::Serializable::deserialize(this->projectorReferenceImageFilename, json);
+					ofxRulr::Utils::Serializable::deserialize(json, this->projectorReferenceImageFilename);
 					if (this->projectorReferenceImageFilename.get().empty()) {
 						this->projectorReferenceImage.clear();
 					}
@@ -250,9 +250,9 @@ namespace ofxRulr {
 						this->projectorReferenceImage.load(this->projectorReferenceImageFilename.get());
 					}
 
-					ofxRulr::Utils::Serializable::deserialize(this->dragVerticesEnabled, json);
-					ofxRulr::Utils::Serializable::deserialize(this->calibrateOnVertexChange, json);
-					ofxRulr::Utils::Serializable::deserialize(this->useExistingParametersAsInitial, json);
+					ofxRulr::Utils::Serializable::deserialize(json, this->dragVerticesEnabled);
+					ofxRulr::Utils::Serializable::deserialize(json, this->calibrateOnVertexChange);
+					ofxRulr::Utils::Serializable::deserialize(json, this->useExistingParametersAsInitial);
 				}
 
 				//---------

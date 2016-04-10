@@ -14,7 +14,6 @@
 #include "ofxTriangulate.h"
 
 //utils
-#include "ofxRulr/Utils/Base64.h"
 #include "ofxRulr/Utils/Constants.h"
 #include "ofxRulr/Utils/Gui.h"
 #include "ofxRulr/Utils/Initialiser.h"

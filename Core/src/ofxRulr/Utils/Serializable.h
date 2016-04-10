@@ -7,10 +7,6 @@
 #include <string>
 #include <type_traits>
 
-// Syntactic sugar which enables struct-ofParameterGroup
-#define PARAM_DECLARE(NAME, ...) bool paramDeclareConstructor \
-{ [this] { this->setName(NAME), this->add(__VA_ARGS__); return true; }() };
-
 namespace ofxRulr {
 	namespace Utils {
 		class Serializable {
@@ -30,13 +26,13 @@ namespace ofxRulr {
 			//////////////////////////////////////////////////////////////////////////
 
 			template<typename Number>
-			static void serializeNumber(const ofParameter<Number> & parameter, Json::Value & json) {
+			static void serializeNumber(Json::Value & json, const ofParameter<Number> & parameter) {
 				const auto & value = parameter.get();
 				if (value == value) { // don't serialize a NaN
 					json[parameter.getName()] = parameter.get();
 				}
 			}
-#define SERIALIZE_NUMBER(Type) static void serialize(const ofParameter<Type> & parameter, Json::Value & json) { serializeNumber(parameter, json); }
+#define SERIALIZE_NUMBER(Type) static void serialize(Json::Value & json, const ofParameter<Type> & parameter) { serializeNumber(json, parameter); }
 			SERIALIZE_NUMBER(uint8_t);
 			SERIALIZE_NUMBER(uint16_t);
 			SERIALIZE_NUMBER(uint32_t);
@@ -49,19 +45,19 @@ namespace ofxRulr {
 			SERIALIZE_NUMBER(float);
 			SERIALIZE_NUMBER(double);
 			
-			static void serialize(const ofParameter<string> &, Json::Value &);
-			static void serialize(const ofParameterGroup &, Json::Value &);
+			static void serialize(Json::Value &, const ofParameter<string> &);
+			static void serialize(Json::Value &, const ofParameterGroup &);
 			
 			template<typename NotNumber,
 				typename = enable_if<!is_arithmetic<NotNumber>::value, bool>::type>
-			static void serialize(const ofParameter<NotNumber> & parameter, Json::Value & json) {
+			static void serialize(Json::Value & json, const ofParameter<NotNumber> & parameter) {
 				json[parameter.getName()] << parameter.get();
 			}
 
 			//////////////////////////////////////////////////////////////////////////
 
 			template<typename T>
-			static void deserialize(ofParameter<T> & parameter, const Json::Value & json) {
+			static void deserialize(const Json::Value & json, ofParameter<T> & parameter) {
 				auto & jsonValue = json[parameter.getName()];
 				if (!jsonValue.isNull()) {
 					T value;
@@ -69,14 +65,34 @@ namespace ofxRulr {
 					parameter.set(value);
 				}
 			}
-			static void deserialize(ofParameter<int> &, const Json::Value &);
-			static void deserialize(ofParameter<float> &, const Json::Value &);
-			static void deserialize(ofParameter<bool> &, const Json::Value &);
-			static void deserialize(ofParameter<string> &, const Json::Value &);
-			static void deserialize(ofParameterGroup &, const Json::Value &);
+			static void deserialize(const Json::Value &, ofParameter<int> &);
+			static void deserialize(const Json::Value &, ofParameter<float> &);
+			static void deserialize(const Json::Value &, ofParameter<bool> &);
+			static void deserialize(const Json::Value &, ofParameter<string> &);
+			static void deserialize(const Json::Value &, ofParameterGroup &);
 		};
 	}
 }
+
+
+
+//--
+// Parameter groups
+//--
+//
+// json >> parameterGroup; //deserialize
+// json << parameterGroup; //serialize
+template<typename T>
+void operator>> (const Json::Value & json, ofParameterGroup & parameterGroup) {
+	ofxRulr::Utils::Serializable::deserialize(json, parameterGroup);
+}
+
+template<typename T>
+void operator<< (Json::Value & json, const ofParameterGroup & parameterGroup) {
+	ofxRulr::Utils::Serializable::serialize(json, parameterGroup);
+}
+//
+//--
 
 
 
@@ -88,12 +104,12 @@ namespace ofxRulr {
 // json << parameter; //serialize
 template<typename T>
 void operator>> (const Json::Value & json, ofParameter<T> & parameter) {
-	ofxRulr::Utils::Serializable::deserialize(parameter, json);
+	ofxRulr::Utils::Serializable::deserialize(json, parameter);
 }
 
 template<typename T>
 void operator<< (Json::Value & json, const ofParameter<T> & parameter) {
-	ofxRulr::Utils::Serializable::serialize(parameter, json);
+	ofxRulr::Utils::Serializable::serialize(json, parameter);
 }
 //
 //--

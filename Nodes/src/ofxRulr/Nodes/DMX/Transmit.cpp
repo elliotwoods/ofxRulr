@@ -110,7 +110,7 @@ namespace ofxRulr {
 				auto & jsonUniverses = json["universes"];
 				for (int i = 0; i < this->universes.size(); i++) {
 					auto & jsonUniverse = jsonUniverses[ofToString(i)];
-					Utils::Serializable::serialize(this->universes[i]->blackoutEnabled, jsonUniverse);
+					Utils::Serializable::serialize(jsonUniverse, this->universes[i]->blackoutEnabled);
 				}
 			}
 
@@ -119,7 +119,7 @@ namespace ofxRulr {
 				const auto & jsonUniverses = json["universes"];
 				for (int i = 0; i < this->universes.size(); i++) {
 					const auto & jsonUniverse = jsonUniverses[ofToString(i)];
-					Utils::Serializable::deserialize(this->universes[i]->blackoutEnabled, jsonUniverse);
+					Utils::Serializable::deserialize(jsonUniverse, this->universes[i]->blackoutEnabled);
 				}
 			}
 
