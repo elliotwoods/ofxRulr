@@ -80,7 +80,7 @@ namespace ofxRulr {
 
 				auto & jsonResolution = json["resolution"];
 				jsonResolution["width"] = this->viewInObjectSpace.getWidth();
-				jsonResolution["height"] = this->viewInObjectSpace.getWidth();
+				jsonResolution["height"] = this->viewInObjectSpace.getHeight();
 
 				auto & jsonDistortion = jsonCalibration["distortion"];
 				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
@@ -99,7 +99,7 @@ namespace ofxRulr {
 				const auto & jsonResolution = json["resolution"];
 				if (!jsonResolution.isNull()) {
 					this->setWidth(jsonResolution["width"].asFloat());
-					this->setWidth(jsonResolution["height"].asFloat());
+					this->setHeight(jsonResolution["height"].asFloat());
 				}
 				else {
 					this->setWidth(1024);
