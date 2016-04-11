@@ -82,6 +82,15 @@ namespace ofxRulr {
 						this->nodeBrowser->reset();
 					}
 				};
+
+				auto wasArbTex = ofGetUsingArbTex();
+				ofDisableArbTex();
+				this->cell = make_shared<ofTexture>();
+				this->cell->enableMipmap();
+				this->cell->loadData(ofxAssets::image("ofxRulr::cell-100").getPixels());
+				this->cell->setTextureWrap(GL_REPEAT, GL_REPEAT);
+				this->cell->setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST_MIPMAP_NEAREST);
+				if (wasArbTex) ofEnableArbTex();
 			}
 			
 			//----------
@@ -106,64 +115,26 @@ namespace ofxRulr {
 			//----------
 			void Patch::View::drawGridLines() {
 				ofPushStyle();
-				ofNoFill();
-				ofSetLineWidth(3.0f);
-				ofSetColor(80);
-				ofDrawRectangle(this->canvasExtents);
-
-				const int stepMinor = 20;
-				const int stepMajor = 100;
-
+				ofSetColor(255);
+				
 				auto canvasTopLeft = this->canvasExtents.getTopLeft();
 				auto canvasBottomRight = this->canvasExtents.getBottomRight();
-				for (int x = 0; x < canvasBottomRight.x; x += stepMinor) {
-					if (x == 0) {
-						ofSetLineWidth(3.0f);
+				auto canvasSpan = canvasBottomRight - canvasTopLeft;
+
+				this->cell->bind();
+				{
+					auto plane = ofPlanePrimitive(canvasSpan.x, canvasSpan.y, 2, 2);
+					const auto texScale = 0.01f;  // cell is 100x100px
+					plane.mapTexCoords(canvasTopLeft.x * texScale, canvasTopLeft.y * texScale, canvasBottomRight.x * texScale, canvasBottomRight.y * texScale);
+					
+					ofPushMatrix();
+					{	
+						ofTranslate(canvasTopLeft.x + canvasSpan.x * 0.5, -(canvasTopLeft.y - canvasSpan.y * 0.5), 0.0);
+						plane.draw();
 					}
-					else if (x % stepMajor == 0) {
-						ofSetLineWidth(2.0f);
-					}
-					else {
-						ofSetLineWidth(1.0f);
-					}
-					ofDrawLine(x, canvasTopLeft.y, x, canvasBottomRight.y);
+					ofPopMatrix();
 				}
-				for (int x = 0; x > canvasTopLeft.x; x -= stepMinor) {
-					if (x == 0) {
-						ofSetLineWidth(3.0f);
-					}
-					else if ((-x) % stepMajor == 0) {
-						ofSetLineWidth(2.0f);
-					}
-					else {
-						ofSetLineWidth(1.0f);
-					}
-					ofDrawLine(x, canvasTopLeft.y, x, canvasBottomRight.y);
-				}
-				for (int y = 0; y < canvasBottomRight.y; y += stepMinor) {
-					if (y == 0) {
-						ofSetLineWidth(3.0f);
-					}
-					else if (y % stepMajor == 0) {
-						ofSetLineWidth(2.0f);
-					}
-					else {
-						ofSetLineWidth(1.0f);
-					}
-					ofDrawLine(canvasTopLeft.x, y, canvasBottomRight.x, y);
-				}
-				for (int y = 0; y > canvasTopLeft.y; y -= 10) {
-					if (y == 0) {
-						ofSetLineWidth(3.0f);
-					}
-					else if ((-y) % stepMajor == 0) {
-						ofSetLineWidth(2.0f);
-					}
-					else {
-						ofSetLineWidth(1.0f);
-					}
-					ofDrawLine(canvasTopLeft.x, y, canvasBottomRight.x, y);
-				}
+				this->cell->unbind();
 
 				ofPopStyle();
 			}
