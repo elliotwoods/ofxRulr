@@ -33,14 +33,18 @@ namespace ofxRulr {
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
 
-				ofParameter<float> pan;
-				ofParameter<float> tilt;
-				ofParameter<float> brightness;
-				ofParameter<float> iris;
-				ofParameter<bool> power;
-				ofParameter<string> powerCircuit;
-				ofParameter<int> pauseBetweenPowerUps;
-				ofParameter<float> tiltOffset;
+				struct : ofParameterGroup {
+					ofParameter<float> pan;
+					ofParameter<float> tilt;
+					ofParameter<float> brightness;
+					ofParameter<float> iris;
+					ofParameter<bool> power;
+					ofParameter<string> powerCircuit;
+					ofParameter<int> pauseBetweenPowerUps;
+					ofParameter<float> tiltOffset;
+
+					PARAM_DECLARE("Moving head", pan, tilt, brightness, iris, power, powerCircuit, pauseBetweenPowerUps, tiltOffset);
+				} parameters;
 
 				//you should generate your lamp signal based on 'power state signal' rather than on power parameter
 				bool powerStateSignal;

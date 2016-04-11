@@ -311,7 +311,7 @@ namespace ofxRulr {
 					if (kinect && camera) {
 						auto kinectColorSource = kinect->getDevice()->getColorSource();
 						auto kinectColorView = MAKE(ofxCvGui::Panels::Draws, kinectColorSource->getTexture());
-						kinectColorView->onDrawCropped += [this](ofxCvGui::DrawCroppedArguments & args) {
+						kinectColorView->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 							ofPolyline previewLine;
 							if (!this->previewCornerFindsKinect.empty()) {
 								ofDrawCircle(this->previewCornerFindsKinect.front(), 10.0f);
@@ -328,7 +328,7 @@ namespace ofxRulr {
 						this->view->add(kinectColorView);
 
 						auto cameraColorView = MAKE(ofxCvGui::Panels::Draws, camera->getGrabber()->getTexture());
-						cameraColorView->onDrawCropped += [this](ofxCvGui::DrawCroppedArguments & args) {
+						cameraColorView->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 							ofPolyline previewLine;
 							if (!this->previewCornerFindsCamera.empty()) {
 								ofDrawCircle(this->previewCornerFindsCamera.front(), 10.0f);

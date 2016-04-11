@@ -8,7 +8,7 @@ using namespace std;
 namespace ofxRulr {
 	namespace Utils {
 		//----------
-		void Serializable::serialize(const ofParameter<string> & parameter, Json::Value & json) {
+		void Serializable::serialize(Json::Value & json, const ofParameter<string> & parameter) {
 			json[parameter.getName()] = parameter.get();
 		}
 
@@ -18,7 +18,7 @@ namespace ofxRulr {
 			auto typedParameter = dynamic_pointer_cast<ofParameter<Type>>(abstractParameter);
 			if (typedParameter) {
 				const auto & parameter = *typedParameter;
-				Serializable::serialize(parameter, json);
+				Serializable::serialize(json, parameter);
 				return true;
 			}
 			else {
@@ -27,37 +27,42 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Serializable::serialize(const ofParameterGroup & group, Json::Value & json) {
+		void Serializable::serialize(Json::Value & json, const ofParameterGroup & group) {
 			const auto name = group.getName();
 			auto & jsonGroup = name.empty() ? json : json[name];
 			for (const auto & parameter : group) {
-				if (trySerialize<uint8_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<uint16_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<uint32_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<uint64_t>(jsonGroup, parameter)) continue;
-
-				if (trySerialize<int8_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<int16_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<int32_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<int64_t>(jsonGroup, parameter)) continue;
-
-				if (trySerialize<bool>(jsonGroup, parameter)) continue;
+				if (trySerialize<int>(jsonGroup, parameter)) continue;
 				if (trySerialize<float>(jsonGroup, parameter)) continue;
-				if (trySerialize<double>(jsonGroup, parameter)) continue;
+				if (trySerialize<bool>(jsonGroup, parameter)) continue;
+
+				if (trySerialize<ofVec2f>(jsonGroup, parameter)) continue;
+				if (trySerialize<ofVec3f>(jsonGroup, parameter)) continue;
+				if (trySerialize<ofVec4f>(jsonGroup, parameter)) continue;
 
 				if (trySerialize<string>(jsonGroup, parameter)) continue;
 
+				//group
 				{
 					auto typedParameter = dynamic_pointer_cast<ofParameterGroup>(parameter);
 					if (typedParameter) {
-						serialize(*typedParameter, jsonGroup);
+						serialize(jsonGroup, *typedParameter);
+						continue;
 					}
 				}
+
+				//anything else
+				{
+					const auto name = parameter->getName();
+					jsonGroup[name] << parameter->toString();
+					continue;
+				}
+
+				ofLogWarning("ofxRulr::Utils::Serializable::serialize") << "Couldn't serialize" << parameter->getName();
 			}
 		}
 
 		//----------
-		void Serializable::deserialize(ofParameter<int> & parameter, const Json::Value & json) {
+		void Serializable::deserialize(const Json::Value & json, ofParameter<int> & parameter) {
 			const auto name = parameter.getName();
 			if (json[name].isNumeric()) {
 				parameter.set(json[name].asInt());
@@ -65,7 +70,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Serializable::deserialize(ofParameter<float> & parameter, const Json::Value & json) {
+		void Serializable::deserialize(const Json::Value & json, ofParameter<float> & parameter) {
 			const auto name = parameter.getName();
 			if (json.isMember(name)) {
 				parameter.set(json[name].asFloat());
@@ -73,7 +78,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Serializable::deserialize(ofParameter<bool> & parameter, const Json::Value & json) {
+		void Serializable::deserialize(const Json::Value & json, ofParameter<bool> & parameter) {
 			const auto name = parameter.getName();
 			if (json.isMember(name)) {
 				parameter.set(json[parameter.getName()].asBool());
@@ -81,7 +86,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Serializable::deserialize(ofParameter<string> & parameter, const Json::Value & json) {
+		void Serializable::deserialize(const Json::Value & json, ofParameter<string> & parameter) {
 			const auto name = parameter.getName();
 			if (json.isMember(name)) {
 				parameter.set(json[parameter.getName()].asString());
@@ -93,7 +98,7 @@ namespace ofxRulr {
 			auto typedParameter = dynamic_pointer_cast<ofParameter<Type>>(abstractParameter);
 			if (typedParameter) {
 				auto & parameter = *typedParameter;
-				Serializable::deserialize(parameter, json);
+				Serializable::deserialize(json, parameter);
 				return true;
 			}
 			else {
@@ -102,7 +107,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Serializable::deserialize(ofParameterGroup & group, const Json::Value & json) {
+		void Serializable::deserialize(const Json::Value & json, ofParameterGroup & group) {
 			const auto name = group.getName();
 			auto & jsonGroup = name.empty() ? json : json[name];
 			for (const auto & parameter : group) {
@@ -113,7 +118,10 @@ namespace ofxRulr {
 				if (tryDeserialize<int>(jsonGroup, parameter)) continue;
 				if (tryDeserialize<float>(jsonGroup, parameter)) continue;
 				if (tryDeserialize<bool>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<string>(jsonGroup, parameter)) continue;
+
+				if (tryDeserialize<ofVec2f>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<ofVec3f>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<ofVec4f>(jsonGroup, parameter)) continue;
 			
 				if (tryDeserialize<string>(jsonGroup, parameter)) continue;
 
@@ -121,7 +129,7 @@ namespace ofxRulr {
 				{
 					auto typedParameter = dynamic_pointer_cast<ofParameterGroup>(parameter);
 					if (typedParameter) {
-						deserialize(*typedParameter, jsonGroup);
+						deserialize(jsonGroup, *typedParameter);
 						continue;
 					}
 				}
@@ -129,12 +137,15 @@ namespace ofxRulr {
 				//anything else
 				{
 					const auto name = parameter->getName();
-					if (json.isMember(name)) {
+					if (jsonGroup.isMember(name)) {
 						string valueString;
 						jsonGroup[name] >> valueString;
 						parameter->fromString(valueString);
+						continue;
 					}
 				}
+
+				ofLogWarning("ofxRulr::Utils::Serializable::serialize") << "Couldn't deserialize" << parameter->getName();
 			}
 		}
 

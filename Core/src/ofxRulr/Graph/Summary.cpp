@@ -24,8 +24,11 @@ namespace ofxRulr {
 			RULR_NODE_SERIALIZATION_LISTENERS;
 
 			this->view = MAKE(ofxCvGui::Panels::World);
+			this->view->onDraw.addListener([this](ofxCvGui::DrawArguments &) {
+				ofBackgroundGradient(40, 0);
+			}, this, -1);
 			this->view->onDrawWorld += [this](ofCamera &) {
-				if (this->showGrid) {
+				if (this->parameters.grid.enabled) {
 					this->drawGrid();
 				}
 				if (this->world) {
@@ -34,7 +37,6 @@ namespace ofxRulr {
 						node->drawWorld();
 					}
 				}
-
 			};
 
 			auto wasArbTex = ofGetUsingArbTex();
@@ -43,15 +45,14 @@ namespace ofxRulr {
 			this->grid->enableMipmap();
 			this->grid->loadData(ofxAssets::image("ofxRulr::grid-10").getPixels());
 			this->grid->setTextureWrap(GL_REPEAT, GL_REPEAT);
+			this->grid->setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST);
 			if (wasArbTex) ofEnableArbTex();
 
 #ifdef OFXCVGUI_USE_OFXGRABCAM
-			this->showCursor.addListener(this, &Summary::callbackShowCursor);
+			this->parameters.showCursor.addListener(this, &Summary::callbackShowCursor);
 #endif
-			this->showCursor.set("Show Cursor", false);
-			this->showGrid.set("Show Grid", true);
-			this->roomMinimum.set("Room minimum", ofVec3f(-5.0f, -4.0f, 0.0f));
-			this->roomMaximum.set("Room maximum", ofVec3f(+5.0f, 0.0f, 6.0f));
+			this->parameters.grid.dark.addListener(this, &Summary::callbackGridDark);
+
 			this->view->setGridEnabled(false);
 		}
 
@@ -74,10 +75,7 @@ namespace ofxRulr {
 
 		//----------
 		void Summary::serialize(Json::Value & json) {
-			Utils::Serializable::serialize(this->showCursor, json);
-			Utils::Serializable::serialize(this->showGrid, json);
-			Utils::Serializable::serialize(this->roomMinimum, json);
-			Utils::Serializable::serialize(this->roomMaximum, json);
+			Utils::Serializable::serialize(json, this->parameters);
 
 			auto & camera = this->view->getCamera();
 			auto & cameraJson = json["Camera"];
@@ -87,10 +85,7 @@ namespace ofxRulr {
 
 		//----------
 		void Summary::deserialize(const Json::Value & json) {
-			Utils::Serializable::deserialize(this->showCursor, json);
-			Utils::Serializable::deserialize(this->showGrid, json);
-			Utils::Serializable::deserialize(this->roomMinimum, json);
-			Utils::Serializable::deserialize(this->roomMaximum, json);
+			Utils::Serializable::deserialize(json, this->parameters);
 
 			auto & camera = this->view->getCamera();
 			if (json.isMember("Camera")) {
@@ -104,8 +99,8 @@ namespace ofxRulr {
 				camera.setOrientation(orientation);
 			}
 			else {
-				camera.setPosition(this->roomMinimum.get() * ofVec3f(0.0f, 1.0f, 1.0f));
-				camera.lookAt(this->roomMaximum.get() * ofVec3f(0.0f, 1.0f, 1.0f), ofVec3f(0, -1, 0));
+				camera.setPosition(this->parameters.grid.roomMinimum.get() * ofVec3f(0.0f, 1.0f, 1.0f));
+				camera.lookAt(this->parameters.grid.roomMaximum.get() * ofVec3f(0.0f, 1.0f, 1.0f), ofVec3f(0, -1, 0));
 				camera.move(ofVec3f()); // nudge camera to update
 			}
 		}
@@ -116,17 +111,30 @@ namespace ofxRulr {
 			
 #ifdef OFXCVGUI_USE_OFXGRABCAM
 			inspector->add(new Widgets::Title("Cursor", Widgets::Title::Level::H3));
-			inspector->add(new Widgets::Toggle(this->showCursor));
+			inspector->add(new Widgets::Toggle(this->parameters.showCursor));
 
-			inspector->add(new Widgets::LiveValue<ofVec3f>("Position", [this]() {
-				return this->view->getCamera().getCursorWorld();
+			auto formatMeters = [](float distance) {
+				stringstream formatted;
+
+				formatted << floor(distance) << "m ";
+				distance = fmod(distance * 100.0f, 100.0f);
+				formatted << floor(distance) << "cm ";
+				distance = fmod(distance * 10.0f, 10.0f);
+				formatted << floor(distance) << "mm";
+				return formatted.str();
+			};
+			inspector->add(new Widgets::LiveValue<string>("Position X", [this, formatMeters]() {
+				return formatMeters(this->view->getCamera().getCursorWorld().x);
+			}));
+			inspector->add(new Widgets::LiveValue<string>("Position Y", [this, formatMeters]() {
+				return formatMeters(this->view->getCamera().getCursorWorld().y);
+			}));
+			inspector->add(new Widgets::LiveValue<string>("Position Z", [this, formatMeters]() {
+				return formatMeters(this->view->getCamera().getCursorWorld().z);
 			}));
 #endif
 
-			inspector->add(new Widgets::Title("Grid", Widgets::Title::Level::H3));
-			inspector->add(new Widgets::Toggle(this->showGrid));
-			inspector->add(new Widgets::EditableValue<ofVec3f>(this->roomMinimum));
-			inspector->add(new Widgets::EditableValue<ofVec3f>(this->roomMaximum));
+			inspector->addParameterGroup(this->parameters.grid);
 		}
 
 
@@ -136,11 +144,20 @@ namespace ofxRulr {
 			this->view->setCursorEnabled(showCursor);
 		}
 #endif
+		//----------
+		void Summary::callbackGridDark(bool &) {
+			if (this->parameters.grid.dark) {
+				this->grid->loadData(ofxAssets::image("ofxRulr::grid-10-dark").getPixels());
+			}
+			else {
+				this->grid->loadData(ofxAssets::image("ofxRulr::grid-10").getPixels());
+			}
+		}
 
 		//----------
 		void Summary::drawGrid() {
-			const auto & roomMinimum = this->roomMinimum.get();
-			const auto & roomMaximum = this->roomMaximum.get();
+			const auto & roomMinimum = this->parameters.grid.roomMinimum.get();
+			const auto & roomMaximum = this->parameters.grid.roomMaximum.get();
 			const auto roomSpan = roomMaximum - roomMinimum;
 			auto & camera = this->view->getCamera();
 
@@ -178,31 +195,38 @@ namespace ofxRulr {
 			//--
 			//
 			ofPushStyle();
-			const auto cursorPosition = camera.getCursorWorld();
-			//
-			ofSetColor(0);
-			ofSetLineWidth(2.0f);
-			//front wall
-			ofDrawLine(cursorPosition.x, roomMaximum.y, roomMinimum.z, cursorPosition.x, roomMinimum.y, roomMinimum.z); //x
-			ofDrawLine(roomMinimum.x, cursorPosition.y, roomMinimum.z, roomMaximum.x, cursorPosition.y, roomMinimum.z); //y
-			//back wall
-			ofDrawLine(cursorPosition.x, roomMaximum.y, roomMaximum.z, cursorPosition.x, roomMinimum.y, roomMaximum.z); //x
-			ofDrawLine(roomMinimum.x, cursorPosition.y, roomMaximum.z, roomMaximum.x, cursorPosition.y, roomMaximum.z); //y
-			//
-			//floor
-			ofDrawLine(cursorPosition.x, roomMaximum.y, roomMinimum.z, cursorPosition.x, roomMaximum.y, roomMaximum.z); //x
-			ofDrawLine(roomMinimum.x, roomMaximum.y, cursorPosition.z, roomMaximum.x, roomMaximum.y, cursorPosition.z); //z
-			//ceiling
-			ofDrawLine(cursorPosition.x, roomMinimum.y, roomMinimum.z, cursorPosition.x, roomMinimum.y, roomMaximum.z); //x
-			ofDrawLine(roomMinimum.x, roomMinimum.y, cursorPosition.z, roomMaximum.x, roomMinimum.y, cursorPosition.z); //z
-			//
-			//left wall
-			ofDrawLine(roomMinimum.x, cursorPosition.y, roomMinimum.z, roomMinimum.x, cursorPosition.y, roomMaximum.z); //y
-			ofDrawLine(roomMinimum.x, roomMinimum.y, cursorPosition.z, roomMinimum.x, roomMaximum.y, cursorPosition.z); //z
-			//right wall
-			ofDrawLine(roomMaximum.x, cursorPosition.y, roomMinimum.z, roomMaximum.x, cursorPosition.y, roomMaximum.z); //y
-			ofDrawLine(roomMaximum.x, roomMinimum.y, cursorPosition.z, roomMaximum.x, roomMaximum.y, cursorPosition.z); //z
-			//
+			{
+				const auto cursorPosition = camera.getCursorWorld();
+				//
+				if (this->parameters.grid.dark) {
+					ofSetColor(100);
+				}
+				else {
+					ofSetColor(0);
+				}
+				ofSetLineWidth(2.0f);
+				//front wall
+				ofDrawLine(cursorPosition.x, roomMaximum.y, roomMinimum.z, cursorPosition.x, roomMinimum.y, roomMinimum.z); //x
+				ofDrawLine(roomMinimum.x, cursorPosition.y, roomMinimum.z, roomMaximum.x, cursorPosition.y, roomMinimum.z); //y
+				//back wall
+				ofDrawLine(cursorPosition.x, roomMaximum.y, roomMaximum.z, cursorPosition.x, roomMinimum.y, roomMaximum.z); //x
+				ofDrawLine(roomMinimum.x, cursorPosition.y, roomMaximum.z, roomMaximum.x, cursorPosition.y, roomMaximum.z); //y
+				//
+				//floor
+				ofDrawLine(cursorPosition.x, roomMaximum.y, roomMinimum.z, cursorPosition.x, roomMaximum.y, roomMaximum.z); //x
+				ofDrawLine(roomMinimum.x, roomMaximum.y, cursorPosition.z, roomMaximum.x, roomMaximum.y, cursorPosition.z); //z
+				//ceiling
+				ofDrawLine(cursorPosition.x, roomMinimum.y, roomMinimum.z, cursorPosition.x, roomMinimum.y, roomMaximum.z); //x
+				ofDrawLine(roomMinimum.x, roomMinimum.y, cursorPosition.z, roomMaximum.x, roomMinimum.y, cursorPosition.z); //z
+				//
+				//left wall
+				ofDrawLine(roomMinimum.x, cursorPosition.y, roomMinimum.z, roomMinimum.x, cursorPosition.y, roomMaximum.z); //y
+				ofDrawLine(roomMinimum.x, roomMinimum.y, cursorPosition.z, roomMinimum.x, roomMaximum.y, cursorPosition.z); //z
+				//right wall
+				ofDrawLine(roomMaximum.x, cursorPosition.y, roomMinimum.z, roomMaximum.x, cursorPosition.y, roomMaximum.z); //y
+				ofDrawLine(roomMaximum.x, roomMinimum.y, cursorPosition.z, roomMaximum.x, roomMaximum.y, cursorPosition.z); //z
+				//
+			}
 			ofPopStyle();
 			//
 			//--

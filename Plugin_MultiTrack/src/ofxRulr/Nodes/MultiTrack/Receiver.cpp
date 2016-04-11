@@ -1,6 +1,8 @@
 #include "pch_MultiTrack.h"
 #include "Receiver.h"
 
+#include "Poco/Base64Decoder.h"
+
 using namespace ofxCvGui;
 
 namespace ofxRulr {
@@ -25,25 +27,59 @@ namespace ofxRulr {
 
 				this->panel = ofxCvGui::Panels::Groups::makeStrip();
 
-				//this->parameters.previews.enabled.addListener(this, &Receiver::previewsChangeCallback);
+				this->controlSocket = make_unique<Utils::ControlSocket>();
+				this->controlSocket->init("127.0.0.1", ofxMultiTrack::NodeControl);
+
+				this->controlSocket->addHandler("getDepthToWorldTable::response", [this](const Json::Value & arguments) {
+					if (!arguments["error"].empty()) {
+						try {
+							throw(ofxRulr::Exception(arguments["error"].toStyledString()));
+						}
+						RULR_CATCH_ALL_TO_ERROR;
+					}
+					else if(!arguments["image"].empty()) {
+						try {
+							string decodedMessage;
+
+							{
+								const auto encodedString = arguments["image"].asString();
+								istringstream istr(encodedString);
+								ostringstream ostr;
+								Poco::Base64Decoder b64in(istr);
+								copy(std::istreambuf_iterator<char>(b64in),
+									std::istreambuf_iterator<char>(),
+									std::ostreambuf_iterator<char>(ostr));
+
+								decodedMessage = ostr.str();;
+							}
+
+							if (decodedMessage.empty()) {
+								throw(ofxRulr::Exception("Can't decode Base64 message"));
+							}
+
+							ofxSquashBuddies::Message message;
+							message.pushData(decodedMessage.data(), decodedMessage.size());
+
+							if (message.empty()) {
+								throw(ofxRulr::Exception("Initialise ofxSquashBuddies::Message failed"));
+							}
+							if (!message.getData(this->depthToCameraRays)) {
+								throw(ofxRulr::Exception("Decode ofxSquashBuddies::Message to image failed"));
+							}
+						}
+						RULR_CATCH_ALL_TO_ERROR;
+					}
+				});
 			}
 
 			//----------
 			void Receiver::update() {
-				bool changeConnection = false;
-				if (this->receiver && !this->parameters.connection.connect) {
-					//disconnect
-					this->receiver.reset();
-					changeConnection = true;
-				} else if(!this->receiver && this->parameters.connection.connect) {
-					//connect
-					this->receiver = make_shared<ofxMultiTrack::Receiver>();
-					this->receiver->init(this->parameters.connection.portNumber);
+				if (this->controlSocket) {
+					this->controlSocket->update();
 
-					changeConnection = true;
-				}
-				if (changeConnection) {
-					this->rebuildGui();
+					if (!this->depthToCameraRays.isAllocated()) {
+						this->controlSocket->sendMessage("getDepthToWorldTable");
+					}
 				}
 
 				if (this->receiver) {
@@ -64,8 +100,6 @@ namespace ofxRulr {
 			//----------
 			void Receiver::populateInspector(ofxCvGui::InspectArguments & args) {
 				auto inspector = args.inspector;
-
-				inspector->addParameterGroup(this->parameters);
 
 				if (this->receiver) {
 					inspector->addTitle("Status", Widgets::Title::Level::H2);
@@ -102,16 +136,28 @@ namespace ofxRulr {
 						return Widgets::Indicator::Status::Clear;
 					});
 				}
+
+				args.inspector->addTitle("Control Socket");
+				{
+					args.inspector->addIndicator("Active", [this]() {
+						return (Widgets::Indicator::Status) this->controlSocket->isSocketActive();
+					});
+					args.inspector->addLiveValueHistory("Heartbeat age [ms]", [this]() {
+						return chrono::duration_cast<chrono::milliseconds>(this->controlSocket->getTimeSinceLastHeartbeatReceived()).count();
+					});
+				}
+
+				inspector->addParameterGroup(this->parameters);
 			}
 
 			//----------
 			void Receiver::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(this->parameters, json);
+				Utils::Serializable::serialize(json, this->parameters);
 			}
 
 			//----------
 			void Receiver::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(this->parameters, json);
+				Utils::Serializable::deserialize(json, this->parameters);
 			}
 
 			//----------

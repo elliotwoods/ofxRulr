@@ -202,7 +202,7 @@ namespace ofxRulr {
 								ofDrawRectangle(args.localBounds);
 							}
 							ofPopStyle();
-						}, -100, this);
+						}, this, -100);
 					}
 				}
 

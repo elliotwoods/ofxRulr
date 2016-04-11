@@ -60,15 +60,19 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="..\..\ofxMultiTrack\ofxMultiTrackLib\ofxMultiTrack.props" />
+    <Import Project="..\..\ofxZmq\ofxZmqLib\ofxZmq.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="..\..\ofxMultiTrack\ofxMultiTrackLib\ofxMultiTrack.props" />
+    <Import Project="..\..\ofxZmq\ofxZmqLib\ofxZmq.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="..\..\ofxMultiTrack\ofxMultiTrackLib\ofxMultiTrack.props" />
+    <Import Project="..\..\ofxZmq\ofxZmqLib\ofxZmq.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="..\..\ofxMultiTrack\ofxMultiTrackLib\ofxMultiTrack.props" />
+    <Import Project="..\..\ofxZmq\ofxZmqLib\ofxZmq.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -141,7 +145,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\LocalKinect.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Receiver.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Sender.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.h" />
+    <ClInclude Include="src\ofxRulr\Utils\ControlSocket.h" />
     <ClInclude Include="src\pch_MultiTrack.h" />
   </ItemGroup>
   <ItemGroup>
@@ -152,7 +158,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Receiver.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Sender.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\ControlSocket.cpp" />
     <ClCompile Include="src\pch_MultiTrack.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -175,6 +183,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\ofxSquash\ofxSquashLib\ofxSquashLib.vcxproj">
       <Project>{c5348207-a7ab-4078-85fa-ed5b98a75e87}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxZmq\ofxZmqLib\ofxZmqLib.vcxproj">
+      <Project>{3f7cd569-f3e4-4c44-991d-01eb9037794e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Plugin_KinectForWindows2\Plugin_KinectForWindows2.vcxproj">
       <Project>{cbfc3d47-1e57-4291-90b6-c344b836b8da}</Project>

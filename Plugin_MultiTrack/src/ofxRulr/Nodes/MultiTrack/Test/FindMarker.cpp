@@ -35,7 +35,7 @@ namespace ofxRulr {
 					panel->add(resultPanel);
 					this->panel = panel;
 
-					resultPanel->onDrawCropped += [this](DrawCroppedArguments & args) {
+					resultPanel->onDrawImage += [this](DrawImageArguments & args) {
 						int index = 0;
 						for (const auto & marker : this->markers) {
 							ofPushStyle();
@@ -127,12 +127,12 @@ namespace ofxRulr {
 
 				//----------
 				void FindMarker::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(this->parameters, json);
+					Utils::Serializable::serialize(json, this->parameters);
 				}
 
 				//----------
 				void FindMarker::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(this->parameters, json);
+					Utils::Serializable::deserialize(json, this->parameters);
 				}
 			}
 		}

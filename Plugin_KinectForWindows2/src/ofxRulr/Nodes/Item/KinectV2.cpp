@@ -68,26 +68,15 @@ namespace ofxRulr {
 
 			//----------
 			void KinectV2::serialize(Json::Value & json) {
-				ofxRulr::Utils::Serializable::serialize(this->viewType, json);
-				auto & jsonEnabledViews = json["enabledViews"];
-				{
-					ofxRulr::Utils::Serializable::serialize(this->enabledViews.rgb, jsonEnabledViews);
-					ofxRulr::Utils::Serializable::serialize(this->enabledViews.depth, jsonEnabledViews);
-					ofxRulr::Utils::Serializable::serialize(this->enabledViews.ir, jsonEnabledViews);
-					ofxRulr::Utils::Serializable::serialize(this->enabledViews.body, jsonEnabledViews);
-				}
+				ofxRulr::Utils::Serializable::serialize(json, this->viewType);
+				ofxRulr::Utils::Serializable::serialize(json, this->enabledViews);
 			}
 
 			//----------
 			void KinectV2::deserialize(const Json::Value & json) {
-				ofxRulr::Utils::Serializable::deserialize(this->viewType, json);
-				const auto & jsonEnabledViews = json["enabledViews"];
-				{
-					ofxRulr::Utils::Serializable::deserialize(this->enabledViews.rgb, jsonEnabledViews);
-					ofxRulr::Utils::Serializable::deserialize(this->enabledViews.depth, jsonEnabledViews);
-					ofxRulr::Utils::Serializable::deserialize(this->enabledViews.ir, jsonEnabledViews);
-					ofxRulr::Utils::Serializable::deserialize(this->enabledViews.body, jsonEnabledViews);
-				}
+				ofxRulr::Utils::Serializable::deserialize(json, this->viewType);
+				ofxRulr::Utils::Serializable::deserialize(json, this->enabledViews);
+
 				this->rebuildView();
 			}
 
@@ -200,7 +189,7 @@ namespace ofxRulr {
 
 					auto width = texture.getWidth();
 					auto height = texture.getHeight();
-					bodyView->onDrawCropped += [this, width, height](DrawCroppedArguments & args) {
+					bodyView->onDrawImage += [this, width, height](DrawImageArguments & args) {
 						auto bodySource = this->device->getBodySource();
 						bodySource->drawProjected(0, 0, width, height, ofxKinectForWindows2::ProjectionCoordinates::DepthCamera);
 					};

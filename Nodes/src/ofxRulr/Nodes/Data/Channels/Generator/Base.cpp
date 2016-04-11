@@ -46,12 +46,12 @@ namespace ofxRulr {
 
 					//----------
 					void Base::serialize(Json::Value & json) {
-						Utils::Serializable::serialize(this->addressParameter, json);
+						Utils::Serializable::serialize(json, this->addressParameter);
 					}
 
 					//----------
 					void Base::deserialize(const Json::Value & json) {
-						Utils::Serializable::deserialize(this->addressParameter, json);
+						Utils::Serializable::deserialize(json, this->addressParameter);
 					}
 
 					//----------

@@ -44,7 +44,7 @@ namespace ofxRulr {
 
 				this->getCanvasElementGroup()->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
 					this->drawGridLines();
-				}, -1, this);
+				}, this, -1);
 
 				this->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
 					if (args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {

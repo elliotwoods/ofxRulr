@@ -40,7 +40,7 @@ namespace ofxRulr {
 					this->addInput(MAKE(Graph::Pin<Item::Camera>));
 
 					auto view = MAKE(ofxCvGui::Panels::Image, this->dummy);
-					view->onDrawCropped += [this](ofxCvGui::DrawCroppedArguments & args) {
+					view->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 						try {
 							auto graycodeNode = this->getInput<Scan::Graycode>();
 							if (graycodeNode) {
@@ -132,8 +132,8 @@ namespace ofxRulr {
 
 					}
 
-					Utils::Serializable::serialize(this->undistortFirst, json);
-					Utils::Serializable::serialize(this->doubleExportSize, json);
+					Utils::Serializable::serialize(json, this->undistortFirst);
+					Utils::Serializable::serialize(json, this->doubleExportSize);
 				}
 
 				//----------
@@ -146,8 +146,8 @@ namespace ofxRulr {
 						}
 					}
 
-					Utils::Serializable::deserialize(this->undistortFirst, json);
-					Utils::Serializable::deserialize(this->doubleExportSize, json);
+					Utils::Serializable::deserialize(json, this->undistortFirst);
+					Utils::Serializable::deserialize(json, this->doubleExportSize);
 				}
 
 				//----------

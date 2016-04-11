@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofxRulr/Utils/Serializable.h"
-#include "ofxRulr/Utils/Base64.h"
 #include "ofxRulr/Nodes/Base.h"
 
 #include "ofxCvGui/Panels/Scroll.h"
@@ -141,7 +140,7 @@ namespace ofxRulr {
 					string getTypeName() const override {
 						return string(typeid(DataType).name()) + "Frame";
 					}
-
+					/*
 					//----------
 					void setInstance(const DataType & instance) {
 						this->encodedData = Utils::Base64::encode(instance);
@@ -151,6 +150,7 @@ namespace ofxRulr {
 					bool getInstance(DataType & instance) {
 						return Utils::Base64::decode(this->encodedData, instance);
 					}
+					*/
 				protected:
 					string encodedData;
 				};

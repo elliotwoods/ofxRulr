@@ -260,8 +260,8 @@ namespace ofxRulr {
 
 				//---------
 				void MovingHeadToWorld::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(this->beamBrightness, json);
-					Utils::Serializable::serialize(this->calibrateOnAdd, json);
+					Utils::Serializable::serialize(json, this->beamBrightness);
+					Utils::Serializable::serialize(json, this->calibrateOnAdd);
 
 					auto & jsonDataPoints = json["dataPoints"];
 					for (int i = 0; i < this->dataPoints.size(); i++) {
@@ -275,8 +275,8 @@ namespace ofxRulr {
 
 				//---------
 				void MovingHeadToWorld::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(this->beamBrightness, json);
-					Utils::Serializable::deserialize(this->calibrateOnAdd, json);
+					Utils::Serializable::deserialize(json, this->beamBrightness);
+					Utils::Serializable::deserialize(json, this->calibrateOnAdd);
 					
 					this->dataPoints.clear();
 					const auto & jsonDataPoints = json["dataPoints"];

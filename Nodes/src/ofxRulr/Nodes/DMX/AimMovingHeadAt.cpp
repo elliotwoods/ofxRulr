@@ -99,35 +99,35 @@ namespace ofxRulr {
 
 			//----------
 			void AimMovingHeadAt::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(this->ignoreBlankTransform, json);
+				Utils::Serializable::serialize(json, this->ignoreBlankTransform);
 
 				for (int i = 0; i < 3; i++) {
-					Utils::Serializable::serialize(this->objectPositionOffset[i], json);
+					Utils::Serializable::serialize(json, this->objectPositionOffset[i]);
 				}
 
 				auto & jsonPrediction = json["prediction"];
 				{
-					Utils::Serializable::serialize(this->steveJobs.enabled, jsonPrediction);
-					Utils::Serializable::serialize(this->steveJobs.steps, jsonPrediction);
-					Utils::Serializable::serialize(this->steveJobs.minimumVelocity, jsonPrediction);
-					Utils::Serializable::serialize(this->steveJobs.maximumAcceleration, jsonPrediction);
+					Utils::Serializable::serialize(jsonPrediction, this->steveJobs.enabled);
+					Utils::Serializable::serialize(jsonPrediction, this->steveJobs.steps);
+					Utils::Serializable::serialize(jsonPrediction, this->steveJobs.minimumVelocity);
+					Utils::Serializable::serialize(jsonPrediction, this->steveJobs.maximumAcceleration);
 				}
 			}
 
 			//----------
 			void AimMovingHeadAt::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(this->ignoreBlankTransform, json);
+				Utils::Serializable::deserialize(json, this->ignoreBlankTransform);
 
 				for (int i = 0; i < 3; i++) {
-					Utils::Serializable::deserialize(this->objectPositionOffset[i], json);
+					Utils::Serializable::deserialize(json, this->objectPositionOffset[i]);
 				}
 
 				const auto & jsonPrediction = json["prediction"];
 				{
-					Utils::Serializable::deserialize(this->steveJobs.enabled, jsonPrediction);
-					Utils::Serializable::deserialize(this->steveJobs.steps, jsonPrediction);
-					Utils::Serializable::deserialize(this->steveJobs.minimumVelocity, jsonPrediction);
-					Utils::Serializable::deserialize(this->steveJobs.maximumAcceleration, jsonPrediction);
+					Utils::Serializable::deserialize(jsonPrediction, this->steveJobs.enabled);
+					Utils::Serializable::deserialize(jsonPrediction, this->steveJobs.steps);
+					Utils::Serializable::deserialize(jsonPrediction, this->steveJobs.minimumVelocity);
+					Utils::Serializable::deserialize(jsonPrediction, this->steveJobs.maximumAcceleration);
 				}
 			}
 

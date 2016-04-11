@@ -170,11 +170,11 @@ namespace ofxRulr {
 				json["width"] = this->width;
 				json["height"] = this->height;
 				json["monitorSelection"] = this->videoOutputSelection;
-				ofxRulr::Utils::Serializable::serialize(this->splitHorizontal, json);
-				ofxRulr::Utils::Serializable::serialize(this->splitVertical, json);
-				ofxRulr::Utils::Serializable::serialize(this->splitUseIndex, json);
-				ofxRulr::Utils::Serializable::serialize(this->testPattern, json);
-				ofxRulr::Utils::Serializable::serialize(this->mute, json);
+				ofxRulr::Utils::Serializable::serialize(json, this->splitHorizontal);
+				ofxRulr::Utils::Serializable::serialize(json, this->splitVertical);
+				ofxRulr::Utils::Serializable::serialize(json, this->splitUseIndex);
+				ofxRulr::Utils::Serializable::serialize(json, this->testPattern);
+				ofxRulr::Utils::Serializable::serialize(json, this->mute);
 			}
 
 			//----------
@@ -182,11 +182,11 @@ namespace ofxRulr {
 				this->width = json["width"].asInt();
 				this->height = json["height"].asInt();
 				this->setVideoOutputSelection(json["monitorSelection"].asInt());
-				ofxRulr::Utils::Serializable::deserialize(this->splitHorizontal, json);
-				ofxRulr::Utils::Serializable::deserialize(this->splitVertical, json);
-				ofxRulr::Utils::Serializable::deserialize(this->splitUseIndex, json);
-				ofxRulr::Utils::Serializable::deserialize(this->testPattern, json);
-				ofxRulr::Utils::Serializable::deserialize(this->mute, json);
+				ofxRulr::Utils::Serializable::deserialize(json, this->splitHorizontal);
+				ofxRulr::Utils::Serializable::deserialize(json, this->splitVertical);
+				ofxRulr::Utils::Serializable::deserialize(json, this->splitUseIndex);
+				ofxRulr::Utils::Serializable::deserialize(json, this->testPattern);
+				ofxRulr::Utils::Serializable::deserialize(json, this->mute);
 			}
 
 			//----------

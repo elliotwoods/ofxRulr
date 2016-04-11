@@ -35,13 +35,14 @@ namespace ofxRulr {
 					
 					shared_ptr<ofxCvGui::Panels::Draws> view;
 					
-					struct {
+					struct : ofParameterGroup {
 						ofParameter<float> scale;
 						ofParameter<float> cornersX;
 						ofParameter<float> cornersY;
 						ofParameter<float> positionX;
 						ofParameter<float> positionY;
 						ofParameter<float> brightness;
+						PARAM_DECLARE("Checkerboard", scale, cornersX, cornersY, positionX, positionY, brightness);
 					} checkerboard;
 					
 					ofParameter<float> initialLensOffset;

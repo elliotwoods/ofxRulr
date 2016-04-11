@@ -3,8 +3,6 @@
 #include "ofxRulr/Nodes/Item/IDepthCamera.h"
 #include "ofxMultiTrack.h"
 
-#include "ofxRulr/Utils/ParameterGroup.h"
-
 namespace ofxRulr {
 	namespace Nodes {
 		namespace MultiTrack {
@@ -28,7 +26,7 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", true };
 						ofParameter<float> threshold{ "Threshold", 100, 0, 255 };
-						ofParameter<float> minimumArea{ "Minimum area", 30 * 30 };
+						ofParameter<float> minimumArea{ "Minimum area", 5 * 5 };
 						ofParameter<float> markerPadding{ "Marker padding [%]", 50, 0, 100 };
 						PARAM_DECLARE("FindMarker", enabled, threshold, minimumArea);
 					} parameters;

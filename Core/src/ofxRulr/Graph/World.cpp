@@ -147,7 +147,7 @@ namespace ofxRulr {
 						if (mouse.action == ofxCvGui::MouseArguments::Action::Pressed) {
 							ofxCvGui::inspect(node);
 						}
-					}, -100, this);
+					}, this, -100);
 
 					//draw outlines on gui panels if node is selected
 					nodePanel->onDraw += [node](DrawArguments & drawArgs) {

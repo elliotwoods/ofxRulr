@@ -32,7 +32,8 @@ namespace ofxRulr {
 			void Assets::init() {
 				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
-				
+				RULR_NODE_SERIALIZATION_LISTENERS;
+
 				this->view = make_shared<Panels::Widgets>();
 				
 				this->filter.setName("Filter");
@@ -56,12 +57,12 @@ namespace ofxRulr {
 			
 			//----------
 			void Assets::serialize(Json::Value & json) {
-				ofxRulr::Utils::Serializable::serialize(this->filter, json);
+				json << this->filter;
 			}
 			
 			//----------
 			void Assets::deserialize(const Json::Value & json) {
-				ofxRulr::Utils::Serializable::deserialize(this->filter, json);
+				json >> this->filter;
 			}
 			
 			//----------

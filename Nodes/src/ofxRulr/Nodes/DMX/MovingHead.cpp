@@ -24,14 +24,14 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
-				this->pan.set("Pan", 0.0f, -180.0f, 180.0f);
-				this->tilt.set("Tilt", 0.0f, -100.0f, 100.0f);
-				this->brightness.set("Brightness", 0.0f, 0.0f, 1.0f);
-				this->iris.set("Iris", 1.0f, 0.0f, 1.0f);
-				this->power.set("Power", false);
-				this->powerCircuit.set("Power circuit (mutex)", "main ring");
-				this->pauseBetweenPowerUps.set("Pause between power ups [s]", 2);
-				this->tiltOffset.set("Tilt offset", 0.0f, -90.0f, 90.0f);
+				this->parameters.pan.set("Pan", 0.0f, -180.0f, 180.0f);
+				this->parameters.tilt.set("Tilt", 0.0f, -100.0f, 100.0f);
+				this->parameters.brightness.set("Brightness", 0.0f, 0.0f, 1.0f);
+				this->parameters.iris.set("Iris", 1.0f, 0.0f, 1.0f);
+				this->parameters.power.set("Power", false);
+				this->parameters.powerCircuit.set("Power circuit (mutex)", "main ring");
+				this->parameters.pauseBetweenPowerUps.set("Pause between power ups [s]", 2);
+				this->parameters.tiltOffset.set("Tilt offset", 0.0f, -90.0f, 90.0f);
 
 				this->powerStateSignal = false;
 			}
@@ -43,8 +43,8 @@ namespace ofxRulr {
 			
 			//----------
 			void MovingHead::update() {
-				if (this->powerStateSignal != this->power) {
-					if (this->power) {
+				if (this->powerStateSignal != this->parameters.power) {
+					if (this->parameters.power) {
 						//global store of power circuit control
 						static map<string, float> lastPowerUpPerCircuit;
 						static ofMutex lastPowerUpPerCircuitMutex;
@@ -53,16 +53,16 @@ namespace ofxRulr {
 						lastPowerUpPerCircuitMutex.lock();
 						{
 							//try and find this power circuit
-							auto findCircuit = lastPowerUpPerCircuit.find(this->powerCircuit.get());
+							auto findCircuit = lastPowerUpPerCircuit.find(this->parameters.powerCircuit.get());
 							if (findCircuit == lastPowerUpPerCircuit.end()) {
 								//register this circuit, say the last spark on it was really long ago
-								lastPowerUpPerCircuit.insert(pair<string, float>(this->powerCircuit.get(), std::numeric_limits<float>::min()));
+								lastPowerUpPerCircuit.insert(pair<string, float>(this->parameters.powerCircuit.get(), std::numeric_limits<float>::min()));
 							}
 							
 							//check if we've had a power on event too recently
 							auto now = ofGetElapsedTimef();
-							auto & lastPowerUpOnThisCircuit = lastPowerUpPerCircuit[this->powerCircuit.get()];
-							if (now - this->pauseBetweenPowerUps.get() > lastPowerUpOnThisCircuit) {
+							auto & lastPowerUpOnThisCircuit = lastPowerUpPerCircuit[this->parameters.powerCircuit.get()];
+							if (now - this->parameters.pauseBetweenPowerUps.get() > lastPowerUpOnThisCircuit) {
 								//ok it's time, let's boot
 								this->powerStateSignal = true;
 								lastPowerUpOnThisCircuit = now;
@@ -84,36 +84,22 @@ namespace ofxRulr {
 
 			//----------
 			void MovingHead::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(this->pan, json);
-				Utils::Serializable::serialize(this->tilt, json);
-				Utils::Serializable::serialize(this->brightness, json);
-				Utils::Serializable::serialize(this->iris, json);
-				Utils::Serializable::serialize(this->power, json);
-				Utils::Serializable::serialize(this->powerCircuit, json);
-				Utils::Serializable::serialize(this->pauseBetweenPowerUps, json);
-				Utils::Serializable::serialize(this->tiltOffset, json);
+				Utils::Serializable::serialize(json, this->parameters);
 			}
 
 			//----------
 			void MovingHead::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(this->pan, json);
-				Utils::Serializable::deserialize(this->tilt, json);
-				Utils::Serializable::deserialize(this->brightness, json);
-				Utils::Serializable::deserialize(this->iris, json);
-				Utils::Serializable::deserialize(this->power, json);
-				Utils::Serializable::deserialize(this->powerCircuit, json);
-				Utils::Serializable::deserialize(this->pauseBetweenPowerUps, json);
-				Utils::Serializable::deserialize(this->tiltOffset, json);
+				Utils::Serializable::deserialize(json, this->parameters);
 			}
 
 			//----------
 			ofVec2f MovingHead::getPanTilt() const {
-				return ofVec2f(this->pan, this->tilt);
+				return ofVec2f(this->parameters.pan, this->parameters.tilt);
 			}
 
 			//----------
 			float MovingHead::getMaxTilt() const {
-				return this->tilt.getMax();
+				return this->parameters.tilt.getMax();
 			}
 
 			//----------
@@ -121,12 +107,12 @@ namespace ofxRulr {
 				auto worldToObject = this->getTransform().getInverse();
 				auto objectSpacePoint = worldSpacePoint * worldToObject;
 				
-				auto panTilt = MovingHead::getPanTiltForTargetInObjectSpace(objectSpacePoint, this->tiltOffset);
+				auto panTilt = MovingHead::getPanTiltForTargetInObjectSpace(objectSpacePoint, this->parameters.tiltOffset);
 
 				if (navigationEnabled) {
 					//we want to find the fastest route to it, for every 180 degrees of pan there is a valid solution, let's choose the one with the smallest pan always
-					auto halfRotationsMin = ceil(this->pan.getMin() / 180.0f);
-					auto halfRotationsMax = ceil(this->pan.getMax() / 180.0f) + 1;
+					auto halfRotationsMin = ceil(this->parameters.pan.getMin() / 180.0f);
+					auto halfRotationsMax = ceil(this->parameters.pan.getMax() / 180.0f) + 1;
 					map<float, ofVec2f> solutions; // panDistance, (pan,tilt)
 					for (int halfRotation = halfRotationsMin; halfRotation < halfRotationsMax; halfRotation++) {
 						//for each hemisphere, find the solution, check if it's in valid range
@@ -140,9 +126,9 @@ namespace ofxRulr {
 							//odd, flip tilt
 							searchTilt = -panTilt.y;
 						}
-						if (searchPan >= this->pan.getMin() && searchPan <= this->pan.getMax() && searchTilt >= this->tilt.getMin() && searchTilt <= this->tilt.getMax()) {
+						if (searchPan >= this->parameters.pan.getMin() && searchPan <= this->parameters.pan.getMax() && searchTilt >= this->parameters.tilt.getMin() && searchTilt <= this->parameters.tilt.getMax()) {
 							//it's a valid solution
-							auto panDistance = abs(searchPan - this->pan);
+							auto panDistance = abs(searchPan - this->parameters.pan);
 							pair<float, ofVec2f> solution(panDistance, ofVec2f(searchPan, searchTilt));
 							solutions.insert(solution);
 						}
@@ -179,46 +165,46 @@ namespace ofxRulr {
 		
 			//----------
 			void MovingHead::setPanTilt(const ofVec2f & panTilt) {
-				this->pan = panTilt.x;
-				this->tilt = panTilt.y;
+				this->parameters.pan = panTilt.x;
+				this->parameters.tilt = panTilt.y;
 			}
 
 			//----------
 			void MovingHead::setBrightness(float brightness) {
-				this->brightness = brightness;
+				this->parameters.brightness = brightness;
 			}
 
 			//----------
 			void MovingHead::setIris(float iris) {
-				this->iris = iris;
+				this->parameters.iris = iris;
 			}
 
 			//----------
 			void MovingHead::setPower(bool power) {
-				this->power = power;
+				this->parameters.power = power;
 			}
 
 			//----------
 			void MovingHead::setHome() {
-				this->pan.set(0.0f);
-				this->tilt.set(0.0f);
+				this->parameters.pan.set(0.0f);
+				this->parameters.tilt.set(0.0f);
 			}
 
 			//----------
 			void MovingHead::setTiltOffset(float tiltOffset) {
-				this->tiltOffset = tiltOffset;
+				this->parameters.tiltOffset = tiltOffset;
 			}
 
 			//----------
 			void MovingHead::copyFrom(shared_ptr<MovingHead> other) {
-				this->pan = other->pan;
-				this->tilt = other->tilt;
-				this->brightness = other->brightness;
-				this->iris = other->iris;
-				this->power = other->power;
-				this->powerCircuit = other->powerCircuit;
-				this->pauseBetweenPowerUps = other->pauseBetweenPowerUps;
-				this->tiltOffset = other->tiltOffset;
+				this->parameters.pan = other->parameters.pan;
+				this->parameters.tilt = other->parameters.tilt;
+				this->parameters.brightness = other->parameters.brightness;
+				this->parameters.iris = other->parameters.iris;
+				this->parameters.power = other->parameters.power;
+				this->parameters.powerCircuit = other->parameters.powerCircuit;
+				this->parameters.pauseBetweenPowerUps = other->parameters.pauseBetweenPowerUps;
+				this->parameters.tiltOffset = other->parameters.tiltOffset;
 			}
 
 			//----------
@@ -226,20 +212,20 @@ namespace ofxRulr {
 				auto inspector = inspectArguments.inspector;
 				
 				inspector->add(new Widgets::Title("DMX::MovingHead", Widgets::Title::Level::H2));
-				inspector->add(new Widgets::Slider(this->pan));
-				inspector->add(new Widgets::Slider(this->tilt));
+				inspector->add(new Widgets::Slider(this->parameters.pan));
+				inspector->add(new Widgets::Slider(this->parameters.tilt));
 				inspector->add(new Widgets::Button("Home", [this]() {
 					this->setHome();
 				}));
-				inspector->add(new Widgets::Slider(this->brightness));
-				inspector->add(new Widgets::Slider(this->iris));
-				inspector->add(new Widgets::Toggle(this->power));
-				inspector->add(new Widgets::EditableValue<string>(this->powerCircuit));
-				inspector->add(new Widgets::EditableValue<int>(this->pauseBetweenPowerUps));
+				inspector->add(new Widgets::Slider(this->parameters.brightness));
+				inspector->add(new Widgets::Slider(this->parameters.iris));
+				inspector->add(new Widgets::Toggle(this->parameters.power));
+				inspector->add(new Widgets::EditableValue<string>(this->parameters.powerCircuit));
+				inspector->add(new Widgets::EditableValue<int>(this->parameters.pauseBetweenPowerUps));
 				inspector->add(new Widgets::Indicator("Power status", [this]() {
 					return (Widgets::Indicator::Status) this->powerStateSignal;
 				}));
-				inspector->add(new Widgets::Slider(this->tiltOffset));
+				inspector->add(new Widgets::Slider(this->parameters.tiltOffset));
 				
 			}
 		}

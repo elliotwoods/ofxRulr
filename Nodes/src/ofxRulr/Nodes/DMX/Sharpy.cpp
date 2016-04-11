@@ -19,17 +19,17 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
-				this->pan.setMin(-270);
-				this->pan.setMax(270);
+				this->parameters.pan.setMin(-270);
+				this->parameters.pan.setMax(270);
 
-				this->tilt.setMin(-126);
-				this->tilt.setMax(126);
+				this->parameters.tilt.setMin(-126);
+				this->parameters.tilt.setMax(126);
 
 				this->channels.push_back(make_shared<Channel>("Colour wheel"));
 				this->channels.push_back(make_shared<Channel>("Stop / Strobe"));
-				this->channels.push_back(make_shared<Channel>("Dimmer", [this]() { return (DMX::Value) (this->brightness * 255.0f); }));
+				this->channels.push_back(make_shared<Channel>("Dimmer", [this]() { return (DMX::Value) (this->parameters.brightness * 255.0f); }));
 				this->channels.push_back(make_shared<Channel>("Static gobo change", [this]() {
-					auto goboSelection = (int) round(ofMap(this->iris.get(), 0.0f, 1.0f, 0, 6, true));
+					auto goboSelection = (int) round(ofMap(this->parameters.iris.get(), 0.0f, 1.0f, 0, 6, true));
 					
 					//0 is fully open, 1 is most closed, 6 is almost fully open
 					//so swizzle the selection
@@ -46,19 +46,19 @@ namespace ofxRulr {
 				this->channels.push_back(make_shared<Channel>("Frost"));
 				this->channels.push_back(make_shared<Channel>("Focus"));
 				this->channels.push_back(make_shared<Channel>("Pan", [this]() {
-					auto panAll = (int) ofMap(this->pan.get(), this->pan.getMin(), this->pan.getMax(), 0, std::numeric_limits<uint16_t>::max());
+					auto panAll = (int) ofMap(this->parameters.pan.get(), this->parameters.pan.getMin(), this->parameters.pan.getMax(), 0, std::numeric_limits<uint16_t>::max());
 					return (DMX::Value) (panAll >> 8);
 				}));
 				this->channels.push_back(make_shared<Channel>("Pan fine", [this]() {
-					auto panAll = (int)ofMap(this->pan.get(), this->pan.getMin(), this->pan.getMax(), 0, std::numeric_limits<uint16_t>::max());
+					auto panAll = (int)ofMap(this->parameters.pan.get(), this->parameters.pan.getMin(), this->parameters.pan.getMax(), 0, std::numeric_limits<uint16_t>::max());
 					return (DMX::Value) (panAll % 256);
 				}));
 				this->channels.push_back(make_shared<Channel>("Tilt", [this]() {
-					auto tiltAll = (int)ofMap(this->tilt.get(), this->tilt.getMin(), this->tilt.getMax(), 0, std::numeric_limits<uint16_t>::max());
+					auto tiltAll = (int)ofMap(this->parameters.tilt.get(), this->parameters.tilt.getMin(), this->parameters.tilt.getMax(), 0, std::numeric_limits<uint16_t>::max());
 					return (DMX::Value) (tiltAll >> 8);
 				}));
 				this->channels.push_back(make_shared<Channel>("Tilt fine", [this]() {
-					auto tiltAll = (int)ofMap(this->tilt.get(), this->tilt.getMin(), this->tilt.getMax(), 0, std::numeric_limits<uint16_t>::max());
+					auto tiltAll = (int)ofMap(this->parameters.tilt.get(), this->parameters.tilt.getMin(), this->parameters.tilt.getMax(), 0, std::numeric_limits<uint16_t>::max());
 					return (DMX::Value) (tiltAll % 256);
 				}));
 				this->channels.push_back(make_shared<Channel>("Function"));
@@ -108,12 +108,12 @@ namespace ofxRulr {
 
 			//----------
 			void Sharpy::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(this->vectorChannelsEnabled, json);
+				json << this->vectorChannelsEnabled;
 			}
 
 			//----------
 			void Sharpy::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(this->vectorChannelsEnabled, json);
+				json >> this->vectorChannelsEnabled;
 				this->updateVectorChannelsEnabled();
 			}
 

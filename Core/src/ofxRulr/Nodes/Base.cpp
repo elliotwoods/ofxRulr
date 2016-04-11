@@ -37,7 +37,7 @@ namespace ofxRulr {
 		void Base::init() {
 			this->onPopulateInspector.addListener([this](ofxCvGui::InspectArguments & args) {
 				this->populateInspector(args);
-			}, 99999, this); // populate the instpector with this at the top. We call notify in reverse for inheritance
+			}, this, 99999); // populate the instpector with this at the top. We call notify in reverse for inheritance
 
 			//notify the subclasses to init
 			this->onInit.notifyListeners();
@@ -188,6 +188,21 @@ namespace ofxRulr {
 					message << "Node [" << this->getTypeName() << "] is missing connection [" << inputPin->getName() << "]";
 					throw(Exception(message.str()));
 				}
+			}
+		}
+
+		//----------
+		void Base::manageParameters(ofParameterGroup & parameters, bool addToInspector) {
+			this->onSerialize += [&parameters](Json::Value & json) {
+				Utils::Serializable::serialize(json, parameters);
+			};
+			this->onDeserialize += [&parameters](const Json::Value & json) {
+				Utils::Serializable::deserialize(json, parameters);
+			};
+			if (addToInspector) {
+				this->onPopulateInspector += [&parameters](ofxCvGui::InspectArguments & args) {
+					args.inspector->addParameterGroup(parameters);
+				};
 			}
 		}
 

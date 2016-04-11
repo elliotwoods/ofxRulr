@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\plugin.cpp" />
+    <ClCompile Include="src\pch_Plugin_Orbbec.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Device.cpp">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Color.cpp">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.cpp">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{7cb23bcc-0fb3-4499-b761-25860287bbd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{5298b00f-faab-425c-b58d-8fc893f88157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure">
+      <UniqueIdentifier>{faa2746c-f704-43a1-bcb3-f2eb4fca83e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
+      <UniqueIdentifier>{376e1462-6366-4f47-8372-53cc30de8df6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Item">
+      <UniqueIdentifier>{adae8927-d19a-4f23-b894-73994d05d55c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{a85bf41c-580d-479f-b016-81efca63dd06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{381a7fc7-614c-4ccc-be1a-8302605ac1ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Item">
+      <UniqueIdentifier>{9c5ec4e8-c4f8-4bb2-9ac6-49a520481531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Item\Orbbec">
+      <UniqueIdentifier>{1bcbb061-4091-4a7c-b7d0-3f563c296367}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_Orbbec.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Device.h">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Color.h">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.h">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

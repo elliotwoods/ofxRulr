@@ -127,7 +127,7 @@ namespace ofxRulr {
 							jsonCorners[i][j]["y"] = accumulatedCorners[i][j].y;
 						}
 					}
-					Utils::Serializable::serialize(this->error, json);
+					Utils::Serializable::serialize(json, this->error);
 				}
 
 				//----------
@@ -142,7 +142,7 @@ namespace ofxRulr {
 						}
 						this->accumulatedCorners.push_back(board);
 					}
-					Utils::Serializable::deserialize(this->error, json);
+					Utils::Serializable::deserialize(json, this->error);
 				}
 
 				//----------
@@ -200,6 +200,7 @@ namespace ofxRulr {
 
 					auto calibrateButton = new Widgets::Button("Calibrate", [this]() {
 						try {
+							ofxCvGui::Utils::drawProcessingNotice("Computing camera calibration...");
 							this->calibrate();
 						}
 						RULR_CATCH_ALL_TO_ALERT
