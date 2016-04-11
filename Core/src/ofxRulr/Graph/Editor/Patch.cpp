@@ -89,7 +89,7 @@ namespace ofxRulr {
 				this->cell->enableMipmap();
 				this->cell->loadData(ofxAssets::image("ofxRulr::cell-100").getPixels());
 				this->cell->setTextureWrap(GL_REPEAT, GL_REPEAT);
-				this->cell->setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST_MIPMAP_NEAREST);
+				this->cell->setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST);
 				if (wasArbTex) ofEnableArbTex();
 			}
 			
