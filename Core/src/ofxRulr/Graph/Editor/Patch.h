@@ -32,6 +32,8 @@ namespace ofxRulr {
 					Patch & patchInstance;
 					shared_ptr<NodeBrowser> nodeBrowser;
 					ofVec2f birthLocation;
+
+					shared_ptr<ofTexture> cell;
 				};
 				Patch();
 				string getTypeName() const override;
