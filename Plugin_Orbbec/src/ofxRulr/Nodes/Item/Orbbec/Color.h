@@ -16,9 +16,23 @@ namespace ofxRulr {
 					void update();
 
 					ofxCvGui::PanelPtr getPanel() override;
+
+					ofVec3f cameraToDepth(const ofVec2f & camera);
+					ofVec3f cameraToWorld(const ofVec2f & camera);
 				protected:
-					ofxCvGui::PanelPtr panel;
+					struct : ofParameterGroup {
+						ofParameter<bool> renderDepthMap{ "Render depth map", false };
+						PARAM_DECLARE("Color", renderDepthMap);
+					} parameters;
+
+					void renderDepthMap();
+
+					shared_ptr<ofxCvGui::Panels::Groups::Strip> panelStrip;
 					ofTexture texture;
+
+					ofFbo drawPointCloud;
+					ofFbo extractDepthBuffer;
+					ofFloatPixels colorDepthBufferPixels;
 				};
 			}
 		}

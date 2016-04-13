@@ -135,7 +135,7 @@ namespace ofxRulr {
 					//synthesise world points
 					vector<ofVec3f> worldPoints;
 					for (const auto depthPoint : depthPoints) {
-						worldPoints.emplace_back(depth->depthToWorld(depthPoint) * ofVec3f(-1, 1, 1));
+						worldPoints.emplace_back(depth->depthToWorld(depthPoint) * ofVec3f(1, 1, 1));
 					}
 					
 					//calibrate the camera on this data

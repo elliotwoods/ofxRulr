@@ -2,8 +2,8 @@
 #include "toPojector.h"
 
 #include "ofxRulr/Nodes/Item/Orbbec/Device.h"
+#include "ofxRulr/Nodes/Item/Orbbec/Color.h"
 #include "ofxRulr/Nodes/System/VideoOutput.h"
-#include "ColorRegistration.h"
 
 using namespace ofxCv;
 
@@ -29,7 +29,7 @@ namespace ofxRulr {
 						RULR_NODE_DRAW_WORLD_LISTENER;
 
 						this->addInput<Item::Orbbec::Device>();
-						this->addInput<ColorRegistration>();
+						this->addInput<Item::Orbbec::Color>();
 						this->addInput<Item::Projector>();
 						auto videoOutputPin = this->addInput<System::VideoOutput>();
 
@@ -153,7 +153,7 @@ namespace ofxRulr {
 							throw(ofxRulr::Exception("Color stream not initialised"));
 						}
 
-						auto calibration = this->getInput<ColorRegistration>();
+						auto colorNode = this->getInput<Item::Orbbec::Color>();
 
 						vector<ofVec2f> foundCorners;
 						cv::findChessboardCorners(toCv(colorStream->getPixels()), cv::Size(this->parameters.checkerboard.cornersX, this->parameters.checkerboard.cornersY), toCv(foundCorners));
@@ -167,7 +167,7 @@ namespace ofxRulr {
 						vector<Correspondence> newCorrespondences;
 						int pointIndex = 0;
 						for (const auto & foundCorner : foundCorners) {
-							auto foundCornerWorld = calibration->cameraToWorld(foundCorner);
+							auto foundCornerWorld = colorNode->cameraToWorld(foundCorner);
 							if (foundCornerWorld.z == 0.0f) {
 								continue;
 							}
@@ -179,6 +179,10 @@ namespace ofxRulr {
 
 							newCorrespondences.push_back(correspondence);
 							pointIndex++;
+						}
+						
+						if (newCorrespondences.empty()) {
+							throw(ofxRulr::Exception("Can't find world locations for corners."));
 						}
 
 						this->correspondences.insert(this->correspondences.end(), newCorrespondences.begin(), newCorrespondences.end());

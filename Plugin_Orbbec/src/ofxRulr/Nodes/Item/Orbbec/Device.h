@@ -34,7 +34,9 @@ namespace ofxRulr {
 					friend Procedure::Calibrate::Orbbec::ColorRegistration;
 
 					struct : ofParameterGroup {
+						ofParameter<bool> drawVertices{ "Draw Vertices", false };
 						ofParameter<bool> drawFaces{ "Draw faces", true };
+
 						struct : ofParameterGroup {
 							ofParameter<bool> color{ "Color", true };
 							ofParameter<bool> depth{ "Depth", true };
@@ -43,7 +45,7 @@ namespace ofxRulr {
 							ofParameter<bool> skeleton{ "Skeleton", true };
 							PARAM_DECLARE("Enabled streams", color, depth, infrared, points, skeleton);
 						} enabledStreams;
-						PARAM_DECLARE("Orbbec", drawFaces, enabledStreams);
+						PARAM_DECLARE("Orbbec", drawVertices, drawFaces, enabledStreams);
 					} parameters;
 
 					bool streamsNeedRebuilding = true;

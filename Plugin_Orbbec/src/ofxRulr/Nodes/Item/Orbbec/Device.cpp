@@ -55,12 +55,13 @@ namespace ofxRulr {
 								ofPushMatrix();
 								{
 									ofScale(+0.001, -0.001, 0.001);
+									if (this->parameters.drawVertices) {
+										points->getMesh().drawVertices();
+									}
 									if (this->parameters.drawFaces) {
 										points->getMesh().drawFaces();
 									}
-									else {
-										points->getMesh().drawVertices();
-									}
+
 								}
 								ofPopMatrix();
 							}
@@ -129,12 +130,6 @@ namespace ofxRulr {
 					}
 					if (this->parameters.enabledStreams.color && this->parameters.enabledStreams.infrared) {
 						this->parameters.enabledStreams.infrared = false;
-					}
-					if (!this->parameters.enabledStreams.points && this->parameters.enabledStreams.skeleton) {
-						this->parameters.enabledStreams.skeleton = false;
-					}
-					if ((this->parameters.enabledStreams.points || this->parameters.enabledStreams.infrared) && !this->parameters.enabledStreams.depth) {
-						this->parameters.enabledStreams.depth = true;
 					}
 
 					//setup streams

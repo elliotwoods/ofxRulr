@@ -32,12 +32,16 @@ EXPORTS
 	??0ofVbo@@QEAA@AEBV0@@Z
 	??0ofVbo@@QEAA@XZ
 	??0ofVec2f@@QEAA@AEBVofVec3f@@@Z
+	??0ofxOscMessage@@QEAA@XZ
+	??0ofxOscReceiver@@QEAA@XZ
+	??0ofxOscSender@@QEAA@XZ
 	??1ofFbo@@UEAA@XZ
 	??1ofLog@@UEAA@XZ
 	??1ofNode@@UEAA@XZ
 	??1ofRectangle@@UEAA@XZ
 	??1ofTexture@@UEAA@XZ
 	??1ofVbo@@QEAA@XZ
+	??1ofxOscMessage@@QEAA@XZ
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
 	?ofCircle@@YAXAEBVofVec3f@@M@Z
 	?ofCircle@@YAXMMM@Z
@@ -141,8 +145,10 @@ EXPORTS
 	?setHue@?$ofColor_@E@@QEAAXM@Z
 	?white@?$ofColor_@E@@2V1@B
 	?allocate@?$ofImage_@E@@QEAAXHHW4ofImageType@@@Z
+	?bind@?$ofImage_@E@@QEBAXH@Z
 	?loadImage@?$ofImage_@E@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?setFromPixels@?$ofImage_@E@@QEAAXAEBV?$ofPixels_@E@@@Z
+	?unbind@?$ofImage_@E@@QEBAXH@Z
 	?update@?$ofImage_@E@@QEAAXXZ
 	?allocate@?$ofPixels_@E@@QEAAXHHH@Z
 	?allocate@?$ofPixels_@E@@QEAAXHHW4ofImageType@@@Z
@@ -254,6 +260,7 @@ EXPORTS
 	?set@ofBuffer@@QEAA_NAEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
 	?size@ofBuffer@@QEBA_KXZ
 	??0Settings@ofFbo@@QEAA@V?$shared_ptr@VofBaseGLRenderer@@@std@@@Z
+	?allocate@ofFbo@@QEAAXHHHH@Z
 	?allocate@ofFbo@@QEAAXUSettings@1@@Z
 	?begin@ofFbo@@QEBAX_N@Z
 	?end@ofFbo@@QEBAXXZ
@@ -267,6 +274,7 @@ EXPORTS
 	?addColor@ofMesh@@QEAAXAEBV?$ofColor_@M@@@Z
 	?addIndex@ofMesh@@QEAAXI@Z
 	?addIndices@ofMesh@@QEAAXPEBI_K@Z
+	?addTexCoord@ofMesh@@QEAAXAEBVofVec2f@@@Z
 	?addVertex@ofMesh@@QEAAXAEBVofVec3f@@@Z
 	?disableColors@ofMesh@@UEAAXXZ
 	?disableIndices@ofMesh@@UEAAXXZ
@@ -436,10 +444,19 @@ EXPORTS
 	?lockForWriting@Frame@ofxMachineVision@@QEAA_NXZ
 	?unlock@Frame@ofxMachineVision@@QEAAXXZ
 	?addFeature@Specification@ofxMachineVision@@QEAAXAEBW4Feature@2@@Z
+	?addFloatArg@ofxOscMessage@@QEAAXM@Z
+	?getArgAsFloat@ofxOscMessage@@QEBAMH@Z
+	?getArgAsInt@ofxOscMessage@@QEBAHH@Z
+	?getNextMessage@ofxOscReceiver@@QEAA_NAEAVofxOscMessage@@@Z
+	?hasWaitingMessages@ofxOscReceiver@@QEAA_NXZ
+	?setup@ofxOscReceiver@@QEAA_NH@Z
+	?sendMessage@ofxOscSender@@QEAAXAEAVofxOscMessage@@_N@Z
+	?setup@ofxOscSender@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?beginAsCamera@Projector@ofxRay@@QEBAX_N@Z
 	?drawOnNearPlane@Projector@ofxRay@@QEBAXAEAVofTexture@@_N@Z
 	?endAsCamera@Projector@ofxRay@@QEBAXXZ
 	?getClippedProjectionMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
+	?getScreenCoordinateOfWorldPosition@Projector@ofxRay@@QEBA?AVofVec3f@@V3@@Z
 	?getViewMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	??0Exception@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0Channel@Channels@Data@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -519,6 +536,11 @@ EXPORTS
 	?serialize@Serializable@Utils@ofxRulr@@SAXAEAVValue@Json@@AEBV?$ofParameter@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@@Z
 	?serialize@Serializable@Utils@ofxRulr@@SAXAEAVValue@Json@@AEBVofParameterGroup@@@Z
 	?hasMaster@BaseStore@ofxSingleton@@QEBA_NXZ
+	??0Sender@ofxSpout@@QEAA@XZ
+	??1Sender@ofxSpout@@QEAA@XZ
+	?getChannelName@Sender@ofxSpout@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?init@Sender@ofxSpout@@QEAA_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@HH@Z
+	?send@Sender@ofxSpout@@QEAA_NAEBVofTexture@@@Z
 	??0Base64Decoder@Poco@@QEAA@AEAV?$basic_istream@DU?$char_traits@D@std@@@std@@@Z
 	??0Base64Encoder@Poco@@QEAA@AEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@@Z
 	??1Base64Decoder@Poco@@UEAA@XZ

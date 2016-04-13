@@ -58,6 +58,18 @@
     <Import Project="..\..\ofxRulr\ofxRulr_Plugin.props" />
     <Import Project="..\..\..\addons\ofxOrbbec\ofxOrbbecLib\ofxOrbbec.props" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="..\..\ofxSpout\ofxSpoutLib\ofxSpout.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\..\ofxSpout\ofxSpoutLib\ofxSpout.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="..\..\ofxSpout\ofxSpoutLib\ofxSpout.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\..\ofxSpout\ofxSpoutLib\ofxSpout.props" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
@@ -128,6 +140,7 @@
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Color.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Device.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\DrawFeature.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\toProjector.cpp" />
@@ -150,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Color.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Device.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\DrawFeature.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\toPojector.h" />

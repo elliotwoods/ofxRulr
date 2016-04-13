@@ -107,6 +107,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_Orbbec", "..\Plugin_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxOrbbecLib", "..\..\ofxOrbbec\ofxOrbbecLib\ofxOrbbecLib.vcxproj", "{6891A0B0-AD9E-4042-909D-1B5FDB4A3E39}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxSpout", "..\..\ofxSpout\ofxSpoutLib\ofxSpout.vcxproj", "{3985EE69-9945-40C4-839B-C21A17D5F151}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -353,6 +355,14 @@ Global
 		{6891A0B0-AD9E-4042-909D-1B5FDB4A3E39}.Release|x64.Build.0 = Release|x64
 		{6891A0B0-AD9E-4042-909D-1B5FDB4A3E39}.Release|x86.ActiveCfg = Release|Win32
 		{6891A0B0-AD9E-4042-909D-1B5FDB4A3E39}.Release|x86.Build.0 = Release|Win32
+		{3985EE69-9945-40C4-839B-C21A17D5F151}.Debug|x64.ActiveCfg = Debug|x64
+		{3985EE69-9945-40C4-839B-C21A17D5F151}.Debug|x64.Build.0 = Debug|x64
+		{3985EE69-9945-40C4-839B-C21A17D5F151}.Debug|x86.ActiveCfg = Debug|Win32
+		{3985EE69-9945-40C4-839B-C21A17D5F151}.Debug|x86.Build.0 = Debug|Win32
+		{3985EE69-9945-40C4-839B-C21A17D5F151}.Release|x64.ActiveCfg = Release|x64
+		{3985EE69-9945-40C4-839B-C21A17D5F151}.Release|x64.Build.0 = Release|x64
+		{3985EE69-9945-40C4-839B-C21A17D5F151}.Release|x86.ActiveCfg = Release|Win32
+		{3985EE69-9945-40C4-839B-C21A17D5F151}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -396,5 +406,6 @@ Global
 		{43E2F412-019B-426A-99FC-03EAB90AEA2D} = {148566DA-E924-4085-B479-ACA0D1601C9A}
 		{CFA3EC15-B6AC-4634-8382-38E43C43695D} = {43E2F412-019B-426A-99FC-03EAB90AEA2D}
 		{6891A0B0-AD9E-4042-909D-1B5FDB4A3E39} = {43E2F412-019B-426A-99FC-03EAB90AEA2D}
+		{3985EE69-9945-40C4-839B-C21A17D5F151} = {16F575BF-69CD-4DE7-886A-F1E871E4D5B1}
 	EndGlobalSection
 EndGlobal

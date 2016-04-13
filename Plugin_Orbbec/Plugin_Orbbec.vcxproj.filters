@@ -20,6 +20,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\toProjector.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\DrawFeature.cpp">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\toPojector.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\DrawFeature.h">
+      <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
