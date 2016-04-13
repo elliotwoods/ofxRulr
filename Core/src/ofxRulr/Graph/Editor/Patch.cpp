@@ -136,6 +136,10 @@ namespace ofxRulr {
 				}
 				this->cell->unbind();
 
+				ofSetColor(100);
+				ofNoFill();
+				ofDrawRectangle(ofRectangle(canvasTopLeft, canvasBottomRight));
+
 				ofPopStyle();
 			}
 
