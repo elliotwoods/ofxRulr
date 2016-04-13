@@ -38,6 +38,9 @@ namespace ofxRulr {
 					}
 				}
 			};
+			auto & camera = this->view->getCamera();
+			camera.setNearClip(0.01f);
+			camera.setFarClip(10000.0f);
 
 			auto wasArbTex = ofGetUsingArbTex();
 			ofDisableArbTex();

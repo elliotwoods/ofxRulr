@@ -54,8 +54,13 @@ namespace ofxRulr {
 							if (points) {
 								ofPushMatrix();
 								{
-									ofScale(0.001, 0.001, 0.001);
-									points->getMesh().drawVertices();
+									ofScale(+0.001, -0.001, 0.001);
+									if (this->parameters.drawFaces) {
+										points->getMesh().drawFaces();
+									}
+									else {
+										points->getMesh().drawVertices();
+									}
 								}
 								ofPopMatrix();
 							}
@@ -86,13 +91,26 @@ namespace ofxRulr {
 
 				//----------
 				template<typename StreamType>
-				void syncStream(shared_ptr<ofxOrbbec::Device>  device, bool enabled) {
-					auto stream = device->get<StreamType>(false);
-					if (stream && !enabled) {
-						device->close<StreamType>();
+				void syncStream(shared_ptr<ofxOrbbec::Device> device, bool enabled) {
+					if (device->has<StreamType>()) {
+						if (!enabled) {
+							cout << "Closing" << typeid(StreamType).name() << endl;
+							device->close<StreamType>();
+						}
 					}
-					else if (!stream && enabled) {
-						device->init<StreamType>();
+					else {
+						if (enabled) {
+							device->init<StreamType>();
+						}
+					}
+				}
+
+				//----------
+				template<typename StreamType>
+				void disableMirroring(shared_ptr<ofxOrbbec::Streams::Base> stream) {
+					auto typedStream = dynamic_pointer_cast<StreamType>(stream);
+					if (typedStream) {
+						typedStream->getStream().enable_mirroring(false);
 					}
 				}
 
@@ -102,6 +120,23 @@ namespace ofxRulr {
 						return;
 					}
 
+					//remove conflicts
+					if (this->device->has<ofxOrbbec::Streams::Color>() && this->parameters.enabledStreams.infrared) {
+						this->device->closeColor();
+					}
+					if (this->device->has<ofxOrbbec::Streams::Infrared>() && this->parameters.enabledStreams.color) {
+						this->device->closeInfrared();
+					}
+					if (this->parameters.enabledStreams.color && this->parameters.enabledStreams.infrared) {
+						this->parameters.enabledStreams.infrared = false;
+					}
+					if (!this->parameters.enabledStreams.points && this->parameters.enabledStreams.skeleton) {
+						this->parameters.enabledStreams.skeleton = false;
+					}
+					if ((this->parameters.enabledStreams.points || this->parameters.enabledStreams.infrared) && !this->parameters.enabledStreams.depth) {
+						this->parameters.enabledStreams.depth = true;
+					}
+
 					//setup streams
 					syncStream<ofxOrbbec::Streams::Color>(this->device, this->parameters.enabledStreams.color);
 					syncStream<ofxOrbbec::Streams::Depth>(this->device, this->parameters.enabledStreams.depth);
@@ -109,6 +144,11 @@ namespace ofxRulr {
 					syncStream<ofxOrbbec::Streams::Points>(this->device, this->parameters.enabledStreams.points);
 					syncStream<ofxOrbbec::Streams::Skeleton>(this->device, this->parameters.enabledStreams.skeleton);
 
+					for (auto stream : this->device->getStreams()) {
+						disableMirroring<ofxOrbbec::Streams::Color>(stream);
+						disableMirroring<ofxOrbbec::Streams::Depth>(stream);
+						disableMirroring<ofxOrbbec::Streams::Infrared>(stream);
+					}
 
 					//build gui
 					this->panelStrip->clear();
@@ -154,9 +194,6 @@ namespace ofxRulr {
 
 				//----------
 				void Device::streamEnableCallback(bool &) {
-					if (this->parameters.enabledStreams.infrared) {
-						this->parameters.enabledStreams.color = false;
-					}
 					this->streamsNeedRebuilding = true;
 				}
 			}

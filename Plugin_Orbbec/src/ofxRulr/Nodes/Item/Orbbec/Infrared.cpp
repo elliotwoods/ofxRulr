@@ -51,6 +51,9 @@ namespace ofxRulr {
 				void Infrared::update() {
 					auto deviceNode = this->getInput<Device>();
 					if (deviceNode) {
+						//sync location with device
+						this->setTransform(deviceNode->getTransform());
+
 						auto device = deviceNode->getDevice();
 						if (device) {
 							if (device->isFrameNew()) {
@@ -132,7 +135,7 @@ namespace ofxRulr {
 					//synthesise world points
 					vector<ofVec3f> worldPoints;
 					for (const auto depthPoint : depthPoints) {
-						worldPoints.emplace_back(depth->depthToWorld(depthPoint));
+						worldPoints.emplace_back(depth->depthToWorld(depthPoint) * ofVec3f(-1, 1, 1));
 					}
 					
 					//calibrate the camera on this data

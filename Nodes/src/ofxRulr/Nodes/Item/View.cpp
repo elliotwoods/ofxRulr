@@ -31,14 +31,18 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
+				this->manageParameters(this->parameters);
+
 				this->onTransformChange += [this]() {
 					this->markViewDirty();
 				};
 
-				this->focalLengthX.set("Focal Length X", 1024.0f, 1.0f, 50000.0f);
-				this->focalLengthY.set("Focal Length Y", 1024.0f, 1.0f, 50000.0f);
-				this->principalPointX.set("Center Of Projection X", 512.0f, -10000.0f, 10000.0f);
-				this->principalPointY.set("Center Of Projection Y", 512.0f, -10000.0f, 10000.0f);
+				this->setWidth(1024);
+				this->setHeight(768);
+				this->focalLengthX.set("Focal Length X", this->getWidth(), 1.0f, 50000.0f);
+				this->focalLengthY.set("Focal Length Y", this->getWidth(), 1.0f, 50000.0f);
+				this->principalPointX.set("Center Of Projection X", this->getWidth() / 2.0f, -10000.0f, 10000.0f);
+				this->principalPointY.set("Center Of Projection Y", this->getHeight() / 2.0f, -10000.0f, 10000.0f);
 				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 					this->distortion[i].set("Distortion K" + ofToString(i + 1), 0.0f, -1000.0f, 1000.0f);
 				}
@@ -50,9 +54,9 @@ namespace ofxRulr {
 				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 					this->distortion[i].addListener(this, &View::parameterCallback);
 				}
+				this->parameters.clipping._near.addListener(this, &View::parameterCallback);
+				this->parameters.clipping._far.addListener(this, &View::parameterCallback);
 
-				this->viewInObjectSpace.setDefaultNear(0.05f);
-				this->viewInObjectSpace.setDefaultFar(50.0f);
 				this->viewInObjectSpace.color = this->getColor();
 
 				this->markViewDirty();
@@ -100,10 +104,6 @@ namespace ofxRulr {
 				if (!jsonResolution.isNull()) {
 					this->setWidth(jsonResolution["width"].asFloat());
 					this->setHeight(jsonResolution["height"].asFloat());
-				}
-				else {
-					this->setWidth(1024);
-					this->setHeight(768);
 				}
 
 				auto & jsonDistortion = jsonCalibration["distortion"];
@@ -328,6 +328,9 @@ namespace ofxRulr {
 			//----------
 			void View::rebuildView() {
 				auto projection = ofxCv::makeProjectionMatrix(this->getCameraMatrix(), this->getSize());
+				this->viewInObjectSpace.setNearClip(this->parameters.clipping._near);
+				this->viewInObjectSpace.setFarClip(this->parameters.clipping._far);
+
 				this->viewInObjectSpace.setProjection(projection);
 
 				if (this->hasDistortion) {

@@ -33,9 +33,17 @@ namespace ofxRulr {
 						this->addInput<Nodes::Item::Orbbec::Infrared>();
 						this->addInput<Nodes::Item::Board>();
 
+						this->onDrawWorld += [this]() {
+							ofPushStyle();
+							ofSetColor(255, 0, 0);
+							ofDrawSphere(this->testPixel.world, 0.02f);
+							ofPopStyle();
+						};
+
 						this->panelStrip = make_shared<ofxCvGui::Panels::Groups::Strip>();
 						{
 							auto irPreview = make_shared<ofxCvGui::Panels::Texture>(this->irPreview);
+							irPreview->setCaption("IR");
 							irPreview->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 								for (const auto & capture : this->captures) {
 									ofxCv::drawCorners(capture.irImagePoints);
@@ -45,9 +53,22 @@ namespace ofxRulr {
 						}
 						{
 							auto colorPreview = make_shared<ofxCvGui::Panels::Texture>(this->colorPreview);
+							colorPreview->setCaption("Color");
 							colorPreview->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 								for (const auto & capture : this->captures) {
 									ofxCv::drawCorners(capture.colorImagePoints);
+								}
+
+								ofDrawCircle(this->testPixel.camera, 5.0f);
+							};
+							auto colorPreviewWeak = weak_ptr<ofxCvGui::Element>(colorPreview);
+							colorPreview->onMouse += [this, colorPreviewWeak](ofxCvGui::MouseArguments & args) {
+								auto colorPreview = colorPreviewWeak.lock();
+								if (colorPreview) {
+									args.takeMousePress(colorPreview);
+									if (args.isDragging(colorPreview)) {
+										this->testPixel.camera = args.local;
+									}
 								}
 							};
 							this->panelStrip->add(colorPreview);
@@ -60,6 +81,8 @@ namespace ofxRulr {
 					void ColorRegistration::update() {
 						auto device = this->getInput<Item::Orbbec::Device>();
 						if (device) {
+							this->testPixel.world = this->cameraToWorld(this->testPixel.camera);
+
 							{
 								auto irStream = device->getDevice()->get<ofxOrbbec::Streams::Infrared>(false);
 								if (irStream) {
@@ -80,6 +103,13 @@ namespace ofxRulr {
 									this->colorPreview = colorStream->getTexture();
 								}
 							}
+
+							if (this->parameters.renderDepthMap) {
+								try {
+									this->renderDepthMap();
+								}
+								RULR_CATCH_ALL_TO_ERROR;
+							}
 						}
 					}
 
@@ -93,7 +123,7 @@ namespace ofxRulr {
 							try {
 								this->addCapture();
 							}
-							RULR_CATCH_ALL_TO_ALERT;
+							RULR_CATCH_ALL_TO_ERROR;
 						}, ' ');
 						inspector->addButton("Clear all captures", [this]() {
 							this->captures.clear();
@@ -118,6 +148,7 @@ namespace ofxRulr {
 						inspector->addLiveValue<float>("Reprojection error", [this]() {
 							return this->reprojectionError;
 						});
+
 					}
 
 					//----------
@@ -303,6 +334,10 @@ namespace ofxRulr {
 
 						//first let's calibrate the cameras
 						{
+							int flags = CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | this->parameters.allowDistortion
+								? 0
+								: CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_ZERO_TANGENT_DIST;
+
 							vector<cv::Mat> rotations, translations;
 							cv::calibrateCamera(objectPoints
 								, colorImagePoints
@@ -311,19 +346,21 @@ namespace ofxRulr {
 								, colorDistortionCoefficients
 								, rotations
 								, translations
-								, CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6);
-
-							cv::calibrateCamera(objectPoints
-								, irImagePoints
-								, irNode->getSize()
-								, irCameraMatrix
-								, irDistortionCoefficients
-								, rotations
-								, translations
-								, CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6);
-
+								, flags);
 							colorNode->setIntrinsics(colorCameraMatrix, colorDistortionCoefficients);
-							irNode->setIntrinsics(irCameraMatrix, irDistortionCoefficients);
+
+							if (this->parameters.calibrateIRIntrinsics) {
+								cv::calibrateCamera(objectPoints
+									, irImagePoints
+									, irNode->getSize()
+									, irCameraMatrix
+									, irDistortionCoefficients
+									, rotations
+									, translations
+									, flags);
+
+								irNode->setIntrinsics(irCameraMatrix, irDistortionCoefficients);
+							}
 						}
 						
 						cv::Mat rotation, translation;
@@ -353,6 +390,130 @@ namespace ofxRulr {
 					//----------
 					ofxCvGui::PanelPtr ColorRegistration::getPanel() {
 						return this->panelStrip;
+					}
+
+					//----------
+					ofVec3f ColorRegistration::cameraToDepth(const ofVec2f & camera) {	
+						if (!ofRectangle(0, 0, this->colorDepthBufferPixels.getWidth(), this->colorDepthBufferPixels.getHeight()).inside(camera)) {
+							return ofVec3f();
+						}
+
+						if (this->colorDepthBufferPixels.isAllocated()) {
+							auto depthValue = this->colorDepthBufferPixels[floor(camera.x) + floor(camera.y) * this->colorDepthBufferPixels.getWidth()];
+							if (depthValue == 1.0f) {
+								depthValue = 0.0f; // far plane = nothing found
+							}
+							return ofVec3f(camera.x, camera.y, depthValue);
+						}
+						else {
+							return ofVec3f();
+						}
+					}
+
+					//----------
+					ofVec3f ColorRegistration::cameraToWorld(const ofVec2f & camera) {
+						auto screenDepth = this->cameraToDepth(camera);
+						if (screenDepth.z == 0) {
+							return ofVec3f();
+						}
+
+						auto clipCoord = screenDepth;
+						clipCoord.x = 2 * (clipCoord.x / 640.0f) - 1.0f;
+						clipCoord.y = -(2 * (clipCoord.y / 480.0f) - 1.0f);
+						clipCoord.z = clipCoord.z * 2.0f - 1.0f;
+						
+						auto colorView = this->getInput<Item::Orbbec::Color>();
+						if (!colorView) {
+							return ofVec3f();
+						}
+						auto viewProjection = colorView->getViewInWorldSpace().getViewMatrix() * colorView->getViewInWorldSpace().getClippedProjectionMatrix();
+						return clipCoord * viewProjection.getInverse();
+					}
+
+					//----------
+					void ColorRegistration::renderDepthMap() {
+						ofFbo fbo;
+						try {
+							this->throwIfMissingAConnection<Item::Orbbec::Device>();
+							this->throwIfMissingAConnection<Item::Orbbec::Color>();
+							this->throwIfMissingAConnection<Item::Orbbec::Infrared>();
+
+							auto deviceNode = this->getInput<Item::Orbbec::Device>();
+							auto colorNode = this->getInput<Item::Orbbec::Color>();
+							auto infraredNode = this->getInput<Item::Orbbec::Infrared>();
+
+							auto device = deviceNode->getDevice();
+							if (!device) {
+								throw(ofxRulr::Exception("Device not initialised"));
+							}
+							auto pointStream = deviceNode->getDevice()->getPoints();
+							if (!pointStream) {
+								throw(ofxRulr::Exception("Point stream not available"));
+							}
+
+							if(!this->drawPointCloud.isAllocated()) {
+								ofFbo::Settings fboSettings;
+								fboSettings.width = colorNode->getWidth();
+								fboSettings.height = colorNode->getHeight();
+								fboSettings.useDepth = true;
+								fboSettings.depthStencilInternalFormat = GL_DEPTH_COMPONENT32;
+								fboSettings.depthStencilAsTexture = true;
+
+								this->drawPointCloud.allocate(fboSettings);
+								
+								fboSettings.useDepth = false;
+								fboSettings.depthStencilAsTexture = false;
+								fboSettings.internalformat = GL_R32F;
+
+								this->extractDepthBuffer.allocate(fboSettings);
+
+								{
+									{
+										auto depthPreview = make_shared<ofxCvGui::Panels::Texture>(this->drawPointCloud.getTexture());
+										depthPreview->setCaption("Depth in color / Color");
+										this->panelStrip->add(depthPreview);
+									}
+
+									{
+										auto depthPreview = make_shared<ofxCvGui::Panels::Texture>(this->drawPointCloud.getDepthTexture());
+										depthPreview->setCaption("Depth in color / Depth");
+										this->panelStrip->add(depthPreview);
+									}
+
+									{
+										auto depthPreview = make_shared<ofxCvGui::Panels::Texture>(this->extractDepthBuffer.getTexture());
+										depthPreview->setCaption("Depth in color readback");
+										this->panelStrip->add(depthPreview);
+									}
+								}
+							}
+
+							auto & colorView = colorNode->getViewInWorldSpace();
+
+							this->drawPointCloud.begin();
+							ofEnableDepthTest();
+							ofClear(0, 255);
+							{
+								colorView.beginAsCamera(true);
+								{
+									ofPushMatrix();
+									{
+										deviceNode->drawWorld();
+									}
+									ofPopMatrix();
+								}
+								colorView.endAsCamera();
+							}
+							ofDisableDepthTest();
+							this->drawPointCloud.end();
+
+							this->extractDepthBuffer.begin();
+							this->drawPointCloud.getDepthTexture().draw(0, 0);
+							this->extractDepthBuffer.end();
+
+							this->extractDepthBuffer.getTexture().readToPixels(colorDepthBufferPixels);
+						}
+						RULR_CATCH_ALL_TO_ERROR;
 					}
 				}
 			}

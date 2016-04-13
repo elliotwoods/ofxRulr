@@ -130,6 +130,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Device.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\toProjector.cpp" />
     <ClCompile Include="src\pch_Plugin_Orbbec.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -151,6 +152,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Device.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Orbbec\Infrared.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\toPojector.h" />
     <ClInclude Include="src\pch_Plugin_Orbbec.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

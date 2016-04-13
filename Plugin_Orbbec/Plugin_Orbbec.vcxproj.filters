@@ -15,7 +15,10 @@
       <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\toProjector.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +49,9 @@
     <Filter Include="src\ofxRulr\Nodes\Item\Orbbec">
       <UniqueIdentifier>{1bcbb061-4091-4a7c-b7d0-3f563c296367}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec">
+      <UniqueIdentifier>{aa856c45-77b7-4a26-a6c0-97a2bc51821b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Orbbec.h">
@@ -61,7 +67,10 @@
       <Filter>src\ofxRulr\Nodes\Item\Orbbec</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\ColorRegistration.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec\toPojector.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\Orbbec</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -47,6 +47,15 @@ namespace ofxRulr {
 				const bool hasDistortion;
 				ofParameter<float> distortion[RULR_VIEW_DISTORTION_COEFFICIENT_COUNT];
 
+				struct : ofParameterGroup {
+					struct : ofParameterGroup {
+						ofParameter<float> _near{ "Near", 0.1, 0.0001f, 100.0f };
+						ofParameter<float> _far{ "Far", 30.0f, 0.0001f, 100.0f };
+						PARAM_DECLARE("Clipping", _near, _far);
+					} clipping;
+					PARAM_DECLARE("View", clipping);
+				} parameters;
+
 				//Versions of this view as an ofxRay::Camera in world space and object space
 				ofxRay::Camera viewInObjectSpace;
 				
