@@ -38,7 +38,7 @@ namespace ofxRulr {
 						ofParameter<int> receivingPort{ "Receiving port",  ofxMultiTrack::Ports::NodeToServerDataRangeBegin };
 						ofParameter<bool> connect{ "Connect", false };
 
-						PARAM_DECLARE("Connection", controlPort, receivingPort, connect);
+						PARAM_DECLARE("Connection", senderAddress, controlPort, receivingPort, connect);
 					} connection;
 
 					struct : ofParameterGroup {
