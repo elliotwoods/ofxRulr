@@ -139,11 +139,20 @@ namespace ofxRulr {
 						}
 					}
 
-					if (this->spoutSender.getChannelName() != this->getName()) {
-						this->spoutSender.init(this->getName());
+					if (this->spoutSender && !this->parameters.spout.enabled) {
+						this->spoutSender.reset();
 					}
-					if (this->fbo.isAllocated()) {
-						this->spoutSender.send(this->fbo.getTexture());
+					else if (!this->spoutSender && this->parameters.spout.enabled) {
+						this->spoutSender = make_unique<ofxSpout::Sender>();
+						this->spoutSender->init(this->parameters.spout.channel.get());
+					}
+					if (this->spoutSender) {
+						if (this->spoutSender->getChannelName() != this->parameters.spout.channel.get()) {
+							this->spoutSender->init(this->parameters.spout.channel.get());
+						}
+						if (this->fbo.isAllocated()) {
+							this->spoutSender->send(this->fbo.getTexture());
+						}
 					}
 				}
 
@@ -159,7 +168,12 @@ namespace ofxRulr {
 							{
 								auto drawLabels = this->parameters.draw.labelProbability.enabled.get() && device->has<ofxOrbbec::Streams::Skeleton>();
 								if (drawLabels) {
-									this->labelProbability.loadData(device->getSkeleton()->getProbabilityMap(this->parameters.draw.labelProbability.labelIndex));
+									if (this->parameters.draw.labelProbability.labelIndex == 0) {
+										this->labelProbability.loadData(device->getSkeleton()->getUserMask());
+									}
+									else {
+										this->labelProbability.loadData(device->getSkeleton()->getProbabilityMap(this->parameters.draw.labelProbability.labelIndex));
+									}
 									this->labelProbability.bind();
 									ofSetMatrixMode(ofMatrixMode::OF_MATRIX_TEXTURE);
 									ofPushMatrix();

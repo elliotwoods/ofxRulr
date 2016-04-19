@@ -25,7 +25,7 @@ namespace ofxRulr {
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
 						ofParameter<int> port{ "Port", ofxMultiTrack::Ports::NodeControl };
-						ofParameter<bool> enabled{ "Enabled", true };
+						ofParameter<bool> enabled{ "Enabled", false };
 						PARAM_DECLARE("Control Socket", port);
 					} controlSocket;
 

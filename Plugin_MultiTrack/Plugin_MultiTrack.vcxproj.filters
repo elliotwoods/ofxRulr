@@ -63,6 +63,9 @@
     <ClInclude Include="src\ofxRulr\Utils\ControlSocket.h">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\World.h">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch_MultiTrack.cpp">
@@ -88,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\ControlSocket.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\World.cpp">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

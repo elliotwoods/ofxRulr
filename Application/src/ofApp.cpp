@@ -81,7 +81,7 @@ void ofApp::setup2(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	ofDrawBitmapString(50, 10, 10);
+	//ofDrawBitmapString(50, 10, 10);
 	ofxRulr::Graph::World::X().update();
 }
 

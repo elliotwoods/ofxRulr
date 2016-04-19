@@ -107,15 +107,6 @@ namespace ofxRulr {
 				}
 
 				//----------
-				template<typename StreamType>
-				void disableMirroring(shared_ptr<ofxOrbbec::Streams::Base> stream) {
-					auto typedStream = dynamic_pointer_cast<StreamType>(stream);
-					if (typedStream) {
-						typedStream->getStream().enable_mirroring(false);
-					}
-				}
-
-				//----------
 				void Device::rebuildStreams() {
 					if (!this->device) {
 						return;
@@ -138,12 +129,6 @@ namespace ofxRulr {
 					syncStream<ofxOrbbec::Streams::Infrared>(this->device, this->parameters.enabledStreams.infrared);
 					syncStream<ofxOrbbec::Streams::Points>(this->device, this->parameters.enabledStreams.points);
 					syncStream<ofxOrbbec::Streams::Skeleton>(this->device, this->parameters.enabledStreams.skeleton);
-
-					for (auto stream : this->device->getStreams()) {
-						disableMirroring<ofxOrbbec::Streams::Color>(stream);
-						disableMirroring<ofxOrbbec::Streams::Depth>(stream);
-						disableMirroring<ofxOrbbec::Streams::Infrared>(stream);
-					}
 
 					//build gui
 					this->panelStrip->clear();

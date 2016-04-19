@@ -467,6 +467,7 @@ EXPORTS
 	?what@Exception@ofxRulr@@UEBAPEBDXZ
 	??0AbstractPin@Graph@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0World@Graph@ofxRulr@@QEAA@XZ
+	?getName@AbstractPin@Graph@ofxRulr@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	??0Patch@Editor@Graph@ofxRulr@@QEAA@XZ
 	?setup@PinView@Editor@Graph@ofxRulr@@QEAAXAEAVBase@Nodes@4@@Z
 	?getSingletonStore@?$Singleton@VWorld@Graph@ofxRulr@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ

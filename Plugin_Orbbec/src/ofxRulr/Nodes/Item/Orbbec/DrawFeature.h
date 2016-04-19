@@ -43,19 +43,25 @@ namespace ofxRulr {
 						} oscTarget;
 
 						struct : ofParameterGroup {
-							ofParameter<bool> enabled{ "Enabled", true };
+							ofParameter<bool> enabled{ "Enabled", false };
 							ofParameter<int> port{ "Port", 4445 };
 							PARAM_DECLARE("OSC receiver", enabled, port);
 						} oscReceiver;
 
-						PARAM_DECLARE("DrawFeature", drawToWorld, draw, oscTarget, oscReceiver);
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", false };
+							ofParameter<string> channel{ "Channel", "Orbbec" };
+							PARAM_DECLARE("Spout", enabled, channel);
+						} spout;
+
+						PARAM_DECLARE("DrawFeature", drawToWorld, draw, oscTarget, oscReceiver, spout);
 					} parameters;
 
 					ofxCvGui::PanelPtr panel;
 					ofFbo fbo;
 					ofTexture labelProbability;
 
-					ofxSpout::Sender spoutSender;
+					unique_ptr<ofxSpout::Sender> spoutSender;
 
 					struct {
 						int currentPort = -1;

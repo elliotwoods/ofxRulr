@@ -147,6 +147,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Receiver.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Sender.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\World.h" />
     <ClInclude Include="src\ofxRulr\Utils\ControlSocket.h" />
     <ClInclude Include="src\pch_MultiTrack.h" />
   </ItemGroup>
@@ -160,6 +161,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Receiver.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Sender.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\World.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\ControlSocket.cpp" />
     <ClCompile Include="src\pch_MultiTrack.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
