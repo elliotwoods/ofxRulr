@@ -30,10 +30,10 @@ namespace ofxRulr {
 				for (size_t i = 0; i < NumReceivers; i++) {
 					auto receiverPin = this->addInput<Receiver>("Receiver " + ofToString(i + 1));
 					receiverPin->onNewConnection += [this, i](shared_ptr<Receiver> receiver) {
-						receivers[i] = receiver;
+						this->receivers[i] = receiver;
 					};
 					receiverPin->onDeleteConnection += [this, i](shared_ptr<Receiver> receiver) {
-						receivers.erase(i);
+						this->receivers.erase(i);
 					};
 				}
 			}
