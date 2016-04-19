@@ -39,34 +39,16 @@ namespace ofxRulr {
 			/*
 			Gui listener tree:
 				- this
-					- background
-					- dialog
-						- textBox
-						- listBox
-							- listItems
+					- textBox
+					- listBox
+						- listItems
 			*/
 
 			//----------
 			NodeBrowser::NodeBrowser() {
 				this->setCaption("NodeBrowser");
 
-				this->buildBackground();
-				this->buildDialog();
-
-				this->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
-					const float padding = 80.0f;
-					auto bounds = args.localBounds;
-					bounds.width -= padding * 2;
-					bounds.x += padding;
-					bounds.height -= padding * 2;
-					bounds.y += padding;
-
-					//if too small, let the dialog take the whole window
-					if (bounds.width < 100 || bounds.height < 100) {
-						bounds = args.localBounds;
-					}
-					this->dialog->setBounds(bounds);
-				};
+				this->build();
 			}
 
 			//----------
@@ -77,7 +59,7 @@ namespace ofxRulr {
 
 			//----------
 			void NodeBrowser::refreshResults() {
-				//build seach tokens
+				//build search tokens
 				auto searchTokens = ofSplitString(this->textBox->getText(), " ", true);
 				for (auto & searchToken : searchTokens) {
 					searchToken = ofToLower(searchToken);
@@ -120,49 +102,18 @@ namespace ofxRulr {
 				}
 			}
 
-			//----------
-			void NodeBrowser::buildBackground() {
-				this->background = make_shared<ofxCvGui::Element>();
-				this->background->onDraw += [this](ofxCvGui::DrawArguments & args) {
-					ofPushStyle();
-					ofSetColor(0, 200);
-					ofDrawRectangle(args.localBounds);
-					ofPopStyle();
-				};
-				this->background->onMouse += [this](ofxCvGui::MouseArguments & args) {
-					if (args.takeMousePress(this->background.get())) {
-						this->disable();
-					}
-				};
-				this->background->addListenersToParent(this, true);
-			}
-
 #define LIST_Y (96 + 10 + 10)
 
 			//----------
-			void NodeBrowser::buildDialog() {
-				this->dialog = make_shared<ofxCvGui::ElementGroup>();
-				this->dialog->setCaption("Dialog");
-				this->dialog->addListenersToParent(this);
+			void NodeBrowser::build() {
+				this->setCaption("Dialog");
 
-				this->dialog->onMouse += [this](ofxCvGui::MouseArguments & args) {
-					args.takeMousePress(this->dialog);
+				this->onMouse += [this](ofxCvGui::MouseArguments & args) {
+					args.takeMousePress(this);
 				};
 
-				this->dialog->onDraw += [this](ofxCvGui::DrawArguments & args) {
+				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					ofPushStyle();
-
-					//shadow for dialog
-					ofFill();
-					ofSetColor(0, 100);
-					ofPushMatrix();
-					ofTranslate(5, 5);
-					ofDrawRectangle(args.localBounds);
-					ofPopMatrix();
-
-					//background for dialog
-					ofSetColor(80);
-					ofDrawRectangle(args.localBounds);
 
 					//line between text box and list
 					ofSetLineWidth(1.0f);
@@ -182,7 +133,7 @@ namespace ofxRulr {
 					ofxAssets::font("ofxCvGui::swisop3", 12).drawString(message, this->textBox->getBounds().x, 10 + 78);
 				};
 
-				this->dialog->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
+				this->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
 					ofRectangle textBoxBounds;
 					textBoxBounds.height = 80.0f;
 					textBoxBounds.x = 10.0f + 96.0f + 10.0f;
@@ -205,7 +156,7 @@ namespace ofxRulr {
 			//----------
 			void NodeBrowser::buildTextBox() {
 				this->textBox = make_shared<ofxCvGui::Utils::TextField>();
-				this->textBox->addListenersToParent(this->dialog);
+				this->textBox->addListenersToParent(this);
 				this->textBox->setFont(ofxAssets::font("ofxCvGui::swisop3", 36));
 				this->textBox->setHintText("Search...");
 				this->textBox->onTextChange += [this](string &) {
@@ -304,7 +255,7 @@ namespace ofxRulr {
 						this->notifyNewNode();
 					}
 				};
-				this->listBox->addListenersToParent(this->dialog);
+				this->listBox->addListenersToParent(this);
 			}
 
 			//----------
@@ -315,6 +266,7 @@ namespace ofxRulr {
 					newNode->init();
 					newNode->deserialize(Json::Value()); // always call deserialize
 					this->onNewNode(newNode);
+					ofxCvGui::closeDialogue(this);
 				}
 			}
 		}

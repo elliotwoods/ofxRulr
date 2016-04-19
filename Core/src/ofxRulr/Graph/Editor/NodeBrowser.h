@@ -8,7 +8,7 @@
 namespace ofxRulr {
 	namespace Graph {
 		namespace Editor {
-			class NodeBrowser : public ofxCvGui::Element {
+			class NodeBrowser : public ofxCvGui::Panels::Base {
 				class ListItem : public ofxCvGui::Element {
 				public:
 					ListItem(shared_ptr<BaseFactory>);
@@ -25,15 +25,12 @@ namespace ofxRulr {
 				void refreshResults();
 				ofxLiquidEvent<shared_ptr<Nodes::Base>> onNewNode;
 			protected:
-				void buildBackground();
-				void buildDialog();
+				void build();
 				void buildTextBox();
 				void buildListBox();
 
 				void notifyNewNode();
 
-				ofxCvGui::ElementPtr background;
-				ofxCvGui::ElementGroupPtr dialog;
 				shared_ptr<ofxCvGui::Utils::TextField> textBox;
 				shared_ptr<ofxCvGui::Panels::Scroll> listBox;
 

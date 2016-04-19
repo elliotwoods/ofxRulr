@@ -69,16 +69,13 @@ namespace ofxRulr {
 
 				// NODE BROWSER
 				this->nodeBrowser = make_shared<NodeBrowser>();
-				this->nodeBrowser->disable(); //starts as hidden
-				this->nodeBrowser->addListenersToParent(this, true); // nodeBrowser goes on top of all elements (last listener)
 				this->nodeBrowser->onNewNode += [this](shared_ptr<Nodes::Base> & node) {
 					this->patchInstance.addNode(node, ofRectangle(this->birthLocation, this->birthLocation + ofVec2f(200, 100)));
-					this->nodeBrowser->disable();
 				};
 				this->canvasElements->onMouse += [this](ofxCvGui::MouseArguments & args) {
 					if (args.isDoubleClicked(this)) {
 						this->birthLocation = args.local;
-						this->nodeBrowser->enable();
+						ofxCvGui::Controller::X().setActiveDialogue(this->nodeBrowser);
 						this->nodeBrowser->reset();
 					}
 				};
