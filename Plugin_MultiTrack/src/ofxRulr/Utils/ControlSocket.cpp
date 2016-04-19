@@ -63,7 +63,7 @@ namespace ofxRulr {
 				Json::Reader reader;
 				Json::Value json;
 				if (!reader.parse(message, json)) {
-					ofLogWarning("ContolSocket") << "Failed to parse message";
+					ofLogWarning("ControlSocket") << "Failed to parse message";
 					continue;
 				}
 
@@ -73,7 +73,7 @@ namespace ofxRulr {
 
 					auto findHandler = this->handlers.find(actionName);
 					if (findHandler == this->handlers.end()) {
-						ofLogWarning("ContolSocket") << "No handler found for action [" << actionName << "]";
+						ofLogWarning("ControlSocket") << "No handler found for action [" << actionName << "]";
 					}
 					else {
 						findHandler->second(arguments);
@@ -102,7 +102,7 @@ namespace ofxRulr {
 				messageJson["arguments"] = arguments;
 			}
 			const auto message = writer.write(messageJson);
-			this->socket->send(message);
+			this->socket->send(message, true);
 		}
 
 		//----------

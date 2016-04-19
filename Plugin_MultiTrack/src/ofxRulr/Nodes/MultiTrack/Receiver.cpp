@@ -70,6 +70,8 @@ namespace ofxRulr {
 						RULR_CATCH_ALL_TO_ERROR;
 					}
 				});
+
+				this->receiver = make_shared<ofxMultiTrack::Receiver>();
 			}
 
 			//----------
@@ -83,6 +85,11 @@ namespace ofxRulr {
 				}
 
 				if (this->receiver) {
+					if (this->receiver->getReceiver().getPort() != this->parameters.connection.receivingPort) {
+						// Port value changed, reinitialize.
+						this->receiver->init(this->parameters.connection.receivingPort);
+					}
+
 					this->receiver->update();
 				}
 			}
