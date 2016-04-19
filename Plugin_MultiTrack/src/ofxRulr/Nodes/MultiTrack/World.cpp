@@ -38,15 +38,13 @@ namespace ofxRulr {
 			void World::update() {
 				for (size_t i = 0; i < NumReceivers; i++) {
 					auto name = "Receiver " + ofToString(i + 1);
-					auto receiver = this->getInput<Receiver>(name);
-					if (receiver) {
-						if (receiver->getReceiver()->isFrameNew()) {
+					auto input = this->getInput<Receiver>(name);
+					if (input) {
+						auto receiver = input->getReceiver();
+						if (receiver && receiver->isFrameNew()) {
 							// TODO Something useful here.
 							cout << "New frame for " << name << endl;
 						}
-					}
-					else {
-						ofLogError("World::Update") << name << " does not exist!";
 					}
 				}
 			}
