@@ -1,6 +1,8 @@
 #include "pch_MultiTrack.h"
 #include "World.h"
 
+#include "ofxRulr/Nodes/Data/Channels/Database.h"
+
 using namespace ofxCvGui;
 
 namespace ofxRulr {
@@ -22,6 +24,8 @@ namespace ofxRulr {
 				RULR_NODE_UPDATE_LISTENER;
 				//RULR_NODE_INSPECTOR_LISTENER;
 				//RULR_NODE_SERIALIZATION_LISTENERS;
+
+				this->addInput<ofxRulr::Nodes::Data::Channels::Database>();
 
 				for (size_t i = 0; i < NumReceivers; i++) {
 					auto receiverPin = this->addInput<Receiver>("Receiver " + ofToString(i + 1));
