@@ -102,7 +102,7 @@ namespace ofxRulr {
 				messageJson["arguments"] = arguments;
 			}
 			const auto message = writer.write(messageJson);
-			this->socket->send(message);
+			this->socket->send(message, true);
 		}
 
 		//----------
