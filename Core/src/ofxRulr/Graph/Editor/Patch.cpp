@@ -325,8 +325,8 @@ namespace ofxRulr {
 				for (auto nodeHost : this->nodeHosts) {
 					if (ofxCvGui::isBeingInspected(nodeHost.second->getNodeInstance())) {
 						this->selection = nodeHost.second;
-						break;
 					}
+					nodeHost.second->getNodeInstance()->update();
 				}
 			}
 

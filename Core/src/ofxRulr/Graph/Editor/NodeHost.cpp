@@ -151,8 +151,6 @@ namespace ofxRulr {
 				}, this, -1);
 
 				this->onUpdate += [this](ofxCvGui::UpdateArguments & args) {
-					this->getNodeInstance()->update();
-
 					//--
 					//Clamp bounds
 					//--
