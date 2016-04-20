@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Procedure/Base.h"
+#include "ofxMultiTrack/Frame.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -18,6 +19,15 @@ namespace ofxRulr {
 						NumSteps
 					};
 
+					struct Marker {
+						ofPolyline outline;
+
+						ofVec2f center;
+						float radius;
+
+						ofVec3f position;
+					};
+
 					Calibrate();
 					string getTypeName() const override;
 					void init();
@@ -25,7 +35,10 @@ namespace ofxRulr {
 					void update();
 
 					void goToStep(Step nextStep);
+
 					void addCapture();
+					void findMarkerInFrame(ofxMultiTrack::Frame & frame, vector<Marker> & markers);
+
 					void solveAll();
 
 				protected:
@@ -37,7 +50,10 @@ namespace ofxRulr {
 					Step currStep;
 
 					chrono::system_clock::time_point captureStartTime;
-					map<size_t, map<string, vector<ofVec3f>>> markerData;
+					map<size_t, map<string, vector<Marker>>> markerData;
+
+					ofTexture infrared;
+					ofImage threshold;
 					float error;
 
 					struct : ofParameterGroup {

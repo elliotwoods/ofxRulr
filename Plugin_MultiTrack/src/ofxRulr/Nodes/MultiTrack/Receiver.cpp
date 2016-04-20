@@ -104,6 +104,12 @@ namespace ofxRulr {
 				//this->setExtrinsics() // Directly from CV
 				//this->setTransform()  // Use getTransform for the initial values in ofxNonLinearFit
 				//ofxCv::estimateAffine3D()
+
+				auto & frame = this->receiver->getFrame();
+				const auto & bodies = frame.getBodies();
+				for (const auto & body : bodies) {
+					body.drawWorld();
+				}
 			}
 
 			//----------

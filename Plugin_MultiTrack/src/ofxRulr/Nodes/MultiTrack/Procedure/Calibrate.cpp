@@ -7,6 +7,8 @@
 
 #include "ofxRulr/Nodes/MultiTrack/World.h"
 
+#include "ofxMultiTrack/Receiver.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace MultiTrack {
@@ -90,7 +92,6 @@ namespace ofxRulr {
 					}
 					else if (this->currStep == StepCapture) {
 						//Clear previous data.
-						this->images.clear();
 						this->markerData.clear();
 
 						panel = ofxCvGui::Panels::makeWidgets();
@@ -108,7 +109,6 @@ namespace ofxRulr {
 						auto & receivers = this->getInput<World>()->getReceivers();
 						size_t count = 0;
 						shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
-						cout << "Working with " << receivers.size() << " receivers" << endl;
 						for (auto & it : receivers) {
 							auto weak_receiver = it.second;
 							if (!weak_receiver.expired()) {
@@ -190,7 +190,59 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::addCapture() {
+					size_t frameNum = ofGetFrameNum();
 
+					auto & receivers = this->getInput<World>()->getReceivers();
+					size_t count = 0;
+					shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
+					for (auto & it : receivers) {
+						auto weak_receiver = it.second;
+						if (!weak_receiver.expired()) {
+							auto receiverNode = weak_receiver.lock();
+							auto receiver = receiverNode->getReceiver();
+							if (receiver) {
+								if (receiver->isFrameNew()) {
+
+									auto & name = receiverNode->getName();
+								}
+							}
+
+						}
+					}
+				}
+
+				//----------
+				void Calibrate::findMarkerInFrame(ofxMultiTrack::Frame & frame, vector<Marker> & markers) {
+					const auto & infrared = frame.getInfrared();
+					this->infrared.loadData(infrared);
+
+					auto infraRed16 = infrared; //copy local
+					auto infraRed16Mat = ofxCv::toCv(infraRed16);
+
+					auto infraRed8Mat = infraRed16Mat.clone();
+					infraRed8Mat.convertTo(infraRed8Mat, CV_8U, 1.0f / float(1 << 8));
+
+					cv::threshold(infraRed8Mat, infraRed8Mat, this->parameters.threshold, 255, THRESH_TOZERO);
+					ofxCv::copy(infraRed8Mat, this->threshold);
+					this->threshold.update();
+
+					vector<vector<cv::Point2i>> contours;
+					cv::findContours(infraRed8Mat, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+
+					this->markers.clear();
+					for (auto & contour : contours) {
+						if (cv::contourArea(contour) >= this->parameters.minimumArea) {
+							Marker marker;
+							for (auto point : contour) {
+								marker.outline.addVertex(toOf(point));
+							}
+							marker.outline.close();
+
+							cv::minEnclosingCircle(contour, toCv(marker.center), marker.radius);
+
+							this->markers.push_back(marker);
+						}
+					}
 				}
 
 				//----------
