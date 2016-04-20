@@ -144,6 +144,7 @@
     <ClInclude Include="libs\oscpkt\include\oscpkt\udp.hh" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\LocalKinect.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Receiver.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Sender.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.h" />
@@ -158,6 +159,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Receiver.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Sender.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.cpp" />

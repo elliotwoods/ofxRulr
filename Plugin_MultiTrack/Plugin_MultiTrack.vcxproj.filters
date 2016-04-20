@@ -34,6 +34,9 @@
     <Filter Include="src\ofxRulr\Utils">
       <UniqueIdentifier>{ba469132-582d-4d49-9e8b-3b2da0f0e0a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\MultiTrack\Calibrate">
+      <UniqueIdentifier>{1fd566d0-fe01-43e9-b006-2d7f74e3bf6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_MultiTrack.h">
@@ -66,6 +69,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\World.h">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.h">
+      <Filter>src\ofxRulr\Nodes\MultiTrack\Calibrate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch_MultiTrack.cpp">
@@ -94,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\World.cpp">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.cpp">
+      <Filter>src\ofxRulr\Nodes\MultiTrack\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
