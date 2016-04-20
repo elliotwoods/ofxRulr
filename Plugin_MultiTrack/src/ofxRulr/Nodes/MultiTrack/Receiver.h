@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofxRulr/Nodes/Item/IDepthCamera.h"
+#include "ofxRulr/Nodes/Item/RigidBody.h"
 #include "ofxRulr/Utils/ControlSocket.h"
 
 #include "ofxMultiTrack.h"
@@ -8,7 +8,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace MultiTrack {
-			class Receiver : public Nodes::Base {
+			class Receiver : public Item::RigidBody {
 			public:
 				Receiver();
 				string getTypeName() const override;
