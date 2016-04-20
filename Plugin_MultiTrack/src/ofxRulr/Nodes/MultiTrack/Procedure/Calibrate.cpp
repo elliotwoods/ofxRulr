@@ -26,9 +26,36 @@ namespace ofxRulr {
 					RULR_NODE_UPDATE_LISTENER;
 					RULR_NODE_INSPECTOR_LISTENER;
 
+					this->currStep = StepIdle;
+
 					this->addInput<ofxRulr::Nodes::MultiTrack::World>();
 
-					this->panel = ofxCvGui::Panels::Groups::makeStrip();
+					//Build the step panels.
+					this->stepPanels.resize(NumSteps);
+					{
+						this->stepPanels[StepIdle] = nullptr;
+					}
+					{
+						this->stepPanels[StepBegin] = ofxCvGui::Panels::makeWidgets();;
+						auto & panelBegin = this->stepPanels[StepBegin];
+						panelBegin->addTitle("MultiTrack Calibration");
+						panelBegin->addLiveValue<string>("Instructions", [this]() {
+							return "Pick up your marker and do the thing.";
+						});
+						panelBegin->addParameterGroup(parameters.capture);
+						panelBegin->addParameterGroup(parameters.findMarker);
+						auto button = panelBegin->addButton("Begin Capture", [this]() {
+							this->captureStartTime = chrono::system_clock::now();
+							this->goToStep(StepIdle);
+						});
+						button->setHeight(100.0f);
+					}
+
+					//Build the node and setup the dialogue.
+					this->panel = ofxCvGui::Panels::makeWidgets();
+					this->panel->addButton("Open Dialogue", [this]() {
+						this->goToStep(StepBegin);
+					});
 				}
 
 				//----------
@@ -38,13 +65,49 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::update() {
-					if (this->parameters.capture.enabled) {
+					if (this->currStep == StepCapture) {
 						this->addCapture();
 
 						if (this->getTimeSinceCaptureStarted() > chrono::seconds(this->parameters.capture.duration)) {
-							//Stop capture.
-							this->parameters.capture.enabled = false;
+							this->goToStep(StepSolve);
 						}
+					}
+				}
+
+				//----------
+				void Calibrate::goToStep(Step nextStep) {
+					// TODO: Turn this back on once we get a close callback on the Dialogue
+					//if (this->currStep == nextStep) return;
+
+					this->currStep = nextStep;
+
+					if (this->dialogue) {
+						this->dialogue->clear();
+					}
+
+					auto & currPanel = this->stepPanels[this->currStep];
+					if (currPanel) {
+						if (!this->dialogue) {
+							//Build the dialogue
+							this->dialogue = make_shared<ofxCvGui::Panels::Widgets>();
+							this->dialogue->addTitle("Dialogue");
+							this->dialogue->addButton("Close", [this]() {
+								this->goToStep(StepIdle);
+							});
+						}
+
+						//Add the current panel.
+						this->dialogue->add(currPanel);
+						
+						//Make sure the dialog is open.
+						if (!ofxCvGui::isDialogueOpen()) {
+							ofxCvGui::openDialogue(this->dialogue);
+						}
+					}
+					else {
+						//Close and delete the dialog.
+						ofxCvGui::closeDialogue();
+						this->dialogue.reset();
 					}
 				}
 
@@ -63,17 +126,17 @@ namespace ofxRulr {
 					auto inspector = inspectArgs.inspector;
 
 					inspector->addParameterGroup(this->parameters.capture);
-					this->parameters.capture.enabled.addListener(this, &Calibrate::captureToggled);
+					//this->parameters.capture.enabled.addListener(this, &Calibrate::captureToggled);
 
-					inspector->addLiveValue<float>("Capture remaining [s]", [this]() {
-						if (this->parameters.capture.enabled) {
-							// Using * 1000.0f so we get floats.
-							return (this->parameters.capture.duration * 1000.0f - chrono::duration_cast<chrono::milliseconds>(this->getTimeSinceCaptureStarted()).count()) / 1000.0f;
-						}
-						else {
-							return 0.0f;
-						}
-					});
+					//inspector->addLiveValue<float>("Capture remaining [s]", [this]() {
+					//	if (this->parameters.capture.enabled) {
+					//		// Using * 1000.0f so we get floats.
+					//		return (this->parameters.capture.duration * 1000.0f - chrono::duration_cast<chrono::milliseconds>(this->getTimeSinceCaptureStarted()).count()) / 1000.0f;
+					//	}
+					//	else {
+					//		return 0.0f;
+					//	}
+					//});
 
 					inspector->add(MAKE(ofxCvGui::Widgets::Button, "Clear capture data", [this]() {
 						this->markerData.clear();
@@ -94,11 +157,6 @@ namespace ofxRulr {
 					inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<float>, "Reprojection error [px]", [this]() {
 						return this->error;
 					}));
-				}
-
-				//----------
-				void Calibrate::captureToggled(bool &) {
-					this->captureStartTime = chrono::system_clock::now();
 				}
 
 				//----------

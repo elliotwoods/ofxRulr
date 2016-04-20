@@ -379,10 +379,14 @@ EXPORTS
 	??0Controller@ofxCvGui@@QEAA@XZ
 	??0Element@ofxCvGui@@QEAA@XZ
 	??0InspectController@ofxCvGui@@QEAA@XZ
+	?closeDialogue@ofxCvGui@@YAXXZ
 	?getDefaultTypeface@ofxCvGui@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?isDialogueOpen@ofxCvGui@@YA_NXZ
 	?makeElement@ofxCvGui@@YA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
+	?openDialogue@ofxCvGui@@YAXV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@Z
 	?refreshInspector@ofxCvGui@@YAXPEAVIInspectable@1@@Z
 	?init@Builder@ofxCvGui@@QEAAXXZ
+	?clearActiveDialogue@Controller@ofxCvGui@@QEAAXXZ
 	?addListenersToParent@Element@ofxCvGui@@QEAAXPEAV12@_N@Z
 	?getBounds@Element@ofxCvGui@@QEBAAEBVofRectangle@@XZ
 	?getCaption@Element@ofxCvGui@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
