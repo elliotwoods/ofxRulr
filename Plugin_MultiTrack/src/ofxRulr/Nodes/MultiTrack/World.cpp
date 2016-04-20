@@ -52,6 +52,11 @@ namespace ofxRulr {
 					}
 				}
 			}
+
+			//----------
+			map<size_t, weak_ptr<Receiver>> & World::getReceivers() {
+				return this->receivers;
+			}
 		}
 	}
 }

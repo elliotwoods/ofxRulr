@@ -24,38 +24,26 @@ namespace ofxRulr {
 				//----------
 				void Calibrate::init() {
 					RULR_NODE_UPDATE_LISTENER;
-					RULR_NODE_INSPECTOR_LISTENER;
+					//RULR_NODE_INSPECTOR_LISTENER;
 
 					this->currStep = StepIdle;
 
-					this->addInput<ofxRulr::Nodes::MultiTrack::World>();
-
-					//Build the step panels.
-					this->stepPanels.resize(NumSteps);
-					{
-						this->stepPanels[StepIdle] = nullptr;
-					}
-					{
-						this->stepPanels[StepBegin] = ofxCvGui::Panels::makeWidgets();;
-						auto & panelBegin = this->stepPanels[StepBegin];
-						panelBegin->addTitle("MultiTrack Calibration");
-						panelBegin->addLiveValue<string>("Instructions", [this]() {
-							return "Pick up your marker and do the thing.";
-						});
-						panelBegin->addParameterGroup(parameters.capture);
-						panelBegin->addParameterGroup(parameters.findMarker);
-						auto button = panelBegin->addButton("Begin Capture", [this]() {
-							this->captureStartTime = chrono::system_clock::now();
-							this->goToStep(StepIdle);
-						});
-						button->setHeight(100.0f);
-					}
-
-					//Build the node and setup the dialogue.
 					this->panel = ofxCvGui::Panels::makeWidgets();
-					this->panel->addButton("Open Dialogue", [this]() {
+					auto button = this->panel->addButton("Open Dialogue", [this]() {
 						this->goToStep(StepBegin);
 					});
+
+					//Only draw the button when a World is connected.
+					auto world = this->getInput<World>();
+					button->setEnabled(world.get());
+
+					auto worldPin = this->addInput<ofxRulr::Nodes::MultiTrack::World>();
+					worldPin->onNewConnection += [this, button](shared_ptr<World> world) {
+						button->setEnabled(true);
+					};
+					worldPin->onDeleteConnection += [this, button](shared_ptr<World> world) {
+						button->setEnabled(false);
+					};
 				}
 
 				//----------
@@ -81,33 +69,122 @@ namespace ofxRulr {
 
 					this->currStep = nextStep;
 
-					if (this->dialogue) {
-						this->dialogue->clear();
-					}
+					ofxCvGui::closeDialogue();
+					this->dialogue.reset();
 
-					auto & currPanel = this->stepPanels[this->currStep];
-					if (currPanel) {
-						if (!this->dialogue) {
-							//Build the dialogue
-							this->dialogue = make_shared<ofxCvGui::Panels::Widgets>();
-							this->dialogue->addTitle("Dialogue");
-							this->dialogue->addButton("Close", [this]() {
+					shared_ptr<ofxCvGui::Panels::Widgets> panel;
+					if (this->currStep == StepBegin) {
+						panel = ofxCvGui::Panels::makeWidgets();
+						panel->addTitle("MultiTrack Calibration");
+						panel->addLiveValue<string>("Instructions", [this]() {
+							return "Pick up your marker and do the thing.";
+						});
+						panel->addParameterGroup(parameters.capture);
+						panel->addParameterGroup(parameters.findMarker);
+
+						auto buttonNext = panel->addButton("Begin Capture", [this]() {
+							this->captureStartTime = chrono::system_clock::now();
+							this->goToStep(StepCapture);
+						});
+						buttonNext->setHeight(100.0f);
+					}
+					else if (this->currStep == StepCapture) {
+						//Clear previous data.
+						this->images.clear();
+						this->markerData.clear();
+
+						panel = ofxCvGui::Panels::makeWidgets();
+						panel->addTitle("MultiTrack Capture");
+
+						auto buttonBack = panel->addButton("Restart", [this]() {
+							this->goToStep(StepBegin);
+						});
+
+						panel->addLiveValue<float>("Capture remaining [s]", [this]() {
+							// Using * 1000.0f so we get floats.
+							return (this->parameters.capture.duration * 1000.0f - chrono::duration_cast<chrono::milliseconds>(this->getTimeSinceCaptureStarted()).count()) / 1000.0f;
+						});
+
+						auto & receivers = this->getInput<World>()->getReceivers();
+						size_t count = 0;
+						shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
+						cout << "Working with " << receivers.size() << " receivers" << endl;
+						for (auto & it : receivers) {
+							auto weak_receiver = it.second;
+							if (!weak_receiver.expired()) {
+								auto receiver = weak_receiver.lock();
+								
+								if (count % 2 == 0) {
+									strip = ofxCvGui::Panels::Groups::makeStrip();
+									strip->setHeight(360.0f);
+									panel->add(strip);
+								}
+								
+								auto pixels = ofxCvGui::Panels::makePixels(receiver->getReceiver()->getFrame().getColor());
+								pixels->setHeight(360.0f);
+								strip->add(pixels);
+
+								++count;
+							}
+						}
+
+						auto buttonNext = panel->addButton("Solve", [this]() {
+							this->goToStep(StepSolve);
+						});
+						buttonNext->setHeight(100.0f);
+					}
+					else if (this->currStep == StepSolve) {
+						panel = ofxCvGui::Panels::makeWidgets();
+						panel->addTitle("MultiTrack Solve");
+
+						auto buttonBack = panel->addButton("Restart", [this]() {
+							this->goToStep(StepBegin);
+						});
+
+						panel->addParameterGroup(this->parameters.solveTransform);
+
+						auto buttonSolve = panel->addButton("Solve", [this]() {
+							try {
+								this->solveAll();
+							}
+							RULR_CATCH_ALL_TO_ALERT
+						}, OF_KEY_RETURN);
+						buttonSolve->setHeight(100.0f);
+					}
+					//else if (this->currStep == StepConfirm) {
+					//	inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<float>, "Reprojection error [px]", [this]() {
+					//		return this->error;
+					//	}));
+
+					//	auto buttonNext = panel->addButton("Solve", [this]() {
+					//		this->goToStep(StepConfirm);
+					//	});
+					//	buttonNext->setHeight(100.0f);
+					//}
+					
+					if (panel) {
+						//Build the dialogue
+						auto strip = ofxCvGui::Panels::Groups::makeStrip();
+						strip->setDirection(ofxCvGui::Panels::Groups::Strip::Horizontal);
+
+						//Add the common panel.
+						{
+							auto commonPanel = ofxCvGui::Panels::makeWidgets();
+							auto button = commonPanel->addButton("Close", [this]() {
 								this->goToStep(StepIdle);
 							});
+							button->setHeight(50.0f);
+							strip->add(commonPanel);
 						}
 
 						//Add the current panel.
-						this->dialogue->add(currPanel);
-						
+						strip->add(panel);
+
+						strip->setCellSizes({ 100, -1 });
+						this->dialogue = strip;
+
 						//Make sure the dialog is open.
-						if (!ofxCvGui::isDialogueOpen()) {
-							ofxCvGui::openDialogue(this->dialogue);
-						}
-					}
-					else {
-						//Close and delete the dialog.
-						ofxCvGui::closeDialogue();
-						this->dialogue.reset();
+						ofxCvGui::openDialogue(this->dialogue);
 					}
 				}
 
@@ -123,40 +200,7 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
-					auto inspector = inspectArgs.inspector;
-
-					inspector->addParameterGroup(this->parameters.capture);
-					//this->parameters.capture.enabled.addListener(this, &Calibrate::captureToggled);
-
-					//inspector->addLiveValue<float>("Capture remaining [s]", [this]() {
-					//	if (this->parameters.capture.enabled) {
-					//		// Using * 1000.0f so we get floats.
-					//		return (this->parameters.capture.duration * 1000.0f - chrono::duration_cast<chrono::milliseconds>(this->getTimeSinceCaptureStarted()).count()) / 1000.0f;
-					//	}
-					//	else {
-					//		return 0.0f;
-					//	}
-					//});
-
-					inspector->add(MAKE(ofxCvGui::Widgets::Button, "Clear capture data", [this]() {
-						this->markerData.clear();
-					}));
-
-					inspector->addParameterGroup(this->parameters.findMarker);
-
-					inspector->addParameterGroup(this->parameters.solveTransform);
-
-					auto solveButton = MAKE(ofxCvGui::Widgets::Button, "Solve", [this]() {
-						try {
-							this->solveAll();
-						}
-						RULR_CATCH_ALL_TO_ALERT
-					}, OF_KEY_RETURN);
-					solveButton->setHeight(100.0f);
-					inspector->add(solveButton);
-					inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<float>, "Reprojection error [px]", [this]() {
-						return this->error;
-					}));
+					
 				}
 
 				//----------

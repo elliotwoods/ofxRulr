@@ -16,6 +16,8 @@ namespace ofxRulr {
 				void init();
 				void update();
 
+				map<size_t, weak_ptr<Receiver>> & getReceivers();
+
 			protected:
 				map<size_t, weak_ptr<Receiver>> receivers;
 			};

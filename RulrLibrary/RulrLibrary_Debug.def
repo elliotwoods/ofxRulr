@@ -412,6 +412,8 @@ EXPORTS
 	??0Grid@Groups@Panels@ofxCvGui@@QEAA@XZ
 	??0Strip@Groups@Panels@ofxCvGui@@QEAA@W4Direction@0123@@Z
 	?makeStrip@Groups@Panels@ofxCvGui@@YA?AV?$shared_ptr@VStrip@Groups@Panels@ofxCvGui@@@std@@W4Direction@Strip@123@@Z
+	?setCellSizes@Strip@Groups@Panels@ofxCvGui@@QEAAXAEBV?$initializer_list@H@std@@@Z
+	?setDirection@Strip@Groups@Panels@ofxCvGui@@QEAAXW4Direction@1234@@Z
 	?add@Scroll@Panels@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?clear@Scroll@Panels@ofxCvGui@@QEAAXXZ
 	?setStyle@Texture@Panels@ofxCvGui@@QEAAXV?$shared_ptr@UStyle@Texture@Panels@ofxCvGui@@@std@@@Z
