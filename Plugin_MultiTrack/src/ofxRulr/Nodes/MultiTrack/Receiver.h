@@ -27,9 +27,8 @@ namespace ofxRulr {
 			protected:
 				void rebuildGui();
 
-				void previewsChangeCallback(ofParameter<bool> &);
+				void previewsChangeCallback(bool &);
 				shared_ptr<ofxCvGui::Panels::Groups::Strip> panel;
-
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {

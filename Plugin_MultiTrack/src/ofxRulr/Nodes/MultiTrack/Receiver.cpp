@@ -157,6 +157,7 @@ namespace ofxRulr {
 				}
 
 				inspector->addParameterGroup(this->parameters);
+				this->parameters.previews.enabled.addListener(this, &Receiver::previewsChangeCallback);
 			}
 
 			//----------
@@ -190,7 +191,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Receiver::previewsChangeCallback(ofParameter<bool> &) {
+			void Receiver::previewsChangeCallback(bool &) {
 				this->rebuildGui();
 			}
 		}
