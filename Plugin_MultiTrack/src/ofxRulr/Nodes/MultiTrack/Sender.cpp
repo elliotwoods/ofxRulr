@@ -1,3 +1,5 @@
+#ifdef OFXMULTITRACK_UDP
+
 #include "pch_MultiTrack.h"
 #include "Sender.h"
 #include "ofxRulr/Nodes/Item/KinectV2.h"
@@ -179,3 +181,5 @@ namespace ofxRulr {
 		}
 	}
 }
+
+#endif // OFXMULTITRACK_UDP

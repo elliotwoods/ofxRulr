@@ -1,3 +1,5 @@
+#ifdef OFXMULTITRACK_UDP
+
 #pragma once
 
 #include "ofxRulr/Nodes/Item/IDepthCamera.h"
@@ -50,3 +52,5 @@ namespace ofxRulr {
 		}
 	}
 }
+
+#endif // OFXMULTITRACK_UDP

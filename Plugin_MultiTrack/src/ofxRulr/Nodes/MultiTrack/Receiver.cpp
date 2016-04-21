@@ -1,3 +1,5 @@
+#ifdef OFXMULTITRACK_UDP
+
 #include "pch_MultiTrack.h"
 #include "Receiver.h"
 
@@ -203,3 +205,5 @@ namespace ofxRulr {
 		}
 	}
 }
+
+#endif // OFXMULTITRACK_UDP

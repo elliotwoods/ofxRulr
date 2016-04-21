@@ -27,25 +27,25 @@ namespace ofxRulr {
 
 				this->addInput<ofxRulr::Nodes::Data::Channels::Database>();
 
-				for (size_t i = 0; i < NumReceivers; i++) {
-					auto receiverPin = this->addInput<Receiver>("Receiver " + ofToString(i + 1));
-					receiverPin->onNewConnection += [this, i](shared_ptr<Receiver> receiver) {
-						this->receivers[i] = receiver;
+				for (size_t i = 0; i < NumSubscribers; i++) {
+					auto subscriberPin = this->addInput<Subscriber>("Subscriber " + ofToString(i + 1));
+					subscriberPin->onNewConnection += [this, i](shared_ptr<Subscriber> subscriber) {
+						this->subscribers[i] = subscriber;
 					};
-					receiverPin->onDeleteConnection += [this, i](shared_ptr<Receiver> receiver) {
-						this->receivers.erase(i);
+					subscriberPin->onDeleteConnection += [this, i](shared_ptr<Subscriber> subscriber) {
+						this->subscribers.erase(i);
 					};
 				}
 			}
 
 			//----------
 			void World::update() {
-				for (size_t i = 0; i < NumReceivers; i++) {
-					auto name = "Receiver " + ofToString(i + 1);
-					auto input = this->getInput<Receiver>(name);
+				for (size_t i = 0; i < NumSubscribers; i++) {
+					auto name = "Subscriber " + ofToString(i + 1);
+					auto input = this->getInput<Subscriber>(name);
 					if (input) {
-						auto receiver = input->getReceiver();
-						if (receiver && receiver->isFrameNew()) {
+						auto subscriber = input->getSubscriber();
+						if (subscriber && subscriber->isFrameNew()) {
 							// TODO Something useful here.
 							cout << "New frame for " << name << endl;
 						}
@@ -54,8 +54,8 @@ namespace ofxRulr {
 			}
 
 			//----------
-			map<size_t, weak_ptr<Receiver>> & World::getReceivers() {
-				return this->receivers;
+			map<size_t, weak_ptr<Subscriber>> & World::getSubscribers() {
+				return this->subscribers;
 			}
 		}
 	}

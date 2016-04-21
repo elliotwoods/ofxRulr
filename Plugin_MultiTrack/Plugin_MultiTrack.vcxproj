@@ -147,6 +147,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Receiver.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Sender.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\World.h" />
     <ClInclude Include="src\ofxRulr\Utils\ControlSocket.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Receiver.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Sender.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Test\FindMarker.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\World.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\ControlSocket.cpp" />

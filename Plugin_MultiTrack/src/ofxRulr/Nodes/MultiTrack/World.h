@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Receiver.h"
+#include "Subscriber.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -8,7 +8,7 @@ namespace ofxRulr {
 			class World : public Nodes::Base {
 			public:
 				enum Constants : size_t {
-					NumReceivers = 6
+					NumSubscribers = 6
 				};
 
 				World();
@@ -16,10 +16,10 @@ namespace ofxRulr {
 				void init();
 				void update();
 
-				map<size_t, weak_ptr<Receiver>> & getReceivers();
+				map<size_t, weak_ptr<Subscriber>> & getSubscribers();
 
 			protected:
-				map<size_t, weak_ptr<Receiver>> receivers;
+				map<size_t, weak_ptr<Subscriber>> subscribers;
 			};
 		}
 	}

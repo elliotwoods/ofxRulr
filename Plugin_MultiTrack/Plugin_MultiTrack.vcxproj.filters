@@ -72,6 +72,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.h">
       <Filter>src\ofxRulr\Nodes\MultiTrack\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.h">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch_MultiTrack.cpp">
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.cpp">
       <Filter>src\ofxRulr\Nodes\MultiTrack\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.cpp">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
