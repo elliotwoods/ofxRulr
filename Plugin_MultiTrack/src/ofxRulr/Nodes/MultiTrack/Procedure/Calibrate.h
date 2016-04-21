@@ -20,8 +20,6 @@ namespace ofxRulr {
 					};
 
 					struct Marker {
-						ofPolyline outline;
-
 						ofVec2f center;
 						float radius;
 
@@ -37,7 +35,7 @@ namespace ofxRulr {
 					void goToStep(Step nextStep);
 
 					void addCapture();
-					void findMarkerInFrame(ofxMultiTrack::Frame & frame, vector<Marker> & markers);
+					void findMarkerInFrame(const ofxMultiTrack::Frame & frame, vector<Marker> & markers);
 
 					void solveAll();
 

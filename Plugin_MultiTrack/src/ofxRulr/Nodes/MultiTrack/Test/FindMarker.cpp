@@ -1,7 +1,7 @@
 #include "pch_MultiTrack.h"
 #include "FindMarker.h"
 
-#include "../Receiver.h"
+#include "../Subscriber.h"
 
 using namespace ofxCvGui;
 using namespace ofxCv;
@@ -27,7 +27,7 @@ namespace ofxRulr {
 					RULR_NODE_INSPECTOR_LISTENER;
 					RULR_NODE_SERIALIZATION_LISTENERS;
 
-					this->addInput<Receiver>();
+					this->addInput<Subscriber>();
 
 					auto panel = ofxCvGui::Panels::Groups::makeStrip();
 					panel->add(Panels::makeTexture(this->infrared, "Infrared"));
@@ -64,13 +64,13 @@ namespace ofxRulr {
 						return;
 					}
 
-					auto receiverNode = this->getInput<Receiver>();
-					if (receiverNode) {
-						auto receiver = receiverNode->getReceiver();
-						if (receiver) {
-							if (receiver->isFrameNew()) {
+					auto subscriberNode = this->getInput<Subscriber>();
+					if (subscriberNode) {
+						auto subscriber = subscriberNode->getSubscriber();
+						if (subscriber) {
+							if (subscriber->isFrameNew()) {
 								try {
-									auto & frame = receiver->getFrame();
+									auto & frame = subscriber->getFrame();
 
 									const auto & infrared = frame.getInfrared();
 									this->infrared.loadData(infrared);

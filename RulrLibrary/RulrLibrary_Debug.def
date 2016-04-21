@@ -16,6 +16,8 @@ EXPORTS
 	glfwSwapBuffers
 	glfwWindowHint
 	??0ofBuffer@@QEAA@AEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
+	??0ofBuffer@@QEAA@XZ
+	??0ofDirectory@@QEAA@AEBVpath@filesystem@boost@@@Z
 	??0ofFbo@@QEAA@XZ
 	??0ofLog@@QEAA@W4ofLogLevel@@PEBDZZ
 	??0ofLogError@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -43,6 +45,7 @@ EXPORTS
 	??1ofVbo@@QEAA@XZ
 	??1ofxOscMessage@@QEAA@XZ
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
+	?ofBufferFromFile@@YA?AVofBuffer@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
 	?ofCircle@@YAXAEBVofVec3f@@M@Z
 	?ofCircle@@YAXMMM@Z
 	?ofClamp@@YAMMMM@Z
@@ -90,6 +93,7 @@ EXPORTS
 	?ofSleepMillis@@YAXH@Z
 	?ofStringReplace@@YAXAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@1@Z
 	?ofSystemAlertDialog@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?ofSystemLoadDialog@@YA?AVofFileDialogResult@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N0@Z
 	?ofSystemTextBoxDialog@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V12@0@Z
 	?ofToDataPath@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@_N@Z
 	?ofToLower@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@0@Z
@@ -258,8 +262,10 @@ EXPORTS
 	?audioOut@ofBaseSoundOutput@@UEAAXPEAMHHH_K@Z
 	?clear@ofBuffer@@QEAAXXZ
 	?getBinaryBuffer@ofBuffer@@QEBAPEBDXZ
+	?getData@ofBuffer@@QEAAPEADXZ
 	?set@ofBuffer@@QEAA_NAEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
 	?size@ofBuffer@@QEBA_KXZ
+	?exists@ofDirectory@@QEBA_NXZ
 	??0Settings@ofFbo@@QEAA@V?$shared_ptr@VofBaseGLRenderer@@@std@@@Z
 	?allocate@ofFbo@@QEAAXHHHH@Z
 	?allocate@ofFbo@@QEAAXUSettings@1@@Z

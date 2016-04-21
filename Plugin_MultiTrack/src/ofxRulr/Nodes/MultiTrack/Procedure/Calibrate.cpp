@@ -106,21 +106,21 @@ namespace ofxRulr {
 							return (this->parameters.capture.duration * 1000.0f - chrono::duration_cast<chrono::milliseconds>(this->getTimeSinceCaptureStarted()).count()) / 1000.0f;
 						});
 
-						auto & receivers = this->getInput<World>()->getReceivers();
+						auto & subscribers = this->getInput<World>()->getSubscribers();
 						size_t count = 0;
 						shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
-						for (auto & it : receivers) {
-							auto weak_receiver = it.second;
-							if (!weak_receiver.expired()) {
-								auto receiver = weak_receiver.lock();
-								
+						for (auto & it : subscribers) {
+							auto weak_subscriber = it.second;
+							if (!weak_subscriber.expired()) {
+								auto subscriber = weak_subscriber.lock();
+
 								if (count % 2 == 0) {
 									strip = ofxCvGui::Panels::Groups::makeStrip();
 									strip->setHeight(360.0f);
 									panel->add(strip);
 								}
-								
-								auto pixels = ofxCvGui::Panels::makePixels(receiver->getReceiver()->getFrame().getColor());
+
+								auto pixels = ofxCvGui::Panels::makePixels(subscriber->getSubscriber()->getFrame().getDepth());
 								pixels->setHeight(360.0f);
 								strip->add(pixels);
 
@@ -161,7 +161,7 @@ namespace ofxRulr {
 					//	});
 					//	buttonNext->setHeight(100.0f);
 					//}
-					
+
 					if (panel) {
 						//Build the dialogue
 						auto strip = ofxCvGui::Panels::Groups::makeStrip();
@@ -192,27 +192,40 @@ namespace ofxRulr {
 				void Calibrate::addCapture() {
 					size_t frameNum = ofGetFrameNum();
 
-					auto & receivers = this->getInput<World>()->getReceivers();
-					size_t count = 0;
-					shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
-					for (auto & it : receivers) {
-						auto weak_receiver = it.second;
-						if (!weak_receiver.expired()) {
-							auto receiverNode = weak_receiver.lock();
-							auto receiver = receiverNode->getReceiver();
-							if (receiver) {
-								if (receiver->isFrameNew()) {
+					// Get the marker data for this frame.
+					auto & subscribers = this->getInput<World>()->getSubscribers();
+					map<string, vector<Marker>> subscriberData;
+					for (auto & it : subscribers) {
+						auto weak_subscriber = it.second;
+						if (!weak_subscriber.expired()) {
+							auto node = weak_subscriber.lock();
+							auto subscriber = node->getSubscriber();
+							if (subscriber) {
+								if (subscriber->isFrameNew()) {
+									//Find the Markers in the frame.
+									vector<Marker> markers;
+									findMarkerInFrame(subscriber->getFrame(), markers);
 
-									auto & name = receiverNode->getName();
+									//Map the Marker coordinates to world space.
+									auto height = subscriber->getFrame().getDepth().getHeight();
+									auto depth = subscriber->getFrame().getDepth().getData();
+									auto lut = node->getDepthToWorldLUT().getData();
+									for (auto & m : markers) {
+										int idx = m.center.y * height + m.center.x;
+										m.position = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depth[idx] * 0.001f;
+									}
+
+									//Save the data.
+									auto & name = node->getName();
+									subscriberData[name] = markers;
 								}
 							}
-
 						}
 					}
 				}
 
 				//----------
-				void Calibrate::findMarkerInFrame(ofxMultiTrack::Frame & frame, vector<Marker> & markers) {
+				void Calibrate::findMarkerInFrame(const ofxMultiTrack::Frame & frame, vector<Marker> & markers) {
 					const auto & infrared = frame.getInfrared();
 					this->infrared.loadData(infrared);
 
@@ -222,25 +235,19 @@ namespace ofxRulr {
 					auto infraRed8Mat = infraRed16Mat.clone();
 					infraRed8Mat.convertTo(infraRed8Mat, CV_8U, 1.0f / float(1 << 8));
 
-					cv::threshold(infraRed8Mat, infraRed8Mat, this->parameters.threshold, 255, THRESH_TOZERO);
+					cv::threshold(infraRed8Mat, infraRed8Mat, this->parameters.findMarker.threshold, 255, cv::THRESH_TOZERO);
 					ofxCv::copy(infraRed8Mat, this->threshold);
 					this->threshold.update();
 
 					vector<vector<cv::Point2i>> contours;
 					cv::findContours(infraRed8Mat, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
-					this->markers.clear();
+					markers.clear();
 					for (auto & contour : contours) {
-						if (cv::contourArea(contour) >= this->parameters.minimumArea) {
+						if (cv::contourArea(contour) >= this->parameters.findMarker.minimumArea) {
 							Marker marker;
-							for (auto point : contour) {
-								marker.outline.addVertex(toOf(point));
-							}
-							marker.outline.close();
-
-							cv::minEnclosingCircle(contour, toCv(marker.center), marker.radius);
-
-							this->markers.push_back(marker);
+							cv::minEnclosingCircle(contour, ofxCv::toCv(marker.center), marker.radius);
+							markers.push_back(marker);
 						}
 					}
 				}

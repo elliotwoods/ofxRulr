@@ -1,6 +1,5 @@
-#ifdef OFXMULTITRACK_UDP
-
 #include "pch_MultiTrack.h"
+#ifdef OFXMULTITRACK_UDP
 #include "Receiver.h"
 
 #include "Poco/Base64Decoder.h"
