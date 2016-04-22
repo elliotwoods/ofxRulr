@@ -25,11 +25,11 @@ namespace ofxRulr {
 
 				shared_ptr<ofxMultiTrack::Subscriber> getSubscriber() const;
 				const ofFloatPixels & getDepthToWorldLUT() const;
-			protected:
-				void rebuildGui();
+				const ofTexture & getPreviewTexture() const;
 
-				void previewsChangeCallback(bool &);
-				shared_ptr<ofxCvGui::Panels::Groups::Strip> panel;
+			protected:
+				shared_ptr<ofxCvGui::Panels::Texture> previewPanel;
+				shared_ptr<ofxCvGui::Panels::Widgets> uiPanel;
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
@@ -41,19 +41,14 @@ namespace ofxRulr {
 						PARAM_DECLARE("Connection", publisherAddress, controlPort, receivingPort, connect);
 					} connection;
 
-					struct : ofParameterGroup {
-						ofParameter<bool> enabled{ "Enabled", true };
-
-						PARAM_DECLARE("Previews", enabled);
-					} previews;
-
-					PARAM_DECLARE("Receiver", connection, previews);
+					PARAM_DECLARE("Receiver", connection);
 				} parameters;
 
 				shared_ptr<ofxMultiTrack::Subscriber> subscriber;
 				unique_ptr<Utils::ControlSocket> controlSocket;
 
 				ofFloatPixels depthToWorldLUT;
+				ofTexture previewTexture;
 			};
 		}
 	}

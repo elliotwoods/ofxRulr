@@ -23,7 +23,51 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
-				this->panel = ofxCvGui::Panels::Groups::makeStrip();
+				this->previewPanel = ofxCvGui::Panels::makeTexture(this->previewTexture);
+				this->previewPanel->setInputRange(0.0f, 8000.0f / 0xffff);
+
+				this->uiPanel = ofxCvGui::Panels::makeWidgets();
+				this->uiPanel->addLiveValue<float>("Framerate", [this]() {
+					if (this->subscriber) {
+						return this->subscriber->getSubscriber().getIncomingFramerate();
+					}
+					else {
+						return 0.0f;
+					}
+				});
+				this->uiPanel->addIndicator("New frame arrived", [this]() {
+					if (this->subscriber) {
+						if (this->subscriber->getSubscriber().isFrameNew()) {
+							return Widgets::Indicator::Status::Good;
+						}
+					}
+					return Widgets::Indicator::Status::Clear;
+				});
+				this->uiPanel->addLiveValue<float>("Dropped frames", [this]() {
+					if (this->subscriber) {
+						return (float)this->subscriber->getSubscriber().getDroppedFrames().size();
+					}
+					else {
+						return 0.0f;
+					}
+				});
+				this->uiPanel->addListenersToParent(this->previewPanel);
+				this->previewPanel->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments& args) {
+					auto bounds = args.localBounds;
+					bounds.x = 20;
+					bounds.y = 70;
+					bounds.width = MIN(bounds.width - 20, 200);
+					bounds.height = bounds.height - 120;
+					this->uiPanel->setBounds(bounds);
+				};
+				this->uiPanel->onDraw.addListener([](ofxCvGui::DrawArguments & args) {
+					ofPushStyle();
+					{
+						ofSetColor(0, 200);
+						ofDrawRectangle(args.localBounds);
+					}
+					ofPopStyle();
+				}, this, -200);
 
 				this->controlSocket = make_unique<Utils::ControlSocket>();
 				this->controlSocket->init("127.0.0.1", ofxMultiTrack::NodeControl);
@@ -69,6 +113,9 @@ namespace ofxRulr {
 					}
 				});
 
+				static auto inc = 11;
+				this->parameters.connection.publisherAddress = "10.0.0." + ofToString(inc++);
+
 				this->subscriber = make_shared<ofxMultiTrack::Subscriber>();
 			}
 
@@ -90,12 +137,20 @@ namespace ofxRulr {
 					}
 
 					this->subscriber->update();
+
+					if (this->subscriber->getSubscriber().isFrameNew()) {
+						auto & pixels = this->subscriber->getFrame().getDepth();
+						if (!this->previewTexture.isAllocated()) {
+							this->previewTexture.allocate(pixels);
+						}
+						this->previewTexture.loadData(pixels);
+					}
 				}
 			}
 
 			//----------
 			ofxCvGui::PanelPtr Subscriber::getPanel() {
-				return this->panel;
+				return this->previewPanel;
 			}
 
 			//----------
@@ -174,7 +229,6 @@ namespace ofxRulr {
 				}
 
 				inspector->addParameterGroup(this->parameters);
-				this->parameters.previews.enabled.addListener(this, &Subscriber::previewsChangeCallback);
 			}
 
 			//----------
@@ -198,23 +252,8 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Subscriber::rebuildGui() {
-				ofxCvGui::InspectController::X().refresh(this);
-
-				this->panel->clear();
-				if (this->subscriber) {
-					if (this->parameters.previews.enabled) {
-						this->panel->add(ofxCvGui::Panels::makePixels(this->subscriber->getFrame().getDepth()));
-					}
-					else {
-						this->panel->clear();
-					}
-				}
-			}
-
-			//----------
-			void Subscriber::previewsChangeCallback(bool &) {
-				this->rebuildGui();
+			const ofTexture & Subscriber::getPreviewTexture() const {
+				return this->previewTexture;
 			}
 		}
 	}
