@@ -32,6 +32,9 @@ namespace ofxRulr {
 					ofxCvGui::PanelPtr getPanel() override;
 					void update();
 
+					void serialize(Json::Value &);
+					void deserialize(const Json::Value &);
+
 					void goToStep(Step nextStep);
 
 					void captureFrame(bool record);

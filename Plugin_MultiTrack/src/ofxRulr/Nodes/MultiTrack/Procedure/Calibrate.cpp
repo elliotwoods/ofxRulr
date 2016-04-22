@@ -26,7 +26,7 @@ namespace ofxRulr {
 				//----------
 				void Calibrate::init() {
 					RULR_NODE_UPDATE_LISTENER;
-					//RULR_NODE_INSPECTOR_LISTENER;
+					RULR_NODE_SERIALIZATION_LISTENERS;
 
 					this->currStep = StepIdle;
 
@@ -439,6 +439,84 @@ namespace ofxRulr {
 				//----------
 				chrono::system_clock::duration Calibrate::getTimeSinceCaptureStarted() const {
 					return chrono::system_clock::now() - this->captureStartTime;
+				}
+
+				//----------
+				void Calibrate::serialize(Json::Value & json) {
+					{
+						auto & jsonToPreview = json["dataToPreview"];
+						for (const auto & it : this->dataToPreview) {
+							auto const key = ofToString(it.first);
+							auto & jsonSubscriber = jsonToPreview[key];
+							int index = 0;
+							for (const auto & marker : it.second) {
+								auto & jsonMarker = jsonSubscriber[index++];
+								jsonMarker["center"] << marker.center;
+								jsonMarker["radius"] << marker.radius;
+							}
+						}
+					}
+					{
+						auto & jsonToSolve = json["dataToSolve"];
+						for (const auto & it : this->dataToSolve) {
+							auto const subscriberKey = ofToString(it.first);
+							auto & jsonSubscriber = jsonToSolve[subscriberKey];
+							for (const auto & jt : it.second) {
+								auto const frameKey = ofToString(jt.first);
+								auto & jsonFrame = jsonSubscriber[frameKey];
+								const auto & marker = jt.second;
+								jsonFrame["center"] << marker.center;
+								jsonFrame["radius"] << marker.radius;
+								jsonFrame["position"] << marker.position;
+							}
+						}
+					}
+
+					ofxRulr::Utils::Serializable::serialize(json["parameters"], this->parameters);
+				}
+
+				//----------
+				void Calibrate::deserialize(const Json::Value & json) {
+					{
+						this->dataToPreview.clear();
+						auto & jsonToPreview = json["dataToPreview"];
+						const auto subscriberKeys = jsonToPreview.getMemberNames();
+						for (const auto & subscriberKey : subscriberKeys) {
+							vector<Marker> markers;
+							for (const auto & jsonMarker : jsonToPreview[subscriberKey]) {
+								Marker marker;
+								jsonMarker["center"] >> marker.center;
+								jsonMarker["radius"] >> marker.radius;
+								markers.push_back(marker);
+							}
+							size_t subscriberFirst = ofToInt(subscriberKey);
+							this->dataToPreview.emplace(subscriberFirst, markers);
+						}
+					}
+					{
+						this->dataToSolve.clear();
+						auto & jsonToSolve = json["dataToSolve"];
+						const auto subscriberKeys = jsonToSolve.getMemberNames();
+						for (const auto & subscriberKey : subscriberKeys) {
+							map<size_t, Marker> markers;
+							auto & jsonSubscriber = jsonToSolve[subscriberKey];
+							const auto frameKeys = jsonSubscriber.getMemberNames();
+							for (const auto & frameKey : frameKeys) {
+								auto & jsonMarker = jsonSubscriber[frameKey];
+								Marker marker;
+								jsonMarker["center"] >> marker.center;
+								jsonMarker["radius"] >> marker.radius;
+								jsonMarker["position"] >> marker.position;
+
+								size_t frameFirst = ofToInt(frameKey);
+								markers.emplace(frameFirst, marker);
+							}
+							size_t subscriberFirst = ofToInt(subscriberKey);
+							this->dataToSolve.emplace(subscriberFirst, markers);
+						}
+					}
+
+					ofxRulr::Utils::Serializable::deserialize(json["parameters"], this->parameters);
 				}
 			}
 		}
