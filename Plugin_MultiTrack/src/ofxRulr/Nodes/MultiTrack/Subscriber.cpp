@@ -116,6 +116,8 @@ namespace ofxRulr {
 				static auto inc = 11;
 				this->parameters.connection.publisherAddress = "10.0.0." + ofToString(inc++);
 
+				this->parameters.calibration.depthToWorldTableFile.addListener(this, &Subscriber::depthToWorldTableFileCallback);
+
 				this->subscriber = make_shared<ofxMultiTrack::Subscriber>();
 			}
 
@@ -155,10 +157,6 @@ namespace ofxRulr {
 
 			//----------
 			void Subscriber::drawWorld() {
-				//this->setExtrinsics() // Directly from CV
-				//this->setTransform()  // Use getTransform for the initial values in ofxNonLinearFit
-				//ofxCv::estimateAffine3D()
-
 				auto & frame = this->subscriber->getFrame();
 				const auto & bodies = frame.getBodies();
 				for (const auto & body : bodies) {
@@ -208,22 +206,25 @@ namespace ofxRulr {
 					});
 				}
 
-				args.inspector->addTitle("Depth to World LookUp");
+				args.inspector->addTitle("Calibration");
 				{
-					args.inspector->addButton("Load from disk", [this]() {
-						ofBuffer loadBuffer;
-						{
-							auto result = ofSystemLoadDialog("Select file", false, ofToDataPath(""));
-							if (result.bSuccess) {
-								auto filePath = result.filePath;
-								loadBuffer = ofBufferFromFile(filePath);
+					args.inspector->addIndicator("Depth to World loaded", [this]() {
+						if (this->depthToWorldLUT.isAllocated()) {
+							if (this->depthToWorldLUT.getWidth() == 512 && this->depthToWorldLUT.getHeight() == 424) {
+								return ofxCvGui::Widgets::Indicator::Status::Good;
+							}
+							else {
+								return ofxCvGui::Widgets::Indicator::Status::Warning;
 							}
 						}
-
-						if (loadBuffer.size()) {
-							ofxSquashBuddies::Message message;
-							message.pushData(loadBuffer.getData(), loadBuffer.size());
-							message.getData(this->depthToWorldLUT);
+						else {
+							return ofxCvGui::Widgets::Indicator::Status::Clear;
+						}
+					});
+					args.inspector->addButton("Select file", [this]() {
+						auto result = ofSystemLoadDialog("Select Depth to World LUT");
+						if (result.bSuccess) {
+							this->parameters.calibration.depthToWorldTableFile = result.filePath;
 						}
 					});
 				}
@@ -254,6 +255,33 @@ namespace ofxRulr {
 			//----------
 			const ofTexture & Subscriber::getPreviewTexture() const {
 				return this->previewTexture;
+			}
+
+			//----------
+			void Subscriber::depthToWorldTableFileCallback(string & filename) {
+				if (!filename.empty()) {
+					try {
+						this->loadDepthToWorldTableFile();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				}
+			}
+
+			//----------
+			void Subscriber::loadDepthToWorldTableFile() {
+				const auto & filename = this->parameters.calibration.depthToWorldTableFile.get();
+				if (!ofFile::doesFileExist(filename)) {
+					throw(ofxRulr::Exception("File not found : " + filename));
+				}
+
+				auto loadBuffer = ofBufferFromFile(filename);
+				if (!loadBuffer.size()) {
+					throw(ofxRulr::Exception("File empty"));
+				}
+
+				ofxSquashBuddies::Message message;
+				message.pushData(loadBuffer.getData(), loadBuffer.size());
+				message.getData(this->depthToWorldLUT);
 			}
 		}
 	}
