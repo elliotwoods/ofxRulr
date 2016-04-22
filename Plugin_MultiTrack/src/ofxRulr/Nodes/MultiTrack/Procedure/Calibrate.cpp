@@ -167,8 +167,6 @@ namespace ofxRulr {
 						panel->addTitle("Step 3: Solve", ofxCvGui::Widgets::Title::Level::H2);
 						panel->addTitle("The computer will now figure out how the sensors are arranged. Hit the button below, and adjust the parameters until you are satisfied.", ofxCvGui::Widgets::Title::Level::H3);
 
-						panel->addParameterGroup(this->parameters.solveTransform);
-
 						auto buttonSolve = panel->addButton("Solve", [this]() {
 							try {
 								ofxRulr::Utils::ScopedProcess scopedProcess("Solve");
@@ -190,11 +188,12 @@ namespace ofxRulr {
 
 							panel->addTitle("Solver " + ofToString(it.first), ofxCvGui::Widgets::Title::Level::H2);
 
+							panel->addParameterGroup(it.second.parameters);
 							panel->addIndicator("Success", [this, result]() {
 								if (result.success) {
 									return ofxCvGui::Widgets::Indicator::Status::Good;
 								}
-								return ofxCvGui::Widgets::Indicator::Status::Clear;
+								return ofxCvGui::Widgets::Indicator::Status::Error;
 							});
 							panel->addLiveValue<float>("Residual", [this, result]() {
 								return result.residual;
@@ -470,6 +469,14 @@ namespace ofxRulr {
 							}
 						}
 					}
+					{
+						auto & jsonSolveSets = json["solveSets"];
+						for (auto & it : this->solveSets) {
+							auto const subscriberKey = ofToString(it.first);
+							auto & jsonSubscriber = jsonSolveSets[subscriberKey];
+							it.second.serialize(jsonSubscriber);
+						}
+					}
 
 					ofxRulr::Utils::Serializable::serialize(json["parameters"], this->parameters);
 				}
@@ -478,7 +485,7 @@ namespace ofxRulr {
 				void Calibrate::deserialize(const Json::Value & json) {
 					{
 						this->dataToPreview.clear();
-						auto & jsonToPreview = json["dataToPreview"];
+						const auto & jsonToPreview = json["dataToPreview"];
 						const auto subscriberKeys = jsonToPreview.getMemberNames();
 						for (const auto & subscriberKey : subscriberKeys) {
 							vector<Marker> markers;
@@ -494,11 +501,11 @@ namespace ofxRulr {
 					}
 					{
 						this->dataToSolve.clear();
-						auto & jsonToSolve = json["dataToSolve"];
+						const auto & jsonToSolve = json["dataToSolve"];
 						const auto subscriberKeys = jsonToSolve.getMemberNames();
 						for (const auto & subscriberKey : subscriberKeys) {
 							map<size_t, Marker> markers;
-							auto & jsonSubscriber = jsonToSolve[subscriberKey];
+							const auto & jsonSubscriber = jsonToSolve[subscriberKey];
 							const auto frameKeys = jsonSubscriber.getMemberNames();
 							for (const auto & frameKey : frameKeys) {
 								auto & jsonMarker = jsonSubscriber[frameKey];
@@ -512,6 +519,18 @@ namespace ofxRulr {
 							}
 							size_t subscriberFirst = ofToInt(subscriberKey);
 							this->dataToSolve.emplace(subscriberFirst, markers);
+						}
+					}
+					{
+						this->solveSets.clear();
+						const auto & jsonSolveSets = json["solveSets"];
+						const auto subscriberKeys = jsonSolveSets.getMemberNames();
+						for (const auto & subscriberKey : subscriberKeys) {
+							const auto & jsonSubscriber = jsonSolveSets[subscriberKey];
+							ofxRulr::Utils::SolveSet solveSet;
+							solveSet.deserialize(jsonSubscriber);
+							size_t subscriberFirst = ofToInt(subscriberKey);
+							this->solveSets.emplace(subscriberFirst, solveSet);
 						}
 					}
 

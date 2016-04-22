@@ -46,7 +46,6 @@ namespace ofxRulr {
 					void applyTransforms();
 
 				protected:
-					void populateInspector(ofxCvGui::InspectArguments &);
 					chrono::system_clock::duration getTimeSinceCaptureStarted() const;
 
 					shared_ptr<ofxCvGui::Panels::Widgets> panel;
@@ -75,12 +74,7 @@ namespace ofxRulr {
 							PARAM_DECLARE("FindMarker", threshold, minimumArea);
 						} findMarker;
 
-						struct : ofParameterGroup {
-							ofParameter<bool> trimOutliers{ "Trim Outliers", true };
-							PARAM_DECLARE("SolveTransform", trimOutliers);
-						} solveTransform;
-
-						PARAM_DECLARE("Calibrate", capture, findMarker, solveTransform);
+						PARAM_DECLARE("Calibrate", capture, findMarker);
 					} parameters;
 				};
 			}
