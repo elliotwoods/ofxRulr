@@ -15,7 +15,7 @@ namespace ofxRulr {
 						StepBegin,
 						StepCapture,
 						StepSolve,
-						StepConfirm,
+						StepApply,
 
 						NumSteps
 					};
@@ -32,10 +32,13 @@ namespace ofxRulr {
 					ofxCvGui::PanelPtr getPanel() override;
 					void update();
 
+					void serialize(Json::Value &);
+					void deserialize(const Json::Value &);
+
 					void goToStep(Step nextStep);
 
-					void addCapture();
-					void findMarkerInFrame(const ofxMultiTrack::Frame & frame, vector<Marker> & markers);
+					void captureFrame(bool record);
+					vector<Marker> findMarkersInFrame(const ofxMultiTrack::Frame & frame);
 
 					void setupSolveSets();
 					void triggerSolvers();
@@ -51,7 +54,8 @@ namespace ofxRulr {
 					Step currStep;
 
 					chrono::system_clock::time_point captureStartTime;
-					map<size_t, map<size_t, vector<Marker>>> dataToEvaluate;
+					map<size_t, vector<Marker>> dataToPreview;
+					map<size_t, map<size_t, Marker>> dataToSolve;
 					map<size_t, ofxRulr::Utils::SolveSet> solveSets;
 
 					ofTexture infrared;
