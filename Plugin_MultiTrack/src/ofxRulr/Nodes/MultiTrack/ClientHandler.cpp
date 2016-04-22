@@ -337,6 +337,11 @@ namespace ofxRulr {
 
 					auto valueType = subChannel->getValueType();
 					switch (valueType) {
+					case Channel::Type::Int:
+					{
+						message.pushInt32(subChannel->getValue<int>());
+						break;
+					}
 					case Channel::Type::Int32:
 					{
 						message.pushInt32(subChannel->getValue<int32_t>());
@@ -380,6 +385,14 @@ namespace ofxRulr {
 						auto & value = subChannel->getValue<ofVec4f>();
 						for (int i = 0; i < 4; i++) {
 							message.pushFloat(value[i]);
+						}
+						break;
+					}
+					case Channel::Type::IntVector:
+					{
+						auto & value = subChannel->getValue<vector<int>>();
+						for(auto & subValue : value) {
+							message.pushInt32(subValue);
 						}
 						break;
 					}

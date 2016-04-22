@@ -110,6 +110,7 @@ namespace ofxRulr {
 			void Channel::clear() {
 				this->parameter.reset();
 				this->subChannels.clear();
+				this->onHeirarchyChange.notifyListeners();
 			}
 		}
 	}

@@ -27,7 +27,18 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				//RULR_NODE_SERIALIZATION_LISTENERS;
 
-				this->addInput<ofxRulr::Nodes::Data::Channels::Database>();
+				auto databasePin = this->addInput<Data::Channels::Database>();
+
+				databasePin->onNewConnection += [this](shared_ptr<Data::Channels::Database> database) {
+					database->onPopulateData.addListener([this](Data::Channels::Channel & rootChannel) {
+						this->populateDatabase(rootChannel);
+					}, this);
+				};
+				databasePin->onDeleteConnection += [this](shared_ptr<Data::Channels::Database> database) {
+					if (database) {
+						database->onPopulateData.removeListeners(this);
+					}
+				};
 
 				for (size_t i = 0; i < NumSubscribers; i++) {
 					auto subscriberPin = this->addInput<Subscriber>("Subscriber " + ofToString(i + 1));
@@ -62,6 +73,25 @@ namespace ofxRulr {
 						ofSetColor(color);
 						combinedBody.second.mergedBody.drawWorld();
 
+						//draw body perimeter
+						if (this->parameters.fusion.drawBodyPerimeter) {
+							ofPushStyle();
+							{
+								auto dimColor = color;
+								dimColor.setBrightness(50);
+								for (auto & joint : combinedBody.second.mergedBody.joints) {
+									ofPushMatrix();
+									{
+										ofTranslate(joint.second.getPosition() * ofVec3f(1, 0, 1));
+										ofRotate(90, 1, 0, 0);
+										ofDrawCircle(ofVec3f(), this->parameters.fusion.mergeDistanceThreshold);
+									}
+									ofPopMatrix();
+								}
+							}
+							ofPopStyle();
+						}
+
 						//draw original bodies and line to source kinect
 						color.setBrightness(20);
 						for (auto originalBody : combinedBody.second.originalBodiesWorldSpace) {
@@ -90,18 +120,6 @@ namespace ofxRulr {
 			void World::populateInspector(ofxCvGui::InspectArguments & args) {
 				args.inspector->addLiveValue<size_t>("Connected subscribers", [this]() {
 					return this->subscribers.size();
-				});
-				args.inspector->addIndicator("Good", [this]() {
-					return ofxCvGui::Widgets::Indicator::Good;
-				});
-				args.inspector->addIndicator("Error", [this]() {
-					return ofxCvGui::Widgets::Indicator::Error;
-				});
-				args.inspector->addIndicator("Warning", [this]() {
-					return ofxCvGui::Widgets::Indicator::Warning;
-				});
-				args.inspector->addIndicator("Clear", [this]() {
-					return ofxCvGui::Widgets::Indicator::Clear;
 				});
 			}
 
@@ -249,6 +267,54 @@ namespace ofxRulr {
 				//--
 
 				return newCombinedBodies;
+			}
+
+			//----------
+			void World::populateDatabase(Data::Channels::Channel & rootChannel) {
+				auto & combined = rootChannel["combined"];
+				{
+					auto & bodies = combined["bodies"];
+					bodies["count"] = (int) this->combinedBodies.size();
+
+					vector<int> indices;
+					for (auto body : this->combinedBodies) {
+						indices.push_back(body.first);
+					}
+					bodies["indices"] = indices;
+
+					for (auto & combinedBody : this->combinedBodies) {
+						auto & bodyChannel = bodies["body"][ofToString(combinedBody.first)];
+
+						auto & body = combinedBody.second.mergedBody;
+						bodyChannel["tracked"] = (int) body.tracked;
+
+						if (!body.tracked) {
+							bodyChannel.removeSubChannel("centroid");
+							bodyChannel.removeSubChannel("joints");
+						}
+						else {
+							//We use the base of the spine as the centroid
+							auto findSpineBase = body.joints.find(JointType::JointType_SpineBase);
+							if (findSpineBase != body.joints.end()) {
+								bodyChannel["centroid"] = findSpineBase->second.getPosition();
+							}
+							else {
+								bodyChannel.removeSubChannel("centroid");
+							}
+
+							auto & jointChannel = bodyChannel["joints"];
+							jointChannel["count"] = body.joints.size();
+
+							for (auto & joint : body.joints) {
+								auto jointName = ofxKinectForWindows2::toString(joint.first);
+								auto & jointChannel = bodyChannel[jointName];
+								jointChannel["position"] = joint.second.getPosition();
+								jointChannel["orientation"] = joint.second.getOrientation().asVec4();
+								jointChannel["trackingState"] = joint.second.getTrackingState();
+							}
+						}
+					}
+ 				}
 			}
 		}
 	}

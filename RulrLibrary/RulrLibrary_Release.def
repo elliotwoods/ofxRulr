@@ -103,6 +103,7 @@ EXPORTS
 	?ofToDataPath@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@_N@Z
 	?ofToInt@@YAHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?ofToLower@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@0@Z
+	?ofTranslate@@YAXAEBVofVec3f@@@Z
 	?ofTranslate@@YAXMMM@Z
 	??0_InputArray@cv@@QEAA@AEBVMat@1@@Z
 	??0_OutputArray@cv@@QEAA@AEAV?$vector@VMat@cv@@V?$allocator@VMat@cv@@@std@@@std@@@Z

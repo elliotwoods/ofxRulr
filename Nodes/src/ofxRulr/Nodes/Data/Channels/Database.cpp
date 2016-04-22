@@ -35,7 +35,7 @@ namespace ofxRulr {
 					
 					//grid view
 					this->view = make_shared<Panels::Groups::Strip>(Panels::Groups::Strip::Direction::Vertical);
-					this->view->setCellSizes({ -1, 180 });
+					this->view->setCellSizes({ -1, 110 });
 					this->view->add(this->treeView);
 					this->view->add(this->detailView);
 
@@ -63,6 +63,7 @@ namespace ofxRulr {
 							it++;
 						}
 					}
+					this->onPopulateData(*this->rootChannel);
 				}
 
 				//----------
@@ -111,6 +112,12 @@ namespace ofxRulr {
 					rootBranch->clear();
 					rootBranch->setCaption(this->rootChannel->getName());
 					this->addGenerationToGui(rootBranch, *this->getRootChannel());
+
+					//check if we lost the active channel
+					if (!this->selectedChannel.lock()) {
+						this->selectedChannel.reset();
+						this->rebuildDetailView();
+					}
 				}
 
 				//----------
@@ -119,10 +126,17 @@ namespace ofxRulr {
 
 					auto selectedChannel = this->selectedChannel.lock();
 					if (selectedChannel) {
-						this->detailView->addTitle(selectedChannel->getName());
 						selectedChannel->getParameterUntyped();
 						auto type = selectedChannel->getValueType();
 						switch (type) {
+						case Channel::Type::Int:
+						{
+							const auto & parameter = selectedChannel->getParameter<int>();
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "int"; }));
+							this->detailView->add(new Widgets::EditableValue<int>(*parameter));
+							break;
+						}
+
 						case Channel::Type::Int32:
 						{
 							const auto & parameter = selectedChannel->getParameter<int32_t>();
@@ -184,6 +198,20 @@ namespace ofxRulr {
 							const auto & parameter = selectedChannel->getParameter<ofVec4f>();
 							this->detailView->add(new Widgets::EditableValue<ofVec4f>(*parameter));
 							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "ofVec4f"; }));
+							break;
+						}
+						case Channel::Type::IntVector:
+						{
+							const auto & parameter = selectedChannel->getParameter<vector<int>>();
+							this->detailView->add(new Widgets::LiveValue<string>(parameter->getName(), [parameter]() {
+								stringstream output;
+								output << "[" << parameter->get().size() << "] ";
+								for (auto value : parameter->get()) {
+									output << value << ", ";
+								}
+								return output.str();
+							}));
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "vector<int>"; }));
 							break;
 						}
 						case Channel::Type::Undefined:

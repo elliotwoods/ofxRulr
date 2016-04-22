@@ -19,6 +19,7 @@ namespace ofxRulr {
 			public:
 				enum Type {
 					Undefined,
+					Int,
 					Int32,
 					Int64,
 					UInt32,
@@ -27,6 +28,7 @@ namespace ofxRulr {
 					String,
 					Vec3f,
 					Vec4f,
+					IntVector,
 					Unknown
 				};
 
@@ -72,9 +74,13 @@ namespace ofxRulr {
 					auto parameter = dynamic_pointer_cast<ofParameter<T>>(this->parameter);
 					if (!parameter) {
 						parameter = make_shared<ofParameter<T>>();
+						parameter->setName(this->name);
 						this->parameter = parameter;
 					}
 
+					if (typeid(T) == typeid(int)) {
+						this->type = Type::Int;
+					}
 					if (typeid(T) == typeid(int32_t)) {
 						this->type = Type::Int32;
 					}
@@ -98,6 +104,9 @@ namespace ofxRulr {
 					}
 					else if (typeid(T) == typeid(ofVec4f)) {
 						this->type = Type::Vec4f;
+					}
+					else if (typeid(T) == typeid(vector<int>)) {
+						this->type = Type::IntVector;
 					}
 					else {
 						this->type = Type::Unknown;

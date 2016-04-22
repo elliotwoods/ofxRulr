@@ -33,6 +33,8 @@ namespace ofxRulr {
 
 					void addGenerator(shared_ptr<Nodes::Data::Channels::Generator::Base>);
 					void removeGenerator(Nodes::Data::Channels::Generator::Base *);
+
+					ofxLiquidEvent<Channel> onPopulateData;
 				protected:
 					void rebuildTree();
 					void rebuildDetailView();

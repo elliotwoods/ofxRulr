@@ -3,6 +3,8 @@
 #include "Subscriber.h"
 #include "Utils.h"
 
+#include "ofxRulr/Data/Channels/Channel.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace MultiTrack {
@@ -26,7 +28,8 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", false };
 						ofParameter<float> mergeDistanceThreshold{ "Merge distance threshold", 0.3, 0.0, 5.0 };
-						PARAM_DECLARE("Fusion", enabled);
+						ofParameter<bool> drawBodyPerimeter {"Draw body perimeter", true};
+						PARAM_DECLARE("Fusion", enabled, mergeDistanceThreshold, drawBodyPerimeter);
 					} fusion;
 					PARAM_DECLARE("World", fusion);
 				} parameters;
@@ -41,6 +44,7 @@ namespace ofxRulr {
 				void performFusion();
 				WorldBodiesUnmerged getWorldBodiesUnmerged() const;
 				CombinedBodySet combineWorldBodies(WorldBodiesUnmerged worldBodiesUnmerged) const;
+				void populateDatabase(Data::Channels::Channel & rootChannel);
 			};
 		}
 	}
