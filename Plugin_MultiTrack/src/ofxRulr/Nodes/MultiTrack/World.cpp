@@ -47,7 +47,6 @@ namespace ofxRulr {
 						auto subscriber = input->getSubscriber();
 						if (subscriber && subscriber->isFrameNew()) {
 							// TODO Something useful here.
-							cout << "New frame for " << name << endl;
 						}
 					}
 				}

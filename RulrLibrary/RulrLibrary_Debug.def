@@ -16,6 +16,7 @@ EXPORTS
 	glfwSwapBuffers
 	glfwWindowHint
 	??0ofBuffer@@QEAA@AEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
+	??0ofBuffer@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofBuffer@@QEAA@XZ
 	??0ofDirectory@@QEAA@AEBVpath@filesystem@boost@@@Z
 	??0ofFbo@@QEAA@XZ
@@ -46,6 +47,7 @@ EXPORTS
 	??1ofxOscMessage@@QEAA@XZ
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
 	?ofBufferFromFile@@YA?AVofBuffer@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
+	?ofBufferToFile@@YA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAVofBuffer@@_N@Z
 	?ofCircle@@YAXAEBVofVec3f@@M@Z
 	?ofCircle@@YAXMMM@Z
 	?ofClamp@@YAMMMM@Z
@@ -58,6 +60,7 @@ EXPORTS
 	?ofDrawCircle@@YAXAEBVofVec3f@@M@Z
 	?ofDrawGridPlane@@YAXM_K_N@Z
 	?ofDrawLine@@YAXAEBVofVec3f@@0@Z
+	?ofDrawRectangle@@YAXAEBVofRectangle@@@Z
 	?ofDrawRectangle@@YAXMMMM@Z
 	?ofDrawSphere@@YAXAEBVofVec3f@@M@Z
 	?ofEnableAlphaBlending@@YAXXZ
@@ -96,6 +99,7 @@ EXPORTS
 	?ofSystemLoadDialog@@YA?AVofFileDialogResult@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N0@Z
 	?ofSystemTextBoxDialog@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V12@0@Z
 	?ofToDataPath@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@_N@Z
+	?ofToInt@@YAHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?ofToLower@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@0@Z
 	?ofTranslate@@YAXMMM@Z
 	??0_InputArray@cv@@QEAA@AEBVMat@1@@Z
@@ -278,6 +282,7 @@ EXPORTS
 	?getInverse@ofMatrix4x4@@QEBA?AV1@XZ
 	?makeFromMultiplicationOf@ofMatrix4x4@@QEAAXAEBV1@0@Z
 	?makeIdentityMatrix@ofMatrix4x4@@QEAAXXZ
+	?postMult@ofMatrix4x4@@QEAAXAEBV1@@Z
 	?addColor@ofMesh@@QEAAXAEBV?$ofColor_@M@@@Z
 	?addIndex@ofMesh@@QEAAXI@Z
 	?addIndices@ofMesh@@QEAAXPEBI_K@Z
@@ -394,6 +399,7 @@ EXPORTS
 	?init@Builder@ofxCvGui@@QEAAXXZ
 	?clearActiveDialogue@Controller@ofxCvGui@@QEAAXXZ
 	?addListenersToParent@Element@ofxCvGui@@QEAAXPEAV12@_N@Z
+	?addListenersToParent@Element@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@_N@Z
 	?getBounds@Element@ofxCvGui@@QEBAAEBVofRectangle@@XZ
 	?getCaption@Element@ofxCvGui@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getWidth@Element@ofxCvGui@@QEBAMXZ
@@ -422,6 +428,7 @@ EXPORTS
 	?setDirection@Strip@Groups@Panels@ofxCvGui@@QEAAXW4Direction@1234@@Z
 	?add@Scroll@Panels@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?clear@Scroll@Panels@ofxCvGui@@QEAAXXZ
+	?setInputRange@Texture@Panels@ofxCvGui@@QEAAXMM@Z
 	?setStyle@Texture@Panels@ofxCvGui@@QEAAXV?$shared_ptr@UStyle@Texture@Panels@ofxCvGui@@@std@@@Z
 	?add@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@Z
 	?clear@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXXZ
@@ -458,6 +465,15 @@ EXPORTS
 	?lockForWriting@Frame@ofxMachineVision@@QEAA_NXZ
 	?unlock@Frame@ofxMachineVision@@QEAAXXZ
 	?addFeature@Specification@ofxMachineVision@@QEAAXAEBW4Feature@2@@Z
+	??0Algorithm@ofxNonLinearFit@@QEAA@W4algorithm@nlopt@@W4Domain@01@@Z
+	?getCPPType@Algorithm@ofxNonLinearFit@@UEBA?AW4algorithm@nlopt@@XZ
+	?getCType@Algorithm@ofxNonLinearFit@@UEBA?AW4nlopt_algorithm@@XZ
+	?getDomain@Algorithm@ofxNonLinearFit@@UEBA?AW4Domain@12@XZ
+	?cacheModel@RigidBody@Models@ofxNonLinearFit@@UEAAXXZ
+	?evaluate@RigidBody@Models@ofxNonLinearFit@@UEBAXAEAURigidBodyDataPoint@23@@Z
+	?getCachedTransform@RigidBody@Models@ofxNonLinearFit@@QEBAAEBVofMatrix4x4@@XZ
+	?getParameterCount@RigidBody@Models@ofxNonLinearFit@@UEBAIXZ
+	?getResidual@RigidBody@Models@ofxNonLinearFit@@UEBANURigidBodyDataPoint@23@@Z
 	?addFloatArg@ofxOscMessage@@QEAAXM@Z
 	?getArgAsFloat@ofxOscMessage@@QEBAMH@Z
 	?getArgAsInt@ofxOscMessage@@QEBAHH@Z

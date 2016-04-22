@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Procedure/Base.h"
+#include "ofxRulr/Utils/SolveSet.h"
 #include "ofxMultiTrack/Frame.h"
 
 namespace ofxRulr {
@@ -22,7 +23,6 @@ namespace ofxRulr {
 					struct Marker {
 						ofVec2f center;
 						float radius;
-
 						ofVec3f position;
 					};
 
@@ -37,7 +37,10 @@ namespace ofxRulr {
 					void addCapture();
 					void findMarkerInFrame(const ofxMultiTrack::Frame & frame, vector<Marker> & markers);
 
-					void solveAll();
+					void setupSolveSets();
+					void triggerSolvers();
+
+					void applyTransforms();
 
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
@@ -48,7 +51,8 @@ namespace ofxRulr {
 					Step currStep;
 
 					chrono::system_clock::time_point captureStartTime;
-					map<size_t, map<string, vector<Marker>>> markerData;
+					map<size_t, map<size_t, vector<Marker>>> dataToEvaluate;
+					map<size_t, ofxRulr::Utils::SolveSet> solveSets;
 
 					ofTexture infrared;
 					ofImage threshold;

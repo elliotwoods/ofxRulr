@@ -62,6 +62,29 @@ namespace ofxRulr {
 							this->goToStep(StepSolve);
 						}
 					}
+					else if (this->currStep == StepSolve) {
+						if (this->solveSets.size() > 0) {
+							cout << "Solving..." << endl;
+							size_t numCompleted = 0;
+							for (auto & it : this->solveSets) {
+								if (it.second.didComplete()) {
+									++numCompleted;
+								}
+								auto result = it.second.getResult();
+								cout << "  " << it.first << ": ";
+								if (it.second.didComplete()) {
+									cout << " Finished in " << chrono::duration_cast<chrono::seconds>(result.totalTime).count() << " seconds with residual " << result.residual << endl;
+								}
+								else {
+									cout << " Running for " << chrono::duration_cast<chrono::seconds>(it.second.getRunningTime()).count() << " seconds with residual " << result.residual << endl;
+								}
+							}
+							if (numCompleted == this->solveSets.size()) {
+								//All done!
+								cout << "All done!" << endl;
+							}
+						}
+					}
 				}
 
 				//----------
@@ -92,7 +115,7 @@ namespace ofxRulr {
 					}
 					else if (this->currStep == StepCapture) {
 						//Clear previous data.
-						this->markerData.clear();
+						this->dataToEvaluate.clear();
 
 						panel = ofxCvGui::Panels::makeWidgets();
 						panel->addTitle("MultiTrack Capture");
@@ -120,9 +143,9 @@ namespace ofxRulr {
 									panel->add(strip);
 								}
 
-								auto pixels = ofxCvGui::Panels::makePixels(subscriber->getSubscriber()->getFrame().getDepth());
-								pixels->setHeight(360.0f);
-								strip->add(pixels);
+								auto texture = ofxCvGui::Panels::makeTexture(subscriber->getPreviewTexture());
+								texture->setHeight(360.0f);
+								strip->add(texture);
 
 								++count;
 							}
@@ -134,8 +157,32 @@ namespace ofxRulr {
 						buttonNext->setHeight(100.0f);
 					}
 					else if (this->currStep == StepSolve) {
+						this->setupSolveSets();
+						
 						panel = ofxCvGui::Panels::makeWidgets();
 						panel->addTitle("MultiTrack Solve");
+
+						for (auto & it : this->solveSets) {
+							//auto & solveSet = it.second;
+							//auto & result = solveSet.getResult();
+
+							//panel->addTitle("Solver " + ofToString(it.first), ofxCvGui::Widgets::Title::Level::H2);
+
+							//bool running = solveSet.isRunning();
+							//panel->addIndicator("Running", [this, &solveSet]() {
+
+							//	if (this->subscriber) {
+							//		if (this->subscriber->getSubscriber().isFrameNew()) {
+							//			return Widgets::Indicator::Status::Good;
+							//		}
+							//	}
+							//	return Widgets::Indicator::Status::Clear;
+							//});
+							//panel->addLiveValue("Residual", [this, result]() {
+							//	return result.residual;
+							//});
+
+						}
 
 						auto buttonBack = panel->addButton("Restart", [this]() {
 							this->goToStep(StepBegin);
@@ -143,24 +190,24 @@ namespace ofxRulr {
 
 						panel->addParameterGroup(this->parameters.solveTransform);
 
-						auto buttonSolve = panel->addButton("Solve", [this]() {
-							try {
-								this->solveAll();
-							}
-							RULR_CATCH_ALL_TO_ALERT
-						}, OF_KEY_RETURN);
-						buttonSolve->setHeight(100.0f);
-					}
-					//else if (this->currStep == StepConfirm) {
-					//	inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<float>, "Reprojection error [px]", [this]() {
-					//		return this->error;
-					//	}));
+						auto buttonConfirm = panel->addButton("Confirm", [this]() {
+							this->goToStep(StepConfirm);
+						});
+						buttonConfirm->setHeight(100.0f);
 
-					//	auto buttonNext = panel->addButton("Solve", [this]() {
-					//		this->goToStep(StepConfirm);
-					//	});
-					//	buttonNext->setHeight(100.0f);
-					//}
+						//Get crackin'
+						try {
+							this->triggerSolvers();
+						}
+						RULR_CATCH_ALL_TO_ALERT
+					}
+					else if (this->currStep == StepConfirm) {
+						auto buttonNext = panel->addButton("Apply", [this]() {
+							void applyTransforms();
+							this->goToStep(StepIdle);
+						});
+						buttonNext->setHeight(100.0f);
+					}
 
 					if (panel) {
 						//Build the dialogue
@@ -191,10 +238,10 @@ namespace ofxRulr {
 				//----------
 				void Calibrate::addCapture() {
 					size_t frameNum = ofGetFrameNum();
+					cout << "Add Capture " << frameNum << endl;
 
-					// Get the marker data for this frame.
+					//Get the marker data for this frame.
 					auto & subscribers = this->getInput<World>()->getSubscribers();
-					map<string, vector<Marker>> subscriberData;
 					for (auto & it : subscribers) {
 						auto weak_subscriber = it.second;
 						if (!weak_subscriber.expired()) {
@@ -216,8 +263,13 @@ namespace ofxRulr {
 									}
 
 									//Save the data.
-									auto & name = node->getName();
-									subscriberData[name] = markers;
+									auto & subscriberName = node->getName() + "_" + ofToString(it.first);
+									this->dataToEvaluate[it.first][frameNum] = markers;
+
+									cout << "  Subscriber " << subscriberName << " has " << markers.size() << " markers" << endl;
+									for (int i = 0; i < markers.size(); ++i) {
+										cout << "    " << i << ": " << markers[i].center << " => " << markers[i].position << endl;
+									}
 								}
 							}
 						}
@@ -253,8 +305,80 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Calibrate::solveAll() {
+				void Calibrate::setupSolveSets() {
+					//Clear previous solvers.
+					this->solveSets.clear();
 
+					//Go through subscribers in pairs.
+					for (auto & srcIt = this->dataToEvaluate.begin(); srcIt != this->dataToEvaluate.end(); ++srcIt) {
+						//Make sure there is a next element to work with.
+						auto & dstIt = next(srcIt);
+						if (dstIt != this->dataToEvaluate.end()) {
+							auto & srcData = srcIt->second;
+							auto & dstData = dstIt->second;
+							for (auto & kt : srcData) {
+								auto frameNum = kt.first;
+								//Make sure the frame numbers match.
+								if (dstData.find(frameNum) != dstData.end()) {
+									auto & srcMarkers = kt.second;
+									auto & dstMarkers = dstData[frameNum];
+									if (srcMarkers.size() == dstMarkers.size()) {
+										//Everything matches!
+
+										//Add the points.
+										vector<ofVec3f> srcPoints;
+										vector<ofVec3f> dstPoints;
+										for (int i = 0; i < srcMarkers.size(); ++i) {
+											srcPoints.push_back(srcMarkers[i].position);
+											dstPoints.push_back(dstMarkers[i].position);
+										}
+
+										// Set up the solver.
+										this->solveSets[dstIt->first].setup(srcPoints, dstPoints);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				//----------
+				void Calibrate::triggerSolvers() {
+					//Run all the solver threads!
+					for (auto & it : this->solveSets) {
+						it.second.trySolve();
+					}
+				}
+
+				//----------
+				void Calibrate::applyTransforms() {
+					//Apply the transforms in sequence.
+					ofMatrix4x4 currTransform;
+					bool firstFound = false;
+					auto & subscribers = this->getInput<World>()->getSubscribers();
+					for (auto & it : subscribers) {
+						auto weak_subscriber = it.second;
+						if (!weak_subscriber.expired()) {
+							auto subscriberNode = weak_subscriber.lock();
+							auto subscriber = subscriberNode->getSubscriber();
+							if (subscriber) {
+								if (!firstFound) {
+									currTransform = subscriberNode->getTransform();
+									firstFound = true;
+								}
+								else {
+									auto result = this->solveSets[it.first].getResult();
+									if (result.success) {
+										currTransform *= result.transform;
+										subscriberNode->setTransform(currTransform);
+									}
+									else {
+										ofLogWarning("Calibrate") << "Skipping unsuccessful result for Subscriber " << it.first;
+									}
+								}
+							}
+						}
+					}
 				}
 
 				//----------

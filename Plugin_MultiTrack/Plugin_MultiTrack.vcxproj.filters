@@ -75,6 +75,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.h">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\SolveSet.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Publisher.h">
       <Filter>src\ofxRulr\Nodes</Filter>
     </ClInclude>
@@ -112,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.cpp">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\SolveSet.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Publisher.cpp">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
