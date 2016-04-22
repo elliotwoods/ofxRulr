@@ -372,6 +372,8 @@ EXPORTS
 	?unbind@ofTexture@@QEBAXH@Z
 	?drawString@ofTrueTypeFont@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM@Z
 	?getStringBoundingBox@ofTrueTypeFont@@QEBA?AVofRectangle@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM_N@Z
+	?draw@ofVbo@@QEBAXHHH@Z
+	?setColorData@ofVbo@@QEAAXPEBV?$ofColor_@M@@HH@Z
 	?setIndexData@ofVbo@@QEAAXPEBIHH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec2f@@HH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec3f@@HH@Z
@@ -399,8 +401,10 @@ EXPORTS
 	??0Controller@ofxCvGui@@QEAA@XZ
 	??0Element@ofxCvGui@@QEAA@XZ
 	??0InspectController@ofxCvGui@@QEAA@XZ
+	?closeDialog@ofxCvGui@@YAXXZ
 	?getDefaultTypeface@ofxCvGui@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?makeElement@ofxCvGui@@YA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
+	?openDialog@ofxCvGui@@YAXV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@Z
 	?refreshInspector@ofxCvGui@@YAXPEAVIInspectable@1@@Z
 	?init@Builder@ofxCvGui@@QEAAXXZ
 	?addListenersToParent@Element@ofxCvGui@@QEAAXPEAV12@_N@Z
