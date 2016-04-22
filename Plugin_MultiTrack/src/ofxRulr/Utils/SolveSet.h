@@ -22,15 +22,23 @@ namespace ofxRulr {
 			void setup(const vector<ofVec3f> & srcPoints, const vector<ofVec3f> & dstPoints);
 			void trySolve();
 
-			bool didComplete() const;
+			void serialize(Json::Value &);
+			void deserialize(const Json::Value &);
 
+			bool didComplete() const;
 			const Result & getResult() const;
+
+			struct : ofParameterGroup {
+				ofParameter<float> trimOutliers{ "Trim Outliers [%]", 0, 0.0f, 1.0f };
+
+				PARAM_DECLARE("Options", trimOutliers);
+			} parameters;
 
 		protected:
 			ofxNonLinearFit::Models::RigidBody::DataSet dataSet;
 			ofxNonLinearFit::Models::RigidBody model;
 			shared_ptr<ofxNonLinearFit::Fit<ofxNonLinearFit::Models::RigidBody>> fitter;
-			
+
 			bool completed;
 			Result result;
 		};
