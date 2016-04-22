@@ -49,7 +49,7 @@ namespace ofxRulr {
 					chrono::system_clock::duration getTimeSinceCaptureStarted() const;
 
 					shared_ptr<ofxCvGui::Panels::Widgets> panel;
-					ofxCvGui::PanelPtr dialogue;
+					ofxCvGui::PanelPtr dialog;
 					Step currStep;
 
 					chrono::system_clock::time_point captureStartTime;

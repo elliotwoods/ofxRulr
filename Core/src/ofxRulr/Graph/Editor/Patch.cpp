@@ -75,7 +75,7 @@ namespace ofxRulr {
 				this->canvasElements->onMouse += [this](ofxCvGui::MouseArguments & args) {
 					if (args.isDoubleClicked(this)) {
 						this->birthLocation = args.local;
-						ofxCvGui::Controller::X().setActiveDialogue(this->nodeBrowser);
+						ofxCvGui::Controller::X().setActiveDialog(this->nodeBrowser);
 						this->nodeBrowser->reset();
 					}
 				};

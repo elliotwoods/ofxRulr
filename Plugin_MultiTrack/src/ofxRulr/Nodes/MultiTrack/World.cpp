@@ -80,9 +80,20 @@ namespace ofxRulr {
 								auto dimColor = color;
 								dimColor.setBrightness(50);
 								for (auto & joint : combinedBody.second.mergedBody.joints) {
+									switch (joint.second.getTrackingState()) {
+									case TrackingState::TrackingState_Tracked:
+										ofFill();
+									case TrackingState::TrackingState_Inferred:
+										ofNoFill();
+										break;
+									default:
+										continue;
+										break;
+									}
+
 									ofPushMatrix();
 									{
-										ofTranslate(joint.second.getPosition() * ofVec3f(1, 0, 1));
+										ofTranslate(joint.second.getPosition() * ofVec3f(1, 0, 1) + ofVec3f(0, 0.005, 0));
 										ofRotate(90, 1, 0, 0);
 										ofDrawCircle(ofVec3f(), this->parameters.fusion.mergeDistanceThreshold);
 									}
