@@ -55,8 +55,11 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::update() {
-					if (this->currStep == StepCapture) {
-						this->addCapture();
+					if (this->currStep == StepBegin) {
+						this->captureFrame(CapturePreview);
+					}
+					else if (this->currStep == StepCapture) {
+						this->captureFrame(CaptureSolve);
 
 						if (this->getTimeSinceCaptureStarted() > chrono::seconds(this->parameters.capture.duration)) {
 							this->goToStep(StepSolve);
@@ -64,25 +67,27 @@ namespace ofxRulr {
 					}
 					else if (this->currStep == StepSolve) {
 						if (this->solveSets.size() > 0) {
-							cout << "Solving..." << endl;
-							size_t numCompleted = 0;
-							for (auto & it : this->solveSets) {
-								if (it.second.didComplete()) {
-									++numCompleted;
+							ofxRulr::Utils::ScopedProcess scopedProcess("Solving");
+							try {
+								size_t numCompleted = 0;
+								for (auto & it : this->solveSets) {
+									if (it.second.didComplete()) {
+										++numCompleted;
+									}
+									auto result = it.second.getResult();
+									cout << "  " << it.first << ": ";
+									if (it.second.didComplete()) {
+										cout << " Finished in " << chrono::duration_cast<chrono::seconds>(result.totalTime).count() << " seconds with residual " << result.residual << endl;
+									}
+									else {
+										cout << " Running for " << chrono::duration_cast<chrono::seconds>(it.second.getRunningTime()).count() << " seconds with residual " << result.residual << endl;
+									}
 								}
-								auto result = it.second.getResult();
-								cout << "  " << it.first << ": ";
-								if (it.second.didComplete()) {
-									cout << " Finished in " << chrono::duration_cast<chrono::seconds>(result.totalTime).count() << " seconds with residual " << result.residual << endl;
-								}
-								else {
-									cout << " Running for " << chrono::duration_cast<chrono::seconds>(it.second.getRunningTime()).count() << " seconds with residual " << result.residual << endl;
+								if (numCompleted == this->solveSets.size()) {
+									scopedProcess.end();
 								}
 							}
-							if (numCompleted == this->solveSets.size()) {
-								//All done!
-								cout << "All done!" << endl;
-							}
+							RULR_CATCH_ALL_TO_ALERT
 						}
 					}
 				}
@@ -107,6 +112,41 @@ namespace ofxRulr {
 						panel->addParameterGroup(parameters.capture);
 						panel->addParameterGroup(parameters.findMarker);
 
+						auto & subscribers = this->getInput<World>()->getSubscribers();
+						size_t count = 0;
+						shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
+						for (auto & it : subscribers) {
+							auto weak_subscriber = it.second;
+							if (!weak_subscriber.expired()) {
+								auto subscriber = weak_subscriber.lock();
+
+								if (count % 2 == 0) {
+									strip = ofxCvGui::Panels::Groups::makeStrip();
+									strip->setHeight(360.0f);
+									panel->add(strip);
+								}
+
+								auto texture = ofxCvGui::Panels::makeTexture(subscriber->getPreviewTexture());
+								texture->setHeight(360.0f);
+								strip->add(texture);
+
+								auto key = it.first;
+								texture->onDrawImage += [this, key](ofxCvGui::DrawImageArguments & args) {
+									ofPushStyle();
+									ofSetColor(255, 0, 0, 127);
+									{
+										auto & markers = this->dataToPreview[key];
+										for (Marker & m : markers) {
+											ofDrawCircle(m.center, m.radius);
+										}
+									}
+									ofPopStyle();
+								};
+
+								++count;
+							}
+						}
+
 						auto buttonNext = panel->addButton("Begin Capture", [this]() {
 							this->captureStartTime = chrono::system_clock::now();
 							this->goToStep(StepCapture);
@@ -115,7 +155,7 @@ namespace ofxRulr {
 					}
 					else if (this->currStep == StepCapture) {
 						//Clear previous data.
-						this->dataToEvaluate.clear();
+						this->dataToSolve.clear();
 
 						panel = ofxCvGui::Panels::makeWidgets();
 						panel->addTitle("MultiTrack Capture");
@@ -203,7 +243,7 @@ namespace ofxRulr {
 					}
 					else if (this->currStep == StepConfirm) {
 						auto buttonNext = panel->addButton("Apply", [this]() {
-							void applyTransforms();
+							this->applyTransforms();
 							this->goToStep(StepIdle);
 						});
 						buttonNext->setHeight(100.0f);
@@ -236,39 +276,62 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Calibrate::addCapture() {
+				void Calibrate::captureFrame(CaptureMode mode) {
 					size_t frameNum = ofGetFrameNum();
-					cout << "Add Capture " << frameNum << endl;
+					Marker marker;
 
 					//Get the marker data for this frame.
 					auto & subscribers = this->getInput<World>()->getSubscribers();
 					for (auto & it : subscribers) {
 						auto weak_subscriber = it.second;
 						if (!weak_subscriber.expired()) {
-							auto node = weak_subscriber.lock();
-							auto subscriber = node->getSubscriber();
+							auto subscriberNode = weak_subscriber.lock();
+							auto subscriber = subscriberNode->getSubscriber();
 							if (subscriber) {
 								if (subscriber->isFrameNew()) {
 									//Find the Markers in the frame.
-									vector<Marker> markers;
-									findMarkerInFrame(subscriber->getFrame(), markers);
+									vector<Marker> markers = findMarkersInFrame(subscriber->getFrame());
 
-									//Map the Marker coordinates to world space.
-									auto height = subscriber->getFrame().getDepth().getHeight();
-									auto depth = subscriber->getFrame().getDepth().getData();
-									auto lut = node->getDepthToWorldLUT().getData();
-									for (auto & m : markers) {
-										int idx = m.center.y * height + m.center.x;
-										m.position = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depth[idx] * 0.001f;
+									if (mode == CapturePreview) {
+										//Keep all found Markers, don't bother mapping to 3D.
+										if (this->dataToPreview.find(it.first) == this->dataToPreview.end()) {
+											this->dataToPreview.emplace(it.first, markers);
+										}
+										else {
+											this->dataToPreview[it.first] = markers;
+										}
 									}
+									else {
+										if (markers.size() == 1) {
+											auto & marker = markers.front();
 
-									//Save the data.
-									auto & subscriberName = node->getName() + "_" + ofToString(it.first);
-									this->dataToEvaluate[it.first][frameNum] = markers;
+											//Map the Marker coordinates to world space.
+											auto height = subscriber->getFrame().getDepth().getHeight();
+											auto depth = subscriber->getFrame().getDepth().getData();
+											auto lut = subscriberNode->getDepthToWorldLUT().getData();
+											if (lut == nullptr) {
+												ofLogError("Calibrate") << "No Depth to World LUT found for Subscriber " << it.first;
+												throw;
+											}
+											int idx = marker.center.y * height + marker.center.x;
+											marker.position = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depth[idx] * 0.001f;
 
-									cout << "  Subscriber " << subscriberName << " has " << markers.size() << " markers" << endl;
-									for (int i = 0; i < markers.size(); ++i) {
-										cout << "    " << i << ": " << markers[i].center << " => " << markers[i].position << endl;
+											//If the position is valid, save the data.
+											if (marker.position != ofVec3f::zero()) {
+												if (this->dataToSolve.find(it.first) == this->dataToSolve.end()) {
+													map<size_t, Marker> frameToMarker;
+													frameToMarker.emplace(frameNum, marker);
+													this->dataToSolve.emplace(it.first, frameToMarker);
+												}
+												else if (this->dataToSolve[it.first].find(frameNum) == this->dataToSolve[it.first].end()) {
+													this->dataToSolve[it.first].emplace(frameNum, marker);
+												}
+												else {
+													this->dataToSolve[it.first][frameNum] = marker;
+												}
+												ofLogVerbose("Calibrate") << "Frame " << frameNum << ": Subscriber " << it.first << " found marker " << marker.center << " => " << marker.position << endl;
+											}
+										}
 									}
 								}
 							}
@@ -277,7 +340,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Calibrate::findMarkerInFrame(const ofxMultiTrack::Frame & frame, vector<Marker> & markers) {
+				vector<Calibrate::Marker> Calibrate::findMarkersInFrame(const ofxMultiTrack::Frame & frame) {
 					const auto & infrared = frame.getInfrared();
 					this->infrared.loadData(infrared);
 
@@ -294,7 +357,7 @@ namespace ofxRulr {
 					vector<vector<cv::Point2i>> contours;
 					cv::findContours(infraRed8Mat, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
-					markers.clear();
+					vector<Marker> markers;
 					for (auto & contour : contours) {
 						if (cv::contourArea(contour) >= this->parameters.findMarker.minimumArea) {
 							Marker marker;
@@ -302,6 +365,8 @@ namespace ofxRulr {
 							markers.push_back(marker);
 						}
 					}
+
+					return markers;
 				}
 
 				//----------
@@ -310,33 +375,29 @@ namespace ofxRulr {
 					this->solveSets.clear();
 
 					//Go through subscribers in pairs.
-					for (auto & srcIt = this->dataToEvaluate.begin(); srcIt != this->dataToEvaluate.end(); ++srcIt) {
+					for (auto & srcIt = this->dataToSolve.begin(); srcIt != this->dataToSolve.end(); ++srcIt) {
 						//Make sure there is a next element to work with.
 						auto & dstIt = next(srcIt);
-						if (dstIt != this->dataToEvaluate.end()) {
-							auto & srcData = srcIt->second;
-							auto & dstData = dstIt->second;
-							for (auto & kt : srcData) {
-								auto frameNum = kt.first;
+						if (dstIt != this->dataToSolve.end()) {
+							vector<ofVec3f> srcPoints;
+							vector<ofVec3f> dstPoints;
+							
+							auto & srcFrames = srcIt->second;
+							auto & dstFrames = dstIt->second;
+							for (auto & kIt : srcFrames) {
+								auto frameNum = kIt.first;
 								//Make sure the frame numbers match.
-								if (dstData.find(frameNum) != dstData.end()) {
-									auto & srcMarkers = kt.second;
-									auto & dstMarkers = dstData[frameNum];
-									if (srcMarkers.size() == dstMarkers.size()) {
-										//Everything matches!
-
-										//Add the points.
-										vector<ofVec3f> srcPoints;
-										vector<ofVec3f> dstPoints;
-										for (int i = 0; i < srcMarkers.size(); ++i) {
-											srcPoints.push_back(srcMarkers[i].position);
-											dstPoints.push_back(dstMarkers[i].position);
-										}
-
-										// Set up the solver.
-										this->solveSets[dstIt->first].setup(srcPoints, dstPoints);
-									}
+								if (dstFrames.find(frameNum) != dstFrames.end()) {
+									//Add the points.
+									srcPoints.push_back(srcFrames[frameNum].position);
+									dstPoints.push_back(dstFrames[frameNum].position);
 								}
+							}
+
+							if (srcPoints.size()) {
+								// Set up the solver.
+								auto & solver = this->solveSets[dstIt->first];
+								solver.setup(srcPoints, dstPoints);
 							}
 						}
 					}

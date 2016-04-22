@@ -20,6 +20,11 @@ namespace ofxRulr {
 						NumSteps
 					};
 
+					enum CaptureMode {
+						CapturePreview,
+						CaptureSolve
+					};
+
 					struct Marker {
 						ofVec2f center;
 						float radius;
@@ -34,8 +39,8 @@ namespace ofxRulr {
 
 					void goToStep(Step nextStep);
 
-					void addCapture();
-					void findMarkerInFrame(const ofxMultiTrack::Frame & frame, vector<Marker> & markers);
+					void captureFrame(CaptureMode mode);
+					vector<Marker> findMarkersInFrame(const ofxMultiTrack::Frame & frame);
 
 					void setupSolveSets();
 					void triggerSolvers();
@@ -51,7 +56,8 @@ namespace ofxRulr {
 					Step currStep;
 
 					chrono::system_clock::time_point captureStartTime;
-					map<size_t, map<size_t, vector<Marker>>> dataToEvaluate;
+					map<size_t, vector<Marker>> dataToPreview;
+					map<size_t, map<size_t, Marker>> dataToSolve;
 					map<size_t, ofxRulr::Utils::SolveSet> solveSets;
 
 					ofTexture infrared;
