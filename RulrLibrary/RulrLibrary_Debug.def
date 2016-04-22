@@ -66,6 +66,7 @@ EXPORTS
 	?ofDrawSphere@@YAXAEBVofVec3f@@M@Z
 	?ofEnableAlphaBlending@@YAXXZ
 	?ofEnableDepthTest@@YAXXZ
+	?ofFill@@YAXXZ
 	?ofGetCurrentWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@XZ
 	?ofGetElapsedTimef@@YAMXZ
 	?ofGetElapsedTimeMicros@@YA_KXZ
@@ -83,6 +84,7 @@ EXPORTS
 	?ofPopStyle@@YAXXZ
 	?ofPushMatrix@@YAXXZ
 	?ofPushStyle@@YAXXZ
+	?ofRandom@@YAMM@Z
 	?ofRotate@@YAXMMMM@Z
 	?ofRunApp@@YAHPEAVofBaseApp@@@Z
 	?ofScale@@YAXMMM@Z
@@ -154,6 +156,7 @@ EXPORTS
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
 	?limit@?$ofColor_@E@@SAMXZ
 	?setBrightness@?$ofColor_@E@@QEAAXM@Z
+	?setHsb@?$ofColor_@E@@QEAAXMMMM@Z
 	?setHue@?$ofColor_@E@@QEAAXM@Z
 	?setHueAngle@?$ofColor_@E@@QEAAXM@Z
 	?white@?$ofColor_@E@@2V1@B

@@ -31,7 +31,7 @@ namespace ofxRulr {
 					this->currStep = StepIdle;
 
 					this->panel = ofxCvGui::Panels::makeWidgets();
-					auto button = this->panel->addButton("Open Dialogue", [this]() {
+					auto button = this->panel->addButton("Open Capture", [this]() {
 						this->goToStep(StepBegin);
 					});
 
@@ -79,7 +79,7 @@ namespace ofxRulr {
 
 					if (this->currStep == StepIdle) return;
 
-					auto addPreviews = [this](shared_ptr<ofxCvGui::Panels::Widgets> & panel) {
+					auto addPreviews = [this](shared_ptr<ofxCvGui::Panels::Widgets> & panel, bool history) {
 						auto & subscribers = this->getInput<World>()->getSubscribers();
 						size_t count = 0;
 						shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
@@ -99,13 +99,31 @@ namespace ofxRulr {
 								strip->add(texture);
 
 								auto key = it.first;
-								texture->onDrawImage += [this, key](ofxCvGui::DrawImageArguments & args) {
+								texture->onDrawImage += [this, key, history](ofxCvGui::DrawImageArguments & args) {
 									ofPushStyle();
-									ofSetColor(255, 0, 0, 127);
 									{
-										auto & markers = this->dataToPreview[key];
-										for (Marker & m : markers) {
-											ofDrawCircle(m.center, m.radius);
+										ofSetColor(this->getSubscriberColour(key));
+										
+										if (history) {
+											const auto & frames = this->dataToSolve[key];
+											if (frames.size()) {
+												const auto lastFrame = (*frames.rbegin()).first;
+												for (const auto & it : frames) {
+													ofDrawCircle(it.second.center, MAX(it.second.radius - lastFrame + it.first, it.second.radius * 0.25f));
+												}
+
+												ofNoFill();
+												for (const auto & it : frames) {
+													ofDrawCircle(it.second.center, it.second.radius);
+												}
+											}
+										}
+										{
+											ofFill();
+											const auto & markers = this->dataToPreview[key];
+											for (const auto & m : markers) {
+												ofDrawCircle(m.center, m.radius);
+											}
 										}
 									}
 									ofPopStyle();
@@ -128,7 +146,7 @@ namespace ofxRulr {
 						panel->addParameterGroup(parameters.capture);
 						panel->addParameterGroup(parameters.findMarker);
 
-						addPreviews(panel);
+						addPreviews(panel, false);
 
 						auto buttonNext = panel->addButton("Begin Capture", [this]() {
 							this->goToStep(StepCapture);
@@ -152,7 +170,7 @@ namespace ofxRulr {
 							return (this->parameters.capture.duration * 1000.0f - chrono::duration_cast<chrono::milliseconds>(this->getTimeSinceCaptureStarted()).count()) / 1000.0f;
 						});
 
-						addPreviews(panel);
+						addPreviews(panel, true);
 
 						auto buttonNext = panel->addButton("Solve", [this]() {
 							this->goToStep(StepSolve);
@@ -558,6 +576,17 @@ namespace ofxRulr {
 					}
 
 					ofxRulr::Utils::Serializable::deserialize(json["parameters"], this->parameters);
+				}
+
+				//----------
+				const ofColor & Calibrate::getSubscriberColour(size_t key) {
+					if (this->subscriberColours.find(key) == this->subscriberColours.end()) {
+						float hue = ofRandom(255);
+						ofColor colour;
+						colour.setHsb(hue, 255, 200);
+						this->subscriberColours.emplace(key, colour);
+					}
+					return this->subscriberColours[key];
 				}
 			}
 		}

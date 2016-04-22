@@ -45,6 +45,8 @@ namespace ofxRulr {
 
 					void applyTransforms();
 
+					const ofColor & getSubscriberColour(size_t key);
+
 				protected:
 					chrono::system_clock::duration getTimeSinceCaptureStarted() const;
 
@@ -53,6 +55,7 @@ namespace ofxRulr {
 					Step currStep;
 
 					chrono::system_clock::time_point captureStartTime;
+					map<size_t, ofColor> subscriberColours;
 					map<size_t, vector<Marker>> dataToPreview;
 					map<size_t, map<size_t, Marker>> dataToSolve;
 					map<size_t, ofxRulr::Utils::SolveSet> solveSets;
