@@ -41,7 +41,12 @@ namespace ofxRulr {
 						PARAM_DECLARE("Connection", publisherAddress, controlPort, receivingPort, connect);
 					} connection;
 
-					PARAM_DECLARE("Receiver", connection);
+					struct : ofParameterGroup {
+						ofParameter<string> depthToWorldTableFile{ "Depth to World table file", "" };
+						PARAM_DECLARE("Calibration", depthToWorldTableFile);
+					} calibration;
+
+					PARAM_DECLARE("Receiver", connection, calibration);
 				} parameters;
 
 				shared_ptr<ofxMultiTrack::Subscriber> subscriber;
@@ -49,6 +54,9 @@ namespace ofxRulr {
 
 				ofFloatPixels depthToWorldLUT;
 				ofTexture previewTexture;
+
+				void depthToWorldTableFileCallback(string &);
+				void loadDepthToWorldTableFile();
 			};
 		}
 	}
