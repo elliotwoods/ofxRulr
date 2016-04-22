@@ -123,11 +123,35 @@ namespace ofxRulr {
 						selectedChannel->getParameterUntyped();
 						auto type = selectedChannel->getValueType();
 						switch (type) {
-						case Channel::Type::Int:
+						case Channel::Type::Int32:
 						{
-							const auto & parameter = selectedChannel->getParameter<int>();
-							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "int"; }));
-							this->detailView->add(new Widgets::EditableValue<int>(*parameter));
+							const auto & parameter = selectedChannel->getParameter<int32_t>();
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "int32_t"; }));
+							this->detailView->add(new Widgets::EditableValue<int32_t>(*parameter));
+							break;
+						}
+
+						case Channel::Type::Int64:
+						{
+							const auto & parameter = selectedChannel->getParameter<int64_t>();
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "int64_t"; }));
+							this->detailView->add(new Widgets::EditableValue<int64_t>(*parameter));
+							break;
+						}
+
+						case Channel::Type::UInt32:
+						{
+							const auto & parameter = selectedChannel->getParameter<uint32_t>();
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "uint32_t"; }));
+							this->detailView->add(new Widgets::EditableValue<uint32_t>(*parameter));
+							break;
+						}
+
+						case Channel::Type::UInt64:
+						{
+							const auto & parameter = selectedChannel->getParameter<uint64_t>();
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "uint64_t"; }));
+							this->detailView->add(new Widgets::EditableValue<uint64_t>(*parameter));
 							break;
 						}
 							

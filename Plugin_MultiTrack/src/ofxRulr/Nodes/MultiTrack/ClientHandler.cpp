@@ -337,9 +337,24 @@ namespace ofxRulr {
 
 					auto valueType = subChannel->getValueType();
 					switch (valueType) {
-					case Channel::Type::Int:
+					case Channel::Type::Int32:
 					{
-						message.pushInt32(subChannel->getValue<int>());
+						message.pushInt32(subChannel->getValue<int32_t>());
+						break;
+					}
+					case Channel::Type::Int64:
+					{
+						message.pushInt64(subChannel->getValue<int64_t>());
+						break;
+					}
+					case Channel::Type::UInt32:
+					{
+						message.pushInt32(subChannel->getValue<uint32_t>());
+						break;
+					}
+					case Channel::Type::UInt64:
+					{
+						message.pushInt64(subChannel->getValue<uint64_t>());
 						break;
 					}
 					case Channel::Type::Float:

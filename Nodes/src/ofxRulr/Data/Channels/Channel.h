@@ -19,7 +19,10 @@ namespace ofxRulr {
 			public:
 				enum Type {
 					Undefined,
-					Int,
+					Int32,
+					Int64,
+					UInt32,
+					UInt64,
 					Float,
 					String,
 					Vec3f,
@@ -72,8 +75,17 @@ namespace ofxRulr {
 						this->parameter = parameter;
 					}
 
-					if (typeid(T) == typeid(int)) {
-						this->type = Type::Int;
+					if (typeid(T) == typeid(int32_t)) {
+						this->type = Type::Int32;
+					}
+					if (typeid(T) == typeid(int64_t)) {
+						this->type = Type::Int64;
+					}
+					if (typeid(T) == typeid(uint32_t)) {
+						this->type = Type::UInt32;
+					}
+					if (typeid(T) == typeid(uint64_t)) {
+						this->type = Type::UInt64;
 					}
 					else if (typeid(T) == typeid(float)) {
 						this->type = Type::Float;
