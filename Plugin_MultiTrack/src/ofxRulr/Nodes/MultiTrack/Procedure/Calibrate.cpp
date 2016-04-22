@@ -423,13 +423,12 @@ namespace ofxRulr {
 								}
 								else {
 									auto & result = this->solveSets[it.first].getResult();
-									if (result.success) {
-										currTransform *= result.transform;
-										subscriberNode->setTransform(currTransform);
+									if (!result.success) {
+										ofLogWarning("Calibrate") << "Result for Subscriber " << it.first << " was unsuccessful, use at your own risk!";
 									}
-									else {
-										ofLogWarning("Calibrate") << "Skipping unsuccessful result for Subscriber " << it.first;
-									}
+
+									currTransform *= result.transform;
+									subscriberNode->setTransform(currTransform);
 								}
 							}
 						}
