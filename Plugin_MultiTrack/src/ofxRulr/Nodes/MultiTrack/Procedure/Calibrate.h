@@ -15,14 +15,9 @@ namespace ofxRulr {
 						StepBegin,
 						StepCapture,
 						StepSolve,
-						StepConfirm,
+						StepApply,
 
 						NumSteps
-					};
-
-					enum CaptureMode {
-						CapturePreview,
-						CaptureSolve
 					};
 
 					struct Marker {
@@ -39,7 +34,7 @@ namespace ofxRulr {
 
 					void goToStep(Step nextStep);
 
-					void captureFrame(CaptureMode mode);
+					void captureFrame(bool record);
 					vector<Marker> findMarkersInFrame(const ofxMultiTrack::Frame & frame);
 
 					void setupSolveSets();

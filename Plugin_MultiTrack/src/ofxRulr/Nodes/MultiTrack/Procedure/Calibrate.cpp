@@ -56,38 +56,13 @@ namespace ofxRulr {
 				//----------
 				void Calibrate::update() {
 					if (this->currStep == StepBegin) {
-						this->captureFrame(CapturePreview);
+						this->captureFrame(false);
 					}
 					else if (this->currStep == StepCapture) {
-						this->captureFrame(CaptureSolve);
+						this->captureFrame(true);
 
 						if (this->getTimeSinceCaptureStarted() > chrono::seconds(this->parameters.capture.duration)) {
 							this->goToStep(StepSolve);
-						}
-					}
-					else if (this->currStep == StepSolve) {
-						if (this->solveSets.size() > 0) {
-							ofxRulr::Utils::ScopedProcess scopedProcess("Solving");
-							try {
-								size_t numCompleted = 0;
-								for (auto & it : this->solveSets) {
-									if (it.second.didComplete()) {
-										++numCompleted;
-									}
-									auto result = it.second.getResult();
-									cout << "  " << it.first << ": ";
-									if (it.second.didComplete()) {
-										cout << " Finished in " << chrono::duration_cast<chrono::seconds>(result.totalTime).count() << " seconds with residual " << result.residual << endl;
-									}
-									else {
-										cout << " Running for " << chrono::duration_cast<chrono::seconds>(it.second.getRunningTime()).count() << " seconds with residual " << result.residual << endl;
-									}
-								}
-								if (numCompleted == this->solveSets.size()) {
-									scopedProcess.end();
-								}
-							}
-							RULR_CATCH_ALL_TO_ALERT
 						}
 					}
 				}
@@ -102,16 +77,9 @@ namespace ofxRulr {
 					ofxCvGui::closeDialogue();
 					this->dialogue.reset();
 
-					shared_ptr<ofxCvGui::Panels::Widgets> panel;
-					if (this->currStep == StepBegin) {
-						panel = ofxCvGui::Panels::makeWidgets();
-						panel->addTitle("MultiTrack Calibration");
-						panel->addLiveValue<string>("Instructions", [this]() {
-							return "Pick up your marker and do the thing.";
-						});
-						panel->addParameterGroup(parameters.capture);
-						panel->addParameterGroup(parameters.findMarker);
+					if (this->currStep == StepIdle) return;
 
+					auto addPreviews = [this](shared_ptr<ofxCvGui::Panels::Widgets> & panel) {
 						auto & subscribers = this->getInput<World>()->getSubscribers();
 						size_t count = 0;
 						shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
@@ -146,9 +114,23 @@ namespace ofxRulr {
 								++count;
 							}
 						}
+					};
+
+					shared_ptr<ofxCvGui::Panels::Widgets> panel;
+					panel = ofxCvGui::Panels::makeWidgets();
+					panel->addTitle("MultiTrack");
+					
+					if (this->currStep == StepBegin) {
+						//GUI.
+						panel->addTitle("Step 1: Get Ready!", ofxCvGui::Widgets::Title::Level::H2);
+						panel->addTitle("Grab your marker and make sure it's the only red thing in the previews below. Adjust the parameters if necessary.", ofxCvGui::Widgets::Title::Level::H3);
+
+						panel->addParameterGroup(parameters.capture);
+						panel->addParameterGroup(parameters.findMarker);
+
+						addPreviews(panel);
 
 						auto buttonNext = panel->addButton("Begin Capture", [this]() {
-							this->captureStartTime = chrono::system_clock::now();
 							this->goToStep(StepCapture);
 						});
 						buttonNext->setHeight(100.0f);
@@ -156,40 +138,21 @@ namespace ofxRulr {
 					else if (this->currStep == StepCapture) {
 						//Clear previous data.
 						this->dataToSolve.clear();
+						this->solveSets.clear();
 
-						panel = ofxCvGui::Panels::makeWidgets();
-						panel->addTitle("MultiTrack Capture");
-
-						auto buttonBack = panel->addButton("Restart", [this]() {
-							this->goToStep(StepBegin);
-						});
+						//Start the timer.
+						this->captureStartTime = chrono::system_clock::now(); 
+						
+						//GUI.
+						panel->addTitle("Step 2: Capture", ofxCvGui::Widgets::Title::Level::H2);
+						panel->addTitle("Stop reading this and walk across the entire sensor array, making sure the marker is visible.", ofxCvGui::Widgets::Title::Level::H3);
 
 						panel->addLiveValue<float>("Capture remaining [s]", [this]() {
 							// Using * 1000.0f so we get floats.
 							return (this->parameters.capture.duration * 1000.0f - chrono::duration_cast<chrono::milliseconds>(this->getTimeSinceCaptureStarted()).count()) / 1000.0f;
 						});
 
-						auto & subscribers = this->getInput<World>()->getSubscribers();
-						size_t count = 0;
-						shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
-						for (auto & it : subscribers) {
-							auto weak_subscriber = it.second;
-							if (!weak_subscriber.expired()) {
-								auto subscriber = weak_subscriber.lock();
-
-								if (count % 2 == 0) {
-									strip = ofxCvGui::Panels::Groups::makeStrip();
-									strip->setHeight(360.0f);
-									panel->add(strip);
-								}
-
-								auto texture = ofxCvGui::Panels::makeTexture(subscriber->getPreviewTexture());
-								texture->setHeight(360.0f);
-								strip->add(texture);
-
-								++count;
-							}
-						}
+						addPreviews(panel);
 
 						auto buttonNext = panel->addButton("Solve", [this]() {
 							this->goToStep(StepSolve);
@@ -197,52 +160,58 @@ namespace ofxRulr {
 						buttonNext->setHeight(100.0f);
 					}
 					else if (this->currStep == StepSolve) {
+						//Setup the data set if necessary.
 						this->setupSolveSets();
 						
-						panel = ofxCvGui::Panels::makeWidgets();
-						panel->addTitle("MultiTrack Solve");
-
-						for (auto & it : this->solveSets) {
-							//auto & solveSet = it.second;
-							//auto & result = solveSet.getResult();
-
-							//panel->addTitle("Solver " + ofToString(it.first), ofxCvGui::Widgets::Title::Level::H2);
-
-							//bool running = solveSet.isRunning();
-							//panel->addIndicator("Running", [this, &solveSet]() {
-
-							//	if (this->subscriber) {
-							//		if (this->subscriber->getSubscriber().isFrameNew()) {
-							//			return Widgets::Indicator::Status::Good;
-							//		}
-							//	}
-							//	return Widgets::Indicator::Status::Clear;
-							//});
-							//panel->addLiveValue("Residual", [this, result]() {
-							//	return result.residual;
-							//});
-
-						}
-
-						auto buttonBack = panel->addButton("Restart", [this]() {
-							this->goToStep(StepBegin);
-						});
+						//GUI.
+						panel->addTitle("Step 3: Solve", ofxCvGui::Widgets::Title::Level::H2);
+						panel->addTitle("The computer will now figure out how the sensors are arranged. Hit the button below, and adjust the parameters until you are satisfied.", ofxCvGui::Widgets::Title::Level::H3);
 
 						panel->addParameterGroup(this->parameters.solveTransform);
 
-						auto buttonConfirm = panel->addButton("Confirm", [this]() {
-							this->goToStep(StepConfirm);
+						auto buttonSolve = panel->addButton("Solve", [this]() {
+							try {
+								ofxRulr::Utils::ScopedProcess scopedProcess("Solve");
+
+								//Get crackin'
+								this->triggerSolvers();
+
+								//Repeat.
+								this->goToStep(StepSolve);
+
+								scopedProcess.end();
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+						});
+						buttonSolve->setHeight(100.0f);
+
+						for (auto & it : this->solveSets) {
+							auto & result = it.second.getResult();
+
+							panel->addTitle("Solver " + ofToString(it.first), ofxCvGui::Widgets::Title::Level::H2);
+
+							panel->addIndicator("Success", [this, result]() {
+								if (result.success) {
+									return ofxCvGui::Widgets::Indicator::Status::Good;
+								}
+								return ofxCvGui::Widgets::Indicator::Status::Clear;
+							});
+							panel->addLiveValue<float>("Residual", [this, result]() {
+								return result.residual;
+							});
+						}
+
+						auto buttonConfirm = panel->addButton("Apply", [this]() {
+							this->goToStep(StepApply);
 						});
 						buttonConfirm->setHeight(100.0f);
-
-						//Get crackin'
-						try {
-							this->triggerSolvers();
-						}
-						RULR_CATCH_ALL_TO_ALERT
 					}
-					else if (this->currStep == StepConfirm) {
-						auto buttonNext = panel->addButton("Apply", [this]() {
+					else if (this->currStep == StepApply) {
+						//GUI.
+						panel->addTitle("Step 4: Apply", ofxCvGui::Widgets::Title::Level::H2);
+						panel->addTitle("Hit the button below to apply the transformations to the nodes, and exit this wizard.", ofxCvGui::Widgets::Title::Level::H3);
+
+						auto buttonNext = panel->addButton("Done!", [this]() {
 							this->applyTransforms();
 							this->goToStep(StepIdle);
 						});
@@ -257,10 +226,37 @@ namespace ofxRulr {
 						//Add the common panel.
 						{
 							auto commonPanel = ofxCvGui::Panels::makeWidgets();
-							auto button = commonPanel->addButton("Close", [this]() {
+
+							auto buttonClose = commonPanel->addButton("Close", [this]() {
 								this->goToStep(StepIdle);
 							});
-							button->setHeight(50.0f);
+							buttonClose->setHeight(50.0f);
+							commonPanel->addSpacer();
+							auto toggleBegin = commonPanel->addToggle("Begin", [this]() {
+								return (this->currStep == StepBegin);
+							}, [this](bool) {
+								this->goToStep(StepBegin);
+							});
+							toggleBegin->setHeight(50.0f);
+							auto toggleCapture = commonPanel->addToggle("Capture", [this]() {
+								return (this->currStep == StepCapture);
+							}, [this](bool) {
+								this->goToStep(StepCapture);
+							});
+							toggleCapture->setHeight(50.0f);
+							auto toggleSolve = commonPanel->addToggle("Solve", [this]() {
+								return (this->currStep == StepSolve);
+							}, [this](bool) {
+								this->goToStep(StepSolve);
+							});
+							toggleSolve->setHeight(50.0f);
+							auto toggleApply = commonPanel->addToggle("Apply", [this]() {
+								return (this->currStep == StepApply);
+							}, [this](bool) {
+								this->goToStep(StepApply);
+							});
+							toggleApply->setHeight(50.0f);
+
 							strip->add(commonPanel);
 						}
 
@@ -276,7 +272,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Calibrate::captureFrame(CaptureMode mode) {
+				void Calibrate::captureFrame(bool record) {
 					size_t frameNum = ofGetFrameNum();
 					Marker marker;
 
@@ -288,20 +284,19 @@ namespace ofxRulr {
 							auto subscriberNode = weak_subscriber.lock();
 							auto subscriber = subscriberNode->getSubscriber();
 							if (subscriber) {
-								if (subscriber->isFrameNew()) {
+								//if (subscriber->isFrameNew()) {
 									//Find the Markers in the frame.
 									vector<Marker> markers = findMarkersInFrame(subscriber->getFrame());
 
-									if (mode == CapturePreview) {
-										//Keep all found Markers, don't bother mapping to 3D.
-										if (this->dataToPreview.find(it.first) == this->dataToPreview.end()) {
-											this->dataToPreview.emplace(it.first, markers);
-										}
-										else {
-											this->dataToPreview[it.first] = markers;
-										}
+									//Keep all found Markers for preview, don't bother mapping to 3D.
+									if (this->dataToPreview.find(it.first) == this->dataToPreview.end()) {
+										this->dataToPreview.emplace(it.first, markers);
 									}
 									else {
+										this->dataToPreview[it.first] = markers;
+									}
+
+									if (record) {
 										if (markers.size() == 1) {
 											auto & marker = markers.front();
 
@@ -333,7 +328,7 @@ namespace ofxRulr {
 											}
 										}
 									}
-								}
+								//}
 							}
 						}
 					}
@@ -371,8 +366,7 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::setupSolveSets() {
-					//Clear previous solvers.
-					this->solveSets.clear();
+					if (!this->solveSets.empty()) return;
 
 					//Go through subscribers in pairs.
 					for (auto & srcIt = this->dataToSolve.begin(); srcIt != this->dataToSolve.end(); ++srcIt) {
@@ -428,7 +422,7 @@ namespace ofxRulr {
 									firstFound = true;
 								}
 								else {
-									auto result = this->solveSets[it.first].getResult();
+									auto & result = this->solveSets[it.first].getResult();
 									if (result.success) {
 										currTransform *= result.transform;
 										subscriberNode->setTransform(currTransform);
@@ -440,11 +434,6 @@ namespace ofxRulr {
 							}
 						}
 					}
-				}
-
-				//----------
-				void Calibrate::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
-					
 				}
 
 				//----------
