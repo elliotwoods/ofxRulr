@@ -75,6 +75,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.h">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Publisher.h">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch_MultiTrack.cpp">
@@ -108,6 +111,9 @@
       <Filter>src\ofxRulr\Nodes\MultiTrack\Procedure</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.cpp">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Publisher.cpp">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClCompile>
   </ItemGroup>

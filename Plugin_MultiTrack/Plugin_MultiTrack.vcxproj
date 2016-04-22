@@ -145,6 +145,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ChannelGenerator\LocalKinect.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Publisher.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Receiver.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Sender.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.h" />
@@ -161,6 +162,7 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ClientHandler.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Procedure\Calibrate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Publisher.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Receiver.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Sender.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Subscriber.cpp" />
