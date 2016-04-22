@@ -133,9 +133,9 @@ namespace ofxRulr {
 
 				if (this->subscriber) {
 					if (this->subscriber->getSubscriber().getAddress().compare(this->parameters.connection.publisherAddress) != 0 ||
-						this->subscriber->getSubscriber().getPort() != this->parameters.connection.receivingPort) {
+						this->subscriber->getSubscriber().getPort() != this->parameters.connection.publisherPort) {
 						// Address or Port value changed, reinitialize.
-						this->subscriber->init(this->parameters.connection.publisherAddress, this->parameters.connection.receivingPort);
+						this->subscriber->init(this->parameters.connection.publisherAddress, this->parameters.connection.publisherPort);
 					}
 
 					this->subscriber->update();

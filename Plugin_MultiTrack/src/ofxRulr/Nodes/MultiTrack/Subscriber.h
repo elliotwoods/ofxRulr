@@ -34,11 +34,11 @@ namespace ofxRulr {
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
 						ofParameter<string> publisherAddress{ "Publisher address", "127.0.0.1" };
+						ofParameter<int> publisherPort{ "Publisher port",  ofxMultiTrack::Ports::NodeToServerDataRangeBegin };
 						ofParameter<int> controlPort{ "Control port",  ofxMultiTrack::Ports::NodeControl };
-						ofParameter<int> receivingPort{ "Receiving port",  ofxMultiTrack::Ports::NodeToServerDataRangeBegin };
 						ofParameter<bool> connect{ "Connect", false };
 
-						PARAM_DECLARE("Connection", publisherAddress, controlPort, receivingPort, connect);
+						PARAM_DECLARE("Connection", publisherAddress, controlPort, publisherPort, connect);
 					} connection;
 
 					struct : ofParameterGroup {

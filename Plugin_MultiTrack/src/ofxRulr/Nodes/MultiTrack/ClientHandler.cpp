@@ -188,7 +188,7 @@ namespace ofxRulr {
 				inspector->addEditableValue(this->port);
 				inspector->addEditableValue(this->enabled);
 
-				inspector->addIndicator("Server bound", [this]() {
+				inspector->addIndicatorBool("Server bound", [this]() {
 					if (this->socketServer) {
 						return true;
 					}

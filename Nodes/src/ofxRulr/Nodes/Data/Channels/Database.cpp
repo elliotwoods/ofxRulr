@@ -158,7 +158,7 @@ namespace ofxRulr {
 						case Channel::Type::Float:
 						{
 							const auto & parameter = selectedChannel->getParameter<float>();
-							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "string"; }));
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "float"; }));
 							this->detailView->add(new Widgets::EditableValue<float>(*parameter));
 							break;
 						}

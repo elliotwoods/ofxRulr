@@ -1,6 +1,8 @@
 #include "pch_MultiTrack.h"
-#include "World.h"
 
+#include "Utils.h"
+
+#include "World.h"
 #include "ofxRulr/Nodes/Data/Channels/Database.h"
 
 using namespace ofxCvGui;
@@ -20,9 +22,9 @@ namespace ofxRulr {
 
 			//----------
 			void World::init() {
-				//RULR_NODE_DRAW_WORLD_LISTENER;
+				RULR_NODE_DRAW_WORLD_LISTENER;
 				RULR_NODE_UPDATE_LISTENER;
-				//RULR_NODE_INSPECTOR_LISTENER;
+				RULR_NODE_INSPECTOR_LISTENER;
 				//RULR_NODE_SERIALIZATION_LISTENERS;
 
 				this->addInput<ofxRulr::Nodes::Data::Channels::Database>();
@@ -36,25 +38,217 @@ namespace ofxRulr {
 						this->subscribers.erase(i);
 					};
 				}
+
+				this->manageParameters(this->parameters);
 			}
 
 			//----------
 			void World::update() {
-				for (size_t i = 0; i < NumSubscribers; i++) {
-					auto name = "Subscriber " + ofToString(i + 1);
-					auto input = this->getInput<Subscriber>(name);
-					if (input) {
-						auto subscriber = input->getSubscriber();
-						if (subscriber && subscriber->isFrameNew()) {
-							// TODO Something useful here.
-						}
-					}
+				//perform skeleton fusion
+				if(this->parameters.fusion.enabled) {
+					this->performFusion();
 				}
 			}
 
 			//----------
+			void World::drawWorld() {
+				ofPushStyle();
+				{
+					for (const auto & combinedBody : this->combinedBodies) {
+						ofColor color(200, 100, 100);
+						color.setHueAngle((combinedBody.first * 30) % 360);
+
+						//draw combined body
+						ofSetColor(color);
+						combinedBody.second.mergedBody.drawWorld();
+
+						//draw original bodies and line to source kinect
+						color.setBrightness(20);
+						for (auto originalBody : combinedBody.second.originalBodiesWorldSpace) {
+							//original body
+							originalBody.second.drawWorld();
+
+
+							//line to kinect it came from
+							auto findSubscriber = this->subscribers.find(originalBody.first);
+							if (findSubscriber != this->subscribers.end()) {
+								auto subscriber = findSubscriber->second.lock();
+								if (subscriber) {
+									auto findHead = originalBody.second.joints.find(JointType::JointType_Head);
+									if (findHead != originalBody.second.joints.end()) {
+										ofDrawLine(findHead->second.getPosition(), subscriber->getPosition());
+									}
+								}
+							}
+						}
+					}
+				}
+				ofPopStyle();
+			}
+
+			//----------
+			void World::populateInspector(ofxCvGui::InspectArguments & args) {
+				args.inspector->addLiveValue<size_t>("Connected subscribers", [this]() {
+					return this->subscribers.size();
+				});
+				args.inspector->addIndicator("Good", [this]() {
+					return ofxCvGui::Widgets::Indicator::Good;
+				});
+				args.inspector->addIndicator("Error", [this]() {
+					return ofxCvGui::Widgets::Indicator::Error;
+				});
+				args.inspector->addIndicator("Warning", [this]() {
+					return ofxCvGui::Widgets::Indicator::Warning;
+				});
+				args.inspector->addIndicator("Clear", [this]() {
+					return ofxCvGui::Widgets::Indicator::Clear;
+				});
+			}
+
+
+			//----------
 			map<size_t, weak_ptr<Subscriber>> & World::getSubscribers() {
 				return this->subscribers;
+			}
+
+			//----------
+			void World::performFusion() {
+				auto worldBodiesUnmerged = this->getWorldBodiesUnmerged();
+				this->combinedBodies = this->combineWorldBodies(worldBodiesUnmerged);
+			}
+
+			//----------
+			World::WorldBodiesUnmerged World::getWorldBodiesUnmerged() const {
+				//This function accumulates all the bodies from the whole network of sensors.
+				//And transforms them using the rigid body transforms from the Subscriber nodes
+				WorldBodiesUnmerged worldBodiesUnmerged;
+
+				for (auto subscriberIt : this->subscribers) {
+					auto subscriberNode = subscriberIt.second.lock();
+					if (subscriberNode) {
+						auto subscriber = subscriberNode->getSubscriber();
+						if (subscriber) {
+							const auto & bodiesInCameraSpace = subscriber->getFrame().getBodies();
+							auto & BodiesInWorldSpace = worldBodiesUnmerged[subscriberIt.first];
+
+							for (const auto & body : bodiesInCameraSpace) {
+								BodiesInWorldSpace.push_back(body * subscriberNode->getTransform());
+							}
+						}
+					}
+				}
+
+				return worldBodiesUnmerged;
+			}
+
+			//----------
+			CombinedBodySet World::combineWorldBodies(WorldBodiesUnmerged worldBodiesUnmerged) const {
+				const auto & mergeDistanceThreshold = this->parameters.fusion.mergeDistanceThreshold.get();
+				Bodies mergedWorldBodies;
+
+				auto previousFrameCombinedBodies = this->combinedBodies;
+				CombinedBodySet newCombinedBodies;
+
+				// 1. Update any bodies which had been seen previously
+				// 2. Add any bodies which weren't seen previously (adding them to existing when distance is low)
+				// 3. Calculate the merged position
+				// as bodies are handled, we remove them from our WorldBodiesUnmerged set
+
+				//--
+				//Update bodies seen previously
+				//--
+				//
+				// 1. Go through existing bodies
+				// 2. Go through the sources of that body
+				// 3. See if it still has this body index
+				for (const auto & oldCombinedBodyIterator : previousFrameCombinedBodies) {
+					const auto & bodyIndex = oldCombinedBodyIterator.first;
+
+					for (const auto & originalBodiesIterator : oldCombinedBodyIterator.second.originalBodiesWorldSpace) {
+						const auto & originalBodyIndex = originalBodiesIterator.second.bodyId;
+						const auto & subscriberID = originalBodiesIterator.first;
+
+						auto findSubscriber = worldBodiesUnmerged.find(subscriberID);
+						if (findSubscriber != worldBodiesUnmerged.end()) {
+							auto & subscriber = findSubscriber->second;
+							//find if we have matching body index
+							for (auto subscriberBodyIterator = subscriber.begin(); subscriberBodyIterator != subscriber.end(); ) {
+								if (subscriberBodyIterator->bodyId == originalBodyIndex) {
+									//we've found a body which we'd tagged before
+									auto & combinedBody = newCombinedBodies[oldCombinedBodyIterator.first];
+
+									//assign it the new body
+									combinedBody.originalBodiesWorldSpace[subscriberID] = *subscriberBodyIterator;
+
+									//remove it from the unassigned set
+									subscriberBodyIterator = subscriber.erase(subscriberBodyIterator);
+								}
+								else {
+									subscriberBodyIterator++;
+								}
+							}
+						}
+					}
+				}
+				//
+				//--
+
+
+
+				//--
+				//Add subscriber body to existing combined bodies
+				//--
+				//
+				for (auto & subscriber : worldBodiesUnmerged) {
+					auto & bodies = subscriber.second;
+					for (auto bodyIterator = bodies.begin(); bodyIterator != bodies.end(); ) {
+						// now we have a body belonging to a subscriber
+
+						bool addedToExistingBody = false;
+
+						//check this body against any built bodies so far (this is often empty)
+						for (auto & combinedBody : newCombinedBodies) {
+							//find the mean of the combinedBody
+							auto meanOfExistingBodies = mean(combinedBody.second.originalBodiesWorldSpace);
+
+							//if the distance between this body and that body is < threshold, add it to the combined body
+							if (meanDistance(meanOfExistingBodies, *bodyIterator) < this->parameters.fusion.mergeDistanceThreshold) {
+								combinedBody.second.originalBodiesWorldSpace[subscriber.first] = *bodyIterator;
+								addedToExistingBody = true;
+								break;
+							}
+						}
+
+						if (!addedToExistingBody) {
+							static BodyIndex bodyIndex = 0;
+							auto & combinedBody = newCombinedBodies[bodyIndex];
+							combinedBody.originalBodiesWorldSpace[subscriber.first] = *bodyIterator;
+							bodyIndex++;
+						}
+
+						bodyIterator = bodies.erase(bodyIterator);
+					}
+				}
+				//
+				//--
+
+
+
+				// now newCombinedBodies is populated
+
+
+
+				//--
+				//Calculate the merged position
+				//--
+				//
+				for (auto & newCombinedBody : newCombinedBodies) {
+					newCombinedBody.second.mergedBody = mean(newCombinedBody.second.originalBodiesWorldSpace);
+				}
+				//
+				//--
+
+				return newCombinedBodies;
 			}
 		}
 	}

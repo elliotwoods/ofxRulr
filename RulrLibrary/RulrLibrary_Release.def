@@ -150,7 +150,9 @@ EXPORTS
 	?black@?$ofColor_@E@@2V1@B
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
 	?limit@?$ofColor_@E@@SAMXZ
+	?setBrightness@?$ofColor_@E@@QEAAXM@Z
 	?setHue@?$ofColor_@E@@QEAAXM@Z
+	?setHueAngle@?$ofColor_@E@@QEAAXM@Z
 	?white@?$ofColor_@E@@2V1@B
 	?allocate@?$ofImage_@E@@QEAAXHHW4ofImageType@@@Z
 	?bind@?$ofImage_@E@@QEBAXH@Z
@@ -346,6 +348,7 @@ EXPORTS
 	?addVertex@ofPolyline@@QEAAXAEBVofVec3f@@@Z
 	?close@ofPolyline@@QEAAXXZ
 	?draw@ofPolyline@@QEBAXXZ
+	?set@ofQuaternion@@QEAAXAEBVofMatrix4x4@@@Z
 	?getBottomRight@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?getTopRight@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?inside@ofRectangle@@QEBA_NAEBVofVec3f@@@Z
@@ -433,7 +436,8 @@ EXPORTS
 	?add@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@Z
 	?clear@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXXZ
 	?addButton@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VButton@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6AXXZ@5@D@Z
-	?addIndicator@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A_NXZ@5@@Z
+	?addIndicator@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A?AW4Status@Indicator@Widgets@ofxCvGui@@XZ@5@@Z
+	?addIndicatorBool@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A_NXZ@5@@Z
 	?addLiveValueHistory@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VLiveValueHistory@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6AMXZ@5@@Z
 	?addParameterGroup@Widgets@Panels@ofxCvGui@@QEAAXAEAVofParameterGroup@@H@Z
 	?addTitle@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VTitle@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@W4Level@Title@13@@Z
