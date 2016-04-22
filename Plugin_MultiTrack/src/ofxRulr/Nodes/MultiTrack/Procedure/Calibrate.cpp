@@ -304,14 +304,33 @@ namespace ofxRulr {
 											auto depth = subscriber->getFrame().getDepth().getData();
 											auto lut = subscriberNode->getDepthToWorldLUT().getData();
 											if (lut == nullptr) {
-												ofLogError("Calibrate") << "No Depth to World LUT found for Subscriber " << it.first;
-												throw;
+												throw(ofxRulr::Exception("No Depth to World LUT found!"));
 											}
-											int idx = marker.center.y * height + marker.center.x;
-											marker.position = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depth[idx] * 0.001f;
 
-											//If the position is valid, save the data.
-											if (marker.position != ofVec3f::zero()) {
+											//Sample the area around the 2D marker for an average 3D position.
+											ofVec3f avgPos = ofVec3f::zero();
+											size_t numFound = 0;
+											const float radiusSq = marker.radius * marker.radius;
+											for (int y = marker.center.y - marker.radius; y < marker.center.y + marker.radius; ++y) {
+												for (int x = marker.center.x - marker.radius; x < marker.center.x + marker.radius; ++x) {
+													if (ofVec2f(x, y).squareDistance(marker.center) <= radiusSq) {
+														int idx = y * height + x;
+														ofVec3f candidate = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depth[idx] * 0.001f;
+														if (candidate != ofVec3f::zero()) {
+															avgPos += candidate;
+															++numFound;
+														}
+													}
+												}
+											}
+											if (numFound) {
+												//The position is valid.
+
+												//Set the marker position to the average.
+												avgPos /= numFound;
+												marker.position = avgPos;
+
+												//Save the data.
 												if (this->dataToSolve.find(it.first) == this->dataToSolve.end()) {
 													map<size_t, Marker> frameToMarker;
 													frameToMarker.emplace(frameNum, marker);
@@ -324,6 +343,10 @@ namespace ofxRulr {
 													this->dataToSolve[it.first][frameNum] = marker;
 												}
 												ofLogVerbose("Calibrate") << "Frame " << frameNum << ": Subscriber " << it.first << " found marker " << marker.center << " => " << marker.position << endl;
+											}
+											else {
+												//The position is invalid, ignore it.
+												marker.position = ofVec3f::zero();
 											}
 										}
 									}
