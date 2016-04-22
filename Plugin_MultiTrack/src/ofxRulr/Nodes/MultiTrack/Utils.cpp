@@ -65,17 +65,21 @@ namespace ofxRulr {
 			//----------
 			float meanDistance(ofxKinectForWindows2::Data::Body & BodyA, ofxKinectForWindows2::Data::Body & BodyB) {
 				float distance = 0.0f;
+				float countFound = 0;
 				for (const auto & jointIt : BodyA.joints) {
 					auto findInBodyB = BodyB.joints.find(jointIt.first);
 					if (findInBodyB == BodyB.joints.end()) {
 						ofLogError("ofxRulr::Nodes::MultiTrack::meanDistance") << "Matching joint not found in BodyB";
 					}
 					else {
-						distance += jointIt.second.getPosition().distanceSquared(findInBodyB->second.getPosition());
+						if (jointIt.second.getTrackingState() == TrackingState::TrackingState_Tracked && findInBodyB->second.getTrackingState() == TrackingState::TrackingState_Tracked) {
+							distance += jointIt.second.getPosition().distanceSquared(findInBodyB->second.getPosition());
+							countFound++;
+						}
 					}
 				}
 
-				return sqrt(distance / (float)BodyA.joints.size());
+				return sqrt(distance / countFound);
 			}
 		}
 	}

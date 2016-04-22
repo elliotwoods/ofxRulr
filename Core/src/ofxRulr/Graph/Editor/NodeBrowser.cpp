@@ -266,7 +266,7 @@ namespace ofxRulr {
 					newNode->init();
 					newNode->deserialize(Json::Value()); // always call deserialize
 					this->onNewNode(newNode);
-					ofxCvGui::closeDialogue(this);
+					ofxCvGui::closeDialog(this);
 				}
 			}
 		}

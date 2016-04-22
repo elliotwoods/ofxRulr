@@ -69,13 +69,13 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::goToStep(Step nextStep) {
-					// TODO: Turn this back on once we get a close callback on the Dialogue
+					// TODO: Turn this back on once we get a close callback on the Dialog
 					//if (this->currStep == nextStep) return;
 
 					this->currStep = nextStep;
 
-					ofxCvGui::closeDialogue();
-					this->dialogue.reset();
+					ofxCvGui::closeDialog();
+					this->dialog.reset();
 
 					if (this->currStep == StepIdle) return;
 
@@ -236,7 +236,7 @@ namespace ofxRulr {
 					}
 
 					if (panel) {
-						//Build the dialogue
+						//Build the Dialog
 						auto strip = ofxCvGui::Panels::Groups::makeStrip();
 						strip->setDirection(ofxCvGui::Panels::Groups::Strip::Horizontal);
 
@@ -281,10 +281,10 @@ namespace ofxRulr {
 						strip->add(panel);
 
 						strip->setCellSizes({ 100, -1 });
-						this->dialogue = strip;
+						this->Dialog = strip;
 
 						//Make sure the dialog is open.
-						ofxCvGui::openDialogue(this->dialogue);
+						ofxCvGui::openDialog(this->Dialog);
 					}
 				}
 
