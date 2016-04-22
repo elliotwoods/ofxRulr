@@ -15,11 +15,8 @@ namespace ofxRulr {
 
 		//----------
 		void SolveSet::clear() {
-			if (this->running) {
-				this->thread.join();
-			}
-			this->running = false;
 			this->completed = false;
+			this->result.success = false;
 			this->dataSet.clear();
 			this->fitter.reset();
 		}
@@ -45,63 +42,36 @@ namespace ofxRulr {
 		//----------
 		void SolveSet::trySolve() {
 			if (this->dataSet.empty()) {
-				ofLogError("SolveSet") << "Data set is empty!";
-				return;
+				throw(ofxRulr::Exception("Data set is empty!"));
 			}
 
-			this->running = true;
-			this->startTime = chrono::system_clock::now();
+			this->fitter = make_shared<ofxNonLinearFit::Fit<ofxNonLinearFit::Models::RigidBody>>();
 
-			//Run the solver in a separate thread.
-			auto solveBlock = [=]() {
-				this->fitter = make_shared<ofxNonLinearFit::Fit<ofxNonLinearFit::Models::RigidBody>>();
+			this->model.initialiseParameters();
 
-				this->model.initialiseParameters();
-				
-				double residual;
-				bool success = fitter->optimise(this->model, &this->dataSet, &residual);
-				auto endTime = chrono::system_clock::now();
+			double residual;
+			auto startTime = chrono::system_clock::now();
+			bool success = fitter->optimise(this->model, &this->dataSet, &residual);
+			auto endTime = chrono::system_clock::now();
 
-				this->fitter.reset();
+			this->fitter.reset();
 
-				this->mutex.lock();
-				{
-					this->result.success = success;
-					this->result.totalTime = endTime - startTime;
-					this->result.residual = residual;
-					this->result.transform = this->model.getCachedTransform();
-				}
-				this->mutex.unlock();
+			this->result.success = success;
+			this->result.totalTime = endTime - startTime;
+			this->result.residual = residual;
+			this->result.transform = this->model.getCachedTransform();
 
-				this->running = false;
-				this->completed = true;
-			};
-
-			this->thread = std::thread(solveBlock);
-		}
-
-		//----------
-		bool SolveSet::isRunning() const {
-			return this->running;
+			this->completed = true;
 		}
 
 		//----------
 		bool SolveSet::didComplete() const {
 			return this->completed;
 		}
-
-		//----------
-		chrono::system_clock::duration SolveSet::getRunningTime() const {
-			return chrono::system_clock::now() - this->startTime;
-		}
 		
 		//----------
-		SolveSet::Result SolveSet::getResult() {
-			this->mutex.lock();
-			{
-				return this->result;
-			}
-			this->mutex.unlock();
+		const SolveSet::Result & SolveSet::getResult() const {
+			return this->result;
 		}
 	}
 }

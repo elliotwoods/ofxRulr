@@ -22,23 +22,16 @@ namespace ofxRulr {
 			void setup(const vector<ofVec3f> & srcPoints, const vector<ofVec3f> & dstPoints);
 			void trySolve();
 
-			bool isRunning() const;
 			bool didComplete() const;
-			chrono::system_clock::duration getRunningTime() const;
 
-			Result getResult();
+			const Result & getResult() const;
 
 		protected:
 			ofxNonLinearFit::Models::RigidBody::DataSet dataSet;
 			ofxNonLinearFit::Models::RigidBody model;
 			shared_ptr<ofxNonLinearFit::Fit<ofxNonLinearFit::Models::RigidBody>> fitter;
 			
-			std::thread thread;
-			std::mutex mutex;
-
-			bool running;
 			bool completed;
-			chrono::system_clock::time_point startTime;
 			Result result;
 		};
 	}
