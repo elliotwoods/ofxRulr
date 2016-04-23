@@ -708,9 +708,8 @@ namespace ofxRulr {
 				//----------
 				const ofColor & Calibrate::getSubscriberColor(size_t key) {
 					if (this->subscriberColors.find(key) == this->subscriberColors.end()) {
-						float hue = this->subscriberColors.size() * 30.0f;
-						ofColor colour;
-						colour.setHsb(hue, 255, 200);
+						ofColor color(200, 100, 100);
+						color.setHueAngle((key * 50) % 360);
 						this->subscriberColors.emplace(key, colour);
 					}
 					return this->subscriberColors[key];
