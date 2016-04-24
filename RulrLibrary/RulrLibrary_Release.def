@@ -63,6 +63,7 @@ EXPORTS
 	?ofDisableAlphaBlending@@YAXXZ
 	?ofDisableDepthTest@@YAXXZ
 	?ofDrawBitmapStringHighlight@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofVec3f@@AEBV?$ofColor_@E@@2@Z
+	?ofDrawBox@@YAXAEBVofVec3f@@MMM@Z
 	?ofDrawCircle@@YAXAEBVofVec3f@@M@Z
 	?ofDrawGridPlane@@YAXM_K_N@Z
 	?ofDrawLine@@YAXAEBVofVec3f@@0@Z
@@ -253,6 +254,7 @@ EXPORTS
 	?increment@ValueIteratorBase@Json@@IEAAXXZ
 	?isEqual@ValueIteratorBase@Json@@IEBA_NAEBV12@@Z
 	?limit@?$ofColor_@M@@SAMXZ
+	?setHsb@?$ofColor_@M@@QEAAXMMMM@Z
 	?allocate@?$ofPixels_@M@@QEAAXHHW4ofPixelFormat@@@Z
 	?getData@?$ofPixels_@M@@QEAAPEAMXZ
 	?getData@?$ofPixels_@M@@QEBAPEBMXZ
@@ -263,8 +265,10 @@ EXPORTS
 	?setFromPixels@?$ofPixels_@M@@QEAAXPEBMHHH@Z
 	?size@?$ofPixels_@M@@QEBAHXZ
 	?swap@?$ofPixels_@M@@QEAAXAEAV1@@Z
+	??0?$ofColor_@M@@QEAA@MM@Z
 	??0?$ofPixels_@M@@QEAA@XZ
 	??1?$ofPixels_@M@@QEAA@XZ
+	??A?$ofColor_@M@@QEBAAEBM_K@Z
 	??A?$ofPixels_@M@@QEAAAEAMH@Z
 	??X?$ofColor_@M@@QEAAAEAV0@AEBM@Z
 	??1BaseFunctionId@priv@of@@UEAA@XZ

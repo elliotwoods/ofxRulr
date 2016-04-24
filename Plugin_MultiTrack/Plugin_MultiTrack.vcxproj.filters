@@ -81,11 +81,14 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Utils.h">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\MeshProvider.h">
-      <Filter>src\ofxRulr\Utils</Filter>
+    <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\ImageBox.h">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Publisher.h">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\MeshProvider.h">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +132,9 @@
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Utils.cpp">
+      <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\ImageBox.cpp">
       <Filter>src\ofxRulr\Nodes\MultiTrack</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\MeshProvider.cpp">

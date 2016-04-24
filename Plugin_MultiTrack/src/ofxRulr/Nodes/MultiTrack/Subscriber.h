@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Item/RigidBody.h"
-#include "ofxRulr/Utils/ControlSocket.h"
 #include "ofxRulr/Utils/MeshProvider.h"
 
 #include "ofxMultiTrack.h"
@@ -29,6 +28,7 @@ namespace ofxRulr {
 				const ofTexture & getPreviewTexture() const;
 
 				const ofFloatColor & getDebugColor() const;
+				void drawPointCloud();
 
 			protected:
 				shared_ptr<ofxCvGui::Panels::Texture> previewPanel;
@@ -38,10 +38,9 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<string> publisherAddress{ "Publisher address", "127.0.0.1" };
 						ofParameter<int> publisherPort{ "Publisher port",  ofxMultiTrack::Ports::NodeToServerDataRangeBegin };
-						ofParameter<int> controlPort{ "Control port",  ofxMultiTrack::Ports::NodeControl };
 						ofParameter<bool> connect{ "Connect", false };
 
-						PARAM_DECLARE("Connection", publisherAddress, controlPort, publisherPort, connect);
+						PARAM_DECLARE("Connection", publisherAddress, publisherPort, connect);
 					} connection;
 
 					struct : ofParameterGroup {
@@ -51,19 +50,27 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<bool> bodies{ "Bodies", false };
+
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", false };
 							ofParameter<int> downsampleExp{ "Downsample (exp)", 0, 0, 3 };
-							PARAM_DECLARE("Mesh", enabled, downsampleExp);
-						} mesh;
-						PARAM_DECLARE("Draw", bodies, mesh );
+							PARAM_DECLARE("Point cloud", enabled, downsampleExp);
+						} gpuPointCloud;
+
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", false };							
+							ofParameter<bool> applyIRTexture{ "Apply IR Texture", false };
+							ofParameter<float> colorAmplitude{ "Color amplitude", 256.0f, 0.0f, 0xffff };
+							PARAM_DECLARE("CPU point cloud", enabled, applyIRTexture, colorAmplitude);
+						} cpuPointCloud;
+
+						PARAM_DECLARE("Draw", bodies, gpuPointCloud, cpuPointCloud);
 					} draw;
 
 					PARAM_DECLARE("Receiver", connection, calibration, draw);
 				} parameters;
 
 				shared_ptr<ofxMultiTrack::Subscriber> subscriber;
-				unique_ptr<Utils::ControlSocket> controlSocket;
 
 				ofFloatPixels depthToWorldLUT;
 				ofTexture depthToWorldTexture;

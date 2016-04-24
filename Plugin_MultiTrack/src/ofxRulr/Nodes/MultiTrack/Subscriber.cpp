@@ -82,50 +82,6 @@ namespace ofxRulr {
 					ofPopStyle();
 				}, this, -200);
 
-				this->controlSocket = make_unique<Utils::ControlSocket>();
-				this->controlSocket->init("127.0.0.1", ofxMultiTrack::NodeControl);
-
-				this->controlSocket->addHandler("getDepthToWorldTable::response", [this](const Json::Value & arguments) {
-					if (!arguments["error"].empty()) {
-						try {
-							throw(ofxRulr::Exception(arguments["error"].toStyledString()));
-						}
-						RULR_CATCH_ALL_TO_ERROR;
-					}
-					else if (!arguments["image"].empty()) {
-						//try {
-						//	string decodedMessage;
-
-						//	{
-						//		const auto encodedString = arguments["image"].asString();
-						//		istringstream istr(encodedString);
-						//		ostringstream ostr;
-						//		Poco::Base64Decoder b64in(istr);
-						//		copy(std::istreambuf_iterator<char>(b64in),
-						//			std::istreambuf_iterator<char>(),
-						//			std::ostreambuf_iterator<char>(ostr));
-
-						//		decodedMessage = ostr.str();;
-						//	}
-
-						//	if (decodedMessage.empty()) {
-						//		throw(ofxRulr::Exception("Can't decode Base64 message"));
-						//	}
-
-						//	ofxSquashBuddies::Message message;
-						//	message.pushData(decodedMessage.data(), decodedMessage.size());
-
-						//	if (message.empty()) {
-						//		throw(ofxRulr::Exception("Initialise ofxSquashBuddies::Message failed"));
-						//	}
-						//	if (!message.getData(this->depthToCameraLUT)) {
-						//		throw(ofxRulr::Exception("Decode ofxSquashBuddies::Message to image failed"));
-						//	}
-						//}
-						//RULR_CATCH_ALL_TO_ERROR;
-					}
-				});
-
 				static auto inc = 11;
 				this->parameters.connection.publisherAddress = "10.0.0." + ofToString(inc++);
 
@@ -140,14 +96,6 @@ namespace ofxRulr {
 
 			//----------
 			void Subscriber::update() {
-				if (this->controlSocket) {
-					this->controlSocket->update();
-
-					if (!this->depthToWorldLUT.isAllocated()) {
-						this->controlSocket->sendMessage("getDepthToWorldTable");
-					}
-				}
-
 				if (this->depthToWorldLUT.isAllocated() && !this->depthToWorldTexture.isAllocated()) {
 					// TODO: Probably need a listener whenever the table changes.
 					this->depthToWorldTexture.loadData(this->depthToWorldLUT);
@@ -177,14 +125,14 @@ namespace ofxRulr {
 						this->previewTexture.loadData(pixels);
 
 						//Mesh update.
-						if (this->parameters.draw.mesh.enabled) {
+						if (this->parameters.draw.gpuPointCloud.enabled) {
 							auto & meshDimensions = this->meshProvider.getDimensions();
 							if (meshDimensions.x != pixels.getWidth() || meshDimensions.y != pixels.getHeight()) {
 								this->meshProvider.setDimensions(ofVec2f(pixels.getWidth(), pixels.getHeight()));
 							}
 
-							if (this->parameters.draw.mesh.downsampleExp != this->meshProvider.getDownsampleExp()) {
-								this->meshProvider.setDownsampleExp(this->parameters.draw.mesh.downsampleExp);
+							if (this->parameters.draw.gpuPointCloud.downsampleExp != this->meshProvider.getDownsampleExp()) {
+								this->meshProvider.setDownsampleExp(this->parameters.draw.gpuPointCloud.downsampleExp);
 							}
 						}
 					}
@@ -210,7 +158,7 @@ namespace ofxRulr {
 					}
 				}
 
-				if (this->parameters.draw.mesh.enabled) {
+				if (this->parameters.draw.gpuPointCloud.enabled) {
 					this->worldShader.begin();
 					{
 						this->worldShader.setUniform2f("uDimensions", ofVec2f(this->previewTexture.getWidth(), this->previewTexture.getHeight()));
@@ -222,6 +170,10 @@ namespace ofxRulr {
 				}
 
 				ofPopStyle();
+
+				if (this->parameters.draw.cpuPointCloud.enabled) {
+					this->drawPointCloud();
+				}
 			}
 
 			//----------
@@ -253,16 +205,6 @@ namespace ofxRulr {
 						else {
 							return 0.0f;
 						}
-					});
-				}
-
-				args.inspector->addTitle("Control Socket");
-				{
-					args.inspector->addIndicator("Active", [this]() {
-						return (Widgets::Indicator::Status) this->controlSocket->isSocketActive();
-					});
-					args.inspector->addLiveValueHistory("Heartbeat age [ms]", [this]() {
-						return chrono::duration_cast<chrono::milliseconds>(this->controlSocket->getTimeSinceLastHeartbeatReceived()).count();
 					});
 				}
 
@@ -347,6 +289,43 @@ namespace ofxRulr {
 				ofxSquashBuddies::Message message;
 				message.pushData(loadBuffer.getData(), loadBuffer.size());
 				message.getData(this->depthToWorldLUT);
+			}
+
+			//----------
+			void Subscriber::drawPointCloud() {
+				if (this->depthToWorldLUT.isAllocated()) {
+					const auto & frame = this->subscriber->getFrame();
+
+					vector<ofVec3f> vertices;
+					vector<ofFloatColor> colors;
+
+					auto depth = frame.getDepth().getData();
+
+					auto useIR = this->parameters.draw.cpuPointCloud.applyIRTexture.get() && frame.getInfrared().isAllocated();
+					auto IR = frame.getInfrared().getData();
+					auto depthToXY = this->depthToWorldLUT.getData();
+
+					auto colorAmplitude = this->parameters.draw.cpuPointCloud.colorAmplitude;
+
+					for (int i = 0; i < frame.getDepth().size(); i++) {
+						vertices.emplace_back(ofVec3f{
+							(float)depth[i] * depthToXY[i * 2 + 0] / 1000.0f,
+							(float)depth[i] * depthToXY[i * 2 + 1] / 1000.0f,
+							(float)depth[i] / 1000.0f
+						});
+						if (useIR) {
+							colors.emplace_back(ofFloatColor{
+								(float)IR[i] / (float)0xffff * colorAmplitude
+							});
+						}
+					}
+					ofVbo vbo;
+					vbo.setVertexData(vertices.data(), vertices.size(), GL_STATIC_DRAW);
+					if (useIR) {
+						vbo.setColorData(colors.data(), colors.size(), GL_STATIC_DRAW);
+					}
+					vbo.draw(GL_POINTS, 0, vertices.size());
+				}
 			}
 		}
 	}
