@@ -345,6 +345,19 @@ namespace ofxRulr {
 				};
 				return mergeSettings;
 			}
+
+			//----------
+			void World::drawSubscriberPointClouds() const {
+				for (auto subscriberIt : this->subscribers) {
+					auto subscriberNode = subscriberIt.second.lock();
+					if (subscriberNode) {
+						ofPushMatrix();
+						ofMultMatrix(subscriberNode->getTransform());
+						subscriberNode->drawPointCloud();
+						ofPopMatrix();
+					}
+				}
+			}
 		}
 	}
 }

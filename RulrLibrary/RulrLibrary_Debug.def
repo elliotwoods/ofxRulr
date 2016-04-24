@@ -58,6 +58,7 @@ EXPORTS
 	?ofDisableAlphaBlending@@YAXXZ
 	?ofDisableDepthTest@@YAXXZ
 	?ofDrawBitmapStringHighlight@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofVec3f@@AEBV?$ofColor_@E@@2@Z
+	?ofDrawBox@@YAXAEBVofVec3f@@MMM@Z
 	?ofDrawCircle@@YAXAEBVofVec3f@@M@Z
 	?ofDrawGridPlane@@YAXM_K_N@Z
 	?ofDrawLine@@YAXAEBVofVec3f@@0@Z
@@ -258,6 +259,7 @@ EXPORTS
 	?setFromPixels@?$ofPixels_@M@@QEAAXPEBMHHH@Z
 	?size@?$ofPixels_@M@@QEBAHXZ
 	?swap@?$ofPixels_@M@@QEAAXAEAV1@@Z
+	??0?$ofColor_@M@@QEAA@MM@Z
 	??0?$ofPixels_@M@@QEAA@XZ
 	??1?$ofPixels_@M@@QEAA@XZ
 	??A?$ofPixels_@M@@QEAAAEAMH@Z
