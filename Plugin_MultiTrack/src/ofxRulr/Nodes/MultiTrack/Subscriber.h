@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Item/RigidBody.h"
+#include "ofxRulr/Utils/MeshProvider.h"
 
 #include "ofxMultiTrack.h"
 
@@ -27,6 +28,7 @@ namespace ofxRulr {
 				const ofFloatPixels & getDepthToWorldLUT() const;
 				const ofTexture & getPreviewTexture() const;
 
+				const ofFloatColor & getDebugColor() const;
 				void drawPointCloud();
 
 			protected:
@@ -49,14 +51,21 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<bool> bodies{ "Bodies", false };
+
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", false };
+							ofParameter<int> downsampleExp{ "Downsample (exp)", 0, 0, 3 };
+							PARAM_DECLARE("Point cloud", enabled, downsampleExp);
+						} gpuPointCloud;
+
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", false };							
 							ofParameter<bool> applyIRTexture{ "Apply IR Texture", false };
 							ofParameter<float> colorAmplitude{ "Color amplitude", 256.0f, 0.0f, 0xffff };
 							PARAM_DECLARE("CPU point cloud", enabled, applyIRTexture, colorAmplitude);
 						} cpuPointCloud;
 
-						PARAM_DECLARE("Draw", bodies, cpuPointCloud);
+						PARAM_DECLARE("Draw", bodies, gpuPointCloud, cpuPointCloud);
 					} draw;
 
 					PARAM_DECLARE("Receiver", connection, calibration, draw);
@@ -65,7 +74,13 @@ namespace ofxRulr {
 				shared_ptr<ofxMultiTrack::Subscriber> subscriber;
 
 				ofFloatPixels depthToWorldLUT;
+				ofTexture depthToWorldTexture;
 				ofTexture previewTexture;
+
+				ofShader worldShader;
+				Utils::MeshProvider meshProvider;
+
+				ofFloatColor debugColor;
 
 				void depthToWorldTableFileCallback(string &);
 				void loadDepthToWorldTableFile();

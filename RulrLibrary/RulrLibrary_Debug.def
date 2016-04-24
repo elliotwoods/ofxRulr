@@ -32,9 +32,11 @@ EXPORTS
 	??0ofRectangle@@QEAA@AEBV0@@Z
 	??0ofRectangle@@QEAA@MMMM@Z
 	??0ofSerial@@QEAA@XZ
+	??0ofShader@@QEAA@XZ
 	??0ofTexture@@QEAA@XZ
 	??0ofVbo@@QEAA@AEBV0@@Z
 	??0ofVbo@@QEAA@XZ
+	??0ofVboMesh@@QEAA@XZ
 	??0ofVec2f@@QEAA@AEBVofVec3f@@@Z
 	??0ofxOscMessage@@QEAA@XZ
 	??0ofxOscReceiver@@QEAA@XZ
@@ -43,9 +45,12 @@ EXPORTS
 	??1ofLog@@UEAA@XZ
 	??1ofNode@@UEAA@XZ
 	??1ofRectangle@@UEAA@XZ
+	??1ofShader@@QEAA@XZ
 	??1ofTexture@@UEAA@XZ
 	??1ofVbo@@QEAA@XZ
+	??1ofVboMesh@@UEAA@XZ
 	??1ofxOscMessage@@QEAA@XZ
+	??4ofShader@@QEAAAEAV0@AEBV0@@Z
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
 	?ofBufferFromFile@@YA?AVofBuffer@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
 	?ofBufferToFile@@YA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAVofBuffer@@_N@Z
@@ -249,6 +254,7 @@ EXPORTS
 	?increment@ValueIteratorBase@Json@@IEAAXXZ
 	?isEqual@ValueIteratorBase@Json@@IEBA_NAEBV12@@Z
 	?limit@?$ofColor_@M@@SAMXZ
+	?setHsb@?$ofColor_@M@@QEAAXMMMM@Z
 	?allocate@?$ofPixels_@M@@QEAAXHHW4ofPixelFormat@@@Z
 	?getData@?$ofPixels_@M@@QEAAPEAMXZ
 	?getData@?$ofPixels_@M@@QEBAPEBMXZ
@@ -262,6 +268,7 @@ EXPORTS
 	??0?$ofColor_@M@@QEAA@MM@Z
 	??0?$ofPixels_@M@@QEAA@XZ
 	??1?$ofPixels_@M@@QEAA@XZ
+	??A?$ofColor_@M@@QEBAAEBM_K@Z
 	??A?$ofPixels_@M@@QEAAAEAMH@Z
 	??X?$ofColor_@M@@QEAAAEAV0@AEBM@Z
 	??1BaseFunctionId@priv@of@@UEAA@XZ
@@ -298,6 +305,9 @@ EXPORTS
 	?addIndices@ofMesh@@QEAAXPEBI_K@Z
 	?addTexCoord@ofMesh@@QEAAXAEBVofVec2f@@@Z
 	?addVertex@ofMesh@@QEAAXAEBVofVec3f@@@Z
+	?clearIndices@ofMesh@@QEAAXXZ
+	?clearTexCoords@ofMesh@@QEAAXXZ
+	?clearVertices@ofMesh@@QEAAXXZ
 	?disableColors@ofMesh@@UEAAXXZ
 	?disableIndices@ofMesh@@UEAAXXZ
 	?disableNormals@ofMesh@@UEAAXXZ
@@ -364,6 +374,10 @@ EXPORTS
 	?isInitialized@ofSerial@@QEBA_NXZ
 	?setup@ofSerial@@QEAA_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?writeBytes@ofSerial@@QEAAJPEBE_K@Z
+	?begin@ofShader@@QEBAXXZ
+	?end@ofShader@@QEBAXXZ
+	?setUniform2f@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofVec2f@@@Z
+	?setUniformTexture@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofTexture@@H@Z
 	?bind@ofTexture@@QEBAXH@Z
 	?clear@ofTexture@@QEAAXXZ
 	?isAllocated@ofTexture@@QEBA_NXZ
@@ -382,6 +396,7 @@ EXPORTS
 	??0Register@ofxAssets@@QEAA@XZ
 	?font@ofxAssets@@YAAEAVofTrueTypeFont@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?image@ofxAssets@@YAAEAV?$ofImage_@E@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?shader@ofxAssets@@YAAEAVofShader@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?addAddon@Register@ofxAssets@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?getShaderPointer@Register@ofxAssets@@QEAA?AV?$shared_ptr@VShader@ofxAssets@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?getSingletonStore@?$Singleton@VRegister@ofxAssets@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ

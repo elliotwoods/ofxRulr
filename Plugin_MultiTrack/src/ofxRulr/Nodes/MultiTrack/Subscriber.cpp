@@ -93,10 +93,26 @@ namespace ofxRulr {
 				this->parameters.calibration.depthToWorldTableFile.addListener(this, &Subscriber::depthToWorldTableFileCallback);
 
 				this->subscriber = make_shared<ofxMultiTrack::Subscriber>();
+
+				static int colorCounter = 0;
+				this->debugColor.setHsb(ofRandom(0.05f) + (0.15f * colorCounter++), 1.0f, 1.0f);
+				this->worldShader = ofxAssets::shader("ofxRulr::Nodes::MultiTrack::depthToWorld");
 			}
 
 			//----------
 			void Subscriber::update() {
+				if (this->depthToWorldLUT.isAllocated() && !this->depthToWorldTexture.isAllocated()) {
+					// TODO: Probably need a listener whenever the table changes.
+					this->depthToWorldTexture.loadData(this->depthToWorldLUT);
+
+					//Upload LUT to shader.
+					this->worldShader.begin();
+					{
+						this->worldShader.setUniformTexture("uWorldTable", this->depthToWorldTexture, 2);
+					}
+					this->worldShader.end();
+				}
+
 				if (this->subscriber) {
 					if (this->subscriber->getSubscriber().getAddress().compare(this->parameters.connection.publisherAddress) != 0 ||
 						this->subscriber->getSubscriber().getPort() != this->parameters.connection.publisherPort) {
@@ -112,6 +128,18 @@ namespace ofxRulr {
 							this->previewTexture.allocate(pixels);
 						}
 						this->previewTexture.loadData(pixels);
+
+						//Mesh update.
+						if (this->parameters.draw.gpuPointCloud.enabled) {
+							auto & meshDimensions = this->meshProvider.getDimensions();
+							if (meshDimensions.x != pixels.getWidth() || meshDimensions.y != pixels.getHeight()) {
+								this->meshProvider.setDimensions(ofVec2f(pixels.getWidth(), pixels.getHeight()));
+							}
+
+							if (this->parameters.draw.gpuPointCloud.downsampleExp != this->meshProvider.getDownsampleExp()) {
+								this->meshProvider.setDownsampleExp(this->parameters.draw.gpuPointCloud.downsampleExp);
+							}
+						}
 					}
 				}
 			}
@@ -125,12 +153,28 @@ namespace ofxRulr {
 			void Subscriber::drawObject() {
 				auto & frame = this->subscriber->getFrame();
 
+				ofPushStyle();
+				ofSetColor(this->debugColor);
+
 				if (this->parameters.draw.bodies) {
 					const auto & bodies = frame.getBodies();
 					for (const auto & body : bodies) {
 						body.drawWorld(); // actually this is in kinect camera space
 					}
 				}
+
+				if (this->parameters.draw.gpuPointCloud.enabled) {
+					this->worldShader.begin();
+					{
+						this->worldShader.setUniform2f("uDimensions", ofVec2f(this->previewTexture.getWidth(), this->previewTexture.getHeight()));
+						this->worldShader.setUniformTexture("uDepthTexture", this->previewTexture, 1);
+
+						this->meshProvider.getMesh().draw(OF_MESH_POINTS);
+					}
+					this->worldShader.end();
+				}
+
+				ofPopStyle();
 
 				if (this->parameters.draw.cpuPointCloud.enabled) {
 					this->drawPointCloud();
@@ -218,6 +262,11 @@ namespace ofxRulr {
 			//----------
 			const ofTexture & Subscriber::getPreviewTexture() const {
 				return this->previewTexture;
+			}
+
+			//----------
+			const ofFloatColor & Subscriber::getDebugColor() const {
+				return this->debugColor;
 			}
 
 			//----------
