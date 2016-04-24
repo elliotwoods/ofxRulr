@@ -133,7 +133,8 @@ namespace ofxRulr {
 
 				this->subscriber = make_shared<ofxMultiTrack::Subscriber>();
 
-				//setup world render
+				static int colorCounter = 0;
+				this->debugColor.setHsb(ofRandom(0.05f) + (0.15f * colorCounter++), 1.0f, 1.0f);
 				this->worldShader = ofxAssets::shader("ofxRulr::Nodes::MultiTrack::depthToWorld");
 			}
 
@@ -199,6 +200,9 @@ namespace ofxRulr {
 			void Subscriber::drawObject() {
 				auto & frame = this->subscriber->getFrame();
 
+				ofPushStyle();
+				ofSetColor(this->debugColor);
+
 				if (this->parameters.draw.bodies) {
 					const auto & bodies = frame.getBodies();
 					for (const auto & body : bodies) {
@@ -216,6 +220,8 @@ namespace ofxRulr {
 					}
 					this->worldShader.end();
 				}
+
+				ofPopStyle();
 			}
 
 			//----------
@@ -309,6 +315,11 @@ namespace ofxRulr {
 			//----------
 			const ofTexture & Subscriber::getPreviewTexture() const {
 				return this->previewTexture;
+			}
+
+			//----------
+			const ofFloatColor & Subscriber::getDebugColor() const {
+				return this->debugColor;
 			}
 
 			//----------

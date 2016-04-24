@@ -28,6 +28,8 @@ namespace ofxRulr {
 				const ofFloatPixels & getDepthToWorldLUT() const;
 				const ofTexture & getPreviewTexture() const;
 
+				const ofFloatColor & getDebugColor() const;
+
 			protected:
 				shared_ptr<ofxCvGui::Panels::Texture> previewPanel;
 				shared_ptr<ofxCvGui::Panels::Widgets> uiPanel;
@@ -69,6 +71,8 @@ namespace ofxRulr {
 
 				ofShader worldShader;
 				Utils::MeshProvider meshProvider;
+
+				ofFloatColor debugColor;
 
 				void depthToWorldTableFileCallback(string &);
 				void loadDepthToWorldTableFile();
