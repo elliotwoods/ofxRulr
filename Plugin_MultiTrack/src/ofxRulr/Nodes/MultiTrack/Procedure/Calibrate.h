@@ -15,7 +15,6 @@ namespace ofxRulr {
 						StepBegin,
 						StepCapture,
 						StepSolve,
-						StepApply,
 
 						NumSteps
 					};
@@ -30,8 +29,11 @@ namespace ofxRulr {
 					string getTypeName() const override;
 					void init();
 					ofxCvGui::PanelPtr getPanel() override;
-					void update();
 
+					void update();
+					void drawWorld();
+					
+					void populateInspector(ofxCvGui::InspectArguments &);
 					void serialize(Json::Value &);
 					void deserialize(const Json::Value &);
 
@@ -45,6 +47,8 @@ namespace ofxRulr {
 
 					void applyTransforms();
 
+					const ofColor & getSubscriberColor(size_t key);
+
 				protected:
 					chrono::system_clock::duration getTimeSinceCaptureStarted() const;
 
@@ -53,6 +57,7 @@ namespace ofxRulr {
 					Step currStep;
 
 					chrono::system_clock::time_point captureStartTime;
+					map<size_t, ofColor> subscriberColors;
 					map<size_t, vector<Marker>> dataToPreview;
 					map<size_t, map<size_t, Marker>> dataToSolve;
 					map<size_t, ofxRulr::Utils::SolveSet> solveSets;
@@ -71,10 +76,16 @@ namespace ofxRulr {
 							ofParameter<float> threshold{ "Threshold", 100, 0, 255 };
 							ofParameter<float> minimumArea{ "Minimum area", 5 * 5 };
 							ofParameter<float> markerPadding{ "Marker padding [%]", 50, 0, 100 };
-							PARAM_DECLARE("FindMarker", threshold, minimumArea);
+							PARAM_DECLARE("Find Marker", threshold, minimumArea);
 						} findMarker;
 
-						PARAM_DECLARE("Calibrate", capture, findMarker);
+						struct : ofParameterGroup {
+							ofParameter<bool> drawPoints{ "Draw Points", true };
+							ofParameter<bool> drawLines{ "Draw Lines", true };
+							PARAM_DECLARE("Debug World", drawPoints, drawLines);
+						} debugWorld;
+
+						PARAM_DECLARE("Calibrate", capture, findMarker, debugWorld);
 					} parameters;
 				};
 			}

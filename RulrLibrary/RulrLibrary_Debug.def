@@ -84,6 +84,7 @@ EXPORTS
 	?ofPopStyle@@YAXXZ
 	?ofPushMatrix@@YAXXZ
 	?ofPushStyle@@YAXXZ
+	?ofRandom@@YAMM@Z
 	?ofRotate@@YAXMMMM@Z
 	?ofRunApp@@YAHPEAVofBaseApp@@@Z
 	?ofScale@@YAXMMM@Z
@@ -155,6 +156,7 @@ EXPORTS
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
 	?limit@?$ofColor_@E@@SAMXZ
 	?setBrightness@?$ofColor_@E@@QEAAXM@Z
+	?setHsb@?$ofColor_@E@@QEAAXMMMM@Z
 	?setHue@?$ofColor_@E@@QEAAXM@Z
 	?setHueAngle@?$ofColor_@E@@QEAAXM@Z
 	?white@?$ofColor_@E@@2V1@B
@@ -370,6 +372,8 @@ EXPORTS
 	?unbind@ofTexture@@QEBAXH@Z
 	?drawString@ofTrueTypeFont@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM@Z
 	?getStringBoundingBox@ofTrueTypeFont@@QEBA?AVofRectangle@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM_N@Z
+	?draw@ofVbo@@QEBAXHHH@Z
+	?setColorData@ofVbo@@QEAAXPEBV?$ofColor_@M@@HH@Z
 	?setIndexData@ofVbo@@QEAAXPEBIHH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec2f@@HH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec3f@@HH@Z
