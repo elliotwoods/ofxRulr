@@ -12,6 +12,11 @@ namespace ofxRulr {
 			}
 
 			//----------
+			Subscriber::~Subscriber() {
+				
+			}
+
+			//----------
 			string Subscriber::getTypeName() const {
 				return "MultiTrack::Subscriber";
 			}

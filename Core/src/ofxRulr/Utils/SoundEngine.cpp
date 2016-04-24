@@ -10,7 +10,7 @@ namespace ofxRulr {
 			//try default output device
 			bool success = false;
 #ifdef TARGET_WIN32
-			auto device = ofSoundDevice::MS_WASAPI;
+			auto device = ofSoundDevice::MS_DS;
 #else
 			auto device = ofSoundDevice::DEFAULT;
 #endif
@@ -53,6 +53,11 @@ namespace ofxRulr {
 			}
 
 			this->soundStream.setOutput(this);
+		}
+
+		//----------
+		SoundEngine::~SoundEngine() {
+			this->soundStream.close();
 		}
 		
 		//----------

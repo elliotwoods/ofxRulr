@@ -36,6 +36,7 @@ namespace ofxRulr {
 					shared_ptr<ofTexture> cell;
 				};
 				Patch();
+				virtual ~Patch();
 				string getTypeName() const override;
 				void init();
 

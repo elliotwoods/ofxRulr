@@ -12,6 +12,7 @@ namespace ofxRulr {
 		class World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
 		public:
 			World();
+			virtual ~World();
 			void init(ofxCvGui::Controller &, bool enableSummaryView = true);
 			void loadAll(bool printDebug = false);
 			void saveAll() const;

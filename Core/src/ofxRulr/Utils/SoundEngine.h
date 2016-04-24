@@ -19,6 +19,7 @@ namespace ofxRulr {
 			};
 			
 			SoundEngine();
+			~SoundEngine();
 			void audioOut(ofSoundBuffer &) override;
 			
 			void addSource(weak_ptr<ofBaseSoundOutput>);

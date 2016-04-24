@@ -22,6 +22,11 @@ namespace ofxRulr {
 		}
 
 		//-----------
+		World::~World() {
+
+		}
+
+		//-----------
 		void World::init(Controller & controller, bool enableSummaryView) {
 			Utils::initialiser.checkInitialised();
 

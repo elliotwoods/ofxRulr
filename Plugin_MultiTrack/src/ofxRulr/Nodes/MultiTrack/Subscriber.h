@@ -10,6 +10,7 @@ namespace ofxRulr {
 			class Subscriber : public Item::RigidBody {
 			public:
 				Subscriber();
+				virtual ~Subscriber();
 				string getTypeName() const override;
 				void init();
 				void update();

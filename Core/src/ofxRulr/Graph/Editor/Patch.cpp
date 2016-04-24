@@ -177,6 +177,11 @@ namespace ofxRulr {
 			}
 
 			//----------
+			Patch::~Patch() {
+
+			}
+
+			//----------
 			string Patch::getTypeName() const {
 				return "Patch";
 			}
