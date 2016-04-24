@@ -41,9 +41,14 @@ namespace ofxRulr {
 					void addGenerationToGui(shared_ptr<ofxCvGui::Panels::Tree::Branch>, const Channel &);
 					void selectChannel(weak_ptr<Channel>);
 
+					struct : ofParameterGroup {
+						ofParameter<bool> collapseByDefault{ "Collapse by default", false };
+						PARAM_DECLARE("Database", collapseByDefault);
+					} parameters;
+
 					shared_ptr<Channel> rootChannel;
 
-					shared_ptr<ofxCvGui::Panels::Groups::Strip> view;
+					shared_ptr<ofxCvGui::Panels::Groups::Strip> panel;
 					shared_ptr<ofxCvGui::Panels::Tree> treeView;
 					shared_ptr<ofxCvGui::Panels::Widgets> detailView;
 
@@ -52,6 +57,8 @@ namespace ofxRulr {
 					vector<weak_ptr<Nodes::Data::Channels::Generator::Base>> generators;
 
 					weak_ptr<Channel> selectedChannel;
+
+					bool firstRun = true;
 				};
 			}
 		}

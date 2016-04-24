@@ -337,6 +337,11 @@ namespace ofxRulr {
 
 					auto valueType = subChannel->getValueType();
 					switch (valueType) {
+					case Channel::Type::Bool:
+					{
+						message.pushBool(subChannel->getValue<bool>());
+						break;
+					}
 					case Channel::Type::Int:
 					{
 						message.pushInt32(subChannel->getValue<int>());

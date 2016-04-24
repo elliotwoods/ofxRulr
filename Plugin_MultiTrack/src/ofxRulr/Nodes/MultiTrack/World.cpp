@@ -66,58 +66,63 @@ namespace ofxRulr {
 				ofPushStyle();
 				{
 					for (const auto & combinedBody : this->combinedBodies) {
-						ofColor color(200, 100, 100);
-						color.setHueAngle((combinedBody.first * 30) % 360);
+						ofColor color(255, 100, 100);
+						color.setHueAngle((combinedBody.first * 60) % 360);
 
 						//draw combined body
 						ofSetColor(color);
-						combinedBody.second.mergedBody.drawWorld();
+						if (this->parameters.draw.combinedBody) {
+							combinedBody.second.combinedBody.drawWorld();
+
+							//draw body label
+							for (auto findReferenceJoint = combinedBody.second.combinedBody.joints.find(JointType::JointType_Head); findReferenceJoint != combinedBody.second.combinedBody.joints.end(); findReferenceJoint++) {
+								//draw the first valid joint, start with the head
+								ofDrawBitmapString(ofToString(combinedBody.first), findReferenceJoint->second.getPosition());
+								break;
+							}
+						}
 
 						//draw body perimeter
-						if (this->parameters.fusion.drawBodyPerimeter) {
+						if (this->parameters.draw.bodyPerimeter) {
 							ofPushStyle();
 							{
 								auto dimColor = color;
 								dimColor.setBrightness(50);
-								for (auto & joint : combinedBody.second.mergedBody.joints) {
-									switch (joint.second.getTrackingState()) {
-									case TrackingState::TrackingState_Tracked:
-										ofFill();
-									case TrackingState::TrackingState_Inferred:
-										ofNoFill();
-										break;
-									default:
-										continue;
-										break;
+								ofNoFill();
+								for (auto & joint : combinedBody.second.combinedBody.joints) {
+									if (joint.second.getTrackingState() == TrackingState::TrackingState_Tracked) {
+										ofPushMatrix();
+										{
+											ofTranslate(joint.second.getPosition() * ofVec3f(1, 0, 1) + ofVec3f(0, 0.005, 0));
+											ofRotate(90, 1, 0, 0);
+											ofDrawCircle(ofVec3f(), this->parameters.fusion.mergeDistanceThreshold / 2.0f);
+										}
+										ofPopMatrix();
 									}
-
-									ofPushMatrix();
-									{
-										ofTranslate(joint.second.getPosition() * ofVec3f(1, 0, 1) + ofVec3f(0, 0.005, 0));
-										ofRotate(90, 1, 0, 0);
-										ofDrawCircle(ofVec3f(), this->parameters.fusion.mergeDistanceThreshold);
-									}
-									ofPopMatrix();
 								}
 							}
 							ofPopStyle();
 						}
 
 						//draw original bodies and line to source kinect
-						color.setBrightness(20);
+						color.setBrightness(80);
+						ofSetColor(color);
 						for (auto originalBody : combinedBody.second.originalBodiesWorldSpace) {
-							//original body
-							originalBody.second.drawWorld();
+							if (this->parameters.draw.sourceBodies) {
+								//original body
+								originalBody.second.drawWorld();
+							}
 
-
-							//line to kinect it came from
-							auto findSubscriber = this->subscribers.find(originalBody.first);
-							if (findSubscriber != this->subscribers.end()) {
-								auto subscriber = findSubscriber->second.lock();
-								if (subscriber) {
-									auto findHead = originalBody.second.joints.find(JointType::JointType_Head);
-									if (findHead != originalBody.second.joints.end()) {
-										ofDrawLine(findHead->second.getPosition(), subscriber->getPosition());
+							if (this->parameters.draw.bodySourceRays) {
+								//line to kinect it came from
+								auto findSubscriber = this->subscribers.find(originalBody.first);
+								if (findSubscriber != this->subscribers.end()) {
+									auto subscriber = findSubscriber->second.lock();
+									if (subscriber) {
+										auto findHead = originalBody.second.joints.find(JointType::JointType_Head);
+										if (findHead != originalBody.second.joints.end()) {
+											ofDrawLine(findHead->second.getPosition(), subscriber->getPosition());
+										}
 									}
 								}
 							}
@@ -161,7 +166,9 @@ namespace ofxRulr {
 							auto & BodiesInWorldSpace = worldBodiesUnmerged[subscriberIt.first];
 
 							for (const auto & body : bodiesInCameraSpace) {
-								BodiesInWorldSpace.push_back(body * subscriberNode->getTransform());
+								if (body.tracked) {
+									BodiesInWorldSpace.push_back(body * subscriberNode->getTransform());
+								}
 							}
 						}
 					}
@@ -241,7 +248,8 @@ namespace ofxRulr {
 							auto meanOfExistingBodies = mean(combinedBody.second.originalBodiesWorldSpace);
 
 							//if the distance between this body and that body is < threshold, add it to the combined body
-							if (meanDistance(meanOfExistingBodies, *bodyIterator) < this->parameters.fusion.mergeDistanceThreshold) {
+							auto distance = meanDistance(meanOfExistingBodies, *bodyIterator, true);
+							if (distance < this->parameters.fusion.mergeDistanceThreshold) {
 								combinedBody.second.originalBodiesWorldSpace[subscriber.first] = *bodyIterator;
 								addedToExistingBody = true;
 								break;
@@ -255,6 +263,7 @@ namespace ofxRulr {
 							bodyIndex++;
 						}
 
+						//erase this body from unassigned bodies
 						bodyIterator = bodies.erase(bodyIterator);
 					}
 				}
@@ -272,7 +281,7 @@ namespace ofxRulr {
 				//--
 				//
 				for (auto & newCombinedBody : newCombinedBodies) {
-					newCombinedBody.second.mergedBody = mean(newCombinedBody.second.originalBodiesWorldSpace);
+					newCombinedBody.second.combinedBody = mean(newCombinedBody.second.originalBodiesWorldSpace);
 				}
 				//
 				//--
@@ -296,7 +305,7 @@ namespace ofxRulr {
 					for (auto & combinedBody : this->combinedBodies) {
 						auto & bodyChannel = bodies["body"][ofToString(combinedBody.first)];
 
-						auto & body = combinedBody.second.mergedBody;
+						auto & body = combinedBody.second.combinedBody;
 						bodyChannel["tracked"] = (int) body.tracked;
 
 						if (!body.tracked) {
@@ -321,7 +330,7 @@ namespace ofxRulr {
 								auto & jointChannel = bodyChannel[jointName];
 								jointChannel["position"] = joint.second.getPosition();
 								jointChannel["orientation"] = joint.second.getOrientation().asVec4();
-								jointChannel["trackingState"] = joint.second.getTrackingState();
+								jointChannel["trackingState"] = joint.second.getTrackingState() == TrackingState::TrackingState_Tracked;
 							}
 						}
 					}

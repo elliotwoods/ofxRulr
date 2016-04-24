@@ -28,10 +28,17 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", false };
 						ofParameter<float> mergeDistanceThreshold{ "Merge distance threshold", 0.3, 0.0, 5.0 };
-						ofParameter<bool> drawBodyPerimeter {"Draw body perimeter", true};
-						PARAM_DECLARE("Fusion", enabled, mergeDistanceThreshold, drawBodyPerimeter);
+						PARAM_DECLARE("Fusion", enabled, mergeDistanceThreshold);
 					} fusion;
-					PARAM_DECLARE("World", fusion);
+
+					struct : ofParameterGroup {
+						ofParameter<bool> bodyPerimeter{ "Body perimeter", true };
+						ofParameter<bool> combinedBody{ "Combined body", true };
+						ofParameter<bool> sourceBodies{ "Source bodies", true };
+						ofParameter<bool> bodySourceRays{ "Body source rays", true };
+						PARAM_DECLARE("Draw", bodyPerimeter, combinedBody, sourceBodies, bodySourceRays);
+					} draw;
+					PARAM_DECLARE("World", fusion, draw);
 				} parameters;
 
 				Subscribers subscribers;

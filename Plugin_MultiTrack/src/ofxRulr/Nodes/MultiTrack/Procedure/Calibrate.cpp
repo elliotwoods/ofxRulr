@@ -263,10 +263,10 @@ namespace ofxRulr {
 						strip->add(panel);
 
 						strip->setCellSizes({ 100, -1 });
-						this->Dialog = strip;
+						this->dialog = strip;
 
 						//Make sure the dialog is open.
-						ofxCvGui::openDialog(this->Dialog);
+						ofxCvGui::openDialog(this->dialog);
 					}
 				}
 

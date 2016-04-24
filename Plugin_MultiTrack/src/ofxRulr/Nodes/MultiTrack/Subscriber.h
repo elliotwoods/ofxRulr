@@ -46,7 +46,12 @@ namespace ofxRulr {
 						PARAM_DECLARE("Calibration", depthToWorldTableFile);
 					} calibration;
 
-					PARAM_DECLARE("Receiver", connection, calibration);
+					struct : ofParameterGroup {
+						ofParameter<bool> bodies{ "Bodies", false };
+						PARAM_DECLARE("Draw", bodies );
+					} draw;
+
+					PARAM_DECLARE("Receiver", connection, calibration, draw);
 				} parameters;
 
 				shared_ptr<ofxMultiTrack::Subscriber> subscriber;

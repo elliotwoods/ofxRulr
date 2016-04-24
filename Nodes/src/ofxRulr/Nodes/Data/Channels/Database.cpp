@@ -34,12 +34,14 @@ namespace ofxRulr {
 					this->detailView = make_shared<Panels::Widgets>();
 					
 					//grid view
-					this->view = make_shared<Panels::Groups::Strip>(Panels::Groups::Strip::Direction::Vertical);
-					this->view->setCellSizes({ -1, 110 });
-					this->view->add(this->treeView);
-					this->view->add(this->detailView);
+					this->panel = make_shared<Panels::Groups::Strip>(Panels::Groups::Strip::Direction::Vertical);
+					this->panel->setCellSizes({ -1, 110 });
+					this->panel->add(this->treeView);
+					this->panel->add(this->detailView);
 
 					auto & root = *this->rootChannel;
+
+					this->manageParameters(this->parameters);
 				}
 
 				//----------
@@ -63,6 +65,12 @@ namespace ofxRulr {
 							it++;
 						}
 					}
+
+					if (this->firstRun && this->parameters.collapseByDefault) {
+						this->treeView->getRootBranch()->collapse();
+						this->firstRun = false;
+					}
+
 					this->onPopulateData(*this->rootChannel);
 				}
 
@@ -77,7 +85,7 @@ namespace ofxRulr {
 
 				//----------
 				PanelPtr Database::getPanel() {
-					return this->view;
+					return this->panel;
 				}
 
 				//----------
@@ -129,6 +137,15 @@ namespace ofxRulr {
 						selectedChannel->getParameterUntyped();
 						auto type = selectedChannel->getValueType();
 						switch (type) {
+
+						case Channel::Type::Bool:
+						{
+							const auto & parameter = selectedChannel->getParameter<bool>();
+							this->detailView->add(new Widgets::LiveValue<string>("Type", []() {return "bool"; }));
+							this->detailView->add(new Widgets::EditableValue<bool>(*parameter));
+							break;
+						}
+
 						case Channel::Type::Int:
 						{
 							const auto & parameter = selectedChannel->getParameter<int>();

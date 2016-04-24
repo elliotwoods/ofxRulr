@@ -12,7 +12,7 @@ namespace ofxRulr {
 
 			struct CombinedBody {
 				map<SubscriberID, ofxKinectForWindows2::Data::Body> originalBodiesWorldSpace; // index is subscriberID
-				ofxKinectForWindows2::Data::Body mergedBody;
+				ofxKinectForWindows2::Data::Body combinedBody;
 			};
 			typedef map<BodyIndex, CombinedBody> CombinedBodySet;
 
@@ -21,7 +21,7 @@ namespace ofxRulr {
 			ofxKinectForWindows2::Data::Body mean(const vector<ofxKinectForWindows2::Data::Body> &);
 			ofxKinectForWindows2::Data::Body mean(const map<SubscriberID, ofxKinectForWindows2::Data::Body> &);
 
-			float meanDistance(ofxKinectForWindows2::Data::Body &, ofxKinectForWindows2::Data::Body &);
+			float meanDistance(ofxKinectForWindows2::Data::Body &, ofxKinectForWindows2::Data::Body &, bool xzOnly);
 		}
 	}
 }

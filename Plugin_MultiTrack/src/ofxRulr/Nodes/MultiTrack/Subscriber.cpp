@@ -158,9 +158,12 @@ namespace ofxRulr {
 			//----------
 			void Subscriber::drawObject() {
 				auto & frame = this->subscriber->getFrame();
-				const auto & bodies = frame.getBodies();
-				for (const auto & body : bodies) {
-					body.drawWorld(); // actually this is in kinect camera space
+
+				if (this->parameters.draw.bodies) {
+					const auto & bodies = frame.getBodies();
+					for (const auto & body : bodies) {
+						body.drawWorld(); // actually this is in kinect camera space
+					}
 				}
 			}
 

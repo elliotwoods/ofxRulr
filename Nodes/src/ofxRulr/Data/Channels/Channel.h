@@ -19,6 +19,7 @@ namespace ofxRulr {
 			public:
 				enum Type {
 					Undefined,
+					Bool,
 					Int,
 					Int32,
 					Int64,
@@ -78,6 +79,9 @@ namespace ofxRulr {
 						this->parameter = parameter;
 					}
 
+					if (typeid(T) == typeid(bool)) {
+						this->type = Type::Bool;
+					}
 					if (typeid(T) == typeid(int)) {
 						this->type = Type::Int;
 					}

@@ -12,6 +12,7 @@ namespace ofxRulr {
 
 				map<JointType, ofVec3f> positions;
 				map<JointType, ofQuaternion> orientations;
+				map<JointType, int> count;
 
 				//get all tracked joints
 				for (auto & body : bodies) {
@@ -19,6 +20,14 @@ namespace ofxRulr {
 						if (joint.second.getTrackingState() == TrackingState_Tracked) {
 							positions[joint.first] += joint.second.getPosition();
 							orientations[joint.first] = joint.second.getOrientation();
+							
+							auto findCount = count.find(joint.first);
+							if (findCount == count.end()) {
+								count[joint.first] = 1;
+							}
+							else {
+								count[joint.first]++;
+							}
 						}
 					}
 				}
@@ -29,6 +38,14 @@ namespace ofxRulr {
 						if (positions.find(joint.first) == positions.end()) {
 							positions[joint.first] += joint.second.getPosition();
 							orientations[joint.first] = joint.second.getOrientation();
+
+							auto findCount = count.find(joint.first);
+							if (findCount == count.end()) {
+								count[joint.first] = 1;
+							}
+							else {
+								count[joint.first]++;
+							}
 						}
 					}
 				}
@@ -36,18 +53,20 @@ namespace ofxRulr {
 				//accumulate the body
 				auto body = bodies.front();
 				for (auto & joint : body.joints) {
-					_Joint rawJoint = {
-						joint.first,
-						(CameraSpacePoint&)(positions[joint.first] * (1.0f / (float)bodies.size())),
-						TrackingState::TrackingState_Tracked
-					};
+					if (count[joint.first] > 0) {
+						_Joint rawJoint = {
+							joint.first,
+							(CameraSpacePoint&)(positions[joint.first] / (float)count[joint.first]),
+							TrackingState::TrackingState_Tracked
+						};
 
-					_JointOrientation rawJointOrientation = {
-						joint.first,
-						(Vector4&)orientations[joint.first]
-					};
+						_JointOrientation rawJointOrientation = {
+							joint.first,
+							(Vector4&)orientations[joint.first]
+						};
 
-					joint.second.set(rawJoint, rawJointOrientation);
+						joint.second.set(rawJoint, rawJointOrientation);
+					}
 				}
 
 				return body;
@@ -63,7 +82,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			float meanDistance(ofxKinectForWindows2::Data::Body & BodyA, ofxKinectForWindows2::Data::Body & BodyB) {
+			float meanDistance(ofxKinectForWindows2::Data::Body & BodyA, ofxKinectForWindows2::Data::Body & BodyB, bool xzOnly) {
 				float distance = 0.0f;
 				float countFound = 0;
 				for (const auto & jointIt : BodyA.joints) {
@@ -73,7 +92,12 @@ namespace ofxRulr {
 					}
 					else {
 						if (jointIt.second.getTrackingState() == TrackingState::TrackingState_Tracked && findInBodyB->second.getTrackingState() == TrackingState::TrackingState_Tracked) {
-							distance += jointIt.second.getPosition().distanceSquared(findInBodyB->second.getPosition());
+							if (xzOnly) {
+								distance += (jointIt.second.getPosition() * ofVec3f(1, 0, 1)).distanceSquared(findInBodyB->second.getPosition() * ofVec3f(1, 0, 1));
+							}
+							else {
+								distance += jointIt.second.getPosition().distanceSquared(findInBodyB->second.getPosition());
+							}
 							countFound++;
 						}
 					}
