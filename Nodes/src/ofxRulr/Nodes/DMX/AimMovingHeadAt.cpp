@@ -187,7 +187,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const ofVec3f & AimMovingHeadAt::getObjectPositionOffset() const {
+			ofVec3f AimMovingHeadAt::getObjectPositionOffset() const {
 				return ofVec3f(this->objectPositionOffset[0], this->objectPositionOffset[1], this->objectPositionOffset[2]);
 			}
 

@@ -245,7 +245,7 @@ namespace ofxRulr {
 						//check this body against any built bodies so far (this is often empty)
 						for (auto & combinedBody : newCombinedBodies) {
 							//find the mean of the combinedBody
-							auto meanOfExistingBodies = mean(combinedBody.second.originalBodiesWorldSpace);
+							auto meanOfExistingBodies = mean(combinedBody.second.originalBodiesWorldSpace, this->getMergeSettings());
 
 							//if the distance between this body and that body is < threshold, add it to the combined body
 							auto distance = meanDistance(meanOfExistingBodies, *bodyIterator, true);
@@ -281,7 +281,7 @@ namespace ofxRulr {
 				//--
 				//
 				for (auto & newCombinedBody : newCombinedBodies) {
-					newCombinedBody.second.combinedBody = mean(newCombinedBody.second.originalBodiesWorldSpace);
+					newCombinedBody.second.combinedBody = mean(newCombinedBody.second.originalBodiesWorldSpace, this->getMergeSettings());
 				}
 				//
 				//--
@@ -298,7 +298,7 @@ namespace ofxRulr {
 
 					vector<int> indices;
 					for (auto body : this->combinedBodies) {
-						indices.push_back(body.first);
+						indices.push_back((int) body.first);
 					}
 					bodies["indices"] = indices;
 
@@ -335,6 +335,15 @@ namespace ofxRulr {
 						}
 					}
  				}
+			}
+
+			//----------
+			MergeSettings World::getMergeSettings() const {
+				MergeSettings mergeSettings = {
+					this->parameters.fusion.crossoverEnabled.get(),
+					this->parameters.fusion.crossoverMargin.get()
+				};
+				return mergeSettings;
 			}
 		}
 	}

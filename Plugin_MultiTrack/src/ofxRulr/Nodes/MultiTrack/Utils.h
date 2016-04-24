@@ -10,6 +10,11 @@ namespace ofxRulr {
 			typedef size_t BodyIndex;
 			typedef size_t SubscriberID;
 
+			enum DepthMapSize {
+				Width = 512,
+				Height = 424
+			};
+
 			struct CombinedBody {
 				map<SubscriberID, ofxKinectForWindows2::Data::Body> originalBodiesWorldSpace; // index is subscriberID
 				ofxKinectForWindows2::Data::Body combinedBody;
@@ -18,8 +23,15 @@ namespace ofxRulr {
 
 			typedef map<SubscriberID, weak_ptr<Subscriber>> Subscribers;
 
-			ofxKinectForWindows2::Data::Body mean(const vector<ofxKinectForWindows2::Data::Body> &);
-			ofxKinectForWindows2::Data::Body mean(const map<SubscriberID, ofxKinectForWindows2::Data::Body> &);
+			struct MergeSettings {
+				bool crossoverEnabled;
+				///Size in pixels at the edge of each frame to apply crossover logic
+				float crossoverMargin;
+			};
+
+			float getWeight(const ofVec2f & positionInDepthMap, const MergeSettings & mergeSettings);
+			ofxKinectForWindows2::Data::Body mean(const vector<ofxKinectForWindows2::Data::Body> &, const MergeSettings &);
+			ofxKinectForWindows2::Data::Body mean(const map<SubscriberID, ofxKinectForWindows2::Data::Body> &, const MergeSettings &);
 
 			float meanDistance(ofxKinectForWindows2::Data::Body &, ofxKinectForWindows2::Data::Body &, bool xzOnly);
 		}

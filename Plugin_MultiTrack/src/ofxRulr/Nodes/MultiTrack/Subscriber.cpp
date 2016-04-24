@@ -35,6 +35,19 @@ namespace ofxRulr {
 						return 0.0f;
 					}
 				});
+				this->uiPanel->addIndicator("Depth to World loaded", [this]() {
+					if (this->depthToWorldLUT.isAllocated()) {
+						if (this->depthToWorldLUT.getWidth() == 512 && this->depthToWorldLUT.getHeight() == 424) {
+							return ofxCvGui::Widgets::Indicator::Status::Good;
+						}
+						else {
+							return ofxCvGui::Widgets::Indicator::Status::Warning;
+						}
+					}
+					else {
+						return ofxCvGui::Widgets::Indicator::Status::Clear;
+					}
+				});
 				this->uiPanel->addIndicator("New frame arrived", [this]() {
 					if (this->subscriber) {
 						if (this->subscriber->getSubscriber().isFrameNew()) {
@@ -266,7 +279,7 @@ namespace ofxRulr {
 					try {
 						this->loadDepthToWorldTableFile();
 					}
-					RULR_CATCH_ALL_TO_ALERT;
+					RULR_CATCH_ALL_TO_ERROR;
 				}
 			}
 
