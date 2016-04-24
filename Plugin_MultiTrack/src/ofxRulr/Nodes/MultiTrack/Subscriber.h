@@ -2,6 +2,7 @@
 
 #include "ofxRulr/Nodes/Item/RigidBody.h"
 #include "ofxRulr/Utils/ControlSocket.h"
+#include "ofxRulr/Utils/MeshProvider.h"
 
 #include "ofxMultiTrack.h"
 
@@ -48,7 +49,12 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<bool> bodies{ "Bodies", false };
-						PARAM_DECLARE("Draw", bodies );
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", false };
+							ofParameter<int> downsampleExp{ "Downsample (exp)", 0, 0, 3 };
+							PARAM_DECLARE("Mesh", enabled, downsampleExp);
+						} mesh;
+						PARAM_DECLARE("Draw", bodies, mesh );
 					} draw;
 
 					PARAM_DECLARE("Receiver", connection, calibration, draw);
@@ -58,7 +64,11 @@ namespace ofxRulr {
 				unique_ptr<Utils::ControlSocket> controlSocket;
 
 				ofFloatPixels depthToWorldLUT;
+				ofTexture depthToWorldTexture;
 				ofTexture previewTexture;
+
+				ofShader worldShader;
+				Utils::MeshProvider meshProvider;
 
 				void depthToWorldTableFileCallback(string &);
 				void loadDepthToWorldTableFile();

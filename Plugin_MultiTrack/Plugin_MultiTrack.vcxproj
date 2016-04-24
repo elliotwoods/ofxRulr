@@ -153,6 +153,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\Utils.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MultiTrack\World.h" />
     <ClInclude Include="src\ofxRulr\Utils\ControlSocket.h" />
+    <ClInclude Include="src\ofxRulr\Utils\MeshProvider.h" />
     <ClInclude Include="src\ofxRulr\Utils\SolveSet.h" />
     <ClInclude Include="src\pch_MultiTrack.h" />
   </ItemGroup>
@@ -172,6 +173,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\Utils.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MultiTrack\World.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\ControlSocket.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\MeshProvider.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\SolveSet.cpp" />
     <ClCompile Include="src\pch_MultiTrack.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

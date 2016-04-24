@@ -132,6 +132,9 @@ namespace ofxRulr {
 				this->parameters.calibration.depthToWorldTableFile.addListener(this, &Subscriber::depthToWorldTableFileCallback);
 
 				this->subscriber = make_shared<ofxMultiTrack::Subscriber>();
+
+				//setup world render
+				this->worldShader = ofxAssets::shader("ofxRulr::Nodes::MultiTrack::depthToWorld");
 			}
 
 			//----------
@@ -142,6 +145,18 @@ namespace ofxRulr {
 					if (!this->depthToWorldLUT.isAllocated()) {
 						this->controlSocket->sendMessage("getDepthToWorldTable");
 					}
+				}
+
+				if (this->depthToWorldLUT.isAllocated() && !this->depthToWorldTexture.isAllocated()) {
+					// TODO: Probably need a listener whenever the table changes.
+					this->depthToWorldTexture.loadData(this->depthToWorldLUT);
+
+					//Upload LUT to shader.
+					this->worldShader.begin();
+					{
+						this->worldShader.setUniformTexture("uWorldTable", this->depthToWorldTexture, 2);
+					}
+					this->worldShader.end();
 				}
 
 				if (this->subscriber) {
@@ -159,6 +174,18 @@ namespace ofxRulr {
 							this->previewTexture.allocate(pixels);
 						}
 						this->previewTexture.loadData(pixels);
+
+						//Mesh update.
+						if (this->parameters.draw.mesh.enabled) {
+							auto & meshDimensions = this->meshProvider.getDimensions();
+							if (meshDimensions.x != pixels.getWidth() || meshDimensions.y != pixels.getHeight()) {
+								this->meshProvider.setDimensions(ofVec2f(pixels.getWidth(), pixels.getHeight()));
+							}
+
+							if (this->parameters.draw.mesh.downsampleExp != this->meshProvider.getDownsampleExp()) {
+								this->meshProvider.setDownsampleExp(this->parameters.draw.mesh.downsampleExp);
+							}
+						}
 					}
 				}
 			}
@@ -177,6 +204,17 @@ namespace ofxRulr {
 					for (const auto & body : bodies) {
 						body.drawWorld(); // actually this is in kinect camera space
 					}
+				}
+
+				if (this->parameters.draw.mesh.enabled) {
+					this->worldShader.begin();
+					{
+						this->worldShader.setUniform2f("uDimensions", ofVec2f(this->previewTexture.getWidth(), this->previewTexture.getHeight()));
+						this->worldShader.setUniformTexture("uDepthTexture", this->previewTexture, 1);
+
+						this->meshProvider.getMesh().draw(OF_MESH_POINTS);
+					}
+					this->worldShader.end();
 				}
 			}
 
