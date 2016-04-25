@@ -30,11 +30,11 @@ namespace ofxRulr {
 					RULR_NODE_SERIALIZATION_LISTENERS;
 					RULR_NODE_DRAW_WORLD_LISTENER;
 
-					this->currStep = StepIdle;
+					this->dialogStep = DialogStepClosed;
 
 					this->panel = ofxCvGui::Panels::makeWidgets();
 					auto button = this->panel->addButton("Open Capture", [this]() {
-						this->goToStep(StepBegin);
+						this->dialogStepTo(DialogStepBegin);
 					});
 
 					//Only draw the button when a World is connected.
@@ -57,45 +57,50 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::update() {
-					if (this->currStep == StepBegin) {
-						this->captureFrame(false);
-					}
-					else if (this->currStep == StepCapture) {
+					if (this->dialogStep == DialogStepCapture) {
 						this->captureFrame(true);
 
 						if (this->getTimeSinceCaptureStarted() > chrono::seconds(this->parameters.capture.duration)) {
-							this->goToStep(StepSolve);
+							this->dialogStepTo(DialogStepComplete);
 						}
+					}
+					else if (this->dialogStep == DialogStepBegin || this->parameters.debugWorld.liveMarker) {
+						this->captureFrame(false);
 					}
 				}
 
 				//----------
 				void Calibrate::drawWorld() {
-					ofPushStyle();
+					/*ofPushStyle();
 					for (auto & it : this->dataToPreview) {
 						ofSetColor(this->getSubscriberColor(it.first));
 						for (auto & m : it.second) {
 							ofDrawSphere(m.position, 0.1f);
 						}
 					}
-					ofPopStyle();
+					ofPopStyle();*/
 
-					if (!this->parameters.debugWorld.drawLines && !this->parameters.debugWorld.drawPoints) return;
+					if (!(this->parameters.debugWorld.drawLines || this->parameters.debugWorld.drawPoints || this->parameters.debugWorld.liveMarker)) {
+						return;
+					}
 
 					//Cache the transforms for each subscriber.
 					auto world = this->getInput<World>();
 					if (!world) return;
 
 					map<size_t, ofMatrix4x4> transforms;
+					map<size_t, ofFloatColor> debugColors;
 					auto & subscribers = world->getSubscribers();
 					for (auto & it : subscribers) {
 						auto weak_subscriber = it.second;
 						if (!weak_subscriber.expired()) {
 							auto subscriberNode = weak_subscriber.lock();
 							transforms.emplace(it.first, subscriberNode->getTransform());
+							debugColors.emplace(it.first, subscriberNode->getDebugColor());
 						}
 					}
 
+					//Draw lines between matching points of different Subscribers
 					if (this->parameters.debugWorld.drawLines) {
 						vector<ofVec3f> linePoints;
 						vector<ofFloatColor> colors;
@@ -123,8 +128,8 @@ namespace ofxRulr {
 										linePoints.push_back(lineStart.getInterpolated(lineEnd, 0.01f));
 										linePoints.push_back(lineEnd.getInterpolated(lineStart, 0.01f));
 
-										colors.push_back(this->getSubscriberColor(srcIt->first));
-										colors.push_back(this->getSubscriberColor(dstIt->first));
+										colors.push_back(debugColors[srcIt->first]);
+										colors.push_back(debugColors[dstIt->first]);
 									}
 								}
 							}
@@ -137,43 +142,61 @@ namespace ofxRulr {
 						vbo.draw(GL_LINES, 0, linePoints.size());
 					}
 
+					//Draw the point data for each subscriber.
 					if (this->parameters.debugWorld.drawPoints) {
-						auto & subscribers = this->getInput<World>()->getSubscribers();
-						for (auto & it : subscribers) {
-							auto weak_subscriber = it.second;
-							if (!weak_subscriber.expired()) {
-								auto subscriberNode = weak_subscriber.lock();
-								ofMesh mesh;
-								for (const auto & jt : this->dataToSolve[it.first]) {
-									mesh.addVertex(jt.second.position);
-								}
+						for (auto & it = this->dataToSolve.begin(); it != this->dataToSolve.end(); ++it) {
+							if (transforms.find(it->first) == transforms.end()) break;
+							const auto & transform = transforms[it->first];
 
-								ofPushMatrix();
-								ofPushStyle();
-								{
-									ofSetColor(this->getSubscriberColor(it.first));
-									ofMultMatrix(subscriberNode->getTransform());
-
-									mesh.draw(OF_MESH_POINTS);
-								}
-								ofPopStyle();
-								ofPopMatrix();
+							ofMesh mesh;
+							for (const auto & jt : this->dataToSolve[it->first]) {
+								mesh.addVertex(jt.second.position);
 							}
+
+							ofPushMatrix();
+							ofPushStyle();
+							{
+								ofSetColor(debugColors[it->first]);
+								ofMultMatrix(transform);
+
+								mesh.draw(OF_MESH_POINTS);
+							}
+							ofPopStyle();
+							ofPopMatrix();
 						}
 					}
+
+					//Draw the live marker(s) for each subscriber.
+					if (this->parameters.debugWorld.liveMarker) {
+						for (auto & it = this->dataToPreview.begin(); it != this->dataToPreview.end(); ++it) {
+							ofPushStyle();
+							{
+								ofSetColor(debugColors[it->first]);
+								for (const Marker & marker : it->second) {
+									if (marker.valid) {
+										ofDrawSphere(marker.position, 0.1f);
+									}
+								}
+							}
+							ofPopStyle();
+						}
+					}
+
 				}
 
 				//----------
-				void Calibrate::goToStep(Step nextStep) {
+				void Calibrate::dialogStepTo(DialogStep nextStep) {
 					// TODO: Turn this back on once we get a close callback on the Dialog
 					//if (this->currStep == nextStep) return;
 
-					this->currStep = nextStep;
+					this->dialogStep = nextStep;
 
 					ofxCvGui::closeDialog();
 					this->dialog.reset();
 
-					if (this->currStep == StepIdle) return;
+					if (this->dialogStep == DialogStepClosed) {
+						return;
+					}
 
 					auto addPreviews = [this](shared_ptr<ofxCvGui::Panels::Widgets> & panel, bool history) {
 						auto & subscribers = this->getInput<World>()->getSubscribers();
@@ -195,10 +218,11 @@ namespace ofxRulr {
 								strip->add(texture);
 
 								auto key = it.first;
-								texture->onDrawImage += [this, key, history](ofxCvGui::DrawImageArguments & args) {
+								auto color = subscriber->getDebugColor();
+								texture->onDrawImage += [this, key, color, history](ofxCvGui::DrawImageArguments & args) {
 									ofPushStyle();
 									{
-										ofSetColor(this->getSubscriberColor(key));
+										ofSetColor(color);
 										
 										if (history) {
 											const auto & frames = this->dataToSolve[key];
@@ -234,7 +258,7 @@ namespace ofxRulr {
 					panel = ofxCvGui::Panels::makeWidgets();
 					panel->addTitle("MultiTrack");
 					
-					if (this->currStep == StepBegin) {
+					if (this->dialogStep == DialogStepBegin) {
 						//GUI.
 						panel->addTitle("Step 1: Get Ready!", ofxCvGui::Widgets::Title::Level::H2);
 						panel->addTitle("Grab your marker and make sure it's the only red thing in the previews below. Adjust the parameters if necessary.", ofxCvGui::Widgets::Title::Level::H3);
@@ -245,11 +269,11 @@ namespace ofxRulr {
 						addPreviews(panel, false);
 
 						auto buttonNext = panel->addButton("Begin Capture", [this]() {
-							this->goToStep(StepCapture);
+							this->dialogStepTo(DialogStepCapture);
 						});
 						buttonNext->setHeight(100.0f);
 					}
-					else if (this->currStep == StepCapture) {
+					else if (this->dialogStep == DialogStepCapture) {
 						//Clear previous data.
 						this->dataToSolve.clear();
 						this->solveSets.clear();
@@ -268,16 +292,24 @@ namespace ofxRulr {
 
 						addPreviews(panel, true);
 
-						auto buttonNext = panel->addButton("Solve", [this]() {
-							this->goToStep(StepSolve);
+						auto buttonNext = panel->addButton("Continue", [this]() {
+							this->dialogStepTo(DialogStepComplete);
 						});
 						buttonNext->setHeight(100.0f);
 					}
-					else if (this->currStep == StepSolve) {
-						//Setup the data set if necessary.
+					else if (this->dialogStep == DialogStepComplete) {
 						this->setupSolveSets();
 
-						ofxCvGui::refreshInspector(this);
+						//GUI.
+						panel->addTitle("Step 3: Complete", ofxCvGui::Widgets::Title::Level::H2);
+						panel->addTitle("You're done here. Close this dialog and move on to the Inspector to finish calibration.", ofxCvGui::Widgets::Title::Level::H3);
+
+						addPreviews(panel, false);
+
+						auto buttonNext = panel->addButton("Close Dialog", [this]() {
+							this->dialogStepTo(DialogStepClosed);
+						});
+						buttonNext->setHeight(100.0f);
 					}
 
 					if (panel) {
@@ -290,28 +322,28 @@ namespace ofxRulr {
 							auto commonPanel = ofxCvGui::Panels::makeWidgets();
 
 							auto buttonClose = commonPanel->addButton("Close", [this]() {
-								this->goToStep(StepIdle);
+								this->dialogStepTo(DialogStepClosed);
 							});
 							buttonClose->setHeight(50.0f);
-							commonPanel->addSpacer();
-							auto toggleBegin = commonPanel->addToggle("Begin", [this]() {
-								return (this->currStep == StepBegin);
-							}, [this](bool) {
-								this->goToStep(StepBegin);
-							});
-							toggleBegin->setHeight(50.0f);
-							auto toggleCapture = commonPanel->addToggle("Capture", [this]() {
-								return (this->currStep == StepCapture);
-							}, [this](bool) {
-								this->goToStep(StepCapture);
-							});
-							toggleCapture->setHeight(50.0f);
-							auto toggleSolve = commonPanel->addToggle("Solve", [this]() {
-								return (this->currStep == StepSolve);
-							}, [this](bool) {
-								this->goToStep(StepSolve);
-							});
-							toggleSolve->setHeight(50.0f);
+							//commonPanel->addSpacer();
+							//auto toggleBegin = commonPanel->addToggle("Begin", [this]() {
+							//	return (this->currStep == StepBegin);
+							//}, [this](bool) {
+							//	this->goToStep(StepBegin);
+							//});
+							//toggleBegin->setHeight(50.0f);
+							//auto toggleCapture = commonPanel->addToggle("Capture", [this]() {
+							//	return (this->currStep == StepCapture);
+							//}, [this](bool) {
+							//	this->goToStep(StepCapture);
+							//});
+							//toggleCapture->setHeight(50.0f);
+							//auto toggleSolve = commonPanel->addToggle("Solve", [this]() {
+							//	return (this->currStep == StepSolve);
+							//}, [this](bool) {
+							//	this->goToStep(StepSolve);
+							//});
+							//toggleSolve->setHeight(50.0f);
 
 							strip->add(commonPanel);
 						}
@@ -342,7 +374,7 @@ namespace ofxRulr {
 							this->triggerSolvers();
 
 							//Repeat.
-							this->goToStep(StepSolve);
+							this->setupSolveSets();
 							ofxCvGui::refreshInspector(this);
 
 							scopedProcess.end();
@@ -378,64 +410,41 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::captureFrame(bool record) {
+					auto world = this->getInput<World>();
+					if (!world) return;
+
 					size_t frameNum = ofGetFrameNum();
 					Marker marker;
 
 					//Get the marker data for this frame.
-					auto & subscribers = this->getInput<World>()->getSubscribers();
+					auto & subscribers = world->getSubscribers();
 					for (auto & it : subscribers) {
 						auto weak_subscriber = it.second;
 						if (!weak_subscriber.expired()) {
 							auto subscriberNode = weak_subscriber.lock();
 							auto subscriber = subscriberNode->getSubscriber();
 							if (subscriber) {
+								const auto & frame = subscriber->getFrame();
+
+								//Make sure all the data is ready before proceeding.
+								auto width = subscriber->getFrame().getDepth().getWidth();
+								if (width == 0) continue;
+								 
+								auto depth = subscriber->getFrame().getDepth().getData();
+								if (depth == nullptr) continue;
+
+								auto lut = subscriberNode->getDepthToWorldLUT().getData();
+								if (lut == nullptr)  continue;
+
 								//if (subscriber->isFrameNew()) {
 									//Find the Markers in the frame.
 									vector<Marker> markers = findMarkersInFrame(subscriber->getFrame());
 
 									for (auto & marker : markers) {
-										//Map the Marker coordinates to world space.
-										auto width = subscriber->getFrame().getDepth().getWidth();
-										auto depth = subscriber->getFrame().getDepth().getData();
-										auto lut = subscriberNode->getDepthToWorldLUT().getData();
-										if (lut == nullptr) {
-											throw(ofxRulr::Exception("No Depth to World LUT found!"));
-										}
-
-										//Sample the area around the 2D marker for an average 3D position.
-										ofVec3f avgPos = ofVec3f::zero();
-										size_t numFound = 0;
-										const float radiusSq = marker.radius * marker.radius;
-										for (int y = marker.center.y - marker.radius; y < marker.center.y + marker.radius; ++y) {
-											for (int x = marker.center.x - marker.radius; x < marker.center.x + marker.radius; ++x) {
-												x = marker.center.x;
-												y = marker.center.y;
-												if (ofVec2f(x, y).squareDistance(marker.center) <= radiusSq) {
-													int idx = y * width + x;
-													ofVec3f candidate = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depth[idx] * 0.001f;
-													if (candidate != ofVec3f::zero()) {
-														avgPos += candidate;
-														++numFound;
-													}
-												}
-												break;
-											}
-											break;
-										}
-										if (numFound) {
-											//The position is valid.
-
-											//Set the marker position to the average.
-											avgPos /= numFound;
-											marker.position = avgPos;
-										}
-										else {
-											//The position is invalid, ignore it.
-											marker.position = ofVec3f::zero();
-										}
+										this->mapMarkerToWorld(marker, width, depth, lut);
 									}
 
-									//Keep all found Markers for preview, don't bother mapping to 3D.
+									//Keep all found Markers for preview.
 									if (this->dataToPreview.find(it.first) == this->dataToPreview.end()) {
 										this->dataToPreview.emplace(it.first, markers);
 									}
@@ -447,38 +456,8 @@ namespace ofxRulr {
 										if (markers.size() == 1) {
 											auto & marker = markers.front();
 
-											//Map the Marker coordinates to world space.
-											auto height = subscriber->getFrame().getDepth().getHeight();
-											auto depth = subscriber->getFrame().getDepth().getData();
-											auto lut = subscriberNode->getDepthToWorldLUT().getData();
-											if (lut == nullptr) {
-												throw(ofxRulr::Exception("No Depth to World LUT found!"));
-											}
-
-											//Sample the area around the 2D marker for an average 3D position.
-											ofVec3f avgPos = ofVec3f::zero();
-											size_t numFound = 0;
-											const float radiusSq = marker.radius * marker.radius;
-											for (int y = marker.center.y - marker.radius; y < marker.center.y + marker.radius; ++y) {
-												for (int x = marker.center.x - marker.radius; x < marker.center.x + marker.radius; ++x) {
-													if (ofVec2f(x, y).squareDistance(marker.center) <= radiusSq) {
-														int idx = y * height + x;
-														ofVec3f candidate = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depth[idx] * 0.001f;
-														if (candidate != ofVec3f::zero()) {
-															avgPos += candidate;
-															++numFound;
-														}
-													}
-												}
-											}
-											if (numFound) {
-												//The position is valid.
-
-												//Set the marker position to the average.
-												avgPos /= numFound;
-												marker.position = avgPos;
-
-												//Save the data.
+											if (marker.valid) {
+												//Save the data for solving.
 												if (this->dataToSolve.find(it.first) == this->dataToSolve.end()) {
 													map<size_t, Marker> frameToMarker;
 													frameToMarker.emplace(frameNum, marker);
@@ -491,10 +470,6 @@ namespace ofxRulr {
 													this->dataToSolve[it.first][frameNum] = marker;
 												}
 												ofLogVerbose("Calibrate") << "Frame " << frameNum << ": Subscriber " << it.first << " found marker " << marker.center << " => " << marker.position << endl;
-											}
-											else {
-												//The position is invalid, ignore it.
-												marker.position = ofVec3f::zero();
 											}
 										}
 									}
@@ -532,6 +507,43 @@ namespace ofxRulr {
 					}
 
 					return markers;
+				}
+
+				//----------
+				bool Calibrate::mapMarkerToWorld(Marker & marker, int frameWidth, const unsigned short * depthData, const float * lut) {
+					//Sample the area around the 2D marker for an average 3D position.
+					ofVec3f avgPos = ofVec3f::zero();
+					size_t numFound = 0;
+					const float radiusSq = marker.radius * marker.radius;
+					for (int y = marker.center.y - marker.radius; y < marker.center.y + marker.radius; ++y) {
+						for (int x = marker.center.x - marker.radius; x < marker.center.x + marker.radius; ++x) {
+							x = marker.center.x;
+							y = marker.center.y;
+							if (ofVec2f(x, y).squareDistance(marker.center) <= radiusSq) {
+								int idx = y * frameWidth + x;
+								ofVec3f candidate = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depthData[idx] * 0.001f;
+								if (candidate != ofVec3f::zero()) {
+									avgPos += candidate;
+									++numFound;
+								}
+							}
+							break;
+						}
+						break;
+					}
+					if (numFound) {
+						//The position is valid, set the marker position to the average.
+						avgPos /= numFound;
+						marker.position = avgPos;
+						marker.valid = true;
+					}
+					else {
+						//The position is invalid, ignore it.
+						marker.position = ofVec3f::zero();
+						marker.valid = false;
+					}
+					
+					return marker.valid;
 				}
 
 				//----------
@@ -706,16 +718,6 @@ namespace ofxRulr {
 					}
 
 					ofxRulr::Utils::Serializable::deserialize(json["parameters"], this->parameters);
-				}
-
-				//----------
-				const ofColor & Calibrate::getSubscriberColor(size_t key) {
-					if (this->subscriberColors.find(key) == this->subscriberColors.end()) {
-						ofColor color(200, 100, 100);
-						color.setHueAngle((key * 50) % 360);
-						this->subscriberColors.emplace(key, color);
-					}
-					return this->subscriberColors[key];
 				}
 			}
 		}
