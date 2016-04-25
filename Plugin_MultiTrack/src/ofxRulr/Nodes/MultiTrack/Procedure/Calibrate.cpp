@@ -396,7 +396,7 @@ namespace ofxRulr {
 					});
 					buttonConfirm->setHeight(100.0f);
 
-					panel->addParameterGroup(parameters.debugWorld);
+					inspector->addParameterGroup(parameters.debugWorld);
 				}
 
 				//----------
