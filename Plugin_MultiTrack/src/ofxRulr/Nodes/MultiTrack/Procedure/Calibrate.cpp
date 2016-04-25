@@ -71,23 +71,14 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::drawWorld() {
-					/*ofPushStyle();
-					for (auto & it : this->dataToPreview) {
-						ofSetColor(this->getSubscriberColor(it.first));
-						for (auto & m : it.second) {
-							ofDrawSphere(m.position, 0.1f);
-						}
-					}
-					ofPopStyle();*/
-
 					if (!(this->parameters.debugWorld.drawLines || this->parameters.debugWorld.drawPoints || this->parameters.debugWorld.liveMarker)) {
 						return;
 					}
 
-					//Cache the transforms for each subscriber.
 					auto world = this->getInput<World>();
 					if (!world) return;
 
+					//Cache the transforms and debug colors for each subscriber.
 					map<size_t, ofMatrix4x4> transforms;
 					map<size_t, ofFloatColor> debugColors;
 					auto & subscribers = world->getSubscribers();
@@ -169,16 +160,35 @@ namespace ofxRulr {
 					//Draw the live marker(s) for each subscriber.
 					if (this->parameters.debugWorld.liveMarker) {
 						for (auto & it = this->dataToPreview.begin(); it != this->dataToPreview.end(); ++it) {
+							if (transforms.find(it->first) == transforms.end()) break;
+							const auto & transform = transforms[it->first];
+							const auto & origin = ofVec3f::zero() * transform;
+
+							ofPushMatrix();
 							ofPushStyle();
 							{
 								ofSetColor(debugColors[it->first]);
 								for (const Marker & marker : it->second) {
-									if (marker.valid) {
-										ofDrawSphere(marker.position, 0.1f);
-									}
+									ofNode node;
+									node.setPosition(marker.position * transform);
+									node.lookAt(origin);
+
+									ofVec3f axis;
+									float angle;
+									node.getOrientationQuat().getRotate(angle, axis);
+
+									//Translate the Marker to its position.
+									ofTranslate(node.getPosition());
+
+									//Perform the rotation (billboard).
+									ofRotate(angle, axis.x, axis.y, axis.z);
+
+									marker.valid ? ofFill() : ofNoFill();
+									ofDrawCircle(0, 0, 0.1f);
 								}
 							}
 							ofPopStyle();
+							ofPopMatrix();
 						}
 					}
 
