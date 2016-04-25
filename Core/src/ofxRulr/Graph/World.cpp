@@ -118,7 +118,7 @@ namespace ofxRulr {
 			horizontalGroup->add(inspector);
 			inspector->setTitleEnabled(false);
 
-			//whenever the instpector clears, setup default elements
+			//whenever the inspector clears, setup default elements
 			InspectController::X().onClear += [this] (InspectArguments & args) {
 				auto inspector = args.inspector;
 				inspector->add(new Widgets::LiveValueHistory("Application fps [Hz]", [] () {

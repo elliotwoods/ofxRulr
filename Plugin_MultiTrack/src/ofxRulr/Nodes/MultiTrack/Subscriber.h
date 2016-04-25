@@ -61,7 +61,7 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", false };							
 							ofParameter<bool> applyIRTexture{ "Apply IR Texture", false };
-							ofParameter<float> colorAmplitude{ "Color amplitude", 256.0f, 0.0f, 0xffff };
+							ofParameter<float> colorAmplitude{ "Color amplitude", 256.0f, 0.0f, 1024.0f };
 							PARAM_DECLARE("CPU point cloud", enabled, applyIRTexture, colorAmplitude);
 						} cpuPointCloud;
 

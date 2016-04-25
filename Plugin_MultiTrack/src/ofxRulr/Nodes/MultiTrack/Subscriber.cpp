@@ -154,26 +154,27 @@ namespace ofxRulr {
 				auto & frame = this->subscriber->getFrame();
 
 				ofPushStyle();
-				ofSetColor(this->debugColor);
+				{
+					ofSetColor(this->debugColor);
 
-				if (this->parameters.draw.bodies) {
-					const auto & bodies = frame.getBodies();
-					for (const auto & body : bodies) {
-						body.drawWorld(); // actually this is in kinect camera space
+					if (this->parameters.draw.bodies) {
+						const auto & bodies = frame.getBodies();
+						for (const auto & body : bodies) {
+							body.drawWorld(); // actually this is in kinect camera space
+						}
+					}
+
+					if (this->parameters.draw.gpuPointCloud.enabled) {
+						this->worldShader.begin();
+						{
+							this->worldShader.setUniform2f("uDimensions", ofVec2f(this->previewTexture.getWidth(), this->previewTexture.getHeight()));
+							this->worldShader.setUniformTexture("uDepthTexture", this->previewTexture, 1);
+
+							this->meshProvider.getMesh().draw(OF_MESH_POINTS);
+						}
+						this->worldShader.end();
 					}
 				}
-
-				if (this->parameters.draw.gpuPointCloud.enabled) {
-					this->worldShader.begin();
-					{
-						this->worldShader.setUniform2f("uDimensions", ofVec2f(this->previewTexture.getWidth(), this->previewTexture.getHeight()));
-						this->worldShader.setUniformTexture("uDepthTexture", this->previewTexture, 1);
-
-						this->meshProvider.getMesh().draw(OF_MESH_POINTS);
-					}
-					this->worldShader.end();
-				}
-
 				ofPopStyle();
 
 				if (this->parameters.draw.cpuPointCloud.enabled) {
