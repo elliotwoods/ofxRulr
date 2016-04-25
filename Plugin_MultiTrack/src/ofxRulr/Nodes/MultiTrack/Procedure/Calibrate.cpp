@@ -83,8 +83,11 @@ namespace ofxRulr {
 					if (!this->parameters.debugWorld.drawLines && !this->parameters.debugWorld.drawPoints) return;
 
 					//Cache the transforms for each subscriber.
+					auto world = this->getInput<World>();
+					if (!world) return;
+
 					map<size_t, ofMatrix4x4> transforms;
-					auto & subscribers = this->getInput<World>()->getSubscribers();
+					auto & subscribers = world->getSubscribers();
 					for (auto & it : subscribers) {
 						auto weak_subscriber = it.second;
 						if (!weak_subscriber.expired()) {
