@@ -424,12 +424,13 @@ namespace ofxRulr {
 							auto subscriberNode = weak_subscriber.lock();
 							auto subscriber = subscriberNode->getSubscriber();
 							if (subscriber) {
-								const auto & frame = subscriber->getFrame();
-
 								//Make sure all the data is ready before proceeding.
 								auto width = subscriber->getFrame().getDepth().getWidth();
 								if (width == 0) continue;
 								 
+								auto height = subscriber->getFrame().getDepth().getHeight();
+								if (height == 0) continue;
+
 								auto depth = subscriber->getFrame().getDepth().getData();
 								if (depth == nullptr) continue;
 
@@ -441,7 +442,7 @@ namespace ofxRulr {
 									vector<Marker> markers = findMarkersInFrame(subscriber->getFrame());
 
 									for (auto & marker : markers) {
-										this->mapMarkerToWorld(marker, width, depth, lut);
+										this->mapMarkerToWorld(marker, width, height, depth, lut);
 									}
 
 									//Keep all found Markers for preview.
@@ -510,13 +511,17 @@ namespace ofxRulr {
 				}
 
 				//----------
-				bool Calibrate::mapMarkerToWorld(Marker & marker, int frameWidth, const unsigned short * depthData, const float * lut) {
+				bool Calibrate::mapMarkerToWorld(Marker & marker, int frameWidth, int frameHeight, const unsigned short * depthData, const float * lut) {
 					//Sample the area around the 2D marker for an average 3D position.
 					ofVec3f avgPos = ofVec3f::zero();
 					size_t numFound = 0;
 					const float radiusSq = marker.radius * marker.radius;
-					for (int y = marker.center.y - marker.radius; y < marker.center.y + marker.radius; ++y) {
-						for (int x = marker.center.x - marker.radius; x < marker.center.x + marker.radius; ++x) {
+					int minY = MAX(0, marker.center.y - marker.radius);
+					int maxY = MIN(marker.center.y - marker.radius, frameHeight);
+					int minX = MAX(0, marker.center.x - marker.radius);
+					int maxX = MIN(marker.center.x - marker.radius, frameWidth);
+					for (int y = minY; y < maxY; ++y) {
+						for (int x = minX; x < maxX; ++x) {
 							//x = marker.center.x;
 							//y = marker.center.y;
 							if (ofVec2f(x, y).squareDistance(marker.center) <= radiusSq) {

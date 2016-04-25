@@ -40,7 +40,7 @@ namespace ofxRulr {
 
 					void captureFrame(bool record);
 					vector<Marker> findMarkersInFrame(const ofxMultiTrack::Frame & frame);
-					bool mapMarkerToWorld(Marker & marker, int frameWidth, const unsigned short * depthData, const float * lutData);
+					bool mapMarkerToWorld(Marker & marker, int frameWidth, int frameHeight, const unsigned short * depthData, const float * lutData);
 
 					void setupSolveSets();
 					void triggerSolvers();
