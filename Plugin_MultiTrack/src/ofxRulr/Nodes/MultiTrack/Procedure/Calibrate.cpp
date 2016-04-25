@@ -517,8 +517,8 @@ namespace ofxRulr {
 					const float radiusSq = marker.radius * marker.radius;
 					for (int y = marker.center.y - marker.radius; y < marker.center.y + marker.radius; ++y) {
 						for (int x = marker.center.x - marker.radius; x < marker.center.x + marker.radius; ++x) {
-							x = marker.center.x;
-							y = marker.center.y;
+							//x = marker.center.x;
+							//y = marker.center.y;
 							if (ofVec2f(x, y).squareDistance(marker.center) <= radiusSq) {
 								int idx = y * frameWidth + x;
 								ofVec3f candidate = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depthData[idx] * 0.001f;
@@ -527,9 +527,9 @@ namespace ofxRulr {
 									++numFound;
 								}
 							}
-							break;
+							//break;
 						}
-						break;
+						//break;
 					}
 					if (numFound) {
 						//The position is valid, set the marker position to the average.
