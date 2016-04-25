@@ -228,17 +228,13 @@ namespace ofxRulr {
 												for (const auto & it : frames) {
 													ofDrawCircle(it.second.center, MAX(it.second.radius - lastFrame + it.first, it.second.radius * 0.25f));
 												}
-
-												ofNoFill();
-												for (const auto & it : frames) {
-													ofDrawCircle(it.second.center, it.second.radius);
-												}
 											}
 										}
 										{
 											ofFill();
 											const auto & markers = this->dataToPreview[key];
 											for (const auto & m : markers) {
+												m.valid ? ofFill() : ofNoFill();
 												ofDrawCircle(m.center, m.radius);
 											}
 										}
@@ -523,6 +519,7 @@ namespace ofxRulr {
 								int idx = y * frameWidth + x;
 								ofVec3f candidate = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depthData[idx] * 0.001f;
 								if (candidate != ofVec3f::zero()) {
+									//Valid mapping.
 									avgPos += candidate;
 									++numFound;
 								}
@@ -535,7 +532,16 @@ namespace ofxRulr {
 						//The position is valid, set the marker position to the average.
 						avgPos /= numFound;
 						marker.position = avgPos;
-						marker.valid = true;
+
+						const auto dist = marker.position.length();
+						if (this->parameters.findMarker.clipNear < dist && dist < this->parameters.findMarker.clipFar) {
+							//Valid range.
+							marker.valid = true;
+						}
+						else {
+							marker.valid = false;
+						}
+						
 					}
 					else {
 						//The position is invalid, ignore it.

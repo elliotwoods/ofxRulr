@@ -72,8 +72,9 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<float> threshold{ "Threshold", 100, 0, 255 };
 							ofParameter<float> minimumArea{ "Minimum area", 5 * 5 };
-							ofParameter<float> markerPadding{ "Marker padding [%]", 50, 0, 100 };
-							PARAM_DECLARE("Find Marker", threshold, minimumArea);
+							ofParameter<float> clipNear{ "Clip near (m)", 0.4, 0.0, 8.0 };
+							ofParameter<float> clipFar{ "Clip far (m)", 8.0, 0.0, 8.0 };
+							PARAM_DECLARE("Find Marker", threshold, minimumArea, clipNear, clipFar);
 						} findMarker;
 
 						struct : ofParameterGroup {
