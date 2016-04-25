@@ -19,7 +19,6 @@ namespace ofxRulr {
 				void init();
 				void update();
 				void drawWorld();
-				void drawSubscriberPointClouds() const;
 
 				void populateInspector(ofxCvGui::InspectArguments &);
 				map<size_t, weak_ptr<Subscriber>> & getSubscribers();

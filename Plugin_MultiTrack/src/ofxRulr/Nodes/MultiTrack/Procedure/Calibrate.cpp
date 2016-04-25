@@ -1,6 +1,8 @@
 #include "pch_MultiTrack.h"
 #include "Calibrate.h"
 
+#include "../Utils.h"
+
 #include "ofxRulr/Utils/ScopedProcess.h"
 
 #include "ofxCvGui/Widgets/Button.h"
@@ -96,7 +98,7 @@ namespace ofxRulr {
 						if (!weak_subscriber.expired()) {
 							auto subscriberNode = weak_subscriber.lock();
 							transforms.emplace(it.first, subscriberNode->getTransform());
-							debugColors.emplace(it.first, subscriberNode->getDebugColor());
+							debugColors.emplace(it.first, subscriberNode->getSubscriberColor());
 						}
 					}
 
@@ -213,12 +215,12 @@ namespace ofxRulr {
 									panel->add(strip);
 								}
 
-								auto texture = ofxCvGui::Panels::makeTexture(subscriber->getPreviewTexture());
+								auto texture = ofxCvGui::Panels::makeTexture(subscriber->getDepthTexture());
 								texture->setHeight(360.0f);
 								strip->add(texture);
 
 								auto key = it.first;
-								auto color = subscriber->getDebugColor();
+								auto color = subscriber->getSubscriberColor();
 								texture->onDrawImage += [this, key, color, history](ofxCvGui::DrawImageArguments & args) {
 									ofPushStyle();
 									{
@@ -517,8 +519,14 @@ namespace ofxRulr {
 					const float radiusSq = marker.radius * marker.radius;
 					for (int y = marker.center.y - marker.radius; y < marker.center.y + marker.radius; ++y) {
 						for (int x = marker.center.x - marker.radius; x < marker.center.x + marker.radius; ++x) {
-							//x = marker.center.x;
-							//y = marker.center.y;
+
+							//check if we're outside the image
+							if (x < 0 || y
+								|| x >= DepthMapSize::Width
+								|| y >= DepthMapSize::Height) {
+								continue;
+							}
+
 							if (ofVec2f(x, y).squareDistance(marker.center) <= radiusSq) {
 								int idx = y * frameWidth + x;
 								ofVec3f candidate = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depthData[idx] * 0.001f;
@@ -597,21 +605,18 @@ namespace ofxRulr {
 						auto weak_subscriber = it.second;
 						if (!weak_subscriber.expired()) {
 							auto subscriberNode = weak_subscriber.lock();
-							auto subscriber = subscriberNode->getSubscriber();
-							if (subscriber) {
-								if (!firstFound) {
-									currTransform = subscriberNode->getTransform();
-									firstFound = true;
+							if (!firstFound) {
+								currTransform = subscriberNode->getTransform();
+								firstFound = true;
+							}
+							else {
+								auto & result = this->solveSets[it.first].getResult();
+								if (!result.success) {
+									ofLogWarning("Calibrate") << "Result for Subscriber " << it.first << " was unsuccessful, use at your own risk!";
 								}
-								else {
-									auto & result = this->solveSets[it.first].getResult();
-									if (!result.success) {
-										ofLogWarning("Calibrate") << "Result for Subscriber " << it.first << " was unsuccessful, use at your own risk!";
-									}
 
-									currTransform *= result.transform;
-									subscriberNode->setTransform(currTransform);
-								}
+								currTransform *= result.transform.getInverse();
+								subscriberNode->setTransform(currTransform);
 							}
 						}
 					}

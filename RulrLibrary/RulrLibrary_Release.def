@@ -302,6 +302,7 @@ EXPORTS
 	?postMult@ofMatrix4x4@@QEAAXAEBV1@@Z
 	?addColor@ofMesh@@QEAAXAEBV?$ofColor_@M@@@Z
 	?addIndex@ofMesh@@QEAAXI@Z
+	?addIndices@ofMesh@@QEAAXAEBV?$vector@IV?$allocator@I@std@@@std@@@Z
 	?addIndices@ofMesh@@QEAAXPEBI_K@Z
 	?addTexCoord@ofMesh@@QEAAXAEBVofVec2f@@@Z
 	?addVertex@ofMesh@@QEAAXAEBVofVec3f@@@Z
@@ -376,6 +377,8 @@ EXPORTS
 	?writeBytes@ofSerial@@QEAAJPEBE_K@Z
 	?begin@ofShader@@QEBAXXZ
 	?end@ofShader@@QEBAXXZ
+	?setUniform1f@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@M@Z
+	?setUniform1i@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?setUniform2f@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofVec2f@@@Z
 	?setUniformTexture@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofTexture@@H@Z
 	?bind@ofTexture@@QEBAXH@Z

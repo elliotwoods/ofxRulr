@@ -57,45 +57,35 @@ namespace ofxRulr {
 		//----------
 		void MeshProvider::rebuildMesh() {
 			float stepSize = pow(2, this->downsampleExp);
-			ofVec2f numSteps = ofVec2f(ceil(this->dimensions.x / stepSize), ceil(this->dimensions.y / stepSize));
+			ofVec2f downsampledResolution = ofVec2f(ceil(this->dimensions.x / stepSize), ceil(this->dimensions.y / stepSize));
 
-			auto width = numSteps.x * stepSize;
-			auto height = numSteps.y * stepSize;
+			auto width = downsampledResolution.x * stepSize;
+			auto height = downsampledResolution.y * stepSize;
 
-			//Indices
-			//{
-			//	this->mesh.clearIndices();
+ 			//Indices
+			{
+				this->mesh.clearIndices();
 
-			//	int x = 0;
-			//	int y = 0;
-			//	int width = stepAmt.x * downsampleAmt;
-			//	int height = stepAmt.y * downsampleAmt;
+				int x = 0;
+				int y = 0;
 
-			//	for (float yStep = 0; yStep < height - stepAmt.y; yStep += stepAmt.y) {
-			//		for (float xStep = 0; xStep < width - stepAmt.x; xStep += stepAmt.x) {
-			//			ofIndexType a, b, c;
+				auto stride = downsampledResolution.x;
 
-			//			a = x + y * stepAmt.x;
-			//			b = (x + 1) + y*stepAmt.x;
-			//			c = x + (y + 1)*stepAmt.x;
-			//			mesh.addIndex(a);
-			//			mesh.addIndex(b);
-			//			mesh.addIndex(c);
+				for (int y = 0; y < downsampledResolution.y - 1; y++) {
+					for (int x = 0; x < downsampledResolution.x - 1; x++) {
+						ofIndexType TL = x + y * stride;
+						ofIndexType BL = x + (y + 1) * stride;
+						ofIndexType TR = (x + 1) + y * stride;
+						ofIndexType BR = (x + 1) + (y + 1) * stride;
 
-			//			a = (x + 1) + (y + 1)*stepAmt.x;
-			//			b = x + (y + 1)*stepAmt.x;
-			//			c = (x + 1) + (y)*stepAmt.x;
-			//			mesh.addIndex(a);
-			//			mesh.addIndex(b);
-			//			mesh.addIndex(c);
+						// top left triangle
+						mesh.addIndices({ TL, BL, TR });
 
-			//			x++;
-			//		}
-
-			//		y++;
-			//		x = 0;
-			//	}
-			//}
+						// bottom right triangle
+						mesh.addIndices({ TR, BL, BR });
+					}
+				}
+			}
 
 			//Vertices and texture coordinates
 			{
@@ -118,7 +108,7 @@ namespace ofxRulr {
 			//	}
 			//}
 
-			cout << "Built mesh with " << this->mesh.getNumVertices() << " vertices" << endl;
+			//cout << "Built mesh with " << this->mesh.getNumVertices() << " vertices" << endl;
 
 			this->dirty = false;
 		}

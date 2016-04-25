@@ -32,7 +32,13 @@ namespace ofxRulr {
 						PARAM_DECLARE("Resolution", width, height);
 					} resolution;
 
-					PARAM_DECLARE("ImageBox", box, resolution)
+					struct : ofParameterGroup {
+						ofParameter<bool> subscriberIndex{ "Subscriber index", false };
+						ofParameter<bool> IR{ "IR", false };
+						PARAM_DECLARE("Draw style", subscriberIndex, IR);
+					} drawStyle;
+
+					PARAM_DECLARE("ImageBox", box, resolution, drawStyle)
 				} parameters;
 
 				ofFbo fbo;

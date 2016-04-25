@@ -26,11 +26,19 @@ namespace ofxRulr {
 
 				shared_ptr<ofxMultiTrack::Subscriber> getSubscriber() const;
 				const ofFloatPixels & getDepthToWorldLUT() const;
-				const ofTexture & getPreviewTexture() const;
 
-				const ofFloatColor & getDebugColor() const;
-				void drawPointCloud();
+				const ofTexture & getDepthTexture() const;
+				const ofTexture & getIRTexture() const;
 
+				const ofFloatColor & getSubscriberColor() const;
+
+				void drawPointCloudCpu();
+
+				struct PointCloudStyle {
+					bool applyIndexColor;
+					bool applyIR;
+				};
+				void drawPointCloudGpu(PointCloudStyle);
 			protected:
 				shared_ptr<ofxCvGui::Panels::Texture> previewPanel;
 				shared_ptr<ofxCvGui::Panels::Widgets> uiPanel;
@@ -55,7 +63,15 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", false };
 							ofParameter<int> downsampleExp{ "Downsample (exp)", 0, 0, 3 };
-							PARAM_DECLARE("Point cloud", enabled, downsampleExp);
+							ofParameter<float> maxDisparity{ "Maximum disparity [m]", 0.1, 0.0, 1.0f };
+							
+							struct : ofParameterGroup {
+								ofParameter<bool> applyIndexColor { "Apply index color", true };
+								ofParameter<bool> applyIR { "Apply IR", true };
+								PARAM_DECLARE("Style", applyIndexColor, applyIR);
+							} style;
+						
+							PARAM_DECLARE("Point cloud", enabled, downsampleExp, maxDisparity, style);
 						} gpuPointCloud;
 
 						struct : ofParameterGroup {
@@ -75,9 +91,11 @@ namespace ofxRulr {
 
 				ofFloatPixels depthToWorldLUT;
 				ofTexture depthToWorldTexture;
-				ofTexture previewTexture;
 
-				ofShader worldShader;
+				ofTexture depthTexture;
+				ofTexture irTexture;
+
+				ofShader & getWorldShader();
 				Utils::MeshProvider meshProvider;
 
 				ofFloatColor debugColor;

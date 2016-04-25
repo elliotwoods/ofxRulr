@@ -28,7 +28,7 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
-				this->previewPanel = ofxCvGui::Panels::makeTexture(this->previewTexture);
+				this->previewPanel = ofxCvGui::Panels::makeTexture(this->depthTexture);
 				this->previewPanel->setInputRange(0.0f, 8000.0f / 0xffff);
 
 				this->uiPanel = ofxCvGui::Panels::makeWidgets();
@@ -92,25 +92,28 @@ namespace ofxRulr {
 
 				this->parameters.calibration.depthToWorldTableFile.addListener(this, &Subscriber::depthToWorldTableFileCallback);
 
-				this->subscriber = make_shared<ofxMultiTrack::Subscriber>();
-
 				static int colorCounter = 0;
 				this->debugColor.setHsb(ofRandom(0.05f) + (0.15f * colorCounter++), 1.0f, 1.0f);
-				this->worldShader = ofxAssets::shader("ofxRulr::Nodes::MultiTrack::depthToWorld");
 			}
 
 			//----------
 			void Subscriber::update() {
-				if (this->depthToWorldLUT.isAllocated() && !this->depthToWorldTexture.isAllocated()) {
-					// TODO: Probably need a listener whenever the table changes.
-					this->depthToWorldTexture.loadData(this->depthToWorldLUT);
+				//connect/disconnect
+				if (!this->subscriber && this->parameters.connection.connect) {
+					this->subscriber = make_shared<ofxMultiTrack::Subscriber>();
+					this->subscriber->init(this->parameters.connection.publisherAddress, this->parameters.connection.publisherPort);
+				}
+				else if (this->subscriber && !this->parameters.connection.connect) {
+					this->subscriber.reset();
+				}
 
-					//Upload LUT to shader.
-					this->worldShader.begin();
-					{
-						this->worldShader.setUniformTexture("uWorldTable", this->depthToWorldTexture, 2);
+				//change connection properties
+				if (this->subscriber) {
+					if (this->subscriber->getSubscriber().getAddress().compare(this->parameters.connection.publisherAddress) != 0 ||
+						this->subscriber->getSubscriber().getPort() != this->parameters.connection.publisherPort) {
+
+						this->subscriber->init(this->parameters.connection.publisherAddress, this->parameters.connection.publisherPort);
 					}
-					this->worldShader.end();
 				}
 
 				if (this->subscriber) {
@@ -123,17 +126,21 @@ namespace ofxRulr {
 					this->subscriber->update();
 
 					if (this->subscriber->getSubscriber().isFrameNew()) {
-						auto & pixels = this->subscriber->getFrame().getDepth();
-						if (!this->previewTexture.isAllocated()) {
-							this->previewTexture.allocate(pixels);
+						const auto & depthPixels = this->subscriber->getFrame().getDepth();
+						const auto & irPixels = this->subscriber->getFrame().getInfrared();
+
+						if (depthPixels.isAllocated()) {
+							this->depthTexture.loadData(depthPixels);
 						}
-						this->previewTexture.loadData(pixels);
+						if (irPixels.isAllocated()) {
+							this->irTexture.loadData(irPixels);
+						}
 
 						//Mesh update.
 						if (this->parameters.draw.gpuPointCloud.enabled) {
 							auto & meshDimensions = this->meshProvider.getDimensions();
-							if (meshDimensions.x != pixels.getWidth() || meshDimensions.y != pixels.getHeight()) {
-								this->meshProvider.setDimensions(ofVec2f(pixels.getWidth(), pixels.getHeight()));
+							if (meshDimensions.x != depthPixels.getWidth() || meshDimensions.y != depthPixels.getHeight()) {
+								this->meshProvider.setDimensions(ofVec2f(depthPixels.getWidth(), depthPixels.getHeight()));
 							}
 
 							if (this->parameters.draw.gpuPointCloud.downsampleExp != this->meshProvider.getDownsampleExp()) {
@@ -151,34 +158,30 @@ namespace ofxRulr {
 
 			//----------
 			void Subscriber::drawObject() {
-				auto & frame = this->subscriber->getFrame();
+				if (this->parameters.draw.bodies) {
+					ofPushStyle();
+					{
+						ofSetColor(this->debugColor);
 
-				ofPushStyle();
-				{
-					ofSetColor(this->debugColor);
-
-					if (this->parameters.draw.bodies) {
-						const auto & bodies = frame.getBodies();
-						for (const auto & body : bodies) {
-							body.drawWorld(); // actually this is in kinect camera space
+						if (this->subscriber) {
+							const auto & bodies = this->subscriber->getFrame().getBodies();
+							for (const auto & body : bodies) {
+								body.drawWorld(); // actually this is in kinect camera space
+							}
 						}
 					}
-
-					if (this->parameters.draw.gpuPointCloud.enabled) {
-						this->worldShader.begin();
-						{
-							this->worldShader.setUniform2f("uDimensions", ofVec2f(this->previewTexture.getWidth(), this->previewTexture.getHeight()));
-							this->worldShader.setUniformTexture("uDepthTexture", this->previewTexture, 1);
-
-							this->meshProvider.getMesh().draw(OF_MESH_POINTS);
-						}
-						this->worldShader.end();
-					}
+					ofPopStyle();
 				}
-				ofPopStyle();
+
+				if (this->parameters.draw.gpuPointCloud.enabled) {
+					PointCloudStyle style;
+					style.applyIR = this->parameters.draw.gpuPointCloud.style.applyIR;
+					style.applyIndexColor = this->parameters.draw.gpuPointCloud.style.applyIndexColor;
+					this->drawPointCloudGpu(style);
+				}
 
 				if (this->parameters.draw.cpuPointCloud.enabled) {
-					this->drawPointCloud();
+					this->drawPointCloudCpu();
 				}
 			}
 
@@ -261,45 +264,23 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const ofTexture & Subscriber::getPreviewTexture() const {
-				return this->previewTexture;
+			const ofTexture & Subscriber::getDepthTexture() const {
+				return this->depthTexture;
 			}
 
 			//----------
-			const ofFloatColor & Subscriber::getDebugColor() const {
+			const ofTexture & Subscriber::getIRTexture() const {
+				return this->irTexture;
+			}
+
+			//----------
+			const ofFloatColor & Subscriber::getSubscriberColor() const {
 				return this->debugColor;
 			}
 
 			//----------
-			void Subscriber::depthToWorldTableFileCallback(string & filename) {
-				if (!filename.empty()) {
-					try {
-						this->loadDepthToWorldTableFile();
-					}
-					RULR_CATCH_ALL_TO_ERROR;
-				}
-			}
-
-			//----------
-			void Subscriber::loadDepthToWorldTableFile() {
-				const auto & filename = this->parameters.calibration.depthToWorldTableFile.get();
-				if (!ofFile::doesFileExist(filename)) {
-					throw(ofxRulr::Exception("File not found : " + filename));
-				}
-
-				auto loadBuffer = ofBufferFromFile(filename);
-				if (!loadBuffer.size()) {
-					throw(ofxRulr::Exception("File empty"));
-				}
-
-				ofxSquashBuddies::Message message;
-				message.pushData(loadBuffer.getData(), loadBuffer.size());
-				message.getData(this->depthToWorldLUT);
-			}
-
-			//----------
-			void Subscriber::drawPointCloud() {
-				if (this->depthToWorldLUT.isAllocated()) {
+			void Subscriber::drawPointCloudCpu() {
+				if (this->depthToWorldLUT.isAllocated() && this->subscriber) {
 					const auto & frame = this->subscriber->getFrame();
 
 					vector<ofVec3f> vertices;
@@ -332,6 +313,79 @@ namespace ofxRulr {
 					}
 					vbo.draw(GL_POINTS, 0, vertices.size());
 				}
+			}
+
+			//----------
+			void Subscriber::drawPointCloudGpu(PointCloudStyle pointCloudStyle) {
+				auto & worldShader = this->getWorldShader();
+				worldShader.begin();
+				{
+					worldShader.setUniformTexture("uWorldTable", this->depthToWorldTexture, 1);
+					worldShader.setUniform2f("uDimensions", ofVec2f(this->depthTexture.getWidth(), this->depthTexture.getHeight()));
+					worldShader.setUniform1f("uMaxDisparity", this->parameters.draw.gpuPointCloud.maxDisparity);
+					worldShader.setUniformTexture("uDepthTexture", this->depthTexture, 2);
+
+					ofPushStyle();
+					{
+						if (pointCloudStyle.applyIndexColor) {
+							ofSetColor(this->getSubscriberColor());
+						}
+
+						if (pointCloudStyle.applyIR) {
+							worldShader.setUniformTexture("uColorTexture", this->irTexture, 3);
+							worldShader.setUniform1f("uColorScale", 255.0f);
+							worldShader.setUniform1i("uUseColorTexture", 1);
+						}
+						else {
+							worldShader.setUniform1i("uUseColorTexture", 0);
+							worldShader.setUniform1f("uColorScale", 1.0f);
+						}
+
+						this->meshProvider.getMesh().draw(OF_MESH_FILL);
+					}
+					ofPopStyle();
+				}
+				worldShader.end();
+			}
+
+			//----------
+			void Subscriber::depthToWorldTableFileCallback(string & filename) {
+				if (!filename.empty()) {
+					try {
+						this->loadDepthToWorldTableFile();
+					}
+					RULR_CATCH_ALL_TO_ERROR;
+				}
+			}
+
+			//----------
+			void Subscriber::loadDepthToWorldTableFile() {
+				//load the file
+				{
+					const auto & filename = this->parameters.calibration.depthToWorldTableFile.get();
+					if (!ofFile::doesFileExist(filename)) {
+						throw(ofxRulr::Exception("File not found : " + filename));
+					}
+
+					auto loadBuffer = ofBufferFromFile(filename);
+					if (!loadBuffer.size()) {
+						throw(ofxRulr::Exception("File empty"));
+					}
+
+					ofxSquashBuddies::Message message;
+					message.pushData(loadBuffer.getData(), loadBuffer.size());
+					message.getData(this->depthToWorldLUT);
+				}
+				
+				//load the texture and setup shader
+				{
+					this->depthToWorldTexture.loadData(this->depthToWorldLUT);
+				}
+			}
+
+			//----------
+			ofShader & Subscriber::getWorldShader() {
+				return ofxAssets::shader("ofxRulr::Nodes::MultiTrack::depthToWorld");
 			}
 		}
 	}

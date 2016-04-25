@@ -60,7 +60,17 @@ namespace ofxRulr {
 
 								ofScale(2.0f / this->parameters.box.width, 2.0f / this->parameters.box.height, 2.0f / this->parameters.box.depth);
 								ofMultMatrix(this->getTransform().getInverse());
-								world->drawSubscriberPointClouds();
+								
+								auto subscribers = world->getSubscribers();
+								for (auto subscriberIterator : subscribers) {
+									auto subscriber = subscriberIterator.second.lock();
+									if (subscriber) {
+										Subscriber::PointCloudStyle style;
+										style.applyIndexColor = this->parameters.drawStyle.subscriberIndex;
+										style.applyIR = this->parameters.drawStyle.IR;
+										subscriber->drawPointCloudGpu(style);
+									}
+								}
 							}
 							ofPopMatrix();
 						}
