@@ -199,22 +199,19 @@ namespace ofxRulr {
 					}
 
 					auto addPreviews = [this](shared_ptr<ofxCvGui::Panels::Widgets> & panel, bool history) {
+						auto strip = ofxCvGui::Panels::Groups::makeStrip();
+						strip->setHeight(360.0f);
+						panel->add(strip);
+
 						auto & subscribers = this->getInput<World>()->getSubscribers();
-						size_t count = 0;
-						shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
 						for (auto & it : subscribers) {
 							auto weak_subscriber = it.second;
 							if (!weak_subscriber.expired()) {
 								auto subscriber = weak_subscriber.lock();
 
-								if (count % 2 == 0) {
-									strip = ofxCvGui::Panels::Groups::makeStrip();
-									strip->setHeight(360.0f);
-									panel->add(strip);
-								}
-
 								auto texture = ofxCvGui::Panels::makeTexture(subscriber->getPreviewTexture());
-								texture->setHeight(360.0f);
+								texture->setWidth(480.0f);
+								texture->setHeight(320.0f);
 								strip->add(texture);
 
 								auto key = it.first;
@@ -248,8 +245,6 @@ namespace ofxRulr {
 									}
 									ofPopStyle();
 								};
-
-								++count;
 							}
 						}
 					};
