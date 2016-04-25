@@ -506,11 +506,13 @@ namespace ofxRulr {
 					//Sample the area around the 2D marker for an average 3D position.
 					ofVec3f avgPos = ofVec3f::zero();
 					size_t numFound = 0;
+					
 					const float radiusSq = marker.radius * marker.radius;
+					
 					int minY = MAX(0, marker.center.y - marker.radius);
-					int maxY = MIN(marker.center.y - marker.radius, frameHeight);
+					int maxY = MIN(marker.center.y + marker.radius, frameHeight);
 					int minX = MAX(0, marker.center.x - marker.radius);
-					int maxX = MIN(marker.center.x - marker.radius, frameWidth);
+					int maxX = MIN(marker.center.x + marker.radius, frameWidth);
 					for (int y = minY; y < maxY; ++y) {
 						for (int x = minX; x < maxX; ++x) {
 							//x = marker.center.x;
