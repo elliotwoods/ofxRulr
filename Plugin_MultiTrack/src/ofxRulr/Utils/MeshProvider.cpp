@@ -108,8 +108,6 @@ namespace ofxRulr {
 			//	}
 			//}
 
-			//cout << "Built mesh with " << this->mesh.getNumVertices() << " vertices" << endl;
-
 			this->dirty = false;
 		}
 	}

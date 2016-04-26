@@ -73,23 +73,14 @@ namespace ofxRulr {
 
 				//----------
 				void Calibrate::drawWorld() {
-					/*ofPushStyle();
-					for (auto & it : this->dataToPreview) {
-						ofSetColor(this->getSubscriberColor(it.first));
-						for (auto & m : it.second) {
-							ofDrawSphere(m.position, 0.1f);
-						}
-					}
-					ofPopStyle();*/
-
 					if (!(this->parameters.debugWorld.drawLines || this->parameters.debugWorld.drawPoints || this->parameters.debugWorld.liveMarker)) {
 						return;
 					}
 
-					//Cache the transforms for each subscriber.
 					auto world = this->getInput<World>();
 					if (!world) return;
 
+					//Cache the transforms and debug colors for each subscriber.
 					map<size_t, ofMatrix4x4> transforms;
 					map<size_t, ofFloatColor> debugColors;
 					auto & subscribers = world->getSubscribers();
@@ -171,16 +162,35 @@ namespace ofxRulr {
 					//Draw the live marker(s) for each subscriber.
 					if (this->parameters.debugWorld.liveMarker) {
 						for (auto & it = this->dataToPreview.begin(); it != this->dataToPreview.end(); ++it) {
+							if (transforms.find(it->first) == transforms.end()) break;
+							const auto & transform = transforms[it->first];
+							const auto & origin = ofVec3f::zero() * transform;
+
+							ofPushMatrix();
 							ofPushStyle();
 							{
 								ofSetColor(debugColors[it->first]);
 								for (const Marker & marker : it->second) {
-									if (marker.valid) {
-										ofDrawSphere(marker.position, 0.1f);
-									}
+									ofNode node;
+									node.setPosition(marker.position * transform);
+									node.lookAt(origin);
+
+									ofVec3f axis;
+									float angle;
+									node.getOrientationQuat().getRotate(angle, axis);
+
+									//Translate the Marker to its position.
+									ofTranslate(node.getPosition());
+
+									//Perform the rotation (billboard).
+									ofRotate(angle, axis.x, axis.y, axis.z);
+
+									marker.valid ? ofFill() : ofNoFill();
+									ofDrawCircle(0, 0, 0.1f);
 								}
 							}
 							ofPopStyle();
+							ofPopMatrix();
 						}
 					}
 
@@ -201,22 +211,19 @@ namespace ofxRulr {
 					}
 
 					auto addPreviews = [this](shared_ptr<ofxCvGui::Panels::Widgets> & panel, bool history) {
+						auto strip = ofxCvGui::Panels::Groups::makeStrip();
+						strip->setHeight(360.0f);
+						panel->add(strip);
+
 						auto & subscribers = this->getInput<World>()->getSubscribers();
-						size_t count = 0;
-						shared_ptr<ofxCvGui::Panels::Groups::Strip> strip;
 						for (auto & it : subscribers) {
 							auto weak_subscriber = it.second;
 							if (!weak_subscriber.expired()) {
 								auto subscriber = weak_subscriber.lock();
 
-								if (count % 2 == 0) {
-									strip = ofxCvGui::Panels::Groups::makeStrip();
-									strip->setHeight(360.0f);
-									panel->add(strip);
-								}
-
 								auto texture = ofxCvGui::Panels::makeTexture(subscriber->getDepthTexture());
-								texture->setHeight(360.0f);
+								texture->setWidth(480.0f);
+								texture->setHeight(320.0f);
 								strip->add(texture);
 
 								auto key = it.first;
@@ -233,25 +240,19 @@ namespace ofxRulr {
 												for (const auto & it : frames) {
 													ofDrawCircle(it.second.center, MAX(it.second.radius - lastFrame + it.first, it.second.radius * 0.25f));
 												}
-
-												ofNoFill();
-												for (const auto & it : frames) {
-													ofDrawCircle(it.second.center, it.second.radius);
-												}
 											}
 										}
 										{
 											ofFill();
 											const auto & markers = this->dataToPreview[key];
 											for (const auto & m : markers) {
+												m.valid ? ofFill() : ofNoFill();
 												ofDrawCircle(m.center, m.radius);
 											}
 										}
 									}
 									ofPopStyle();
 								};
-
-								++count;
 							}
 						}
 					};
@@ -407,7 +408,7 @@ namespace ofxRulr {
 					});
 					buttonConfirm->setHeight(100.0f);
 
-					panel->addParameterGroup(parameters.debugWorld);
+					inspector->addParameterGroup(parameters.debugWorld);
 				}
 
 				//----------
@@ -426,12 +427,13 @@ namespace ofxRulr {
 							auto subscriberNode = weak_subscriber.lock();
 							auto subscriber = subscriberNode->getSubscriber();
 							if (subscriber) {
-								const auto & frame = subscriber->getFrame();
-
 								//Make sure all the data is ready before proceeding.
 								auto width = subscriber->getFrame().getDepth().getWidth();
 								if (width == 0) continue;
 								 
+								auto height = subscriber->getFrame().getDepth().getHeight();
+								if (height == 0) continue;
+
 								auto depth = subscriber->getFrame().getDepth().getData();
 								if (depth == nullptr) continue;
 
@@ -443,7 +445,7 @@ namespace ofxRulr {
 									vector<Marker> markers = findMarkersInFrame(subscriber->getFrame());
 
 									for (auto & marker : markers) {
-										this->mapMarkerToWorld(marker, width, depth, lut);
+										this->mapMarkerToWorld(marker, width, height, depth, lut);
 									}
 
 									//Keep all found Markers for preview.
@@ -512,25 +514,26 @@ namespace ofxRulr {
 				}
 
 				//----------
-				bool Calibrate::mapMarkerToWorld(Marker & marker, int frameWidth, const unsigned short * depthData, const float * lut) {
+				bool Calibrate::mapMarkerToWorld(Marker & marker, int frameWidth, int frameHeight, const unsigned short * depthData, const float * lut) {
 					//Sample the area around the 2D marker for an average 3D position.
 					ofVec3f avgPos = ofVec3f::zero();
 					size_t numFound = 0;
+					
 					const float radiusSq = marker.radius * marker.radius;
-					for (int y = marker.center.y - marker.radius; y < marker.center.y + marker.radius; ++y) {
-						for (int x = marker.center.x - marker.radius; x < marker.center.x + marker.radius; ++x) {
+					
+					int minY = MAX(0, marker.center.y - marker.radius);
+					int maxY = MIN(marker.center.y + marker.radius, frameHeight - 1);
+					int minX = MAX(0, marker.center.x - marker.radius);
+					int maxX = MIN(marker.center.x + marker.radius, frameWidth - 1);
 
-							//check if we're outside the image
-							if (x < 0 || y
-								|| x >= DepthMapSize::Width
-								|| y >= DepthMapSize::Height) {
-								continue;
-							}
+					for (int y = minY; y < maxY; ++y) {
+						for (int x = minX; x < maxX; ++x) {
 
 							if (ofVec2f(x, y).squareDistance(marker.center) <= radiusSq) {
 								int idx = y * frameWidth + x;
 								ofVec3f candidate = ofVec3f(lut[idx * 2 + 0], lut[idx * 2 + 1], 1.0f) * depthData[idx] * 0.001f;
 								if (candidate != ofVec3f::zero()) {
+									//Valid mapping.
 									avgPos += candidate;
 									++numFound;
 								}
@@ -543,7 +546,16 @@ namespace ofxRulr {
 						//The position is valid, set the marker position to the average.
 						avgPos /= numFound;
 						marker.position = avgPos;
-						marker.valid = true;
+
+						const auto dist = marker.position.length();
+						if (this->parameters.findMarker.clipNear < dist && dist < this->parameters.findMarker.clipFar) {
+							//Valid range.
+							marker.valid = true;
+						}
+						else {
+							marker.valid = false;
+						}
+						
 					}
 					else {
 						//The position is invalid, ignore it.

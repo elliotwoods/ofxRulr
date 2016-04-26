@@ -65,6 +65,7 @@ EXPORTS
 	?ofDrawBitmapStringHighlight@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofVec3f@@AEBV?$ofColor_@E@@2@Z
 	?ofDrawBox@@YAXAEBVofVec3f@@MMM@Z
 	?ofDrawCircle@@YAXAEBVofVec3f@@M@Z
+	?ofDrawCircle@@YAXMMM@Z
 	?ofDrawGridPlane@@YAXM_K_N@Z
 	?ofDrawLine@@YAXAEBVofVec3f@@0@Z
 	?ofDrawRectangle@@YAXAEBVofRectangle@@@Z
@@ -350,7 +351,10 @@ EXPORTS
 	?usingTextures@ofMesh@@UEBA_NXZ
 	?boom@ofNode@@QEAAXM@Z
 	?getGlobalTransformMatrix@ofNode@@QEBA?AVofMatrix4x4@@XZ
+	?getOrientationQuat@ofNode@@QEBA?AVofQuaternion@@XZ
+	?getPosition@ofNode@@QEBA?AVofVec3f@@XZ
 	?lookAt@ofNode@@QEAAXAEBVofVec3f@@@Z
+	?setPosition@ofNode@@QEAAXAEBVofVec3f@@@Z
 	?add@ofParameterGroup@@QEAAXAEAVofAbstractParameter@@@Z
 	?fromString@ofParameterGroup@@UEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?getEscapedName@ofParameterGroup@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -367,6 +371,7 @@ EXPORTS
 	?addVertex@ofPolyline@@QEAAXAEBVofVec3f@@@Z
 	?close@ofPolyline@@QEAAXXZ
 	?draw@ofPolyline@@QEBAXXZ
+	?getRotate@ofQuaternion@@QEBAXAEAMAEAVofVec3f@@@Z
 	?set@ofQuaternion@@QEAAXAEBVofMatrix4x4@@@Z
 	?getBottomRight@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?getTopRight@ofRectangle@@QEBA?AVofVec3f@@XZ
@@ -436,6 +441,7 @@ EXPORTS
 	?setCaption@Element@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?setEnabled@Element@ofxCvGui@@QEAAX_N@Z
 	?setHeight@Element@ofxCvGui@@QEAAXM@Z
+	?setWidth@Element@ofxCvGui@@QEAAXM@Z
 	?refresh@InspectController@ofxCvGui@@QEAAXPEAVIInspectable@2@@Z
 	?isDragging@MouseArguments@ofxCvGui@@QEBA_NV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?takeMousePress@MouseArguments@ofxCvGui@@QEAA_NV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
