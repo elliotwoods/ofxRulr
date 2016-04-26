@@ -44,9 +44,11 @@ namespace ofxRulr {
 					auto subscriberPin = this->addInput<Subscriber>("Subscriber " + ofToString(i + 1));
 					subscriberPin->onNewConnection += [this, i](shared_ptr<Subscriber> subscriber) {
 						this->subscribers[i] = subscriber;
+						ofxCvGui::refreshInspector(this);
 					};
 					subscriberPin->onDeleteConnection += [this, i](shared_ptr<Subscriber> subscriber) {
 						this->subscribers.erase(i);
+						ofxCvGui::refreshInspector(this);
 					};
 				}
 
@@ -137,6 +139,20 @@ namespace ofxRulr {
 				args.inspector->addLiveValue<size_t>("Connected subscribers", [this]() {
 					return this->subscribers.size();
 				});
+				for (auto subscriberIt : this->subscribers) {
+					auto subscriberWeak = subscriberIt.second;
+					args.inspector->addLiveValueHistory("Subscriber " + ofToString(subscriberIt.first), [subscriberWeak] {
+						auto subscriberNode = subscriberWeak.lock();
+						if (subscriberNode) {
+							auto subscriber = subscriberNode->getSubscriber();
+							if (subscriber) {
+								return subscriber->getSubscriber().getIncomingFramerate();
+							}
+						}
+
+						return 0.0f;
+					});
+				}
 			}
 
 
