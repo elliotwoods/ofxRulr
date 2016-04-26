@@ -216,6 +216,11 @@ namespace ofxRulr {
 						strip->setHeight(360.0f);
 						panel->add(strip);
 
+						//keep 4:3 aspect ratio
+						panel->onBoundsChange.addListener([strip](ofxCvGui::BoundsChangeArguments & args) {
+							strip->setHeight(args.localBounds.width / (float)strip->getElements().size() * (3.0f / 4.0f));
+						}, this, -1);
+
 						auto & subscribers = this->getInput<World>()->getSubscribers();
 						for (auto & it : subscribers) {
 							auto weak_subscriber = it.second;
@@ -223,8 +228,6 @@ namespace ofxRulr {
 								auto subscriber = weak_subscriber.lock();
 
 								auto texture = ofxCvGui::Panels::makeTexture(subscriber->getDepthTexture());
-								texture->setWidth(480.0f);
-								texture->setHeight(320.0f);
 								strip->add(texture);
 
 								auto key = it.first;
