@@ -21,7 +21,7 @@ namespace ofxRulr {
 			void clear();
 			void setup(const vector<ofVec3f> & srcPoints, const vector<ofVec3f> & dstPoints);
 			
-			void solveNLOpt();
+			void solveNL();
 			void solveCv();
 
 			void serialize(Json::Value &);
@@ -43,10 +43,11 @@ namespace ofxRulr {
 			} parameters;
 
 		protected:
-			vector<ofVec3f> srcPoints;
-			vector<ofVec3f> dstPoints;
-
+			ofxNonLinearFit::Models::RigidBody::DataSet dataSet;
 			ofxNonLinearFit::Models::RigidBody model;
+			
+			vector<cv::Point3f> inPoints;
+			vector<cv::Point3f> outPoints;
 
 			bool completed;
 			Result result;

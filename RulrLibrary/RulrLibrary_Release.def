@@ -124,6 +124,7 @@ EXPORTS
 	?contourArea@cv@@YANAEBV_InputArray@1@_N@Z
 	?cvtColor@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@HH@Z
 	?error@cv@@YAXAEBVException@1@@Z
+	?estimateAffine3D@cv@@YAHAEBV_InputArray@1@0AEBV_OutputArray@1@1NN@Z
 	?fastFree@cv@@YAXPEAX@Z
 	?findChessboardCorners@cv@@YA_NAEBV_InputArray@1@V?$Size_@H@1@AEBV_OutputArray@1@H@Z
 	?findContours@cv@@YAXAEBV_OutputArray@1@0HHV?$Point_@H@1@@Z
@@ -157,6 +158,7 @@ EXPORTS
 	?convertTo@Mat@cv@@QEBAXAEBV_OutputArray@2@HNN@Z
 	?copySize@Mat@cv@@QEAAXAEBV12@@Z
 	?copyTo@Mat@cv@@QEBAXAEBV_OutputArray@2@@Z
+	?create@Mat@cv@@QEAAXHPEBHH@Z
 	?deallocate@Mat@cv@@QEAAXXZ
 	?zeros@Mat@cv@@SA?AVMatExpr@2@HHH@Z
 	?black@?$ofColor_@E@@2V1@B

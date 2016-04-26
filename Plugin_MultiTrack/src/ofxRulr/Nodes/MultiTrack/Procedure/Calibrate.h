@@ -43,7 +43,6 @@ namespace ofxRulr {
 					bool mapMarkerToWorld(Marker & marker, int frameWidth, int frameHeight, const unsigned short * depthData, const float * lutData);
 
 					void setupSolveSets();
-					void triggerSolvers();
 
 					void applyTransforms();
 
