@@ -207,6 +207,7 @@ namespace ofxRulr {
 					this->dialog.reset();
 
 					if (this->dialogStep == DialogStepClosed) {
+						ofxCvGui::refreshInspector(this);
 						return;
 					}
 
@@ -237,6 +238,7 @@ namespace ofxRulr {
 										ofSetColor(color);
 										
 										if (history) {
+											//Draw captured previous frame markers.
 											const auto & frames = this->dataToSolve[key];
 											if (frames.size()) {
 												const auto lastFrame = (*frames.rbegin()).first;
@@ -246,6 +248,7 @@ namespace ofxRulr {
 											}
 										}
 										{
+											//Draw live current frame markers.
 											ofFill();
 											const auto & markers = this->dataToPreview[key];
 											for (const auto & m : markers) {
@@ -260,21 +263,21 @@ namespace ofxRulr {
 						}
 					};
 
-					shared_ptr<ofxCvGui::Panels::Widgets> panel;
-					panel = ofxCvGui::Panels::makeWidgets();
-					panel->addTitle("MultiTrack");
+					shared_ptr<ofxCvGui::Panels::Widgets> stepPanel;
+					stepPanel = ofxCvGui::Panels::makeWidgets();
+					stepPanel->addTitle("MultiTrack");
 					
 					if (this->dialogStep == DialogStepBegin) {
 						//GUI.
-						panel->addTitle("Step 1: Get Ready!", ofxCvGui::Widgets::Title::Level::H2);
-						panel->addTitle("Grab your marker and make sure it's the only red thing in the previews below. Adjust the parameters if necessary.", ofxCvGui::Widgets::Title::Level::H3);
+						stepPanel->addTitle("Step 1: Get Ready!", ofxCvGui::Widgets::Title::Level::H2);
+						stepPanel->addTitle("Grab your marker and make sure it's the only red thing in the previews below. Adjust the parameters if necessary.", ofxCvGui::Widgets::Title::Level::H3);
 
-						panel->addParameterGroup(parameters.capture);
-						panel->addParameterGroup(parameters.findMarker);
+						stepPanel->addParameterGroup(parameters.capture);
+						stepPanel->addParameterGroup(parameters.findMarker);
 
-						addPreviews(panel, false);
+						addPreviews(stepPanel, false);
 
-						auto buttonNext = panel->addButton("Begin Capture", [this]() {
+						auto buttonNext = stepPanel->addButton("Begin Capture", [this]() {
 							this->dialogStepTo(DialogStepCapture);
 						});
 						buttonNext->setHeight(100.0f);
@@ -288,17 +291,17 @@ namespace ofxRulr {
 						this->captureStartTime = chrono::system_clock::now(); 
 						
 						//GUI.
-						panel->addTitle("Step 2: Capture", ofxCvGui::Widgets::Title::Level::H2);
-						panel->addTitle("Stop reading this and walk across the entire sensor array, making sure the marker is visible.", ofxCvGui::Widgets::Title::Level::H3);
+						stepPanel->addTitle("Step 2: Capture", ofxCvGui::Widgets::Title::Level::H2);
+						stepPanel->addTitle("Stop reading this and walk across the entire sensor array, making sure the marker is visible.", ofxCvGui::Widgets::Title::Level::H3);
 
-						panel->addLiveValue<float>("Capture remaining [s]", [this]() {
+						stepPanel->addLiveValue<float>("Capture remaining [s]", [this]() {
 							// Using * 1000.0f so we get floats.
 							return (this->parameters.capture.duration * 1000.0f - chrono::duration_cast<chrono::milliseconds>(this->getTimeSinceCaptureStarted()).count()) / 1000.0f;
 						});
 
-						addPreviews(panel, true);
+						addPreviews(stepPanel, true);
 
-						auto buttonNext = panel->addButton("Continue", [this]() {
+						auto buttonNext = stepPanel->addButton("Continue", [this]() {
 							this->dialogStepTo(DialogStepComplete);
 						});
 						buttonNext->setHeight(100.0f);
@@ -307,62 +310,41 @@ namespace ofxRulr {
 						this->setupSolveSets();
 
 						//GUI.
-						panel->addTitle("Step 3: Complete", ofxCvGui::Widgets::Title::Level::H2);
-						panel->addTitle("You're done here. Close this dialog and move on to the Inspector to finish calibration.", ofxCvGui::Widgets::Title::Level::H3);
+						stepPanel->addTitle("Step 3: Complete", ofxCvGui::Widgets::Title::Level::H2);
+						stepPanel->addTitle("You're done here. Close this dialog and move on to the Inspector to finish calibration.", ofxCvGui::Widgets::Title::Level::H3);
 
-						addPreviews(panel, false);
+						addPreviews(stepPanel, true);
 
-						auto buttonNext = panel->addButton("Close Dialog", [this]() {
+						auto buttonNext = stepPanel->addButton("Close Dialog", [this]() {
 							this->dialogStepTo(DialogStepClosed);
 						});
 						buttonNext->setHeight(100.0f);
 					}
 
-					if (panel) {
-						//Build the Dialog
-						auto strip = ofxCvGui::Panels::Groups::makeStrip();
-						strip->setDirection(ofxCvGui::Panels::Groups::Strip::Horizontal);
+					//Build the Dialog
+					auto strip = ofxCvGui::Panels::Groups::makeStrip();
+					strip->setDirection(ofxCvGui::Panels::Groups::Strip::Horizontal);
 
-						//Add the common panel.
-						{
-							auto commonPanel = ofxCvGui::Panels::makeWidgets();
+					//Add the common panel.
+					{
+						auto commonPanel = ofxCvGui::Panels::makeWidgets();
 
-							auto buttonClose = commonPanel->addButton("Close", [this]() {
-								this->dialogStepTo(DialogStepClosed);
-							});
-							buttonClose->setHeight(50.0f);
-							//commonPanel->addSpacer();
-							//auto toggleBegin = commonPanel->addToggle("Begin", [this]() {
-							//	return (this->currStep == StepBegin);
-							//}, [this](bool) {
-							//	this->goToStep(StepBegin);
-							//});
-							//toggleBegin->setHeight(50.0f);
-							//auto toggleCapture = commonPanel->addToggle("Capture", [this]() {
-							//	return (this->currStep == StepCapture);
-							//}, [this](bool) {
-							//	this->goToStep(StepCapture);
-							//});
-							//toggleCapture->setHeight(50.0f);
-							//auto toggleSolve = commonPanel->addToggle("Solve", [this]() {
-							//	return (this->currStep == StepSolve);
-							//}, [this](bool) {
-							//	this->goToStep(StepSolve);
-							//});
-							//toggleSolve->setHeight(50.0f);
+						auto buttonClose = commonPanel->addButton("Close", [this]() {
+							this->dialogStepTo(DialogStepClosed);
+						});
+						buttonClose->setHeight(50.0f);
 
-							strip->add(commonPanel);
-						}
-
-						//Add the current panel.
-						strip->add(panel);
-
-						strip->setCellSizes({ 100, -1 });
-						this->dialog = strip;
-
-						//Make sure the dialog is open.
-						ofxCvGui::openDialog(this->dialog);
+						strip->add(commonPanel);
 					}
+
+					//Add the step panel.
+					strip->add(stepPanel);
+
+					strip->setCellSizes({ 100, -1 });
+					this->dialog = strip;
+
+					//Make sure the dialog is open.
+					ofxCvGui::openDialog(this->dialog);
 				}
 
 				//----------
@@ -606,7 +588,7 @@ namespace ofxRulr {
 				void Calibrate::triggerSolvers() {
 					//Run all the solver threads!
 					for (auto & it : this->solveSets) {
-						it.second.trySolve();
+						it.second.solveNLOpt();
 					}
 				}
 

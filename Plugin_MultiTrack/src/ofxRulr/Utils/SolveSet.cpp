@@ -17,8 +17,9 @@ namespace ofxRulr {
 		void SolveSet::clear() {
 			this->completed = false;
 			this->result.success = false;
-			this->dataSet.clear();
-			this->fitter.reset();
+
+			this->srcPoints.clear();
+			this->dstPoints.clear();
 		}
 
 		//----------
@@ -31,45 +32,49 @@ namespace ofxRulr {
 			}
 
 			//Copy the data.
+			this->srcPoints = srcPoints;
+			this->dstPoints = dstPoints;
+		}
+
+		//----------
+		void SolveSet::solveNLOpt() {
+			ofxNonLinearFit::Models::RigidBody::DataSet dataSet;
+
+			//Copy the data.
 			for (size_t i = 0; i < srcPoints.size(); ++i) {
 				ofxNonLinearFit::Models::RigidBody::DataPoint dataPoint;
 				dataPoint.x = srcPoints[i];
 				dataPoint.xdash = dstPoints[i];
-				this->dataSet.push_back(dataPoint);
+				dataSet.push_back(dataPoint);
 			}
-		}
 
-		//----------
-		void SolveSet::trySolve() {
-			if (this->dataSet.empty()) {
+			if (dataSet.empty()) {
 				throw(ofxRulr::Exception("Data set is empty!"));
 			}
 
-			this->fitter = make_shared<ofxNonLinearFit::Fit<ofxNonLinearFit::Models::RigidBody>>();
-
 			this->model.initialiseParameters();
+
+			auto fitter = make_shared<ofxNonLinearFit::Fit<ofxNonLinearFit::Models::RigidBody>>();
 
 			double residual;
 			bool success;
 			auto startTime = chrono::system_clock::now();
-			if (this->parameters.trimOutliers == 0.0f) {
+			if (this->parameters.nlSettings.trimOutliers == 0.0f) {
 				//Use full data set.
-				success = fitter->optimise(this->model, &this->dataSet, &residual);
+				success = fitter->optimise(this->model, &dataSet, &residual);
 			}
 			else {
 				//Use subset with top results. This will only work if the full set is calculated previously.
-				auto firstIt = this->dataSet.begin();
-				auto lastIt = firstIt + (int)(this->dataSet.size() * (1.0f - this->parameters.trimOutliers));
+				auto firstIt = dataSet.begin();
+				auto lastIt = firstIt + (int)(dataSet.size() * (1.0f - this->parameters.nlSettings.trimOutliers));
 				ofxNonLinearFit::Models::RigidBody::DataSet subSet(firstIt, lastIt);
 				success = fitter->optimise(this->model, &subSet, &residual);
 			}
 			auto endTime = chrono::system_clock::now();
 
-			sort(this->dataSet.begin(), this->dataSet.end(), [this](auto & a, auto & b) {
+			sort(dataSet.begin(), dataSet.end(), [this](auto & a, auto & b) {
 				return (this->model.getResidual(a) < this->model.getResidual(b));
 			});
-
-			this->fitter.reset();
 
 			this->result.success = success;
 			this->result.totalTime = endTime - startTime;
@@ -77,6 +82,18 @@ namespace ofxRulr {
 			this->result.transform = this->model.getCachedTransform();
 
 			this->completed = true;
+		}
+
+		//----------
+		void SolveSet::solveCv() {
+			
+
+			//this->result.success = success;
+			//this->result.totalTime = endTime - startTime;
+			//this->result.residual = residual;
+			//this->result.transform = this->model.getCachedTransform();
+
+			//this->completed = true;
 		}
 
 		//----------
@@ -91,10 +108,10 @@ namespace ofxRulr {
 			{
 				auto & jsonDataSet = json["dataSet"];
 				int index = 0;
-				for (const auto & dataPoint : this->dataSet) {
+				for (int i = 0; i < this->srcPoints.size(); ++i) {
 					auto & jsonDataPoint = jsonDataSet[index++];
-					jsonDataPoint["x"] << dataPoint.x;
-					jsonDataPoint["xdash"] << dataPoint.xdash;
+					jsonDataPoint["src"] << this->srcPoints[i];
+					jsonDataPoint["dst"] << this->dstPoints[i];
 				}
 			}
 
@@ -111,13 +128,17 @@ namespace ofxRulr {
 				jsonResult["transform"] >> this->result.transform;
 			}
 			{
-				this->dataSet.clear();
+				this->srcPoints.clear();
+				this->dstPoints.clear();
 				const auto & jsonDataSet = json["dataSet"];
 				for (const auto & jsonDataPoint : jsonDataSet) {
-					ofxNonLinearFit::Models::RigidBody::DataPoint dataPoint;
-					jsonDataPoint["x"] >> dataPoint.x;
-					jsonDataPoint["xdash"] >> dataPoint.xdash;
-					this->dataSet.push_back(dataPoint);
+					//ofxNonLinearFit::Models::RigidBody::DataPoint dataPoint;
+					ofVec3f src;
+					ofVec3f dst;
+					jsonDataPoint["src"] >> src;
+					jsonDataPoint["dst"] >> dst;
+					this->srcPoints.push_back(src);
+					this->dstPoints.push_back(dst);
 				}
 			}
 
