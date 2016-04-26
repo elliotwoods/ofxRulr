@@ -207,6 +207,7 @@ namespace ofxRulr {
 					this->dialog.reset();
 
 					if (this->dialogStep == DialogStepClosed) {
+						ofxCvGui::refreshInspector(this);
 						return;
 					}
 
