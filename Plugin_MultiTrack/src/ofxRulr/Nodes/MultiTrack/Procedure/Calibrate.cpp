@@ -585,7 +585,7 @@ namespace ofxRulr {
 				void Calibrate::triggerSolvers() {
 					//Run all the solver threads!
 					for (auto & it : this->solveSets) {
-						it.second.trySolve();
+						it.second.solveNLOpt();
 					}
 				}
 
