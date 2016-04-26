@@ -434,6 +434,7 @@ EXPORTS
 	?init@Builder@ofxCvGui@@QEAAXXZ
 	?addListenersToParent@Element@ofxCvGui@@QEAAXPEAV12@_N@Z
 	?addListenersToParent@Element@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@_N@Z
+	?arrange@Element@ofxCvGui@@QEAAXXZ
 	?getBounds@Element@ofxCvGui@@QEBAAEBVofRectangle@@XZ
 	?getCaption@Element@ofxCvGui@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getWidth@Element@ofxCvGui@@QEBAMXZ
@@ -467,6 +468,7 @@ EXPORTS
 	?setStyle@Texture@Panels@ofxCvGui@@QEAAXV?$shared_ptr@UStyle@Texture@Panels@ofxCvGui@@@std@@@Z
 	?add@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@Z
 	?clear@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXXZ
+	?getElements@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAAEAV?$vector@V?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@V?$allocator@V?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@2@@std@@XZ
 	?addButton@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VButton@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6AXXZ@5@D@Z
 	?addIndicator@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A?AW4Status@Indicator@Widgets@ofxCvGui@@XZ@5@@Z
 	?addIndicatorBool@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A_NXZ@5@@Z
