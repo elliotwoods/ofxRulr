@@ -7,15 +7,20 @@ uniform mat4 textureMatrix;
 in vec4 position;
 in vec2 texcoord;
 
+out vec2 vTexCoord;
+
 //Custom
 uniform sampler2DRect uDepthTexture;
 uniform sampler2DRect uWorldTable;
+uniform sampler2DRect uColorTexture;
 uniform vec2 uDimensions;
 
 void main()
 {
 	const vec2 halfvec = vec2(0.5, 0.5);
     vec2 depthCoord = texcoord + halfvec;
+    vTexCoord = depthCoord;
+
     // short to int, mm to meters
 	float depth = texture(uDepthTexture, depthCoord).x * 65535.0 / 1000.0;
 

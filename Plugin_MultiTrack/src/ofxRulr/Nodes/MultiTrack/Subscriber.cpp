@@ -292,7 +292,7 @@ namespace ofxRulr {
 					auto IR = frame.getInfrared().getData();
 					auto depthToXY = this->depthToWorldLUT.getData();
 
-					auto colorAmplitude = this->parameters.draw.cpuPointCloud.colorAmplitude;
+					auto colorAmplitude = this->parameters.draw.IRAmplitude;
 
 					for (int i = 0; i < frame.getDepth().size(); i++) {
 						vertices.emplace_back(ofVec3f{
@@ -333,7 +333,7 @@ namespace ofxRulr {
 
 						if (pointCloudStyle.applyIR) {
 							worldShader.setUniformTexture("uColorTexture", this->irTexture, 3);
-							worldShader.setUniform1f("uColorScale", 255.0f);
+							worldShader.setUniform1f("uColorScale", this->parameters.draw.IRAmplitude);
 							worldShader.setUniform1i("uUseColorTexture", 1);
 						}
 						else {
