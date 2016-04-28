@@ -33,13 +33,13 @@ namespace ofxRulr {
 			struct : ofParameterGroup {
 				struct : ofParameterGroup {
 					ofParameter<float> trimOutliers{ "Trim Outliers [%]", 0, 0.0f, 1.0f };
-					PARAM_DECLARE("NLopt", trimOutliers);
+					PARAM_DECLARE("NL Optimize", trimOutliers);
 				} nlSettings;
 				struct : ofParameterGroup {
-					ofParameter<float> trimOutliers{ "Trim Outliers [%]", 0, 0.0f, 1.0f };
-					PARAM_DECLARE("NLopt", trimOutliers);
+					ofParameter<float> ransacThreshold{ "RANSAC Threshold", 3.0f, 0.0f, 10.0f };
+					PARAM_DECLARE("CV Estimate", ransacThreshold);
 				} cvSettings;
-				PARAM_DECLARE("Settings", nlSettings);
+				PARAM_DECLARE("Settings", nlSettings, cvSettings);
 			} parameters;
 
 		protected:

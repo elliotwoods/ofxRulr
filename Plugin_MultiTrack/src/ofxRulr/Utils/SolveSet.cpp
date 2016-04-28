@@ -91,8 +91,6 @@ namespace ofxRulr {
 			this->result.residual = residual;
 			this->result.transform = this->model.getCachedTransform();
 
-			cout << this->result.transform << endl;
-
 			this->completed = true;
 		}
 
@@ -107,16 +105,19 @@ namespace ofxRulr {
 			cv::Mat transform(3, 4, CV_64F);
 
 			auto startTime = chrono::system_clock::now();
-			int ret = cv::estimateAffine3D(this->inPoints, this->outPoints, transform, inliers);
-			std::cout << transform << std::endl;
+			int ret = cv::estimateAffine3D(this->inPoints, this->outPoints, transform, inliers, this->parameters.cvSettings.ransacThreshold);
 			auto endTime = chrono::system_clock::now();
 
-			this->result.success = ret != 0;
+			this->result.success = ret;
 			this->result.totalTime = endTime - startTime;
-			//this->result.residual = residual;
-			//this->result.transform = ofMatrix4x4(transform
+			this->result.residual = 1.0f - (inliers.size() / (float)this->inPoints.size());
+			auto m = transform.ptr<double>(0);
+			this->result.transform = ofMatrix4x4(m[0], m[4], m[8],  0.0f,
+												 m[1], m[5], m[9],  0.0f,
+												 m[2], m[6], m[10], 0.0f,
+												 m[3], m[7], m[11], 1.0f);
 
-			//this->completed = true;
+			this->completed = true;
 		}
 
 		//----------

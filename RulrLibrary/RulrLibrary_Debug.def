@@ -25,6 +25,7 @@ EXPORTS
 	??0ofLogNotice@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogVerbose@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogWarning@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??0ofMatrix4x4@@QEAA@MMMMMMMMMMMMMMMM@Z
 	??0ofMesh@@QEAA@XZ
 	??0ofNode@@QEAA@XZ
 	??0ofParameterGroup@@QEAA@XZ
@@ -92,6 +93,7 @@ EXPORTS
 	?ofPushMatrix@@YAXXZ
 	?ofPushStyle@@YAXXZ
 	?ofRandom@@YAMM@Z
+	?ofRandom@@YAMMM@Z
 	?ofRotate@@YAXMMMM@Z
 	?ofRunApp@@YAHPEAVofBaseApp@@@Z
 	?ofScale@@YAXMMM@Z
@@ -302,6 +304,7 @@ EXPORTS
 	?getInverse@ofMatrix4x4@@QEBA?AV1@XZ
 	?makeFromMultiplicationOf@ofMatrix4x4@@QEAAXAEBV1@0@Z
 	?makeIdentityMatrix@ofMatrix4x4@@QEAAXXZ
+	?makeRotationMatrix@ofMatrix4x4@@QEAAXMMMM@Z
 	?postMult@ofMatrix4x4@@QEAAXAEBV1@@Z
 	?addColor@ofMesh@@QEAAXAEBV?$ofColor_@M@@@Z
 	?addIndex@ofMesh@@QEAAXI@Z
