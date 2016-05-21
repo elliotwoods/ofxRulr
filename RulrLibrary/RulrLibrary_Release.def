@@ -25,6 +25,7 @@ EXPORTS
 	??0ofLogNotice@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogVerbose@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogWarning@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??0ofMatrix4x4@@QEAA@MMMMMMMMMMMMMMMM@Z
 	??0ofMesh@@QEAA@XZ
 	??0ofNode@@QEAA@XZ
 	??0ofParameterGroup@@QEAA@XZ
@@ -92,6 +93,7 @@ EXPORTS
 	?ofPushMatrix@@YAXXZ
 	?ofPushStyle@@YAXXZ
 	?ofRandom@@YAMM@Z
+	?ofRandom@@YAMMM@Z
 	?ofRotate@@YAXMMMM@Z
 	?ofRunApp@@YAHPEAVofBaseApp@@@Z
 	?ofScale@@YAXMMM@Z
@@ -124,6 +126,7 @@ EXPORTS
 	?contourArea@cv@@YANAEBV_InputArray@1@_N@Z
 	?cvtColor@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@HH@Z
 	?error@cv@@YAXAEBVException@1@@Z
+	?estimateAffine3D@cv@@YAHAEBV_InputArray@1@0AEBV_OutputArray@1@1NN@Z
 	?fastFree@cv@@YAXPEAX@Z
 	?findChessboardCorners@cv@@YA_NAEBV_InputArray@1@V?$Size_@H@1@AEBV_OutputArray@1@H@Z
 	?findContours@cv@@YAXAEBV_OutputArray@1@0HHV?$Point_@H@1@@Z
@@ -157,6 +160,7 @@ EXPORTS
 	?convertTo@Mat@cv@@QEBAXAEBV_OutputArray@2@HNN@Z
 	?copySize@Mat@cv@@QEAAXAEBV12@@Z
 	?copyTo@Mat@cv@@QEBAXAEBV_OutputArray@2@@Z
+	?create@Mat@cv@@QEAAXHPEBHH@Z
 	?deallocate@Mat@cv@@QEAAXXZ
 	?zeros@Mat@cv@@SA?AVMatExpr@2@HHH@Z
 	?black@?$ofColor_@E@@2V1@B
@@ -300,6 +304,7 @@ EXPORTS
 	?getInverse@ofMatrix4x4@@QEBA?AV1@XZ
 	?makeFromMultiplicationOf@ofMatrix4x4@@QEAAXAEBV1@0@Z
 	?makeIdentityMatrix@ofMatrix4x4@@QEAAXXZ
+	?makeRotationMatrix@ofMatrix4x4@@QEAAXMMMM@Z
 	?postMult@ofMatrix4x4@@QEAAXAEBV1@@Z
 	?addColor@ofMesh@@QEAAXAEBV?$ofColor_@M@@@Z
 	?addIndex@ofMesh@@QEAAXI@Z

@@ -354,12 +354,14 @@ namespace ofxRulr {
 					//GUI.
 					inspector->addTitle("Solve", ofxCvGui::Widgets::Title::Level::H1);
 
-					auto buttonSolve = inspector->addButton("Solve", [this]() {
+					auto buttonSolveNL = inspector->addButton("Solve NL", [this]() {
 						try {
 							ofxRulr::Utils::ScopedProcess scopedProcess("Solve");
 
 							//Get crackin'
-							this->triggerSolvers();
+							for (auto & it : this->solveSets) {
+								it.second.solveNL();
+							}
 
 							//Repeat.
 							this->setupSolveSets();
@@ -369,7 +371,26 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 					});
-					buttonSolve->setHeight(100.0f);
+					buttonSolveNL->setHeight(100.0f);
+
+					auto buttonSolveCV = inspector->addButton("Solve CV", [this]() {
+						try {
+							ofxRulr::Utils::ScopedProcess scopedProcess("Solve");
+
+							//Get crackin'
+							for (auto & it : this->solveSets) {
+								it.second.solveCv();
+							}
+
+							//Repeat.
+							this->setupSolveSets();
+							ofxCvGui::refreshInspector(this);
+
+							scopedProcess.end();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+					});
+					buttonSolveCV->setHeight(100.0f);
 
 					for (auto & it : this->solveSets) {
 						auto & result = it.second.getResult();
@@ -581,14 +602,6 @@ namespace ofxRulr {
 								solver.setup(srcPoints, dstPoints);
 							}
 						}
-					}
-				}
-
-				//----------
-				void Calibrate::triggerSolvers() {
-					//Run all the solver threads!
-					for (auto & it : this->solveSets) {
-						it.second.solveNLOpt();
 					}
 				}
 
