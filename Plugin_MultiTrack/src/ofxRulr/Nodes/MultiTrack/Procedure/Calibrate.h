@@ -71,14 +71,14 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<float> threshold{ "Threshold", 100, 0, 255 };
-							ofParameter<float> minimumArea{ "Minimum area", 5 * 5 };
+							ofParameter<float> minimumArea{ "Minimum area", 3 * 3 };
 							ofParameter<float> clipNear{ "Clip near (m)", 0.4, 0.0, 8.0 };
 							ofParameter<float> clipFar{ "Clip far (m)", 8.0, 0.0, 8.0 };
 							PARAM_DECLARE("Find Marker", threshold, minimumArea, clipNear, clipFar);
 						} findMarker;
 
 						struct : ofParameterGroup {
-							ofParameter<bool> liveMarker{ "Live Marker", true };
+							ofParameter<bool> liveMarker{ "Live Marker", false };
 							ofParameter<bool> drawPoints{ "Draw Points", true };
 							ofParameter<bool> drawLines{ "Draw Lines", true };
 							PARAM_DECLARE("Debug World", liveMarker, drawPoints, drawLines);

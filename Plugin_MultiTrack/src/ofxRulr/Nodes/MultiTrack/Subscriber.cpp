@@ -30,7 +30,19 @@ namespace ofxRulr {
 
 				this->previewPanel = ofxCvGui::Panels::makeTexture(this->depthTexture);
 				this->previewPanel->setInputRange(0.0f, 8000.0f / 0xffff);
-
+				
+				//apply color to the preview panel
+				this->previewPanel->onDrawImage.addListener([this](ofxCvGui::DrawImageArguments &) {
+					if (this->parameters.draw.gpuPointCloud.style.applyIndexColor) {
+						ofPushStyle();
+						ofSetColor(this->getSubscriberColor());
+					}
+				}, this, -1);
+				this->previewPanel->onDrawImage.addListener([this](ofxCvGui::DrawImageArguments &) {
+					if (this->parameters.draw.gpuPointCloud.style.applyIndexColor) {
+						ofPopStyle();
+					}
+				}, this, +1);
 				this->uiPanel = ofxCvGui::Panels::makeWidgets();
 				this->uiPanel->addLiveValue<float>("Framerate", [this]() {
 					if (this->subscriber) {
@@ -40,6 +52,7 @@ namespace ofxRulr {
 						return 0.0f;
 					}
 				});
+				this->uiPanel->addToggle(this->parameters.draw.gpuPointCloud.style.applyIndexColor);
 				this->uiPanel->addIndicator("Depth to World loaded", [this]() {
 					if (this->depthToWorldLUT.isAllocated()) {
 						if (this->depthToWorldLUT.getWidth() == 512 && this->depthToWorldLUT.getHeight() == 424) {

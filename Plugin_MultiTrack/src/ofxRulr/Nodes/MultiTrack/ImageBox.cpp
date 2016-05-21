@@ -58,8 +58,8 @@ namespace ofxRulr {
 								ofLoadIdentityMatrix();
 								ofScale(1.0f, -1.0f, 1.0f);
 
-								ofScale(2.0f / this->parameters.box.width, 2.0f / this->parameters.box.height, 2.0f / this->parameters.box.depth);
 								ofMultMatrix(this->getTransform().getInverse());
+								ofScale(2.0f / this->parameters.box.width, 2.0f / this->parameters.box.height, 2.0f / this->parameters.box.depth);
 								
 								auto subscribers = world->getSubscribers();
 								for (auto subscriberIterator : subscribers) {

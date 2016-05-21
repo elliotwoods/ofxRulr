@@ -46,6 +46,7 @@ namespace ofxRulr {
 
 			const Utils::Set<Nodes::Base> * world;
 
+			ofCamera * camera = nullptr;
 			ofTexture * grid;
 			ofLight light;
 		};
