@@ -110,6 +110,8 @@ namespace ofxRulr {
 				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 					Utils::Serializable::deserialize(jsonDistortion, this->distortion[i]);
 				}
+
+				this->markViewDirty();
 			}
 
 			//---------
@@ -174,7 +176,9 @@ namespace ofxRulr {
 
 					inspector->add(new Widgets::Title("Distortion coefficients", Widgets::Title::Level::H3));
 					for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-						inspector->add(new Widgets::Slider(this->distortion[i]));
+						inspector->addSlider(this->distortion[i])->onValueChange += [this](ofParameter<float>&) {
+							this->markViewDirty();
+						};
 					}
 				}
 

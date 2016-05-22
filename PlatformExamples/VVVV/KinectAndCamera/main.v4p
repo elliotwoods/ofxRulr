@@ -7,13 +7,15 @@
    <NODE systemname="Reader (ofxRay Camera)" filename="..\modules\Reader (ofxRay Camera).v4p" nodename="Reader (ofxRay Camera)" componentmode="Hidden" id="0">
    <BOUNDS type="Node" left="3360" top="2745" width="100" height="100">
    </BOUNDS>
-   <BOUNDS type="Window" left="15105" top="2370" width="11085" height="8985">
+   <BOUNDS type="Window" left="1410" top="4350" width="15555" height="8985">
    </BOUNDS>
    <PIN pinname="Filename" visible="1" slicecount="1" values="Camera.ofxRayCamera">
    </PIN>
    <PIN pinname="ViewProjection" visible="1">
    </PIN>
    <PIN pinname="Read" slicecount="1" visible="1" values="0">
+   </PIN>
+   <PIN pinname="Distortion" visible="1">
    </PIN>
    </NODE>
    <NODE nodename="IOBox (String)" componentmode="InABox" id="5" systemname="IOBox (String)">
@@ -193,6 +195,8 @@
    </PIN>
    <PIN pinname="Camera ViewProjection" visible="1" slicecount="1" values="||">
    </PIN>
+   <PIN pinname="DistortionXYZW" visible="1">
+   </PIN>
    </NODE>
    <NODE systemname="Grid (DX11.Geometry)" filename="%VVVV%\packs\dx11\nodes\plugins\VVVV.DX11.Nodes.dll" nodename="Grid (DX11.Geometry)" componentmode="Hidden" id="17">
    <BOUNDS type="Node" left="5820" top="4065" width="100" height="100">
@@ -227,7 +231,7 @@
    <LINK srcnodeid="16" srcpinname="Layer" dstnodeid="8" dstpinname="Layer 3">
    </LINK>
    <NODE systemname="Rasterizer (DX11.RenderState)" filename="%VVVV%\packs\dx11\nodes\plugins\VVVV.DX11.Nodes.dll" nodename="Rasterizer (DX11.RenderState)" componentmode="Hidden" id="20">
-   <BOUNDS type="Node" left="5655" top="5520" width="100" height="100">
+   <BOUNDS type="Node" left="5655" top="5220" width="100" height="100">
    </BOUNDS>
    <PIN pinname="Render State" visible="1" slicecount="1" values="||">
    </PIN>
@@ -237,7 +241,7 @@
    <LINK srcnodeid="20" srcpinname="Render State" dstnodeid="16" dstpinname="Render State">
    </LINK>
    <NODE systemname="Scale (Transform)" nodename="Scale (Transform)" componentmode="Hidden" id="21">
-   <BOUNDS type="Node" left="7365" top="5385" width="100" height="100">
+   <BOUNDS type="Node" left="6120" top="5685" width="100" height="100">
    </BOUNDS>
    <PIN pinname="Transform Out" visible="1">
    </PIN>
@@ -492,4 +496,6 @@
    <PIN pinname="String Type" slicecount="1" values="MultiLine">
    </PIN>
    </NODE>
+   <LINK srcnodeid="0" srcpinname="Distortion" dstnodeid="16" dstpinname="DistortionXYZW">
+   </LINK>
    </PATCH>
