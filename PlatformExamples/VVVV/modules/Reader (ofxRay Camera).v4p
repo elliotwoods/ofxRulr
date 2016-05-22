@@ -1,6 +1,6 @@
 <!DOCTYPE PATCH  SYSTEM "http://vvvv.org/versions/vvvv45beta34.2.dtd" >
    <PATCH nodename="E:\openFrameworks\addons\ofxRulr\PlatformExamples\VVVV\modules\Reader (ofxRay Camera).v4p" scrollx="0" scrolly="0" systemname="Reader (ofxRay Camera)" filename="E:\openFrameworks\addons\ofxRulr\PlatformExamples\VVVV\modules\Reader (ofxRay Camera).v4p">
-   <BOUNDS type="Window" left="15105" top="2370" width="8370" height="8985">
+   <BOUNDS type="Window" left="15105" top="2370" width="11085" height="8985">
    </BOUNDS>
    <NODE systemname="Reader (String)" filename="%VVVV%\lib\nodes\modules\String\Reader (String).v4p" nodename="Reader (String)" componentmode="Hidden" id="14">
    <BOUNDS type="Node" left="1775" top="1440" width="100" height="100">
@@ -15,11 +15,11 @@
    </BOUNDS>
    <BOUNDS type="Node" left="1775" top="580" width="0" height="0">
    </BOUNDS>
-   <PIN pinname="Input String" slicecount="1" values="C:\Users\Elliot\Desktop\ofxRayCamera.txt">
+   <PIN pinname="Input String" slicecount="1" values="||">
    </PIN>
    <PIN pinname="Default" slicecount="1" values="file.txt">
    </PIN>
-   <PIN pinname="File Mask" slicecount="1" values="|All Text Formats (*.csv, *.dtd, *.html, *.txt, *.xml)||*.csv;*.dtd;*.html;*.htm;*.txt;*.xml||Text (*.txt)||*.txt||XML (*.xml)||*.xml||CSV (*.csv)||*.csv||DTD (*.dtd)||*.dtd||HTML (*.html, *.htm)||*.html;*.htm|">
+   <PIN pinname="File Mask" slicecount="1" values="|ofxRayCamera (*.ofxRayCamera)||*.ofxRayCamera||Text (*.txt)||*.txt|">
    </PIN>
    <PIN pinname="Maximum Characters" slicecount="1" values="-1">
    </PIN>

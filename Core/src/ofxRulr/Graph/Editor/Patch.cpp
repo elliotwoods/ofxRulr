@@ -515,6 +515,11 @@ namespace ofxRulr {
 			void Patch::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
+// 				inspector->addButton("Clear patch", [this]() {
+// 					this->nodeHosts.clear();
+// 					this->rebuildLinkHosts();
+// 					this->view->resync();
+// 				});
 				inspector->add(new Widgets::Button("Duplicate patch down", [this]() {
 					Json::Value json;
 					this->serialize(json);

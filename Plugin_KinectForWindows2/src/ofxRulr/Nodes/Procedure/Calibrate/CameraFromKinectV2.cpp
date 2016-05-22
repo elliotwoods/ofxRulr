@@ -48,14 +48,14 @@ namespace ofxRulr {
 					this->addInput(MAKE(Pin<Item::Camera>));
 					this->addInput(MAKE(Pin<Item::Board>));
 
-					this->usePreTest.set("Pre Test at low resolution", true);
-
 					this->error = 0.0f;
 
 					this->view = MAKE(ofxCvGui::Panels::Groups::Grid);
 					this->onAnyInputConnectionChanged += [this]() {
 						this->rebuildView();
 					};
+
+					this->manageParameters(this->parameters);
 				}
 
 				//----------
@@ -133,7 +133,7 @@ namespace ofxRulr {
 
 					vector<ofVec2f> kinectCameraPoints;
 					bool foundInKinect;
-					if (this->usePreTest)
+					if (this->parameters.usePreTest)
 					{
 						foundInKinect = ofxCv::findChessboardCornersPreTest(kinectColorImage, checkerboardSize, toCv(kinectCameraPoints), 1024);
 					}
@@ -157,7 +157,7 @@ namespace ofxRulr {
 					//
 					vector<ofVec2f> cameraPoints;
 					bool foundInCamera;
-					if (this->usePreTest)
+					if (this->parameters.usePreTest)
 					{
 						foundInCamera = ofxCv::findChessboardCornersPreTest(cameraColorImage, checkerboardSize, toCv(cameraPoints), 1024);
 					}
@@ -167,12 +167,19 @@ namespace ofxRulr {
 					//
 					//--
 
+					if (foundInKinect) {
+						lastTimeCheckerboardSeenInKinect = chrono::system_clock::now();
+					}
+					if (foundInCamera) {
+						lastTimeCheckerboardSeenInCamera = chrono::system_clock::now();
+					}
+
 					this->previewCornerFindsKinect.clear();
 					this->previewCornerFindsCamera.clear();
 
 					if (!foundInKinect || !foundInCamera) {
 						stringstream error;
-						error << "Chesboard found in kinect [" << (foundInKinect ? "X" : " ") << "], camera [" << (foundInCamera ? "X" : " ") << "]";
+						error << "Board found in kinect [" << (foundInKinect ? "X" : " ") << "], camera [" << (foundInCamera ? "X" : " ") << "]";
 						throw(ofxRulr::Exception(error.str()));
 					}
 
@@ -256,7 +263,7 @@ namespace ofxRulr {
 							this->addCapture();
 							scopedProcess.end();
 						}
-						RULR_CATCH_ALL_TO_ALERT
+						RULR_CATCH_ALL_TO_ERROR
 					}, ' ');
 					addButton->setHeight(100.0f);
 					inspector->add(addButton);
@@ -276,7 +283,6 @@ namespace ofxRulr {
 					inspector->add(new ofxCvGui::Widgets::LiveValue<float>("Reprojection error", [this]() {
 						return this->error;
 					}));
-					inspector->add(new ofxCvGui::Widgets::Toggle(this->usePreTest));
 				}
 
 				//----------
@@ -309,6 +315,20 @@ namespace ofxRulr {
 					auto camera = this->getInput<Item::Camera>();
 
 					if (kinect && camera) {
+						auto drawSuccessIndicator = [](const ofRectangle & bounds, const chrono::system_clock::time_point & lastSuccess) {
+							auto timeSinceLastSuccess = chrono::system_clock::now() - lastSuccess;
+							auto millis = chrono::duration_cast<chrono::milliseconds>(timeSinceLastSuccess).count();
+							if (millis < 3000) {
+								ofPushStyle();
+								{
+									ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ADD);
+									ofSetColor(0, ofMap(millis, 0, 3000, 255, 0), 0);
+									ofDrawRectangle(bounds);
+								}
+								ofPopStyle();
+							}
+						};
+
 						auto kinectColorSource = kinect->getDevice()->getColorSource();
 						auto kinectColorView = MAKE(ofxCvGui::Panels::Draws, kinectColorSource->getTexture());
 						kinectColorView->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
@@ -320,15 +340,20 @@ namespace ofxRulr {
 								}
 							}
 							ofPushStyle();
-							ofSetColor(255, 0, 0);
-							previewLine.draw();
+							{
+								ofSetColor(255, 0, 0);
+								previewLine.draw();
+							}
 							ofPopStyle();
+						};
+						kinectColorView->onDraw += [this, drawSuccessIndicator] (ofxCvGui::DrawArguments & args) {
+							drawSuccessIndicator(args.localBounds, this->lastTimeCheckerboardSeenInKinect);
 						};
 						kinectColorView->setCaption("Kinect RGB");
 						this->view->add(kinectColorView);
 
 						auto cameraColorView = MAKE(ofxCvGui::Panels::Draws, camera->getGrabber()->getTexture());
-						cameraColorView->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
+						cameraColorView->onDrawImage += [this, drawSuccessIndicator](ofxCvGui::DrawImageArguments & args) {
 							ofPolyline previewLine;
 							if (!this->previewCornerFindsCamera.empty()) {
 								ofDrawCircle(this->previewCornerFindsCamera.front(), 10.0f);
@@ -337,9 +362,15 @@ namespace ofxRulr {
 								}
 							}
 							ofPushStyle();
-							ofSetColor(255, 0, 0);
-							previewLine.draw();
+							{
+								ofSetColor(255, 0, 0);
+								previewLine.draw();
+
+							}
 							ofPopStyle();
+						};
+						cameraColorView->onDraw += [this, drawSuccessIndicator](ofxCvGui::DrawArguments & args) {
+							drawSuccessIndicator(args.localBounds, this->lastTimeCheckerboardSeenInCamera);
 						};
 						cameraColorView->setCaption("Camera");
 						this->view->add(cameraColorView);

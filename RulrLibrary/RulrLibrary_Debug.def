@@ -73,6 +73,7 @@ EXPORTS
 	?ofDrawRectangle@@YAXMMMM@Z
 	?ofDrawSphere@@YAXAEBVofVec3f@@M@Z
 	?ofEnableAlphaBlending@@YAXXZ
+	?ofEnableBlendMode@@YAXW4ofBlendMode@@@Z
 	?ofEnableDepthTest@@YAXXZ
 	?ofFill@@YAXXZ
 	?ofGetCurrentWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@XZ

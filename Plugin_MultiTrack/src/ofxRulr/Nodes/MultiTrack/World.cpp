@@ -47,7 +47,14 @@ namespace ofxRulr {
 						ofxCvGui::refreshInspector(this);
 					};
 					subscriberPin->onDeleteConnection += [this, i](shared_ptr<Subscriber> subscriber) {
-						this->subscribers.erase(i);
+						//this is a double check. if it's empty then we might be being destroyed (which can cause subscribers to be invalid)
+						if (!this->subscribers.empty()) {
+							auto findSubscriber = this->subscribers.find(i);
+							if (findSubscriber != this->subscribers.end()) {
+								this->subscribers.erase(findSubscriber);
+							}
+						}
+
 						ofxCvGui::refreshInspector(this);
 					};
 				}

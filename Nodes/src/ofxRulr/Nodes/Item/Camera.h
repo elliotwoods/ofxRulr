@@ -49,12 +49,17 @@ namespace ofxRulr {
 				void focusCallback(float &);
 				void sharpnessCallback(float &);
 
+				void buildCachedInitialisationSettings();
+				void applyAnyCachedInitialisationSettings();
+
 				shared_ptr<ofxCvGui::Panels::Groups::Strip> placeholderPanel;
 				shared_ptr<ofxCvGui::Panels::Widgets> cameraOpenPanel;
 				shared_ptr<ofxCvGui::Panels::Draws> grabberPanel;
 
 				shared_ptr<ofxMachineVision::Grabber::Simple> grabber;
 				shared_ptr<ofxMachineVision::Device::Base::InitialisationSettings> initialisationSettings;
+				
+				Json::Value cachedInitialisationSettings;
 
 				ofParameter<bool> showSpecification;
 				ofParameter<bool> showFocusLine;

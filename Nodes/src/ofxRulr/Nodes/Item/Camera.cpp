@@ -42,6 +42,7 @@ namespace ofxRulr {
 				
 				this->placeholderPanel = make_shared<Panels::Groups::Strip>();
 				this->cameraOpenPanel = make_shared<ofxCvGui::Panels::Widgets>();
+
 				this->buildGrabberPanel();
 				this->rebuildPanel();
 
@@ -95,25 +96,28 @@ namespace ofxRulr {
 					
 				}
 
-				auto & jsonSettings = json["properties"];
+				auto & jsonProperties = json["properties"];
 				{
-					Utils::Serializable::serialize(jsonSettings, this->exposure);
-					Utils::Serializable::serialize(jsonSettings, this->gain);
-					Utils::Serializable::serialize(jsonSettings, this->focus);
-					Utils::Serializable::serialize(jsonSettings, this->sharpness);
+					Utils::Serializable::serialize(jsonProperties, this->exposure);
+					Utils::Serializable::serialize(jsonProperties, this->gain);
+					Utils::Serializable::serialize(jsonProperties, this->focus);
+					Utils::Serializable::serialize(jsonProperties, this->sharpness);
 				}
+
+				this->buildCachedInitialisationSettings();
+				json["cachedInitialisationSettings"] = this->cachedInitialisationSettings;
 			}
 
 			//----------
 			void Camera::deserialize(const Json::Value & json) {
-				auto & jsonDevice = json["device"];
+				const auto & jsonDevice = json["device"];
 				{
 					//take in the saved resolution, this will be overwritten when the device is open and running
 					this->viewInObjectSpace.setWidth(jsonDevice["width"].asFloat());
 					this->viewInObjectSpace.setHeight(jsonDevice["height"].asFloat());
 				}
 
-				auto & jsonSettings = json["properties"];
+				const auto & jsonSettings = json["properties"];
 				{
 					Utils::Serializable::deserialize(jsonSettings, this->exposure);
 					Utils::Serializable::deserialize(jsonSettings, this->gain);
@@ -121,6 +125,21 @@ namespace ofxRulr {
 					Utils::Serializable::deserialize(jsonSettings, this->sharpness);
 					
 					this->setAllGrabberProperties();
+				}
+
+				this->cachedInitialisationSettings = json["cachedInitialisationSettings"];
+				if (!this->grabber->getDevice()) {
+					if (this->cachedInitialisationSettings.isMember("deviceType")) {
+						this->setDevice(this->cachedInitialisationSettings["deviceType"].asString());
+					}
+				}
+				if (this->grabber->getDevice()) {
+					if (this->cachedInitialisationSettings["isOpen"].asBool()) {
+						try {
+							this->openDevice();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+					}
 				}
 			}
 
@@ -145,6 +164,10 @@ namespace ofxRulr {
 			//----------
 			void Camera::setDevice(DevicePtr device) {
 				this->grabber->setDevice(device);
+				if (device) {
+					this->initialisationSettings = this->grabber->getDefaultInitialisationSettings();
+					this->applyAnyCachedInitialisationSettings();
+				}
 				this->rebuildPanel();
 			}
 
@@ -303,8 +326,6 @@ namespace ofxRulr {
 							[this, factory](bool set) {
 								if (set) {
 									this->grabber->setDevice(factory.second->makeUntyped());
-									this->initialisationSettings = this->grabber->getDefaultInitialisationSettings();
-									this->rebuildOpenCameraPanel();
 								}
 							});
 					}
@@ -419,6 +440,26 @@ namespace ofxRulr {
 			//----------
 			void Camera::sharpnessCallback(float & value) {
 				this->grabber->setSharpness(value);
+			}
+
+			//----------
+			void Camera::buildCachedInitialisationSettings() {
+				this->cachedInitialisationSettings.clear();
+
+				if (this->initialisationSettings) {
+					this->cachedInitialisationSettings["deviceType"] = this->grabber->getDeviceTypeName();
+					this->cachedInitialisationSettings["isOpen"] = this->grabber->getIsDeviceOpen();
+					Utils::Serializable::serialize(this->cachedInitialisationSettings["content"], *this->initialisationSettings);
+				}
+			}
+
+			//----------
+			void Camera::applyAnyCachedInitialisationSettings() {
+				auto cachedDeviceType = this->cachedInitialisationSettings["deviceType"].asString();
+				if (this->initialisationSettings
+					&& this->grabber->getDeviceTypeName() == cachedDeviceType) {
+					Utils::Serializable::deserialize(this->cachedInitialisationSettings["content"], * this->initialisationSettings);
+				}
 			}
 		}
 	}

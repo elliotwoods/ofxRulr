@@ -32,12 +32,18 @@ namespace ofxRulr {
 					void rebuildView();
 					shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
 
-					ofParameter<bool> usePreTest;
+					struct : ofParameterGroup {
+						ofParameter<bool> usePreTest{ "Pre-test at low resolution", false };
+						PARAM_DECLARE("CameraFromKinectV2", usePreTest);
+					} parameters;
 
 					vector<Correspondence> correspondences;
 					vector<ofVec2f> previewCornerFindsKinect;
 					vector<ofVec2f> previewCornerFindsCamera;
 					float error;
+
+					chrono::system_clock::time_point lastTimeCheckerboardSeenInKinect;
+					chrono::system_clock::time_point lastTimeCheckerboardSeenInCamera;
 				};
 			}
 		}
