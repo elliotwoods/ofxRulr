@@ -84,7 +84,7 @@ namespace ofxRulr {
 						PARAM_DECLARE("Draw", bodies, IRAmplitude, gpuPointCloud, cpuPointCloud);
 					} draw;
 
-					PARAM_DECLARE("Receiver", connection, calibration, draw);
+					PARAM_DECLARE("Subscriber", connection, calibration, draw);
 				} parameters;
 
 				shared_ptr<ofxMultiTrack::Subscriber> subscriber;
