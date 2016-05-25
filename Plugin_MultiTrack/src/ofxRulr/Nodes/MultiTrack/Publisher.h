@@ -31,7 +31,7 @@ namespace ofxRulr {
 					} controlSocket;
 
 					struct : ofParameterGroup {
-						ofParameter<int> port{ "Port", 2147 };
+						ofParameter<int> port{ "Port", 5000 };
 						PARAM_DECLARE("Data Socket", port);
 					} dataSocket;
 
