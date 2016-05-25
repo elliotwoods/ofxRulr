@@ -29,6 +29,11 @@ namespace ofxRulr {
 
 				auto kinectInput = this->addInput<Item::KinectV2>();
 				kinectInput->onNewConnection += [this](shared_ptr<Item::KinectV2> & kinectNode) {
+					// TODO: How do I remove this event listener in onDeleteConnection?
+					kinectNode->onSourcesChanged += [this]() {
+						this->rebuild();
+					};
+					
 					this->rebuild();
 				};
 				kinectInput->onDeleteConnection += [this](shared_ptr<Item::KinectV2> &) {

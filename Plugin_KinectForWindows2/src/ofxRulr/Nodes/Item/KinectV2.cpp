@@ -28,24 +28,30 @@ namespace ofxRulr {
 				this->device->open();
 
 				if (this->device->isOpen()) {
-					this->device->initColorSource();
 					this->device->initDepthSource();
-					this->device->initInfraredSource();
-					this->device->initBodySource();
-					this->device->initBodyIndexSource();
 				}
 				else {
 					throw(Exception("Cannot initialise Kinect device. We should find a way to fail elegantly here (and retry later)."));
 				}
 
 				this->playState.set("Play state", 0, 0, 1);
-				this->viewType.set("View type", 3, 0, 3);
-
+				
 				{
-					this->enabledViews.rgb.set("RGB", true);
-					this->enabledViews.depth.set("Depth", true);
-					this->enabledViews.ir.set("IR", false);
-					this->enabledViews.body.set("Body", false);
+					this->enabledSources.rgb.set("RGB", true);
+					this->enabledSources.depth.set("Depth", true);
+					this->enabledSources.ir.set("IR", false);
+					this->enabledSources.body.set("Body", false);
+				}
+				
+				this->resetSources();
+
+				this->viewType.set("View type", 3, 0, 3);
+				
+				{
+					this->enabledViews.rgb.set("RGB", this->enabledSources.rgb);
+					this->enabledViews.depth.set("Depth", this->enabledSources.depth);
+					this->enabledViews.ir.set("IR", this->enabledSources.ir);
+					this->enabledViews.body.set("Body", this->enabledSources.body);
 				}
 			}
 
@@ -77,7 +83,9 @@ namespace ofxRulr {
 				ofxRulr::Utils::Serializable::deserialize(json, this->viewType);
 				ofxRulr::Utils::Serializable::deserialize(json, this->enabledViews);
 
+				this->resetSources();
 				this->rebuildView();
+				this->onSourcesChanged.notifyListeners();
 			}
 
 			//----------
@@ -139,6 +147,19 @@ namespace ofxRulr {
 				selectViewType->entangle(this->viewType);
 				inspector->add(selectViewType);
 
+				inspector->add(new Widgets::Title("Enabled sources", Widgets::Title::Level::H2));
+				{
+					auto changeSourcesCallback = [this](ofParameter<bool> &) {
+						this->resetSources();
+						this->rebuildView();
+						this->onSourcesChanged.notifyListeners();
+					};
+					inspector->addToggle(this->enabledSources.rgb)->onValueChange += changeSourcesCallback;
+					inspector->addToggle(this->enabledSources.depth)->onValueChange += changeSourcesCallback;
+					inspector->addToggle(this->enabledSources.ir)->onValueChange += changeSourcesCallback;
+					inspector->addToggle(this->enabledSources.body)->onValueChange += changeSourcesCallback;
+				}
+
 				inspector->add(new Widgets::Title("Enabled views", Widgets::Title::Level::H2));
 				{
 					auto changeViewsCallback = [this](ofParameter<bool> &) {
@@ -152,16 +173,53 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void KinectV2::resetSources() {
+				if (!this->device->isOpen()) {
+					throw(Exception("Cannot initialise Kinect device. We should find a way to fail elegantly here (and retry later)."));
+				}
+
+				if (this->enabledSources.rgb) {
+					this->device->initColorSource();
+				}
+				else {
+					this->device->releaseColorSource();
+				}
+
+				if (this->enabledSources.depth) {
+					this->device->initDepthSource();
+				}
+				else {
+					this->device->releaseDepthSource();
+				}
+
+				if (this->enabledViews.ir) {
+					this->device->initInfraredSource();
+				}
+				else {
+					this->device->releaseInfraredSource();
+				}
+
+				if (this->enabledViews.body) {
+					this->device->initBodySource();
+					this->device->initBodyIndexSource();
+				}
+				else {
+					this->device->releaseBodySource();
+					this->device->releaseBodyIndexSource();
+				}
+			}
+
+			//----------
 			void KinectV2::rebuildView() {
 				this->view->clear();
 
-				if(this->enabledViews.rgb) {
+				if (this->enabledSources.rgb && this->enabledViews.rgb) {
 					auto rgbView = make_shared<ofxCvGui::Panels::Texture>(this->device->getColorSource()->getTexture());
 					rgbView->setCaption("RGB");
 					this->view->add(rgbView);
 				}
 
-				if (this->enabledViews.depth) {
+				if (this->enabledSources.depth && this->enabledViews.depth) {
 					auto depthView = make_shared<ofxCvGui::Panels::Texture>(this->device->getDepthSource()->getTexture());
 					depthView->setCaption("Depth");
 					
@@ -172,13 +230,13 @@ namespace ofxRulr {
 					this->view->add(depthView);
 				}
 
-				if (this->enabledViews.ir) {
+				if (this->enabledSources.ir && this->enabledViews.ir) {
 					auto irView = make_shared<ofxCvGui::Panels::Texture>(this->device->getInfraredSource()->getTexture());
 					irView->setCaption("IR");
 					this->view->add(irView);
 				}
 
-				if (this->enabledViews.body) {
+				if (this->enabledSources.body && this->enabledViews.body) {
 					auto & texture = this->device->getBodyIndexSource()->getTexture();
 					auto bodyView = make_shared<ofxCvGui::Panels::Texture>(texture);
 					bodyView->setCaption("Body");

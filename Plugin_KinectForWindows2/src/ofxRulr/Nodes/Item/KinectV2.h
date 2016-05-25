@@ -29,7 +29,11 @@ namespace ofxRulr {
 				void drawObject();
 				shared_ptr<ofxKinectForWindows2::Device> getDevice();
 
+				ofxLiquidEvent<void> onSourcesChanged;
+
 			protected:
+				void resetSources();
+
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void rebuildView();
 
@@ -38,6 +42,14 @@ namespace ofxRulr {
 
 				ofParameter<int> playState;
 				ofParameter<int> viewType;
+
+				struct : ofParameterGroup {
+					ofParameter<bool> rgb;
+					ofParameter<bool> depth;
+					ofParameter<bool> ir;
+					ofParameter<bool> body;
+					PARAM_DECLARE("Enabled sources", rgb, depth, ir, body);
+				} enabledSources;
 
 				struct : ofParameterGroup {
 					ofParameter<bool> rgb;
