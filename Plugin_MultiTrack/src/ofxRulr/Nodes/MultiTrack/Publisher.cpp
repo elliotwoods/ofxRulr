@@ -58,18 +58,17 @@ namespace ofxRulr {
 
 					//this should anyway be true if publisher exists
 					if (kinect) {
-						//sync endpoint parameters
+						//sync parameters
 						if (this->parameters.dataSocket.port.get() != this->publisher->getPublisher().getPort()) {
 							this->publisher->init(kinect, this->parameters.dataSocket.port);
 						}
 
-						////sync parameters
-						//if (this->publisher->getPublisher().getPacketSize() != this->parameters.squashBuddies.packetSize) {
-						//	this->publisher->getPublisher().setPacketSize(this->parameters.squashBuddies.packetSize);
-						//}
-						//if (this->publisher->getPublisher().getMaxSocketBufferSize() != this->parameters.squashBuddies.maxSocketBufferSize) {
-						//	this->publisher->getPublisher().setMaxSocketBufferSize(this->parameters.squashBuddies.maxSocketBufferSize);
-						//}
+						if (this->publisher->getPublisher().getPacketSize() != this->parameters.squashBuddies.packetSize) {
+							this->publisher->getPublisher().setPacketSize(this->parameters.squashBuddies.packetSize);
+						}
+						if (this->publisher->getPublisher().getMaxSocketBufferSize() != this->parameters.squashBuddies.maxSocketBufferSize) {
+							this->publisher->getPublisher().setMaxSocketBufferSize(this->parameters.squashBuddies.maxSocketBufferSize);
+						}
 
 						this->droppedFrame = !this->publisher->update();
 					}
@@ -106,26 +105,26 @@ namespace ofxRulr {
 					args.inspector->addLiveValueHistory("Dropped frame", [this]() {
 						return (float) this->droppedFrame;
 					});
-					args.inspector->addEditableValue<int>("Packet size", [this]() {
-						return (int) this->publisher->getPublisher().getPacketSize();
-					}, [this](string newSizeString) {
-						if (!newSizeString.empty()) {
-							this->publisher->getPublisher().setPacketSize(ofToInt(newSizeString));
-						}
-					});
+					//args.inspector->addEditableValue<int>("Packet size", [this]() {
+					//	return (int) this->publisher->getPublisher().getPacketSize();
+					//}, [this](string newSizeString) {
+					//	if (!newSizeString.empty()) {
+					//		this->publisher->getPublisher().setPacketSize(ofToInt(newSizeString));
+					//	}
+					//});
 					args.inspector->addLiveValue<size_t>("Current compressor queue size", [this]() {
 						return this->publisher->getPublisher().getCurrentCompressorQueueSize();
 					});
 					args.inspector->addLiveValue<size_t>("Current socket buffer size", [this]() {
 						return this->publisher->getPublisher().getCurrentSocketBufferSize();
 					});
-					args.inspector->addEditableValue<int>("Max socket buffer size", [this]() {
-						return (int) this->publisher->getPublisher().getMaxSocketBufferSize();
-					}, [this](string newSizeString) {
-						if (!newSizeString.empty()) {
-							this->publisher->getPublisher().setMaxSocketBufferSize(ofToInt(newSizeString));
-						}
-					});
+					//args.inspector->addEditableValue<int>("Max socket buffer size", [this]() {
+					//	return (int) this->publisher->getPublisher().getMaxSocketBufferSize();
+					//}, [this](string newSizeString) {
+					//	if (!newSizeString.empty()) {
+					//		this->publisher->getPublisher().setMaxSocketBufferSize(ofToInt(newSizeString));
+					//	}
+					//});
 				}
 
 				args.inspector->addParameterGroup(this->parameters);
