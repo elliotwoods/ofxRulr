@@ -191,6 +191,7 @@ EXPORTS
 	?getTotalBytes@?$ofPixels_@E@@QEBAHXZ
 	?getWidth@?$ofPixels_@E@@QEBAHXZ
 	?isAllocated@?$ofPixels_@E@@QEBA_NXZ
+	?resizeTo@?$ofPixels_@E@@QEBA_NAEAV1@W4ofInterpolationMethod@@@Z
 	?setFromExternalPixels@?$ofPixels_@E@@QEAAXPEAEHHW4ofPixelFormat@@@Z
 	?setFromPixels@?$ofPixels_@E@@QEAAXPEBEHHH@Z
 	?size@?$ofPixels_@E@@QEBAHXZ
