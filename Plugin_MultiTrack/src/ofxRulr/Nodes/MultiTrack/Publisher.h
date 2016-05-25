@@ -20,6 +20,7 @@ namespace ofxRulr {
 
 				shared_ptr<ofxMultiTrack::Publisher> getPublisher();
 			protected:
+				void rebuild();
 				void buildControlSocket();
 
 				struct : ofParameterGroup {

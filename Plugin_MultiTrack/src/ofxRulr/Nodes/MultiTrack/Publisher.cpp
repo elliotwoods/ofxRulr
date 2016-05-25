@@ -2,6 +2,7 @@
 #include "Publisher.h"
 
 #include "ofxRulr/Nodes/Item/KinectV2.h"
+#include "ofxRulr/Nodes/Item/Camera.h"
 
 //#include "Poco/Base64Encoder.h"
 
@@ -28,16 +29,19 @@ namespace ofxRulr {
 
 				auto kinectInput = this->addInput<Item::KinectV2>();
 				kinectInput->onNewConnection += [this](shared_ptr<Item::KinectV2> & kinectNode) {
-					auto kinect = kinectNode->getDevice();
-					if (kinect) {
-						this->publisher = make_shared<ofxMultiTrack::Publisher>();
-						this->publisher->init(*kinectNode->getDevice(), this->parameters.dataSocket.port);
-					}
-					ofxCvGui::refreshInspector(this);
+					this->rebuild();
 				};
 				kinectInput->onDeleteConnection += [this](shared_ptr<Item::KinectV2> &) {
 					this->publisher.reset();
 					ofxCvGui::refreshInspector(this);
+				};
+
+				auto cameraInput = this->addInput<Item::Camera>();
+				cameraInput->onNewConnection += [this](shared_ptr<Item::Camera> &) {
+					this->rebuild();
+				};
+				cameraInput->onDeleteConnection += [this](shared_ptr<Item::Camera> &) {
+					this->rebuild();
 				};
 
 				this->buildControlSocket();
@@ -56,7 +60,7 @@ namespace ofxRulr {
 					if (kinect) {
 						//sync endpoint parameters
 						if (this->parameters.dataSocket.port.get() != this->publisher->getPublisher().getPort()) {
-							this->publisher->init(*kinect, this->parameters.dataSocket.port);
+							this->publisher->init(kinect, this->parameters.dataSocket.port);
 						}
 
 						////sync parameters
@@ -164,6 +168,31 @@ namespace ofxRulr {
 			//----------
 			shared_ptr<ofxMultiTrack::Publisher> Publisher::getPublisher() {
 				return this->publisher;
+			}
+
+			//----------
+			void Publisher::rebuild() {
+				auto kinectNode = this->getInput<Item::KinectV2>();
+				auto kinect = kinectNode->getDevice();
+				if (kinect) {
+					this->publisher = make_shared<ofxMultiTrack::Publisher>();
+
+					auto cameraNode = this->getInput<Item::Camera>();
+					if (cameraNode) {
+						auto grabber = cameraNode->getGrabber();
+						if (grabber) {
+							this->publisher->init(kinect, grabber, this->parameters.dataSocket.port);
+						}
+						else {
+							this->publisher->init(kinect, this->parameters.dataSocket.port);
+						}
+					}
+					else {
+						this->publisher->init(kinect, this->parameters.dataSocket.port);
+					}
+				}
+
+				ofxCvGui::refreshInspector(this);
 			}
 
 			//----------
