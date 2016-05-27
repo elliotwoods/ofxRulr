@@ -39,8 +39,8 @@ namespace ofxRulr {
 				{
 					this->enabledSources.rgb.set("RGB", true);
 					this->enabledSources.depth.set("Depth", true);
-					this->enabledSources.ir.set("IR", false);
-					this->enabledSources.body.set("Body", false);
+					this->enabledSources.ir.set("IR", true);
+					this->enabledSources.body.set("Body", true);
 				}
 				
 				this->resetSources();
@@ -192,14 +192,14 @@ namespace ofxRulr {
 					this->device->releaseDepthSource();
 				}
 
-				if (this->enabledViews.ir) {
+				if (this->enabledSources.ir) {
 					this->device->initInfraredSource();
 				}
 				else {
 					this->device->releaseInfraredSource();
 				}
 
-				if (this->enabledViews.body) {
+				if (this->enabledSources.body) {
 					this->device->initBodySource();
 					this->device->initBodyIndexSource();
 				}
