@@ -71,9 +71,8 @@ namespace ofxRulr {
 					if (kinect) {
 						//sync parameters
 						if (this->parameters.dataSocket.port.get() != this->publisher->getPublisher().getPort()) {
-							this->publisher->init(kinect, this->parameters.dataSocket.port);
+							this->publisher->getPublisher().init(this->parameters.dataSocket.port);
 						}
-
 						if (this->publisher->getPublisher().getPacketSize() != this->parameters.squashBuddies.packetSize) {
 							this->publisher->getPublisher().setPacketSize(this->parameters.squashBuddies.packetSize);
 						}
