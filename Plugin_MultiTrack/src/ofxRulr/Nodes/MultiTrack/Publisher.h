@@ -47,6 +47,8 @@ namespace ofxRulr {
 				shared_ptr<ofxMultiTrack::Publisher> publisher;
 				unique_ptr<Utils::ControlSocket> controlSocket;
 				bool droppedFrame;
+
+				bool needsRebuild;
 			};
 		}
 	}

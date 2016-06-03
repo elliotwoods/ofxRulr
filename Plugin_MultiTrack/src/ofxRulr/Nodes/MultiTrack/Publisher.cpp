@@ -27,14 +27,16 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
+				this->needsRebuild = false;
+
 				auto kinectInput = this->addInput<Item::KinectV2>();
 				kinectInput->onNewConnection += [this](shared_ptr<Item::KinectV2> & kinectNode) {
 					// TODO: How do I remove this event listener in onDeleteConnection?
 					kinectNode->onSourcesChanged += [this]() {
-						this->rebuild();
+						this->needsRebuild = true;
 					};
 					
-					this->rebuild();
+					this->needsRebuild = true;
 				};
 				kinectInput->onDeleteConnection += [this](shared_ptr<Item::KinectV2> &) {
 					this->publisher.reset();
@@ -43,10 +45,10 @@ namespace ofxRulr {
 
 				auto cameraInput = this->addInput<Item::Camera>();
 				cameraInput->onNewConnection += [this](shared_ptr<Item::Camera> &) {
-					this->rebuild();
+					this->needsRebuild = true;
 				};
 				cameraInput->onDeleteConnection += [this](shared_ptr<Item::Camera> &) {
-					this->rebuild();
+					this->needsRebuild = true;
 				};
 
 				this->buildControlSocket();
@@ -54,6 +56,10 @@ namespace ofxRulr {
 
 			//----------
 			void Publisher::update() {
+				if (this->needsRebuild) {
+					this->rebuild();
+				}
+
 				if (this->controlSocket) {
 					this->controlSocket->update();
 				}
@@ -195,6 +201,11 @@ namespace ofxRulr {
 						this->publisher->init(kinect, this->parameters.dataSocket.port);
 					}
 				}
+				else {
+					this->publisher.reset();
+				}
+
+				this->needsRebuild = false;
 
 				ofxCvGui::refreshInspector(this);
 			}
