@@ -63,7 +63,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(KINECTSDK20_DIR)\inc;..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxSplashScreen\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -72,7 +72,7 @@
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <AdditionalDependencies>RulrLibrary_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application\bin;..\..\..\addons\ofxMessagePack\libs\msgpack-c\lib\win64;F:\openFrameworks\addons\ofxNonLinearFit\libs\NLopt\lib\vs\x64;..\..\..\addons\ofxUeye\libs\ueye\vs2012;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxSplashScreen\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
     </Link>
@@ -83,7 +83,7 @@
       <PreprocessorDefinitions>__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(KINECTSDK20_DIR)\inc;..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxSplashScreen\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -95,7 +95,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <AdditionalDependencies>RulrLibrary_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application\bin;..\..\..\addons\ofxMessagePack\libs\msgpack-c\lib\win64;..\..\..\addons\ofxNonLinearFit\libs\NLopt\lib\win64;..\..\..\addons\ofxUeye\libs\ueye\vs2012;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AssemblyDebug>
       </AssemblyDebug>
       <ModuleDefinitionFile>

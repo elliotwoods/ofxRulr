@@ -48,7 +48,10 @@ namespace ofxRulr {
 
 				this->onDrawObject += [this]() {
 					if (this->grabber->getIsDeviceOpen()) {
-						this->getViewInObjectSpace().drawOnNearPlane(* this->getGrabber());
+						auto & grabberTexture = this->getGrabber()->getTexture();
+						if (grabberTexture.isAllocated()) {
+							this->getViewInObjectSpace().drawOnNearPlane(*this->getGrabber());
+						}
 					}
 				};
 			}
@@ -325,7 +328,8 @@ namespace ofxRulr {
 							},
 							[this, factory](bool set) {
 								if (set) {
-									this->grabber->setDevice(factory.second->makeUntyped());
+									auto device = factory.second->makeUntyped();
+									this->setDevice(device);
 								}
 							});
 					}
@@ -424,22 +428,30 @@ namespace ofxRulr {
 
 			//----------
 			void Camera::exposureCallback(float & value) {
-				this->grabber->setExposure(value);
+				if (this->grabber->getIsDeviceOpen()) {
+					this->grabber->setExposure(value);
+				}
 			}
 
 			//----------
 			void Camera::gainCallback(float & value) {
-				this->grabber->setGain(value);
+				if (this->grabber->getIsDeviceOpen()) {
+					this->grabber->setGain(value);
+				}
 			}
 
 			//----------
 			void Camera::focusCallback(float & value) {
-				this->grabber->setFocus(value);
+				if (this->grabber->getIsDeviceOpen()) {
+					this->grabber->setFocus(value);
+				}
 			}
 
 			//----------
 			void Camera::sharpnessCallback(float & value) {
-				this->grabber->setSharpness(value);
+				if (this->grabber->getIsDeviceOpen()) {
+					this->grabber->setSharpness(value);
+				}
 			}
 
 			//----------

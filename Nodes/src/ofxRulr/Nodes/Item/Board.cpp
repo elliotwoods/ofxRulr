@@ -20,10 +20,6 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
-				this->parameters.boardType.set("Board Type", 0, 0, 1);
-				this->parameters.sizeX.set("Size X", 10.0f, 2.0f, 20.0f);
-				this->parameters.sizeY.set("Size Y", 7.0f, 2.0f, 20.0f);
-				this->parameters.spacing.set("Spacing [m]", 0.026f, 0.001f, 1.0f);
 				this->updatePreviewMesh();
 
 				auto view = make_shared<ofxCvGui::Panels::World>();

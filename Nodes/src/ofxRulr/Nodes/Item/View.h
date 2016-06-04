@@ -49,8 +49,8 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
-						ofParameter<float> _near{ "Near", 0.1, 0.0001f, 100.0f };
-						ofParameter<float> _far{ "Far", 30.0f, 0.0001f, 100.0f };
+						ofParameter<float> _near{ "Near", 0.1, 0.0001f, 10000.0f };
+						ofParameter<float> _far{ "Far", 30.0f, 0.0001f, 10000.0f };
 						PARAM_DECLARE("Clipping", _near, _far);
 					} clipping;
 					PARAM_DECLARE("View", clipping);

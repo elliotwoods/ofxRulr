@@ -16,8 +16,6 @@ using namespace std;
 
 namespace ofxRulr {
 	namespace Graph {
-		class Node;
-
 		class AbstractPin : public ofxCvGui::Element {
 		public:
 			AbstractPin(string name);

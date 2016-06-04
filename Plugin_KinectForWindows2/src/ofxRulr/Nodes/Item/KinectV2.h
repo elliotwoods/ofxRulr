@@ -40,10 +40,10 @@ namespace ofxRulr {
 				ofParameter<int> viewType;
 
 				struct : ofParameterGroup {
-					ofParameter<bool> rgb;
-					ofParameter<bool> depth;
-					ofParameter<bool> ir;
-					ofParameter<bool> body;
+					ofParameter<bool> rgb{ "RGB", true };
+					ofParameter<bool> depth{ "Depth", true };
+					ofParameter<bool> ir{ "IR", false };
+					ofParameter<bool> body{ "Body", false };
 					PARAM_DECLARE("Enabled views", rgb, depth, ir, body);
 				} enabledViews;
 			};

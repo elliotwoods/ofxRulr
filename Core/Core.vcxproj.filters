@@ -186,6 +186,9 @@
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\UdpSocket.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\ip\win32</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Graphics.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -349,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\UdpSocket.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Graphics.h">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

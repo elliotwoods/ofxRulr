@@ -54,13 +54,6 @@ namespace ofxRulr {
 						ofPopStyle();
 					};
 					
-					this->checkerboard.scale.set("Checkerboard Scale", 0.2f, 0.01f, 1.0f);
-					this->checkerboard.cornersX.set("Checkerboard Corners X", 5, 1, 10);
-					this->checkerboard.cornersY.set("Checkerboard Corners Y", 4, 1, 10);
-					this->checkerboard.positionX.set("Checkerboard Position X", 0, -1, 1);
-					this->checkerboard.positionY.set("Checkerboard Position Y", 0, -1, 1);
-					this->checkerboard.brightness.set("Checkerboard Brightness", 0.5, 0, 1);
-					
 					this->initialLensOffset.set("Initial Lens Offset", 0.5f, -1.0f, 1.0f);
 				}
 				

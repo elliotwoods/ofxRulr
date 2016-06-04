@@ -15,6 +15,7 @@
 
 //utils
 #include "ofxRulr/Utils/Constants.h"
+#include "ofxRulr/Utils/Graphics.h"
 #include "ofxRulr/Utils/Gui.h"
 #include "ofxRulr/Utils/Initialiser.h"
 #include "ofxRulr/Utils/PolyFit.h"

@@ -654,6 +654,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\Application\openFrameworks.h">
       <Filter>src\ofxRulr\Nodes\Application</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Test\Latency.h">
+      <Filter>src\ofxRulr\Nodes\Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -793,6 +796,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Application\openFrameworks.cpp">
       <Filter>src\ofxRulr\Nodes\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Test\Latency.cpp">
+      <Filter>src\ofxRulr\Nodes\Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

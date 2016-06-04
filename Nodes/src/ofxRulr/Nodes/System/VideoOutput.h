@@ -76,7 +76,7 @@ namespace ofxRulr {
 				int videoOutputSelection;
 				bool needsMonitorRefresh;
 
-				std::unique_ptr<ofAppGLFWWindow> window;
+				std::shared_ptr<ofAppGLFWWindow> window;
 				string windowTitle;
 
 				ofParameter<bool> showWindow;

@@ -31,9 +31,10 @@ namespace ofxRulr {
 				ofMesh previewMesh;
 
 				struct : ofParameterGroup {
-					ofParameter<int> boardType; // 0 = checkerboard, 1 = circles
-					ofParameter<float> sizeX, sizeY;
-					ofParameter<float> spacing;
+					ofParameter<int> boardType{ "Board type", 0, 0, 1 }; // 0 = checkerboard, 1 = circles
+					ofParameter<float> sizeX{ "Size X", 10.0f, 2.0f, 20.0f };
+					ofParameter<float> sizeY{ "Size Y", 7.0f, 2.0f, 20.0f };
+					ofParameter<float> spacing{ "Spacing [m]", 0.026f, 0.001f, 1.0f };
 					PARAM_DECLARE("Board", boardType, sizeX, sizeY, spacing);
 				} parameters;
 			};
