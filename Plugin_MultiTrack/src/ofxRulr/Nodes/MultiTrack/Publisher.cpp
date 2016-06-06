@@ -185,14 +185,21 @@ namespace ofxRulr {
 				auto kinect = kinectNode->getDevice();
 				if (kinect) {
 					auto cameraNode = this->getInput<Item::Camera>();
-					auto grabber = cameraNode->getGrabber();
-					if (grabber) {
-						//Publisher with external color
-						auto publisherExtColor = make_shared<ofxMultiTrack::PublisherExtColor>();
-						publisherExtColor->init(kinect, grabber, this->parameters.dataSocket.port);
-						auto camera = cameraNode->getViewInWorldSpace();
-						publisherExtColor->setCameraParams(cameraNode->getDistortionCoefficients(), camera.getViewMatrix(), camera.getClippedProjectionMatrix());
-						this->publisher = publisherExtColor;
+					if (cameraNode) {
+						auto grabber = cameraNode->getGrabber();
+						if (grabber) {
+							//Publisher with external color
+							auto publisherExtColor = make_shared<ofxMultiTrack::PublisherExtColor>();
+							publisherExtColor->init(kinect, grabber, this->parameters.dataSocket.port);
+							auto camera = cameraNode->getViewInWorldSpace();
+							publisherExtColor->setCameraParams(cameraNode->getDistortionCoefficients(), camera.getViewMatrix(), camera.getClippedProjectionMatrix());
+							this->publisher = publisherExtColor;
+						}
+						else {
+							//Publisher with device color
+							this->publisher = make_shared<ofxMultiTrack::Publisher>();
+							this->publisher->init(kinect, this->parameters.dataSocket.port);
+						}
 					}
 					else {
 						//Publisher with device color
