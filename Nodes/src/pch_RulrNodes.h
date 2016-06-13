@@ -23,3 +23,4 @@
 #include "ofxRulr/Utils/Serializable.h"
 #include "ofxRulr/Utils/Set.h"
 #include "ofxRulr/Utils/SoundEngine.h"
+#include "ofxRulr/Utils/Utils.h"

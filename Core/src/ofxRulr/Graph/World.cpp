@@ -3,9 +3,10 @@
 
 #include "Summary.h"
 
-#include "../Exception.h"
-#include "../Utils/Initialiser.h"
-#include "../Version.h"
+#include "ofxRulr/Exception.h"
+#include "ofxRulr/Utils/Initialiser.h"
+#include "ofxRulr/Utils/Utils.h"
+#include "ofxRulr/Version.h"
 
 using namespace ofxCvGui;
 
@@ -121,15 +122,26 @@ namespace ofxRulr {
 			//whenever the inspector clears, setup default elements
 			InspectController::X().onClear += [this] (InspectArguments & args) {
 				auto inspector = args.inspector;
+
 				inspector->add(new Widgets::LiveValueHistory("Application fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));
-				inspector->add(new Widgets::Button("Save all", [this]() {
+
+				auto saveAllButton = inspector->add(new Widgets::Button("Save all", [this]() {
 					this->saveAll();
 				}));
+				saveAllButton->onDraw += [this](ofxCvGui::DrawArguments & args) {
+					//show time since last save if >1min
+					auto duration = chrono::system_clock::now() - this->lastSaveOrLoad;
+					if (duration > chrono::minutes(1)) {
+						ofxAssets::font(ofxCvGui::getDefaultTypeface(), 8).drawString(Utils::formatDuration(duration, true, true, false) + "[since last save]", 6, 27);
+					}
+				};
+
 				inspector->add(new Widgets::Button("Load all", [this]() {
 					this->loadAll();
 				}));
+
 				inspector->add(new Widgets::Spacer());
 			};
 			//
@@ -184,6 +196,7 @@ namespace ofxRulr {
 			for(auto node : * this) {
 				node->save(node->getDefaultFilename());
 			}
+			const_cast<World*>(this)->lastSaveOrLoad = chrono::system_clock::now();
 		}
 
 		//-----------
@@ -194,6 +207,7 @@ namespace ofxRulr {
 				}
 				node->load(node->getDefaultFilename());
 			}
+			this->lastSaveOrLoad = chrono::system_clock::now();
 		}
 
 		//-----------

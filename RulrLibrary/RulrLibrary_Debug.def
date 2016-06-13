@@ -109,6 +109,7 @@ EXPORTS
 	?ofRect@@YAXAEBVofRectangle@@@Z
 	?ofRotate@@YAXMMMM@Z
 	?ofRunApp@@YAHPEAVofBaseApp@@@Z
+	?ofSaveImage@@YAXAEBV?$ofPixels_@E@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4ofImageQualityType@@@Z
 	?ofScale@@YAXMMM@Z
 	?ofSetColor@@YAXAEBV?$ofColor_@E@@@Z
 	?ofSetColor@@YAXAEBV?$ofColor_@E@@H@Z
@@ -120,6 +121,7 @@ EXPORTS
 	?ofSetupScreen@@YAXXZ
 	?ofSleepMillis@@YAXH@Z
 	?ofSphere@@YAXAEBVofVec3f@@M@Z
+	?ofSplitString@@YA?AV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$allocator@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@0_N1@Z
 	?ofStringReplace@@YAXAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@1@Z
 	?ofSystemAlertDialog@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?ofSystemLoadDialog@@YA?AVofFileDialogResult@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N0@Z
@@ -138,6 +140,7 @@ EXPORTS
 	??0Exception@cv@@QEAA@HAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@00H@Z
 	??1Exception@cv@@UEAA@XZ
 	?_interlockedExchangeAdd@cv@@YAHPEAHH@Z
+	?add@cv@@YAXAEBV_InputArray@1@0AEBV_OutputArray@1@0H@Z
 	?boundingRect@cv@@YA?AV?$Rect_@H@1@AEBV_InputArray@1@@Z
 	?calibrateCamera@cv@@YANAEBV_InputArray@1@0V?$Size_@H@1@AEBV_OutputArray@1@222HVTermCriteria@1@@Z
 	?contourArea@cv@@YANAEBV_InputArray@1@_N@Z
@@ -149,6 +152,7 @@ EXPORTS
 	?findContours@cv@@YAXAEBV_OutputArray@1@0HHV?$Point_@H@1@@Z
 	?flip@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@H@Z
 	?minEnclosingCircle@cv@@YAXAEBV_InputArray@1@AEAV?$Point_@M@1@AEAM@Z
+	?noArray@cv@@YAAEBV_OutputArray@1@XZ
 	?solvePnP@cv@@YA_NAEBV_InputArray@1@000AEBV_OutputArray@1@1_NH@Z
 	?stereoCalibrate@cv@@YANAEBV_InputArray@1@00AEBV_OutputArray@1@111V?$Size_@H@1@1111VTermCriteria@1@H@Z
 	?threshold@cv@@YANAEBV_InputArray@1@AEBV_OutputArray@1@NNH@Z
@@ -340,6 +344,7 @@ EXPORTS
 	?makeFromMultiplicationOf@ofMatrix4x4@@QEAAXAEBV1@0@Z
 	?makeIdentityMatrix@ofMatrix4x4@@QEAAXXZ
 	?makeRotationMatrix@ofMatrix4x4@@QEAAXMMMM@Z
+	?makeTranslationMatrix@ofMatrix4x4@@QEAAXMMM@Z
 	?postMult@ofMatrix4x4@@QEAAXAEBV1@@Z
 	?addColor@ofMesh@@QEAAXAEBV?$ofColor_@M@@@Z
 	?addIndex@ofMesh@@QEAAXI@Z
@@ -452,6 +457,7 @@ EXPORTS
 	?setIndexData@ofVbo@@QEAAXPEBIHH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec2f@@HH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec3f@@HH@Z
+	?load@ObjLoader@ofx@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAVofMesh@@_N2@Z
 	??0Register@ofxAssets@@QEAA@XZ
 	?font@ofxAssets@@YAAEAVofTrueTypeFont@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?image@ofxAssets@@YAAEAV?$ofImage_@E@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -564,6 +570,7 @@ EXPORTS
 	??0Payload@ofxGraycode@@QEAA@XZ
 	??5Encoder@ofxGraycode@@QEAA_NAEAV?$ofImage_@E@@@Z
 	??6Decoder@ofxGraycode@@QEAAXAEBV?$ofPixels_@E@@@Z
+	?getFrame@BaseCodec@ofxGraycode@@QEBAHXZ
 	?init@BaseCodec@ofxGraycode@@QEAAXAEAVPayload@2@@Z
 	??9const_iterator@DataSet@ofxGraycode@@QEBA_NAEBU012@@Z
 	??Dconst_iterator@DataSet@ofxGraycode@@QEBA?AUreference@012@XZ
@@ -712,8 +719,10 @@ EXPORTS
 	?getWindow@VideoOutput@System@Nodes@ofxRulr@@QEBAPEAUGLFWwindow@@XZ
 	?isWindowOpen@VideoOutput@System@Nodes@ofxRulr@@QEBA_NXZ
 	?presentFbo@VideoOutput@System@Nodes@ofxRulr@@QEAAXXZ
+	?setMute@VideoOutput@System@Nodes@ofxRulr@@QEAAX_N@Z
 	?setWindowOpen@VideoOutput@System@Nodes@ofxRulr@@QEAAX_N@Z
-	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
+	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N_K@Z
 	??1ScopedProcess@Utils@ofxRulr@@QEAA@XZ
 	?popPointSize@Graphics@Utils@ofxRulr@@YAXXZ
 	?pushPointSize@Graphics@Utils@ofxRulr@@YAXM_N@Z

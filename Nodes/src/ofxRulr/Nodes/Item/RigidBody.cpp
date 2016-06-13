@@ -67,6 +67,8 @@ namespace ofxRulr {
 				for (int i = 0; i < 3; i++){
 					jsonRotationEuler[i] = this->rotationEuler[i].get();
 				}
+
+				Utils::Serializable::serialize(json, this->movementSpeed);
 			}
 
 			//---------
@@ -82,6 +84,8 @@ namespace ofxRulr {
 				for (int i = 0; i < 3; i++){
 					this->rotationEuler[i] = jsonRotationEuler[i].asFloat();
 				}
+
+				Utils::Serializable::deserialize(json, this->movementSpeed);
 			}
 
 			//---------
@@ -119,6 +123,121 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ALERT
 				}));
+
+				//WASD controls
+				{
+					auto element = make_shared<ofxCvGui::Element>();
+					auto movementEnabled = make_shared<ofParameter<bool>>("Enabled", false);
+					
+					//we put it into the scope of the elemnt so that it will be deleted when that scope is deleted
+					auto enabledButton = make_shared<Widgets::Toggle>(*movementEnabled);
+					enabledButton->addListenersToParent(element);
+
+					element->onDraw += [this, enabledButton, movementEnabled](ofxCvGui::DrawArguments & args) {
+						auto drawKey = [](char key, float x, float y) {
+							ofPushStyle();
+							{
+								auto keyIsPressed = ofGetKeyPressed(key) || ofGetKeyPressed(key - ('A' - 'a'));
+								if (keyIsPressed) {
+									ofFill();
+								}
+								else {
+									ofSetLineWidth(1.0f);
+									ofNoFill();
+								}
+								ofDrawRectangle(x, y, 30, 30);
+
+								if (keyIsPressed) {
+									ofSetColor(40);
+								}
+								else {
+									ofSetColor(200);
+								}
+								ofDrawBitmapString(string(1, key), x + (30 - 8) / 2, y + (30 + 10) / 2);
+							}
+							ofPopStyle();
+						};
+						ofPushStyle();
+						{
+							ofSetColor(150, 200, 150);
+							drawKey('W', 50, 10);
+							drawKey('A', 10, 50);
+
+							ofSetColor(200, 150, 150);
+							drawKey('S', 50, 50);
+							drawKey('D', 90, 50);
+
+							ofSetColor(150, 150, 200);
+							drawKey('T', 150, 10);
+							drawKey('G', 150, 50);
+						}
+						ofPopStyle();
+					};
+					element->onKeyboard += [this, enabledButton](ofxCvGui::KeyboardArguments & args) {
+						if (args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
+							int axes = 0;
+							switch (args.key) {
+							case 'w':
+							case 'W':
+							case 's':
+							case 'S':
+								axes = 1;
+								break;
+							case 'a':
+							case 'A':
+							case 'd':
+							case 'D':
+								axes = 0;
+								break;
+							case 't':
+							case 'T':
+							case 'g':
+							case 'G':
+								axes = 2;
+								break;
+							default:
+								//no action
+								return;
+								break;
+							};
+
+							float difference = 1.0f;
+							switch (args.key)
+							{
+							case 'w':
+							case 'W':
+							case 'a':
+							case 'A':
+							case 'g':
+							case 'G':
+								difference = -1.0f;
+								break;
+
+							case 's':
+							case 'S':
+							case 'd':
+							case 'D':
+							case 't':
+							case 'T':
+								difference = +1.0f;
+								break;
+
+							default:
+								break;
+							}
+							this->translation[axes] += difference * this->movementSpeed;
+						}
+					};
+					element->onBoundsChange += [enabledButton](ofxCvGui::BoundsChangeArguments & args) {
+						auto bounds = args.localBounds;
+						bounds.x = 150 + 30 + 10;
+						bounds.width -= bounds.x;
+						enabledButton->setBounds(bounds);
+					};
+					element->setHeight(80.0f);
+					inspector->add(element);
+					inspector->addSlider(this->movementSpeed);
+				}
 
 				inspector->add(make_shared<Widgets::Spacer>());
 			}

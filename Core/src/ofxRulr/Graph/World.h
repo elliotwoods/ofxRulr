@@ -21,6 +21,7 @@ namespace ofxRulr {
 		protected:
 			static ofxCvGui::Controller * gui; ///< Why is this static? Needs comment.  I presume it's so we can grid multiple worlds?
 			ofxCvGui::PanelGroupPtr guiGrid;
+			chrono::system_clock::time_point lastSaveOrLoad = chrono::system_clock::now();
 		};
 	}
 }

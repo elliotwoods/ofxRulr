@@ -45,6 +45,9 @@ namespace ofxRulr {
 				void setWindowOpen(bool);
 				bool isWindowOpen() const;
 
+				void setMute(bool);
+				bool getMute() const;
+
 				/// Direct access drawing functions.
 				/// (Only use if you know what you're doing).
 				///{
@@ -79,7 +82,6 @@ namespace ofxRulr {
 				std::shared_ptr<ofAppGLFWWindow> window;
 				string windowTitle;
 
-				ofParameter<bool> showWindow;
 				ofParameter<bool> useFullScreenMode;
 				ofParameter<float> splitHorizontal;
 				ofParameter<float> splitVertical;

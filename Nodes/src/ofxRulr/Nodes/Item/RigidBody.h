@@ -40,7 +40,7 @@ namespace ofxRulr {
 
 				ofParameter<float> translation[3];
 				ofParameter<float> rotationEuler[3];
-
+				ofParameter<float> movementSpeed{ "Movement speed [m/s]", 0.1, 0, 10 };
 			private:
 			};
 

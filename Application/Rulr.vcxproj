@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7FD42DF7-442E-479A-BA76-D0022F99702A}</ProjectGuid>
+    <ProjectGuid>{08DCFF34-4ABA-48E6-A56C-D1957FFA181A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ofxRulr</RootNamespace>
     <ProjectName>Rulr</ProjectName>
@@ -75,6 +75,7 @@
       <AdditionalIncludeDirectories>..\..\..\addons\ofxSplashScreen\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

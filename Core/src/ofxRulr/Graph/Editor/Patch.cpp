@@ -1,5 +1,6 @@
 #include "pch_RulrCore.h"
 #include "Patch.h"
+#include "ofxRulr/Utils/ScopedProcess.h"
 
 #include "ofxCvGui/Widgets/Button.h"
 
@@ -246,7 +247,6 @@ namespace ofxRulr {
 				ofVec2f canvasScrollPosiition;
 				canvasJson["Scroll"] >> canvasScrollPosiition;
 				this->view->setScrollPosition(canvasScrollPosiition);
-
 			}
 
 			//----------
@@ -255,8 +255,14 @@ namespace ofxRulr {
 				map<int, int> reassignIDs;
 
 				const auto & nodesJson = json["Nodes"];
+
+				Utils::ScopedProcess scopedProcess("Loading nodes", false, nodesJson.size());
+
 				//Deserialise nodes
 				for (const auto & nodeJson : nodesJson) {
+					auto name = nodeJson["Name"].asString();
+					Utils::ScopedProcess scopedProcessNode(name, false);
+
 					auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
 					if (useNewIDs) {
 						//use a new ID instead, store a reference to what we changed
@@ -316,6 +322,7 @@ namespace ofxRulr {
 
 				this->rebuildLinkHosts();
 				this->view->resync();
+				scopedProcess.end();
 			}
 
 			//----------

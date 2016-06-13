@@ -54,6 +54,9 @@ namespace ofxRulr {
 					if (this->mute) {
 						ofxCvGui::Utils::drawText("MUTE [SPACE]", args.localBounds);
 					}
+					if (!this->window) {
+						ofxCvGui::Utils::drawText("CLOSED", args.localBounds);
+					}
 				};
 
 				this->monitorSelectionView = MAKE(ofxCvGui::Panels::ElementHost);
@@ -136,7 +139,6 @@ namespace ofxRulr {
 					}
 				};
 
-				this->showWindow.set("Show window", false);
 				this->useFullScreenMode.set("Use real fullscreen", false);
 				this->splitHorizontal.set("Split Horizontal", 1, 1, 8);
 				this->splitVertical.set("Split Vertical", 1, 1, 8);
@@ -202,13 +204,15 @@ namespace ofxRulr {
 					this->refreshMonitors();
 				}));
 
-				auto showWindowToggle = MAKE(ofxCvGui::Widgets::Toggle, this->showWindow, OF_KEY_RETURN);
+				auto showWindowToggle = inspector->addToggle("Show window", [this]() {
+					return this->isWindowOpen();
+				}, [this](bool value) {
+					this->setWindowOpen(value);
+				});
 				{
+					showWindowToggle->setHotKey(OF_KEY_RETURN);
 					showWindowToggle->setHeight(100.0f);
 					inspector->add(showWindowToggle);
-					showWindowToggle->onValueChange += [this](ofParameter<bool> & value) {
-						this->setWindowOpen(value);
-					};
 				}
 
 				inspector->add(make_shared<ofxCvGui::Widgets::LiveValue<string>>("Monitor selection", [this]() {
@@ -279,8 +283,10 @@ namespace ofxRulr {
 				}
 
 				//show and then clear the window
-				this->presentFbo();
-				this->clearFbo(true);
+				if (this->window) {
+					this->presentFbo();
+					this->clearFbo(true);
+				}
 				
 				//set the window title
 				if(this->window && this->windowTitle != this->getName()) {
@@ -361,6 +367,16 @@ namespace ofxRulr {
 			//----------
 			bool VideoOutput::isWindowOpen() const {
 				return this->window != nullptr;
+			}
+
+			//----------
+			void VideoOutput::setMute(bool mute) {
+				this->mute = mute;
+			}
+
+			//----------
+			bool VideoOutput::getMute() const {
+				return this->mute;
 			}
 
 			//----------
@@ -613,14 +629,12 @@ namespace ofxRulr {
 					//
 					//--
 				}
-				else {
-					this->showWindow = false;
-				}
 			}
 
 			//----------
 			void VideoOutput::destroyWindow() {
 				this->window.reset();
+				this->fbo.clear();
 			}
 
 			//----------

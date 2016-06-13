@@ -184,7 +184,7 @@ namespace ofxRulr {
 			void Camera::openDevice() {
 				auto device = this->grabber->getDevice();
 				if (device) {
-					ofxCvGui::Utils::drawProcessingNotice("Opening grabber device...");
+					Utils::ScopedProcess scopedProcess("Opening grabber device");
 					this->grabber->open(this->initialisationSettings);
 					if (!this->grabber->getIsDeviceOpen()) {
 						throw(ofxRulr::Exception("Cannot open device of type [" + device->getTypeName() + "]"));
@@ -216,6 +216,7 @@ namespace ofxRulr {
 					const auto & deviceSpecification = this->getGrabber()->getDeviceSpecification();
 					this->grabberPanel->setCaption(deviceSpecification.getManufacturer() + " : " + deviceSpecification.getModelName());
 
+					scopedProcess.end();
 				}
 				else {
 					throw(ofxRulr::Exception("Cannot open device until one is set."));
