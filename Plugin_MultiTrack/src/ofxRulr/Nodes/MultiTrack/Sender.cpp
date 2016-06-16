@@ -1,7 +1,11 @@
 #include "pch_MultiTrack.h"
+
 #ifdef OFXMULTITRACK_UDP
+
 #include "Sender.h"
+
 #include "ofxRulr/Nodes/Item/KinectV2.h"
+#include "ofxRulr/Nodes/Item/Camera.h"
 
 #include "Poco/Base64Decoder.h"
 #include "Poco/Base64Encoder.h"
@@ -27,18 +31,28 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
+				this->needsRebuild = false;
+
 				auto kinectInput = this->addInput<Item::KinectV2>();
 				kinectInput->onNewConnection += [this](shared_ptr<Item::KinectV2> & kinectNode) {
-					auto kinect = kinectNode->getDevice();
-					if (kinect) {
-						this->sender = make_shared<ofxMultiTrack::Sender>();
-						this->sender->init(*kinectNode->getDevice(), this->parameters.target.ipAddress, this->parameters.target.port);
-					}
-					ofxCvGui::refreshInspector(this);
+					// TODO: How do I remove this event listener in onDeleteConnection?
+					kinectNode->onSourcesChanged += [this]() {
+						this->needsRebuild = true;
+					};
+
+					this->needsRebuild = true;
 				};
 				kinectInput->onDeleteConnection += [this](shared_ptr<Item::KinectV2> &) {
 					this->sender.reset();
 					ofxCvGui::refreshInspector(this);
+				};
+
+				auto cameraInput = this->addInput<Item::Camera>();
+				cameraInput->onNewConnection += [this](shared_ptr<Item::Camera> &) {
+					this->needsRebuild = true;
+				};
+				cameraInput->onDeleteConnection += [this](shared_ptr<Item::Camera> &) {
+					this->needsRebuild = true;
 				};
 
 				this->buildControlSocket();
@@ -46,6 +60,10 @@ namespace ofxRulr {
 
 			//----------
 			void Sender::update() {
+				if (this->needsRebuild) {
+					this->rebuild();
+				}
+
 				if (this->controlSocket) {
 					this->controlSocket->update();
 				}
@@ -56,10 +74,9 @@ namespace ofxRulr {
 					//this should anyway be true if sender exists
 					if (kinect) {
 						//sync endpoint parameters
-						auto endPoint = this->sender->getSender().getEndPoint();
-						if (this->parameters.target.ipAddress.get() != endPoint.getEndPoint().address().to_string()
-							|| this->parameters.target.port.get() != endPoint.getEndPoint().port()) {
-							this->sender->init(*kinect, this->parameters.target.ipAddress, this->parameters.target.port);
+						if (this->parameters.dataSocket.ipAddress.get() != this->sender->getSender().getAddress()
+							|| this->parameters.dataSocket.port.get() != this->sender->getSender().getPort()) {
+							this->sender->getSender().init(this->parameters.dataSocket.ipAddress, this->parameters.dataSocket.port);
 						}
 
 						//sync parameters
@@ -70,7 +87,7 @@ namespace ofxRulr {
 							this->sender->getSender().setMaxSocketBufferSize(this->parameters.squashBuddies.maxSocketBufferSize);
 						}
 
-						this->sender->update();
+						this->droppedFrame = !this->sender->update();
 					}
 				}
 			}
@@ -95,7 +112,46 @@ namespace ofxRulr {
 					}
 				}
 
+				if (this->sender) {
+					args.inspector->addLiveValueHistory("Kinect device framerate", [this]() {
+						return this->sender->getDeviceFrameRate();
+					});
+					args.inspector->addLiveValueHistory("Sending framerate", [this]() {
+						return this->sender->getSender().getSendFramerate();
+					});
+					args.inspector->addLiveValueHistory("Dropped frame", [this]() {
+						return (float) this->droppedFrame;
+					});
+					args.inspector->addLiveValue<size_t>("Current socket buffer size", [this]() {
+						return this->sender->getSender().getCurrentSocketBufferSize();
+					});
+				}
+
 				args.inspector->addParameterGroup(this->parameters);
+
+				args.inspector->addButton("Save Depth To World Table", [this]() {
+					string filename = "DepthToWorld.raw";
+					{
+						auto result = ofSystemTextBoxDialog("Enter filename [" + filename + "]");
+						if (!result.empty()) {
+							filename = result;
+						}
+
+						string saveString;
+						{
+							ofFloatPixels depthToWorldTable;
+							auto kinect = this->getInput<Item::KinectV2>()->getDevice();
+							kinect->getDepthSource()->getDepthToWorldTable(depthToWorldTable);
+							ofxSquashBuddies::Message message;
+							message.setData(depthToWorldTable);
+							saveString = message.getMessageString();
+							ofBuffer saveBuffer(saveString);
+							if (!ofBufferToFile(ofToDataPath(filename), saveBuffer)) {
+								ofSystemAlertDialog("Error saving table to disk!");
+							}
+						}
+					}
+				});
 			}
 
 			//----------
@@ -114,13 +170,50 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void Sender::rebuild() {
+				auto kinectNode = this->getInput<Item::KinectV2>();
+				auto kinect = kinectNode->getDevice();
+				if (kinect) {
+					auto cameraNode = this->getInput<Item::Camera>();
+					if (cameraNode) {
+						auto grabber = cameraNode->getGrabber();
+						if (grabber) {
+							//Sender with external color
+							auto publisherExtColor = make_shared<ofxMultiTrack::SenderExtColor>();
+							publisherExtColor->init(kinect, grabber, this->parameters.dataSocket.ipAddress, this->parameters.dataSocket.port);
+							auto camera = cameraNode->getViewInWorldSpace();
+							publisherExtColor->setCameraParams(cameraNode->getDistortionCoefficients(), camera.getViewMatrix(), camera.getClippedProjectionMatrix());
+							this->sender = publisherExtColor;
+						}
+						else {
+							//Sender with device color
+							this->sender = make_shared<ofxMultiTrack::Sender>();
+							this->sender->init(kinect, this->parameters.dataSocket.ipAddress, this->parameters.dataSocket.port);
+						}
+					}
+					else {
+						//Sender with device color
+						this->sender = make_shared<ofxMultiTrack::Sender>();
+						this->sender->init(kinect, this->parameters.dataSocket.ipAddress, this->parameters.dataSocket.port);
+					}
+				}
+				else {
+					this->sender.reset();
+				}
+
+				this->needsRebuild = false;
+
+				ofxCvGui::refreshInspector(this);
+			}
+
+			//----------
 			void Sender::buildControlSocket() {
 				if (this->parameters.controlSocket.enabled) {
 					this->controlSocket = make_unique<Utils::ControlSocket>();
 					this->controlSocket->init(this->parameters.controlSocket.port);
 
-					this->controlSocket->addHandler("setTarget", [this](const Json::Value & json) {
-						Utils::Serializable::deserialize(json, this->parameters.target);
+					this->controlSocket->addHandler("setDataSocket", [this](const Json::Value & json) {
+						Utils::Serializable::deserialize(json, this->parameters.dataSocket);
 					});
 
 					this->controlSocket->addHandler("getDepthToWorldTable", [this](const Json::Value &) {

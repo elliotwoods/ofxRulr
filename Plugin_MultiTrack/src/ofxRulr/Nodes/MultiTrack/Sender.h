@@ -22,6 +22,7 @@ namespace ofxRulr {
 
 				shared_ptr<ofxMultiTrack::Sender> getSender();
 			protected:
+				void rebuild(); 
 				void buildControlSocket();
 
 				struct : ofParameterGroup {
@@ -34,8 +35,8 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<string> ipAddress{ "IP Address", "127.0.0.1" };
 						ofParameter<int> port{ "Port", 2147 };
-						PARAM_DECLARE("Target", ipAddress, port);
-					} target;
+						PARAM_DECLARE("Data Socket", ipAddress, port);
+					} dataSocket;
 
 					struct : ofParameterGroup {
 						ofParameter<int> packetSize{ "Packet size", 4096, 1024, 1e9 };
@@ -43,11 +44,14 @@ namespace ofxRulr {
 						PARAM_DECLARE("Squash Buddies", packetSize, maxSocketBufferSize);
 					} squashBuddies;
 					
-					PARAM_DECLARE("Sender", controlSocket, target, squashBuddies);
+					PARAM_DECLARE("Sender", controlSocket, dataSocket, squashBuddies);
 				} parameters;
 
 				shared_ptr<ofxMultiTrack::Sender> sender;
 				unique_ptr<Utils::ControlSocket> controlSocket;
+				bool droppedFrame;
+
+				bool needsRebuild;
 			};
 		}
 	}
