@@ -1,4 +1,7 @@
 #include "pch_MultiTrack.h"
+
+#ifdef OFXMULTITRACK_TCP
+
 #include "Utils.h"
 
 namespace ofxRulr {
@@ -129,3 +132,5 @@ namespace ofxRulr {
 		}
 	}
 }
+
+#endif // OFXMULTITRACK_TCP

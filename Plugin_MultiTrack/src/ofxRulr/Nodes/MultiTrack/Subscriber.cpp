@@ -1,4 +1,7 @@
 #include "pch_MultiTrack.h"
+
+#ifdef OFXMULTITRACK_TCP
+
 #include "Subscriber.h"
 
 using namespace ofxCvGui;
@@ -403,3 +406,5 @@ namespace ofxRulr {
 		}
 	}
 }
+
+#endif // OFXMULTITRACK_TCP

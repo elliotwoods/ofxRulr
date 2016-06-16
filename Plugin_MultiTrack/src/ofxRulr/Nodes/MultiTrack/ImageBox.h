@@ -1,3 +1,5 @@
+#ifdef OFXMULTITRACK_TCP
+
 #pragma once
 
 #include "ofxRulr/Nodes/Item/RigidBody.h"
@@ -47,3 +49,5 @@ namespace ofxRulr {
 		}
 	}
 }
+
+#endif // OFXMULTITRACK_TCP

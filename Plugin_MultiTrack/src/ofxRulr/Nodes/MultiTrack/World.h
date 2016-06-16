@@ -1,3 +1,5 @@
+#ifdef OFXMULTITRACK_TCP
+
 #pragma once
 
 #include "Subscriber.h"
@@ -59,3 +61,5 @@ namespace ofxRulr {
 		}
 	}
 }
+
+#endif // OFXMULTITRACK_TCP
