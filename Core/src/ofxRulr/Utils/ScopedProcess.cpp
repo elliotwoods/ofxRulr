@@ -115,19 +115,43 @@ namespace ofxRulr {
 					auto & assetRegister = ofxAssets::Register::X();
 					auto & soundEngine = SoundEngine::X();
 
-					shared_ptr<ofxAssets::Sound> sound;
-					if (process->wasSuccess()) {
-						sound = assetRegister.getSoundPointer("ofxRulr::success");
-					}
-					else {
-						sound = assetRegister.getSoundPointer("ofxRulr::failure");
-					}
-					auto delay = soundEngine.getRemainingNumFrames(assetRegister.getSoundPointer("ofxRulr::start"));
+					//play sound
+					{
+						shared_ptr<ofxAssets::Sound> sound;
+						if (process->wasSuccess()) {
+							sound = assetRegister.getSoundPointer("ofxRulr::success");
+						}
+						else {
+							sound = assetRegister.getSoundPointer("ofxRulr::failure");
+						}
+						auto delay = soundEngine.getRemainingNumFrames(assetRegister.getSoundPointer("ofxRulr::start"));
 
-					SoundEngine::ActiveSound activeSound;
-					activeSound.sound = sound;
-					activeSound.delay = delay;
-					soundEngine.play(activeSound);
+						SoundEngine::ActiveSound activeSound;
+						activeSound.sound = sound;
+						activeSound.delay = delay;
+						soundEngine.play(activeSound);
+					}
+
+					//stop active sound
+					{
+						//check if any parent processes need to continue sounding
+						bool hasSoundingProcess = false;
+						for (auto parentProcess : this->activeProcesses) {
+							if (parentProcess == process) {
+								//we've gone too far up the tree
+								break;
+							}
+
+							if (parentProcess->getHasSuccessOrFail()) {
+								hasSoundingProcess = true;
+								break;
+							}
+						}
+
+						if (!hasSoundingProcess) {
+							this->isSounding = false;
+						}
+					}
 				}
 			}
 

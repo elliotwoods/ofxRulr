@@ -226,6 +226,7 @@ namespace ofxRulr {
 								break;
 							}
 							this->translation[axes] += difference * this->movementSpeed;
+							this->onTransformChange.notifyListeners();
 						}
 					};
 					element->onBoundsChange += [enabledButton](ofxCvGui::BoundsChangeArguments & args) {

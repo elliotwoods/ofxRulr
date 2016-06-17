@@ -35,11 +35,9 @@ namespace ofxRulr {
 
 		//----------
 		void Base::init() {
-			RULR_NODE_SERIALIZATION_LISTENERS;
-
 			this->onPopulateInspector.addListener([this](ofxCvGui::InspectArguments & args) {
 				this->populateInspector(args);
-			}, this, 99999); // populate the instpector with this at the top. We call notify in reverse for inheritance
+			}, this, 99999); // populate the inspector with this at the top. We call notify in reverse for inheritance
 
 			
 			//notify the subclasses to init
@@ -62,16 +60,6 @@ namespace ofxRulr {
 				}
 				this->onUpdate.notifyListeners();
 			}
-		}
-
-		//----------
-		void Base::serialize(Json::Value & json) {
-			Utils::Serializable::serialize(json, this->parameters);
-		}
-
-		//----------
-		void Base::deserialize(const Json::Value & json) {
-			Utils::Serializable::deserialize(json, this->parameters);
 		}
 
 		//----------
@@ -171,8 +159,6 @@ namespace ofxRulr {
 				RULR_CATCH_ALL_TO_ALERT
 			}));
 
-			inspector->addToggle(this->parameters.drawToWorld);
-
 			//pin status
 			for (auto inputPin : this->getInputPins()) {
 				inspector->add(new Widgets::Indicator(inputPin->getName(), [inputPin]() {
@@ -186,9 +172,7 @@ namespace ofxRulr {
 
 		//----------
 		void Base::drawWorld() {
-			if (this->parameters.drawToWorld) {
-				this->onDrawWorld.notifyListeners();
-			}
+			this->onDrawWorld.notifyListeners();
 		}
 
 		//----------
