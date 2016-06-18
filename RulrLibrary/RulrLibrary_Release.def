@@ -69,6 +69,7 @@ EXPORTS
 	?ofClear@@YAXMMMM@Z
 	?ofCreateWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@AEBVofWindowSettings@@@Z
 	?ofDisableAlphaBlending@@YAXXZ
+	?ofDisableBlendMode@@YAXXZ
 	?ofDisableDepthTest@@YAXXZ
 	?ofDrawBitmapStringHighlight@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofVec3f@@AEBV?$ofColor_@E@@2@Z
 	?ofDrawBox@@YAXAEBVofVec3f@@MMM@Z
@@ -87,6 +88,7 @@ EXPORTS
 	?ofGetElapsedTimeMicros@@YA_KXZ
 	?ofGetElapsedTimeMillis@@YA_KXZ
 	?ofGetFrameNum@@YA_KXZ
+	?ofGetKeyPressed@@YA_NH@Z
 	?ofGetScreenHeight@@YAHXZ
 	?ofGetScreenWidth@@YAHXZ
 	?ofGetStyle@@YA?AVofStyle@@XZ
@@ -251,6 +253,15 @@ EXPORTS
 	??0?$ofPixels_@G@@QEAA@XZ
 	??1?$ofPixels_@G@@QEAA@XZ
 	??4?$ofPixels_@G@@QEAAAEAV0@AEBV0@@Z
+	?allocate@?$ofPixels_@H@@QEAAXHHH@Z
+	?clear@?$ofPixels_@H@@QEAAXXZ
+	?getData@?$ofPixels_@H@@QEAAPEAHXZ
+	?getHeight@?$ofPixels_@H@@QEBAHXZ
+	?getWidth@?$ofPixels_@H@@QEBAHXZ
+	?isAllocated@?$ofPixels_@H@@QEBA_NXZ
+	?set@?$ofPixels_@H@@QEAAXHH@Z
+	??0?$ofPixels_@H@@QEAA@XZ
+	??1?$ofPixels_@H@@QEAA@XZ
 	??0?$ofPixels_@I@@QEAA@XZ
 	??1?$ofPixels_@I@@QEAA@XZ
 	??0FastWriter@Json@@QEAA@XZ
@@ -259,6 +270,7 @@ EXPORTS
 	??0Value@Json@@QEAA@_K@Z
 	??0Value@Json@@QEAA@_N@Z
 	??0Value@Json@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??0Value@Json@@QEAA@AEBV01@@Z
 	??0Value@Json@@QEAA@H@Z
 	??0Value@Json@@QEAA@I@Z
 	??0Value@Json@@QEAA@N@Z
@@ -425,6 +437,7 @@ EXPORTS
 	?set@ofQuaternion@@QEAAXAEBVofMatrix4x4@@@Z
 	?getBottomLeft@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?getBottomRight@ofRectangle@@QEBA?AVofVec3f@@XZ
+	?getCenter@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?getHeight@ofRectangle@@QEBAMXZ
 	?getTopLeft@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?getTopRight@ofRectangle@@QEBA?AVofVec3f@@XZ
@@ -499,6 +512,7 @@ EXPORTS
 	?getCaption@Element@ofxCvGui@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getHeight@Element@ofxCvGui@@QEBAMXZ
 	?getWidth@Element@ofxCvGui@@QEBAMXZ
+	?isMouseDragging@Element@ofxCvGui@@QEBA_NXZ
 	?setBounds@Element@ofxCvGui@@QEAAXAEBVofRectangle@@@Z
 	?setCaption@Element@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?setEnabled@Element@ofxCvGui@@QEAAX_N@Z
@@ -516,6 +530,7 @@ EXPORTS
 	?makeImage@Panels@ofxCvGui@@YA?AV?$shared_ptr@VImage@Panels@ofxCvGui@@@std@@AEAV?$ofImage_@E@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeTexture@Panels@ofxCvGui@@YA?AV?$shared_ptr@VTexture@Panels@ofxCvGui@@@std@@AEBVofTexture@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeWidgets@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWidgets@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
+	?getPanelToImageTransform@BaseImage@Panels@ofxCvGui@@QEBA?AVofMatrix4x4@@XZ
 	?clearDrawObject@Draws@Panels@ofxCvGui@@QEAAXXZ
 	?setDrawObject@Draws@Panels@ofxCvGui@@QEAAXAEAVofBaseDraws@@@Z
 	??0Grid@Groups@Panels@ofxCvGui@@QEAA@XZ
@@ -565,6 +580,7 @@ EXPORTS
 	?getSelectionIndex@MultipleChoice@Widgets@ofxCvGui@@QEBAHXZ
 	?setSelection@MultipleChoice@Widgets@ofxCvGui@@QEAAXH@Z
 	?addIntValidator@Slider@Widgets@ofxCvGui@@QEAAXXZ
+	?setHotKey@Toggle@Widgets@ofxCvGui@@QEAAXD@Z
 	??0BaseCodec@ofxGraycode@@QEAA@XZ
 	??0DataSet@ofxGraycode@@QEAA@XZ
 	??0Payload@ofxGraycode@@QEAA@XZ

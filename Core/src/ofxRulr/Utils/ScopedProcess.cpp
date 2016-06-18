@@ -194,11 +194,12 @@ namespace ofxRulr {
 					}
 				}
 
-				cout << endl;
 				auto duration = process->getDuration();
 				if (duration > std::chrono::seconds(10)) {
-					cout << "Completed in " << Utils::formatDuration(duration) << endl;
+					cout << " Completed in " << Utils::formatDuration(duration) << endl;
 				}
+
+				cout << endl;
 			}
 		}
 
