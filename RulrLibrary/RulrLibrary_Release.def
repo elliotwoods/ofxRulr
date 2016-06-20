@@ -777,3 +777,7 @@ EXPORTS
 	??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEBVofAbstractParameter@@@Z
 	??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEBVofBuffer@@@Z
 	?isBeingInspected@IInspectable@ofxCvGui@@QEBA_NXZ
+	?makeScaleMatrix@ofMatrix4x4@@QEAAXMMM@Z
+	?getWidth@Payload@ofxGraycode@@QEBAIXZ
+	?getHeight@Payload@ofxGraycode@@QEBAIXZ
+	?nextChildProcess@ScopedProcess@Utils@ofxRulr@@QEAAXXZ
