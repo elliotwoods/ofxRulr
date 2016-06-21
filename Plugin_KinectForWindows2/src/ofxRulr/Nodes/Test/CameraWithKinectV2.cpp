@@ -84,7 +84,6 @@ namespace ofxRulr {
 						auto depthToWorldRay = (ofVec2f *)this->depthToWorldTable.getData();
 
 						auto colorPixels = cameraNode->getGrabber()->getPixels();
-
 						const vector<float> distortion = cameraNode->getDistortionCoefficients();
 						const auto cameraRay = cameraNode->getViewInWorldSpace(); 
 						const auto viewProjection = cameraRay.getViewMatrix() * cameraRay.getClippedProjectionMatrix();
@@ -114,8 +113,11 @@ namespace ofxRulr {
 									mesh.addColor(colorPixels.getColor(colorX, colorY));
 								}
 								else {
-									mesh.addColor(ofColor(0, 255, 0));
+									mesh.addColor(ofColor::red);
 								}
+							}
+							else {
+								mesh.addColor(ofColor::white);
 							}
 
 							depthPixel++;
