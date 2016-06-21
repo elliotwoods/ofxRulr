@@ -167,6 +167,7 @@ EXPORTS
 	?black@?$ofColor_@E@@2V1@B
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
 	?limit@?$ofColor_@E@@SAMXZ
+	?red@?$ofColor_@E@@2V1@B
 	?setBrightness@?$ofColor_@E@@QEAAXM@Z
 	?setHsb@?$ofColor_@E@@QEAAXMMMM@Z
 	?setHue@?$ofColor_@E@@QEAAXM@Z
@@ -182,6 +183,7 @@ EXPORTS
 	?allocate@?$ofPixels_@E@@QEAAXHHW4ofImageType@@@Z
 	?allocate@?$ofPixels_@E@@QEAAXHHW4ofPixelFormat@@@Z
 	?getBytesPerChannel@?$ofPixels_@E@@QEBAHXZ
+	?getColor@?$ofPixels_@E@@QEBA?AV?$ofColor_@E@@HH@Z
 	?getData@?$ofPixels_@E@@QEAAPEAEXZ
 	?getData@?$ofPixels_@E@@QEBAPEBEXZ
 	?getHeight@?$ofPixels_@E@@QEBAHXZ
@@ -451,6 +453,7 @@ EXPORTS
 	?setEnabled@Element@ofxCvGui@@QEAAX_N@Z
 	?setHeight@Element@ofxCvGui@@QEAAXM@Z
 	?setWidth@Element@ofxCvGui@@QEAAXM@Z
+	?isBeingInspected@IInspectable@ofxCvGui@@QEBA_NXZ
 	?refresh@InspectController@ofxCvGui@@QEAAXPEAVIInspectable@2@@Z
 	?isDragging@MouseArguments@ofxCvGui@@QEBA_NV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?takeMousePress@MouseArguments@ofxCvGui@@QEAA_NV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
@@ -498,6 +501,7 @@ EXPORTS
 	?getSingletonStore@?$Singleton@VInspectController@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	??0Button@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXXZ@4@D@Z
 	??0MultipleChoice@Widgets@ofxCvGui@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??0MultipleChoice@Widgets@ofxCvGui@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV?$initializer_list@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@4@@Z
 	??0Slider@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@M@@@Z
 	??0Title@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4Level@012@@Z
 	??0Toggle@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@_N@@D@Z
