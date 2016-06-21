@@ -1,5 +1,3 @@
-#ifdef OFXMULTITRACK_TCP
-
 #pragma once
 
 #include "ofxRulr/Nodes/Item/IDepthCamera.h"
@@ -55,5 +53,3 @@ namespace ofxRulr {
 		}
 	}
 }
-
-#endif // OFXMULTITRACK_TCP

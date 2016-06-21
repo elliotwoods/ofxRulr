@@ -1,7 +1,5 @@
 #include "pch_MultiTrack.h"
 
-#ifdef OFXMULTITRACK_TCP
-
 #include "Calibrate.h"
 
 #include "../Utils.h"
@@ -741,5 +739,3 @@ namespace ofxRulr {
 		}
 	}
 }
-
-#endif // OFXMULTITRACK_TCP

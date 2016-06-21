@@ -1,7 +1,5 @@
 #include "pch_MultiTrack.h"
 
-#ifdef OFXMULTITRACK_TCP
-
 #include "Publisher.h"
 
 #include "ofxRulr/Nodes/Item/KinectV2.h"
@@ -286,5 +284,3 @@ namespace ofxRulr {
 		}
 	}
 }
-
-#endif // OFXMULTITRACK_TCP

@@ -87,6 +87,7 @@
       <AdditionalIncludeDirectories>libs/oscpkt/include;../../../addons/ofxRulr/Plugin_KinectForWindows2/src;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch_MultiTrack.h</PrecompiledHeaderFile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -99,6 +100,7 @@
       <SDLCheck>false</SDLCheck>
       <AdditionalIncludeDirectories>libs/oscpkt/include;../../../addons/ofxRulr/Plugin_KinectForWindows2/src;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -115,6 +117,7 @@
       <AdditionalIncludeDirectories>libs/oscpkt/include;../../../addons/ofxRulr/Plugin_KinectForWindows2/src;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch_MultiTrack.h</PrecompiledHeaderFile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -131,6 +134,7 @@
       <SDLCheck>false</SDLCheck>
       <AdditionalIncludeDirectories>libs/oscpkt/include;../../../addons/ofxRulr/Plugin_KinectForWindows2/src;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

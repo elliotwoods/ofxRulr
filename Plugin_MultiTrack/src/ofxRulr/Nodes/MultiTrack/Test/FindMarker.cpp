@@ -1,7 +1,5 @@
 #include "pch_MultiTrack.h"
 
-#ifdef OFXMULTITRACK_TCP
-
 #include "FindMarker.h"
 
 #include "../Subscriber.h"
@@ -141,5 +139,3 @@ namespace ofxRulr {
 		}
 	}
 }
-
-#endif // OFXMULTITRACK_TCP

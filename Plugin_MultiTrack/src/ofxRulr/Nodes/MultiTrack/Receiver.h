@@ -1,5 +1,3 @@
-#ifdef OFXMULTITRACK_UDP
-
 #pragma once
 
 #include "ofxRulr/Nodes/Item/RigidBody.h"
@@ -59,5 +57,3 @@ namespace ofxRulr {
 		}
 	}
 }
-
-#endif // OFXMULTITRACK_UDP

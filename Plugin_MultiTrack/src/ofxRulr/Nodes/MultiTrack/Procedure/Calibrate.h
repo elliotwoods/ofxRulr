@@ -1,5 +1,3 @@
-#ifdef OFXMULTITRACK_TCP
-
 #pragma once
 
 #include "ofxRulr/Nodes/Procedure/Base.h"
@@ -92,5 +90,3 @@ namespace ofxRulr {
 		}
 	}
 }
-
-#endif // OFXMULTITRACK_TCP

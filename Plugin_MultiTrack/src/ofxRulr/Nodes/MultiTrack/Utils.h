@@ -1,5 +1,3 @@
-#ifdef OFXMULTITRACK_TCP
-
 #pragma once
 
 #include "ofxKinectForWindows2.h"
@@ -39,5 +37,3 @@ namespace ofxRulr {
 		}
 	}
 }
-
-#endif // OFXMULTITRACK_TCP
