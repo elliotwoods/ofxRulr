@@ -82,19 +82,19 @@ namespace ofxRulr {
 					if (typeid(T) == typeid(bool)) {
 						this->type = Type::Bool;
 					}
-					if (typeid(T) == typeid(int)) {
+					else if (typeid(T) == typeid(int)) {
 						this->type = Type::Int;
 					}
-					if (typeid(T) == typeid(int32_t)) {
+					else if (typeid(T) == typeid(int32_t)) {
 						this->type = Type::Int32;
 					}
-					if (typeid(T) == typeid(int64_t)) {
+					else if (typeid(T) == typeid(int64_t)) {
 						this->type = Type::Int64;
 					}
-					if (typeid(T) == typeid(uint32_t)) {
+					else if (typeid(T) == typeid(uint32_t)) {
 						this->type = Type::UInt32;
 					}
-					if (typeid(T) == typeid(uint64_t)) {
+					else if (typeid(T) == typeid(uint64_t)) {
 						this->type = Type::UInt64;
 					}
 					else if (typeid(T) == typeid(float)) {

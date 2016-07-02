@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5B11C632-4E4E-4F86-914D-61F2F1FA6C0B}</ProjectGuid>
+    <ProjectGuid>{33D577F9-86E9-4F15-81F1-256A00BBE3EA}</ProjectGuid>
     <RootNamespace>Nodes</RootNamespace>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
   </PropertyGroup>

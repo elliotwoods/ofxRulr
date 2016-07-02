@@ -186,7 +186,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3E918808-ADEE-4B04-9042-25F795280BAD}</ProjectGuid>
+    <ProjectGuid>{9201D4E8-8B5A-44D4-BAA6-23229A1871A7}</ProjectGuid>
     <RootNamespace>Core</RootNamespace>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
   </PropertyGroup>

@@ -212,6 +212,7 @@ namespace ofxRulr {
 				// 2. Add any bodies which weren't seen previously (adding them to existing when distance is low)
 				// 3. Calculate the merged position
 				// as bodies are handled, we remove them from our WorldBodiesUnmerged set
+				// 4. Remove inactive bodies
 
 				//--
 				//Update bodies seen previously
@@ -309,6 +310,24 @@ namespace ofxRulr {
 				//
 				//--
 
+
+
+				//--
+				//Remove inactive bodies
+				//--
+				//
+				for (auto newCombinedBodyIterator = newCombinedBodies.begin(); newCombinedBodyIterator != newCombinedBodies.end(); ) {
+					if (newCombinedBodyIterator->second.combinedBody.tracked) {
+						newCombinedBodyIterator++;
+					}
+					else {
+						newCombinedBodyIterator = newCombinedBodies.erase(newCombinedBodyIterator);
+					}
+
+				}
+				//
+				//--
+
 				return newCombinedBodies;
 			}
 
@@ -325,11 +344,27 @@ namespace ofxRulr {
 					}
 					bodies["indices"] = indices;
 
+					//remove untracked bodies from database
+					{
+						auto & bodyChannels = bodies["body"].getSubChannels();
+						for (auto bodyChannelIterator = bodyChannels.begin(); bodyChannelIterator != bodyChannels.end(); ) {
+							const auto bodyIndex = ofToInt(bodyChannelIterator->first);
+							if (this->combinedBodies.find(bodyIndex) == this->combinedBodies.end()) {
+								bodyChannelIterator = bodyChannels.erase(bodyChannelIterator);
+							}
+							else {
+								bodyChannelIterator++;
+							}
+						}
+					}
+
+
+					//set data for tracked bodies
 					for (auto & combinedBody : this->combinedBodies) {
 						auto & bodyChannel = bodies["body"][ofToString(combinedBody.first)];
 
 						auto & body = combinedBody.second.combinedBody;
-						bodyChannel["tracked"] = (int) body.tracked;
+						bodyChannel["tracked"] = (bool) body.tracked;
 
 						if (!body.tracked) {
 							bodyChannel.removeSubChannel("centroid");
@@ -345,12 +380,12 @@ namespace ofxRulr {
 								bodyChannel.removeSubChannel("centroid");
 							}
 
-							auto & jointChannel = bodyChannel["joints"];
-							jointChannel["count"] = body.joints.size();
+							auto & jointsChannel = bodyChannel["joints"];
+							jointsChannel["count"] = (int) body.joints.size();
 
 							for (auto & joint : body.joints) {
 								auto jointName = ofxKinectForWindows2::toString(joint.first);
-								auto & jointChannel = bodyChannel[jointName];
+								auto & jointChannel = jointsChannel[jointName];
 								jointChannel["position"] = joint.second.getPosition();
 								jointChannel["orientation"] = joint.second.getOrientation().asVec4();
 								jointChannel["trackingState"] = joint.second.getTrackingState() == TrackingState::TrackingState_Tracked;
