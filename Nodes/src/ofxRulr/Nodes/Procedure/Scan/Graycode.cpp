@@ -42,7 +42,7 @@ namespace ofxRulr {
 					this->decoder.init(payload);
 					this->encoder.init(payload);
 
-					this->view = MAKE(Panels::Draws, this->preview);
+					this->view = MAKE(Panels::Texture, this->preview);
 
 					videoOutputPin->onNewConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
 						videoOutput->onDrawOutput.addListener([this](ofRectangle & rectangle) {
@@ -151,11 +151,14 @@ namespace ofxRulr {
 					this->decoder.setThreshold(this->threshold);
 					this->message.clear();
 
+					Utils::ScopedProcess scopedProcess("Scanning graycode", true, this->payload.getFrameCount());
+
 					ofHideCursor();
 
 					try {
 
 						while (this->encoder >> this->message) {
+							Utils::ScopedProcess frameScopedProcess("Scanning frame", false);
 #ifdef TARGET_OSX
 							/*
 							 something strange on OSX
@@ -183,10 +186,6 @@ namespace ofxRulr {
 								videoOutput->end();
 								videoOutput->presentFbo();
 
-								stringstream message;
-								message << this->getName() << " scanning " << this->encoder.getFrame() << "/" << this->encoder.getFrameCount();
-								ofxCvGui::Utils::drawProcessingNotice(message.str());
-
 								auto startWait = ofGetElapsedTimeMillis();
 								while (ofGetElapsedTimeMillis() - startWait < this->delay) {
 									ofSleepMillis(1);
@@ -203,6 +202,8 @@ namespace ofxRulr {
 					catch (...) {
 					}
 					ofShowCursor();
+
+					scopedProcess.end();
 
 					this->previewDirty = true;
 				}
@@ -221,6 +222,13 @@ namespace ofxRulr {
 				//----------
 				const ofxGraycode::DataSet & Graycode::getDataSet() const {
 					return this->decoder.getDataSet();
+				}
+
+
+				//----------
+				void Graycode::setDataSet(const ofxGraycode::DataSet & dataSet) {
+					this->decoder.setDataSet(dataSet);
+					this->previewDirty = true;
 				}
 
 				//----------

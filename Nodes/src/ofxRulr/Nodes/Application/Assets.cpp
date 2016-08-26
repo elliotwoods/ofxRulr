@@ -202,7 +202,7 @@ namespace ofxRulr {
 								
 								asset->get(size).drawString("AaBbCcDdEeFf0123456789", 5, 35);
 							};
-							element->setScissor(true);
+							element->setScissorEnabled(true);
 							element->setHeight(58.0f);
 							this->view->add(element);
 							

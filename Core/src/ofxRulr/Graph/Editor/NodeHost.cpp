@@ -22,7 +22,7 @@ namespace ofxRulr {
 					- inputPins
 				*/				
 				this->elements = make_shared<ofxCvGui::ElementGroup>();
-				this->elements->setScissor(true);
+				this->elements->setScissorEnabled(true);
 
 				ofxCvGui::ElementPtr title;
 
