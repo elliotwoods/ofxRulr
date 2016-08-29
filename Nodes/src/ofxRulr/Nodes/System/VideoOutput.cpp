@@ -541,7 +541,7 @@ namespace ofxRulr {
 					};
 
 					//turn the scissor on
-					selectButton->setScissor(true);
+					selectButton->setScissorEnabled(true);
 
 					this->monitorSelectionView->getElementGroup()->add(selectButton);
 				}

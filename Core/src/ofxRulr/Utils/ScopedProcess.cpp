@@ -50,6 +50,8 @@ namespace ofxRulr {
 		//----------
 		void ScopedProcess::ActiveProcesses::pushProcess(ScopedProcess * process) {
 			this->activeProcesses.push_back(process);
+
+			//start sounding
 			if (!isSounding && process->getHasSuccessOrFail()) {
 				SoundEngine::X().play("ofxRulr::start");
 				this->waitForStartSound = true;
