@@ -74,11 +74,11 @@ namespace ofxRulr {
 						}
 						message << "] ";
 
-						chrono::system_clock::duration timeRemaining = chrono::milliseconds(
-							(long long)
-							((1.0f - progress) * (float) chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - process->getStartTime()).count())
-						);
-						if (timeRemaining > chrono::seconds(0)) {
+						const auto timeSpent = chrono::system_clock::now() - process->getStartTime();
+						const auto timeSpentInMillis = chrono::duration_cast<chrono::milliseconds>(timeSpent).count();
+						const auto totalTimePrediced = timeSpentInMillis * (1.0f / progress);
+						const auto timeRemaining = chrono::milliseconds((long long) ((1.0f - progress) * (float)totalTimePrediced));
+						if (timeRemaining > chrono::milliseconds(0)) {
 							message << Utils::formatDuration(timeRemaining) << " remaining." << endl;
 						}
 					}
