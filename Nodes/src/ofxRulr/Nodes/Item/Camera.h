@@ -2,7 +2,7 @@
 
 #include "View.h"
 #include "ofxMachineVision.h"
-#include "ofxCvGui/Panels/Groups/Grid.h"
+#include "ofxCvGui/Panels/Groups/Strip.h"
 
 #include "ofxCvMin.h"
 #include "ofxRay.h"
