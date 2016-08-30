@@ -56,9 +56,6 @@ namespace ofxRulr {
 			///Note : manually calling update more than once per frame will have no effect
 			void update();
 
-			void serialize(Json::Value &);
-			void deserialize(const Json::Value &);
-
 			string getName() const override;
 			void setName(const string);
 
@@ -177,7 +174,7 @@ namespace ofxRulr {
 			struct : ofParameterGroup {
 				ofParameter<bool> drawToWorld{ "Draw to world", true };
 				PARAM_DECLARE("Node", drawToWorld);
-			} parameters;
+			} nodeParameters;
 		private:
 			Graph::Editor::NodeHost * nodeHost;
 			Graph::PinSet inputPins;

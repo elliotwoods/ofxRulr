@@ -99,7 +99,11 @@ namespace ofxRulr {
 							ofTranslate(vertex->viewPosition);
 
 							//text label
-							ofDrawBitmapString(ofToString(index++), 0, 0);
+							auto caption = vertex->getCaption();
+							if (caption.empty()) {
+								caption = ofToString(index);
+							}
+							ofDrawBitmapString(caption, 0, 0);
 
 							//cross
 							ofPushStyle();
@@ -119,6 +123,8 @@ namespace ofxRulr {
 							ofPopMatrix();
 						}
 						ofPopMatrix();
+
+						index++;
 					};
 					view->onMouse += [this, viewWeak](ofxCvGui::MouseArguments & args) {
 						auto view = viewWeak.lock();
@@ -438,13 +444,6 @@ namespace ofxRulr {
 					this->reprojectionError = reprojectionError;
 					//
 					//--
-
-					for (auto & point : worldRows[0]) {
-						cout << point << endl;
-					}
-					for (auto & point : viewRows[0]) {
-						cout << point << endl;
-					}
 				}
 
 				//---------

@@ -16,6 +16,10 @@ namespace ofxRulr {
 						virtual void drawWorld(const ofColor & = ofColor(255));
 						virtual bool isSelected() const = 0;
 
+						virtual string getCaption() {
+							return "";
+						}
+
 						ofVec2f viewPosition; /// px
 					protected:
 						void drawObjectLines();
