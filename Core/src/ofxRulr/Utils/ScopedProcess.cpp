@@ -50,6 +50,8 @@ namespace ofxRulr {
 		//----------
 		void ScopedProcess::ActiveProcesses::pushProcess(ScopedProcess * process) {
 			this->activeProcesses.push_back(process);
+
+			//start sounding
 			if (!isSounding && process->getHasSuccessOrFail()) {
 				SoundEngine::X().play("ofxRulr::start");
 				this->waitForStartSound = true;
@@ -72,11 +74,11 @@ namespace ofxRulr {
 						}
 						message << "] ";
 
-						chrono::system_clock::duration timeRemaining = chrono::milliseconds(
-							(long long)
-							((1.0f - progress) * (float) chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - process->getStartTime()).count())
-						);
-						if (timeRemaining > chrono::seconds(0)) {
+						const auto timeSpent = chrono::system_clock::now() - process->getStartTime();
+						const auto timeSpentInMillis = chrono::duration_cast<chrono::milliseconds>(timeSpent).count();
+						const auto totalTimePrediced = timeSpentInMillis * (1.0f / progress);
+						const auto timeRemaining = chrono::milliseconds((long long) ((1.0f - progress) * (float)totalTimePrediced));
+						if (timeRemaining > chrono::milliseconds(0)) {
 							message << Utils::formatDuration(timeRemaining) << " remaining." << endl;
 						}
 					}
@@ -115,19 +117,43 @@ namespace ofxRulr {
 					auto & assetRegister = ofxAssets::Register::X();
 					auto & soundEngine = SoundEngine::X();
 
-					shared_ptr<ofxAssets::Sound> sound;
-					if (process->wasSuccess()) {
-						sound = assetRegister.getSoundPointer("ofxRulr::success");
-					}
-					else {
-						sound = assetRegister.getSoundPointer("ofxRulr::failure");
-					}
-					auto delay = soundEngine.getRemainingNumFrames(assetRegister.getSoundPointer("ofxRulr::start"));
+					//play sound
+					{
+						shared_ptr<ofxAssets::Sound> sound;
+						if (process->wasSuccess()) {
+							sound = assetRegister.getSoundPointer("ofxRulr::success");
+						}
+						else {
+							sound = assetRegister.getSoundPointer("ofxRulr::failure");
+						}
+						auto delay = soundEngine.getRemainingNumFrames(assetRegister.getSoundPointer("ofxRulr::start"));
 
-					SoundEngine::ActiveSound activeSound;
-					activeSound.sound = sound;
-					activeSound.delay = delay;
-					soundEngine.play(activeSound);
+						SoundEngine::ActiveSound activeSound;
+						activeSound.sound = sound;
+						activeSound.delay = delay;
+						soundEngine.play(activeSound);
+					}
+
+					//stop active sound
+					{
+						//check if any parent processes need to continue sounding
+						bool hasSoundingProcess = false;
+						for (auto parentProcess : this->activeProcesses) {
+							if (parentProcess == process) {
+								//we've gone too far up the tree
+								break;
+							}
+
+							if (parentProcess->getHasSuccessOrFail()) {
+								hasSoundingProcess = true;
+								break;
+							}
+						}
+
+						if (!hasSoundingProcess) {
+							this->isSounding = false;
+						}
+					}
 				}
 			}
 
@@ -170,11 +196,12 @@ namespace ofxRulr {
 					}
 				}
 
-				cout << endl;
 				auto duration = process->getDuration();
 				if (duration > std::chrono::seconds(10)) {
-					cout << "Completed in " << Utils::formatDuration(duration) << endl;
+					cout << " Completed in " << Utils::formatDuration(duration) << endl;
 				}
+
+				cout << endl;
 			}
 		}
 

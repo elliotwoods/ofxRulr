@@ -39,8 +39,9 @@ namespace ofxRulr {
 					void clear();
 
 					ofxGraycode::Decoder & getDecoder();
-					const ofxGraycode::DataSet & getDataSet() const;
 
+					const ofxGraycode::DataSet & getDataSet() const;
+					void setDataSet(const ofxGraycode::DataSet &);
 				protected:
 					void drawPreviewOnVideoOutput(const ofRectangle &);
 					void populateInspector(ofxCvGui::InspectArguments &);

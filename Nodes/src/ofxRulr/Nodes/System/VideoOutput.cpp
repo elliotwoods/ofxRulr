@@ -212,7 +212,6 @@ namespace ofxRulr {
 				{
 					showWindowToggle->setHotKey(OF_KEY_RETURN);
 					showWindowToggle->setHeight(100.0f);
-					inspector->add(showWindowToggle);
 				}
 
 				inspector->add(make_shared<ofxCvGui::Widgets::LiveValue<string>>("Monitor selection", [this]() {
@@ -542,7 +541,7 @@ namespace ofxRulr {
 					};
 
 					//turn the scissor on
-					selectButton->setScissor(true);
+					selectButton->setScissorEnabled(true);
 
 					this->monitorSelectionView->getElementGroup()->add(selectButton);
 				}

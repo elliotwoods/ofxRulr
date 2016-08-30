@@ -1,6 +1,10 @@
 #include "ofxRulr/Nodes/DeclareNodes.h"
 #include "ofApp.h"
 
+#include "../../../ofxEdsdk/pairs/ofxRulr/Nodes/Monitor/CanonLiveView.h"
+#include "../../../ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRDevice.h"
+#include "../../../ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRLiveViewDevice.h"
+
 
 #ifdef TARGET_OSX
 #include "../Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h"
@@ -35,7 +39,16 @@ void ofApp::setup2(){
     //
     //--
 #endif
-    
+
+	//--
+	//Setup EDSDK nodes
+	//--
+	//
+	RULR_DECLARE_NODE(Nodes::Monitor::CanonLiveView);
+	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRDevice>();
+	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRLiveViewDevice>();
+	//
+	//--
     
 	//--
 	//Initialise nodes and plugins
