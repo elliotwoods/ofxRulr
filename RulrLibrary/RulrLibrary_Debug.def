@@ -60,6 +60,7 @@ EXPORTS
 	??1ofxOscMessage@@QEAA@XZ
 	??4ofRectangle@@QEAAAEAV0@AEBV0@@Z
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
+	??Dcv@@YA?AVMatExpr@0@AEBVMat@0@N@Z
 	?ofBufferFromFile@@YA?AVofBuffer@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
 	?ofBufferToFile@@YA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofBuffer@@_N@Z
 	?ofCircle@@YAXAEBVofVec3f@@M@Z
@@ -565,7 +566,7 @@ EXPORTS
 	?addLiveValueHistory@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VLiveValueHistory@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6AMXZ@5@@Z
 	?addParameterGroup@Widgets@Panels@ofxCvGui@@QEAAXAEAVofParameterGroup@@H@Z
 	?addSlider@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VSlider@Widgets@ofxCvGui@@@std@@AEAV?$ofParameter@M@@@Z
-	?addSpacer@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VSpacer@Widgets@ofxCvGui@@@std@@XZ
+	?addSpacer@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VSpacer@Widgets@ofxCvGui@@@std@@_N@Z
 	?addTitle@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VTitle@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@W4Level@Title@13@@Z
 	?addToggle@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VToggle@Widgets@ofxCvGui@@@std@@AEAV?$ofParameter@_N@@@Z
 	?getCamera@World@Panels@ofxCvGui@@QEAAAEAVofxGrabCam@@XZ
@@ -600,6 +601,7 @@ EXPORTS
 	??5Encoder@ofxGraycode@@QEAA_NAEAV?$ofImage_@E@@@Z
 	??6Decoder@ofxGraycode@@QEAAXAEBV?$ofPixels_@E@@@Z
 	?getFrame@BaseCodec@ofxGraycode@@QEBAHXZ
+	?getPayload@BaseCodec@ofxGraycode@@QEBAAEBVPayload@2@XZ
 	?init@BaseCodec@ofxGraycode@@QEAAXAEAVPayload@2@@Z
 	??9const_iterator@DataSet@ofxGraycode@@QEBA_NAEBU012@@Z
 	??Dconst_iterator@DataSet@ofxGraycode@@QEBA?AUreference@012@XZ
@@ -626,6 +628,8 @@ EXPORTS
 	?savePreviews@Decoder@ofxGraycode@@QEAAXXZ
 	?setThreshold@Decoder@ofxGraycode@@QEAAXE@Z
 	?reset@Encoder@ofxGraycode@@UEAAXXZ
+	?getHeight@Payload@ofxGraycode@@QEBAIXZ
+	?getWidth@Payload@ofxGraycode@@QEBAIXZ
 	?init@Payload@ofxGraycode@@QEAAXII@Z
 	?calc@PayloadGraycode@ofxGraycode@@UEBAXAEBV?$vector@V?$ofPixels_@E@@V?$allocator@V?$ofPixels_@E@@@std@@@std@@AEAVDataSet@2@@Z
 	?fillPixels@PayloadGraycode@ofxGraycode@@UEBAXIAEAV?$ofPixels_@E@@@Z
