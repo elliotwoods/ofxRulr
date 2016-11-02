@@ -10,8 +10,10 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromKinectV2.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
-    <ClCompile Include="src\plugin.cpp" />
     <ClCompile Include="src\pch_Plugin_KinectForWindows2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plugin.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

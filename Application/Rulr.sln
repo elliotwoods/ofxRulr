@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rulr", "Rulr.vcxproj", "{08DCFF34-4ABA-48E6-A56C-D1957FFA181A}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -106,6 +106,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxOrbbecLib", "..\..\ofxOrbbec\ofxOrbbecLib\ofxOrbbecLib.vcxproj", "{6891A0B0-AD9E-4042-909D-1B5FDB4A3E39}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxSpout", "..\..\ofxSpout\ofxSpoutLib\ofxSpout.vcxproj", "{3985EE69-9945-40C4-839B-C21A17D5F151}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_KinectForWindows2_Camera", "..\Plugin_KinectForWindows2\Plugin_KinectForWindows2_Camera.vcxproj", "{E91D390E-75A3-4435-8CE9-B14271A8866A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -359,6 +361,14 @@ Global
 		{3985EE69-9945-40C4-839B-C21A17D5F151}.Release|x64.Build.0 = Release|x64
 		{3985EE69-9945-40C4-839B-C21A17D5F151}.Release|x86.ActiveCfg = Release|Win32
 		{3985EE69-9945-40C4-839B-C21A17D5F151}.Release|x86.Build.0 = Release|Win32
+		{E91D390E-75A3-4435-8CE9-B14271A8866A}.Debug|x64.ActiveCfg = Debug|x64
+		{E91D390E-75A3-4435-8CE9-B14271A8866A}.Debug|x64.Build.0 = Debug|x64
+		{E91D390E-75A3-4435-8CE9-B14271A8866A}.Debug|x86.ActiveCfg = Debug|Win32
+		{E91D390E-75A3-4435-8CE9-B14271A8866A}.Debug|x86.Build.0 = Debug|Win32
+		{E91D390E-75A3-4435-8CE9-B14271A8866A}.Release|x64.ActiveCfg = Release|x64
+		{E91D390E-75A3-4435-8CE9-B14271A8866A}.Release|x64.Build.0 = Release|x64
+		{E91D390E-75A3-4435-8CE9-B14271A8866A}.Release|x86.ActiveCfg = Release|Win32
+		{E91D390E-75A3-4435-8CE9-B14271A8866A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -403,5 +413,6 @@ Global
 		{CFA3EC15-B6AC-4634-8382-38E43C43695D} = {43E2F412-019B-426A-99FC-03EAB90AEA2D}
 		{6891A0B0-AD9E-4042-909D-1B5FDB4A3E39} = {43E2F412-019B-426A-99FC-03EAB90AEA2D}
 		{3985EE69-9945-40C4-839B-C21A17D5F151} = {16F575BF-69CD-4DE7-886A-F1E871E4D5B1}
+		{E91D390E-75A3-4435-8CE9-B14271A8866A} = {E02D4FA5-079D-4D3F-805D-AB62A37E77FA}
 	EndGlobalSection
 EndGlobal

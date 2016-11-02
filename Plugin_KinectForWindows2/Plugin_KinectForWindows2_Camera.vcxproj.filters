@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\pch_Plugin_KinectForWindows2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxMachineVision\Device\KinectForWindows2RGB.cpp">
+      <Filter>src\ofxMachineVision\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plugin_Camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_KinectForWindows2.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxMachineVision\Device\KinectForWindows2RGB.h">
+      <Filter>src\ofxMachineVision\Device</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{7cb23bcc-0fb3-4499-b761-25860287bbd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{5298b00f-faab-425c-b58d-8fc893f88157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure">
+      <UniqueIdentifier>{faa2746c-f704-43a1-bcb3-f2eb4fca83e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
+      <UniqueIdentifier>{376e1462-6366-4f47-8372-53cc30de8df6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Item">
+      <UniqueIdentifier>{adae8927-d19a-4f23-b894-73994d05d55c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxMachineVision">
+      <UniqueIdentifier>{02d146f7-58a3-4929-bc65-b00b6f37e0f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxMachineVision\Device">
+      <UniqueIdentifier>{6f143008-0f5b-4119-a00c-f1ed5e4c4717}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
