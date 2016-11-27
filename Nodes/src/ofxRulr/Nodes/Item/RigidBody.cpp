@@ -134,10 +134,10 @@ namespace ofxRulr {
 					enabledButton->addListenersToParent(element);
 
 					element->onDraw += [this, enabledButton, movementEnabled](ofxCvGui::DrawArguments & args) {
-						auto drawKey = [](char key, float x, float y) {
+						auto drawKey = [movementEnabled](char key, float x, float y) {
 							ofPushStyle();
 							{
-								auto keyIsPressed = ofGetKeyPressed(key) || ofGetKeyPressed(key - ('A' - 'a'));
+								auto keyIsPressed = movementEnabled->get() ? (ofGetKeyPressed(key) || ofGetKeyPressed(key - ('A' - 'a'))) : false;
 								if (keyIsPressed) {
 									ofFill();
 								}
@@ -173,8 +173,8 @@ namespace ofxRulr {
 						}
 						ofPopStyle();
 					};
-					element->onKeyboard += [this, enabledButton](ofxCvGui::KeyboardArguments & args) {
-						if (args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
+					element->onKeyboard += [this, enabledButton, movementEnabled](ofxCvGui::KeyboardArguments & args) {
+						if (movementEnabled && args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
 							int axes = 0;
 							switch (args.key) {
 							case 'w':

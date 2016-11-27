@@ -21,7 +21,7 @@ namespace ofxRulr {
 					bool getRunFinderEnabled() const;
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void addBoard();
+					void addBoard(bool tetheredCapture);
 					void findBoard();
 					void calibrate();
 
@@ -31,6 +31,7 @@ namespace ofxRulr {
 					vector<ofVec2f> currentCorners;
 					vector<vector<ofVec2f>> accumulatedCorners;
 					ofParameter<float> error;
+					ofParameter<bool> tetheredShootMode{ "Tethered shoot mode", false };
 				};
 			}
 		}

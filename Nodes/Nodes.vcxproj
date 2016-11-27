@@ -231,6 +231,11 @@
     <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\triangle_impl.hpp" />
     <ClInclude Include="..\..\ofxTriangle\src\ofxTriangle.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\AddScan.h" />
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\AddView.h" />
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\Node.h" />
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\ProCamModel.h" />
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\Solver.h" />
     <ClInclude Include="src\ofxRulr\Data\Channels\Address.h" />
     <ClInclude Include="src\ofxRulr\Data\Channels\Channel.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Application\Assets.h" />
@@ -255,6 +260,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Item\RigidBody.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\View.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Base.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h" />
@@ -262,6 +268,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Triangulate.h" />
@@ -306,6 +313,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\AddScan.cpp" />
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\AddView.cpp" />
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\Node.cpp" />
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\ProCamModel.cpp" />
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\Solver.cpp" />
     <ClCompile Include="src\ofxRulr\Data\Channels\Address.cpp" />
     <ClCompile Include="src\ofxRulr\Data\Channels\Channel.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Application\Assets.cpp" />
@@ -328,6 +340,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Item\Projector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\RigidBody.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\View.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp" />
@@ -335,6 +348,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp" />

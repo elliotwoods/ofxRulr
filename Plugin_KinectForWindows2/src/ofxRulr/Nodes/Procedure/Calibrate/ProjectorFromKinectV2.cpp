@@ -243,6 +243,7 @@ namespace ofxRulr {
 					this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
 						worldPoints, projectorPoints,
 						this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight(),
+						true,
 						this->initialLensOffset, 1.4f, this->trimOutliers);
 
 					auto view = ofxCv::makeMatrix(rotation, translation);
@@ -319,7 +320,7 @@ namespace ofxRulr {
 					auto projector = this->getInput<Item::Projector>();
 
 					ofMesh preview;
-					for (auto correspondence : this->correspondences) {
+					for (auto & correspondence : this->correspondences) {
 						preview.addVertex(correspondence.world);
 						preview.addColor(ofColor(
 							ofMap(correspondence.projector.x, -1, 1, 0, 255),

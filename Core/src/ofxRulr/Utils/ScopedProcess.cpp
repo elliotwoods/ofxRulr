@@ -188,6 +188,9 @@ namespace ofxRulr {
 				}
 
 				cout << "Ending : " << process->getActivityName();
+				if (process->getHasSuccessOrFail() && !process->wasSuccess()) {
+					cout << " (FAIL)";
+				}
 				if (this->activeProcesses.size() > 0) {
 					//we might be a child process
 					auto parentProcess = this->activeProcesses[this->activeProcesses.size() - 1];

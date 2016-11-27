@@ -47,6 +47,11 @@ namespace ofxRulr {
 					this->drawGridLines();
 				}, this, -1);
 
+				this->onUpdate += [this](ofxCvGui::UpdateArguments &) {
+					if (this->dirty) {
+						this->rebuild();
+					}
+				};
 				this->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
 					if (args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
 						if (args.key == OF_KEY_BACKSPACE || args.key == OF_KEY_DEL) {
@@ -92,7 +97,12 @@ namespace ofxRulr {
 			}
 			
 			//----------
-			void Patch::View::resync() {
+			void Patch::View::markDirty() {
+				this->dirty = true;
+			}
+
+			//----------
+			void Patch::View::rebuild() {
 				this->canvasElements->clear();
 				const auto & nodeHosts = this->patchInstance.getNodeHosts();
 				for (const auto & it : nodeHosts) {
@@ -321,7 +331,7 @@ namespace ofxRulr {
 				}
 
 				this->rebuildLinkHosts();
-				this->view->resync();
+				this->view->markDirty();
 				scopedProcess.end();
 			}
 
@@ -414,12 +424,12 @@ namespace ofxRulr {
 					this->callbackReleaseMakeConnection(args);
 				};
 				nodeHost->onDropInputConnection += [this](const shared_ptr<AbstractPin> &) {
-					this->view->resync();
+					this->view->markDirty();
 				};
 				nodeHost->getNodeInstance()->onAnyInputConnectionChanged += [this]() {
 					this->rebuildLinkHosts();
 				};
-				this->view->resync();
+				this->view->markDirty();
 			}
 			
 			//----------
@@ -437,7 +447,7 @@ namespace ofxRulr {
 					}
 				}
 				this->rebuildLinkHosts();
-				this->view->resync();
+				this->view->markDirty();
 			}
 
 			//----------
@@ -522,11 +532,12 @@ namespace ofxRulr {
 			void Patch::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-// 				inspector->addButton("Clear patch", [this]() {
-// 					this->nodeHosts.clear();
-// 					this->rebuildLinkHosts();
-// 					this->view->resync();
-// 				});
+				inspector->addButton("Clear patch", [this]() {
+					this->nodeHosts.clear();
+					this->rebuildLinkHosts();
+					this->view->markDirty();
+				});
+				
 				inspector->add(new Widgets::Button("Duplicate patch down", [this]() {
 					Json::Value json;
 					this->serialize(json);
@@ -569,7 +580,7 @@ namespace ofxRulr {
 				if (args.button == 2) {
 					//right click, clear the link
 					this->newLink.reset();
-					this->view->resync();
+					this->view->markDirty();
 				}
 				else if (args.button == 0) {
 					//left click, try and make the link
@@ -577,7 +588,7 @@ namespace ofxRulr {
 
 					//clear the temporary link regardless of success
 					this->newLink.reset();
-					this->view->resync();
+					this->view->markDirty();
 				}
 			}
 		}

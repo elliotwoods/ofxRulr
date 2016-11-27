@@ -23,6 +23,7 @@ namespace ofxRulr {
 			void Triangulate::init() {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
+				RULR_NODE_DRAW_WORLD_LISTENER;
 
 				auto cameraPin = MAKE(Graph::Pin<Item::Camera>);
 				auto projectorPin = MAKE(Graph::Pin<Item::Projector>);
@@ -63,8 +64,11 @@ namespace ofxRulr {
 
 				const auto & dataSet = graycode->getDataSet();
 
-				ofxCvGui::Utils::drawProcessingNotice("Triangulating..");
+				Utils::ScopedProcess scopedProcess("Triangulating");
 				ofxTriangulate::Triangulate(dataSet, camera->getViewInWorldSpace(), projector->getViewInWorldSpace(), this->mesh, this->maxLength, this->giveColor, this->giveTexCoords);
+				if (this->mesh.getNumVertices() > 0) {
+					scopedProcess.end();
+				}
 			}
 
 			//----------
@@ -81,6 +85,10 @@ namespace ofxRulr {
 				}, OF_KEY_RETURN);
 				triangulateButton->setHeight(100.0f);
 				inspector->add(triangulateButton);
+
+				inspector->addLiveValue<size_t>("Point count", [this]() {
+					return this->mesh.getNumVertices();
+				});
 
 				inspector->add(new Widgets::Slider(this->maxLength));
 				inspector->add(new Widgets::Toggle(this->giveColor));
@@ -122,6 +130,7 @@ namespace ofxRulr {
 				glPushAttrib(GL_POINT_BIT);
 				glPointSize(this->drawPointSize);
 				this->mesh.drawVertices();
+				glPointSize(1.0f);
 				glPopAttrib();
 
 				auto graycode = this->getInput<Scan::Graycode>();

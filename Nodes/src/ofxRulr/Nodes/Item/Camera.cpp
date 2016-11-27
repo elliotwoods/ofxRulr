@@ -116,8 +116,8 @@ namespace ofxRulr {
 				const auto & jsonDevice = json["device"];
 				{
 					//take in the saved resolution, this will be overwritten when the device is open and running
-					this->viewInObjectSpace.setWidth(jsonDevice["width"].asFloat());
-					this->viewInObjectSpace.setHeight(jsonDevice["height"].asFloat());
+					this->setWidth(jsonDevice["width"].asFloat());
+					this->setHeight(jsonDevice["height"].asFloat());
 				}
 
 				const auto & jsonSettings = json["properties"];

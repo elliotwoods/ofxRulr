@@ -133,6 +133,9 @@
     <Filter Include="addons\ofxObjLoader\libs">
       <UniqueIdentifier>{ed074027-ab4f-4be2-8199-4e7e3b3dbff5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver">
+      <UniqueIdentifier>{8d69bb64-9aaa-4816-b611-e474601303b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h">
@@ -657,6 +660,27 @@
     <ClInclude Include="src\ofxRulr\Nodes\Test\Latency.h">
       <Filter>src\ofxRulr\Nodes\Test</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\Solver.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\AddView.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\AddScan.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\Node.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Procedure\Calibrate\ProCamSolver\ProCamModel.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -690,9 +714,6 @@
       <Filter>src\ofxRulr\Nodes\Procedure</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp">
@@ -799,6 +820,30 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Test\Latency.cpp">
       <Filter>src\ofxRulr\Nodes\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\Solver.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\AddView.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\AddScan.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\Node.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="Procedure\Calibrate\ProCamSolver\ProCamModel.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

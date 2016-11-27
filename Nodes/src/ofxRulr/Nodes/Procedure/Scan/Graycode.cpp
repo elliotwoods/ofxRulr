@@ -166,11 +166,10 @@ namespace ofxRulr {
 					this->decoder.setThreshold(this->threshold);
 					this->message.clear();
 
-					Utils::ScopedProcess scopedProcess("Scanning graycode", true, this->payload.getFrameCount());
-
 					ofHideCursor();
 
 					try {
+						Utils::ScopedProcess scopedProcess("Scanning graycode", true, this->payload.getFrameCount());
 
 						while (this->encoder >> this->message) {
 							Utils::ScopedProcess frameScopedProcess("Scanning frame", false);
@@ -213,12 +212,11 @@ namespace ofxRulr {
 							auto frame = grabber->getFreshFrame();
 							this->decoder << frame->getPixels();
 						}
+						scopedProcess.end();
 					}
 					catch (...) {
 					}
 					ofShowCursor();
-
-					scopedProcess.end();
 
 					this->previewDirty = true;
 				}

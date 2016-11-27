@@ -87,7 +87,16 @@ namespace ofxRulr {
 
 			//----------
 			vector<cv::Point3f> Board::getObjectPoints() const {
-				return ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing());
+				if (this->parameters.offset.x == 0.0f && this->parameters.offset.y == 0.0f) {
+					return ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing(), this->parameters.offset.centered);
+				}
+				else {
+					auto objectPoints = ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing(), this->parameters.offset.centered);
+					for (auto & objectPoint : objectPoints) {
+						objectPoint += cv::Point3f(this->parameters.offset.x, this->parameters.offset.y, this->parameters.offset.z);
+					}
+					return objectPoints;
+				}
 			}
 
 			//----------

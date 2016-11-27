@@ -111,6 +111,10 @@ namespace ofxRulr {
 							if (grabber->isFrameNew() && grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
 								try {
 									this->findBoard();
+
+									if (this->tetheredShootMode && currentCorners.size() > 0) {
+										this->addBoard(true);
+									}
 								}
 								RULR_CATCH_ALL_TO_ERROR
 							}
@@ -178,25 +182,27 @@ namespace ofxRulr {
 				void CameraIntrinsics::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 					auto inspector = inspectArguments.inspector;
 					
-					inspector->add(new Widgets::Indicator("Points found", [this]() {
+					inspector->addIndicator("Points found", [this]() {
 						return (Widgets::Indicator::Status) !this->currentCorners.empty();
-					}));
-					inspector->add(new Widgets::LiveValue<int>("Calibration set count", [this]() {
+					});
+					inspector->addLiveValue<int>("Calibration set count", [this]() {
 						return (int)accumulatedCorners.size();
-					}));
-					inspector->add(new Widgets::Button("Add board to calibration set", [this]() {
+					});
+					inspector->addButton("Add board to calibration set", [this]() {
 						try {
 							ofxRulr::Utils::ScopedProcess scopedProcess("Finding checkerboard");
-							this->addBoard();
+							this->addBoard(false);
 							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ERROR;
-					}, ' '));
-					inspector->add(new Widgets::Button("Clear calibration set", [this]() {
-						this->accumulatedCorners.clear();
-					}));
+					}, ' ');
+					inspector->addToggle(this->tetheredShootMode);
 
-					inspector->add(new Widgets::Spacer());
+					inspector->addButton("Clear calibration set", [this]() {
+						this->accumulatedCorners.clear();
+					});
+
+					inspector->addSpacer();
 
 					auto calibrateButton = new Widgets::Button("Calibrate", [this]() {
 						try {
@@ -208,23 +214,28 @@ namespace ofxRulr {
 					}, OF_KEY_RETURN);
 					calibrateButton->setHeight(100.0f);
 					inspector->add(calibrateButton);
-					inspector->add(new Widgets::LiveValue<float>("Reprojection error [px]", [this]() {
+					inspector->addLiveValue<float>("Reprojection error [px]", [this]() {
 						return this->error;
-					}));
+					});
 				}
 
 				//----------
-				void CameraIntrinsics::addBoard() {
+				void CameraIntrinsics::addBoard(bool tetheredCapture) {
 					this->throwIfMissingAnyConnection();
 					
 					auto camera = this->getInput<Item::Camera>();
 					//if it's a DSLR, let's take a single shot and find the board
 					const auto cameraSpecification = camera->getGrabber()->getDeviceSpecification();
-					if (cameraSpecification.supports(ofxMachineVision::Feature::Feature_OneShot) && !cameraSpecification.supports(ofxMachineVision::Feature::Feature_FreeRun)) {
-						//by calling getFreshFrame(), then update(), we should guarantee that the frame
-						camera->getGrabber()->getFreshFrame();
-						this->findBoard();
+
+					if (!tetheredCapture) {
+						//if this was called from a tethered capture, then we don't need to capture again for oneshot
+						if (cameraSpecification.supports(ofxMachineVision::Feature::Feature_OneShot) && !cameraSpecification.supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+							//by calling getFreshFrame(), then update(), we should guarantee that the frame
+							camera->getGrabber()->getFreshFrame();
+							this->findBoard();
+						}
 					}
+					
 					
 					if (this->currentCorners.empty()) {
 						throw(ofxRulr::Exception("No corners found"));

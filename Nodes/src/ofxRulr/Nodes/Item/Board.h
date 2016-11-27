@@ -35,7 +35,16 @@ namespace ofxRulr {
 					ofParameter<float> sizeX{ "Size X", 10.0f, 2.0f, 20.0f };
 					ofParameter<float> sizeY{ "Size Y", 7.0f, 2.0f, 20.0f };
 					ofParameter<float> spacing{ "Spacing [m]", 0.026f, 0.001f, 1.0f };
-					PARAM_DECLARE("Board", boardType, sizeX, sizeY, spacing);
+
+					struct : ofParameterGroup {
+						ofParameter<bool> centered{ "Centered", true };
+						ofParameter<float> x{ "X", 0, -1.0f, 1.0f };
+						ofParameter<float> y{ "Y", 0, -1.0f, 1.0f };
+						ofParameter<float> z{ "Z", 0, -1.0f, 1.0f };
+						PARAM_DECLARE("Offset", x, y, z);
+					} offset;
+
+					PARAM_DECLARE("Board", boardType, sizeX, sizeY, spacing, offset);
 				} parameters;
 			};
 		}

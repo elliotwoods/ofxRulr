@@ -226,10 +226,11 @@ namespace ofxRulr {
 						projectorPoints.push_back(correpondence.projector);
 					}
 					cv::Mat cameraMatrix, rotation, translation;
-					this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
-															worldPoints, projectorPoints,
-															this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight(),
-															this->initialLensOffset, 1.4f);
+					this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation
+						, worldPoints, projectorPoints
+						, this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight()
+						, true
+						, this->initialLensOffset, 1.4f);
 					
 					auto view = ofxCv::makeMatrix(rotation, translation);
 					projector->setTransform(view.getInverse());

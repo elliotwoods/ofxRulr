@@ -57,21 +57,19 @@ namespace ofxRulr {
 				this->parameters.clipping._near.addListener(this, &View::parameterCallback);
 				this->parameters.clipping._far.addListener(this, &View::parameterCallback);
 
-				this->viewInObjectSpace.color = this->getColor();
+				this->viewInObjectSpaceCached.color = this->getColor();
 
 				this->markViewDirty();
 			}
 
 			//---------
 			void View::update() {
-				if (this->viewIsDirty) {
-					this->rebuildView();
-				}
+
 			}
 
 			//----------
 			void View::drawObject() {
-				this->viewInObjectSpace.draw();
+				this->getViewInObjectSpace().draw();
 			}
 
 			//---------
@@ -83,8 +81,11 @@ namespace ofxRulr {
 				Utils::Serializable::serialize(jsonCalibration, this->principalPointY);
 
 				auto & jsonResolution = json["resolution"];
-				jsonResolution["width"] = this->viewInObjectSpace.getWidth();
-				jsonResolution["height"] = this->viewInObjectSpace.getHeight();
+				{
+					auto viewInObjectSpace = this->getViewInObjectSpace();
+					jsonResolution["width"] = viewInObjectSpace.getWidth();
+					jsonResolution["height"] = viewInObjectSpace.getHeight();
+				}
 
 				auto & jsonDistortion = jsonCalibration["distortion"];
 				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
@@ -140,34 +141,28 @@ namespace ofxRulr {
 				addCameraMatrixParameter(this->principalPointY);
 
 				inspector->add(new Widgets::EditableValue<float>("Throw ratio X", [this]() {
-					return this->viewInObjectSpace.getThrowRatio();
+					return this->getThrowRatio();
 				}, [this](string newValueString) {
 					auto newThrowRatio = ofToFloat(newValueString);
 					if (newThrowRatio > 0.0f) {
-						auto pixelAspectRatio = this->focalLengthY / this->focalLengthX;
-						this->focalLengthX = this->getWidth() * newThrowRatio;
-						this->focalLengthY = this->focalLengthX / pixelAspectRatio;
-						this->markViewDirty();
+						this->setThrowRatio(newThrowRatio);
 					}
 				}));
 				inspector->add(new Widgets::EditableValue<float>("Pixel aspect ratio", [this]() {
-					return this->focalLengthY / this->focalLengthX;
+					return this->getPixelAspectRatio();
 				}, [this](string newValueString) {
 					auto newPixelAspectRatio = ofToFloat(newValueString);
 					if (newPixelAspectRatio > 0.0f) {
-						this->focalLengthY = this->focalLengthX / newPixelAspectRatio;
-						this->markViewDirty();
+						this->setPixelAspectRatio(newPixelAspectRatio);
 					}
 				}));
 
 				inspector->add(new Widgets::EditableValue<ofVec2f>("Lens offset", [this]() {
-					return this->getViewInObjectSpace().getLensOffset();
+					return this->getLensOffset();
 				}, [this](string newValueString) {
 					auto newValueStrings = ofSplitString(newValueString, ",");
 					if (newValueStrings.size() == 2) {
-						this->principalPointX = ofMap(ofToFloat(newValueStrings[0]), +0.5f, -0.5f, 0, this->getWidth());
-						this->principalPointY = ofMap(ofToFloat(newValueStrings[1]), -0.5f, +0.5f, 0, this->getHeight());
-						this->markViewDirty();
+						this->setLensOffset(ofVec2f(ofToFloat(newValueStrings[0]), ofToFloat(newValueStrings[1])));
 					}
 				}));
 
@@ -210,24 +205,24 @@ namespace ofxRulr {
 
 			//----------
 			void View::setWidth(float width) {
-				this->viewInObjectSpace.setWidth(width);
+				this->viewInObjectSpaceCached.setWidth(width);
 				this->markViewDirty();
 			}
 
 			//----------
 			void View::setHeight(float height) {
-				this->viewInObjectSpace.setHeight(height);
+				this->viewInObjectSpaceCached.setHeight(height);
 				this->markViewDirty();
 			}
 
 			//----------
 			float View::getWidth() const {
-				return this->viewInObjectSpace.getWidth();
+				return this->viewInObjectSpaceCached.getWidth();
 			}
 
 			//----------
 			float View::getHeight() const {
-				return this->viewInObjectSpace.getHeight();
+				return this->viewInObjectSpaceCached.getHeight();
 			}
 
 			//----------
@@ -241,12 +236,12 @@ namespace ofxRulr {
 				}
 				this->markViewDirty();
 			}
-
-			//----------
-			void View::setProjection(const ofMatrix4x4 & projection) {
-				ofLogWarning("View::setProjection") << "Calls to this function will only change cached objects (not parameters). Use this function for debug purposes only.";
-				this->viewInObjectSpace.setProjection(projection);
-			}
+// 
+// 			//----------
+// 			void View::setProjection(const ofMatrix4x4 & projection) {
+// 				ofLogWarning("View::setProjection") << "Calls to this function will only change cached objects (not parameters). Use this function for debug purposes only.";
+// 				this->viewInObjectSpace.setProjection(projection);
+// 			}
 
 			//----------
 			cv::Size View::getSize() const {
@@ -273,13 +268,52 @@ namespace ofxRulr {
 			}
 
 			//----------
+			float View::getThrowRatio() const {
+				return this->getViewInObjectSpace().getThrowRatio();
+			}
+
+			//----------
+			void View::setThrowRatio(float throwRatio) {
+				auto pixelAspectRatio = this->focalLengthY / this->focalLengthX;
+				this->focalLengthX = this->getWidth() * throwRatio;
+				this->focalLengthY = this->focalLengthX / pixelAspectRatio;
+				this->markViewDirty();
+			}
+
+			//----------
+			float View::getPixelAspectRatio() const {
+				return this->focalLengthY / this->focalLengthX;
+			}
+
+			//----------
+			void View::setPixelAspectRatio(float pixelAspectRatio) {
+				this->focalLengthY = this->focalLengthX / pixelAspectRatio;
+				this->markViewDirty();
+			}
+
+			//----------
+			ofVec2f View::getLensOffset() const {
+				return this->getViewInObjectSpace().getLensOffset();
+			}
+
+			//----------
+			void View::setLensOffset(const ofVec2f & lensOffset) {
+				this->principalPointX = ofMap(lensOffset.x, +0.5f, -0.5f, 0, this->getWidth());
+				this->principalPointY = ofMap(lensOffset.y, -0.5f, +0.5f, 0, this->getHeight());
+				this->markViewDirty();
+			}
+
+			//----------
 			const ofxRay::Camera & View::getViewInObjectSpace() const {
-				return this->viewInObjectSpace;
+				if (this->viewIsDirty) {
+					const_cast<View *>(this)->rebuildView();
+				}
+				return this->viewInObjectSpaceCached;
 			}
 
 			//----------
 			ofxRay::Camera View::getViewInWorldSpace() const {
-				auto viewInWorldSpace = this->viewInObjectSpace;
+				auto viewInWorldSpace = this->getViewInObjectSpace();
 
 				const auto viewInverse = this->getTransform();
 				viewInWorldSpace.setView(viewInverse.getInverse());
@@ -332,17 +366,17 @@ namespace ofxRulr {
 			//----------
 			void View::rebuildView() {
 				auto projection = ofxCv::makeProjectionMatrix(this->getCameraMatrix(), this->getSize());
-				this->viewInObjectSpace.setNearClip(this->parameters.clipping._near);
-				this->viewInObjectSpace.setFarClip(this->parameters.clipping._far);
+				this->viewInObjectSpaceCached.setNearClip(this->parameters.clipping._near);
+				this->viewInObjectSpaceCached.setFarClip(this->parameters.clipping._far);
 
-				this->viewInObjectSpace.setProjection(projection);
+				this->viewInObjectSpaceCached.setProjection(projection);
 
 				if (this->hasDistortion) {
 					auto distortionVector = vector<float>(RULR_VIEW_DISTORTION_COEFFICIENT_COUNT);
 					for (int i = 0; i < RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 						distortionVector[i] = this->distortion[i].get();
 					}
-					this->viewInObjectSpace.distortion = distortionVector;
+					this->viewInObjectSpaceCached.distortion = distortionVector;
 				}
 
 				this->viewIsDirty = false;

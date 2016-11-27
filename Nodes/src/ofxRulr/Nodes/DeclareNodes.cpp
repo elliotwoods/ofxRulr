@@ -22,14 +22,20 @@
 #include "ofxRulr/Nodes/Item/View.h"
 
 #include "ofxRulr/Nodes/Procedure/Calibrate/CameraIntrinsics.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/CameraExtrinsicsFromBoard.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/HomographyFromGraycode.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/Mesh2DFromGraycode.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/ViewToVertices.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/MovingHeadToWorld.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromDepthCamera.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/CameraFromDepthCamera.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromGraycode.h"
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Procedure/Triangulate.h"
+
+#include "ofxRulr/Nodes/Procedure/Calibrate/ProCamSolver/Solver.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/ProCamSolver/AddView.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/ProCamSolver/AddScan.h"
 
 #include "ofxRulr/Nodes/Render/NodeThroughView.h"
 
@@ -64,14 +70,21 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Item::View);
 
 			RULR_DECLARE_NODE(Procedure::Calibrate::CameraIntrinsics);
+			RULR_DECLARE_NODE(Procedure::Calibrate::CameraExtrinsicsFromBoard);
 			RULR_DECLARE_NODE(Procedure::Calibrate::HomographyFromGraycode);
 			RULR_DECLARE_NODE(Procedure::Calibrate::Mesh2DFromGraycode);
 			RULR_DECLARE_NODE(Procedure::Calibrate::ViewToVertices);
 			RULR_DECLARE_NODE(Procedure::Calibrate::MovingHeadToWorld);
 			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromDepthCamera);
 			RULR_DECLARE_NODE(Procedure::Calibrate::CameraFromDepthCamera);
+			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromGraycode);
 			RULR_DECLARE_NODE(Procedure::Scan::Graycode);
 			RULR_DECLARE_NODE(Procedure::Triangulate);
+
+			RULR_DECLARE_NODE(Procedure::Calibrate::ProCamSolver::Solver);
+			RULR_DECLARE_NODE(Procedure::Calibrate::ProCamSolver::AddView);
+			RULR_DECLARE_NODE(Procedure::Calibrate::ProCamSolver::AddScan);
+
 
 			RULR_DECLARE_NODE(Render::NodeThroughView);
 
