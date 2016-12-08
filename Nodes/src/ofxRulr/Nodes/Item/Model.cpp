@@ -85,11 +85,11 @@ namespace ofxRulr {
 				ofScale(scale, scale, scale);
 
 				if (this->drawVertices) {
-					glPushAttrib(GL_POINT_BIT);
-					glEnable(GL_POINT_SMOOTH);
-					glPointSize(3.0f);
-					this->modelLoader->drawVertices();
-					glPopAttrib();
+					Utils::Graphics::pushPointSize(3.0f);
+					{
+						this->modelLoader->drawVertices();
+					}
+					Utils::Graphics::popPointSize();
 				}
 				if (this->drawWireframe) {
 					this->modelLoader->drawWireframe();

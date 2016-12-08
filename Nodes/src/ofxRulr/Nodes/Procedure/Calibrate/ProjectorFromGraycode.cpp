@@ -58,12 +58,18 @@ namespace ofxRulr {
 						projectorHeight = projectorNode->getHeight();
 					}
 
-					for (auto & capture : this->captures) {
+					auto selection = this->getSelection();
+
+					for (auto index : selection) {
 						ofMesh line;
+						auto & capture = this->captures[index];
 						line.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINE_STRIP);
 
 						for (int i = 0; i < capture.worldPoints.size(); i++) {
 							const auto & worldPoint = capture.worldPoints[i];
+							if (i == 0) {
+								ofDrawBitmapString(ofToString(index), worldPoint);
+							}
 							preview.addVertex(worldPoint);
 							line.addVertex(worldPoint);
 							line.addColor((float)i / (float)capture.worldPoints.size());
@@ -81,13 +87,11 @@ namespace ofxRulr {
 						line.draw();
 					}
 
-					glPushAttrib(GL_POINT_BIT);
+					Utils::Graphics::pushPointSize(5.0f);
 					{
-						glPointSize(5.0f);
 						preview.drawVertices();
-						glPointSize(1.0f);
 					}
-					glPopAttrib();
+					Utils::Graphics::popPointSize();
 				}
 
 				//----------
@@ -150,21 +154,27 @@ namespace ofxRulr {
 								vector<cv::Point> contoursCollapsed;
 								for (auto & contour : contours) {
 									auto contourBounds = cv::boundingRect(cv::Mat(contour));
-									if (contourBounds.width < 5 || contourBounds.height < 5) {
+									if (contourBounds.area() < 25) {
 										continue;
 									}
 									for (auto & point : contour) {
 										contoursCollapsed.push_back(point);
 									}
 								}
-								bounds = cv::boundingRect(cv::Mat(contoursCollapsed));
-								croppedImage = medianCopyMat(bounds);
+								if (contoursCollapsed.size() > 0) {
+									bounds = cv::boundingRect(cv::Mat(contoursCollapsed));
+									croppedImage = medianCopyMat(bounds);
+								}
+								else {
+									croppedImage = medianCopyMat;
+								}
 							}
 
+							ofxCv::copy(croppedImage, this->preview.getPixels());
+							this->preview.update();
+
 							//find checkerboard in cropped image
-							if (!boardNode->findBoard(croppedImage, pointsInCameraImage)) {
-								ofxCv::copy(croppedImage, this->preview.getPixels());
-								this->preview.update();
+							if (!boardNode->findBoard(croppedImage, pointsInCameraImage, this->parameters.capture.findBoardMode)) {
 								throw(ofxRulr::Exception("Board not found in camera image"));
 							}
 
@@ -175,7 +185,10 @@ namespace ofxRulr {
 							}
 						}
 						else {
-							if (!boardNode->findBoard(medianCopyMat, pointsInCameraImage, this->parameters.capture.useOptimizedImage)) {
+							ofxCv::copy(medianCopyMat, this->preview.getPixels());
+							this->preview.update();
+
+							if (!boardNode->findBoard(medianCopyMat, pointsInCameraImage, this->parameters.capture.findBoardMode)) {
 								throw(ofxRulr::Exception("Board not found in camera image"));
 							}
 						}
@@ -222,12 +235,33 @@ namespace ofxRulr {
 					ofMesh projectorInCameraMesh;
 					{
 						Utils::ScopedProcess scopedProcessBuildMesh("Build delauney mesh", false);
+						auto & projectorInCameraPreview = graycodeNode->getDecoder().getProjectorInCamera().getPixels();
+
+						auto activeEroded = dataSet.getActive();
+						auto activeErodedMat = toCv(activeEroded);
+						{
+							auto boardBounds = cv::boundingRect(Mat(pointsInCameraImage));
+							ofVec2f boardSizeInCamera(boardBounds.width, boardBounds.height);
+							float erosionSize = boardSizeInCamera.length() * this->parameters.capture.erosion;
+							cv::erode(activeErodedMat, activeErodedMat, cv::Mat(), cv::Point(-1, -1), (int)erosionSize);
+						}
+
+						//show preview of eroded
+						{
+							Mat copy;
+							toCv(projectorInCameraPreview).copyTo(copy, activeErodedMat);
+							ofxCv::copy(copy, this->preview.getPixels());
+							this->preview.update();
+						}
+						
+
 
 						//make vertices and tex coords
 						Delaunay::Point tempP;
 						vector<Delaunay::Point> delauneyPoints;
+						auto activeErodedPixel = activeEroded.getData();
 						for (auto & pixel : dataSet) {
-							if (!pixel.active) {
+							if (!*activeErodedPixel++) {
 								continue;
 							}
 
@@ -245,6 +279,10 @@ namespace ofxRulr {
 
 						//apply indices
 						for (auto it = delauney->fbegin(); it != delauney->fend(); ++it) {
+							//cut off big triangles
+							if (delauney->area(it) > this->parameters.capture.maxTriangleArea) {
+								continue;
+							}
 							projectorInCameraMesh.addIndex(delauney->Org(it));
 							projectorInCameraMesh.addIndex(delauney->Dest(it));
 							projectorInCameraMesh.addIndex(delauney->Apex(it));
@@ -280,8 +318,6 @@ namespace ofxRulr {
 
 						Utils::ScopedProcess scopedProcessBuildFbo("Read back fbo", false);
 						projectorInCameraFbo.readToPixels(projectorInCameraPixels);
-						this->preview = projectorInCameraPixels;
-						this->preview.update();
 					}
 
 					//read all projector pixel positions and add working points into capture
@@ -309,6 +345,14 @@ namespace ofxRulr {
 				}
 
 				//----------
+				void ProjectorFromGraycode::deleteLastCapture() {
+					if (!this->captures.empty()) {
+						this->captures.pop_back();
+					}
+					this->preview.clear();
+				}
+
+				//----------
 				void ProjectorFromGraycode::clearCaptures() {
 					this->captures.clear();
 					this->preview.clear();
@@ -327,7 +371,10 @@ namespace ofxRulr {
 					vector<ofVec3f> worldPoints;
 					vector<ofVec2f> projectorImagePoints;
 
-					for (auto capture : this->captures) {
+					auto selection = this->getSelection();
+					for (auto index : selection) {
+						auto & capture = this->captures[index];
+
 						worldPoints.insert(worldPoints.end()
 							, capture.worldPoints.begin()
 							, capture.worldPoints.end());
@@ -359,6 +406,12 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ERROR;
 					}, ' ');
+					inspector->addButton("Delete last capture", [this]() {
+						this->deleteLastCapture();
+					});
+					inspector->addButton("Delete selection", [this]() {
+						this->deleteSelection();
+					});
 					inspector->addButton("Clear captures", [this]() {
 						this->clearCaptures();
 					});
@@ -414,6 +467,47 @@ namespace ofxRulr {
 						this->captures.push_back(move(capture));
 					}
 				}
+
+				//----------
+				vector<int> ProjectorFromGraycode::getSelection() const {
+					auto selectionString = this->parameters.selection.get();
+					auto selectionItemStrings = ofSplitString(selectionString, ",", true, true);
+					
+					vector<int> selectionInts;
+					for (auto & selectionStringItem : selectionItemStrings) {
+						if (selectionStringItem.empty()) {
+							continue;
+						}
+						auto value = ofToInt(selectionStringItem);
+						if (value >= 0 && value < this->captures.size()) {
+							selectionInts.push_back(value);
+						}
+					}
+
+					if (selectionInts.empty()) {
+						for (int i = 0; i < this->captures.size(); i++) {
+							selectionInts.push_back(i);
+						}
+					}
+
+					return selectionInts;
+				}
+
+				//----------
+				void ProjectorFromGraycode::deleteSelection() {
+					int index = 0;
+					auto selection = this->getSelection();
+					for (auto it = this->captures.begin(); it != this->captures.end(); index++) {
+						if (find(selection.begin(), selection.end(), index) != selection.end()) {
+							it = this->captures.erase(it);
+						}
+						else {
+							it++;
+						}
+					}
+					this->parameters.selection = "";
+				}
+
 			}
 		}
 	}

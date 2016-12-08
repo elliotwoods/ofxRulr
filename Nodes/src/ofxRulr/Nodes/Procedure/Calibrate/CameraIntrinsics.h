@@ -2,6 +2,7 @@
 
 #include "../Base.h"
 #include "ofxCvMin.h"
+#include "ofxRulr/Nodes/Item/Board.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -31,7 +32,17 @@ namespace ofxRulr {
 					vector<ofVec2f> currentCorners;
 					vector<vector<ofVec2f>> accumulatedCorners;
 					ofParameter<float> error;
-					ofParameter<bool> tetheredShootMode{ "Tethered shoot mode", false };
+
+					struct : ofParameterGroup {
+						struct : ofParameterGroup {
+							ofParameter<bool> tetheredShootMode{ "Tethered shoot mode", true };
+							ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Mode", Item::Board::FindBoardMode::Raw };
+
+							PARAM_DECLARE("Capture", tetheredShootMode, findBoardMode);
+						} capture;
+						PARAM_DECLARE("CameraIntrinsics", capture);
+					} parameters;
+					
 				};
 			}
 		}

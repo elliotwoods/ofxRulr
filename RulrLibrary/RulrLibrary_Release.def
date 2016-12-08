@@ -21,6 +21,7 @@ EXPORTS
 	glfwWindowHint
 	??0ofBuffer@@QEAA@AEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
 	??0ofBuffer@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??0ofBuffer@@QEAA@PEBD_K@Z
 	??0ofBuffer@@QEAA@XZ
 	??0ofDirectory@@QEAA@AEBVpath@filesystem@boost@@@Z
 	??0ofFbo@@QEAA@XZ
@@ -122,6 +123,7 @@ EXPORTS
 	?ofSetColor@@YAXHHH@Z
 	?ofSetEscapeQuitsApp@@YAX_N@Z
 	?ofSetLineWidth@@YAXM@Z
+	?ofSetLogLevel@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4ofLogLevel@@@Z
 	?ofSetMatrixMode@@YAXW4ofMatrixMode@@@Z
 	?ofSetupScreen@@YAXXZ
 	?ofSleepMillis@@YAXH@Z
@@ -738,7 +740,6 @@ EXPORTS
 	??0RigidBody@Item@Nodes@ofxRulr@@QEAA@XZ
 	??0View@Item@Nodes@ofxRulr@@QEAA@_N@Z
 	??1Camera@Item@Nodes@ofxRulr@@UEAA@XZ
-	?findBoard@Board@Item@Nodes@ofxRulr@@QEBA_NVMat@cv@@AEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@_N@Z
 	?getObjectPoints@Board@Item@Nodes@ofxRulr@@QEBA?AV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@XZ
 	?getSize@Board@Item@Nodes@ofxRulr@@QEBA?AV?$Size_@H@cv@@XZ
 	?getFreshFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
@@ -785,8 +786,6 @@ EXPORTS
 	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
 	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N_K@Z
 	??1ScopedProcess@Utils@ofxRulr@@QEAA@XZ
-	?popPointSize@Graphics@Utils@ofxRulr@@YAXXZ
-	?pushPointSize@Graphics@Utils@ofxRulr@@YAXM_N@Z
 	?end@ScopedProcess@Utils@ofxRulr@@QEAAX_N@Z
 	?nextChildProcess@ScopedProcess@Utils@ofxRulr@@QEAAXXZ
 	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAV?$ofParameter@_N@@@Z

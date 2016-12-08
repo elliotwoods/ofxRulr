@@ -3,6 +3,8 @@
 #include "../Base.h"
 #include "ofxCvMin.h"
 
+#include "ofxRulr/Nodes/Item/Board.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
@@ -35,7 +37,9 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<bool> useOptimizers{ "Use optimizers", false };
-							PARAM_DECLARE("Capture", useOptimizers);
+							ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Find board mode", Item::Board::FindBoardMode::Optimized };
+
+							PARAM_DECLARE("Capture", findBoardMode);
 						} capture;
 
 						struct : ofParameterGroup {

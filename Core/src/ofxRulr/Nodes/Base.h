@@ -8,6 +8,7 @@
 
 #include "ofxCvGui/InspectController.h"
 #include "ofxCvGui/Utils/Sugar.h"
+#include "ofxCvGui/Utils/Enum.h"
 
 #include "ofImage.h"
 #include "ofxAssets.h"

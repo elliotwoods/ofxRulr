@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Base.h"
+#include "ofxRulr/Nodes/Item/Board.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -21,12 +22,16 @@ namespace ofxRulr {
 					void drawWorld();
 					
 					void addCapture();
+					void deleteLastCapture();
 					void clearCaptures();
 					void calibrate();
 
 					void populateInspector(ofxCvGui::InspectArguments &);
 					void serialize(Json::Value &);
 					void deserialize(const Json::Value &);
+
+					vector<int> getSelection() const;
+					void deleteSelection();
 				protected:
 					ofxCvGui::PanelPtr panel;
 
@@ -35,11 +40,14 @@ namespace ofxRulr {
 							ofParameter<bool> autoScan{ "Automatically scan", true };
 							ofParameter<bool> searchBrightArea{ "Search bright area", true };
 							ofParameter<float> brightAreaThreshold{ "Bright area threshold", 64, 0, 255 };
-							ofParameter<bool> useOptimizedImage{ "Use optimized image", false };
+							ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Find board mode", Item::Board::FindBoardMode::Optimized };
 							ofParameter<bool> useRansacForSolvePnp{ "Use RANSAC for SolvePNP", true };
-							PARAM_DECLARE("Capture", autoScan, searchBrightArea, brightAreaThreshold, useOptimizedImage);
+							ofParameter<float> erosion{ "Erosion (/Board size)", 0.02f, 0.0f, 0.1f };
+							ofParameter<int> maxTriangleArea{ "Max triangle area", 100*100 };
+							PARAM_DECLARE("Capture", autoScan, searchBrightArea, brightAreaThreshold, findBoardMode, erosion, maxTriangleArea);
 						} capture;
-						PARAM_DECLARE("ProjectorFromGraycode", capture);
+						ofParameter<string> selection{ "Selection", "" };
+						PARAM_DECLARE("ProjectorFromGraycode", capture, selection);
 					} parameters;
 
 					vector<Capture> captures;

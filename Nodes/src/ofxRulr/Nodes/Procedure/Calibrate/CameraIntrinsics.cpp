@@ -108,15 +108,26 @@ namespace ofxRulr {
 						auto camera = this->getInput<Item::Camera>();
 						if (camera) {
 							auto grabber = camera->getGrabber();
-							if (grabber->isFrameNew() && grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
-								try {
-									this->findBoard();
-
-									if (this->tetheredShootMode && currentCorners.size() > 0) {
-										this->addBoard(true);
+							if (grabber->isFrameNew()) {
+								if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+									try {
+										this->findBoard();
+									}
+									RULR_CATCH_ALL_TO_ERROR
+								}
+								else {
+									if (this->parameters.capture.tetheredShootMode) {
+										try {
+											Utils::ScopedProcess scopedProcessTethered("Tethered shoot find board");
+											this->findBoard();
+											if (this->currentCorners.size() > 0) {
+												this->addBoard(true);
+												scopedProcessTethered.end();
+											}
+										}
+										RULR_CATCH_ALL_TO_ERROR
 									}
 								}
-								RULR_CATCH_ALL_TO_ERROR
 							}
 						}
 					}
@@ -132,6 +143,7 @@ namespace ofxRulr {
 						}
 					}
 					Utils::Serializable::serialize(json, this->error);
+					Utils::Serializable::serialize(json, this->parameters);
 				}
 
 				//----------
@@ -147,6 +159,7 @@ namespace ofxRulr {
 						this->accumulatedCorners.push_back(board);
 					}
 					Utils::Serializable::deserialize(json, this->error);
+					Utils::Serializable::deserialize(json, this->parameters);
 				}
 
 				//----------
@@ -196,7 +209,10 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ERROR;
 					}, ' ');
-					inspector->addToggle(this->tetheredShootMode);
+
+					inspector->addButton("Delete last capture", [this]() {
+						this->accumulatedCorners.pop_back();
+					});
 
 					inspector->addButton("Clear calibration set", [this]() {
 						this->accumulatedCorners.clear();
@@ -217,6 +233,10 @@ namespace ofxRulr {
 					inspector->addLiveValue<float>("Reprojection error [px]", [this]() {
 						return this->error;
 					});
+
+					inspector->addSpacer();
+
+					inspector->addParameterGroup(this->parameters);
 				}
 
 				//----------
@@ -276,7 +296,7 @@ namespace ofxRulr {
 					this->grayscale.update();
 					this->currentCorners.clear();
 
-					board->findBoard(toCv(this->grayscale), toCv(this->currentCorners));
+					board->findBoard(toCv(this->grayscale), toCv(this->currentCorners), this->parameters.capture.findBoardMode);
 				}
 				
 				//----------
@@ -293,6 +313,15 @@ namespace ofxRulr {
 					auto objectPointsSet = vector<vector<Point3f>>(this->accumulatedCorners.size(), board->getObjectPoints());
 					auto cameraResolution = cv::Size(camera->getWidth(), camera->getHeight());
 
+					for (auto it = this->accumulatedCorners.begin(); it != this->accumulatedCorners.end(); ) {
+						if (it->size() != objectPointsSet[0].size()) {
+							ofSystemAlertDialog("Size mismatch. deleting capture.");
+							it = this->accumulatedCorners.erase(it);
+						}
+						else {
+							it++;
+						}
+					}
 					Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
 					Mat distortionCoefficients = Mat::zeros(8, 1, CV_64F);
 

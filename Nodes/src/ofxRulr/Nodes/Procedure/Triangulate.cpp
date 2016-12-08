@@ -127,11 +127,11 @@ namespace ofxRulr {
 
 			//----------
 			void Triangulate::drawWorld() {
-				glPushAttrib(GL_POINT_BIT);
-				glPointSize(this->drawPointSize);
-				this->mesh.drawVertices();
-				glPointSize(1.0f);
-				glPopAttrib();
+				Utils::Graphics::pushPointSize(this->drawPointSize);
+				{
+					this->mesh.drawVertices();
+				}
+				Utils::Graphics::popPointSize();
 
 				auto graycode = this->getInput<Scan::Graycode>();
 

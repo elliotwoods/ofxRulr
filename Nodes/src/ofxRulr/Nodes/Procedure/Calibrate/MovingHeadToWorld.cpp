@@ -375,13 +375,12 @@ namespace ofxRulr {
 					lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
 					lines.draw();
 					lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_POINTS);
-					glPushAttrib(GL_POINT_BIT);
+
+					Utils::Graphics::pushPointSize(3.0f);
 					{
-						glPointSize(3.0f);
-						glEnable(GL_POINT_SMOOTH);
 						lines.draw(); //draw as dots also
 					}
-					glPopAttrib();
+					Utils::Graphics::popPointSize();
 				}
 
 				//---------

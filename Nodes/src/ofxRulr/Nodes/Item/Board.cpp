@@ -105,9 +105,18 @@ namespace ofxRulr {
 			}
 
 			//----------
-			bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results, bool useOptimisers) const {
+			bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results, FindBoardMode findBoardMode) const {
 				auto size = this->getSize();
-				return ofxCv::findBoard(image, this->getBoardType(), size, results, useOptimisers);
+				switch (findBoardMode) {
+				case FindBoardMode::Raw:
+					return ofxCv::findBoard(image, this->getBoardType(), size, results, false);
+				case FindBoardMode::Optimized:
+					return ofxCv::findBoard(image, this->getBoardType(), size, results, true);
+				case FindBoardMode::Assistant:
+					return ofxCv::findBoardWithAssistant(image, this->getBoardType(), size, results);
+				default:
+					return false;
+				}
 			}
 
 			//----------
@@ -128,6 +137,7 @@ namespace ofxRulr {
 				};
 
 				inspector->add(typeChooser);
+				inspector->addParameterGroup(this->parameters.offset);
 
 				Utils::Gui::addIntSlider(this->parameters.sizeX, inspector->getElementGroup())->onValueChange += sliderCallback;
 				Utils::Gui::addIntSlider(this->parameters.sizeY, inspector->getElementGroup())->onValueChange += sliderCallback;

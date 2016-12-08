@@ -35,14 +35,14 @@
     <Import Project="..\..\ofxAddonLib\openFrameworksIncludePathsOnly.props" />
     <Import Project="..\Nodes\ofxRulr_Nodes.props" />
     <Import Project="..\Core\ofxRulr_Core.props" />
-    <Import Project="..\..\ofxEdsdk\ofxEdsdkLib\ofxEdsdk.props" />
+    <Import Project="..\..\ofxCanon\ofxCanonLib\ofxCanon.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\ofxAddonLib\openFrameworksIncludePathsOnly.props" />
     <Import Project="..\Nodes\ofxRulr_Nodes.props" />
     <Import Project="..\Core\ofxRulr_Core.props" />
-    <Import Project="..\..\ofxEdsdk\ofxEdsdkLib\ofxEdsdk.props" />
+    <Import Project="..\..\ofxCanon\ofxCanonLib\ofxCanon.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -107,17 +107,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp" />
-    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.cpp" />
-    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRLiveViewDevice.cpp" />
-    <ClCompile Include="..\..\ofxEdsdk\pairs\ofxRulr\Nodes\Monitor\CanonLiveView.cpp" />
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.h" />
-    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRDevice.h" />
-    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxMachineVision\Device\CanonDSLRLiveViewDevice.h" />
-    <ClInclude Include="..\..\ofxEdsdk\pairs\ofxRulr\Nodes\Monitor\CanonLiveView.h" />
+    <ClInclude Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\ofApp.h" />
   </ItemGroup>
@@ -128,8 +124,8 @@
     <Image Include="main_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj">
-      <Project>{630936f8-c65f-4ab9-92ad-80569eaa7782}</Project>
+    <ProjectReference Include="..\..\ofxCanon\ofxCanonLib\ofxCanonLib.vcxproj">
+      <Project>{b6ef2661-4d10-4dae-b4cf-bd0a92ea864c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

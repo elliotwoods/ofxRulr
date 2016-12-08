@@ -1,9 +1,7 @@
 #include "ofxRulr/Nodes/DeclareNodes.h"
 #include "ofApp.h"
 
-#include "../../../ofxEdsdk/pairs/ofxRulr/Nodes/Monitor/CanonLiveView.h"
-#include "../../../ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRDevice.h"
-#include "../../../ofxEdsdk/pairs/ofxMachineVision/Device/CanonDSLRLiveViewDevice.h"
+#include "../../../ofxCanon/pairs/ofxMachineVision/Device/Canon.h"
 
 
 #ifdef TARGET_OSX
@@ -44,14 +42,12 @@ void ofApp::setup2(){
 	//Setup EDSDK nodes
 	//--
 	//
-	RULR_DECLARE_NODE(Nodes::Monitor::CanonLiveView);
-	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRDevice>();
-	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonDSLRLiveViewDevice>();
+	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::Canon>();
 	//
 	//--
     
 	//--
-	//Initialise nodes and plugins
+	//Initialize nodes and plugins
 	//--
 	//
 	ofxRulr::Nodes::loadCoreNodes();

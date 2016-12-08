@@ -13,6 +13,12 @@
 #include "ofxRulr/Nodes/MultiTrack/Procedure/Calibrate.h"
 #include "ofxRulr/Nodes/MultiTrack/Test/FindMarker.h"
 
+#pragma warning(push)
+#pragma warning(disable:4073)
+#pragma init_seg(lib)
+asio::detail::winsock_init<>::manual manual_winsock_init;
+#pragma warning(pop)
+
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::ChannelGenerator::LocalKinect);
 OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::ClientHandler);

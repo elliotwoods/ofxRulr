@@ -105,9 +105,6 @@
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
       <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\addons\ofxEdsdk\ofxEdsdkLib\ofxEdsdkLib.vcxproj">
-      <Project>{630936f8-c65f-4ab9-92ad-80569eaa7782}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Core\Core.vcxproj">
       <Project>{9201d4e8-8b5a-44d4-baa6-23229a1871a7}</Project>
     </ProjectReference>

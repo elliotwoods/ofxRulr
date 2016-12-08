@@ -8,6 +8,10 @@ namespace ofxRulr {
 		namespace Item {
 			class Board : public Base {
 			public:
+				MAKE_ENUM(FindBoardMode
+					, (Raw, Optimized, Assistant)
+					, ("Raw", "Optimized", "Assistant"));
+
 				Board();
 				void init();
 				string getTypeName() const override;
@@ -22,7 +26,7 @@ namespace ofxRulr {
 				vector<cv::Point3f> getObjectPoints() const;
 				void drawObject() const;
 
-				bool findBoard(cv::Mat, vector<cv::Point2f> & result, bool useOptimisers = true) const;
+				bool findBoard(cv::Mat, vector<cv::Point2f> & result, FindBoardMode findBoardMode = FindBoardMode::Optimized) const;
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void updatePreviewMesh();

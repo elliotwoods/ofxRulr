@@ -246,7 +246,7 @@ namespace ofxRulr {
 
 						this->currentCorners.clear();
 
-						if (!board->findBoard(toCv(this->grayscalePreview), toCv(this->currentCorners), this->parameters.capture.useOptimizers)) {
+						if (!board->findBoard(toCv(this->grayscalePreview), toCv(this->currentCorners), this->parameters.capture.findBoardMode)) {
 							throw(Exception("Board not found in image"));
 						}
 

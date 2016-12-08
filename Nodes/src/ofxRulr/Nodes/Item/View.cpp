@@ -282,7 +282,7 @@ namespace ofxRulr {
 
 			//----------
 			float View::getPixelAspectRatio() const {
-				return this->focalLengthY / this->focalLengthX;
+				return this->focalLengthX / this->focalLengthY;
 			}
 
 			//----------

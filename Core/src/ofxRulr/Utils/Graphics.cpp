@@ -6,14 +6,18 @@ namespace ofxRulr {
 		namespace Graphics {
 			//----------
 			void pushPointSize(float pointSize, bool smoothed) {
-				glPushAttrib(GL_POINT_BIT);
+				//Need to rewrite this for GL 3.0+
+				//glPushAttrib(GL_POINT_BIT);
 				glPointSize(pointSize);
-				glEnable(GL_POINT_SMOOTH);
+				if (smoothed) {
+					glEnable(GL_POINT_SMOOTH);
+				}
 			}
 
 			//----------
 			void popPointSize() {
-				glPopAttrib();
+				//glPopAttrib();
+				glPointSize(1.0f);
 			}
 		}
 	}

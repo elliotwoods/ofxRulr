@@ -299,11 +299,11 @@ namespace ofxRulr {
 								correspondence.cameraNormalized.y * 255.0f,
 								0));
 						}
-						glPushAttrib(GL_POINT_BIT);
-						glEnable(GL_POINT_SMOOTH);
-						glPointSize(10.0f);
-						preview.drawVertices();
-						glPopAttrib();
+						Utils::Graphics::pushPointSize(10.0f);
+						{
+							preview.drawVertices();
+						}
+						Utils::Graphics::popPointSize();
 					}
 				}
 
