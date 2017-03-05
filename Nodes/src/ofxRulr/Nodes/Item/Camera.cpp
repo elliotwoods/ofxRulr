@@ -80,7 +80,7 @@ namespace ofxRulr {
 								middleRow += pixels.getNumChannels();
 							}
 						}
-						frame->unlock();
+						frame->unlockForReading();
 					}
 				}
 			}

@@ -114,9 +114,7 @@ namespace ofxRulr {
 					auto cameraWidth = cameraPixels.getWidth();
 					auto cameraHeight = cameraPixels.getHeight();
 
-					auto checkerboardNode = this->getInput<Item::Board>();
-					auto checkerboardSize = checkerboardNode->getSize();
-					auto checkerboardObjectPoints = checkerboardNode->getObjectPoints();
+					auto boardNode = this->getInput<Item::Board>();
 
 					//convert to grayscale
 					if (cameraColorImage.channels() == 3) {
@@ -132,14 +130,7 @@ namespace ofxRulr {
 					cv::flip(kinectColorImage, kinectColorImage, 1);
 
 					vector<ofVec2f> kinectCameraPoints;
-					bool foundInKinect;
-					if (this->parameters.usePreTest)
-					{
-						foundInKinect = ofxCv::findChessboardCornersPreTest(kinectColorImage, checkerboardSize, toCv(kinectCameraPoints), 1024);
-					}
-					else {
-						foundInKinect = ofxCv::findChessboardCorners(kinectColorImage, checkerboardSize, toCv(kinectCameraPoints));
-					}
+					bool foundInKinect = boardNode->findBoard(kinectColorImage, toCv(kinectCameraPoints), this->parameters.findBoardMode);
 
 
 					//flip the results back again
@@ -156,14 +147,7 @@ namespace ofxRulr {
 					//--
 					//
 					vector<ofVec2f> cameraPoints;
-					bool foundInCamera;
-					if (this->parameters.usePreTest)
-					{
-						foundInCamera = ofxCv::findChessboardCornersPreTest(cameraColorImage, checkerboardSize, toCv(cameraPoints), 1024);
-					}
-					else {
-						foundInCamera = ofxCv::findChessboardCorners(cameraColorImage, checkerboardSize, toCv(cameraPoints));
-					}
+					bool foundInCamera = boardNode->findBoard(cameraColorImage, toCv(cameraPoints), this->parameters.findBoardMode);
 					//
 					//--
 

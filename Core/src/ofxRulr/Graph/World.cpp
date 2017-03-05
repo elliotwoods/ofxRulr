@@ -138,9 +138,13 @@ namespace ofxRulr {
 					}
 				};
 
+				/*
+				HACK
+				Until this doesn't result in a crash always let's remove
 				inspector->add(new Widgets::Button("Load all", [this]() {
 					this->loadAll();
 				}));
+				*/
 
 				inspector->add(new Widgets::Spacer());
 			};

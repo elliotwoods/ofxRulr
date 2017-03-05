@@ -221,7 +221,7 @@ namespace ofxRulr {
 						{
 							auto & pixels = frame->getPixels();
 							if (!pixels.isAllocated()) {
-								frame->unlock();
+								frame->unlockForReading();
 								throw(Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));
 							}
 							if (this->grayscalePreview.getWidth() != pixels.getWidth() || this->grayscalePreview.getHeight() != pixels.getHeight()) {
@@ -234,7 +234,7 @@ namespace ofxRulr {
 								this->grayscalePreview = pixels;
 							}
 						}
-						frame->unlock();
+						frame->unlockForReading();
 
 						this->grayscalePreview.update();
 					}

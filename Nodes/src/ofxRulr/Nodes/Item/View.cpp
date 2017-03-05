@@ -80,6 +80,11 @@ namespace ofxRulr {
 				Utils::Serializable::serialize(jsonCalibration, this->principalPointX);
 				Utils::Serializable::serialize(jsonCalibration, this->principalPointY);
 
+				auto & jsonDistortion = jsonCalibration["distortion"];
+				for (int i = 0; i < RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
+					Utils::Serializable::serialize(jsonDistortion, this->distortion[i]);
+				}
+
 				auto & jsonResolution = json["resolution"];
 				{
 					auto viewInObjectSpace = this->getViewInObjectSpace();
@@ -87,9 +92,23 @@ namespace ofxRulr {
 					jsonResolution["height"] = viewInObjectSpace.getHeight();
 				}
 
-				auto & jsonDistortion = jsonCalibration["distortion"];
-				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-					Utils::Serializable::serialize(jsonDistortion, this->distortion[i]);
+				auto & jsonOpenGL = json["OpenGL"];
+				{
+					auto view = this->getViewInWorldSpace();
+					{
+						auto & viewMatrixJson = jsonOpenGL["viewMatrix"];
+						auto viewMatrix = view.getViewMatrix();
+						for (int i = 0; i < 16; i++) {
+							viewMatrixJson[i] = viewMatrix.getPtr()[i];
+						}
+					}
+					{
+						auto & projectionMatrixJson = jsonOpenGL["projectionMatrix"];
+						auto projectionMatrix = view.getClippedProjectionMatrix();
+						for (int i = 0; i < 16; i++) {
+							projectionMatrixJson[i] = projectionMatrix.getPtr()[i];
+						}
+					}
 				}
 			}
 

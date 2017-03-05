@@ -31,13 +31,7 @@
 	this->onPopulateInspector += [this](ofxCvGui::InspectArguments & args) { \
 		this->populateInspector(args); \
 	}
-#define RULR_NODE_SERIALIZATION_LISTENERS \
-	this->onSerialize += [this](Json::Value & json) { \
-		this->serialize(json); \
-	}; \
-	this->onDeserialize += [this](Json::Value const & json) { \
-		this->deserialize(json); \
-	}
+#define RULR_NODE_SERIALIZATION_LISTENERS RULR_SERIALIZE_LISTENERS
 
 namespace ofxRulr {
 	namespace Graph {

@@ -3,6 +3,8 @@
 #include "ofxRulr/Nodes/Procedure/Base.h"
 #include "ofxCvGui/Panels/Groups/Grid.h"
 
+#include "ofxRulr/Nodes/Item/Board.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
@@ -33,8 +35,8 @@ namespace ofxRulr {
 					shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
 
 					struct : ofParameterGroup {
-						ofParameter<bool> usePreTest{ "Pre-test at low resolution", false };
-						PARAM_DECLARE("CameraFromKinectV2", usePreTest);
+						ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Mode", Item::Board::FindBoardMode::Raw };
+						PARAM_DECLARE("CameraFromKinectV2", findBoardMode);
 					} parameters;
 
 					vector<Correspondence> correspondences;

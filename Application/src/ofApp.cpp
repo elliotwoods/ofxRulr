@@ -2,6 +2,7 @@
 #include "ofApp.h"
 
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/Canon.h"
+#include "../../../ofxCanon/pairs/ofxMachineVision/Device/CanonLiveView.h"
 
 
 #ifdef TARGET_OSX
@@ -43,6 +44,7 @@ void ofApp::setup2(){
 	//--
 	//
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::Canon>();
+	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonLiveView>();
 	//
 	//--
     

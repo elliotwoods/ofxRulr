@@ -6,18 +6,6 @@
 #include "ofxRulr/Nodes/Item/Projector.h"
 #include "ofxRulr/Nodes/System/VideoOutput.h"
 
-#include "ofxRulr/Utils/ScopedProcess.h"
-
-#include "ofxCvGui/Panels/Groups/Grid.h"
-#include "ofxCvGui/Panels/World.h"
-#include "ofxCvGui/Panels/Draws.h"
-
-#include "ofxCvGui/Widgets/Slider.h"
-#include "ofxCvGui/Widgets/Button.h"
-#include "ofxCvGui/Widgets/LiveValue.h"
-
-#include "ofxCvMin.h"
-
 using namespace ofxRulr::Graph;
 using namespace ofxCvGui;
 
@@ -292,6 +280,7 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ERROR
 					}, ' ');
+
 					addButton->setHeight(100.0f);
 					inspector->add(addButton);
 

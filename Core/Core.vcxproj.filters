@@ -192,6 +192,9 @@
     <ClCompile Include="src\ofxRulr\Utils\Utils.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\CaptureSet.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -360,6 +363,9 @@
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\Utils.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\CaptureSet.h">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
   </ItemGroup>

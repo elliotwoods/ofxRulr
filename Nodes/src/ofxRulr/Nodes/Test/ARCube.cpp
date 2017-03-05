@@ -221,11 +221,6 @@ namespace ofxRulr {
 							}
 							case DrawStyle::Cube:
 							{
-								board->drawObject();
-								break;
-							}
-							case DrawStyle::Board:
-							{
 								ofPushMatrix();
 								{
 									auto scale = board->getSpacing() * 4.0f;
@@ -238,6 +233,11 @@ namespace ofxRulr {
 									ofPopStyle();
 								}
 								ofPopMatrix();
+								break;
+							}
+							case DrawStyle::Board:
+							{
+								board->drawObject();
 								break;
 							}
 							default:

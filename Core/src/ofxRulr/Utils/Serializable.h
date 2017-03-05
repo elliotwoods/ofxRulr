@@ -7,6 +7,14 @@
 #include <string>
 #include <type_traits>
 
+#define RULR_SERIALIZE_LISTENERS \
+	this->onSerialize += [this](Json::Value & json) { \
+		this->serialize(json); \
+	}; \
+	this->onDeserialize += [this](Json::Value const & json) { \
+		this->deserialize(json); \
+	}
+
 namespace ofxRulr {
 	namespace Utils {
 		class Serializable {

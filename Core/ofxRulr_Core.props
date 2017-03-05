@@ -11,6 +11,8 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\..\addons\ofxRulr\Core\src;..\..\..\addons\ofxJSON\libs\jsoncpp\include;..\..\..\addons\ofxCvGui\src;..\..\..\addons\ofxClipboard\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)_$(Configuration)_$(Platform).pch</PrecompiledHeaderOutputFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

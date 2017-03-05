@@ -48,9 +48,11 @@ EXPORTS
 	??0ofVec2f@@QEAA@AEBVofVec3f@@@Z
 	??0ofVec2f@@QEAA@AEBVofVec4f@@@Z
 	??0ofVec4f@@QEAA@AEBVofVec2f@@@Z
+	??0ofVideoPlayer@@QEAA@XZ
 	??0ofxOscMessage@@QEAA@XZ
 	??0ofxOscReceiver@@QEAA@XZ
 	??0ofxOscSender@@QEAA@XZ
+	??1ofBaseVideoPlayer@@UEAA@XZ
 	??1ofFbo@@UEAA@XZ
 	??1ofFile@@UEAA@XZ
 	??1ofLog@@UEAA@XZ
@@ -62,6 +64,8 @@ EXPORTS
 	??1ofxOscMessage@@QEAA@XZ
 	??4ofRectangle@@QEAAAEAV0@AEBV0@@Z
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
+	??6cv@@YAAEAVFileStorage@0@AEAV10@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??Dcv@@YA?AVMatExpr@0@AEBVMat@0@0@Z
 	?ofBufferFromFile@@YA?AVofBuffer@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
 	?ofBufferToFile@@YA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofBuffer@@_N@Z
 	?ofCircle@@YAXAEBVofVec3f@@M@Z
@@ -144,34 +148,78 @@ EXPORTS
 	??0_OutputArray@cv@@QEAA@AEAV?$vector@VMat@cv@@V?$allocator@VMat@cv@@@std@@@std@@@Z
 	??0_OutputArray@cv@@QEAA@AEAVMat@1@@Z
 	??0_OutputArray@cv@@QEAA@AEBVMat@1@@Z
+	??0EM@cv@@QEAA@HHAEBVTermCriteria@1@@Z
 	??0Exception@cv@@QEAA@HAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@00H@Z
+	??0FileNodeIterator@cv@@QEAA@PEBUCvFileStorage@@PEBUCvFileNode@@_K@Z
+	??0FileStorage@cv@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H0@Z
+	??0Mat@cv@@QEAA@AEBV01@AEBV?$Rect_@H@1@@Z
+	??0Mat@cv@@QEAA@AEBV01@AEBVRange@1@1@Z
+	??0WriteStructContext@cv@@QEAA@AEAVFileStorage@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H1@Z
+	??1Algorithm@cv@@UEAA@XZ
+	??1EM@cv@@UEAA@XZ
 	??1Exception@cv@@UEAA@XZ
+	??1FileStorage@cv@@UEAA@XZ
+	??1WriteStructContext@cv@@QEAA@XZ
+	??4Mat@cv@@QEAAAEAV01@AEBV?$Scalar_@N@1@@Z
+	??AFileNode@cv@@QEBA?AV01@PEBD@Z
+	??AFileStorage@cv@@QEBA?AVFileNode@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??AFileStorage@cv@@QEBA?AVFileNode@1@PEBD@Z
+	??EFileNodeIterator@cv@@QEAAAEAV01@XZ
 	?_interlockedExchangeAdd@cv@@YAHPEAHH@Z
+	?adaptiveThreshold@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@NHHHN@Z
 	?add@cv@@YAXAEBV_InputArray@1@0AEBV_OutputArray@1@0H@Z
 	?addWeighted@cv@@YAXAEBV_InputArray@1@N0NNAEBV_OutputArray@1@H@Z
+	?approxPolyDP@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@N_N@Z
 	?bitwise_or@cv@@YAXAEBV_InputArray@1@0AEBV_OutputArray@1@0@Z
 	?boundingRect@cv@@YA?AV?$Rect_@H@1@AEBV_InputArray@1@@Z
 	?calibrateCamera@cv@@YANAEBV_InputArray@1@0V?$Size_@H@1@AEBV_OutputArray@1@222HVTermCriteria@1@@Z
+	?Canny@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@NNH_N@Z
 	?contourArea@cv@@YANAEBV_InputArray@1@_N@Z
+	?cornerHarris@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@HHNH@Z
+	?cornerSubPix@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@V?$Size_@H@1@2VTermCriteria@1@@Z
+	?countNonZero@cv@@YAHAEBV_InputArray@1@@Z
 	?createTrackbar@cv@@YAHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0PEAHHP6AXHPEAX@Z2@Z
 	?cvtColor@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@HH@Z
+	?drawContours@cv@@YAXAEBV_OutputArray@1@AEBV_InputArray@1@HAEBV?$Scalar_@N@1@HH1HV?$Point_@H@1@@Z
 	?error@cv@@YAXAEBVException@1@@Z
 	?estimateAffine3D@cv@@YAHAEBV_InputArray@1@0AEBV_OutputArray@1@1NN@Z
 	?fastFree@cv@@YAXPEAX@Z
 	?findChessboardCorners@cv@@YA_NAEBV_InputArray@1@V?$Size_@H@1@AEBV_OutputArray@1@H@Z
+	?findContours@cv@@YAXAEBV_OutputArray@1@00HHV?$Point_@H@1@@Z
 	?findContours@cv@@YAXAEBV_OutputArray@1@0HHV?$Point_@H@1@@Z
 	?flip@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@H@Z
+	?getPerspectiveTransform@cv@@YA?AVMat@1@QEBV?$Point_@M@1@0@Z
+	?getRectSubPix@cv@@YAXAEBV_InputArray@1@V?$Size_@H@1@V?$Point_@M@1@AEBV_OutputArray@1@H@Z
 	?getStructuringElement@cv@@YA?AVMat@1@HV?$Size_@H@1@V?$Point_@H@1@@Z
+	?getTickCount@cv@@YA_JXZ
+	?getTickFrequency@cv@@YANXZ
 	?imread@cv@@YA?AVMat@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?imshow@cv@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV_InputArray@1@@Z
+	?integral@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@H@Z
+	?isContourConvex@cv@@YA_NAEBV_InputArray@1@@Z
+	?line@cv@@YAXAEAVMat@1@V?$Point_@H@1@1AEBV?$Scalar_@N@1@HHH@Z
 	?minEnclosingCircle@cv@@YAXAEBV_InputArray@1@AEAV?$Point_@M@1@AEAM@Z
 	?morphologyEx@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@H0V?$Point_@H@1@HHAEBV?$Scalar_@N@1@@Z
 	?namedWindow@cv@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?noArray@cv@@YAAEBV_OutputArray@1@XZ
+	?perspectiveTransform@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@0@Z
+	?pointPolygonTest@cv@@YANAEBV_InputArray@1@V?$Point_@M@1@_N@Z
+	?projectPoints@cv@@YAXAEBV_InputArray@1@0000AEBV_OutputArray@1@1N@Z
+	?putText@cv@@YAXAEAVMat@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$Point_@H@1@HNV?$Scalar_@N@1@HH_N@Z
+	?read@cv@@YAXAEBVFileNode@1@AEAVMat@1@AEBV31@@Z
+	?rectangle@cv@@YAXAEAVMat@1@V?$Point_@H@1@1AEBV?$Scalar_@N@1@HHH@Z
+	?Rodrigues@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@1@Z
+	?Sobel@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@HHHHNNH@Z
+	?solve@cv@@YA_NAEBV_InputArray@1@0AEBV_OutputArray@1@H@Z
 	?solvePnP@cv@@YA_NAEBV_InputArray@1@000AEBV_OutputArray@1@1_NH@Z
 	?stereoCalibrate@cv@@YANAEBV_InputArray@1@00AEBV_OutputArray@1@111V?$Size_@H@1@1111VTermCriteria@1@H@Z
 	?threshold@cv@@YANAEBV_InputArray@1@AEBV_OutputArray@1@NNH@Z
+	?undistortPoints@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@0000@Z
 	?waitKey@cv@@YAHH@Z
+	?warpPerspective@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@0V?$Size_@H@1@HHAEBV?$Scalar_@N@1@@Z
+	?write@cv@@YAXAEAVFileStorage@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVMat@1@@Z
+	?write@cv@@YAXAEAVFileStorage@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
+	?writeScalar@cv@@YAXAEAVFileStorage@1@M@Z
 	?channels@_InputArray@cv@@UEBAHH@Z
 	?depth@_InputArray@cv@@UEBAHH@Z
 	?empty@_InputArray@cv@@UEBA_NXZ
@@ -193,13 +241,32 @@ EXPORTS
 	?getMatRef@_OutputArray@cv@@UEBAAEAVMat@2@H@Z
 	?needed@_OutputArray@cv@@UEBA_NXZ
 	?release@_OutputArray@cv@@UEBAXXZ
+	?read@Algorithm@cv@@UEAAXAEBVFileNode@2@@Z
+	?write@Algorithm@cv@@UEBAXAEAVFileStorage@2@@Z
+	?clear@EM@cv@@UEAAXXZ
+	?eStep@EM@cv@@MEAAXXZ
+	?info@EM@cv@@UEBAPEAVAlgorithmInfo@2@XZ
+	?mStep@EM@cv@@MEAAXXZ
+	?predict@EM@cv@@QEBA?AV?$Vec@N$01@2@AEBV_InputArray@2@AEBV_OutputArray@2@@Z
+	?read@EM@cv@@UEAAXAEBVFileNode@2@@Z
+	?setTrainData@EM@cv@@MEAAXHAEBVMat@2@PEBV32@1PEBV?$vector@VMat@cv@@V?$allocator@VMat@cv@@@std@@@std@@1@Z
+	?train@EM@cv@@UEAA_NAEBV_InputArray@2@AEBV_OutputArray@2@11@Z
+	?trainE@EM@cv@@UEAA_NAEBV_InputArray@2@000AEBV_OutputArray@2@11@Z
+	?trainM@EM@cv@@UEAA_NAEBV_InputArray@2@0AEBV_OutputArray@2@11@Z
 	?what@Exception@cv@@UEBAPEBDXZ
+	?name@FileNode@cv@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?readRaw@FileNodeIterator@cv@@QEAAAEAV12@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAE_K@Z
+	?release@FileStorage@cv@@UEAAXXZ
 	?get@Formatter@cv@@SAPEBV12@PEBD@Z
 	?convertTo@Mat@cv@@QEBAXAEBV_OutputArray@2@HNN@Z
 	?copySize@Mat@cv@@QEAAXAEBV12@@Z
 	?copyTo@Mat@cv@@QEBAXAEBV_OutputArray@2@@Z
 	?create@Mat@cv@@QEAAXHPEBHH@Z
 	?deallocate@Mat@cv@@QEAAXXZ
+	?eye@Mat@cv@@SA?AVMatExpr@2@HHH@Z
+	?inv@Mat@cv@@QEBA?AVMatExpr@2@H@Z
+	?mul@Mat@cv@@QEBA?AVMatExpr@2@AEBV_InputArray@2@N@Z
+	?setTo@Mat@cv@@QEAAAEAV12@AEBV_InputArray@2@0@Z
 	?zeros@Mat@cv@@SA?AVMatExpr@2@HHH@Z
 	?black@?$ofColor_@E@@2V1@B
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
@@ -499,6 +566,10 @@ EXPORTS
 	?setIndexData@ofVbo@@QEAAXPEBIHH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec2f@@HH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec3f@@HH@Z
+	?draw@ofVideoPlayer@@UEBAXMM@Z
+	?load@ofVideoPlayer@@UEAA_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?play@ofVideoPlayer@@UEAAXXZ
+	?update@ofVideoPlayer@@UEAAXXZ
 	?load@ObjLoader@ofx@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAVofMesh@@_N2@Z
 	??0Register@ofxAssets@@QEAA@XZ
 	?font@ofxAssets@@YAAEAVofTrueTypeFont@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
@@ -507,7 +578,7 @@ EXPORTS
 	?addAddon@Register@ofxAssets@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?getShaderPointer@Register@ofxAssets@@QEAA?AV?$shared_ptr@VShader@ofxAssets@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?getSingletonStore@?$Singleton@VRegister@ofxAssets@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
-	?drawCorners@ofxCv@@YAXAEBV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@std@@@Z
+	?calibrateProjector@ofxCv@@YAMAEAVMat@cv@@00V?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@V?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@5@HH_NMM3H@Z
 	?findChessboardCornersPreTest@ofxCv@@YA_NVMat@cv@@V?$Size_@H@3@AEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@H@Z
 	?getMaxVal@ofxCv@@YAMAEBVMat@cv@@@Z
 	?makeCheckerboardMesh@ofxCv@@YA?AVofMesh@@V?$Size_@H@cv@@M_N@Z
@@ -578,6 +649,7 @@ EXPORTS
 	?add@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@Z
 	?clear@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXXZ
 	?getElements@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAAEAV?$vector@V?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@V?$allocator@V?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@2@@std@@XZ
+	?getInstance@?$UnmanagedSingleton@VWidgetsBuilder@Panels@ofxCvGui@@@ofxSingleton@@SA?AV?$shared_ptr@VWidgetsBuilder@Panels@ofxCvGui@@@std@@XZ
 	?addButton@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VButton@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6AXXZ@5@D@Z
 	?addIndicator@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A?AW4Status@Indicator@Widgets@ofxCvGui@@XZ@5@@Z
 	?addIndicatorBool@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A_NXZ@5@@Z
@@ -658,7 +730,7 @@ EXPORTS
 	?getSingletonStore@?$Singleton@VFactoryRegister@Device@ofxMachineVision@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	?lockForReading@Frame@ofxMachineVision@@QEAA_NXZ
 	?lockForWriting@Frame@ofxMachineVision@@QEAA_NXZ
-	?unlock@Frame@ofxMachineVision@@QEAAXXZ
+	?unlockForWriting@Frame@ofxMachineVision@@QEAAXXZ
 	?getDevice@Base@Grabber@ofxMachineVision@@QEBA?AV?$shared_ptr@VBase@Device@ofxMachineVision@@@std@@XZ
 	?getFreshFrame@Simple@Grabber@ofxMachineVision@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@_NM@Z
 	?addFeature@Specification@ofxMachineVision@@QEAAXAEBW4Feature@2@@Z
@@ -740,6 +812,7 @@ EXPORTS
 	??0RigidBody@Item@Nodes@ofxRulr@@QEAA@XZ
 	??0View@Item@Nodes@ofxRulr@@QEAA@_N@Z
 	??1Camera@Item@Nodes@ofxRulr@@UEAA@XZ
+	?findBoard@Board@Item@Nodes@ofxRulr@@QEBA_NVMat@cv@@AEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@VFindBoardMode@1234@@Z
 	?getObjectPoints@Board@Item@Nodes@ofxRulr@@QEBA?AV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@XZ
 	?getSize@Board@Item@Nodes@ofxRulr@@QEBA?AV?$Size_@H@cv@@XZ
 	?getFreshFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
@@ -786,6 +859,8 @@ EXPORTS
 	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
 	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N_K@Z
 	??1ScopedProcess@Utils@ofxRulr@@QEAA@XZ
+	?popPointSize@Graphics@Utils@ofxRulr@@SAXXZ
+	?pushPointSize@Graphics@Utils@ofxRulr@@SAXM_N@Z
 	?end@ScopedProcess@Utils@ofxRulr@@QEAAX_N@Z
 	?nextChildProcess@ScopedProcess@Utils@ofxRulr@@QEAAXXZ
 	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAV?$ofParameter@_N@@@Z

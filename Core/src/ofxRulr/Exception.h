@@ -3,7 +3,6 @@
 #include <exception>
 #include <string>
 #include "opencv2/core/core.hpp"
-#include <Poco/Exception.h>
 
 namespace ofxRulr {
 	class Exception : public std::exception {

@@ -2,9 +2,10 @@
 
 namespace ofxRulr {
 	namespace Utils {
-		namespace Graphics {
-			void pushPointSize(float pointSize, bool smoothed = true);
-			void popPointSize();
-		}
+		class Graphics {
+		public:
+			static void pushPointSize(float pointSize, bool smoothed = true);
+			static void popPointSize();
+		};
 	}
 }

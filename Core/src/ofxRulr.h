@@ -13,3 +13,4 @@
 #include "ofxRulr/Utils/Gui.h"
 #include "ofxRulr/Utils/SoundEngine.h"
 #include "ofxRulr/Utils/Graphics.h"
+#include "ofxRulr/Utils/ScopedProcess.h"

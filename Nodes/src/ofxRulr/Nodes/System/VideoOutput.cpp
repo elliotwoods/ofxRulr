@@ -426,6 +426,8 @@ namespace ofxRulr {
 				auto scissorEnabled = ofxCvGui::Utils::ScissorManager::X().getScissorEnabled();
 				ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(false);
 
+				ofMesh mesh;
+
 				//Open and draw to the window
 				auto appWindow = ofGetCurrentWindow();
 				ofGetMainLoop()->setCurrentWindow(this->window);
