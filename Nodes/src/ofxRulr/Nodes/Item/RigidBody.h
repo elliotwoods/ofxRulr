@@ -30,7 +30,8 @@ namespace ofxRulr {
 				void setTransform(const ofMatrix4x4 &);
 				void setPosition(const ofVec3f &);
 				void setRotationEuler(const ofVec3f &);
-				void setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse = false);
+				void setExtrinsics(cv::Mat rotationVector, cv::Mat translation, bool inverse = false);
+				void getExtrinsics(cv::Mat & rotationVector, cv::Mat & translation, bool inverse = false);
 				void clearTransform();
 
 				ofxLiquidEvent<void> onDrawObject;

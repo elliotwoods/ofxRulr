@@ -215,3 +215,21 @@ namespace ofxRulr {
 		}
 	}
 }
+
+//----------
+void operator<<(Json::Value & json, const ofMesh & mesh) {
+	json["vertices"] << mesh.getVertices();
+	json["texCoords"] << mesh.getTexCoords();
+	json["colors"] << mesh.getColors();
+	json["indices"] << mesh.getIndices();
+	json["normals"] << mesh.getNormals();
+}
+
+//----------
+void operator >> (const Json::Value & json, ofMesh & mesh) {
+	json["vertices"] >> mesh.getVertices();
+	json["texCoords"] >> mesh.getTexCoords();
+	json["colors"] >> mesh.getColors();
+	json["indices"] >> mesh.getIndices();
+	json["normals"] >> mesh.getNormals();
+}

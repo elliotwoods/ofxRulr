@@ -14,3 +14,10 @@
 #define RULR_WARNING ofLogWarning(string(__func__))
 #define RULR_ERROR ofLogError(string(__func__))
 #define RULR_FATAL ofLogFatalError(string(__func__))
+
+#ifdef RULR_EXPORT_LIBRARY
+	#define RULR_EXPORTS __declspec(dllexport)
+	#define OF_EXPORTS_ENABLED
+#else
+	#define RULR_EXPORTS
+#endif

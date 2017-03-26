@@ -6,11 +6,13 @@
 #include "ofImage.h"
 #include "ofxAssets.h"
 
+#include "ofxRulr/Utils/Constants.h"
+
 namespace ofxRulr {
 	namespace Nodes {
-		class Graphics : public ofxSingleton::Singleton<Graphics> {
+		class RULR_EXPORTS GraphicsManager : public ofxSingleton::Singleton<GraphicsManager> {
 		public:
-			Graphics();
+			GraphicsManager();
 			shared_ptr<ofImage> getIcon(const string & nodeTypeName);
 			ofColor getColor(const string & nodeTypeName);
 

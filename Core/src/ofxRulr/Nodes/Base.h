@@ -7,8 +7,7 @@
 #include "../Version.h"
 
 #include "ofxCvGui/InspectController.h"
-#include "ofxCvGui/Utils/Sugar.h"
-#include "ofxCvGui/Utils/Enum.h"
+#include "ofxCvGui.h"
 
 #include "ofImage.h"
 #include "ofxAssets.h"
@@ -41,7 +40,7 @@ namespace ofxRulr {
 	}
 
 	namespace Nodes {
-		class Base : public ofxCvGui::IInspectable, public Utils::Serializable {
+		class RULR_EXPORTS Base : public ofxCvGui::IInspectable, public Utils::Serializable {
 		public:
 			Base();
 			~Base();
@@ -176,6 +175,9 @@ namespace ofxRulr {
 			bool initialized;
 			uint64_t lastFrameUpdate;
 			bool updateAllInputsFirst;
+
+			//we'd love to have parameters for drawWorldEnabled, etc
+			//but adding ofParameters here seems to cause crashes
 		};
 	}
 }

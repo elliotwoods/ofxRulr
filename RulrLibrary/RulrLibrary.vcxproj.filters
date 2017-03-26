@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="RulrLibrary_Debug.def" />
+    <None Include="RulrLibrary_Release.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{1ed5763f-ffc3-4dac-a64a-4eb4c81ddca6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

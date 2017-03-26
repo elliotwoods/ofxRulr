@@ -7,6 +7,8 @@
 #include <string>
 #include <type_traits>
 
+#include "ofxRulr/Utils/Constants.h"
+
 #define RULR_SERIALIZE_LISTENERS \
 	this->onSerialize += [this](Json::Value & json) { \
 		this->serialize(json); \
@@ -17,7 +19,7 @@
 
 namespace ofxRulr {
 	namespace Utils {
-		class Serializable {
+		class RULR_EXPORTS Serializable {
 		public:
 			virtual std::string getTypeName() const = 0;
 			virtual std::string getName() const;
@@ -122,6 +124,53 @@ void operator<< (Json::Value & json, const ofParameter<T> & parameter) {
 //
 //--
 
+template<typename T, typename _ = void>
+struct is_container : std::false_type {};
+
+template<typename... Ts>
+struct is_container_helper {};
+
+template <typename T>
+using is_vector = is_same<T, std::vector< typename T::value_type,
+	typename T::allocator_type > >;
+
+//--
+// oF types
+//--
+//
+// json >> value; //deserialize
+// json << value; //serialize
+//
+void operator<< (Json::Value & json, const ofMesh &);
+void operator>> (const Json::Value & json, ofMesh &);
+//
+//--
+
+//--
+// Vectors of things
+//--
+//
+// json >> vector<value>; //deserialize
+// json << vector<value>; //serialize
+//
+template<class DataType>
+	void operator<< (Json::Value & json, const vector<DataType> & vectorOfStreamSerializableObjects) {
+	for (int i = 0; i < vectorOfStreamSerializableObjects.size(); i++) {
+		json[i] << vectorOfStreamSerializableObjects[i];
+	}
+}
+
+template<class DataType>
+	void operator >> (const Json::Value & json, vector<DataType> & vectorOfStreamSerializableObjects) {
+	vectorOfStreamSerializableObjects.clear();
+	for (const auto & jsonItem : json) {
+		DataType value;
+		jsonItem >> value;
+		vectorOfStreamSerializableObjects.push_back(value);
+	}
+}
+//
+//--
 
 
 //--
@@ -133,14 +182,16 @@ void operator<< (Json::Value & json, const ofParameter<T> & parameter) {
 //
 // since the json object is useless after the stream, we return void
 template<class T,
-	typename = std::enable_if_t<!std::is_base_of<ofAbstractParameter, T>::value> >
+	typename = std::enable_if_t<!std::is_base_of<ofAbstractParameter, T>::value &&
+	!is_vector<T>::value>>
 void operator>> (const Json::Value & json, T & streamSerializableObject) {
 	stringstream stream(json.asString());
 	stream >> streamSerializableObject;
 }
 
 template<class T,
-	typename = std::enable_if_t<!std::is_base_of<ofAbstractParameter, T>::value> >
+	typename = std::enable_if_t<!std::is_base_of<ofAbstractParameter, T>::value &&
+	!is_vector<T>::value>>
 	void operator<< (Json::Value & json, const T & streamSerializableObject) {
 	stringstream stream;
 	stream << streamSerializableObject;

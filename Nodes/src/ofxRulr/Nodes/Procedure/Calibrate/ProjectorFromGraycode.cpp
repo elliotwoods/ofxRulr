@@ -334,7 +334,7 @@ namespace ofxRulr {
 								continue;
 							}
 
-							capture.projectorImagePoints.push_back(toOf(projectorPoint));
+							capture.projectorImagePoints.push_back(toOf((cv::Point2f) projectorPoint));
 							capture.worldPoints.push_back(*worldPoint++);
 						}
 					}

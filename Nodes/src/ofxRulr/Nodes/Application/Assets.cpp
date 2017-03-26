@@ -90,18 +90,38 @@ namespace ofxRulr {
 				this->view->add(filterWidget);
 
 				auto addReloadButton = [this](ElementPtr element, shared_ptr<ofxAssets::BaseAsset> asset) {
-					auto button = make_shared<Widgets::Button>("Reload",
-															[asset]() {
-																asset->reload();
-															});
-					this->ownedElements.push_back(button);
-					button->addListenersToParent(element);
-					element->onBoundsChange += [button](BoundsChangeArguments & args) {
+					auto reloadLocalButton = make_shared<Widgets::Button>("Reload [local]",
+						[asset]() {
+						asset->reload();
+					});
+					auto reloadOriginButton = make_shared<Widgets::Button>("Reload [origin]",
+						[asset]() {
+						//check if it's from an addon
+						auto path = filesystem::path(asset->getFilename());
+						auto addonPart = path.begin();
+						addonPart++; addonPart++;
+						auto addonName = addonPart->string();
+						if (addonName.compare(0, 3, "ofx")) {
+							path = filesystem::path("../../../" + addonName + "/data/" + path.string());
+							asset->setPath(path);
+						}
+						asset->reload();
+					});
+					element->addChild(reloadLocalButton);
+					element->addChild(reloadOriginButton);
+
+					element->onBoundsChange += [reloadLocalButton, reloadOriginButton](BoundsChangeArguments & args) {
 						auto bounds = args.localBounds;
-						const int width = 80;
+						const int width = 120;
 						bounds.width = width;
+						bounds.height /= 2.0f;
 						bounds.x = args.localBounds.width - width;
-						button->setBounds(bounds);
+						
+						reloadLocalButton->setBounds(bounds);
+
+						bounds.y += bounds.height;
+
+						reloadOriginButton->setBounds(bounds);
 					};
 				};
 				

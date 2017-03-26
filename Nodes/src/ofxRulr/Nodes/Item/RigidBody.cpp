@@ -47,10 +47,12 @@ namespace ofxRulr {
 			//---------
 			void RigidBody::drawWorld() {
 				ofPushMatrix();
-				ofMultMatrix(this->getTransform());
-				ofDrawAxis(0.3f);
-				ofDrawBitmapString(this->getName(), ofVec3f());
-				this->onDrawObject.notifyListeners();
+				{
+					ofMultMatrix(this->getTransform());
+					ofDrawAxis(0.3f);
+					ofDrawBitmapString(this->getName(), ofVec3f());
+					this->onDrawObject.notifyListeners();
+				}
 				ofPopMatrix();
 			}
 
@@ -325,6 +327,15 @@ namespace ofxRulr {
 				else {
 					this->setTransform(extrinsicsMatrix);
 				}
+			}
+
+			//----------
+			void RigidBody::getExtrinsics(cv::Mat & rotationVector, cv::Mat & translation, bool inverse /*= false*/) {
+				auto transform = this->getTransform();
+				if (inverse) {
+					transform = toOf(glm::inverse(toGLM(transform)));
+				}
+				ofxCv::decomposeMatrix(transform, rotationVector, translation);
 			}
 
 			//----------

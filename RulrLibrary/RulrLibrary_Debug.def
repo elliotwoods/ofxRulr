@@ -1,14 +1,6 @@
 Library RulrLibrary_Debug
 EXPORTS
-	__imp_glEnable
 	__imp_glFlush
-	__imp_glLoadIdentity
-	__imp_glMultMatrixf
-	__imp_glPointSize
-	__imp_glPopAttrib
-	__imp_glPushAttrib
-	__imp_WSACleanup
-	__imp_WSAStartup
 	glfwCreateWindow
 	glfwDestroyWindow
 	glfwGetCurrentContext
@@ -20,120 +12,67 @@ EXPORTS
 	glfwSwapBuffers
 	glfwWindowHint
 	??0ofBuffer@@QEAA@AEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
-	??0ofBuffer@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofBuffer@@QEAA@PEBD_K@Z
-	??0ofBuffer@@QEAA@XZ
-	??0ofDirectory@@QEAA@AEBVpath@filesystem@boost@@@Z
 	??0ofFbo@@QEAA@XZ
-	??0ofFile@@QEAA@XZ
-	??0ofLog@@QEAA@W4ofLogLevel@@PEBDZZ
+	??0ofFile@@QEAA@AEBVpath@filesystem@boost@@W4Mode@0@_N@Z
 	??0ofLogError@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogNotice@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??0ofLogVerbose@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogWarning@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??0ofMatrix4x4@@QEAA@MMMMMMMMMMMMMMMM@Z
 	??0ofMesh@@QEAA@XZ
-	??0ofNode@@QEAA@XZ
 	??0ofParameterGroup@@QEAA@XZ
-	??0ofPolyline@@QEAA@XZ
 	??0ofRectangle@@QEAA@AEBV0@@Z
 	??0ofRectangle@@QEAA@MMMM@Z
-	??0ofRectangle@@QEAA@XZ
 	??0ofSerial@@QEAA@XZ
 	??0ofTexture@@QEAA@XZ
-	??0ofThread@@QEAA@XZ
-	??0ofVbo@@QEAA@AEBV0@@Z
-	??0ofVbo@@QEAA@XZ
-	??0ofVboMesh@@QEAA@XZ
-	??0ofVec2f@@QEAA@AEBVofVec3f@@@Z
-	??0ofVec2f@@QEAA@AEBVofVec4f@@@Z
-	??0ofVec4f@@QEAA@AEBVofVec2f@@@Z
-	??0ofVideoPlayer@@QEAA@XZ
-	??0ofxOscMessage@@QEAA@XZ
-	??0ofxOscReceiver@@QEAA@XZ
-	??0ofxOscSender@@QEAA@XZ
-	??1ofBaseVideoPlayer@@UEAA@XZ
 	??1ofFbo@@UEAA@XZ
 	??1ofFile@@UEAA@XZ
 	??1ofLog@@UEAA@XZ
-	??1ofNode@@UEAA@XZ
 	??1ofRectangle@@UEAA@XZ
 	??1ofTexture@@UEAA@XZ
-	??1ofVbo@@QEAA@XZ
-	??1ofVboMesh@@UEAA@XZ
-	??1ofxOscMessage@@QEAA@XZ
-	??4ofRectangle@@QEAAAEAV0@AEBV0@@Z
-	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
-	??6cv@@YAAEAVFileStorage@0@AEAV10@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??Dcv@@YA?AVMatExpr@0@AEBVMat@0@0@Z
-	?ofBufferFromFile@@YA?AVofBuffer@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
-	?ofBufferToFile@@YA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofBuffer@@_N@Z
-	?ofCircle@@YAXAEBVofVec3f@@M@Z
-	?ofCircle@@YAXMMM@Z
 	?ofClamp@@YAMMMM@Z
-	?ofClear@@YAXMM@Z
 	?ofClear@@YAXMMMM@Z
 	?ofCreateWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@AEBVofWindowSettings@@@Z
-	?ofDisableAlphaBlending@@YAXXZ
 	?ofDisableBlendMode@@YAXXZ
-	?ofDisableDepthTest@@YAXXZ
-	?ofDrawBitmapStringHighlight@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofVec3f@@AEBV?$ofColor_@E@@2@Z
-	?ofDrawBox@@YAXAEBVofVec3f@@MMM@Z
-	?ofDrawCircle@@YAXAEBVofVec3f@@M@Z
-	?ofDrawCircle@@YAXMMM@Z
+	?ofDrawAxis@@YAXM@Z
+	?ofDrawGrid@@YAXM_K_N111@Z
 	?ofDrawGridPlane@@YAXM_K_N@Z
 	?ofDrawLine@@YAXAEBVofVec3f@@0@Z
+	?ofDrawLine@@YAXMMMM@Z
 	?ofDrawRectangle@@YAXAEBVofRectangle@@@Z
-	?ofDrawRectangle@@YAXMMMM@Z
+	?ofDrawRectangle@@YAXAEBVofVec3f@@MM@Z
+	?ofDrawSphere@@YAXAEBVofVec3f@@M@Z
 	?ofEnableAlphaBlending@@YAXXZ
 	?ofEnableBlendMode@@YAXW4ofBlendMode@@@Z
-	?ofEnableDepthTest@@YAXXZ
-	?ofFill@@YAXXZ
-	?ofGetCurrentWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@XZ
 	?ofGetElapsedTimef@@YAMXZ
-	?ofGetElapsedTimeMicros@@YA_KXZ
-	?ofGetElapsedTimeMillis@@YA_KXZ
 	?ofGetFrameNum@@YA_KXZ
-	?ofGetKeyPressed@@YA_NH@Z
+	?ofGetFrameRate@@YAMXZ
+	?ofGetLastFrameTime@@YANXZ
 	?ofGetScreenHeight@@YAHXZ
 	?ofGetScreenWidth@@YAHXZ
-	?ofGetStyle@@YA?AVofStyle@@XZ
-	?ofGetViewportHeight@@YAHXZ
-	?ofGetViewportWidth@@YAHXZ
 	?ofLerp@@YAMMMM@Z
-	?ofLine@@YAXAEBVofVec3f@@0@Z
-	?ofLine@@YAXMMMM@Z
 	?ofLoadIdentityMatrix@@YAXXZ
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@E@@AEBVofBuffer@@AEBUofImageLoadSettings@@@Z
-	?ofLoadMatrix@@YAXAEBVofMatrix4x4@@@Z
 	?ofMap@@YAMMMMMM_N@Z
 	?ofMultMatrix@@YAXAEBVofMatrix4x4@@@Z
 	?ofNoFill@@YAXXZ
 	?ofPopMatrix@@YAXXZ
 	?ofPopStyle@@YAXXZ
-	?ofPopView@@YAXXZ
 	?ofPushMatrix@@YAXXZ
 	?ofPushStyle@@YAXXZ
-	?ofPushView@@YAXXZ
-	?ofRandom@@YAMM@Z
-	?ofRect@@YAXAEBVofRectangle@@@Z
 	?ofRotate@@YAXMMMM@Z
 	?ofRunApp@@YAHPEAVofBaseApp@@@Z
 	?ofSaveImage@@YAXAEBV?$ofPixels_@E@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4ofImageQualityType@@@Z
-	?ofScale@@YAXMMM@Z
+	?ofScale@@YAXAEBVofVec3f@@@Z
 	?ofSetColor@@YAXAEBV?$ofColor_@E@@@Z
 	?ofSetColor@@YAXAEBV?$ofColor_@E@@H@Z
 	?ofSetColor@@YAXH@Z
 	?ofSetColor@@YAXHHH@Z
 	?ofSetEscapeQuitsApp@@YAX_N@Z
 	?ofSetLineWidth@@YAXM@Z
-	?ofSetLogLevel@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4ofLogLevel@@@Z
 	?ofSetMatrixMode@@YAXW4ofMatrixMode@@@Z
 	?ofSetupScreen@@YAXXZ
 	?ofSleepMillis@@YAXH@Z
-	?ofSphere@@YAXAEBVofVec3f@@M@Z
 	?ofSplitString@@YA?AV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$allocator@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@0_N1@Z
-	?ofStringReplace@@YAXAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@1@Z
 	?ofSystemAlertDialog@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?ofSystemLoadDialog@@YA?AVofFileDialogResult@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N0@Z
 	?ofSystemTextBoxDialog@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V12@0@Z
@@ -143,270 +82,57 @@ EXPORTS
 	?ofToLower@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@0@Z
 	?ofTranslate@@YAXAEBVofVec3f@@@Z
 	?ofTranslate@@YAXMMM@Z
-	?ofViewport@@YAXVofRectangle@@@Z
-	??0_InputArray@cv@@QEAA@AEBVMat@1@@Z
-	??0_OutputArray@cv@@QEAA@AEAV?$vector@VMat@cv@@V?$allocator@VMat@cv@@@std@@@std@@@Z
-	??0_OutputArray@cv@@QEAA@AEAVMat@1@@Z
-	??0_OutputArray@cv@@QEAA@AEBVMat@1@@Z
-	??0EM@cv@@QEAA@HHAEBVTermCriteria@1@@Z
-	??0Exception@cv@@QEAA@HAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@00H@Z
-	??0FileNodeIterator@cv@@QEAA@PEBUCvFileStorage@@PEBUCvFileNode@@_K@Z
-	??0FileStorage@cv@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H0@Z
-	??0Mat@cv@@QEAA@AEBV01@AEBV?$Rect_@H@1@@Z
-	??0Mat@cv@@QEAA@AEBV01@AEBVRange@1@1@Z
-	??0WriteStructContext@cv@@QEAA@AEAVFileStorage@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H1@Z
-	??1Algorithm@cv@@UEAA@XZ
-	??1EM@cv@@UEAA@XZ
-	??1Exception@cv@@UEAA@XZ
-	??1FileStorage@cv@@UEAA@XZ
-	??1WriteStructContext@cv@@QEAA@XZ
-	??4Mat@cv@@QEAAAEAV01@AEBV?$Scalar_@N@1@@Z
-	??AFileNode@cv@@QEBA?AV01@PEBD@Z
-	??AFileStorage@cv@@QEBA?AVFileNode@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??AFileStorage@cv@@QEBA?AVFileNode@1@PEBD@Z
-	??EFileNodeIterator@cv@@QEAAAEAV01@XZ
-	?_interlockedExchangeAdd@cv@@YAHPEAHH@Z
-	?adaptiveThreshold@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@NHHHN@Z
-	?add@cv@@YAXAEBV_InputArray@1@0AEBV_OutputArray@1@0H@Z
-	?addWeighted@cv@@YAXAEBV_InputArray@1@N0NNAEBV_OutputArray@1@H@Z
-	?approxPolyDP@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@N_N@Z
-	?bitwise_or@cv@@YAXAEBV_InputArray@1@0AEBV_OutputArray@1@0@Z
-	?boundingRect@cv@@YA?AV?$Rect_@H@1@AEBV_InputArray@1@@Z
-	?calibrateCamera@cv@@YANAEBV_InputArray@1@0V?$Size_@H@1@AEBV_OutputArray@1@222HVTermCriteria@1@@Z
-	?Canny@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@NNH_N@Z
-	?contourArea@cv@@YANAEBV_InputArray@1@_N@Z
-	?cornerHarris@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@HHNH@Z
-	?cornerSubPix@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@V?$Size_@H@1@2VTermCriteria@1@@Z
-	?countNonZero@cv@@YAHAEBV_InputArray@1@@Z
-	?createTrackbar@cv@@YAHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0PEAHHP6AXHPEAX@Z2@Z
-	?cvtColor@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@HH@Z
-	?drawContours@cv@@YAXAEBV_OutputArray@1@AEBV_InputArray@1@HAEBV?$Scalar_@N@1@HH1HV?$Point_@H@1@@Z
-	?error@cv@@YAXAEBVException@1@@Z
-	?estimateAffine3D@cv@@YAHAEBV_InputArray@1@0AEBV_OutputArray@1@1NN@Z
-	?fastFree@cv@@YAXPEAX@Z
-	?findChessboardCorners@cv@@YA_NAEBV_InputArray@1@V?$Size_@H@1@AEBV_OutputArray@1@H@Z
-	?findContours@cv@@YAXAEBV_OutputArray@1@00HHV?$Point_@H@1@@Z
-	?findContours@cv@@YAXAEBV_OutputArray@1@0HHV?$Point_@H@1@@Z
-	?flip@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@H@Z
-	?getPerspectiveTransform@cv@@YA?AVMat@1@QEBV?$Point_@M@1@0@Z
-	?getRectSubPix@cv@@YAXAEBV_InputArray@1@V?$Size_@H@1@V?$Point_@M@1@AEBV_OutputArray@1@H@Z
-	?getStructuringElement@cv@@YA?AVMat@1@HV?$Size_@H@1@V?$Point_@H@1@@Z
-	?getTickCount@cv@@YA_JXZ
-	?getTickFrequency@cv@@YANXZ
-	?imread@cv@@YA?AVMat@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
-	?imshow@cv@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV_InputArray@1@@Z
-	?integral@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@H@Z
-	?isContourConvex@cv@@YA_NAEBV_InputArray@1@@Z
-	?line@cv@@YAXAEAVMat@1@V?$Point_@H@1@1AEBV?$Scalar_@N@1@HHH@Z
-	?minEnclosingCircle@cv@@YAXAEBV_InputArray@1@AEAV?$Point_@M@1@AEAM@Z
-	?morphologyEx@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@H0V?$Point_@H@1@HHAEBV?$Scalar_@N@1@@Z
-	?namedWindow@cv@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
-	?noArray@cv@@YAAEBV_OutputArray@1@XZ
-	?perspectiveTransform@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@0@Z
-	?pointPolygonTest@cv@@YANAEBV_InputArray@1@V?$Point_@M@1@_N@Z
-	?projectPoints@cv@@YAXAEBV_InputArray@1@0000AEBV_OutputArray@1@1N@Z
-	?putText@cv@@YAXAEAVMat@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$Point_@H@1@HNV?$Scalar_@N@1@HH_N@Z
-	?read@cv@@YAXAEBVFileNode@1@AEAVMat@1@AEBV31@@Z
-	?rectangle@cv@@YAXAEAVMat@1@V?$Point_@H@1@1AEBV?$Scalar_@N@1@HHH@Z
-	?Rodrigues@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@1@Z
-	?Sobel@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@HHHHNNH@Z
-	?solve@cv@@YA_NAEBV_InputArray@1@0AEBV_OutputArray@1@H@Z
-	?solvePnP@cv@@YA_NAEBV_InputArray@1@000AEBV_OutputArray@1@1_NH@Z
-	?stereoCalibrate@cv@@YANAEBV_InputArray@1@00AEBV_OutputArray@1@111V?$Size_@H@1@1111VTermCriteria@1@H@Z
-	?threshold@cv@@YANAEBV_InputArray@1@AEBV_OutputArray@1@NNH@Z
-	?undistortPoints@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@0000@Z
-	?waitKey@cv@@YAHH@Z
-	?warpPerspective@cv@@YAXAEBV_InputArray@1@AEBV_OutputArray@1@0V?$Size_@H@1@HHAEBV?$Scalar_@N@1@@Z
-	?write@cv@@YAXAEAVFileStorage@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVMat@1@@Z
-	?write@cv@@YAXAEAVFileStorage@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
-	?writeScalar@cv@@YAXAEAVFileStorage@1@M@Z
-	?channels@_InputArray@cv@@UEBAHH@Z
-	?depth@_InputArray@cv@@UEBAHH@Z
-	?empty@_InputArray@cv@@UEBA_NXZ
-	?getGlBuffer@_InputArray@cv@@UEBA?AVGlBuffer@2@XZ
-	?getGlTexture@_InputArray@cv@@UEBA?AVGlTexture@2@XZ
-	?getGpuMat@_InputArray@cv@@UEBA?AVGpuMat@gpu@2@XZ
-	?getMat@_InputArray@cv@@UEBA?AVMat@2@H@Z
-	?getMatVector@_InputArray@cv@@UEBAXAEAV?$vector@VMat@cv@@V?$allocator@VMat@cv@@@std@@@std@@@Z
-	?kind@_InputArray@cv@@UEBAHXZ
-	?size@_InputArray@cv@@UEBA?AV?$Size_@H@2@H@Z
-	?total@_InputArray@cv@@UEBA_KH@Z
-	?type@_InputArray@cv@@UEBAHH@Z
-	?clear@_OutputArray@cv@@UEBAXXZ
-	?create@_OutputArray@cv@@UEBAXHHHH_NH@Z
-	?create@_OutputArray@cv@@UEBAXHPEBHHH_NH@Z
-	?create@_OutputArray@cv@@UEBAXV?$Size_@H@2@HH_NH@Z
-	?fixedSize@_OutputArray@cv@@UEBA_NXZ
-	?fixedType@_OutputArray@cv@@UEBA_NXZ
-	?getMatRef@_OutputArray@cv@@UEBAAEAVMat@2@H@Z
-	?needed@_OutputArray@cv@@UEBA_NXZ
-	?release@_OutputArray@cv@@UEBAXXZ
-	?read@Algorithm@cv@@UEAAXAEBVFileNode@2@@Z
-	?write@Algorithm@cv@@UEBAXAEAVFileStorage@2@@Z
-	?clear@EM@cv@@UEAAXXZ
-	?eStep@EM@cv@@MEAAXXZ
-	?info@EM@cv@@UEBAPEAVAlgorithmInfo@2@XZ
-	?mStep@EM@cv@@MEAAXXZ
-	?predict@EM@cv@@QEBA?AV?$Vec@N$01@2@AEBV_InputArray@2@AEBV_OutputArray@2@@Z
-	?read@EM@cv@@UEAAXAEBVFileNode@2@@Z
-	?setTrainData@EM@cv@@MEAAXHAEBVMat@2@PEBV32@1PEBV?$vector@VMat@cv@@V?$allocator@VMat@cv@@@std@@@std@@1@Z
-	?train@EM@cv@@UEAA_NAEBV_InputArray@2@AEBV_OutputArray@2@11@Z
-	?trainE@EM@cv@@UEAA_NAEBV_InputArray@2@000AEBV_OutputArray@2@11@Z
-	?trainM@EM@cv@@UEAA_NAEBV_InputArray@2@0AEBV_OutputArray@2@11@Z
-	?what@Exception@cv@@UEBAPEBDXZ
-	?name@FileNode@cv@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
-	?readRaw@FileNodeIterator@cv@@QEAAAEAV12@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAE_K@Z
-	?release@FileStorage@cv@@UEAAXXZ
-	?get@Formatter@cv@@SAPEBV12@PEBD@Z
-	?convertTo@Mat@cv@@QEBAXAEBV_OutputArray@2@HNN@Z
-	?copySize@Mat@cv@@QEAAXAEBV12@@Z
-	?copyTo@Mat@cv@@QEBAXAEBV_OutputArray@2@@Z
-	?create@Mat@cv@@QEAAXHPEBHH@Z
-	?deallocate@Mat@cv@@QEAAXXZ
-	?eye@Mat@cv@@SA?AVMatExpr@2@HHH@Z
-	?inv@Mat@cv@@QEBA?AVMatExpr@2@H@Z
-	?mul@Mat@cv@@QEBA?AVMatExpr@2@AEBV_InputArray@2@N@Z
-	?setTo@Mat@cv@@QEAAAEAV12@AEBV_InputArray@2@0@Z
-	?zeros@Mat@cv@@SA?AVMatExpr@2@HHH@Z
-	?black@?$ofColor_@E@@2V1@B
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
 	?limit@?$ofColor_@E@@SAMXZ
-	?setBrightness@?$ofColor_@E@@QEAAXM@Z
-	?setHue@?$ofColor_@E@@QEAAXM@Z
-	?setHueAngle@?$ofColor_@E@@QEAAXM@Z
-	?white@?$ofColor_@E@@2V1@B
 	?allocate@?$ofImage_@E@@QEAAXHHW4ofImageType@@@Z
+	?bind@?$ofImage_@E@@QEBAXH@Z
 	?clear@?$ofImage_@E@@QEAAXXZ
-	?draw@?$ofImage_@E@@UEBAXMM@Z
-	?getPixelsRef@?$ofImage_@E@@QEAAAEAV?$ofPixels_@E@@XZ
 	?loadImage@?$ofImage_@E@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?setFromPixels@?$ofImage_@E@@QEAAXAEBV?$ofPixels_@E@@@Z
+	?unbind@?$ofImage_@E@@QEBAXH@Z
 	?update@?$ofImage_@E@@QEAAXXZ
-	?allocate@?$ofPixels_@E@@QEAAXHHH@Z
 	?allocate@?$ofPixels_@E@@QEAAXHHW4ofImageType@@@Z
-	?allocate@?$ofPixels_@E@@QEAAXHHW4ofPixelFormat@@@Z
 	?getBytesPerChannel@?$ofPixels_@E@@QEBAHXZ
 	?getData@?$ofPixels_@E@@QEAAPEAEXZ
-	?getData@?$ofPixels_@E@@QEBAPEBEXZ
 	?getHeight@?$ofPixels_@E@@QEBAHXZ
-	?getImageType@?$ofPixels_@E@@QEBA?AW4ofImageType@@XZ
 	?getNumChannels@?$ofPixels_@E@@QEBAHXZ
 	?getPixelFormat@?$ofPixels_@E@@QEBA?AW4ofPixelFormat@@XZ
 	?getPixels@?$ofPixels_@E@@QEAAPEAEXZ
-	?getPixels@?$ofPixels_@E@@QEBAPEBEXZ
-	?getTotalBytes@?$ofPixels_@E@@QEBAHXZ
 	?getWidth@?$ofPixels_@E@@QEBAHXZ
 	?isAllocated@?$ofPixels_@E@@QEBA_NXZ
+	?resize@?$ofPixels_@E@@QEAA_NHHW4ofInterpolationMethod@@@Z
 	?rotate90@?$ofPixels_@E@@QEAAXH@Z
-	?set@?$ofPixels_@E@@QEAAXE@Z
-	?setColor@?$ofPixels_@E@@QEAAXAEBV?$ofColor_@E@@@Z
-	?setFromExternalPixels@?$ofPixels_@E@@QEAAXPEAEHHW4ofPixelFormat@@@Z
-	?setFromPixels@?$ofPixels_@E@@QEAAXPEBEHHH@Z
-	?size@?$ofPixels_@E@@QEBAHXZ
 	?swap@?$ofPixels_@E@@QEAAXAEAV1@@Z
 	??0?$ofColor_@E@@QEAA@MM@Z
-	??0?$ofColor_@E@@QEAA@MMMM@Z
 	??0?$ofImage_@E@@QEAA@XZ
-	??0?$ofPixels_@E@@QEAA@$$QEAV0@@Z
-	??0?$ofPixels_@E@@QEAA@AEBV0@@Z
 	??0?$ofPixels_@E@@QEAA@XZ
 	??1?$ofImage_@E@@UEAA@XZ
 	??1?$ofPixels_@E@@QEAA@XZ
+	??4?$ofImage_@E@@QEAAAEAV0@AEAV?$ofPixels_@E@@@Z
 	??4?$ofImage_@E@@QEAAAEAV0@AEBV0@@Z
 	??4?$ofPixels_@E@@QEAAAEAV0@AEBV0@@Z
 	??A?$ofColor_@E@@QEBAAEBE_K@Z
-	?allocate@?$ofPixels_@G@@QEAAXHHW4ofImageType@@@Z
-	?allocate@?$ofPixels_@G@@QEAAXHHW4ofPixelFormat@@@Z
-	?getBytesPerChannel@?$ofPixels_@G@@QEBAHXZ
-	?getData@?$ofPixels_@G@@QEAAPEAGXZ
-	?getData@?$ofPixels_@G@@QEBAPEBGXZ
-	?getHeight@?$ofPixels_@G@@QEBAHXZ
-	?getNumChannels@?$ofPixels_@G@@QEBAHXZ
-	?getPixelFormat@?$ofPixels_@G@@QEBA?AW4ofPixelFormat@@XZ
-	?getPixels@?$ofPixels_@G@@QEAAPEAGXZ
-	?getPixels@?$ofPixels_@G@@QEBAPEBGXZ
-	?getTotalBytes@?$ofPixels_@G@@QEBAHXZ
-	?getWidth@?$ofPixels_@G@@QEBAHXZ
-	?isAllocated@?$ofPixels_@G@@QEBA_NXZ
-	?setFromExternalPixels@?$ofPixels_@G@@QEAAXPEAGHHW4ofPixelFormat@@@Z
-	?setFromPixels@?$ofPixels_@G@@QEAAXPEBGHHH@Z
-	?size@?$ofPixels_@G@@QEBAHXZ
-	?swap@?$ofPixels_@G@@QEAAXAEAV1@@Z
-	??0?$ofPixels_@G@@QEAA@AEBV0@@Z
-	??0?$ofPixels_@G@@QEAA@XZ
-	??1?$ofPixels_@G@@QEAA@XZ
-	??4?$ofPixels_@G@@QEAAAEAV0@AEBV0@@Z
-	?allocate@?$ofPixels_@H@@QEAAXHHH@Z
-	?clear@?$ofPixels_@H@@QEAAXXZ
-	?getData@?$ofPixels_@H@@QEAAPEAHXZ
-	?getHeight@?$ofPixels_@H@@QEBAHXZ
-	?getWidth@?$ofPixels_@H@@QEBAHXZ
-	?isAllocated@?$ofPixels_@H@@QEBA_NXZ
-	?set@?$ofPixels_@H@@QEAAXHH@Z
-	??0?$ofPixels_@H@@QEAA@XZ
-	??1?$ofPixels_@H@@QEAA@XZ
-	??0?$ofPixels_@I@@QEAA@AEBV0@@Z
-	??0?$ofPixels_@I@@QEAA@XZ
-	??1?$ofPixels_@I@@QEAA@XZ
-	??4?$ofPixels_@I@@QEAAAEAV0@AEBV0@@Z
-	??0FastWriter@Json@@QEAA@XZ
-	??0Reader@Json@@QEAA@XZ
-	??0StyledWriter@Json@@QEAA@XZ
-	??0Value@Json@@QEAA@_J@Z
-	??0Value@Json@@QEAA@_K@Z
 	??0Value@Json@@QEAA@_N@Z
 	??0Value@Json@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??0Value@Json@@QEAA@AEBV01@@Z
 	??0Value@Json@@QEAA@H@Z
-	??0Value@Json@@QEAA@I@Z
-	??0Value@Json@@QEAA@N@Z
-	??0Value@Json@@QEAA@W4ValueType@1@@Z
 	??1Value@Json@@QEAA@XZ
-	??1Writer@Json@@UEAA@XZ
 	??4Value@Json@@QEAAAEAV01@AEBV01@@Z
 	??AValue@Json@@QEAAAEAV01@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??AValue@Json@@QEAAAEAV01@H@Z
 	??AValue@Json@@QEAAAEAV01@PEBD@Z
 	??AValue@Json@@QEBAAEBV01@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??AValue@Json@@QEBAAEBV01@H@Z
 	??AValue@Json@@QEBAAEBV01@PEBD@Z
-	?write@FastWriter@Json@@UEAA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVValue@2@@Z
-	?parse@Reader@Json@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAVValue@2@_N@Z
-	?write@StyledWriter@Json@@UEAA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVValue@2@@Z
 	?asBool@Value@Json@@QEBA_NXZ
-	?asFloat@Value@Json@@QEBAMXZ
 	?asInt@Value@Json@@QEBAHXZ
-	?asLargestUInt@Value@Json@@QEBA_KXZ
 	?asString@Value@Json@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?begin@Value@Json@@QEBA?AVValueConstIterator@2@XZ
-	?empty@Value@Json@@QEBA_NXZ
 	?end@Value@Json@@QEBA?AVValueConstIterator@2@XZ
 	?getMemberNames@Value@Json@@QEBA?AV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$allocator@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@std@@XZ
-	?size@Value@Json@@QEBAIXZ
+	?isNull@Value@Json@@QEBA_NXZ
 	?deref@ValueIteratorBase@Json@@IEBAAEAVValue@2@XZ
 	?increment@ValueIteratorBase@Json@@IEAAXXZ
 	?isEqual@ValueIteratorBase@Json@@IEBA_NAEBV12@@Z
 	?limit@?$ofColor_@M@@SAMXZ
-	?setHsb@?$ofColor_@M@@QEAAXMMMM@Z
-	?allocate@?$ofPixels_@M@@QEAAXHHW4ofImageType@@@Z
-	?allocate@?$ofPixels_@M@@QEAAXHHW4ofPixelFormat@@@Z
-	?getData@?$ofPixels_@M@@QEAAPEAMXZ
-	?getData@?$ofPixels_@M@@QEBAPEBMXZ
-	?getHeight@?$ofPixels_@M@@QEBAHXZ
-	?getPixelFormat@?$ofPixels_@M@@QEBA?AW4ofPixelFormat@@XZ
-	?getPixels@?$ofPixels_@M@@QEAAPEAMXZ
-	?getWidth@?$ofPixels_@M@@QEBAHXZ
-	?isAllocated@?$ofPixels_@M@@QEBA_NXZ
-	?set@?$ofPixels_@M@@QEAAXM@Z
-	?setFromPixels@?$ofPixels_@M@@QEAAXPEBMHHH@Z
-	?size@?$ofPixels_@M@@QEBAHXZ
-	?swap@?$ofPixels_@M@@QEAAXAEAV1@@Z
-	??0?$ofColor_@M@@QEAA@MM@Z
-	??0?$ofPixels_@M@@QEAA@XZ
-	??1?$ofPixels_@M@@QEAA@XZ
-	??A?$ofColor_@M@@QEBAAEBM_K@Z
-	??A?$ofPixels_@M@@QEAAAEAMH@Z
-	??X?$ofColor_@M@@QEAAAEAV0@AEBM@Z
 	??1BaseFunctionId@priv@of@@UEAA@XZ
 	?escape@ofAbstractParameter@@MEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@@Z
 	?getEscapedName@ofAbstractParameter@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -418,96 +144,26 @@ EXPORTS
 	?audioOut@ofBaseSoundOutput@@UEAAXAEAVofSoundBuffer@@@Z
 	?audioOut@ofBaseSoundOutput@@UEAAXPEAMHH@Z
 	?audioOut@ofBaseSoundOutput@@UEAAXPEAMHHH_K@Z
-	?clear@ofBuffer@@QEAAXXZ
-	?getBinaryBuffer@ofBuffer@@QEAAPEADXZ
-	?getBinaryBuffer@ofBuffer@@QEBAPEBDXZ
-	?getData@ofBuffer@@QEAAPEADXZ
-	?set@ofBuffer@@QEAA_NAEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
-	?set@ofBuffer@@QEAAXPEBD_K@Z
-	?size@ofBuffer@@QEBA_KXZ
-	?createDirectory@ofDirectory@@SA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N1@Z
-	?exists@ofDirectory@@QEBA_NXZ
 	??0Settings@ofFbo@@QEAA@V?$shared_ptr@VofBaseGLRenderer@@@std@@@Z
-	?allocate@ofFbo@@QEAAXHHHH@Z
 	?allocate@ofFbo@@QEAAXUSettings@1@@Z
 	?begin@ofFbo@@QEBAX_N@Z
 	?end@ofFbo@@QEBAXXZ
-	?getDepthTexture@ofFbo@@QEAAAEAVofTexture@@XZ
-	?isAllocated@ofFbo@@QEBA_NXZ
-	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@E@@H@Z
-	?doesFileExist@ofFile@@SA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
-	?open@ofFile@@QEAA_NAEBVpath@filesystem@boost@@W4Mode@1@_N@Z
-	?removeFile@ofFile@@SA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
-	?removeExt@ofFilePath@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@@Z
+	?exists@ofFile@@QEBA_NXZ
 	?defaultSetting@ofImageLoadSettings@@2U1@A
 	?getPadding@ofLog@@CAAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getInverse@ofMatrix4x4@@QEBA?AV1@XZ
 	?makeFromMultiplicationOf@ofMatrix4x4@@QEAAXAEBV1@0@Z
 	?makeIdentityMatrix@ofMatrix4x4@@QEAAXXZ
-	?makeRotationMatrix@ofMatrix4x4@@QEAAXMMMM@Z
-	?makeScaleMatrix@ofMatrix4x4@@QEAAXMMM@Z
-	?makeTranslationMatrix@ofMatrix4x4@@QEAAXMMM@Z
-	?postMult@ofMatrix4x4@@QEAAXAEBV1@@Z
 	?addColor@ofMesh@@QEAAXAEBV?$ofColor_@M@@@Z
-	?addIndex@ofMesh@@QEAAXI@Z
-	?addIndices@ofMesh@@QEAAXAEBV?$vector@IV?$allocator@I@std@@@std@@@Z
-	?addIndices@ofMesh@@QEAAXPEBI_K@Z
-	?addTexCoord@ofMesh@@QEAAXAEBVofVec2f@@@Z
+	?addTexCoords@ofMesh@@QEAAXAEBV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@std@@@Z
 	?addVertex@ofMesh@@QEAAXAEBVofVec3f@@@Z
-	?addVertices@ofMesh@@QEAAXPEBVofVec3f@@_K@Z
+	?addVertices@ofMesh@@QEAAXAEBV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@@Z
 	?clear@ofMesh@@QEAAXXZ
-	?clearIndices@ofMesh@@QEAAXXZ
-	?clearTexCoords@ofMesh@@QEAAXXZ
 	?clearVertices@ofMesh@@QEAAXXZ
-	?disableColors@ofMesh@@UEAAXXZ
-	?disableIndices@ofMesh@@UEAAXXZ
-	?disableNormals@ofMesh@@UEAAXXZ
-	?disableTextures@ofMesh@@UEAAXXZ
 	?draw@ofMesh@@QEBAXXZ
-	?draw@ofMesh@@UEBAXW4ofPolyRenderMode@@@Z
 	?drawFaces@ofMesh@@QEBAXXZ
-	?drawVertices@ofMesh@@QEBAXXZ
-	?drawWireframe@ofMesh@@QEBAXXZ
-	?enableColors@ofMesh@@UEAAXXZ
-	?enableIndices@ofMesh@@UEAAXXZ
-	?enableNormals@ofMesh@@UEAAXXZ
-	?enableTextures@ofMesh@@UEAAXXZ
-	?getColors@ofMesh@@QEAAAEAV?$vector@V?$ofColor_@M@@V?$allocator@V?$ofColor_@M@@@std@@@std@@XZ
-	?getColorsPointer@ofMesh@@QEAAPEAV?$ofColor_@M@@XZ
-	?getColorsPointer@ofMesh@@QEBAPEBV?$ofColor_@M@@XZ
-	?getIndexPointer@ofMesh@@QEAAPEAIXZ
-	?getIndexPointer@ofMesh@@QEBAPEBIXZ
-	?getIndices@ofMesh@@QEAAAEAV?$vector@IV?$allocator@I@std@@@std@@XZ
-	?getMode@ofMesh@@QEBA?AW4ofPrimitiveMode@@XZ
-	?getNormals@ofMesh@@QEAAAEAV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@XZ
-	?getNormalsPointer@ofMesh@@QEAAPEAVofVec3f@@XZ
-	?getNormalsPointer@ofMesh@@QEBAPEBVofVec3f@@XZ
-	?getNumColors@ofMesh@@QEBA_KXZ
-	?getNumIndices@ofMesh@@QEBA_KXZ
-	?getNumNormals@ofMesh@@QEBA_KXZ
-	?getNumTexCoords@ofMesh@@QEBA_KXZ
-	?getNumVertices@ofMesh@@QEBA_KXZ
-	?getTexCoords@ofMesh@@QEAAAEAV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@std@@XZ
-	?getTexCoordsPointer@ofMesh@@QEAAPEAVofVec2f@@XZ
-	?getTexCoordsPointer@ofMesh@@QEBAPEBVofVec2f@@XZ
-	?getVertex@ofMesh@@QEBA?AVofVec3f@@I@Z
-	?getVertices@ofMesh@@QEAAAEAV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@XZ
-	?getVerticesPointer@ofMesh@@QEAAPEAVofVec3f@@XZ
-	?getVerticesPointer@ofMesh@@QEBAPEBVofVec3f@@XZ
 	?setMode@ofMesh@@QEAAXW4ofPrimitiveMode@@@Z
-	?usingColors@ofMesh@@UEBA_NXZ
-	?usingIndices@ofMesh@@UEBA_NXZ
-	?usingNormals@ofMesh@@UEBA_NXZ
-	?usingTextures@ofMesh@@UEBA_NXZ
-	?boom@ofNode@@QEAAXM@Z
-	?getGlobalTransformMatrix@ofNode@@QEBA?AVofMatrix4x4@@XZ
-	?getOrientationQuat@ofNode@@QEBA?AVofQuaternion@@XZ
-	?getPosition@ofNode@@QEBA?AVofVec3f@@XZ
-	?lookAt@ofNode@@QEAAXAEBVofVec3f@@@Z
-	?lookAt@ofNode@@QEAAXAEBVofVec3f@@V2@@Z
-	?setPosition@ofNode@@QEAAXAEBVofVec3f@@@Z
 	?add@ofParameterGroup@@QEAAXAEAVofAbstractParameter@@@Z
-	?clear@ofParameterGroup@@QEAAXXZ
 	?fromString@ofParameterGroup@@UEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?getEscapedName@ofParameterGroup@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getFirstParent@ofParameterGroup@@EEBA?BV1@XZ
@@ -521,152 +177,60 @@ EXPORTS
 	?setSerializable@ofParameterGroup@@UEAAX_N@Z
 	?toString@ofParameterGroup@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?notifyParameterChanged@Value@ofParameterGroup@@QEAAXAEAVofAbstractParameter@@@Z
-	?addVertex@ofPolyline@@QEAAXAEBVofVec3f@@@Z
-	?close@ofPolyline@@QEAAXXZ
-	?draw@ofPolyline@@QEBAXXZ
-	?getRotate@ofQuaternion@@QEBAXAEAMAEAVofVec3f@@@Z
-	?set@ofQuaternion@@QEAAXAEBVofMatrix4x4@@@Z
-	?getBottomLeft@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?getBottomRight@ofRectangle@@QEBA?AVofVec3f@@XZ
-	?getCenter@ofRectangle@@QEBA?AVofVec3f@@XZ
-	?getHeight@ofRectangle@@QEBAMXZ
-	?getTopLeft@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?getTopRight@ofRectangle@@QEBA?AVofVec3f@@XZ
-	?getWidth@ofRectangle@@QEBAMXZ
-	?inside@ofRectangle@@QEBA_NAEBVofVec3f@@@Z
-	?setFromCenter@ofRectangle@@QEAAXAEBVofVec3f@@MM@Z
 	?close@ofSerial@@QEAAXXZ
 	?isInitialized@ofSerial@@QEBA_NXZ
 	?setup@ofSerial@@QEAA_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?writeBytes@ofSerial@@QEAAJPEBE_K@Z
-	?begin@ofShader@@QEBAXXZ
-	?end@ofShader@@QEBAXXZ
-	?setUniform1f@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@M@Z
-	?setUniform1i@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
-	?setUniform2f@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofVec2f@@@Z
-	?setUniformTexture@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVofTexture@@H@Z
-	?bind@ofTexture@@QEBAXH@Z
-	?clear@ofTexture@@QEAAXXZ
 	?isAllocated@ofTexture@@QEBA_NXZ
 	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@E@@@Z
-	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@G@@@Z
-	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@M@@@Z
-	?readToPixels@ofTexture@@QEBAXAEAV?$ofPixels_@M@@@Z
-	?unbind@ofTexture@@QEBAXH@Z
-	?isThreadRunning@ofThread@@QEBA_NXZ
-	?lock@ofThread@@QEAA_NXZ
-	?startThread@ofThread@@QEAAX_N@Z
-	?unlock@ofThread@@QEAAXXZ
-	?waitForThread@ofThread@@QEAAX_NJ@Z
+	?setTextureMinMagFilter@ofTexture@@QEAAXHH@Z
 	?drawString@ofTrueTypeFont@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM@Z
 	?getStringBoundingBox@ofTrueTypeFont@@QEBA?AVofRectangle@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM_N@Z
-	?clear@ofVbo@@QEAAXXZ
-	?draw@ofVbo@@QEBAXHHH@Z
-	?setColorData@ofVbo@@QEAAXPEBV?$ofColor_@M@@HH@Z
-	?setIndexData@ofVbo@@QEAAXPEBIHH@Z
-	?setVertexData@ofVbo@@QEAAXPEBVofVec2f@@HH@Z
-	?setVertexData@ofVbo@@QEAAXPEBVofVec3f@@HH@Z
-	?draw@ofVideoPlayer@@UEBAXMM@Z
-	?load@ofVideoPlayer@@UEAA_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?play@ofVideoPlayer@@UEAAXXZ
-	?update@ofVideoPlayer@@UEAAXXZ
-	?load@ObjLoader@ofx@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAVofMesh@@_N2@Z
 	??0Register@ofxAssets@@QEAA@XZ
 	?font@ofxAssets@@YAAEAVofTrueTypeFont@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	?image@ofxAssets@@YAAEAV?$ofImage_@E@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?shader@ofxAssets@@YAAEAVofShader@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?addAddon@Register@ofxAssets@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?getShaderPointer@Register@ofxAssets@@QEAA?AV?$shared_ptr@VShader@ofxAssets@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?getSingletonStore@?$Singleton@VRegister@ofxAssets@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
-	?calibrateProjector@ofxCv@@YAMAEAVMat@cv@@00V?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@V?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@5@HH_NMM3H@Z
-	?findChessboardCornersPreTest@ofxCv@@YA_NVMat@cv@@V?$Size_@H@3@AEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@H@Z
+	?decomposeMatrix@ofxCv@@YAXAEBVofMatrix4x4@@AEAVMat@cv@@1@Z
 	?getMaxVal@ofxCv@@YAMAEBVMat@cv@@@Z
-	?makeCheckerboardMesh@ofxCv@@YA?AVofMesh@@V?$Size_@H@cv@@M_N@Z
-	?makeCheckerboardPoints@ofxCv@@YA?AV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@V?$Size_@H@cv@@M_N@Z
 	?makeMatrix@ofxCv@@YA?AVofMatrix4x4@@VMat@cv@@0@Z
 	?toCv@ofxCv@@YA?AVMat@cv@@AEAV23@@Z
-	?toCv@ofxCv@@YAAEAV?$Point_@M@cv@@AEAVofVec2f@@@Z
-	?toCv@ofxCv@@YAAEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@AEAV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@3@@Z
+	?toCv@ofxCv@@YAAEAV?$Point3_@M@cv@@AEAVofVec3f@@@Z
 	?toCv@ofxCv@@YAAEAV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@AEAV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@3@@Z
-	?toCv@ofxCv@@YAAEAV?$vector@V?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@V?$allocator@V?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@@2@@std@@AEAV?$vector@V?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@std@@V?$allocator@V?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@std@@@2@@3@@Z
-	?toCv@ofxCv@@YAAEAV?$vector@V?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@V?$allocator@V?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@@2@@std@@AEAV?$vector@V?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@V?$allocator@V?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@@2@@3@@Z
 	?toOf@ofxCv@@YA?AVofRectangle@@V?$Rect_@H@cv@@@Z
 	?toOf@ofxCv@@YAAEAVofVec2f@@AEAV?$Point_@M@cv@@@Z
 	?toOf@ofxCv@@YAAEAVofVec3f@@AEAV?$Point3_@M@cv@@@Z
-	?toOf@ofxCv@@YAAEBV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@AEBV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@3@@Z
-	?toOf@ofxCv@@YAAEBVofVec2f@@AEBV?$Point_@M@cv@@@Z
-	?undistortPoint@ofxCv@@YA?AVofVec2f@@AEBV2@VMat@cv@@1@Z
+	?toOf@ofxCv@@YAAEBVofVec3f@@AEBV?$Point3_@M@cv@@@Z
 	??0Controller@ofxCvGui@@QEAA@XZ
 	??0Element@ofxCvGui@@QEAA@XZ
-	?closeDialog@ofxCvGui@@YAXXZ
 	?getDefaultTypeface@ofxCvGui@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?makeElement@ofxCvGui@@YA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
-	?makeElementGroup@ofxCvGui@@YA?AV?$shared_ptr@VElementGroup@ofxCvGui@@@std@@XZ
-	?openDialog@ofxCvGui@@YAXV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@Z
-	?refreshInspector@ofxCvGui@@YAXPEAVIInspectable@1@@Z
 	?init@Builder@ofxCvGui@@QEAAXXZ
+	?addChild@Element@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?addListenersToParent@Element@ofxCvGui@@QEAAXPEAV12@_N@Z
-	?addListenersToParent@Element@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@_N@Z
-	?arrange@Element@ofxCvGui@@QEAAXXZ
 	?getBounds@Element@ofxCvGui@@QEBAAEBVofRectangle@@XZ
 	?getCaption@Element@ofxCvGui@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
-	?getHeight@Element@ofxCvGui@@QEBAMXZ
 	?getWidth@Element@ofxCvGui@@QEBAMXZ
-	?isMouseDragging@Element@ofxCvGui@@QEBA_NXZ
 	?setBounds@Element@ofxCvGui@@QEAAXAEBVofRectangle@@@Z
 	?setCaption@Element@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?setEnabled@Element@ofxCvGui@@QEAAX_N@Z
 	?setHeight@Element@ofxCvGui@@QEAAXM@Z
-	?setScissorEnabled@Element@ofxCvGui@@QEAAX_N@Z
-	?isBeingInspected@IInspectable@ofxCvGui@@QEBA_NXZ
-	?isLocal@MouseArguments@ofxCvGui@@QEBA_NXZ
-	?takeMousePress@MouseArguments@ofxCvGui@@QEAA_NV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
-	??0Base@Panels@ofxCvGui@@QEAA@XZ
-	??0Draws@Panels@ofxCvGui@@QEAA@AEAVofBaseDraws@@@Z
-	??0Draws@Panels@ofxCvGui@@QEAA@XZ
-	??0Image@Panels@ofxCvGui@@QEAA@AEAVofAbstractImage@@@Z
-	??0Scroll@Panels@ofxCvGui@@QEAA@XZ
-	??0Texture@Panels@ofxCvGui@@QEAA@AEBVofTexture@@@Z
-	??0World@Panels@ofxCvGui@@QEAA@XZ
 	?makeBaseDraws@Panels@ofxCvGui@@YA?AV?$shared_ptr@VDraws@Panels@ofxCvGui@@@std@@AEAVofBaseDraws@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeImage@Panels@ofxCvGui@@YA?AV?$shared_ptr@VImage@Panels@ofxCvGui@@@std@@AEAV?$ofImage_@E@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
-	?makeTexture@Panels@ofxCvGui@@YA?AV?$shared_ptr@VTexture@Panels@ofxCvGui@@@std@@AEBVofTexture@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeWidgets@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWidgets@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
-	?getPanelToImageTransform@BaseImage@Panels@ofxCvGui@@QEBA?AVofMatrix4x4@@XZ
-	?clearDrawObject@Draws@Panels@ofxCvGui@@QEAAXXZ
-	?getDrawObject@Draws@Panels@ofxCvGui@@QEBAPEAVofBaseDraws@@XZ
-	?setDrawObject@Draws@Panels@ofxCvGui@@QEAAXAEAVofBaseDraws@@@Z
-	??0Grid@Groups@Panels@ofxCvGui@@QEAA@XZ
-	??0Strip@Groups@Panels@ofxCvGui@@QEAA@W4Direction@0123@@Z
-	?makeStrip@Groups@Panels@ofxCvGui@@YA?AV?$shared_ptr@VStrip@Groups@Panels@ofxCvGui@@@std@@W4Direction@Strip@123@@Z
-	?setCellSizes@Strip@Groups@Panels@ofxCvGui@@QEAAXAEBV?$initializer_list@H@std@@@Z
-	?setDirection@Strip@Groups@Panels@ofxCvGui@@QEAAXW4Direction@1234@@Z
+	?makeWorld@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWorld@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?add@Scroll@Panels@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?clear@Scroll@Panels@ofxCvGui@@QEAAXXZ
-	?getElementGroup@Scroll@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VElementGroup@ofxCvGui@@@std@@XZ
-	?setInputRange@Texture@Panels@ofxCvGui@@QEAAXMM@Z
-	?setStyle@Texture@Panels@ofxCvGui@@QEAAXV?$shared_ptr@UStyle@Texture@Panels@ofxCvGui@@@std@@@Z
-	?add@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@Z
-	?clear@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXXZ
-	?getElements@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAAEAV?$vector@V?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@V?$allocator@V?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@2@@std@@XZ
 	?getInstance@?$UnmanagedSingleton@VWidgetsBuilder@Panels@ofxCvGui@@@ofxSingleton@@SA?AV?$shared_ptr@VWidgetsBuilder@Panels@ofxCvGui@@@std@@XZ
 	?addButton@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VButton@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6AXXZ@5@D@Z
-	?addIndicator@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A?AW4Status@Indicator@Widgets@ofxCvGui@@XZ@5@@Z
-	?addIndicatorBool@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A_NXZ@5@@Z
 	?addLiveValueHistory@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VLiveValueHistory@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6AMXZ@5@@Z
 	?addParameterGroup@Widgets@Panels@ofxCvGui@@QEAAXAEAVofParameterGroup@@H@Z
-	?addSlider@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VSlider@Widgets@ofxCvGui@@@std@@AEAV?$ofParameter@M@@@Z
 	?addTitle@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VTitle@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@W4Level@Title@13@@Z
-	?addToggle@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VToggle@Widgets@ofxCvGui@@@std@@AEAV?$ofParameter@_N@@@Z
-	?getCamera@World@Panels@ofxCvGui@@QEAAAEAVofxGrabCam@@XZ
-	??0ScissorManager@Utils@ofxCvGui@@QEAA@XZ
+	?setGridEnabled@World@Panels@ofxCvGui@@QEAAX_N@Z
 	?drawProcessingNotice@Utils@ofxCvGui@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?drawText@Utils@ofxCvGui@@YA?AVofRectangle@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV3@_N2@Z
 	?drawText@Utils@ofxCvGui@@YA?AVofRectangle@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM_NMM1@Z
-	?getBeatingSelectionColor@Utils@ofxCvGui@@YA?AV?$ofColor_@E@@XZ
-	?getScissorEnabled@ScissorManager@Utils@ofxCvGui@@QEBA_NXZ
-	?setScissorEnabled@ScissorManager@Utils@ofxCvGui@@QEAAX_N@Z
-	?getSingletonStore@?$Singleton@VScissorManager@Utils@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	?getSingletonStore@?$Singleton@VController@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	?add@?$ElementGroup_@VElement@ofxCvGui@@@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?clear@?$ElementGroup_@VElement@ofxCvGui@@@ofxCvGui@@QEAAXXZ
@@ -675,224 +239,82 @@ EXPORTS
 	??1?$ElementGroup_@VElement@ofxCvGui@@@ofxCvGui@@UEAA@XZ
 	??0Button@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXXZ@4@D@Z
 	??0MultipleChoice@Widgets@ofxCvGui@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??0Slider@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@M@@@Z
-	??0Spacer@Widgets@ofxCvGui@@QEAA@XZ
-	??0Title@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4Level@012@@Z
-	??0Toggle@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@_N@@D@Z
 	?addOption@MultipleChoice@Widgets@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?addOptions@MultipleChoice@Widgets@ofxCvGui@@QEAAXV?$initializer_list@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@Z
 	?getSelectionIndex@MultipleChoice@Widgets@ofxCvGui@@QEBAHXZ
 	?setSelection@MultipleChoice@Widgets@ofxCvGui@@QEAAXH@Z
-	?addIntValidator@Slider@Widgets@ofxCvGui@@QEAAXXZ
-	?setHotKey@Toggle@Widgets@ofxCvGui@@QEAAXD@Z
-	??0BaseCodec@ofxGraycode@@QEAA@XZ
-	??0DataSet@ofxGraycode@@QEAA@XZ
-	??0Payload@ofxGraycode@@QEAA@XZ
-	??5Encoder@ofxGraycode@@QEAA_NAEAV?$ofImage_@E@@@Z
-	??6Decoder@ofxGraycode@@QEAAXAEBV?$ofPixels_@E@@@Z
-	?getFrame@BaseCodec@ofxGraycode@@QEBAHXZ
-	?init@BaseCodec@ofxGraycode@@QEAAXAEAVPayload@2@@Z
-	??9const_iterator@DataSet@ofxGraycode@@QEBA_NAEBU012@@Z
-	??Dconst_iterator@DataSet@ofxGraycode@@QEBA?AUreference@012@XZ
-	??Econst_iterator@DataSet@ofxGraycode@@QEAAXXZ
-	?begin@DataSet@ofxGraycode@@QEBA?AUconst_iterator@12@XZ
-	?end@DataSet@ofxGraycode@@QEBA?AUconst_iterator@12@XZ
-	?getActive@DataSet@ofxGraycode@@QEBAAEBV?$ofPixels_@E@@XZ
-	?getPayloadHeight@DataSet@ofxGraycode@@QEBAIXZ
-	?getPayloadSize@DataSet@ofxGraycode@@QEBAIXZ
-	?getPayloadWidth@DataSet@ofxGraycode@@QEBAIXZ
-	?load@DataSet@ofxGraycode@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?save@DataSet@ofxGraycode@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?getCameraXY@reference@const_iterator@DataSet@ofxGraycode@@QEBA?AVofVec2f@@XZ
-	?getProjectorXY@reference@const_iterator@DataSet@ofxGraycode@@QEBA?AVofVec2f@@XZ
-	?clear@Decoder@ofxGraycode@@QEAAXXZ
-	?draw@Decoder@ofxGraycode@@UEBAXMM@Z
-	?draw@Decoder@ofxGraycode@@UEBAXMMMM@Z
-	?getDataSet@Decoder@ofxGraycode@@QEBAAEBVDataSet@2@XZ
-	?getHeight@Decoder@ofxGraycode@@UEBAMXZ
-	?getWidth@Decoder@ofxGraycode@@UEBAMXZ
-	?hasData@Decoder@ofxGraycode@@QEBA_NXZ
-	?loadDataSet@Decoder@ofxGraycode@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
-	?saveDataSet@Decoder@ofxGraycode@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?savePreviews@Decoder@ofxGraycode@@QEAAXXZ
-	?setThreshold@Decoder@ofxGraycode@@QEAAXE@Z
-	?reset@Encoder@ofxGraycode@@UEAAXXZ
-	?init@Payload@ofxGraycode@@QEAAXII@Z
-	?calc@PayloadGraycode@ofxGraycode@@UEBAXAEBV?$vector@V?$ofPixels_@E@@V?$allocator@V?$ofPixels_@E@@@std@@@std@@AEAVDataSet@2@@Z
-	?fillPixels@PayloadGraycode@ofxGraycode@@UEBAXIAEAV?$ofPixels_@E@@@Z
-	?getImageType@PayloadGraycode@ofxGraycode@@UEBA?AW4ofImageType@@XZ
-	?render@PayloadGraycode@ofxGraycode@@MEAAXXZ
-	??0Frame@ofxMachineVision@@QEAA@XZ
 	??0Specification@ofxMachineVision@@QEAA@AEBV01@@Z
-	??0Specification@ofxMachineVision@@QEAA@HHV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@00@Z
+	??0Specification@ofxMachineVision@@QEAA@W4CaptureSequenceType@1@HHV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@11@Z
 	??0Specification@ofxMachineVision@@QEAA@XZ
-	??1Frame@ofxMachineVision@@QEAA@XZ
 	??0FactoryRegister@Device@ofxMachineVision@@QEAA@XZ
 	?getSingletonStore@?$Singleton@VFactoryRegister@Device@ofxMachineVision@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
-	?lockForReading@Frame@ofxMachineVision@@QEAA_NXZ
-	?lockForWriting@Frame@ofxMachineVision@@QEAA_NXZ
-	?unlockForWriting@Frame@ofxMachineVision@@QEAAXXZ
-	?getDevice@Base@Grabber@ofxMachineVision@@QEBA?AV?$shared_ptr@VBase@Device@ofxMachineVision@@@std@@XZ
-	?getFreshFrame@Simple@Grabber@ofxMachineVision@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@_NM@Z
-	?addFeature@Specification@ofxMachineVision@@QEAAXAEBW4Feature@2@@Z
-	?supports@Specification@ofxMachineVision@@QEBA_NAEBW4Feature@2@@Z
-	??0Algorithm@ofxNonLinearFit@@QEAA@W4algorithm@nlopt@@W4Domain@01@@Z
-	?getCPPType@Algorithm@ofxNonLinearFit@@UEBA?AW4algorithm@nlopt@@XZ
-	?getCType@Algorithm@ofxNonLinearFit@@UEBA?AW4nlopt_algorithm@@XZ
-	?getDomain@Algorithm@ofxNonLinearFit@@UEBA?AW4Domain@12@XZ
-	?cacheModel@RigidBody@Models@ofxNonLinearFit@@UEAAXXZ
-	?evaluate@RigidBody@Models@ofxNonLinearFit@@UEBAXAEAURigidBodyDataPoint@23@@Z
-	?getCachedTransform@RigidBody@Models@ofxNonLinearFit@@QEBAAEBVofMatrix4x4@@XZ
-	?getParameterCount@RigidBody@Models@ofxNonLinearFit@@UEBAIXZ
-	?getResidual@RigidBody@Models@ofxNonLinearFit@@UEBANURigidBodyDataPoint@23@@Z
-	?addFloatArg@ofxOscMessage@@QEAAXM@Z
-	?getArgAsFloat@ofxOscMessage@@QEBAMH@Z
-	?getArgAsInt@ofxOscMessage@@QEBAHH@Z
-	?getNextMessage@ofxOscReceiver@@QEAA_NAEAVofxOscMessage@@@Z
-	?hasWaitingMessages@ofxOscReceiver@@QEAA_NXZ
-	?setup@ofxOscReceiver@@QEAA_NH@Z
-	?sendMessage@ofxOscSender@@QEAAXAEAVofxOscMessage@@_N@Z
-	?setup@ofxOscSender@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
-	??0Plane@ofxRay@@QEAA@XZ
-	??0Ray@ofxRay@@QEAA@XZ
-	?draw@Plane@ofxRay@@UEBAXXZ
-	?fitToPoints@Plane@ofxRay@@QEAA_NAEBV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@AEAM@Z
-	?getDistanceTo@Plane@ofxRay@@QEBAMAEBVofVec3f@@@Z
-	?randomiseVectors@Plane@ofxRay@@UEAAXM@Z
-	?setScale@Plane@ofxRay@@QEAAXAEBVofVec2f@@@Z
-	?beginAsCamera@Projector@ofxRay@@QEBAX_N@Z
-	?drawOnNearPlane@Projector@ofxRay@@QEBAXAEAVofTexture@@_N@Z
-	?endAsCamera@Projector@ofxRay@@QEBAXXZ
-	?getClippedProjectionMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
-	?getProjectionMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
-	?getScreenCoordinateOfWorldPosition@Projector@ofxRay@@QEBA?AVofVec3f@@V3@@Z
-	?getViewMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
-	?closestPointOnRayTo@Ray@ofxRay@@QEBA?AVofVec3f@@AEBV3@@Z
-	?distanceTo@Ray@ofxRay@@QEBAMAEBVofVec3f@@@Z
-	?draw@Ray@ofxRay@@UEBAXXZ
-	?randomiseVectors@Ray@ofxRay@@UEAAXM@Z
+	?getAvailableAllocatedFrame@FramePool@ofxMachineVision@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@HHW4ofPixelFormat@@@Z
+	?getAvailableFrameFilledWith@FramePool@ofxMachineVision@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@AEBV?$ofPixels_@E@@@Z
+	?getAvailableFrameFilledWith@FramePool@ofxMachineVision@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@PEBE_K1W4ofPixelFormat@@@Z
+	?getFrame@Simple@Grabber@ofxMachineVision@@QEBA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
+	?getInstance@?$UnmanagedSingleton@VFramePool@ofxMachineVision@@@ofxSingleton@@SA?AV?$shared_ptr@VFramePool@ofxMachineVision@@@std@@XZ
 	??0Exception@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??0Channel@Channels@Data@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	??AChannel@Channels@Data@ofxRulr@@QEAAAEAV0123@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?getSubChannels@Channel@Channels@Data@ofxRulr@@QEAAAEAV?$map@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$shared_ptr@VChannel@Channels@Data@ofxRulr@@@2@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$shared_ptr@VChannel@Channels@Data@ofxRulr@@@2@@std@@@2@@std@@XZ
-	?getValueType@Channel@Channels@Data@ofxRulr@@QEBA?AW4Type@1234@XZ
-	?removeSubChannel@Channel@Channels@Data@ofxRulr@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?what@Exception@ofxRulr@@UEBAPEBDXZ
 	??0AbstractPin@Graph@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0World@Graph@ofxRulr@@QEAA@XZ
 	??0Patch@Editor@Graph@ofxRulr@@QEAA@XZ
 	?setup@PinView@Editor@Graph@ofxRulr@@QEAAXAEAVBase@Nodes@4@@Z
-	?getSingletonStore@?$Singleton@VFactoryRegister@Graph@ofxRulr@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	?getSingletonStore@?$Singleton@VWorld@Graph@ofxRulr@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	?init@World@Graph@ofxRulr@@QEAAXAEAVController@ofxCvGui@@_N@Z
 	?loadAll@World@Graph@ofxRulr@@QEAAX_N@Z
 	??0Base@Nodes@ofxRulr@@QEAA@XZ
+	??0GraphicsManager@Nodes@ofxRulr@@QEAA@XZ
 	??1Base@Nodes@ofxRulr@@QEAA@XZ
 	?loadCoreNodes@Nodes@ofxRulr@@YAXXZ
 	?loadPluginNodes@Nodes@ofxRulr@@YAXXZ
 	?addInput@Base@Nodes@ofxRulr@@IEAAXV?$shared_ptr@VAbstractPin@Graph@ofxRulr@@@std@@@Z
-	?drawWorld@Base@Nodes@ofxRulr@@QEAAXXZ
 	?getColor@Base@Nodes@ofxRulr@@QEAAAEBV?$ofColor_@E@@XZ
 	?getIcon@Base@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@V?$ofImage_@E@@@std@@XZ
 	?getInputPins@Base@Nodes@ofxRulr@@QEBAAEBV?$Set@VAbstractPin@Graph@ofxRulr@@@Utils@3@XZ
 	?getName@Base@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getTypeName@Base@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?manageParameters@Base@Nodes@ofxRulr@@QEAAXAEAVofParameterGroup@@_N@Z
-	?setName@Base@Nodes@ofxRulr@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?throwIfMissingAnyConnection@Base@Nodes@ofxRulr@@QEBAXXZ
+	?setIcon@Base@Nodes@ofxRulr@@QEAAXV?$shared_ptr@V?$ofImage_@E@@@std@@@Z
 	?update@Base@Nodes@ofxRulr@@QEAAXXZ
-	??0Database@Channels@Data@Nodes@ofxRulr@@QEAA@XZ
-	?getRootChannel@Database@Channels@Data@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VChannel@Channels@Data@ofxRulr@@@std@@XZ
-	??0Base@Generator@Channels@Data@Nodes@ofxRulr@@QEAA@XZ
 	??0Transmit@DMX@Nodes@ofxRulr@@QEAA@XZ
 	?getPanel@Transmit@DMX@Nodes@ofxRulr@@UEAA?AV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@XZ
 	?getChannels@Universe@Transmit@DMX@Nodes@ofxRulr@@QEBAPEBEXZ
-	??0Board@Item@Nodes@ofxRulr@@QEAA@XZ
+	?getIcon@GraphicsManager@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@V?$ofImage_@E@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@@Z
 	??0Camera@Item@Nodes@ofxRulr@@QEAA@XZ
-	??0Projector@Item@Nodes@ofxRulr@@QEAA@XZ
 	??0RigidBody@Item@Nodes@ofxRulr@@QEAA@XZ
-	??0View@Item@Nodes@ofxRulr@@QEAA@_N@Z
 	??1Camera@Item@Nodes@ofxRulr@@UEAA@XZ
-	?findBoard@Board@Item@Nodes@ofxRulr@@QEBA_NVMat@cv@@AEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@VFindBoardMode@1234@@Z
-	?getObjectPoints@Board@Item@Nodes@ofxRulr@@QEBA?AV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@XZ
-	?getSize@Board@Item@Nodes@ofxRulr@@QEBA?AV?$Size_@H@cv@@XZ
-	?getFreshFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
+	?getFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getGrabber@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VSimple@Grabber@ofxMachineVision@@@std@@XZ
-	?drawWorld@RigidBody@Item@Nodes@ofxRulr@@QEAAXXZ
-	?getPosition@RigidBody@Item@Nodes@ofxRulr@@QEBA?AVofVec3f@@XZ
-	?getRotationQuat@RigidBody@Item@Nodes@ofxRulr@@QEBA?AVofQuaternion@@XZ
+	?getExtrinsics@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEAVMat@cv@@0_N@Z
 	?getTransform@RigidBody@Item@Nodes@ofxRulr@@QEBA?AVofMatrix4x4@@XZ
-	?getTypeName@RigidBody@Item@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?setExtrinsics@RigidBody@Item@Nodes@ofxRulr@@QEAAXVMat@cv@@0_N@Z
 	?setTransform@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBVofMatrix4x4@@@Z
 	?getCameraMatrix@View@Item@Nodes@ofxRulr@@QEBA?AVMat@cv@@XZ
 	?getDistortionCoefficients@View@Item@Nodes@ofxRulr@@QEBA?AVMat@cv@@XZ
-	?getHeight@View@Item@Nodes@ofxRulr@@QEBAMXZ
 	?getSize@View@Item@Nodes@ofxRulr@@QEBA?AV?$Size_@H@cv@@XZ
-	?getViewInObjectSpace@View@Item@Nodes@ofxRulr@@QEBAAEBVCamera@ofxRay@@XZ
-	?getViewInWorldSpace@View@Item@Nodes@ofxRulr@@QEBA?AVCamera@ofxRay@@XZ
-	?getWidth@View@Item@Nodes@ofxRulr@@QEBAMXZ
-	?setHeight@View@Item@Nodes@ofxRulr@@QEAAXM@Z
-	?setIntrinsics@View@Item@Nodes@ofxRulr@@QEAAXVMat@cv@@0@Z
-	?setWidth@View@Item@Nodes@ofxRulr@@QEAAXM@Z
-	??0IReferenceVertices@Calibrate@Procedure@Nodes@ofxRulr@@QEAA@XZ
-	?getVertices@IReferenceVertices@Calibrate@Procedure@Nodes@ofxRulr@@QEBAAEBV?$vector@V?$shared_ptr@VVertex@IReferenceVertices@Calibrate@Procedure@Nodes@ofxRulr@@@std@@V?$allocator@V?$shared_ptr@VVertex@IReferenceVertices@Calibrate@Procedure@Nodes@ofxRulr@@@std@@@2@@std@@XZ
-	?drawWorld@Vertex@IReferenceVertices@Calibrate@Procedure@Nodes@ofxRulr@@UEAAXAEBV?$ofColor_@E@@@Z
-	??0Graycode@Scan@Procedure@Nodes@ofxRulr@@QEAA@XZ
-	?getDataSet@Graycode@Scan@Procedure@Nodes@ofxRulr@@QEBAAEBVDataSet@ofxGraycode@@XZ
-	?getDecoder@Graycode@Scan@Procedure@Nodes@ofxRulr@@QEAAAEAVDecoder@ofxGraycode@@XZ
-	?runScan@Graycode@Scan@Procedure@Nodes@ofxRulr@@QEAAXXZ
-	?setDataSet@Graycode@Scan@Procedure@Nodes@ofxRulr@@QEAAXAEBVDataSet@ofxGraycode@@@Z
-	??0VideoOutput@System@Nodes@ofxRulr@@QEAA@XZ
-	?applyNormalisedSplitViewTransform@VideoOutput@System@Nodes@ofxRulr@@QEBAXXZ
-	?begin@VideoOutput@System@Nodes@ofxRulr@@QEAAXXZ
-	?clearFbo@VideoOutput@System@Nodes@ofxRulr@@QEAAX_N@Z
-	?end@VideoOutput@System@Nodes@ofxRulr@@QEAAXXZ
-	?getFbo@VideoOutput@System@Nodes@ofxRulr@@QEAAAEAVofFbo@@XZ
-	?getHeight@VideoOutput@System@Nodes@ofxRulr@@QEBAMXZ
-	?getSize@VideoOutput@System@Nodes@ofxRulr@@QEBA?AVofRectangle@@XZ
-	?getWidth@VideoOutput@System@Nodes@ofxRulr@@QEBAMXZ
-	?getWindow@VideoOutput@System@Nodes@ofxRulr@@QEBAPEAUGLFWwindow@@XZ
-	?isWindowOpen@VideoOutput@System@Nodes@ofxRulr@@QEBA_NXZ
-	?presentFbo@VideoOutput@System@Nodes@ofxRulr@@QEAAXXZ
-	?setMute@VideoOutput@System@Nodes@ofxRulr@@QEAAX_N@Z
-	?setWindowOpen@VideoOutput@System@Nodes@ofxRulr@@QEAAX_N@Z
-	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z
-	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N_K@Z
-	??1ScopedProcess@Utils@ofxRulr@@QEAA@XZ
-	?popPointSize@Graphics@Utils@ofxRulr@@SAXXZ
-	?pushPointSize@Graphics@Utils@ofxRulr@@SAXM_N@Z
-	?end@ScopedProcess@Utils@ofxRulr@@QEAAX_N@Z
-	?nextChildProcess@ScopedProcess@Utils@ofxRulr@@QEAAXXZ
+	?getSingletonStore@?$Singleton@VGraphicsManager@Nodes@ofxRulr@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
+	??0AbstractCaptureSet@Utils@ofxRulr@@QEAA@XZ
+	??0ThreadPool@Utils@ofxRulr@@QEAA@_K0@Z
+	??1ThreadPool@Utils@ofxRulr@@UEAA@XZ
+	??0BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@QEAA@XZ
+	?add@AbstractCaptureSet@Utils@ofxRulr@@QEAAXV?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@@Z
+	?clear@AbstractCaptureSet@Utils@ofxRulr@@QEAAXXZ
+	?deserialize@AbstractCaptureSet@Utils@ofxRulr@@QEAAXAEBVValue@Json@@@Z
+	?getSelectionUntyped@AbstractCaptureSet@Utils@ofxRulr@@QEBA?AV?$vector@V?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@V?$allocator@V?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@@2@@std@@XZ
+	?populateWidgets@AbstractCaptureSet@Utils@ofxRulr@@QEAAXV?$shared_ptr@VWidgets@Panels@ofxCvGui@@@std@@@Z
+	?serialize@AbstractCaptureSet@Utils@ofxRulr@@QEAAXAEAVValue@Json@@@Z
+	?getDataDisplay@BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@MEAA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
+	?getTypeName@BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAV?$ofParameter@_N@@@Z
 	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAV?$ofParameter@H@@@Z
-	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAV?$ofParameter@M@@@Z
 	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAV?$ofParameter@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@@Z
 	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAVofParameterGroup@@@Z
-	?getDefaultFilename@Serializable@Utils@ofxRulr@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getName@Serializable@Utils@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?serialize@Serializable@Utils@ofxRulr@@SAXAEAVValue@Json@@AEBV?$ofParameter@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@@Z
 	?serialize@Serializable@Utils@ofxRulr@@SAXAEAVValue@Json@@AEBVofParameterGroup@@@Z
+	?performAsync@ThreadPool@Utils@ofxRulr@@QEAA_NV?$function@$$A6AXXZ@std@@@Z
 	?hasMaster@BaseStore@ofxSingleton@@QEBA_NXZ
-	??0Sender@ofxSpout@@QEAA@XZ
-	??1Sender@ofxSpout@@QEAA@XZ
-	?getChannelName@Sender@ofxSpout@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
-	?init@Sender@ofxSpout@@QEAA_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@HH@Z
-	?send@Sender@ofxSpout@@QEAA_NAEBVofTexture@@@Z
-	??0Base64Decoder@Poco@@QEAA@AEAV?$basic_istream@DU?$char_traits@D@std@@@std@@@Z
-	??0Exception@Poco@@QEAA@AEBV01@@Z
-	??0IOException@Poco@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0H@Z
-	??0IOException@Poco@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVException@1@H@Z
-	??0IOException@Poco@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
-	??0IOException@Poco@@QEAA@AEBV01@@Z
-	??0IOException@Poco@@QEAA@H@Z
-	??0RuntimeException@Poco@@QEAA@AEBV01@@Z
-	??1Base64Decoder@Poco@@UEAA@XZ
-	??1IOException@Poco@@UEAA@XZ
-	??4IOException@Poco@@QEAAAEAV01@AEBV01@@Z
-	?unexpected@Bugcheck@Poco@@SAXPEBDH@Z
-	?what@Exception@Poco@@UEBAPEBDXZ
 	??$ofDrawBitmapString@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MMM@Z
 	??$ofFromString@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV01@@Z
-	??5@YAAEAV?$basic_istream@DU?$char_traits@D@std@@@std@@AEAV01@AEAVofBuffer@@@Z
 	??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEBVofAbstractParameter@@@Z
 	??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEBVofBuffer@@@Z

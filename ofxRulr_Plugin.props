@@ -4,6 +4,7 @@
     <Import Project="Core\ofxRulr_Core.props" />
     <Import Project="Nodes\ofxRulr_Nodes.props" />
     <Import Project="..\ofxAddonLib\openFrameworksIncludePathsOnly.props" />
+    <Import Project="..\ofxCvMin\ofxCvMinLib\ofxCvMin_libraries_only.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>

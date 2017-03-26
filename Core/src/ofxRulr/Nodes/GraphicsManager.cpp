@@ -1,18 +1,18 @@
 #include "pch_RulrCore.h"
-#include "Graphics.h"
+#include "GraphicsManager.h"
 
 //----------
-OFXSINGLETON_DEFINE(ofxRulr::Nodes::Graphics);
+OFXSINGLETON_DEFINE(ofxRulr::Nodes::GraphicsManager);
 
 namespace ofxRulr {
 	namespace Nodes {
 		//----------
-		Graphics::Graphics() {
+		GraphicsManager::GraphicsManager() {
 
 		}
 
 		//----------
-		shared_ptr<ofImage> Graphics::getIcon(const string & nodeTypeName) {
+		shared_ptr<ofImage> GraphicsManager::getIcon(const string & nodeTypeName) {
 			auto findIcon = this->icons.find(nodeTypeName);
 			if (findIcon == this->icons.end()) {
 				//no icon yet, let's load it
@@ -35,7 +35,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		ofColor Graphics::getColor(const string & nodeTypeName) {
+		ofColor GraphicsManager::getColor(const string & nodeTypeName) {
 			auto findColor = this->colors.find(nodeTypeName);
 			if (findColor == this->colors.end()) {
 				auto color = ofxCvGui::Utils::toColor(nodeTypeName);
@@ -48,12 +48,12 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Graphics::setIcon(const string & nodeTypeName, shared_ptr<ofImage> icon) {
+		void GraphicsManager::setIcon(const string & nodeTypeName, shared_ptr<ofImage> icon) {
 			this->icons[nodeTypeName] = icon;
 		}
 
 		//----------
-		void Graphics::setColor(const string & nodeTypeName, const ofColor & color) {
+		void GraphicsManager::setColor(const string & nodeTypeName, const ofColor & color) {
 			//see setIcon for notes
 			auto & storedColor = this->colors[nodeTypeName];
 			storedColor = color;

@@ -4,9 +4,11 @@
 #include "ofxCvGui/Element.h"
 #include "ofxCvGui/InspectController.h"
 
+#include "ofxRulr/Utils/Constants.h"
+
 namespace ofxRulr {
 	namespace Utils {
-		class AbstractCaptureSet : public Serializable {
+		class RULR_EXPORTS AbstractCaptureSet : public Serializable {
 		public:
 			class BaseCapture : public Serializable {
 			public:
@@ -17,7 +19,6 @@ namespace ofxRulr {
 
 				bool isSelected() const;
 				void setSelected(bool);
-
 
 				ofParameter<ofColor> color{ "Color", ofColor() };
 
@@ -42,7 +43,7 @@ namespace ofxRulr {
 			void selectAll();
 			void selectNone();
 
-			void populateInspector(ofxCvGui::InspectArguments &);
+			void populateWidgets(shared_ptr<ofxCvGui::Panels::Widgets>);
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
 

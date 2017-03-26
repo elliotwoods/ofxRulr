@@ -24,3 +24,4 @@
 #include "ofxRulr/Utils/Set.h"
 #include "ofxRulr/Utils/SoundEngine.h"
 #include "ofxRulr/Utils/Utils.h"
+#include "ofxRulr/Nodes/GraphicsManager.h"

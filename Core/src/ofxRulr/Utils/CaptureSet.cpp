@@ -68,6 +68,7 @@ namespace ofxRulr {
 				selectedButton->onDraw += [this](DrawArguments & args) {
 					ofPushStyle();
 					{
+						ofSetColor(this->color);
 						ofSetLineWidth(2.0f);
 						if (this->isSelected()) {
 							ofFill();
@@ -235,68 +236,63 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void AbstractCaptureSet::populateInspector(InspectArguments & inspectArgs) {
-			auto inspector = inspectArgs.inspector;
+		void AbstractCaptureSet::populateWidgets(shared_ptr<ofxCvGui::Panels::Widgets> widgetsPanel) {
+			widgetsPanel->add(this->listView);
 
-			inspector->addTitle("Captures:", ofxCvGui::Widgets::Title::Level::H2);
+			widgetsPanel->addLiveValue<int>("Count", [this]() {
+				return this->captures.size();
+			});
+
+			widgetsPanel->addButton("Clear", [this]() {
+				this->clear();
+			});
+
 			{
-				inspector->add(this->listView);
-
-				inspector->addLiveValue<int>("Count", [this]() {
-					return this->captures.size();
-				});
-
-				inspector->addButton("Clear", [this]() {
-					this->clear();
-				});
-
-				{
-					auto selectionSelector = inspector->addMultipleChoice("Selection", { "All", "None" });
-					selectionSelector->setAllowNullSelection(true);
-					selectionSelector->onValueChange += [this](int selectionIndex) {
-						switch (selectionIndex) {
-						case 0:
-							this->selectAll();
-							break;
-						case 1:
-							this->selectNone();
-							break;
-						default:
-							break;
+				auto selectionSelector = widgetsPanel->addMultipleChoice("Selection", { "All", "None" });
+				selectionSelector->setAllowNullSelection(true);
+				selectionSelector->onValueChange += [this](int selectionIndex) {
+					switch (selectionIndex) {
+					case 0:
+						this->selectAll();
+						break;
+					case 1:
+						this->selectNone();
+						break;
+					default:
+						break;
+					}
+				};
+				auto selectionSelectorWeak = weak_ptr<Widgets::MultipleChoice>(selectionSelector);
+				selectionSelector->onUpdate += [this, selectionSelectorWeak](UpdateArguments &) {
+					auto selectionSelector = selectionSelectorWeak.lock();
+					if (selectionSelector) {
+						if (this->captures.empty()) {
+							selectionSelector->setSelection(-1);
 						}
-					};
-					auto selectionSelectorWeak = weak_ptr<Widgets::MultipleChoice>(selectionSelector);
-					selectionSelector->onUpdate += [this, selectionSelectorWeak](UpdateArguments &) {
-						auto selectionSelector = selectionSelectorWeak.lock();
-						if (selectionSelector) {
-							if (this->captures.empty()) {
-								selectionSelector->setSelection(-1);
-							}
-							bool allSelected = true;
-							bool noneSelected = true;
-							for (auto capture : this->captures) {
-								if (capture->isSelected()) {
-									noneSelected = false;
-								}
-								else {
-									allSelected = false;
-								}
-							}
-							if (allSelected) {
-								selectionSelector->setSelection(0);
-							}
-							else if (noneSelected) {
-								selectionSelector->setSelection(1);
+						bool allSelected = true;
+						bool noneSelected = true;
+						for (auto capture : this->captures) {
+							if (capture->isSelected()) {
+								noneSelected = false;
 							}
 							else {
-								selectionSelector->setSelection(-1);
+								allSelected = false;
 							}
 						}
-					};
-				}
-
-				inspector->addSpacer();
+						if (allSelected) {
+							selectionSelector->setSelection(0);
+						}
+						else if (noneSelected) {
+							selectionSelector->setSelection(1);
+						}
+						else {
+							selectionSelector->setSelection(-1);
+						}
+					}
+				};
 			}
+
+			widgetsPanel->addSpacer();
 		}
 
 		//----------
@@ -315,7 +311,7 @@ namespace ofxRulr {
 			for (const auto & jsonCapture : jsonCaptures) {
 				auto capture = this->makeEmpty();
 				capture->deserialize(jsonCapture);
-				this->captures.push_back(capture);
+				this->add(capture); //ensure event listeners are attached
 			}
 		}
 

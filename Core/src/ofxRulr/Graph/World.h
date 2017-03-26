@@ -9,7 +9,7 @@
 
 namespace ofxRulr {
 	namespace Graph {
-		class World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
+		class RULR_EXPORTS World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
 		public:
 			World();
 			virtual ~World();

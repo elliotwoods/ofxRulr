@@ -8,7 +8,7 @@
 
 namespace ofxRulr {
 	namespace Graph {
-		class Summary : public Nodes::Base {
+		class RULR_EXPORTS Summary : public Nodes::Base {
 		public:
 			Summary();
 			string getTypeName() const override;

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "ofxCvGui.h"
+#include "ofxRulr/Utils/Constants.h"
 
 namespace ofxRulr {
 	namespace Utils {
 		namespace Gui {
-			shared_ptr<ofxCvGui::Widgets::Slider> addIntSlider(ofParameter<float> & parameter, ofxCvGui::ElementGroupPtr inspector);
+			RULR_EXPORTS shared_ptr<ofxCvGui::Widgets::Slider> addIntSlider(ofParameter<float> & parameter, ofxCvGui::ElementGroupPtr inspector);
 		}
 	}
 }

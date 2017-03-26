@@ -4,7 +4,6 @@
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/Canon.h"
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/CanonLiveView.h"
 
-
 #ifdef TARGET_OSX
 #include "../Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h"
 #include "../../../addons/ofxBlackmagic2/pairs/ofxMachineVision/Device/DeckLink.h"

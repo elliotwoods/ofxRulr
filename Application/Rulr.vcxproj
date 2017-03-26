@@ -43,6 +43,7 @@
     <Import Project="..\Nodes\ofxRulr_Nodes.props" />
     <Import Project="..\Core\ofxRulr_Core.props" />
     <Import Project="..\..\ofxCanon\ofxCanonLib\ofxCanon.props" />
+    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin_copy_binaries_only.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

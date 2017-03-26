@@ -90,7 +90,7 @@
     <ClCompile Include="src\ofxRulr\Graph\Summary.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\World.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Base.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Graphics.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\GraphicsManager.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\CaptureSet.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Graphics.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Gui.cpp" />
@@ -99,6 +99,7 @@
     <ClCompile Include="src\ofxRulr\Utils\ScopedProcess.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\SoundEngine.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\ThreadPool.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Utils.cpp" />
     <ClCompile Include="src\pch_RulrCore.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -149,7 +150,7 @@
     <ClInclude Include="src\ofxRulr\Graph\Summary.h" />
     <ClInclude Include="src\ofxRulr\Graph\World.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Base.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Graphics.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\GraphicsManager.h" />
     <ClInclude Include="src\ofxRulr\Utils\CaptureSet.h" />
     <ClInclude Include="src\ofxRulr\Utils\Constants.h" />
     <ClInclude Include="src\ofxRulr\Utils\Graphics.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="src\ofxRulr\Utils\Set.h" />
     <ClInclude Include="src\ofxRulr\Utils\SoundEngine.h" />
     <ClInclude Include="src\ofxRulr\Utils\Utils.h" />
+    <ClInclude Include="src\ofxRulr\Utils\ThreadPool.h" />
     <ClInclude Include="src\ofxRulr\Version.h" />
     <ClInclude Include="src\pch_RulrCore.h" />
   </ItemGroup>
@@ -214,12 +216,14 @@
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="ofxRulr_Core.props" />
     <Import Project="..\..\..\addons\ofxAddonLib\ofxAddonLib.props" />
+    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin_libraries_only.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="ofxRulr_Core.props" />
     <Import Project="..\..\..\addons\ofxAddonLib\ofxAddonLib.props" />
+    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin_libraries_only.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />

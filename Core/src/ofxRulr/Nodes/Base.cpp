@@ -3,7 +3,7 @@
 
 #include "ofxRulr/Graph/Editor/NodeHost.h"
 #include "../Exception.h"
-#include "Graphics.h"
+#include "GraphicsManager.h"
 
 using namespace ofxCvGui;
 
@@ -89,7 +89,7 @@ namespace ofxRulr {
 		//----------
 		shared_ptr<ofImage> Base::getIcon() {
 			if (!this->icon) {
-				this->icon = Graphics::X().getIcon(this->getTypeName());
+				this->icon = GraphicsManager::X().getIcon(this->getTypeName());
 			}
 			return this->icon;
 		}
@@ -97,7 +97,7 @@ namespace ofxRulr {
 		//----------
 		const ofColor & Base::getColor() {
 			if (!this->color) {
-				this->color = make_shared<ofColor>(Graphics::X().getColor(this->getTypeName()));
+				this->color = make_shared<ofColor>(GraphicsManager::X().getColor(this->getTypeName()));
 			}
 			return * this->color;
 		}

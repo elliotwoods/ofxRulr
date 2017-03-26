@@ -1,8 +1,10 @@
 #pragma once
 
+#include "ofxRulr/Utils/Constants.h"
+
 namespace ofxRulr {
 	namespace Utils {
-		class Initialiser {
+		class RULR_EXPORTS Initialiser {
 		public:
 			Initialiser();
 			void checkInitialised();

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{53695f24-0430-4196-b53c-3cce472d160b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{f8a6306b-29fd-4ca4-936e-6f0ee4df836c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{102be500-d5fe-4e78-a303-22dcfe9a58dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\MoCap">
+      <UniqueIdentifier>{a418a3e2-b156-4e1b-bf20-40eec018ea0e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch_Plugin_MoCap.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\FindMarkerCentroids.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\Body.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\MatchMarkers.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewMatchedMarkers.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_MoCap.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\FindMarkerCentroids.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\Body.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\MatchMarkers.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\ThreadedProcessNode.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewMatchedMarkers.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

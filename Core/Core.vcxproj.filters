@@ -132,9 +132,6 @@
     <ClCompile Include="src\ofxRulr\Nodes\Base.cpp">
       <Filter>src\ofxRulr\Nodes</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Graphics.cpp">
-      <Filter>src\ofxRulr\Nodes</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Graph\FactoryRegister.cpp">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
@@ -193,6 +190,12 @@
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\CaptureSet.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\GraphicsManager.cpp">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\ThreadPool.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -281,9 +284,6 @@
     <ClInclude Include="src\ofxRulr\Nodes\Base.h">
       <Filter>src\ofxRulr\Nodes</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Graphics.h">
-      <Filter>src\ofxRulr\Nodes</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\FactoryRegister.h">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
@@ -366,6 +366,12 @@
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\CaptureSet.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\GraphicsManager.h">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\ThreadPool.h">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClInclude>
   </ItemGroup>

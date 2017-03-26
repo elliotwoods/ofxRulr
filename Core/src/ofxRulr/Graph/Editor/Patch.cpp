@@ -443,6 +443,10 @@ namespace ofxRulr {
 				for (auto nodeHost : this->nodeHosts) {
 					if (nodeHost.second == selection) {
 						this->nodeHosts.erase(nodeHost.first);
+
+						//this shouldn't be entirely necessary since the node should become outdated and disappear
+						//but this is much safer
+						ofxCvGui::InspectController::X().clear();
 						break;
 					}
 				}

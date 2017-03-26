@@ -56,16 +56,17 @@ namespace ofxRulr {
 					Utils::CaptureSet<Capture> captures;
 
 					vector<ofVec2f> currentCorners;
-					ofParameter<float> error;
+					ofParameter<float> error{ "Reprojection error [px]", 0.0f };
 
 					struct : ofParameterGroup {
+						ofParameter<bool> drawBoards{ "Draw boards", true };
 						struct : ofParameterGroup {
 							ofParameter<bool> tetheredShootMode{ "Tethered shoot mode", true };
 							ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Mode", Item::Board::FindBoardMode::Optimized };
 
 							PARAM_DECLARE("Capture", tetheredShootMode, findBoardMode);
 						} capture;
-						PARAM_DECLARE("CameraIntrinsics", capture);
+						PARAM_DECLARE("CameraIntrinsics", drawBoards, capture);
 					} parameters;
 					
 				};

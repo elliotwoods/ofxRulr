@@ -16,7 +16,7 @@ using namespace std;
 
 namespace ofxRulr {
 	namespace Graph {
-		class AbstractPin : public ofxCvGui::Element {
+		class RULR_EXPORTS AbstractPin : public ofxCvGui::Element {
 		public:
 			AbstractPin(string name);
 			virtual string getTypeName() = 0;
@@ -51,8 +51,8 @@ namespace ofxRulr {
 		public:
 			Pin(string name) : AbstractPin(name) {
 				this->pinView->template setup<NodeType>();
-				auto tempNode = NodeType();
-				this->color = tempNode.getColor();
+				auto tempNode = make_unique<NodeType>();
+				this->color = tempNode->getColor();
 				this->connectionMade = false;
 			}
 

@@ -2,6 +2,7 @@
 
 #include "PinView.h"
 #include "ofxRulr/Nodes/Base.h"
+#include "ofxRulr/Utils/Constants.h"
 #include "ofxCvGui/Utils/Button.h"
 
 #define RULR_NODEHOST_INPUTAREA_WIDTH 85

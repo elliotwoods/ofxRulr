@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../FactoryRegister.h"
+#include "ofxRulr/Utils/Constants.h"
+
 #include "ofxCvGui/Element.h"
 #include "ofxCvGui/Utils/TextField.h"
 #include "ofxCvGui/Panels/Scroll.h"

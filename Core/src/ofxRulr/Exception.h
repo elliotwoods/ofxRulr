@@ -4,8 +4,10 @@
 #include <string>
 #include "opencv2/core/core.hpp"
 
+#include "ofxRulr/Utils/Constants.h"
+
 namespace ofxRulr {
-	class Exception : public std::exception {
+	class RULR_EXPORTS Exception : public std::exception {
 	public:
 		Exception(const std::string message);
 		const char * what() const throw() override;

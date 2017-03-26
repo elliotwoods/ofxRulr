@@ -275,7 +275,7 @@ namespace ofxRulr {
 
 				if (camera) {
 					auto grabber = camera->getGrabber();
-					if (!grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+					if (!grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)) {
 						//find when the camera is a single shot camera
 						return true;
 					}

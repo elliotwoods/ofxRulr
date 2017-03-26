@@ -10,6 +10,11 @@ namespace ofxRulr {
 			Base::Base() {
 
 			}
+
+			//----------
+			void Base::init() {
+
+			}
 		}
 	}
 }

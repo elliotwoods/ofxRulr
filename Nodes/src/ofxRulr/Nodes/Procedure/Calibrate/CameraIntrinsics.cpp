@@ -128,9 +128,6 @@ namespace ofxRulr {
 									{
 										auto selectedCaptures = this->captures.getSelection();
 
-										ofFill();
-										ofSetLineWidth(0.0f);
-
 										for (auto & selectedCapture : selectedCaptures) {
 											ofSetColor(selectedCapture->color);
 											selectedCapture->drawOnImage();
@@ -151,10 +148,6 @@ namespace ofxRulr {
 							ofxCvGui::Utils::drawText("Select this node and connect active camera.", args.localBounds);
 						}
 					};
-
-					this->error.set("Reprojection error", 0.0f, 0.0f, std::numeric_limits<float>::max());
-
-					this->error = 0.0f;
 				}
 
 				//----------
@@ -174,14 +167,14 @@ namespace ofxRulr {
 						if (camera) {
 							auto grabber = camera->getGrabber();
 							if (grabber->isFrameNew()) {
-								if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+								if (grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)) {
 									try {
 										this->findBoard();
 									}
 									RULR_CATCH_ALL_TO_ERROR
 								}
 								else {
-									if (this->parameters.capture.tetheredShootMode && grabber->getDeviceSpecification().supports(ofxMachineVision::Feature_OneShot)) {
+									if (this->parameters.capture.tetheredShootMode && grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::OneShot)) {
 										try {
 											Utils::ScopedProcess scopedProcessTethered("Tethered shoot find board");
 											this->findBoard();
@@ -200,16 +193,18 @@ namespace ofxRulr {
 
 				//----------
 				void CameraIntrinsics::drawWorld() {
-					auto selectedCaptures = this->captures.getSelection();
+					if (this->parameters.drawBoards) {
+						auto selectedCaptures = this->captures.getSelection();
 
-					ofPushStyle();
-					{
-						for (auto capture : selectedCaptures) {
-							ofSetColor(capture->color);
-							capture->drawWorld();
+						ofPushStyle();
+						{
+							for (auto capture : selectedCaptures) {
+								ofSetColor(capture->color);
+								capture->drawWorld();
+							}
 						}
+						ofPopStyle();
 					}
-					ofPopStyle();
 				}
 
 				//----------
@@ -246,7 +241,7 @@ namespace ofxRulr {
 					else {
 						if (camera) {
 							auto grabber = camera->getGrabber();
-							if (!grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+							if (!grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)) {
 								//find when the camera is a single shot camera
 								return true;
 							}
@@ -273,7 +268,8 @@ namespace ofxRulr {
 						RULR_CATCH_ALL_TO_ERROR;
 					}, ' ');
 
-					this->captures.populateInspector(inspectArguments);
+					inspector->addTitle("Captures", Widgets::Title::H2);
+					this->captures.populateWidgets(inspector);
 
 					inspector->addSpacer();
 
@@ -306,7 +302,7 @@ namespace ofxRulr {
 
 					if (!tetheredCapture) {
 						//if this was called from a tethered capture, then we don't need to capture again for oneshot
-						if (cameraSpecification.supports(ofxMachineVision::Feature::Feature_OneShot) && !cameraSpecification.supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+						if (cameraSpecification.supports(ofxMachineVision::CaptureSequenceType::OneShot) && !cameraSpecification.supports(ofxMachineVision::CaptureSequenceType::Continuous)) {
 							//by calling getFreshFrame(), then update(), we should guarantee that the frame
 							camera->getGrabber()->getFreshFrame();
 							this->findBoard();
@@ -340,10 +336,8 @@ namespace ofxRulr {
 					if (!frame) {
 						throw(Exception("No camera frame available"));
 					}
-					frame->lockForReading();
 					auto & pixels = frame->getPixels();
 					if (!pixels.isAllocated()) {
-						frame->unlockForReading();
 						throw(Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));
 					}
 					if (this->grayscale.getWidth() != pixels.getWidth() || this->grayscale.getHeight() != pixels.getHeight()) {
@@ -355,7 +349,6 @@ namespace ofxRulr {
 					else {
 						this->grayscale = pixels;
 					}
-					frame->unlockForReading();
 
 					this->grayscale.update();
 					this->currentCorners.clear();

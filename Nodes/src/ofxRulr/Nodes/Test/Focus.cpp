@@ -200,7 +200,7 @@ namespace ofxRulr {
 				else {
 					if (camera) {
 						auto grabber = camera->getGrabber();
-						if (!grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
+						if (!grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)) {
 							//find when the camera is a single shot camera
 							return true;
 						}
@@ -264,8 +264,8 @@ namespace ofxRulr {
 			//----------
 			void Focus::connect(shared_ptr<ofxMachineVision::Grabber::Simple> grabber) {
 				if(grabber) {
-					grabber->onNewFrameReceived.addListener([this](ofxMachineVision::FrameEventArgs & frameEvent) {
-						this->calculateFocus(frameEvent.frame);
+					grabber->onNewFrameReceived.addListener([this](shared_ptr<ofxMachineVision::Frame> & frame) {
+						this->calculateFocus(frame);
 					}, this);
 					
 					//also perform on existing frame if any

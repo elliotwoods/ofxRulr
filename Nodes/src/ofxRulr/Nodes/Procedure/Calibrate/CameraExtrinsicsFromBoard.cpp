@@ -217,24 +217,19 @@ namespace ofxRulr {
 						if (!frame) {
 							throw(Exception("No camera frame available"));
 						}
-						frame->lockForReading();
-						{
-							auto & pixels = frame->getPixels();
-							if (!pixels.isAllocated()) {
-								frame->unlockForReading();
-								throw(Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));
-							}
-							if (this->grayscalePreview.getWidth() != pixels.getWidth() || this->grayscalePreview.getHeight() != pixels.getHeight()) {
-								this->grayscalePreview.allocate(pixels.getWidth(), pixels.getHeight(), OF_IMAGE_GRAYSCALE);
-							}
-							if (pixels.getNumChannels() != 1) {
-								cv::cvtColor(toCv(pixels), toCv(this->grayscalePreview), CV_RGB2GRAY);
-							}
-							else {
-								this->grayscalePreview = pixels;
-							}
+						auto & pixels = frame->getPixels();
+						if (!pixels.isAllocated()) {
+							throw(Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));
 						}
-						frame->unlockForReading();
+						if (this->grayscalePreview.getWidth() != pixels.getWidth() || this->grayscalePreview.getHeight() != pixels.getHeight()) {
+							this->grayscalePreview.allocate(pixels.getWidth(), pixels.getHeight(), OF_IMAGE_GRAYSCALE);
+						}
+						if (pixels.getNumChannels() != 1) {
+							cv::cvtColor(toCv(pixels), toCv(this->grayscalePreview), CV_RGB2GRAY);
+						}
+						else {
+							this->grayscalePreview = pixels;
+						}
 
 						this->grayscalePreview.update();
 					}

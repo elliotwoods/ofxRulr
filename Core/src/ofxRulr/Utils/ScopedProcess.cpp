@@ -79,8 +79,9 @@ namespace ofxRulr {
 						const auto totalTimePrediced = timeSpentInMillis * (1.0f / progress);
 						const auto timeRemaining = chrono::milliseconds((long long) ((1.0f - progress) * (float)totalTimePrediced));
 						if (timeRemaining > chrono::milliseconds(0)) {
-							message << Utils::formatDuration(timeRemaining) << " remaining." << endl;
+							message << Utils::formatDuration(timeRemaining) << " remaining.";
 						}
+						message << endl;
 					}
 				}
 				ofxCvGui::Utils::drawProcessingNotice(message.str());
@@ -101,7 +102,7 @@ namespace ofxRulr {
 					//we might be a child process
 					auto parentProcess = this->activeProcesses[this->activeProcesses.size() - 2];
 					if (parentProcess->hasCountedChildProcesses()) {
-						cout << " [" << parentProcess->getChildProcessActiveIndex() << "/" << parentProcess->getChildProcessCount() << "]";
+						cout << " [" << parentProcess->getChildProcessActiveIndex() << "/" << parentProcess->getChildProcessCount() << "]" << endl;
 					}
 				} 
 

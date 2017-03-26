@@ -19,11 +19,14 @@ namespace ofxMachineVision {
 
 			KinectForWindows2RGB();
 			string getTypeName() const override;
-			shared_ptr<Base::InitialisationSettings> getDefaultSettings() override {
+			shared_ptr<Base::InitialisationSettings> getDefaultSettings() const override {
 				return make_shared<InitialisationSettings>();
 			}
 			Specification open(shared_ptr<Base::InitialisationSettings> = nullptr) override;
 			void close() override;
+
+			bool startCapture() override;
+			void stopCapture() override;
 
 			void updateIsFrameNew() override;
 			bool isFrameNew() override;
@@ -33,7 +36,7 @@ namespace ofxMachineVision {
 		protected:
 			int frameIndex;
 			bool markFrameNew;
-			ofxMachineVision::Microseconds openTime;
+			chrono::high_resolution_clock::time_point startTime;
 			shared_ptr<ofxKinectForWindows2::Device> kinect;
 			bool useColor = true;
 		};

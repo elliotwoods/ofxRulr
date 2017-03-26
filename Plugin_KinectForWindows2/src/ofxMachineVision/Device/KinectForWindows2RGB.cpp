@@ -7,7 +7,6 @@ namespace ofxMachineVision {
 	namespace Device {
 		//----------
 		KinectForWindows2RGB::KinectForWindows2RGB() {
-			this->openTime = 0;
 			this->frameIndex = 0;
 		}
 
@@ -29,7 +28,6 @@ namespace ofxMachineVision {
 					throw(Exception(message));
 				}
 
-				this->openTime = ofGetElapsedTimeMicros();
 				this->frameIndex = 0;
 
 				//wait for the first live view frame to arrive
@@ -49,8 +47,11 @@ namespace ofxMachineVision {
 
 			//copy the specification from the first frame
 			const auto & pixels = this->kinect->getColorSource()->getPixels();
-			Specification specification(pixels.getWidth(), pixels.getHeight(), "Microsoft", "Kinect2");
-			specification.addFeature(ofxMachineVision::Feature::Feature_FreeRun);
+			Specification specification(CaptureSequenceType::Continuous
+				, pixels.getWidth()
+				, pixels.getHeight()
+				, "Microsoft"
+				, "Kinect2");
 
 			{
 				auto settings = dynamic_pointer_cast<KinectForWindows2RGB::InitialisationSettings>(initialisationSettings);
@@ -73,6 +74,17 @@ namespace ofxMachineVision {
 		}
 
 		//----------
+		bool KinectForWindows2RGB::startCapture() {
+			this->startTime = chrono::high_resolution_clock::now();
+			return true;
+		}
+
+		//----------
+		void KinectForWindows2RGB::stopCapture() {
+
+		}
+
+		//----------
 		void KinectForWindows2RGB::updateIsFrameNew() {
 			this->kinect->update();
 		}
@@ -84,15 +96,16 @@ namespace ofxMachineVision {
 
 		//----------
 		shared_ptr<Frame> KinectForWindows2RGB::getFrame() {
-			auto frame = shared_ptr<Frame>(new Frame());
+			shared_ptr<Frame> frame;
 
 			if (this->useColor) {
-				frame->getPixels() = this->kinect->getColorSource()->getPixels();
+				const auto & rgbPixels = this->kinect->getColorSource()->getPixels();
+				frame = FramePool::X().getAvailableFrameFilledWith(rgbPixels);
 			}
 			else {
-				auto yuvPixels = this->kinect->getColorSource()->getYuvPixels();
+				const auto & yuvPixels = this->kinect->getColorSource()->getYuvPixels();
+				frame = FramePool::X().getAvailableAllocatedFrame(yuvPixels.getWidth(), yuvPixels.getHeight(), ofPixelFormat::OF_PIXELS_GRAY);
 				auto & pixels = frame->getPixels();
-				pixels.allocate(yuvPixels.getWidth(), yuvPixels.getHeight(), ofPixelFormat::OF_PIXELS_GRAY);
 				
 				auto in = yuvPixels.getData();
 				auto out = pixels.getData();
@@ -103,7 +116,7 @@ namespace ofxMachineVision {
 				}
 			}
 
-			frame->setTimestamp(ofGetElapsedTimeMicros() - this->openTime);
+			frame->setTimestamp(chrono::high_resolution_clock::now() - this->startTime);
 			frame->setFrameIndex(this->frameIndex++);
 			
 			return frame;

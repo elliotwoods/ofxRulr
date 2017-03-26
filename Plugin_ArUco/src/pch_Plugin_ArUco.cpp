@@ -1,0 +1,1 @@
+#include "pch_Plugin_ArUco.h"
