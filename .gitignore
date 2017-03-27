@@ -38,3 +38,6 @@ ipch/
 
 # VVVV backup files
 *~.xml
+Application/Rulr\.VC\.db
+
+Application/Rulr\.VC\.VC\.opendb

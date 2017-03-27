@@ -36,9 +36,9 @@ namespace ofxRulr {
 						inputNode->onNewFrame.addListener([this](shared_ptr<IncomingFrameType> incomingFrame) {
 							if (!this->threadPool->performAsync([this, incomingFrame]() {
 								this->processFrame(incomingFrame);
-								this->processedFramesPerSecond++;
+								this->processedFramesSinceLastAppFrame++;
 							})) {
-								this->droppedFramesPerSecond++;
+								this->droppedFramesSinceLastAppFrame++;
 							}
 						}, this);
 					};
@@ -52,9 +52,11 @@ namespace ofxRulr {
 				void update() {
 					auto processedFramesPerSecond = (float)processedFramesSinceLastAppFrame.load() / ofGetLastFrameTime();
 					this->processedFramesPerSecond = ofLerp(this->processedFramesPerSecond, processedFramesPerSecond, 0.1f);
+					this->processedFramesSinceLastAppFrame.store(0);
 
 					auto droppedFramesPerSecond = (float)droppedFramesSinceLastAppFrame.load() / ofGetLastFrameTime();
 					this->droppedFramesPerSecond = ofLerp(this->droppedFramesPerSecond, droppedFramesPerSecond, 0.1f);
+					this->droppedFramesSinceLastAppFrame.store(0);
 				}
 
 				void populateInspector(ofxCvGui::InspectArguments & inspectArgs) {

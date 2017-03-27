@@ -176,8 +176,8 @@ namespace ofxRulr {
 
 					//TODO : what if some of the centroids don't belong to this body
 
-					if (sumErrorSquared < successErrorThresholdSquared) {
-						//if this is as good as we want, then throw it up (no, not like that :)
+					if (sumErrorSquared < 1.0f) {
+						//this is classed as a 'definite match', we throw it up (no, not like that :)
 						throw(outputFrame);
 					}
 					results.emplace(sumErrorSquared, move(outputFrame));
@@ -198,7 +198,6 @@ namespace ofxRulr {
 			//----------
 			void MatchMarkers::processFullSearch(shared_ptr<MatchMarkersFrame> & outputFrame) {
 				//performs a brute force nPr search on possible candidates for marker tracking
-				map<float, shared_ptr<MatchMarkersFrame>> results;
 
 				if (outputFrame->incomingFrame->centroids.size() < 4
 					|| outputFrame->bodyDescription->markerCount < 4) {
@@ -206,41 +205,40 @@ namespace ofxRulr {
 					return;
 				}
 
+				shared_ptr<MatchMarkersFrame> searchResult;
 				try {
+					map<float, shared_ptr<MatchMarkersFrame>> results;
 					auto thresholdErrorSquared = this->parameters.searchDistanceThreshold.get();
 					thresholdErrorSquared *= thresholdErrorSquared;
 					traverseBranch(*outputFrame, vector<size_t>(), results, thresholdErrorSquared);
 
 					if (!results.empty()) {
-						cout << "Found a match with " << results.begin()->first << "px error" << endl;
+						if (results.begin()->first < this->parameters.searchDistanceThreshold.get()) {
+							searchResult = results.begin()->second;
+						}
 					}
 				}
 				catch (shared_ptr<MatchMarkersFrame> & result) {
 					//we threw early
-					results.emplace(0, result);
-					cout << "Found a match which meets our search threshold" << endl;
+					searchResult = result;
 				}
 
-				if (!results.empty()) {
-					auto result = results.begin();
-					
+				if (searchResult) {
 					//combine the camera and body transforms
-					cv::composeRT(result->second->modelViewRotationVector
-						, result->second->modelViewTranslation
+					cv::composeRT(searchResult->modelViewRotationVector
+						, searchResult->modelViewTranslation
 						, outputFrame->cameraDescription->rotationVector
 						, outputFrame->cameraDescription->translation
 						, outputFrame->modelViewRotationVector
 						, outputFrame->modelViewTranslation);
 
-					outputFrame->matchCount = result->second->matchCount;
-					outputFrame->matchedMarkerListIndex = result->second->matchedMarkerListIndex;
-					outputFrame->matchedMarkerID = result->second->matchedMarkerID;
-					outputFrame->matchedProjectedPoint = result->second->matchedProjectedPoint;
-					outputFrame->matchedCentroids = result->second->matchedCentroids;
-					outputFrame->matchedObjectSpacePoints = result->second->matchedObjectSpacePoints;
-				}
-				else {
-					cout << "No results found";
+					outputFrame->trackingWasLost = true;
+					outputFrame->matchCount = searchResult->matchCount;
+					outputFrame->matchedMarkerListIndex = searchResult->matchedMarkerListIndex;
+					outputFrame->matchedMarkerID = searchResult->matchedMarkerID;
+					outputFrame->matchedProjectedPoint = searchResult->matchedProjectedPoint;
+					outputFrame->matchedCentroids = searchResult->matchedCentroids;
+					outputFrame->matchedObjectSpacePoints = searchResult->matchedObjectSpacePoints;
 				}
 			}
 

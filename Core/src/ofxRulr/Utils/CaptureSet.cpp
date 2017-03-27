@@ -20,11 +20,9 @@ namespace ofxRulr {
 				json >> this->color;
 
 				{
-					cout << json["timestamp"] << endl;
 					time_t time;
 					json["timestamp"] >> time;
 					this->timestamp = chrono::system_clock::from_time_t(time);
-					cout << this->timestamp << endl;
 				}
 
 				this->rebuildDateStrings();

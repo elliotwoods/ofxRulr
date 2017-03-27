@@ -43,7 +43,8 @@ namespace ofxRulr {
 				void loadCSV(string filename = "");
 				void saveCSV(string filename = "");
 
-				void updateTracking(cv::Mat rotationVector, cv::Mat translation);
+				bool getTrackingPrediction(cv::Mat & rotationVector, cv::Mat & translation); // returns true if prediction is used
+				ofMatrix4x4 updateTracking(cv::Mat rotationVector, cv::Mat translation, bool newTracking); // returns updated transform with filtering
 			protected:
 				class Marker : public Utils::AbstractCaptureSet::BaseCapture {
 				public:
@@ -60,7 +61,10 @@ namespace ofxRulr {
 					
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", false };
-						PARAM_DECLARE("Kalman filter", enabled);
+						ofParameter<float> processNoise{ "Process noise", 1e-5, 0, 1 };
+						ofParameter<float> measurementNoise{ "Measurement noise", 1e-2, 0, 1 };
+						ofParameter<float> errorPost{ "Error post", 1, 0, 10 };
+						PARAM_DECLARE("Kalman filter", enabled, processNoise, measurementNoise, errorPost);
 					} kalmanFilter;
 
 					struct : ofParameterGroup {
@@ -72,7 +76,7 @@ namespace ofxRulr {
 				} parameters;
 
 				void invalidateBodyDescription();
-				static shared_ptr<cv::KalmanFilter> makeKalmanFilter(); 
+				shared_ptr<cv::KalmanFilter> makeKalmanFilter(); 
 
 				ofxCvGui::PanelPtr panel;
 				Utils::CaptureSet<Marker> markers;

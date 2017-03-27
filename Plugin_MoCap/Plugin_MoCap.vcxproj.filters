@@ -37,6 +37,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.cpp">
       <Filter>src\ofxRulr\Nodes\MoCap</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\OSCRelay.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_MoCap.h" />
@@ -59,6 +62,9 @@
       <Filter>src\ofxRulr\Nodes\MoCap</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\OSCRelay.h">
       <Filter>src\ofxRulr\Nodes\MoCap</Filter>
     </ClInclude>
   </ItemGroup>

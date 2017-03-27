@@ -1,5 +1,6 @@
 #include "pch_Plugin_MoCap.h"
 #include "Body.h"
+#include "ofxGLM.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -120,7 +121,7 @@ namespace ofxRulr {
 				//rebuild body description
 				if (!this->getBodyDescription()) {
 					auto bodyDescription = make_shared<Description>();
-					
+
 					auto markers = this->markers.getSelection();
 					for (size_t i = 0; i < markers.size(); i++) {
 						bodyDescription->markers.positions.push_back(markers[i]->position);
@@ -130,7 +131,7 @@ namespace ofxRulr {
 
 					bodyDescription->markerDiameter = this->parameters.markerDiameter;
 					bodyDescription->markerCount = markers.size();
-					
+
 					bodyDescription->modelTransform = this->getTransform();
 					ofxCv::decomposeMatrix(bodyDescription->modelTransform
 						, bodyDescription->rotationVector
@@ -197,7 +198,7 @@ namespace ofxRulr {
 						for (auto point : marker->worldHistory) {
 							trail.addVertex(point);
 							color.a = ofMap(pointIndex++
-								, 0, (float) historyLength
+								, 0, (float)historyLength
 								, 0.0f, 255.0f
 								, false);
 							trail.addColor(color);
@@ -206,7 +207,7 @@ namespace ofxRulr {
 					}
 				}
 				ofPopStyle();
-				
+
 			}
 
 			//----------
@@ -323,12 +324,49 @@ namespace ofxRulr {
 			}
 
 			//----------
-			//https://github.com/opencv/opencv/blob/master/samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/src/main_detection.cpp
-			void Body::updateTracking(cv::Mat rotationVector, cv::Mat translation) {
+			bool Body::getTrackingPrediction(cv::Mat & rotationVector, cv::Mat & translation) {
 				if (this->parameters.kalmanFilter.enabled) {
 					this->kalmanFilterMutex.lock();
 					auto kalmanFilter = this->kalmanFilter;
 					this->kalmanFilterMutex.unlock();
+
+					if(kalmanFilter) {
+						auto predicton = kalmanFilter->predict();
+						translation.at<double>(0) = predicton.at<double>(0);
+						translation.at<double>(1) = predicton.at<double>(1);
+						translation.at<double>(2) = predicton.at<double>(2);
+
+						rotationVector.at<double>(0) = predicton.at<double>(9);
+						rotationVector.at<double>(1) = predicton.at<double>(10);
+						rotationVector.at<double>(2) = predicton.at<double>(11);
+
+						return true;
+					}
+					else {
+						//continue outside to ordinary version
+					}
+				}
+
+				//return our current transform
+				auto transform = this->getTransform();
+				transform = ofxGLM::toOf(glm::inverse(ofxGLM::toGLM(transform)));
+				ofxCv::decomposeMatrix(transform, rotationVector, translation);
+
+				return false;
+			}
+
+			//----------
+			//https://github.com/opencv/opencv/blob/master/samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/src/main_detection.cpp
+			ofMatrix4x4 Body::updateTracking(cv::Mat rotationVector, cv::Mat translation, bool newTracking) {
+				if (this->parameters.kalmanFilter.enabled) {
+					this->kalmanFilterMutex.lock();
+					auto kalmanFilter = this->kalmanFilter;
+					this->kalmanFilterMutex.unlock();
+
+					//if the object was lost, restart the Kalman filter
+					if (newTracking) {
+						kalmanFilter.reset();
+					}
 
 					//create the measurement vector
 					cv::Mat measurement;
@@ -343,10 +381,10 @@ namespace ofxRulr {
 						this->kalmanFilterMutex.unlock();
 
 						kalmanFilter->statePre = measurement;
+						kalmanFilter->predict();
 					}
 
 					//predict and correct
-					auto prediction = kalmanFilter->predict();
 					auto estimation = kalmanFilter->correct(measurement);
 
 					translation.at<double>(0) = estimation.at<double>(0);
@@ -358,7 +396,9 @@ namespace ofxRulr {
 					rotationVector.at<double>(2) = estimation.at<double>(11);
 				}
 
-				transformIncoming.send(ofxCv::makeMatrix(rotationVector, translation));
+				auto transform = ofxCv::makeMatrix(rotationVector, translation);
+				transformIncoming.send(transform);
+				return transform;
 			}
 
 			//----------
@@ -372,9 +412,9 @@ namespace ofxRulr {
 				auto kalmanFilter = make_shared<cv::KalmanFilter>();
 				kalmanFilter->init(18, 6, 0, CV_64F);
 
-				cv::setIdentity(kalmanFilter->processNoiseCov, cv::Scalar::all(1e-5));
-				cv::setIdentity(kalmanFilter->measurementNoiseCov, cv::Scalar::all(1e-2));
-				cv::setIdentity(kalmanFilter->errorCovPost, cv::Scalar::all(1));
+				cv::setIdentity(kalmanFilter->processNoiseCov, cv::Scalar::all(this->parameters.kalmanFilter.processNoise.get()));
+				cv::setIdentity(kalmanFilter->measurementNoiseCov, cv::Scalar::all(this->parameters.kalmanFilter.measurementNoise.get()));
+				cv::setIdentity(kalmanFilter->errorCovPost, cv::Scalar::all(this->parameters.kalmanFilter.errorPost.get()));
 
 				/** DYNAMIC MODEL **/
 
@@ -398,7 +438,7 @@ namespace ofxRulr {
 				//  [0 0 0  0  0  0   0   0   0 0 0 0  0  0  0   0   0   1]
 
 				// TODO : how to deal with varying dt?
-				auto dt = 1.0f / 120.0f;
+				auto dt = 1.0f / 150.0f;
 				auto dt2 = dt * dt;
 
 				// position

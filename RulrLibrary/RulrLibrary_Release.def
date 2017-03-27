@@ -24,11 +24,14 @@ EXPORTS
 	??0ofRectangle@@QEAA@MMMM@Z
 	??0ofSerial@@QEAA@XZ
 	??0ofTexture@@QEAA@XZ
+	??0ofxOscMessage@@QEAA@XZ
+	??0ofxOscSender@@QEAA@XZ
 	??1ofFbo@@UEAA@XZ
 	??1ofFile@@UEAA@XZ
 	??1ofLog@@UEAA@XZ
 	??1ofRectangle@@UEAA@XZ
 	??1ofTexture@@UEAA@XZ
+	??1ofxOscMessage@@QEAA@XZ
 	?ofClamp@@YAMMMM@Z
 	?ofClear@@YAXMMMM@Z
 	?ofCreateWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@AEBVofWindowSettings@@@Z
@@ -243,6 +246,8 @@ EXPORTS
 	?addOptions@MultipleChoice@Widgets@ofxCvGui@@QEAAXV?$initializer_list@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@Z
 	?getSelectionIndex@MultipleChoice@Widgets@ofxCvGui@@QEBAHXZ
 	?setSelection@MultipleChoice@Widgets@ofxCvGui@@QEAAXH@Z
+	?toGLM@ofxGLM@@YAAEAU?$tmat4x4@M@detail@glm@@AEAVofMatrix4x4@@@Z
+	?toOf@ofxGLM@@YAAEBVofMatrix4x4@@AEBU?$tmat4x4@M@detail@glm@@@Z
 	??0Specification@ofxMachineVision@@QEAA@AEBV01@@Z
 	??0Specification@ofxMachineVision@@QEAA@W4CaptureSequenceType@1@HHV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@11@Z
 	??0Specification@ofxMachineVision@@QEAA@XZ
@@ -253,6 +258,9 @@ EXPORTS
 	?getAvailableFrameFilledWith@FramePool@ofxMachineVision@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@PEBE_K1W4ofPixelFormat@@@Z
 	?getFrame@Simple@Grabber@ofxMachineVision@@QEBA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getInstance@?$UnmanagedSingleton@VFramePool@ofxMachineVision@@@ofxSingleton@@SA?AV?$shared_ptr@VFramePool@ofxMachineVision@@@std@@XZ
+	?addFloatArg@ofxOscMessage@@QEAAXM@Z
+	?sendMessage@ofxOscSender@@QEAAXAEAVofxOscMessage@@_N@Z
+	?setup@ofxOscSender@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	??0Exception@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?what@Exception@ofxRulr@@UEBAPEBDXZ
 	??0AbstractPin@Graph@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z

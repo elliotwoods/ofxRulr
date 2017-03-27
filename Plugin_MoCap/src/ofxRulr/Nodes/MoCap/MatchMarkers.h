@@ -26,6 +26,8 @@ namespace ofxRulr {
 				vector<cv::Point2f> projectedMarkerImagePoints; // note this is empty when doing exhaustive search
 				float distanceThresholdSquared; // note this flips to the exhaustive search parameter empty when doing exhaustive search
 
+				bool trackingWasLost = false;
+
 				size_t matchCount = 0;
 				vector<size_t> matchedMarkerListIndex; // index in marker points list coming from Body
 				vector<size_t> matchedMarkerID;
@@ -52,7 +54,7 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					ofParameter<float> trackingDistanceThreshold{ "Tracking distance threshold [px]", 20, 0, 300 };
-					ofParameter<float> searchDistanceThreshold{ "Search distance threshold [px]", 1, 0, 10 };
+					ofParameter<float> searchDistanceThreshold{ "Search distance threshold [px]", 5, 0, 20 };
 					ofParameter<bool> searchWhenTrackingLost{ "Search when tracking lost", false };
 					PARAM_DECLARE("MatchMarkers", trackingDistanceThreshold, searchDistanceThreshold, searchWhenTrackingLost);
 				} parameters;

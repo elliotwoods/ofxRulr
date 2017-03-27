@@ -61,14 +61,11 @@ namespace ofxRulr {
 					, outgoingFrame->modelViewTranslation
 					, true);
 
-
-				outgoingFrame->transform = ofxCv::makeMatrix(outgoingFrame->modelViewRotationVector
-					, outgoingFrame->modelViewTranslation);
-
 				//TODO : 
 				// * cancel the camera transform
 
-				bodyNode->updateTracking(outgoingFrame->modelViewRotationVector, outgoingFrame->modelViewTranslation);
+				outgoingFrame->transform = bodyNode->updateTracking(outgoingFrame->modelViewRotationVector, outgoingFrame->modelViewTranslation, incomingFrame->trackingWasLost);
+
 				this->onNewFrame.notifyListeners(outgoingFrame);
 			}
 		}
