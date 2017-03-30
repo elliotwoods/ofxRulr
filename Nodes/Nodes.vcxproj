@@ -269,6 +269,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h" />
@@ -280,6 +281,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Test\ARCube.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\Focus.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\Latency.h" />
+    <ClInclude Include="src\ofxRulr\Utils\VideoOutputListener.h" />
     <ClInclude Include="src\pch_RulrNodes.h" />
   </ItemGroup>
   <ItemGroup>
@@ -351,6 +353,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp" />
@@ -362,6 +365,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Test\ARCube.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\Focus.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\Latency.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\VideoOutputListener.cpp" />
     <ClCompile Include="src\pch_RulrNodes.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

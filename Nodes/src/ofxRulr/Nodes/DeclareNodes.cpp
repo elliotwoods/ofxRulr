@@ -32,6 +32,7 @@
 #include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromGraycode.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/StereoCalibrate.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromStereoCameras.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromStereoAndHelperCamera.h"
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Procedure/Triangulate.h"
 
@@ -82,13 +83,15 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromGraycode);
 			RULR_DECLARE_NODE(Procedure::Calibrate::StereoCalibrate);
 			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromStereoCamera);
-			RULR_DECLARE_NODE(Procedure::Scan::Graycode);
-			RULR_DECLARE_NODE(Procedure::Triangulate);
+			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromStereoAndHelperCamera);
 
 			RULR_DECLARE_NODE(Procedure::Calibrate::ProCamSolver::Solver);
 			RULR_DECLARE_NODE(Procedure::Calibrate::ProCamSolver::AddView);
 			RULR_DECLARE_NODE(Procedure::Calibrate::ProCamSolver::AddScan);
 
+			RULR_DECLARE_NODE(Procedure::Scan::Graycode);
+
+			RULR_DECLARE_NODE(Procedure::Triangulate);
 
 			RULR_DECLARE_NODE(Render::NodeThroughView);
 

@@ -136,6 +136,9 @@
     <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProCamSolver">
       <UniqueIdentifier>{8d69bb64-9aaa-4816-b611-e474601303b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Utils">
+      <UniqueIdentifier>{08482660-a69e-4f25-816f-43c7b263d001}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h">
@@ -687,6 +690,12 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\VideoOutputListener.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -856,6 +865,12 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\VideoOutputListener.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

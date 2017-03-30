@@ -4,6 +4,7 @@
 
 #include "ofxGraycode.h"
 #include "ofxCvGui/Panels/Image.h"
+#include "ofxRulr/Utils/VideoOutputListener.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -33,31 +34,36 @@ namespace ofxRulr {
 					void clear();
 					bool hasData() const;
 
-					bool hasDecoder() const;
+					bool hasScanSuite() const;
 					ofxGraycode::Decoder & getDecoder() const;
 					const ofxGraycode::DataSet & getDataSet() const;
 					void setDataSet(const ofxGraycode::DataSet &);
 				protected:
-					void rebuild();
+					struct Suite {
+						ofxGraycode::PayloadGraycode payload;
+						ofxGraycode::Encoder encoder;
+						ofxGraycode::Decoder decoder;
+					};
+
+					void invalidateSuite();
 					void drawPreviewOnVideoOutput(const ofRectangle &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 					void updatePreview();
 					void updateTestPattern();
-					string getPreviewModeString() const;
 					
 					ofxCvGui::PanelPtr view;
 
-					unique_ptr<ofxGraycode::PayloadGraycode> payload;
-					unique_ptr<ofxGraycode::Encoder> encoder;
-					unique_ptr<ofxGraycode::Decoder> decoder;
+					unique_ptr<Suite> suite;
+
 					ofImage message;
 					
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<float> captureDelay{ "Capture delay [ms]", 200 };
-							ofParameter<float> flushFrames{ "Flush frames", 1 };
+							ofParameter<float> flushOutputFrames{ "Flush output frames", 2 };
+							ofParameter<float> flushInputFrames{ "Flush input frames", 0 };
 							ofParameter<float> brightness{ "Brightness [/255]", 255, 0, 255 };
-							PARAM_DECLARE("Scan", captureDelay, flushFrames, brightness);
+							PARAM_DECLARE("Scan", captureDelay, flushOutputFrames, flushInputFrames, brightness);
 						} scan;
 
 						struct : ofParameterGroup {
@@ -81,8 +87,9 @@ namespace ofxRulr {
 					bool previewDirty = true;
 					bool shouldLoadWhenReady = false;
 
-					void callbackChangeThreshold(float &);
 					void callbackChangePreviewMode(PreviewMode &);
+
+					unique_ptr<Utils::VideoOutputListener> videoOutputListener;
 				};
 			}
 		}
