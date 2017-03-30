@@ -2,6 +2,9 @@
 #include "StereoCalibrate.h"
 
 #include "ofxRulr/Nodes/Item/Camera.h"
+#include <future>
+
+#include "ofxNonLinearFit.h"
 
 using namespace ofxCv;
 using namespace cv;
@@ -66,7 +69,7 @@ namespace ofxRulr {
 
 					this->addInput<Item::Camera>("Camera A");
 					this->addInput<Item::Camera>("Camera B");
-					this->addInput<Item::Board>();
+					this->addInput<Item::AbstractBoard>();
 
 					//build gui
 					{
@@ -210,6 +213,7 @@ namespace ofxRulr {
 				void StereoCalibrate::serialize(Json::Value & json) {
 					this->captures.serialize(json);
 					Utils::Serializable::serialize(json, this->parameters);
+					Utils::Serializable::serialize(json, this->reprojectionError);
 
 					{
 						const auto filename = this->getDefaultFilename() + "-opencvmatrices.yml";
@@ -232,6 +236,7 @@ namespace ofxRulr {
 				void StereoCalibrate::deserialize(const Json::Value & json) {
 					this->captures.deserialize(json);
 					Utils::Serializable::deserialize(json, this->parameters);
+					Utils::Serializable::deserialize(json, this->reprojectionError);
 
 					if (json.isMember("opencvMatricesFile")) {
 						auto filename = json["opencvMatricesFile"].asString();
@@ -340,6 +345,147 @@ namespace ofxRulr {
 					return worldPointsOutput;
 				}
 
+				struct SolvePnPDataPoint {
+					vector<cv::Point3f> objectSpacePoint;
+					vector<cv::Point2f> imagePointProjectionA;
+					vector<cv::Point2f> imagePointProjectionB;
+				};
+
+				class SolvePnPModel : public ofxNonLinearFit::Models::Base<SolvePnPDataPoint, SolvePnPModel> {
+				public:
+					struct System {
+						cv::Mat cameraMatrixA;
+						cv::Mat cameraMatrixB;
+						cv::Mat distortionCoefficientsA;
+						cv::Mat distortionCoefficientsB;
+						cv::Mat rotationVectorStereo;
+						cv::Mat translationStereo;
+					};
+
+					SolvePnPModel() {
+						this->rotationVectorA = cv::Mat(3, 1, CV_64F);
+						this->rotationVectorA = cv::Mat(3, 1, CV_64F);
+						this->translationB = cv::Mat(3, 1, CV_64F);
+						this->translationB = cv::Mat(3, 1, CV_64F);
+					}
+
+					unsigned int getParameterCount() const override {
+						return 6;
+					}
+
+					double getResidual(SolvePnPDataPoint dataPoint) const override {
+						auto dataPointTest = dataPoint;
+						this->evaluate(dataPointTest);
+
+						double residualSquaredSum = 0.0;
+						for (int i = 0; i < dataPoint.objectSpacePoint.size(); i++) {
+							residualSquaredSum += ofxCv::toOf(dataPoint.imagePointProjectionA[i]).squareDistance(ofxCv::toOf(dataPointTest.imagePointProjectionA[i]));
+						}
+						return sqrt(residualSquaredSum);
+					}
+
+					void evaluate(SolvePnPDataPoint & dataPoint) const override {
+						cv::projectPoints(dataPoint.objectSpacePoint
+							, this->rotationVectorA
+							, this->translationA
+							, this->system.cameraMatrixA
+							, this->system.distortionCoefficientsA
+							, dataPoint.imagePointProjectionA);
+
+						cv::projectPoints(dataPoint.objectSpacePoint
+							, this->rotationVectorB
+							, this->translationB
+							, this->system.cameraMatrixB
+							, this->system.distortionCoefficientsB
+							, dataPoint.imagePointProjectionB);
+					}
+					
+					virtual void cacheModel() override {
+						this->rotationVectorA.at<double>(0) = this->parameters[0];
+						this->rotationVectorA.at<double>(1) = this->parameters[1];
+						this->rotationVectorA.at<double>(2) = this->parameters[2];
+						this->translationA.at<double>(0) = this->parameters[3];
+						this->translationA.at<double>(1) = this->parameters[4];
+						this->translationA.at<double>(2) = this->parameters[5];
+
+						cv::composeRT(this->rotationVectorA
+							, this->translationA
+							, this->system.rotationVectorStereo
+							, this->system.translationStereo
+							, this->rotationVectorB
+							, this->translationB);
+					}
+
+					System system;
+
+					cv::Mat rotationVectorA;
+					cv::Mat rotationVectorB;
+					cv::Mat translationA;
+					cv::Mat translationB;
+				};
+
+				//----------
+				//hacked from https://github.com/opencv/opencv/blob/3.1.0/modules/calib3d/src/calibration.cpp#L1154
+				bool StereoCalibrate::solvePnP(const vector<cv::Point2f> & imagePointsA, const vector<cv::Point2f> & imagePointsB, const vector<cv::Point3f> & objectPoints, cv::Mat rotationVector, cv::Mat translation, bool useExtrinsicGuess /*= true*/) {
+					auto count = imagePointsA.size();
+					if (imagePointsB.size() != count
+						|| objectPoints.size() != count) {
+						throw(ofxRulr::Exception("solvePnP requires vectors with equal length as input"));
+					}
+					this->throwIfACameraIsDisconnected();
+
+					//build the model
+					SolvePnPModel model;
+					{
+						auto cameraNodeA = this->getInput<Item::Camera>("Camera A");
+						auto cameraNodeB = this->getInput<Item::Camera>("Camera B");
+
+						model.system = SolvePnPModel::System { cameraNodeA->getCameraMatrix()
+							, cameraNodeB->getCameraMatrix()
+							, cameraNodeA->getDistortionCoefficients()
+							, cameraNodeB->getDistortionCoefficients()
+							, this->openCVCalibration.rotation
+							, this->openCVCalibration.translation
+						};
+					}
+					
+					ofxNonLinearFit::Fit<SolvePnPModel> fit;
+
+					//build the dataSet
+					vector<SolvePnPDataPoint> dataSet;
+					{
+						SolvePnPDataPoint dataPoint;
+						dataPoint.imagePointProjectionA = imagePointsA;
+						dataPoint.imagePointProjectionB = imagePointsB;
+						dataPoint.objectSpacePoint = objectPoints;
+					}
+
+					//perform the fit
+					double residual = 0.0;
+					auto success = fit.optimise(model, &dataSet, &residual);
+
+					//TODO
+					// * build a test case (compare to opencv's solvePnP)
+					// * objectPoints don't need to be the same for both cameras
+					// * check transforms are correct order + inversion
+					// * add error from second camera (+check the order + inversion)
+					// * consider using Jacobian
+					rotationVector = model.rotationVectorA;
+					translation = model.translationA;
+
+					return success;
+				}
+
+				//----------
+				void StereoCalibrate::throwIfACameraIsDisconnected() {
+					if (!this->getInputPin<Item::Camera>("Camera A")->isConnected()) {
+						throw(ofxRulr::Exception("Camera A is disconnected"));
+					}
+					if (!this->getInputPin<Item::Camera>("Camera B")->isConnected()) {
+						throw(ofxRulr::Exception("Camera B is disconnected"));
+					}
+				}
+
 				//----------
 				void StereoCalibrate::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 					auto inspector = inspectArgs.inspector;
@@ -371,7 +517,7 @@ namespace ofxRulr {
 				void StereoCalibrate::addCapture() {
 					this->throwIfMissingAnyConnection();
 
-					auto boardNode = this->getInput<Item::Board>();
+					auto boardNode = this->getInput<Item::AbstractBoard>();
 					auto cameraNodeA = this->getInput<Item::Camera>("Camera A");
 					auto cameraNodeB = this->getInput<Item::Camera>("Camera B");
 
@@ -402,24 +548,51 @@ namespace ofxRulr {
 						auto imageA = ofxCv::toCv(cameraFrameA->getPixels());
 						auto imageB = ofxCv::toCv(cameraFrameB->getPixels());
 
-						bool boardFoundInA = boardNode->findBoard(imageA, ofxCv::toCv(capture->pointsImageSpaceA), this->parameters.capture.findBoardMode);
-						bool boardFoundInB = boardNode->findBoard(imageB, ofxCv::toCv(capture->pointsImageSpaceB), this->parameters.capture.findBoardMode);
+						vector<cv::Point2f> imagePointsA;
+						vector<cv::Point2f> imagePointsB;
+						vector<cv::Point3f> objectPointsA;
+						vector<cv::Point3f> objectPointsB;
 
-						if (!boardFoundInA) {
-							this->lastFailures.lastFailureA = chrono::system_clock::now();
-						}
-						if (!boardFoundInB) {
-							this->lastFailures.lastFailureB = chrono::system_clock::now();
+						//find the board in both cameras
+						{
+							auto findBoardMode = this->parameters.capture.findBoardMode.get();
+							auto futureA = std::async(std::launch::async, [&] {
+								return boardNode->findBoard(imageA
+									, imagePointsA
+									, objectPointsA
+									, findBoardMode
+									, cameraNodeA->getCameraMatrix()
+									, cameraNodeA->getDistortionCoefficients());
+							});
+							auto futureB = std::async(std::launch::async, [&] {
+								return boardNode->findBoard(imageB
+									, imagePointsB
+									, objectPointsB
+									, findBoardMode
+									, cameraNodeB->getCameraMatrix()
+									, cameraNodeB->getDistortionCoefficients());
+							});
+
+							if (!futureA.get()) {
+								this->lastFailures.lastFailureA = chrono::system_clock::now();
+							}
+							if (!futureB.get()) {
+								this->lastFailures.lastFailureB = chrono::system_clock::now();
+							}
 						}
 
-						if (!boardFoundInA) {
-							throw(ofxRulr::Exception("Board not found in camera A"));
-						}
-						if (!boardFoundInB) {
-							throw(ofxRulr::Exception("Board not found in camera B"));
+						Item::AbstractBoard::filterCommonPoints(imagePointsA
+							, imagePointsB
+							, objectPointsA
+							, objectPointsB);
+						
+						if (imagePointsA.empty()) {
+							throw(ofxRulr::Exception("No common board points found between 2 cameras"));
 						}
 
-						capture->pointsObjectSpace = ofxCv::toOf(boardNode->getObjectPoints());
+						capture->pointsImageSpaceA = ofxCv::toOf(imagePointsA);
+						capture->pointsImageSpaceB = ofxCv::toOf(imagePointsB);
+						capture->pointsObjectSpace = ofxCv::toOf(objectPointsA);
 
 						this->captures.add(capture);
 					}
@@ -456,7 +629,7 @@ namespace ofxRulr {
 					cv::Mat distortionCoefficientsB = cameraNodeB->getDistortionCoefficients();
 
 					int flags = 0;
-					if (this->parameters.calibration.improveIntrinsics) {
+					if (!this->parameters.calibration.fixIntrinsics) {
 						flags |= CV_CALIB_USE_INTRINSIC_GUESS;
 					}
 					else {
@@ -477,7 +650,7 @@ namespace ofxRulr {
 						, fundamental
 						, flags);
 
-					if (this->parameters.calibration.improveIntrinsics) {
+					if (!this->parameters.calibration.fixIntrinsics) {
 						cameraNodeA->setIntrinsics(cameraMatrixA, distortionCoefficientsA);
 						cameraNodeB->setIntrinsics(cameraMatrixB, distortionCoefficientsB);
 					}
@@ -517,7 +690,7 @@ namespace ofxRulr {
 						, disparityToDepth
 					};
 
-					//triangulate the points to test their world space re-projections
+					//triangulate the points to see their world space re-projections
 					for (auto capture : selectedCaptures) {
 						capture->pointsWorldSpace = this->triangulate(capture->pointsImageSpaceA, capture->pointsImageSpaceB, false);
 					}

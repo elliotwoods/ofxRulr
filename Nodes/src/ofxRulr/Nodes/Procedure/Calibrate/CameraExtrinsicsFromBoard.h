@@ -3,7 +3,7 @@
 #include "../Base.h"
 #include "ofxCvMin.h"
 
-#include "ofxRulr/Nodes/Item/Board.h"
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -34,10 +34,12 @@ namespace ofxRulr {
 					ofImage grayscalePreview;
 
 					vector<ofVec2f> currentCorners;
+					vector<ofVec3f> currentObjectPoints;
+
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<bool> useOptimizers{ "Use optimizers", false };
-							ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Find board mode", Item::Board::FindBoardMode::Optimized };
+							ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Find board mode", Item::AbstractBoard::FindBoardMode::Optimized };
 
 							PARAM_DECLARE("Capture", findBoardMode);
 						} capture;

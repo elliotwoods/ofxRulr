@@ -1,7 +1,7 @@
 #include "pch_RulrNodes.h"
 #include "CameraIntrinsics.h"
 
-#include "../../Item/Board.h"
+#include "../../Item/AbstractBoard.h"
 #include "../../Item/Camera.h"
 
 #include "ofxRulr/Utils/ScopedProcess.h"
@@ -57,19 +57,8 @@ namespace ofxRulr {
 					json << this->extrsinsics;
 					json << this->reprojectionError;
 
-					{
-						auto & jsonPointsImageSpace = json["pointsImageSpace"];
-						for (int i = 0; i < pointsImageSpace.size(); i++) {
-							jsonPointsImageSpace[i] << this->pointsImageSpace[i];
-						}
-					}
-
-					{
-						auto & jsonPointsObjectSpace = json["pointsObjectSpace"];
-						for (int i = 0; i < pointsObjectSpace.size(); i++) {
-							jsonPointsObjectSpace[i] << this->pointsObjectSpace[i];
-						}
-					}
+					json["pointsImageSpace"] << this->pointsImageSpace;
+					json["pointsObjectSpace"] << this->pointsObjectSpace;
 				}
 
 				//----------
@@ -79,25 +68,8 @@ namespace ofxRulr {
 					json >> this->extrsinsics;
 					json >> this->reprojectionError;
 
-					{
-						const auto & jsonPointsImageSpace = json["pointsImageSpace"];
-						this->pointsImageSpace.clear();
-						for (const auto & jsonPoint : jsonPointsImageSpace) {
-							ofVec2f point;
-							jsonPoint >> point;
-							this->pointsImageSpace.push_back(point);
-						}
-					}
-
-					{
-						const auto & jsonPointsObjectSpace = json["pointsObjectSpace"];
-						this->pointsObjectSpace.clear();
-						for (const auto & jsonPoint : jsonPointsObjectSpace) {
-							ofVec3f point;
-							jsonPoint >> point;
-							this->pointsObjectSpace.push_back(point);
-						}
-					}
+					json["pointsImageSpace"] >> this->pointsImageSpace;
+					json["pointsObjectSpace"] >> this->pointsObjectSpace;
 				}
 
 #pragma mark CameraIntrinsics
@@ -114,9 +86,9 @@ namespace ofxRulr {
 					RULR_NODE_DRAW_WORLD_LISTENER;
 
 					this->addInput(MAKE(Pin<Item::Camera>));
-					this->addInput(MAKE(Pin<Item::Board>));
+					this->addInput(MAKE(Pin<Item::AbstractBoard>));
 
-					this->view = ofxCvGui::Panels::makeImage(this->grayscale);
+					this->view = ofxCvGui::Panels::makeTexture(this->preview);
 					this->view->onDrawImage += [this](DrawImageArguments & args) {
 						auto camera = this->getInput<Item::Camera>();
 						if (camera) {
@@ -135,7 +107,7 @@ namespace ofxRulr {
 									}
 
 									//draw current corners on top
-									ofxCv::drawCorners(this->currentCorners);
+									ofxCv::drawCorners(this->currentImagePoints);
 
 									ofPopStyle();
 								}
@@ -162,29 +134,31 @@ namespace ofxRulr {
 
 				//----------
 				void CameraIntrinsics::update() {
+					this->isFrameNew = false;
+
 					if (this->isBeingInspected()) {
 						auto camera = this->getInput<Item::Camera>();
 						if (camera) {
 							auto grabber = camera->getGrabber();
 							if (grabber->isFrameNew()) {
-								if (grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)) {
+								if (this->parameters.capture.checkAllIncomingFrames) {
 									try {
 										this->findBoard();
-									}
-									RULR_CATCH_ALL_TO_ERROR
-								}
-								else {
-									if (this->parameters.capture.tetheredShootMode && grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::OneShot)) {
-										try {
-											Utils::ScopedProcess scopedProcessTethered("Tethered shoot find board");
-											this->findBoard();
-											if (this->currentCorners.size() > 0) {
-												this->addBoard(true);
-												scopedProcessTethered.end();
-											}
+
+										//we need at least 4 found points for calibrateCamera to be happy to use this board find
+										if (!this->currentImagePoints.size() >= 4) {
+											this->isFrameNew = true;
 										}
-										RULR_CATCH_ALL_TO_ERROR
+										if (this->isFrameNew
+											&& this->parameters.capture.tetheredShootEnabled
+											&& !grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)
+											&& grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::OneShot)) {
+											Utils::ScopedProcess scopedProcessTethered("Tethered shoot find board");
+											this->addBoard();
+											scopedProcessTethered.end();
+										}
 									}
+									RULR_CATCH_ALL_TO_ERROR;
 								}
 							}
 						}
@@ -256,13 +230,16 @@ namespace ofxRulr {
 				void CameraIntrinsics::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 					auto inspector = inspectArguments.inspector;
 					
-					inspector->addIndicator("Points found", [this]() {
-						return (Widgets::Indicator::Status) !this->currentCorners.empty();
+					inspector->addIndicator("New frame found", [this]() {
+						return (Widgets::Indicator::Status) !this->isFrameNew;
+					});
+					inspector->addIndicator("Points available", [this]() {
+						return (Widgets::Indicator::Status) !this->currentImagePoints.empty();
 					});
 					inspector->addButton("Add capture", [this]() {
 						try {
 							ofxRulr::Utils::ScopedProcess scopedProcess("Finding checkerboard");
-							this->addBoard(false);
+							this->addBoard();
 							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ERROR;
@@ -293,30 +270,26 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraIntrinsics::addBoard(bool tetheredCapture) {
+				void CameraIntrinsics::addBoard() {
 					this->throwIfMissingAnyConnection();
 					
 					auto camera = this->getInput<Item::Camera>();
 					//if it's a DSLR, let's take a single shot and find the board
 					const auto cameraSpecification = camera->getGrabber()->getDeviceSpecification();
 
-					if (!tetheredCapture) {
-						//if this was called from a tethered capture, then we don't need to capture again for oneshot
-						if (cameraSpecification.supports(ofxMachineVision::CaptureSequenceType::OneShot) && !cameraSpecification.supports(ofxMachineVision::CaptureSequenceType::Continuous)) {
-							//by calling getFreshFrame(), then update(), we should guarantee that the frame
-							camera->getGrabber()->getFreshFrame();
-							this->findBoard();
-						}
+					if (!this->isFrameNew && !this->parameters.capture.checkAllIncomingFrames) {
+						//in this case let's try again to capture
+						camera->getGrabber()->getFreshFrame();
 					}
 					
-					if (this->currentCorners.empty()) {
+					if (this->currentImagePoints.empty()) {
 						throw(ofxRulr::Exception("No corners found"));
 					}
 
 					{
 						auto capture = make_shared<Capture>();
-						capture->pointsImageSpace = this->currentCorners;
-						capture->pointsObjectSpace = toOf(this->getInput<Item::Board>()->getObjectPoints());
+						capture->pointsImageSpace = this->currentImagePoints;
+						capture->pointsObjectSpace = this->currentObjectPoints;
 						capture->imageWidth = camera->getWidth();
 						capture->imageHeight = camera->getHeight();
 						this->captures.add(capture);
@@ -327,7 +300,7 @@ namespace ofxRulr {
 					this->throwIfMissingAnyConnection();
 
 					auto camera = this->getInput<Item::Camera>();
-					auto board = this->getInput<Item::Board>();
+					auto board = this->getInput<Item::AbstractBoard>();
 
 					auto grabber = camera->getGrabber();
 					auto frame = grabber->getFrame();
@@ -340,26 +313,21 @@ namespace ofxRulr {
 					if (!pixels.isAllocated()) {
 						throw(Exception("Camera pixels are not allocated. Perhaps we need to wait for a frame?"));
 					}
-					if (this->grayscale.getWidth() != pixels.getWidth() || this->grayscale.getHeight() != pixels.getHeight()) {
-						this->grayscale.allocate(pixels.getWidth(), pixels.getHeight(), OF_IMAGE_GRAYSCALE);
-					}
-					if (pixels.getNumChannels() != 1) {
-						cv::cvtColor(toCv(pixels), toCv(this->grayscale), CV_RGB2GRAY);
-					}
-					else {
-						this->grayscale = pixels;
-					}
+					this->preview.loadData(pixels);
 
-					this->grayscale.update();
-					this->currentCorners.clear();
-
-					board->findBoard(toCv(this->grayscale), toCv(this->currentCorners), this->parameters.capture.findBoardMode);
+					this->currentImagePoints.clear();
+					this->currentObjectPoints.clear();
+					board->findBoard(toCv(pixels)
+						, toCv(this->currentImagePoints)
+						, toCv(this->currentObjectPoints)
+						, this->parameters.capture.findBoardMode
+						, camera->getCameraMatrix()
+						, camera->getDistortionCoefficients());
 				}
 				
 				//----------
 				void CameraIntrinsics::calibrate() {
 					this->throwIfMissingAConnection<Item::Camera>();
-					this->throwIfMissingAConnection<Item::Board>();
 
 					auto allCaptures = this->captures.getAllCaptures();
 					
@@ -367,7 +335,6 @@ namespace ofxRulr {
 						throw(ofxRulr::Exception("You need to add at least 2 captures before trying to calibrate (ideally 10)"));
 					}
 					auto camera = this->getInput<Item::Camera>();
-					auto board = this->getInput<Item::Board>();
 
 					vector<vector<Point2f>> imagePoints;
 					vector<vector<Point3f>> objectPoints;

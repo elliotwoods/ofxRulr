@@ -100,6 +100,8 @@ namespace ofxRulr {
 							suite->encoder.init(suite->payload);
 							suite->decoder.init(suite->payload);
 							this->suite = move(suite);
+
+							this->previewDirty = true;
 						}
 					}
 
@@ -108,6 +110,11 @@ namespace ofxRulr {
 							|| this->testPattern.getHeight() != this->suite->payload.getHeight()
 							|| this->testPatternBrightness != this->parameters.scan.brightness) {
 							this->updateTestPattern();
+						}
+
+						if (this->suite->decoder.getThreshold() != this->parameters.processing.threshold) {
+							this->suite->decoder.setThreshold(this->parameters.processing.threshold);
+							this->previewDirty = true;
 						}
 					}
 				}
@@ -316,6 +323,7 @@ namespace ofxRulr {
 				//----------
 				void Graycode::invalidateSuite() {
 					this->suite.reset();
+					this->previewDirty = true;
 				}
 
 				//----------

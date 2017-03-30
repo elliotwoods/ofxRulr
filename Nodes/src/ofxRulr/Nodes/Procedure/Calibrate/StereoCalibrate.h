@@ -2,7 +2,7 @@
 
 #include "../Base.h"
 #include "ofxCvMin.h"
-#include "ofxRulr/Nodes/Item/Board.h"
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
 #include "ofxRulr/Utils/CaptureSet.h"
 
 namespace ofxRulr {
@@ -55,6 +55,9 @@ namespace ofxRulr {
 
 					const OpenCVCalibration & getOpenCVCalibration() const;
 					vector<ofVec3f> triangulate(const vector<ofVec2f> & imagePointsA, const vector<ofVec2f> & imagePointsB, bool correctMatches);
+					bool solvePnP(const vector<cv::Point2f> & imagePointsA, const vector<cv::Point2f> & imagePointsB, const vector<cv::Point3f> & objectPoints, cv::Mat rotationVector, cv::Mat translation, bool useExtrinsicGuess = true);
+
+					void throwIfACameraIsDisconnected();
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
 					void addCapture();
@@ -68,13 +71,13 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
-							ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Mode", Item::Board::FindBoardMode::Optimized };
+							ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Mode", Item::AbstractBoard::FindBoardMode::Optimized };
 							PARAM_DECLARE("Capture", findBoardMode);
 						} capture;
 
 						struct : ofParameterGroup {
-							ofParameter<bool> improveIntrinsics{ "Improve intrinsics", false };
-							PARAM_DECLARE("Calibrate", improveIntrinsics);
+							ofParameter<bool> fixIntrinsics{ "Fix intrinsics", false };
+							PARAM_DECLARE("Calibrate", fixIntrinsics);
 						} calibration;
 
 						struct : ofParameterGroup {

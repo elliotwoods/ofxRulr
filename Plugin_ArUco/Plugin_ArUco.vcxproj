@@ -74,6 +74,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\Detector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\Dictionary.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\FitRoomPlanes.cpp" />
@@ -86,6 +87,7 @@
     <ClCompile Include="src\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\Detector.h" />
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\Dictionary.h" />
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\FitRoomPlanes.h" />

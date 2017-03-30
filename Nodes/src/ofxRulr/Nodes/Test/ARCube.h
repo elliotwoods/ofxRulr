@@ -42,12 +42,16 @@ namespace ofxRulr {
 				MAKE_ENUM(DrawStyle
 					, (Axes, Board, Cube)
 					, ("Axes", "Board", "Cube"));
+				MAKE_ENUM(FillMode
+					, (Fill, Wireframe)
+					, ("Fill", "Wireframe"));
 
 				struct : ofParameterGroup {
 					ofParameter<ActiveWhen> activewhen{ "Active when", ActiveWhen::Selected };
 					ofParameter<DrawStyle> drawStyle{ "Draw style", DrawStyle::Cube };
-					ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Find board mode", Item::Board::FindBoardMode::Optimized };
-					PARAM_DECLARE("ARCube", activewhen, drawStyle, findBoardMode);
+					ofParameter<FillMode> fillMode{ "Fill mode", FillMode::Fill };
+					ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Find board mode", Item::AbstractBoard::FindBoardMode::Optimized };
+					PARAM_DECLARE("ARCube", activewhen, drawStyle, fillMode, findBoardMode);
 				} parameters;
 
 				ofBoxPrimitive cube;

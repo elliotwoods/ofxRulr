@@ -1,17 +1,13 @@
 #pragma once
 
-#include "Base.h"
+#include "AbstractBoard.h"
 #include "ofxCvMin.h"
 
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
-			class Board : public Base {
+			class Board : public AbstractBoard {
 			public:
-				MAKE_ENUM(FindBoardMode
-					, (Raw, Optimized, Assistant)
-					, ("Raw", "Optimized", "Assistant"));
-
 				Board();
 				void init();
 				string getTypeName() const override;
@@ -26,7 +22,7 @@ namespace ofxRulr {
 				vector<cv::Point3f> getObjectPoints() const;
 				void drawObject() const;
 
-				bool findBoard(cv::Mat, vector<cv::Point2f> & result, FindBoardMode findBoardMode = FindBoardMode::Optimized) const;
+				bool findBoard(cv::Mat, vector<cv::Point2f> & result, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const override;
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void updatePreviewMesh();

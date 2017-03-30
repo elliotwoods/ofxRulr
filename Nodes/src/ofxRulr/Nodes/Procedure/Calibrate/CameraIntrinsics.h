@@ -46,29 +46,33 @@ namespace ofxRulr {
 					bool getRunFinderEnabled() const;
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void addBoard(bool tetheredCapture);
+					void addBoard();
 					void findBoard();
 					void calibrate();
 
 					shared_ptr<ofxCvGui::Panels::BaseImage> view;
-					ofImage grayscale;
+					ofTexture preview;
 
 					Utils::CaptureSet<Capture> captures;
 
-					vector<ofVec2f> currentCorners;
+					vector<ofVec2f> currentImagePoints;
+					vector<ofVec3f> currentObjectPoints;
+
 					ofParameter<float> error{ "Reprojection error [px]", 0.0f };
 
 					struct : ofParameterGroup {
 						ofParameter<bool> drawBoards{ "Draw boards", true };
 						struct : ofParameterGroup {
-							ofParameter<bool> tetheredShootMode{ "Tethered shoot mode", true };
-							ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Mode", Item::Board::FindBoardMode::Optimized };
+							ofParameter<bool> checkAllIncomingFrames{ "Check all incoming frames", true };
+							ofParameter<bool> tetheredShootEnabled{ "Tethered shoot enabled", true };
+							ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Mode", Item::Board::FindBoardMode::Optimized };
 
-							PARAM_DECLARE("Capture", tetheredShootMode, findBoardMode);
+							PARAM_DECLARE("Capture", checkAllIncomingFrames, tetheredShootEnabled, findBoardMode);
 						} capture;
 						PARAM_DECLARE("CameraIntrinsics", drawBoards, capture);
 					} parameters;
 					
+					bool isFrameNew = false;
 				};
 			}
 		}

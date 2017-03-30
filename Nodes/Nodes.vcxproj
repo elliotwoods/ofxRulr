@@ -253,6 +253,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Sharpy.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Transmit.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Base.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\AbstractBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Board.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Model.h" />
@@ -281,6 +282,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Test\ARCube.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\Focus.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\Latency.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Test\StereoSolvePnP.h" />
     <ClInclude Include="src\ofxRulr\Utils\VideoOutputListener.h" />
     <ClInclude Include="src\pch_RulrNodes.h" />
   </ItemGroup>
@@ -338,6 +340,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\DMX\MovingHead.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Sharpy.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Transmit.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\AbstractBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Board.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Model.cpp" />
@@ -365,6 +368,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Test\ARCube.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\Focus.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\Latency.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Test\StereoSolvePnP.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\VideoOutputListener.cpp" />
     <ClCompile Include="src\pch_RulrNodes.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <math.h>
 #include <string>
+#include <future>
 
 //internal addons
 #include "ofxClipboard.h"

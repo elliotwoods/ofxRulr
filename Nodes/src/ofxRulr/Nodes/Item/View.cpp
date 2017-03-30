@@ -148,7 +148,7 @@ namespace ofxRulr {
 				inspector->add(new Widgets::Title("Camera matrix", Widgets::Title::Level::H3));
 				auto addCameraMatrixParameter = [this, inspector](ofParameter<float> & parameter) {
 					auto slider = new Widgets::Slider(parameter);
-					slider->onValueChange += [this](ofParameter<float> &) {
+					slider->onValueChange += [this](const float &) {
 						this->markViewDirty();
 					};
 					inspector->add(slider);
@@ -190,7 +190,7 @@ namespace ofxRulr {
 
 					inspector->add(new Widgets::Title("Distortion coefficients", Widgets::Title::Level::H3));
 					for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-						inspector->addSlider(this->distortion[i])->onValueChange += [this](ofParameter<float>&) {
+						inspector->addSlider(this->distortion[i])->onValueChange += [this](const float &) {
 							this->markViewDirty();
 						};
 					}

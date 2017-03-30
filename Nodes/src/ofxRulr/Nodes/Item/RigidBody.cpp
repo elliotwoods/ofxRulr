@@ -105,7 +105,7 @@ namespace ofxRulr {
 
 				for (int i = 0; i < 3; i++) {
 					auto slider = new Widgets::Slider(this->translation[i]);
-					slider->onValueChange += [this](ofParameter<float> &) {
+					slider->onValueChange += [this](const float &) {
 						this->onTransformChange.notifyListeners();
 					};
 					inspector->add(slider);
@@ -113,7 +113,7 @@ namespace ofxRulr {
 				}
 				for (int i = 0; i < 3; i++) {
 					auto slider = new Widgets::Slider(this->rotationEuler[i]);
-					slider->onValueChange += [this](ofParameter<float> &) {
+					slider->onValueChange += [this](const float &) {
 						this->onTransformChange.notifyListeners();
 					};
 					inspector->add(slider);

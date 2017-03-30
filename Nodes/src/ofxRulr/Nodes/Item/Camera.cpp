@@ -367,7 +367,7 @@ namespace ofxRulr {
 					}
 
 					//we don't use weak pointers here, just presume that we should never arrive here if grabber closed / param disappeared
-					widget->onValueChange += [grabber, parameter](ofParameter<DataType> &) {
+					widget->onValueChange += [grabber, parameter](const DataType &) {
 						grabber->syncToDevice(*parameter);
 					};
 
@@ -414,12 +414,10 @@ namespace ofxRulr {
 						const auto & deviceParameters = grabber->getDeviceParameters();
 						for (const auto & parameter : deviceParameters) {
 							//try and add the parameter to the inspector
-							if (addParameterWidget<float, Widgets::Slider>(inspector, parameter, grabber))
-							{
-							}
-							else if (addParameterWidget<float, Widgets::Slider>(inspector, parameter, grabber))
-							{
-							}
+							if (addParameterWidget<float, Widgets::Slider>(inspector, parameter, grabber))	{}
+							else if (addParameterWidget<int, Widgets::EditableValue<int>>(inspector, parameter, grabber)) {}
+							else if (addParameterWidget<bool, Widgets::Toggle>(inspector, parameter, grabber)) {}
+							else if (addParameterWidget<string, Widgets::EditableValue<string>>(inspector, parameter, grabber)) {}
 						}
 					}
 

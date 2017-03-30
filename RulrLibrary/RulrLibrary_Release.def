@@ -288,6 +288,7 @@ EXPORTS
 	?getPanel@Transmit@DMX@Nodes@ofxRulr@@UEAA?AV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@XZ
 	?getChannels@Universe@Transmit@DMX@Nodes@ofxRulr@@QEBAPEBEXZ
 	?getIcon@GraphicsManager@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@V?$ofImage_@E@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@@Z
+	??0AbstractBoard@Item@Nodes@ofxRulr@@QEAA@XZ
 	??0Camera@Item@Nodes@ofxRulr@@QEAA@XZ
 	??0RigidBody@Item@Nodes@ofxRulr@@QEAA@XZ
 	??1Camera@Item@Nodes@ofxRulr@@UEAA@XZ

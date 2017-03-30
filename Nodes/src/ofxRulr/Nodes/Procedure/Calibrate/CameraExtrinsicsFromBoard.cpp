@@ -1,7 +1,7 @@
 #include "pch_RulrNodes.h"
 #include "CameraExtrinsicsFromBoard.h"
 
-#include "../../Item/Board.h"
+#include "../../Item/AbstractBoard.h"
 #include "../../Item/Camera.h"
 
 #include "ofxRulr/Utils/ScopedProcess.h"
@@ -34,7 +34,7 @@ namespace ofxRulr {
 					RULR_NODE_DRAW_WORLD_LISTENER;
 
 					this->addInput(MAKE(Pin<Item::Camera>));
-					this->addInput(MAKE(Pin<Item::Board>));
+					this->addInput(MAKE(Pin<Item::AbstractBoard>));
 
 					this->view = MAKE(ofxCvGui::Panels::Base);
 					this->view->onDraw += [this](DrawArguments & drawArgs) {
@@ -207,7 +207,7 @@ namespace ofxRulr {
 					this->throwIfMissingAnyConnection();
 
 					auto camera = this->getInput<Item::Camera>();
-					auto board = this->getInput<Item::Board>();
+					auto board = this->getInput<Item::AbstractBoard>();
 
 					auto grabber = camera->getGrabber();
 					auto frame = grabber->getFreshFrame();
@@ -240,8 +240,14 @@ namespace ofxRulr {
 						Utils::ScopedProcess scopedProcessFindBoard("Find board");
 
 						this->currentCorners.clear();
+						this->currentObjectPoints.clear();
 
-						if (!board->findBoard(toCv(this->grayscalePreview), toCv(this->currentCorners), this->parameters.capture.findBoardMode)) {
+						if (!board->findBoard(toCv(this->grayscalePreview)
+							, toCv(this->currentCorners)
+							, toCv(this->currentObjectPoints)
+							, this->parameters.capture.findBoardMode.get()
+							, camera->getCameraMatrix()
+							, camera->getDistortionCoefficients())) {
 							throw(Exception("Board not found in image"));
 						}
 
@@ -253,7 +259,7 @@ namespace ofxRulr {
 					ofMatrix4x4 transform;
 					{
 						Mat rotation, translation;
-						cv::solvePnP(board->getObjectPoints()
+						cv::solvePnP(ofxCv::toCv(this->currentObjectPoints)
 							, ofxCv::toCv(this->currentCorners)
 							, camera->getCameraMatrix()
 							, camera->getDistortionCoefficients()

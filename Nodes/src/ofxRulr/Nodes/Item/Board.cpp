@@ -101,11 +101,16 @@ namespace ofxRulr {
 
 			//----------
 			void Board::drawObject() const {
-				this->previewMesh.draw();
+				if (ofGetFill() == ofFillFlag::OF_FILLED) {
+					this->previewMesh.draw();
+				}
+				else {
+					this->previewMesh.drawWireframe();
+				}
 			}
 
 			//----------
-			bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results, FindBoardMode findBoardMode) const {
+			bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const {
 				auto size = this->getSize();
 				switch (findBoardMode) {
 				case FindBoardMode::Raw:
@@ -117,13 +122,14 @@ namespace ofxRulr {
 				default:
 					return false;
 				}
+				objectPoints = this->getObjectPoints();
 			}
 
 			//----------
 			void Board::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				auto sliderCallback = [this](ofParameter<float> &) {
+				auto sliderCallback = [this](const float &) {
 					this->updatePreviewMesh();
 				};
 

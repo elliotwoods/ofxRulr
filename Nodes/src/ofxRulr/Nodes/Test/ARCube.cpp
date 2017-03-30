@@ -116,11 +116,22 @@ namespace ofxRulr {
 								if (board) {
 									//find board in distorted image
 									vector<ofVec2f> imagePoints;
-									auto success = board->findBoard(toCv(distorted), toCv(imagePoints), this->parameters.findBoardMode);
+									vector<ofVec3f> objectPoints;
+									auto success = board->findBoard(toCv(distorted)
+										, toCv(imagePoints)
+										, toCv(objectPoints)
+										, this->parameters.findBoardMode
+										, camera->getCameraMatrix()
+										, camera->getDistortionCoefficients());
 									if (success) {
 										//use solvePnP to resolve transform
 										Mat rotation, translation;
-										cv::solvePnP(board->getObjectPoints(), toCv(imagePoints), cameraMatrix, distortionCoefficients, rotation, translation);
+										cv::solvePnP(board->getObjectPoints()
+											, toCv(imagePoints)
+											, cameraMatrix
+											, distortionCoefficients
+											, rotation
+											, translation);
 
 										this->boardTransform = makeMatrix(rotation, translation);
 										this->foundBoard = true;
@@ -227,7 +238,12 @@ namespace ofxRulr {
 									ofScale(scale, scale, scale);
 									ofPushStyle();
 									{
-										ofFill();
+										if (this->parameters.fillMode.get() == FillMode::Fill) {
+											ofFill();
+										}
+										else {
+											ofNoFill();
+										}
 										this->cube.draw();
 									}
 									ofPopStyle();
@@ -237,6 +253,12 @@ namespace ofxRulr {
 							}
 							case DrawStyle::Board:
 							{
+								if (this->parameters.fillMode.get() == FillMode::Fill) {
+									ofFill();
+								}
+								else {
+									ofNoFill();
+								}
 								board->drawObject();
 								break;
 							}

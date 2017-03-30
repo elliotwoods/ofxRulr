@@ -4,7 +4,7 @@
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
 #include "ofxRulr/Nodes/Item/Projector.h"
-#include "ofxRulr/Nodes/Item/Board.h"
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
 
 #include "ofxTriangle.h"
 
@@ -37,7 +37,7 @@ namespace ofxRulr {
 
 					this->addInput<Item::Projector>();
 					this->addInput<Item::Camera>();
-					this->addInput<Item::Board>();
+					this->addInput<Item::AbstractBoard>();
 					this->addInput<Scan::Graycode>();
 
 					this->panel = ofxCvGui::Panels::makeTexture(this->preview.getTexture());
@@ -112,7 +112,7 @@ namespace ofxRulr {
 					this->throwIfMissingAnyConnection();
 					auto graycodeNode = this->getInput<Procedure::Scan::Graycode>();
 					auto cameraNode = this->getInput<Item::Camera>();
-					auto boardNode = this->getInput<Item::Board>();
+					auto boardNode = this->getInput<Item::AbstractBoard>();
 					auto projectorNode = this->getInput<Item::Projector>();
 					
 					if (this->parameters.capture.autoScan) {
@@ -129,6 +129,7 @@ namespace ofxRulr {
 
 					//Find board in camera
 					vector<cv::Point2f> pointsInCameraImage;
+					vector<cv::Point3f> boardObjectPoints;
 					{
 						Utils::ScopedProcess scopedProcessFindBoard("Find board in camera image", false);
 						const auto & median = dataSet.getMedian();
@@ -174,7 +175,12 @@ namespace ofxRulr {
 							this->preview.update();
 
 							//find checkerboard in cropped image
-							if (!boardNode->findBoard(croppedImage, pointsInCameraImage, this->parameters.capture.findBoardMode)) {
+							if (!boardNode->findBoard(croppedImage
+								, pointsInCameraImage
+								, boardObjectPoints
+								, this->parameters.capture.findBoardMode
+								, cameraNode->getCameraMatrix()
+								, cameraNode->getDistortionCoefficients())) {
 								throw(ofxRulr::Exception("Board not found in camera image"));
 							}
 
@@ -188,7 +194,12 @@ namespace ofxRulr {
 							ofxCv::copy(medianCopyMat, this->preview.getPixels());
 							this->preview.update();
 
-							if (!boardNode->findBoard(medianCopyMat, pointsInCameraImage, this->parameters.capture.findBoardMode)) {
+							if (!boardNode->findBoard(medianCopyMat
+								, pointsInCameraImage
+								, boardObjectPoints
+								, this->parameters.capture.findBoardMode
+								, cameraNode->getCameraMatrix()
+								, cameraNode->getDistortionCoefficients())) {
 								throw(ofxRulr::Exception("Board not found in camera image"));
 							}
 						}
@@ -196,7 +207,6 @@ namespace ofxRulr {
 					
 					//find pose of board in 3D space
 					ofMatrix4x4 boardTransform;
-					vector<cv::Point3f> boardObjectPoints = boardNode->getObjectPoints();
 					{
 						Mat rotation, translation;
 
