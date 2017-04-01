@@ -5,7 +5,7 @@
 
 namespace ofxRulr {
 	namespace Nodes {
-		namespace Test {
+		namespace MoCap {
 			class StereoSolvePnP : public Nodes::Base {
 			public:
 				StereoSolvePnP();
@@ -22,7 +22,8 @@ namespace ofxRulr {
 				} parameters;
 
 				ofxCvGui::PanelPtr panel;
-				ofMatrix4x4 transform;
+				ofMatrix4x4 transformA;
+				ofMatrix4x4 transformB;
 			};
 		}
 	}

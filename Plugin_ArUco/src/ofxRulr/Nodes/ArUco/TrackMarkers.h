@@ -9,7 +9,7 @@ namespace ofxRulr {
 			class TrackMarkers : public Nodes::Base {
 			public:
 				struct TrackedMarker {
-					int index;
+					int ID;
 					ofMatrix4x4 transform;
 					float markerLength;
 					cv::Mat rotation, translation;

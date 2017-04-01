@@ -137,7 +137,7 @@ namespace ofxRulr {
 										}
 										else {
 											newMarker = make_unique<TrackedMarker>();
-											newMarker->index = rawMarker.id;
+											newMarker->ID = rawMarker.id;
 										}
 
 										newMarker->markerLength = markerLength;
@@ -156,7 +156,7 @@ namespace ofxRulr {
 											newMarker->cornersInImage[i] = ofxCv::toOf(rawMarker[i]);
 											newMarker->cornersInObjectSpace[i] = ofxCv::toOf(objectPoints[i]);
 										}
-										this->trackedMarkers.emplace(newMarker->index, move(newMarker));
+										this->trackedMarkers.emplace(newMarker->ID, move(newMarker));
 									}
 								}
 								RULR_CATCH_ALL_TO_ERROR;

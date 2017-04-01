@@ -30,7 +30,7 @@ namespace ofxRulr {
 						{
 							ofEnableAlphaBlending();
 							ofSetColor(0, 200);
-							ofDrawRectangle(ofVec2f(), args.drawSize.x, args.drawSize.y);
+							ofDrawRectangle(args.drawBounds);
 						}
 						ofPopStyle();
 
