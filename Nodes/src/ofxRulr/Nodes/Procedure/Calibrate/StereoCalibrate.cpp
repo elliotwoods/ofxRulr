@@ -75,7 +75,7 @@ namespace ofxRulr {
 					{
 						auto strip = ofxCvGui::Panels::Groups::makeStrip();
 						{
-							auto panel = ofxCvGui::Panels::makeImage(this->previewA);
+							auto panel = ofxCvGui::Panels::makeBaseDraws(this->previewA);
 							panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 								//draw captures
 								auto selectedCaptures = this->captures.getSelection();
@@ -96,7 +96,7 @@ namespace ofxRulr {
 										{
 											ofEnableAlphaBlending();
 											ofSetColor(255, 0, 0, ofMap(chrono::duration_cast<chrono::milliseconds>(timeSinceFailure).count(), 0, 3000, 255.0f, 0.0f));
-											ofDrawRectangle(0, 0, args.drawSize.x, args.drawSize.y);
+											ofDrawRectangle(args.drawBounds);
 										}
 										ofPopStyle();
 									}
@@ -105,7 +105,7 @@ namespace ofxRulr {
 							strip->add(panel);
 						}
 						{
-							auto panel = ofxCvGui::Panels::makeImage(this->previewB);
+							auto panel = ofxCvGui::Panels::makeBaseDraws(this->previewB);
 							panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 								//draw captures
 								auto selectedCaptures = this->captures.getSelection();
@@ -126,7 +126,7 @@ namespace ofxRulr {
 										{
 											ofEnableAlphaBlending();
 											ofSetColor(255, 0, 0, ofMap(chrono::duration_cast<chrono::milliseconds>(timeSinceFailure).count(), 0, 3000, 255.0f, 0.0f));
-											ofDrawRectangle(0, 0, args.drawSize.x, args.drawSize.y);
+											ofDrawRectangle(args.drawBounds);
 										}
 										ofPopStyle();
 									}
@@ -150,7 +150,23 @@ namespace ofxRulr {
 
 				//----------
 				void StereoCalibrate::update() {
-
+					if (this->parameters.previewStyle.get() == PreviewStyle::Live) {
+						auto cameraA = this->getInput<Item::Camera>("Camera A");
+						if (cameraA) {
+							this->previewA.loadData(cameraA->getGrabber()->getPixels());
+						}
+						auto cameraB = this->getInput<Item::Camera>("Camera B");
+						if (cameraB) {
+							this->previewB.loadData(cameraB->getGrabber()->getPixels());
+						}
+					}
+					else {
+						if (!this->previewIsLastCapture) {
+							this->previewA.loadData(lastCaptureImageA);
+							this->previewB.loadData(lastCaptureImageB);
+							this->previewIsLastCapture = true;
+						}
+					}
 				}
 
 				//----------
@@ -218,7 +234,8 @@ namespace ofxRulr {
 					{
 						const auto filename = this->getDefaultFilename() + "-opencvmatrices.yml";
 						FileStorage file(filename, FileStorage::WRITE);
-						file << "rotation" << this->openCVCalibration.rotation;
+						file << "rotation3x3" << this->openCVCalibration.rotation3x3;
+						file << "rotationVector" << this->openCVCalibration.rotationVector;
 						file << "translation" << this->openCVCalibration.translation;
 						file << "essential" << this->openCVCalibration.essential;
 						file << "fundamental" << this->openCVCalibration.fundamental;
@@ -242,7 +259,8 @@ namespace ofxRulr {
 						auto filename = json["opencvMatricesFile"].asString();
 
 						FileStorage file(filename, FileStorage::READ);
-						file["rotation"] >> this->openCVCalibration.rotation;
+						file["rotation3x3"] >> this->openCVCalibration.rotation3x3;
+						file["rotationVector"] >> this->openCVCalibration.rotationVector;
 						file["translation"] >> this->openCVCalibration.translation;
 						file["essential"] >> this->openCVCalibration.essential;
 						file["fundamental"] >> this->openCVCalibration.fundamental;
@@ -263,9 +281,7 @@ namespace ofxRulr {
 				//----------
 				std::vector<ofVec3f> StereoCalibrate::triangulate(const vector<ofVec2f> & imagePointsA, const vector<ofVec2f> & imagePointsB, bool correctMatches) {
 					//check that we have a calibration available
-					if (this->openCVCalibration.rotation.empty()
-						|| this->openCVCalibration.translation.empty()
-						|| this->openCVCalibration.projectionA.empty()
+					if (this->openCVCalibration.projectionA.empty()
 						|| this->openCVCalibration.projectionB.empty()) {
 						throw(ofxRulr::Exception("No stereo calibration available."));
 					}
@@ -345,137 +361,6 @@ namespace ofxRulr {
 					return worldPointsOutput;
 				}
 
-				struct SolvePnPDataPoint {
-					vector<cv::Point3f> objectSpacePoint;
-					vector<cv::Point2f> imagePointProjectionA;
-					vector<cv::Point2f> imagePointProjectionB;
-				};
-
-				class SolvePnPModel : public ofxNonLinearFit::Models::Base<SolvePnPDataPoint, SolvePnPModel> {
-				public:
-					struct System {
-						cv::Mat cameraMatrixA;
-						cv::Mat cameraMatrixB;
-						cv::Mat distortionCoefficientsA;
-						cv::Mat distortionCoefficientsB;
-						cv::Mat rotationVectorStereo;
-						cv::Mat translationStereo;
-					};
-
-					SolvePnPModel() {
-						this->rotationVectorA = cv::Mat(3, 1, CV_64F);
-						this->rotationVectorA = cv::Mat(3, 1, CV_64F);
-						this->translationB = cv::Mat(3, 1, CV_64F);
-						this->translationB = cv::Mat(3, 1, CV_64F);
-					}
-
-					unsigned int getParameterCount() const override {
-						return 6;
-					}
-
-					double getResidual(SolvePnPDataPoint dataPoint) const override {
-						auto dataPointTest = dataPoint;
-						this->evaluate(dataPointTest);
-
-						double residualSquaredSum = 0.0;
-						for (int i = 0; i < dataPoint.objectSpacePoint.size(); i++) {
-							residualSquaredSum += ofxCv::toOf(dataPoint.imagePointProjectionA[i]).squareDistance(ofxCv::toOf(dataPointTest.imagePointProjectionA[i]));
-						}
-						return sqrt(residualSquaredSum);
-					}
-
-					void evaluate(SolvePnPDataPoint & dataPoint) const override {
-						cv::projectPoints(dataPoint.objectSpacePoint
-							, this->rotationVectorA
-							, this->translationA
-							, this->system.cameraMatrixA
-							, this->system.distortionCoefficientsA
-							, dataPoint.imagePointProjectionA);
-
-						cv::projectPoints(dataPoint.objectSpacePoint
-							, this->rotationVectorB
-							, this->translationB
-							, this->system.cameraMatrixB
-							, this->system.distortionCoefficientsB
-							, dataPoint.imagePointProjectionB);
-					}
-					
-					virtual void cacheModel() override {
-						this->rotationVectorA.at<double>(0) = this->parameters[0];
-						this->rotationVectorA.at<double>(1) = this->parameters[1];
-						this->rotationVectorA.at<double>(2) = this->parameters[2];
-						this->translationA.at<double>(0) = this->parameters[3];
-						this->translationA.at<double>(1) = this->parameters[4];
-						this->translationA.at<double>(2) = this->parameters[5];
-
-						cv::composeRT(this->rotationVectorA
-							, this->translationA
-							, this->system.rotationVectorStereo
-							, this->system.translationStereo
-							, this->rotationVectorB
-							, this->translationB);
-					}
-
-					System system;
-
-					cv::Mat rotationVectorA;
-					cv::Mat rotationVectorB;
-					cv::Mat translationA;
-					cv::Mat translationB;
-				};
-
-				//----------
-				//hacked from https://github.com/opencv/opencv/blob/3.1.0/modules/calib3d/src/calibration.cpp#L1154
-				bool StereoCalibrate::solvePnP(const vector<cv::Point2f> & imagePointsA, const vector<cv::Point2f> & imagePointsB, const vector<cv::Point3f> & objectPoints, cv::Mat rotationVector, cv::Mat translation, bool useExtrinsicGuess /*= true*/) {
-					auto count = imagePointsA.size();
-					if (imagePointsB.size() != count
-						|| objectPoints.size() != count) {
-						throw(ofxRulr::Exception("solvePnP requires vectors with equal length as input"));
-					}
-					this->throwIfACameraIsDisconnected();
-
-					//build the model
-					SolvePnPModel model;
-					{
-						auto cameraNodeA = this->getInput<Item::Camera>("Camera A");
-						auto cameraNodeB = this->getInput<Item::Camera>("Camera B");
-
-						model.system = SolvePnPModel::System { cameraNodeA->getCameraMatrix()
-							, cameraNodeB->getCameraMatrix()
-							, cameraNodeA->getDistortionCoefficients()
-							, cameraNodeB->getDistortionCoefficients()
-							, this->openCVCalibration.rotation
-							, this->openCVCalibration.translation
-						};
-					}
-					
-					ofxNonLinearFit::Fit<SolvePnPModel> fit;
-
-					//build the dataSet
-					vector<SolvePnPDataPoint> dataSet;
-					{
-						SolvePnPDataPoint dataPoint;
-						dataPoint.imagePointProjectionA = imagePointsA;
-						dataPoint.imagePointProjectionB = imagePointsB;
-						dataPoint.objectSpacePoint = objectPoints;
-					}
-
-					//perform the fit
-					double residual = 0.0;
-					auto success = fit.optimise(model, &dataSet, &residual);
-
-					//TODO
-					// * build a test case (compare to opencv's solvePnP)
-					// * objectPoints don't need to be the same for both cameras
-					// * check transforms are correct order + inversion
-					// * add error from second camera (+check the order + inversion)
-					// * consider using Jacobian
-					rotationVector = model.rotationVectorA;
-					translation = model.translationA;
-
-					return success;
-				}
-
 				//----------
 				void StereoCalibrate::throwIfACameraIsDisconnected() {
 					if (!this->getInputPin<Item::Camera>("Camera A")->isConnected()) {
@@ -537,8 +422,8 @@ namespace ofxRulr {
 
 					//update previews
 					{
-						this->previewA = cameraFrameA->getPixels();
-						this->previewB = cameraFrameB->getPixels();
+						this->lastCaptureImageA = cameraFrameA->getPixels();
+						this->lastCaptureImageB = cameraFrameB->getPixels();
 					
 					}
 					//build capture
@@ -595,6 +480,7 @@ namespace ofxRulr {
 						capture->pointsObjectSpace = ofxCv::toOf(objectPointsA);
 
 						this->captures.add(capture);
+						this->previewIsLastCapture = false;
 					}
 				}
 
@@ -621,7 +507,7 @@ namespace ofxRulr {
 						objectPoints.push_back(ofxCv::toCv(capture->pointsObjectSpace));
 					}
 
-					cv::Mat rotation, translation;
+					cv::Mat rotation3x3, translation;
 					cv::Mat essential, fundamental;
 					cv::Mat cameraMatrixA = cameraNodeA->getCameraMatrix();
 					cv::Mat cameraMatrixB = cameraNodeB->getCameraMatrix();
@@ -644,7 +530,7 @@ namespace ofxRulr {
 						, cameraMatrixB
 						, distortionCoefficientsB
 						, cameraNodeA->getSize()
-						, rotation
+						, rotation3x3
 						, translation
 						, essential
 						, fundamental
@@ -655,7 +541,7 @@ namespace ofxRulr {
 						cameraNodeB->setIntrinsics(cameraMatrixB, distortionCoefficientsB);
 					}
 
-					auto transformBToA = ofxCv::makeMatrix(rotation, translation);
+					auto transformBToA = ofxCv::makeMatrix(rotation3x3, translation);
 					cameraNodeB->setTransform(transformBToA.getInverse() * cameraNodeA->getTransform());
 
 					//create the rectified data
@@ -668,7 +554,7 @@ namespace ofxRulr {
 							, cameraMatrixB
 							, distortionCoefficientsB
 							, cameraNodeA->getSize()
-							, rotation
+							, rotation3x3
 							, translation
 							, rectificationRotationA
 							, rectificationRotationB
@@ -678,8 +564,15 @@ namespace ofxRulr {
 						);
 					}
 
+					//rotation 3x3 -> vector
+					cv::Mat rotationVector;
+					{
+						cv::Rodrigues(rotation3x3, rotationVector);
+					}
+
 					//save our 'OpenCVCalibration'
-					this->openCVCalibration = OpenCVCalibration{ rotation
+					this->openCVCalibration = OpenCVCalibration{ rotation3x3
+						, rotationVector
 						, translation
 						, essential
 						, fundamental

@@ -263,9 +263,9 @@ namespace ofxRulr {
 						ofPushMatrix();
 						ofPushStyle();
 
-						ofTranslate(0, args.drawSize.y / 2.0f);
+						ofTranslate(0, args.drawBounds.width / 2.0f);
 						ofSetColor(100, 255, 100);
-						ofDrawLine(0, 0, args.drawSize.x, 0);
+						ofDrawLine(0, 0, args.drawBounds.width, 0);
 
 						ofTranslate(0, +128);
 						ofScale(1.0f, -1.0f);
@@ -285,7 +285,7 @@ namespace ofxRulr {
 					ofSetLineWidth(1);
 					ofSetColor(255);
 					ofPushMatrix();
-					ofTranslate(args.drawSize.x / 2.0f, args.drawSize.y / 2.0f);
+					ofTranslate(args.drawBounds.getCenter());
 					ofDrawLine(-10, 0, 10, 0);
 					ofDrawLine(0, -10, 0, 10);
 					ofPopMatrix();

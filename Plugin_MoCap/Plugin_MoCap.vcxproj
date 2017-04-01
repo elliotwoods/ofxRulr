@@ -79,6 +79,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\OSCRelay.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewMatchedMarkers.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\StereoSolvePnP.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.cpp" />
     <ClCompile Include="src\pch_Plugin_MoCap.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -93,6 +94,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\OSCRelay.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewMatchedMarkers.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\StereoSolvePnP.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\ThreadedProcessNode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.h" />
     <ClInclude Include="src\pch_Plugin_MoCap.h" />

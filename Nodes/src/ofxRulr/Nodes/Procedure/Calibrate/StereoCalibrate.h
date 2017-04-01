@@ -11,6 +11,10 @@ namespace ofxRulr {
 			namespace Calibrate {
 				class StereoCalibrate : public Base {
 				public:
+					MAKE_ENUM(PreviewStyle
+						, (Live, LastCapture)
+						, ("Live", "Last Capture"));
+
 					class Capture : public Utils::AbstractCaptureSet::BaseCapture {
 					public:
 						Capture();
@@ -30,7 +34,8 @@ namespace ofxRulr {
 					};
 
 					struct OpenCVCalibration {
-						cv::Mat rotation;
+						cv::Mat rotation3x3;
+						cv::Mat rotationVector;
 						cv::Mat translation;
 						cv::Mat essential;
 						cv::Mat fundamental;
@@ -55,7 +60,6 @@ namespace ofxRulr {
 
 					const OpenCVCalibration & getOpenCVCalibration() const;
 					vector<ofVec3f> triangulate(const vector<ofVec2f> & imagePointsA, const vector<ofVec2f> & imagePointsB, bool correctMatches);
-					bool solvePnP(const vector<cv::Point2f> & imagePointsA, const vector<cv::Point2f> & imagePointsB, const vector<cv::Point3f> & objectPoints, cv::Mat rotationVector, cv::Mat translation, bool useExtrinsicGuess = true);
 
 					void throwIfACameraIsDisconnected();
 				protected:
@@ -64,12 +68,16 @@ namespace ofxRulr {
 					void calibrate();
 
 					ofxCvGui::PanelPtr view;
-					ofImage previewA, previewB;
+					ofTexture previewA, previewB;
+					ofPixels lastCaptureImageA, lastCaptureImageB;
+					bool previewIsLastCapture = true;
 
 					Utils::CaptureSet<Capture> captures;
 					OpenCVCalibration openCVCalibration;
 
 					struct : ofParameterGroup {
+						ofParameter<PreviewStyle> previewStyle {"Preview", PreviewStyle::Live};
+
 						struct : ofParameterGroup {
 							ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Mode", Item::AbstractBoard::FindBoardMode::Optimized };
 							PARAM_DECLARE("Capture", findBoardMode);
@@ -87,7 +95,7 @@ namespace ofxRulr {
 							PARAM_DECLARE("Draw", enabled, points, distances);
 						} draw;
 
-						PARAM_DECLARE("StereoCalibrate", capture, calibration, draw);
+						PARAM_DECLARE("StereoCalibrate", previewStyle, capture, calibration, draw);
 					} parameters;
 
 					ofParameter<float> reprojectionError{ "Reprojection error [px]", 0.0f };

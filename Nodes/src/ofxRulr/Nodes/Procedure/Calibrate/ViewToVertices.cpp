@@ -89,7 +89,7 @@ namespace ofxRulr {
 						if (!referenceVertices) {
 							return;
 						}
-						auto scaleDrawToScreenFactor = args.drawSize / args.viewSize;
+						auto scaleDrawToScreenFactor = args.drawBounds.getBottomRight() / args.drawArguments.localBounds.getBottomRight();
 
 						ofPushMatrix();
 						const auto & vertices = referenceVertices->getVertices();

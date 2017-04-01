@@ -46,7 +46,6 @@
 
 #include "ofxRulr/Nodes/Test/ARCube.h"
 #include "ofxRulr/Nodes/Test/Focus.h"
-#include "ofxRulr/Nodes/Test/StereoSolvePnP.h"
 
 #include "ofxRulr/Graph/FactoryRegister.h"
 
@@ -100,7 +99,6 @@ namespace ofxRulr {
 			
 			RULR_DECLARE_NODE(Test::ARCube);
 			RULR_DECLARE_NODE(Test::Focus);
-			RULR_DECLARE_NODE(Test::StereoSolvePnP);
 		}
 
 		void loadPluginNodes() {
