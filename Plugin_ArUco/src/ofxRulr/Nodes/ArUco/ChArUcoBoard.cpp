@@ -52,7 +52,7 @@ namespace ofxRulr {
 					this->board->draw(cv::Size(this->parameters.size.width * pixelsPerSquare
 						, this->parameters.size.height * pixelsPerSquare)
 						, boardImage
-						, 25);
+						, 0);
 					ofxCv::copy(boardImage, this->preview.getPixels());
 					this->preview.update();
 				}
@@ -76,7 +76,7 @@ namespace ofxRulr {
 
 			//----------
 			//https://github.com/opencv/opencv_contrib/blob/master/modules/aruco/samples/detect_board_charuco.cpp
-			bool ChArUcoBoard::findBoard(cv::Mat image, vector<cv::Point2f> & imagePoints, vector<cv::Point3f> & objectPoints, Nodes::Item::AbstractBoard::FindBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const {
+			bool ChArUcoBoard::findBoard(cv::Mat image, vector<cv::Point2f> & imagePoints, vector<cv::Point3f> & objectPoints, FindBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const {
 				if (!this->board) {
 					return false;
 				}
@@ -134,12 +134,40 @@ namespace ofxRulr {
 					for (int i = 0; i < interpolatedCorners; i++) {
 						objectPoints[i] = this->board->chessboardCorners[charucoIds[i]];
 					}
+
+					return true;
 				}
+			}
+
+			//----------
+			void ChArUcoBoard::drawObject() const {
+				ofPushMatrix();
+				{
+					ofTranslate(ofVec3f(this->parameters.size.width, this->parameters.size.height, 0) / 2.0f * this->parameters.squareLength);
+
+					auto pixelsPerMeter = this->getPreviewPixelsPerMeter();
+					ofScale(1.0f / pixelsPerMeter, 1.0f / pixelsPerMeter, 1.0f);
+					this->preview.draw(-this->preview.getWidth() / 2.0f
+						, +this->preview.getHeight() / 2.0f
+						, this->preview.getWidth()
+						, -this->preview.getHeight());
+				}
+				ofPopMatrix();
+			}
+
+			//----------
+			float ChArUcoBoard::getSpacing() const {
+				return this->parameters.squareLength.get();
 			}
 
 			//----------
 			ofxCvGui::PanelPtr ChArUcoBoard::getPanel() {
 				return this->panel;
+			}
+
+			//----------
+			float ChArUcoBoard::getPreviewPixelsPerMeter() const {
+				return INCHES_PER_METER * this->parameters.previewDPI;
 			}
 		}
 	}

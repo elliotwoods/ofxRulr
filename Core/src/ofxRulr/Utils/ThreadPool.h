@@ -40,6 +40,8 @@ namespace ofxRulr {
 				}
 				return future;
 			}
+
+			size_t getQueueSize() const;
 		protected:
 			set<unique_ptr<thread>> threads;
 			ofThreadChannel<std::function<void()>> actionQueue;

@@ -7,14 +7,14 @@ namespace ofxRulr{
 		namespace Item {
 			class AbstractBoard  : public Base {
 			public:
-				MAKE_ENUM(FindBoardMode
-					, (Raw, Optimized, Assistant)
-					, ("Raw", "Optimized", "Assistant"));
-
 				AbstractBoard();
 				virtual string getTypeName() const override;
 
 				virtual bool findBoard(cv::Mat, vector<cv::Point2f> & result, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const;
+				virtual void drawObject() const { }
+				virtual float getSpacing() const {
+					return 0;
+				}
 
 				template<typename FilteredPointTypeA, typename FilteredPointTypeB>
 				static void filterCommonPoints(vector<FilteredPointTypeA> & imagePointsA

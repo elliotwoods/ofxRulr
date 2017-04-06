@@ -61,11 +61,11 @@ namespace ofxRulr {
 					ofParameter<float> error{ "Reprojection error [px]", 0.0f };
 
 					struct : ofParameterGroup {
-						ofParameter<bool> drawBoards{ "Draw boards", true };
+						ofParameter<WhenDrawBoards> drawBoards{ "Draw boards", WhenDrawBoards::Selected };
 						struct : ofParameterGroup {
 							ofParameter<bool> checkAllIncomingFrames{ "Check all incoming frames", true };
 							ofParameter<bool> tetheredShootEnabled{ "Tethered shoot enabled", true };
-							ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Mode", Item::Board::FindBoardMode::Optimized };
+							ofParameter<FindBoardMode> findBoardMode{ "Mode", FindBoardMode::Optimized };
 
 							PARAM_DECLARE("Capture", checkAllIncomingFrames, tetheredShootEnabled, findBoardMode);
 						} capture;

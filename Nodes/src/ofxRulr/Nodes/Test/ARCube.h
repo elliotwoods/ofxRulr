@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Base.h"
-#include "ofxRulr/Nodes/Item/Board.h"
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
 
 #include "ofxCvGui/Panels/Draws.h"
 #include "ofxCvGui/Utils/Enum.h"
@@ -50,7 +50,7 @@ namespace ofxRulr {
 					ofParameter<ActiveWhen> activewhen{ "Active when", ActiveWhen::Selected };
 					ofParameter<DrawStyle> drawStyle{ "Draw style", DrawStyle::Cube };
 					ofParameter<FillMode> fillMode{ "Fill mode", FillMode::Fill };
-					ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Find board mode", Item::AbstractBoard::FindBoardMode::Optimized };
+					ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
 					PARAM_DECLARE("ARCube", activewhen, drawStyle, fillMode, findBoardMode);
 				} parameters;
 

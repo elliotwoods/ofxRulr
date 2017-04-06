@@ -35,7 +35,7 @@ namespace ofxRulr {
 					shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
 
 					struct : ofParameterGroup {
-						ofParameter<Item::Board::FindBoardMode> findBoardMode{ "Mode", Item::Board::FindBoardMode::Raw };
+						ofParameter<FindBoardMode> findBoardMode{ "Mode", FindBoardMode::Raw };
 						PARAM_DECLARE("CameraFromKinectV2", findBoardMode);
 					} parameters;
 

@@ -231,11 +231,6 @@
     <ClInclude Include="..\..\ofxTriangle\libs\Triangle\include\triangle_impl.hpp" />
     <ClInclude Include="..\..\ofxTriangle\src\ofxTriangle.h" />
     <ClInclude Include="..\..\ofxTriangulate\src\ofxTriangulate.h" />
-    <ClInclude Include="Procedure\Calibrate\ProCamSolver\AddScan.h" />
-    <ClInclude Include="Procedure\Calibrate\ProCamSolver\AddView.h" />
-    <ClInclude Include="Procedure\Calibrate\ProCamSolver\Node.h" />
-    <ClInclude Include="Procedure\Calibrate\ProCamSolver\ProCamModel.h" />
-    <ClInclude Include="Procedure\Calibrate\ProCamSolver\Solver.h" />
     <ClInclude Include="src\ofxRulr\Data\Channels\Address.h" />
     <ClInclude Include="src\ofxRulr\Data\Channels\Channel.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Application\Assets.h" />
@@ -318,11 +313,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Procedure\Calibrate\ProCamSolver\AddScan.cpp" />
-    <ClCompile Include="Procedure\Calibrate\ProCamSolver\AddView.cpp" />
-    <ClCompile Include="Procedure\Calibrate\ProCamSolver\Node.cpp" />
-    <ClCompile Include="Procedure\Calibrate\ProCamSolver\ProCamModel.cpp" />
-    <ClCompile Include="Procedure\Calibrate\ProCamSolver\Solver.cpp" />
     <ClCompile Include="src\ofxRulr\Data\Channels\Address.cpp" />
     <ClCompile Include="src\ofxRulr\Data\Channels\Channel.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Application\Assets.cpp" />

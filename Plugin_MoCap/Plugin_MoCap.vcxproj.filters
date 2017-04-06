@@ -43,6 +43,15 @@
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\StereoSolvePnP.cpp">
       <Filter>src\ofxRulr\Nodes\MoCap</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\UpdateTrackingStereo.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\RecordMarkerImages.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewRecordMarkerImageFrame.cpp">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_MoCap.h" />
@@ -71,6 +80,15 @@
       <Filter>src\ofxRulr\Nodes\MoCap</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\StereoSolvePnP.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\UpdateTrackingStereo.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\RecordMarkerImages.h">
+      <Filter>src\ofxRulr\Nodes\MoCap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewRecordMarkerImageFrame.h">
       <Filter>src\ofxRulr\Nodes\MoCap</Filter>
     </ClInclude>
   </ItemGroup>

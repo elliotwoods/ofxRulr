@@ -167,7 +167,7 @@ namespace ofxRulr {
 		//----------
 		void Serializable::save(string filename) {
 			if (filename == "") {
-				auto result = ofSystemSaveDialog(this->getDefaultFilename(), "Save " + this->getTypeName());
+				auto result = ofSystemSaveDialog(this->getDefaultFilename() + ".json", "Save " + this->getTypeName());
 				if (result.bSuccess) {
 					filename = result.fileName;
 				}
@@ -211,7 +211,7 @@ namespace ofxRulr {
 		string Serializable::getDefaultFilename() const {
 			auto name = this->getName();
 			std::replace(name.begin(), name.end(), ':', '_');
-			return name + ".json";
+			return name;
 		}
 	}
 }

@@ -12,8 +12,10 @@ namespace ofxRulr {
 
 				cv::Mat modelViewRotationVector;
 				cv::Mat modelViewTranslation;
-				ofMatrix4x4 transform;
 
+				cv::Mat modelRotationVector;
+				cv::Mat modelTranslation;
+				ofMatrix4x4 transform;
 			};
 
 			class UpdateTracking : public ThreadedProcessNode<MatchMarkers

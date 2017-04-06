@@ -40,7 +40,7 @@ namespace ofxRulr {
 							ofParameter<bool> autoScan{ "Automatically scan", true };
 							ofParameter<bool> searchBrightArea{ "Search bright area", true };
 							ofParameter<float> brightAreaThreshold{ "Bright area threshold", 64, 0, 255 };
-							ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Find board mode", Item::AbstractBoard::FindBoardMode::Optimized };
+							ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
 							ofParameter<bool> useRansacForSolvePnp{ "Use RANSAC for SolvePNP", true };
 							ofParameter<float> erosion{ "Erosion (/Board size)", 0.02f, 0.0f, 0.1f };
 							ofParameter<int> maxTriangleArea{ "Max triangle area", 100*100 };

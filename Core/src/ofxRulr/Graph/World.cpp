@@ -123,7 +123,7 @@ namespace ofxRulr {
 			InspectController::X().onClear += [this] (InspectArguments & args) {
 				auto inspector = args.inspector;
 
-				inspector->add(new Widgets::LiveValueHistory("Application fps [Hz]", [] () {
+				inspector->add(new Widgets::LiveValueHistory("GUI fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));
 
@@ -198,7 +198,7 @@ namespace ofxRulr {
 		//-----------
 		void World::saveAll() const {
 			for(auto node : * this) {
-				node->save(node->getDefaultFilename());
+				node->save(node->getDefaultFilename() + ".json");
 			}
 			const_cast<World*>(this)->lastSaveOrLoad = chrono::system_clock::now();
 		}
@@ -209,7 +209,7 @@ namespace ofxRulr {
 				if (printDebug) {
 					ofLogNotice("ofxRulr") << "Loading node [" << node->getName() << "]";
 				}
-				node->load(node->getDefaultFilename());
+				node->load(node->getDefaultFilename() + ".json");
 			}
 			this->lastSaveOrLoad = chrono::system_clock::now();
 		}

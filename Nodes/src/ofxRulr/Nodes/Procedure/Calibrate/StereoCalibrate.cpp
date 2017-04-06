@@ -5,6 +5,7 @@
 #include <future>
 
 #include "ofxNonLinearFit.h"
+#include "ofxTriangulate.h"
 
 using namespace ofxCv;
 using namespace cv;
@@ -171,7 +172,8 @@ namespace ofxRulr {
 
 				//----------
 				void StereoCalibrate::drawWorld() {
-					if (this->parameters.draw.enabled) {
+					if (this->parameters.draw.enabled.get() == WhenDrawBoards::Always
+						|| this->isBeingInspected() && this->parameters.draw.enabled.get() == WhenDrawBoards::Selected) {
 						auto captures = this->captures.getSelection();
 						for (auto & capture : captures) {
 
@@ -280,12 +282,6 @@ namespace ofxRulr {
 
 				//----------
 				std::vector<ofVec3f> StereoCalibrate::triangulate(const vector<ofVec2f> & imagePointsA, const vector<ofVec2f> & imagePointsB, bool correctMatches) {
-					//check that we have a calibration available
-					if (this->openCVCalibration.projectionA.empty()
-						|| this->openCVCalibration.projectionB.empty()) {
-						throw(ofxRulr::Exception("No stereo calibration available."));
-					}
-
 					//check that image sizes match
 					if (imagePointsA.size() != imagePointsB.size()) {
 						throw(ofxRulr::Exception("Cannot triangulate. Length of image point vectors do not match."));
@@ -332,6 +328,11 @@ namespace ofxRulr {
 					}
 
 					if (correctMatches) {
+						if (this->openCVCalibration.projectionA.empty()
+							|| this->openCVCalibration.projectionB.empty()) {
+							throw(ofxRulr::Exception("No stereo calibration available."));
+						}
+
 						cv::correctMatches(this->openCVCalibration.fundamental
 							, projectedPointsA
 							, projectedPointsB
@@ -339,26 +340,21 @@ namespace ofxRulr {
 							, projectedPointsB);
 					}
 
-					size_t pointCount = imagePointsA.size();
-
-					cv::Mat worldPoints(pointCount, 4, CV_64FC1);
-					cv::triangulatePoints(this->openCVCalibration.projectionA
-						, this->openCVCalibration.projectionB
-						, projectedPointsA
-						, projectedPointsB
-						, worldPoints);
-
-					vector<ofVec3f> worldPointsOutput;
-					for (int i = 0; i < pointCount; i++) {
-						cv::Vec4d worldPoint(worldPoints.at<double>(0, i)
-							, worldPoints.at<double>(1, i)
-							, worldPoints.at<double>(2, i)
-							, worldPoints.at<double>(3, i));
-						worldPoint /= worldPoint[3];
-						worldPointsOutput.emplace_back(worldPoint[0], worldPoint[1], worldPoint[2]);
+					vector<cv::Point2f> undistortedImageSpacePointsA;
+					vector<cv::Point2f> undistortedImageSpacePointsB;
+					for (int i = 0; i < projectedPointsA.size(); i++) {
+						undistortedImageSpacePointsA.push_back((cv::Point2f) projectedPointsA[i]);
+						undistortedImageSpacePointsB.push_back((cv::Point2f) projectedPointsB[i]);
 					}
 
-					return worldPointsOutput;
+					vector<ofVec3f> worldSpacePoints;
+					ofxTriangulate::Triangulate(ofxCv::toOf(undistortedImageSpacePointsA)
+						, ofxCv::toOf(undistortedImageSpacePointsB)
+						, cameraNodeA->getViewInWorldSpace()
+						, cameraNodeB->getViewInWorldSpace()
+						, worldSpacePoints);
+
+					return worldSpacePoints;
 				}
 
 				//----------

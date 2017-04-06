@@ -11,14 +11,17 @@ namespace ofxRulr {
 				, class OutgoingFrameType>
 				class ThreadedProcessNode : public Nodes::Base {
 			private:
+				atomic<float> processingTime = 0;
 				atomic<int> processedFramesSinceLastAppFrame = 0;
 				atomic<int> droppedFramesSinceLastAppFrame = 0;
-			protected:
-				unique_ptr<Utils::ThreadPool> threadPool;
+
 				float processedFramesPerSecond = 0.0f;
 				float droppedFramesPerSecond = 0.0f;
-
+				unique_ptr<Utils::ThreadPool> threadPool;
+			protected:
 				virtual void processFrame(shared_ptr<IncomingFrameType> incomingFrame) = 0;
+				virtual size_t getThreadPoolSize() const { return 2; }
+				virtual size_t getThreadPoolQueueSize() const { return 3; }
 			public:
 				ThreadedProcessNode() {
 					RULR_NODE_INIT_LISTENER;
@@ -29,13 +32,16 @@ namespace ofxRulr {
 					RULR_NODE_INSPECTOR_LISTENER;
 					RULR_NODE_UPDATE_LISTENER;
 
-					this->threadPool = make_unique<Utils::ThreadPool>(2, 10);
+					this->threadPool = make_unique<Utils::ThreadPool>(this->getThreadPoolSize(), this->getThreadPoolQueueSize());
 
 					auto input = this->addInput<IncomingNodeType>();
 					input->onNewConnection += [this](shared_ptr<IncomingNodeType> inputNode) {
 						inputNode->onNewFrame.addListener([this](shared_ptr<IncomingFrameType> incomingFrame) {
 							if (!this->threadPool->performAsync([this, incomingFrame]() {
+								auto timeStart = chrono::high_resolution_clock::now();
 								this->processFrame(incomingFrame);
+								chrono::duration<float, ratio<1, 1000>> duration = chrono::high_resolution_clock::now() - timeStart;
+								this->processingTime.store(duration.count());
 								this->processedFramesSinceLastAppFrame++;
 							})) {
 								this->droppedFramesSinceLastAppFrame++;
@@ -61,6 +67,14 @@ namespace ofxRulr {
 
 				void populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 					auto inspector = inspectArgs.inspector;
+					inspector->addLiveValueHistory("Processing time [ms]", [this]() {
+						return this->processingTime.load();
+					});
+
+					inspector->addLiveValueHistory("Queue size", [this]() {
+						return this->threadPool->getQueueSize();
+					});
+
 					inspector->addLiveValueHistory("Frames processed [Hz]", [this]() {
 						return this->processedFramesPerSecond;
 					});

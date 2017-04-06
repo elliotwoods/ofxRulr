@@ -54,7 +54,7 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					ofParameter<float> trackingDistanceThreshold{ "Tracking distance threshold [px]", 20, 0, 300 };
-					ofParameter<float> searchDistanceThreshold{ "Search distance threshold [px]", 5, 0, 20 };
+					ofParameter<float> searchDistanceThreshold{ "Search distance threshold [px]", 5, 0, 300 };
 					ofParameter<bool> searchWhenTrackingLost{ "Search when tracking lost", false };
 					PARAM_DECLARE("MatchMarkers", trackingDistanceThreshold, searchDistanceThreshold, searchWhenTrackingLost);
 				} parameters;

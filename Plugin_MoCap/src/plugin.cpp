@@ -10,6 +10,9 @@
 #include "ofxRulr/Nodes/MoCap/UpdateTracking.h"
 #include "ofxRulr/Nodes/MoCap/OSCRelay.h"
 #include "ofxRulr/Nodes/MoCap/StereoSolvePnP.h"
+#include "ofxRulr/Nodes/MoCap/UpdateTrackingStereo.h"
+#include "ofxRulr/Nodes/MoCap/RecordMarkerImages.h"
+#include "ofxRulr/Nodes/MoCap/PreviewRecordMarkerImageFrame.h"
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::FindMarkerCentroids);
@@ -20,4 +23,7 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::UpdateTracking);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::OSCRelay);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::StereoSolvePnP);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::UpdateTrackingStereo);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::RecordMarkerImages);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::PreviewRecordMarkerImagesFrame);
 OFXPLUGIN_PLUGIN_MODULES_END

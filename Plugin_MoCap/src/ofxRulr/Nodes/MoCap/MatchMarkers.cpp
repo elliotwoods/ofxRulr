@@ -76,18 +76,18 @@ namespace ofxRulr {
 				{
 					auto lock = unique_lock<mutex>(this->descriptionMutex);
 					outputFrame->bodyDescription = this->bodyDescription;
-					if (!bodyDescription) {
+					if (!outputFrame->bodyDescription) {
 						//we can't calculate the frame without a marker body
 						return;
 					}
-					else if (bodyDescription->markerCount == 0) {
-						//we can't calculate with an empty body
+					else if (outputFrame->bodyDescription->markerCount == 0) {
+						//we can't calculate with an empty marker body
 						return;
 					}
 
 					outputFrame->cameraDescription = this->cameraDescription;
-					if (!cameraDescription) {
-						//we can't calculate the frame without a camera body
+					if (!outputFrame->cameraDescription) {
+						//we can't calculate the frame without a camera
 						return;
 					}
 				}
@@ -100,7 +100,7 @@ namespace ofxRulr {
 					, outputFrame->modelViewRotationVector
 					, outputFrame->modelViewTranslation);
 
-				//project the points
+				//project all 3D points from marker body (based on existing/predicted pose) into camera space
 				outputFrame->objectSpacePoints = ofxCv::toCv(outputFrame->bodyDescription->markers.positions);
 				cv::projectPoints(outputFrame->objectSpacePoints
 					, outputFrame->modelViewRotationVector
@@ -109,18 +109,21 @@ namespace ofxRulr {
 					, outputFrame->cameraDescription->distortionCoefficients
 					, outputFrame->projectedMarkerImagePoints);
 
-				//look for any matches from incoming frame
+
+				//get the distance threshold
 				outputFrame->distanceThresholdSquared = this->parameters.trackingDistanceThreshold.get();
 				outputFrame->distanceThresholdSquared *= outputFrame->distanceThresholdSquared;
 
 				//check if we should do a full search
 				if (this->needsFullSearch.load()) {
+					//do an exhaustive search for any combination of input markers vs markers on body we want to track
 					this->processFullSearch(outputFrame);
 					this->needsFullSearch.store(false);
 				}
 				else {
+					//look for any matches from incoming frame of tracked markers against markers' predicted projection into camera image
 					this->processTrackingSearch(outputFrame);
-					if (outputFrame->matchCount == 0 && this->parameters.searchWhenTrackingLost.get()) {
+					if (outputFrame->matchCount < 3 && this->parameters.searchWhenTrackingLost.get()) {
 						this->processFullSearch(outputFrame);
 					}
 				}

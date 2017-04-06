@@ -263,7 +263,7 @@ namespace ofxRulr {
 						ofPushMatrix();
 						ofPushStyle();
 
-						ofTranslate(0, args.drawBounds.width / 2.0f);
+						ofTranslate(0, args.drawBounds.height / 2.0f);
 						ofSetColor(100, 255, 100);
 						ofDrawLine(0, 0, args.drawBounds.width, 0);
 

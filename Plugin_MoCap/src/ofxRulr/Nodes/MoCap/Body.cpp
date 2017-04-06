@@ -311,7 +311,7 @@ namespace ofxRulr {
 			//----------
 			void Body::saveCSV(string filename /*= ""*/) {
 				if (filename == "") {
-					auto result = ofSystemLoadDialog("Select CSV");
+					auto result = ofSystemSaveDialog("marker.csv", "Select CSV");
 					if (!result.bSuccess) {
 						return;
 					}

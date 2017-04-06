@@ -187,43 +187,7 @@ namespace ofxRulr {
 
 				//----------
 				void HomographyFromGraycode::findDistortionCoefficients() {
-					struct DataPoint {
-					};
 
-					class Model : public ofxNonLinearFit::Models::Base<DataPoint, Model> {
-					public:
-						cv::Mat distortionCoefficients;
-						cv::Mat homography;
-
-						const vector<ofVec2f> & cameraDistorted;
-						vector<ofVec2f> cameraUndistorted;
-						const vector<ofVec2f> & projector;
-
-						Model(const vector<ofVec2f> & cameraDistorted, const vector<ofVec2f> & projector) :
-							cameraDistorted(cameraDistorted), projector(projector) {
-
-						}
-
-						unsigned int getParameterCount() const override {
-							return RULR_CAMERA_DISTORTION_COEFFICIENT_COUNT;
-						}
-
-						double getResidual(DataPoint point) const override {
-							return 0.0f;
-						}
-
-						void evaluate(DataPoint &) const override {
-							//do nothing
-						}
-
-						void cacheModel() {
-							/*which camera matrix?
-							cv::undistortPoints(toCv(this->cameraDistorted), toCv(this->cameraUndistorted), )
-							undistort the points
-							fit a homography
-							*/
-						}
-					};
 				}
 
 				//----------

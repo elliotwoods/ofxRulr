@@ -18,9 +18,9 @@ namespace ofxRulr {
 
 				ofxCv::BoardType getBoardType() const;
 				cv::Size getSize() const;
-				float getSpacing() const;
 				vector<cv::Point3f> getObjectPoints() const;
-				void drawObject() const;
+				void drawObject() const override;
+				float getSpacing() const override;
 
 				bool findBoard(cv::Mat, vector<cv::Point2f> & result, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const override;
 			protected:

@@ -77,7 +77,11 @@ namespace ofxRulr {
 				}
 
 				//---------
-				double MovingHeadToWorld::Model::getResidual(DataPoint point) const {
+				void MovingHeadToWorld::Model::getResidual(DataPoint point, double & residual, double * gradient) const {
+					if (gradient) {
+						ofLogError("ofxRulr") << "MovingHeadToWorld model doesn't support gradient algorithms";
+					}
+
 					auto pointEvaluated = point;
 					this->evaluate(pointEvaluated);
 					auto difference = pointEvaluated.panTilt - point.panTilt;
@@ -87,8 +91,7 @@ namespace ofxRulr {
 					while (difference.x < -180.0f) {
 						difference.x += 360.0f;
 					}
-					auto residual = difference.lengthSquared();
-					return residual;
+					residual = difference.lengthSquared();
 				}
 
 				//---------
@@ -446,7 +449,9 @@ namespace ofxRulr {
 							for (auto & dataPoint : this->dataPoints) {
 								auto dataPointEvaluated = dataPoint;
 								model.evaluate(dataPointEvaluated);
-								dataPoint.residual = model.getResidual(dataPoint);
+								double residual;
+								model.getResidual(dataPoint, residual, NULL);
+								dataPoint.residual = residual;
 								dataPoint.panTiltEvaluated = dataPointEvaluated.panTilt;
 							}
 						}

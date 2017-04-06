@@ -39,7 +39,7 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<bool> useOptimizers{ "Use optimizers", false };
-							ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Find board mode", Item::AbstractBoard::FindBoardMode::Optimized };
+							ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
 
 							PARAM_DECLARE("Capture", findBoardMode);
 						} capture;

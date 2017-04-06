@@ -167,17 +167,30 @@ namespace ofxRulr {
 
 				//----------
 				void CameraIntrinsics::drawWorld() {
-					if (this->parameters.drawBoards) {
-						auto selectedCaptures = this->captures.getSelection();
-
-						ofPushStyle();
+					if (this->parameters.drawBoards.get() == WhenDrawBoards::Always
+						|| this->isBeingInspected() && this->parameters.drawBoards.get() == WhenDrawBoards::Selected) {
+						ofPushMatrix();
 						{
-							for (auto capture : selectedCaptures) {
-								ofSetColor(capture->color);
-								capture->drawWorld();
+							//transform into camera frame of reference
+							{
+								auto cameraNode = this->getInput<Item::Camera>();
+								if (cameraNode) {
+									ofMultMatrix(cameraNode->getTransform());
+								}
 							}
+							
+
+							ofPushStyle();
+							{
+								auto selectedCaptures = this->captures.getSelection();
+								for (auto capture : selectedCaptures) {
+									ofSetColor(capture->color);
+									capture->drawWorld();
+								}
+							}
+							ofPopStyle();
 						}
-						ofPopStyle();
+						ofPopMatrix();
 					}
 				}
 

@@ -45,5 +45,10 @@ namespace ofxRulr {
 			this->actionQueue.send(move(function));
 			return true;
 		}
+
+		//----------
+		size_t ThreadPool::getQueueSize() const {
+			return this->actionQueue.size();
+		}
 	}
 }

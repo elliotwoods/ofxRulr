@@ -18,9 +18,14 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::InspectArguments &);
 
 				bool findBoard(cv::Mat, vector<cv::Point2f> & imagePoints, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const override;
+				void drawObject() const override;
+				float getSpacing() const override; 
+
 				ofxCvGui::PanelPtr getPanel() override;
 
 			protected:
+				float getPreviewPixelsPerMeter() const;
+
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
 						ofParameter<int> width{ "Width", 12 };

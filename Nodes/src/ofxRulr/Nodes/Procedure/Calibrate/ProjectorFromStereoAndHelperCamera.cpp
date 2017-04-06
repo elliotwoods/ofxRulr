@@ -144,7 +144,7 @@ namespace ofxRulr {
 
 							auto findBoardMode = this->parameters.capture.stereoFindBoardMode.get();
 
-							if (this->parameters.capture.stereoFindBoardMode.get() == Item::AbstractBoard::FindBoardMode::Assistant) {
+							if (this->parameters.capture.stereoFindBoardMode.get() == FindBoardMode::Assistant) {
 								//if we're using assistant don't perform in parallel
 								if (!boardNode->findBoard(ofxCv::toCv(frameA->getPixels())
 									, imagePointsA

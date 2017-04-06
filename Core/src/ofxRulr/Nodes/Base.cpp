@@ -141,7 +141,7 @@ namespace ofxRulr {
 
 			inspector->add(new Widgets::Button("Save Node...", [this] () {
 				try {
-					auto result = ofSystemSaveDialog(this->getDefaultFilename(), "Save node [" + this->getName() + "] as json");
+					auto result = ofSystemSaveDialog(this->getDefaultFilename() + ".json", "Save node [" + this->getName() + "] as json");
 					if (result.bSuccess) {
 						this->save(result.getPath());
 					}

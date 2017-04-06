@@ -93,7 +93,7 @@ namespace ofxRulr {
 					if (!this->suite) {
 						//check if we're eligible to make a suite
 						auto videoOutput = this->getInput<System::VideoOutput>();
-						if(videoOutput->isWindowOpen()) {
+						if(videoOutput && videoOutput->isWindowOpen()) {
 							//build the suite
 							auto suite = make_unique<Suite>();
 							suite->payload.init(videoOutput->getWidth(), videoOutput->getHeight());
@@ -130,7 +130,7 @@ namespace ofxRulr {
 						jsonPayload["width"] = (int) this->suite->payload.getWidth();
 						jsonPayload["height"] = (int) this->suite->payload.getHeight();
 
-						auto filename = ofFilePath::removeExt(this->getDefaultFilename()) + ".sl";
+						auto filename = this->getDefaultFilename() + ".sl";
 						this->suite->decoder.saveDataSet(filename);
 						json["filename"] = filename;
 					}

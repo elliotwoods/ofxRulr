@@ -1,4 +1,4 @@
-#include "pch_Plugin_MoCap.h"
+	#include "pch_Plugin_MoCap.h"
 #include "UpdateTracking.h"
 
 #include "Body.h"
@@ -61,10 +61,27 @@ namespace ofxRulr {
 					, outgoingFrame->modelViewTranslation
 					, true);
 
-				//TODO : 
-				// * cancel the camera transform
+				//apply the inverse of the camera transform
+				{
+					auto cameraTransform = ofxCv::makeMatrix(incomingFrame->cameraDescription->rotationVector, incomingFrame->cameraDescription->translation);
 
-				outgoingFrame->transform = bodyNode->updateTracking(outgoingFrame->modelViewRotationVector, outgoingFrame->modelViewTranslation, incomingFrame->trackingWasLost);
+					cv::Mat cameraRotationInverse;
+					cv::Mat cameraTranslationInverse;
+					ofxCv::decomposeMatrix(cameraTransform.getInverse()
+						, cameraRotationInverse
+						, cameraTranslationInverse);
+
+					cv::composeRT(outgoingFrame->modelViewRotationVector
+						, outgoingFrame->modelViewTranslation
+						, cameraRotationInverse
+						, cameraTranslationInverse
+						, outgoingFrame->modelRotationVector
+						, outgoingFrame->modelTranslation);
+				}
+
+				outgoingFrame->transform = bodyNode->updateTracking(outgoingFrame->modelRotationVector
+					, outgoingFrame->modelTranslation
+					, incomingFrame->trackingWasLost);
 
 				this->onNewFrame.notifyListeners(outgoingFrame);
 			}

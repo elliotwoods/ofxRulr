@@ -47,8 +47,8 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<bool> useExistingGraycodeScan{ "Use existing graycode scan", false };
-							ofParameter<Item::AbstractBoard::FindBoardMode> stereoFindBoardMode{ "Stereo find board mode", Item::AbstractBoard::FindBoardMode::Optimized };
-							ofParameter<Item::AbstractBoard::FindBoardMode> helperFindBoardMode{ "Helper find board mode", Item::AbstractBoard::FindBoardMode::Assistant };
+							ofParameter<FindBoardMode> stereoFindBoardMode{ "Stereo find board mode", FindBoardMode::Optimized };
+							ofParameter<FindBoardMode> helperFindBoardMode{ "Helper find board mode", FindBoardMode::Assistant };
 							ofParameter<float> helperPixelsSeachDistance{ "Helper pixels search distance", 3, 0, 10 };
 							ofParameter<bool> correctStereoMatches{ "Correct stereo matches", false };
 							PARAM_DECLARE("Capture", useExistingGraycodeScan, stereoFindBoardMode, helperFindBoardMode, helperPixelsSeachDistance, correctStereoMatches);

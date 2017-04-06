@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ofxCvGui/Utils/Enum.h"
+
 #define RULR_GL_VERSION_MAJOR 4
 #define RULR_GL_VERSION_MINOR 0
 
@@ -21,3 +23,13 @@
 #else
 	#define RULR_EXPORTS
 #endif
+
+namespace ofxRulr {
+	MAKE_ENUM(WhenDrawBoards
+		, (Selected, Always, Never)
+		, ("Selected", "Always", "Never"));
+
+	MAKE_ENUM(FindBoardMode
+		, (Raw, Optimized, Assistant)
+		, ("Raw", "Optimized", "Assistant"));
+}

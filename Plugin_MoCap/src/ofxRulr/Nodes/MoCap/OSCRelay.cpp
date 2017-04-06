@@ -54,14 +54,31 @@ namespace ofxRulr {
 					return;
 				}
 
+				ofxOscBundle bundle;
 				//send OSC message
 				{
-					ofxOscMessage message;
-					message.setAddress("/transform");
-					for (int i = 0; i < 16; i++) {
-						message.addFloatArg(incomingFrame->transform.getPtr()[i]);
+					{
+						ofxOscMessage message;
+						message.setAddress("/transform");
+						for (int i = 0; i < 16; i++) {
+							message.addFloatArg(incomingFrame->transform.getPtr()[i]);
+						}
+						bundle.addMessage(message);
 					}
-					sender->sendMessage(message);
+
+					{
+						ofxOscMessage message;
+						message.setAddress("/marker/positions");
+						auto & markerPositions = incomingFrame->incomingFrame->bodyDescription->markers.positions;
+						for (int i = 0; i < markerPositions.size(); i++) {
+							message.addFloatArg(markerPositions[i].x);
+							message.addFloatArg(markerPositions[i].y);
+							message.addFloatArg(markerPositions[i].z);
+						}
+						bundle.addMessage(message);
+					}
+
+					sender->sendBundle(bundle);
 				}
 				
 				this->onNewFrame.notifyListeners(shared_ptr<void*>());

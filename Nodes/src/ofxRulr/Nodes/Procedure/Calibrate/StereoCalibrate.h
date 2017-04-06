@@ -79,7 +79,7 @@ namespace ofxRulr {
 						ofParameter<PreviewStyle> previewStyle {"Preview", PreviewStyle::Live};
 
 						struct : ofParameterGroup {
-							ofParameter<Item::AbstractBoard::FindBoardMode> findBoardMode{ "Mode", Item::AbstractBoard::FindBoardMode::Optimized };
+							ofParameter<FindBoardMode> findBoardMode{ "Mode", FindBoardMode::Optimized };
 							PARAM_DECLARE("Capture", findBoardMode);
 						} capture;
 
@@ -89,7 +89,7 @@ namespace ofxRulr {
 						} calibration;
 
 						struct : ofParameterGroup {
-							ofParameter<bool> enabled{ "Enabled", true };
+							ofParameter<WhenDrawBoards> enabled{ "Enabled", WhenDrawBoards::Selected };
 							ofParameter<bool> points{ "Points", true };
 							ofParameter<bool> distances{ "Distances", false };
 							PARAM_DECLARE("Draw", enabled, points, distances);

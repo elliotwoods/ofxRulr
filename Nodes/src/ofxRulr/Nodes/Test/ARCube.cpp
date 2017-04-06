@@ -2,7 +2,7 @@
 #include "ARCube.h"
 
 #include "ofxRulr/Nodes/Item/Camera.h"
-#include "ofxRulr/Nodes/Item/Board.h"
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
 
 #include "ofxCvMin.h"
 #include "ofxCvGui/Widgets/LiveValue.h"
@@ -36,7 +36,7 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
 				this->addInput<Item::Camera>();
-				this->addInput<Item::Board>();
+				this->addInput<Item::AbstractBoard>();
 
 				this->view = make_shared<Panels::Draws>(this->fbo);
 				this->view->onDraw += [this](DrawArguments & args) {
@@ -112,22 +112,22 @@ namespace ofxRulr {
 								this->undistorted.update();
 
 								//find the board
-								auto board = this->getInput<Item::Board>();
+								auto board = this->getInput<Item::AbstractBoard>();
 								if (board) {
 									//find board in distorted image
-									vector<ofVec2f> imagePoints;
-									vector<ofVec3f> objectPoints;
+									vector<cv::Point2f> imagePoints;
+									vector<cv::Point3f> objectPoints;
 									auto success = board->findBoard(toCv(distorted)
-										, toCv(imagePoints)
-										, toCv(objectPoints)
+										, imagePoints
+										, objectPoints
 										, this->parameters.findBoardMode
 										, camera->getCameraMatrix()
 										, camera->getDistortionCoefficients());
 									if (success) {
 										//use solvePnP to resolve transform
 										Mat rotation, translation;
-										cv::solvePnP(board->getObjectPoints()
-											, toCv(imagePoints)
+										cv::solvePnP(objectPoints
+											, imagePoints
 											, cameraMatrix
 											, distortionCoefficients
 											, rotation
@@ -170,7 +170,7 @@ namespace ofxRulr {
 				inspector->addParameterGroup(this->parameters);
 
 				inspector->add(new Widgets::Indicator("Found board", [this]() {
-					if (this->getInputPin<Item::Board>()->isConnected() && this->getInputPin<Item::Camera>()->isConnected()) {
+					if (this->getInputPin<Item::AbstractBoard>()->isConnected() && this->getInputPin<Item::Camera>()->isConnected()) {
 						if (this->foundBoard) {
 							return Widgets::Indicator::Status::Good;
 						}
@@ -207,7 +207,7 @@ namespace ofxRulr {
 			//----------
 			void ARCube::drawWorld() {
 				auto camera = this->getInput<Item::Camera>();
-				auto board = this->getInput<Item::Board>();
+				auto board = this->getInput<Item::AbstractBoard>();
 				if (board && camera && this->foundBoard) {
 					ofPushStyle();
 					{
