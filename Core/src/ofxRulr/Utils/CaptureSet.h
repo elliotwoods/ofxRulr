@@ -23,9 +23,11 @@ namespace ofxRulr {
 				ofParameter<ofColor> color{ "Color", ofColor() };
 
 				ofxLiquidEvent<void> onDeletePressed;
+				ofxLiquidEvent<bool> onSelectionChanged;
 			protected:
 				ofParameter<bool> selected{ "Selected", true };
 				virtual ofxCvGui::ElementPtr getDataDisplay();
+				void callbackSelectedChanged(bool &);
 
 				void rebuildDateStrings();
 				ofParameter<chrono::system_clock::time_point> timestamp{ "Timestamp", chrono::system_clock::now() };
@@ -35,11 +37,13 @@ namespace ofxRulr {
 			};
 
 			AbstractCaptureSet();
+			virtual ~AbstractCaptureSet();
 
 			void add(shared_ptr<BaseCapture>);
 			void remove(shared_ptr<BaseCapture>);
 			void clear();
 
+			void select(shared_ptr<BaseCapture>);
 			void selectAll();
 			void selectNone();
 
@@ -51,7 +55,10 @@ namespace ofxRulr {
 			vector<shared_ptr<BaseCapture>> getAllCapturesUntyped() const;
 
 			virtual shared_ptr<BaseCapture> makeEmpty() const = 0;
+
+			ofxLiquidEvent<void> onSelectionChanged;
 		protected:
+			virtual bool getIsMultipleSelectionAllowed() = 0;
 			vector<shared_ptr<BaseCapture>> captures;
 
 			shared_ptr<ofxCvGui::Panels::Widgets> listView;
@@ -59,7 +66,7 @@ namespace ofxRulr {
 			bool viewDirty = true;
 		};
 
-		template<typename CaptureType>
+		template<typename CaptureType, bool AllowMultipleSelection = true>
 		class CaptureSet : public AbstractCaptureSet {
 		public:
 			vector<shared_ptr<CaptureType>> getVectorTyped(vector<shared_ptr<BaseCapture>> vectorUntyped) const {
@@ -87,6 +94,10 @@ namespace ofxRulr {
 			virtual std::string getTypeName() const override
 			{
 				return "CaptureSet";
+			}
+		protected:
+			bool getIsMultipleSelectionAllowed() override {
+				return AllowMultipleSelection;
 			}
 		};
 	}

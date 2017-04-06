@@ -10,6 +10,8 @@ namespace ofxRulr {
 #pragma mark Capture
 		//----------
 		AbstractCaptureSet::BaseCapture::BaseCapture() {
+			this->selected.addListener(this, &BaseCapture::callbackSelectedChanged);
+
 			this->onSerialize += [this](Json::Value & json) {
 				json << this->selected;
 				json << this->color;
@@ -127,7 +129,10 @@ namespace ofxRulr {
 
 		//----------
 		void AbstractCaptureSet::BaseCapture::setSelected(bool selected) {
-			this->selected = selected;
+			if (selected != this->selected) {
+				this->selected = selected;
+				this->onSelectionChanged(selected);
+			}
 		}
 
 		//----------
@@ -137,6 +142,11 @@ namespace ofxRulr {
 				ofxCvGui::Utils::drawText(this->getDisplayString(), args.localBounds.x, args.localBounds.y, false);
 			};
 			return element;
+		}
+
+		//----------
+		void AbstractCaptureSet::BaseCapture::callbackSelectedChanged(bool & value) {
+			this->onSelectionChanged.notifyListeners(value);
 		}
 
 		//----------
@@ -191,6 +201,11 @@ namespace ofxRulr {
 		}
 
 		//----------
+		AbstractCaptureSet::~AbstractCaptureSet() {
+			this->clear();
+		}
+
+		//----------
 		void AbstractCaptureSet::add(shared_ptr<BaseCapture> capture) {
 			auto captureWeak = weak_ptr<BaseCapture>(capture);
 			capture->onDeletePressed += [captureWeak, this]() {
@@ -200,6 +215,21 @@ namespace ofxRulr {
 				}
 			};
 
+			capture->onSelectionChanged += [captureWeak, this](bool selection) {
+				if (!this->getIsMultipleSelectionAllowed() && selection) {
+					auto selectionSet = this->getSelectionUntyped();
+					auto selectedCapture = captureWeak.lock();
+					for (auto otherCapture : selectionSet) {
+						if (otherCapture != selectedCapture && otherCapture->isSelected()) {
+							otherCapture->setSelected(false);
+						}
+					}
+				}
+				this->onSelectionChanged.notifyListeners();
+			};
+
+			this->onSelectionChanged.notifyListeners();
+
 			this->captures.push_back(capture);
 			this->viewDirty = true;
 		}
@@ -208,6 +238,9 @@ namespace ofxRulr {
 		void AbstractCaptureSet::remove(shared_ptr<BaseCapture> capture) {
 			auto findCapture = find(this->captures.begin(), this->captures.end(), capture);
 			if (findCapture != this->captures.end()) {
+				capture->setSelected(false); // to notify upwards
+				capture->onDeletePressed.removeListeners(this);
+				capture->onSelectionChanged.removeListeners(this);
 				this->captures.erase(findCapture);
 				this->viewDirty = true;
 			}
@@ -215,8 +248,14 @@ namespace ofxRulr {
 
 		//----------
 		void AbstractCaptureSet::clear() {
-			this->captures.clear();
-			this->viewDirty = true;
+			while (!this->captures.empty()) {
+				this->remove(* this->captures.begin());
+			}
+		}
+
+		//----------
+		void AbstractCaptureSet::select(shared_ptr<BaseCapture> capture) {
+			capture->setSelected(true);
 		}
 
 		//----------

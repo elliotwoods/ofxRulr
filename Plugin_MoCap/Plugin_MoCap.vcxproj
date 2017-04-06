@@ -75,6 +75,7 @@
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\Body.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\FindMarkerCentroids.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\MarkerTagger.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\MatchMarkers.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\OSCRelay.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.cpp" />
@@ -93,6 +94,7 @@
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\Body.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\FindMarkerCentroids.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\MarkerTagger.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\MatchMarkers.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\OSCRelay.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.h" />
