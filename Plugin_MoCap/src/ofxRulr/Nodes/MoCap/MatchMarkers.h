@@ -22,6 +22,7 @@ namespace ofxRulr {
 				cv::Mat modelViewRotationVector;
 				cv::Mat modelViewTranslation;
 
+				//These vectors are same layout as bodyDescription
 				vector<cv::Point3f> objectSpacePoints; // note this is empty when doing exhaustive search 
 				vector<cv::Point2f> projectedMarkerImagePoints; // note this is empty when doing exhaustive search
 				float distanceThresholdSquared; // note this flips to the exhaustive search parameter empty when doing exhaustive search
@@ -64,6 +65,7 @@ namespace ofxRulr {
 				mutex descriptionMutex;
 
 				atomic<bool> needsFullSearch = false;
+				atomic<bool> searchInProgress = false;
 			};
 		}
 	}

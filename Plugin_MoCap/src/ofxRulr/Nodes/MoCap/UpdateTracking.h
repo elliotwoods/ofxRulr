@@ -29,6 +29,11 @@ namespace ofxRulr {
 			protected:
 				void processFrame(shared_ptr<MatchMarkersFrame> incomingFrame) override;
 
+				struct : ofParameterGroup {
+					ofParameter<bool> updateCamera{ "Update camera pose", false };
+					PARAM_DECLARE("UpdateTracking", updateCamera);
+				} parameters;
+
 				shared_ptr<Body> bodyNode;
 				mutex bodyNodeMutex;
 			};

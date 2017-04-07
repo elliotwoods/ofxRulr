@@ -22,11 +22,13 @@ namespace ofxRulr {
 
 			//----------
 			void Body::Marker::serialize(Json::Value & json) {
+				Utils::Serializable::serialize(json, this->ID);
 				Utils::Serializable::serialize(json, this->position);
 			}
 
 			//----------
 			void Body::Marker::deserialize(const Json::Value & json) {
+				Utils::Serializable::deserialize(json, this->ID);
 				Utils::Serializable::deserialize(json, this->position);
 			}
 
@@ -62,6 +64,9 @@ namespace ofxRulr {
 						return;
 					}
 
+					ofVec3f boundsMin;
+					ofVec3f boundsMax;
+
 					float maxDistanceSquared = 0.0f;
 
 					//draw marker spheres
@@ -69,12 +74,22 @@ namespace ofxRulr {
 						ofPushStyle();
 						{
 							for (int i = 0; i < bodyDescription->markerCount; i++) {
+								const auto & position = bodyDescription->markers.positions[i];
 								ofSetColor(bodyDescription->markers.colors[i]);
-								ofDrawSphere(bodyDescription->markers.positions[i], bodyDescription->markerDiameter / 2.0f);
+								ofDrawSphere(position, bodyDescription->markerDiameter / 2.0f);
+								ofDrawBitmapString(bodyDescription->markers.IDs[i], bodyDescription->markers.positions[i]);
+
+								boundsMin.x = MIN(boundsMin.x, position.x);
+								boundsMin.y = MIN(boundsMin.y, position.y);
+								boundsMin.z = MIN(boundsMin.z, position.z);
+								boundsMax.x = MAX(boundsMin.x, position.x);
+								boundsMax.y = MAX(boundsMin.y, position.y);
+								boundsMax.z = MAX(boundsMin.z, position.z);
+
 								maxDistanceSquared = max(maxDistanceSquared, bodyDescription->markers.positions[i].lengthSquared());
 							}
 						}
-						ofPopStyle();
+						ofPopStyle();	
 					}
 
 					//draw grid
@@ -82,7 +97,7 @@ namespace ofxRulr {
 						float gridSize = 1.0f;
 						const int steps = 5;
 						if (bodyDescription->markerCount > 0) {
-							gridSize = pow(floor(log10(sqrt(maxDistanceSquared) * 2)), 10) / 2;
+							gridSize = MAX(abs(boundsMax.z), abs(boundsMin.z), abs(boundsMax.x), abs(boundsMin.x));
 						}
 
 						ofPushMatrix();
@@ -126,7 +141,7 @@ namespace ofxRulr {
 					for (size_t i = 0; i < markers.size(); i++) {
 						bodyDescription->markers.positions.push_back(markers[i]->position);
 						bodyDescription->markers.colors.push_back(markers[i]->color);
-						bodyDescription->markers.IDs.push_back(i);
+						bodyDescription->markers.IDs.push_back(markers[i]->ID);
 					}
 
 					bodyDescription->markerDiameter = this->parameters.markerDiameter;
@@ -148,7 +163,7 @@ namespace ofxRulr {
 					auto selection = this->markers.getSelection();
 					for (auto marker : selection) {
 						marker->worldHistory.push_back(marker->position * this->getTransform());
-						auto maxSize = ofGetFrameRate() * this->parameters.drawStyle.historyTrailLength;
+						auto maxSize = ofGetFrameRate() * this->parameters.drawStyleWorld.historyTrailLength;
 						while (marker->worldHistory.size() > maxSize) {
 							marker->worldHistory.pop_front();
 						}
@@ -165,7 +180,7 @@ namespace ofxRulr {
 			void Body::drawObject() const {
 				auto markers = this->markers.getSelection();
 
-				if (this->parameters.drawStyle.useColorsInWorld) {
+				if (this->parameters.drawStyleWorld.useColors) {
 					ofPushStyle();
 					{
 						for (const auto & marker : markers) {
@@ -180,24 +195,32 @@ namespace ofxRulr {
 						ofDrawSphere(marker->position.get(), this->parameters.markerDiameter / 2.0f);
 					}
 				}
+
+				if (this->parameters.drawStyleWorld.showIDs) {
+					for (const auto & marker : markers) {
+						ofDrawBitmapString(ofToString(marker->ID), marker->position);;
+					}
+				}
 			}
 
 			//----------
 			void Body::drawWorld() const {
 				auto selection = this->markers.getSelection();
+
+				//the trails are in world space so we treat these outside of drawObject
 				ofPushStyle();
 				{
 					ofEnableAlphaBlending();
 					for (auto marker : selection) {
 						ofMesh trail;
 						trail.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINE_STRIP);
-						ofColor color = this->parameters.drawStyle.useColorsInWorld.get() ? marker->color : ofColor(255);
+						ofColor color = this->parameters.drawStyleWorld.useColors.get() ? marker->color : ofColor(255);
 
-						int pointIndex = 0;
+						int tailIndex = 0;
 						auto historyLength = marker->worldHistory.size();
 						for (auto point : marker->worldHistory) {
 							trail.addVertex(point);
-							color.a = ofMap(pointIndex++
+							color.a = ofMap(tailIndex++
 								, 0, (float)historyLength
 								, 0.0f, 255.0f
 								, false);
@@ -217,18 +240,10 @@ namespace ofxRulr {
 				inspector->addParameterGroup(this->parameters);
 				this->markers.populateWidgets(inspector);
 				inspector->addButton("Add marker", [this]() {
-					auto inputText = ofSystemTextBoxDialog("Marker position [m] 'x, y, z'");
-					if (!inputText.empty()) {
-						stringstream inputTextStream(inputText);
-						ofVec3f position;
-						inputTextStream >> position;
-
-						auto marker = make_shared<Marker>();
-						marker->position = position;
-						this->markers.add(marker);
-
-						this->invalidateBodyDescription();
+					try {
+						this->addMarker();
 					}
+					RULR_CATCH_ALL_TO_ALERT;
 				});
 				inspector->addButton("Load CSV...", [this]() {
 					try {
@@ -291,17 +306,28 @@ namespace ofxRulr {
 				//split into lines
 				auto lines = ofSplitString(fileString, "\n", true, true);
 				for (auto line : lines) {
-					auto stringCoords = ofSplitString(line, ", ", true, true);
-					if (stringCoords.size() < 3) {
+					auto csvRow = ofSplitString(line, ", ", true, true);
+					MarkerID ID;
+					if (csvRow.size() == 4) {
+						// X, Y, Z, ID
+						ID = ofToInt(csvRow[3]);
+					}
+					else if (csvRow.size() == 3) {
+						// X, Y, Z
+						ID = this->getNextAvailableID();
+					}
+					else {
+						// Unknown format
 						continue;
 					}
 
-					ofVec3f position(ofToFloat(stringCoords[0])
-						, ofToFloat(stringCoords[1])
-						, ofToFloat(stringCoords[2]));
+					ofVec3f position(ofToFloat(csvRow[0])
+						, ofToFloat(csvRow[1])
+						, ofToFloat(csvRow[2]));
 
 					auto marker = make_shared<Marker>();
 					marker->position = position;
+					marker->ID = ID;
 					this->markers.add(marker);
 				}
 
@@ -317,10 +343,15 @@ namespace ofxRulr {
 					}
 					filename = result.filePath;
 				}
-				ofFile file(filename, ofFile::Mode::WriteOnly, false);
-				if (!file.exists()) {
-					throw(ofxRulr::Exception("File not found"));
+				ofstream file(filename, ios::out | ios::trunc);
+				auto markers = this->markers.getSelection();
+				for (auto marker : markers) {
+					file << marker->ID << ", "
+						<< marker->position.get().x << ", "
+						<< marker->position.get().y << ", "
+						<< marker->position.get().z << endl;
 				}
+				file.close();
 			}
 
 			//----------
@@ -399,6 +430,37 @@ namespace ofxRulr {
 				auto transform = ofxCv::makeMatrix(rotationVector, translation);
 				transformIncoming.send(transform);
 				return transform;
+			}
+
+			//----------
+			void Body::addMarker() {
+				auto inputText = ofSystemTextBoxDialog("Marker position [m] 'x, y, z'");
+				if (!inputText.empty()) {
+					stringstream inputTextStream(inputText);
+					ofVec3f position;
+					inputTextStream >> position;
+
+					{
+						auto marker = make_shared<Marker>();
+						marker->ID = this->getNextAvailableID();
+						marker->position = position;
+						this->markers.add(marker);
+					}
+
+					this->invalidateBodyDescription();
+				}
+			}
+
+			//----------
+			MarkerID Body::getNextAvailableID() const {
+				auto markers = this->markers.getAllCaptures();
+				MarkerID ID = 0;
+				for (const auto & marker : markers) {
+					if (marker->ID >= ID) {
+						ID = marker->ID + 1;
+					}
+				}
+				return ID;
 			}
 
 			//----------

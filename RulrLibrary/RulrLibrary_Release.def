@@ -291,6 +291,7 @@ EXPORTS
 	?add@?$ElementGroup_@VBase@Panels@ofxCvGui@@@ofxCvGui@@QEAAXV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@@Z
 	?getInstance@?$UnmanagedSingleton@VWidgetsBuilder@Panels@ofxCvGui@@@ofxSingleton@@SA?AV?$shared_ptr@VWidgetsBuilder@Panels@ofxCvGui@@@std@@XZ
 	?addButton@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VButton@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6AXXZ@5@D@Z
+	?addIndicatorBool@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VIndicator@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A_NXZ@5@@Z
 	?addLiveValueHistory@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VLiveValueHistory@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6AMXZ@5@@Z
 	?addParameterGroup@Widgets@Panels@ofxCvGui@@QEAAXAEAVofParameterGroup@@H@Z
 	?addTitle@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VTitle@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@W4Level@Title@13@@Z

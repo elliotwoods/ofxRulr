@@ -81,7 +81,15 @@ namespace ofxRulr {
 						}
 					}
 
-					auto moment = cv::moments(image(rect));
+					//create a dilated rect for finding moments
+					auto dilatedRect = rect;
+					{
+						dilatedRect.x -= outgoingFrame->dilationSize;
+						dilatedRect.y -= outgoingFrame->dilationSize;
+						dilatedRect.width += outgoingFrame->dilationSize;
+						dilatedRect.height += outgoingFrame->dilationSize;
+					}
+					auto moment = cv::moments(image(dilatedRect));
 
 					//check circularity
 					//https://github.com/opencv/opencv/blob/master/modules/features2d/src/blobdetector.cpp#L225
@@ -105,8 +113,10 @@ namespace ofxRulr {
 				outgoingFrame->centroids.reserve(count);
 				for (size_t i = 0; i < count; i++) {
 					const auto & moment = outgoingFrame->moments[i];
-					outgoingFrame->centroids.emplace_back(moment.m10 / moment.m00 + outgoingFrame->boundingRects[i].x
-						, moment.m01 / moment.m00 + outgoingFrame->boundingRects[i].y);
+					outgoingFrame->centroids.emplace_back(
+						moment.m10 / moment.m00 + outgoingFrame->boundingRects[i].x - outgoingFrame->dilationSize
+						, moment.m01 / moment.m00 + outgoingFrame->boundingRects[i].y - outgoingFrame->dilationSize
+					);
 				}
 
 				//announce the new frame

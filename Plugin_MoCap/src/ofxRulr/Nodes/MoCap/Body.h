@@ -6,14 +6,17 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace MoCap {
+			typedef int MarkerID;
+
 			class Body : public Nodes::Item::RigidBody {
 			public:
 				struct Description {
 					struct Markers {
+						vector<MarkerID> IDs;
 						vector<ofVec3f> positions;
 						vector<ofColor> colors;
-						vector<size_t> IDs;
 					} markers;
+
 					size_t markerCount;
 					float markerDiameter;
 
@@ -50,6 +53,7 @@ namespace ofxRulr {
 				public:
 					Marker();
 					string getDisplayString() const override;
+					ofParameter<MarkerID> ID{ "ID", 0 };
 					ofParameter<ofVec3f> position{ "Position", ofVec3f() };
 					void serialize(Json::Value &);
 					void deserialize(const Json::Value &);
@@ -68,12 +72,16 @@ namespace ofxRulr {
 					} kalmanFilter;
 
 					struct : ofParameterGroup {
-						ofParameter<bool> useColorsInWorld{ "Use colors in world", false };
+						ofParameter<bool> useColors{ "Use colors", false };
+						ofParameter<bool> showIDs{ "Show IDs", false };
 						ofParameter<float> historyTrailLength{ "History trail length [s]", 2, 0, 10 };
-						PARAM_DECLARE("Draw style", useColorsInWorld, historyTrailLength)
-					} drawStyle;
-					PARAM_DECLARE("Body", markerDiameter, kalmanFilter, drawStyle);
+						PARAM_DECLARE("Draw style (world)", useColors, showIDs, historyTrailLength)
+					} drawStyleWorld;
+					PARAM_DECLARE("Body", markerDiameter, kalmanFilter, drawStyleWorld);
 				} parameters;
+
+				void addMarker();
+				MarkerID getNextAvailableID() const;
 
 				void invalidateBodyDescription();
 				shared_ptr<cv::KalmanFilter> makeKalmanFilter(); 

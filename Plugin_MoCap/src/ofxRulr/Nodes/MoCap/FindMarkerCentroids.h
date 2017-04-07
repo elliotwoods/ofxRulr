@@ -11,6 +11,7 @@ namespace ofxRulr {
 				cv::Mat binaryImage;
 				vector<vector<cv::Point2i>> contours;
 				vector<cv::Rect> boundingRects;
+				const int dilationSize = 2; // used for calculating moments
 				vector<cv::Moments> moments;
 				vector<float> circularity;
 				vector<cv::Point2f> centroids;

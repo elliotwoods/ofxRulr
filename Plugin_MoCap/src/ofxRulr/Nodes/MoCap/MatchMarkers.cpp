@@ -60,6 +60,9 @@ namespace ofxRulr {
 				inspector->addButton("Search", [this]() {
 					this->performSearch();
 				}, OF_KEY_RETURN)->setHeight(100.0f);
+				inspector->addIndicatorBool("Search in progress", [this]() {
+					return this->searchInProgress.load();
+				});
 			}
 
 			//----------
@@ -200,6 +203,8 @@ namespace ofxRulr {
 
 			//----------
 			void MatchMarkers::processFullSearch(shared_ptr<MatchMarkersFrame> & outputFrame) {
+				this->searchInProgress.store(true);
+
 				//performs a brute force nPr search on possible candidates for marker tracking
 
 				if (outputFrame->incomingFrame->centroids.size() < 4
@@ -243,6 +248,8 @@ namespace ofxRulr {
 					outputFrame->matchedCentroids = searchResult->matchedCentroids;
 					outputFrame->matchedObjectSpacePoints = searchResult->matchedObjectSpacePoints;
 				}
+
+				this->searchInProgress.store(false);
 			}
 
 			//----------

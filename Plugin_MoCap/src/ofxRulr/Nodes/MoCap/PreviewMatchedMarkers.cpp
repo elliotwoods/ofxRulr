@@ -39,14 +39,22 @@ namespace ofxRulr {
 						{
 							ofSetColor(255, 0, 0);
 							ofSetLineWidth(1.0f);
-							for (auto projectedPoint : previewFrame->projectedMarkerImagePoints) {
-								ofPushMatrix();
-								{
-									ofTranslate(ofxCv::toOf(projectedPoint));
-									ofDrawLine(-10, 0, 10, 0);
-									ofDrawLine(0, -10, 0, 10);
+
+							//check it's not empty first (e.g. when doing exhaustive search)
+							if (!previewFrame->projectedMarkerImagePoints.empty()) {
+								auto size = previewFrame->bodyDescription->markerCount;
+								for (auto i = 0; i < size; i++) {
+									const auto & projectedPoint = previewFrame->projectedMarkerImagePoints[i];
+									const auto & ID = previewFrame->bodyDescription->markers.IDs[i];
+									ofPushMatrix();
+									{
+										ofTranslate(ofxCv::toOf(projectedPoint));
+										ofDrawLine(-10, 0, 10, 0);
+										ofDrawLine(0, -10, 0, 10);
+										ofDrawBitmapString(ofToString(ID), 0, 0);
+									}
+									ofPopMatrix();
 								}
-								ofPopMatrix();
 							}
 						}
 						ofPopStyle();
