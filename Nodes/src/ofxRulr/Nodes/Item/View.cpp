@@ -96,17 +96,21 @@ namespace ofxRulr {
 				{
 					auto view = this->getViewInWorldSpace();
 					{
-						auto & viewMatrixJson = jsonOpenGL["viewMatrix"];
 						auto viewMatrix = view.getViewMatrix();
-						for (int i = 0; i < 16; i++) {
-							viewMatrixJson[i] = viewMatrix.getPtr()[i];
+						if (viewMatrix.isValid()) {
+							auto & viewMatrixJson = jsonOpenGL["viewMatrix"];
+							for (int i = 0; i < 16; i++) {
+								viewMatrixJson[i] = viewMatrix.getPtr()[i];
+							}
 						}
 					}
 					{
-						auto & projectionMatrixJson = jsonOpenGL["projectionMatrix"];
 						auto projectionMatrix = view.getClippedProjectionMatrix();
-						for (int i = 0; i < 16; i++) {
-							projectionMatrixJson[i] = projectionMatrix.getPtr()[i];
+						if (projectionMatrix.isValid()) {
+							auto & projectionMatrixJson = jsonOpenGL["projectionMatrix"];
+							for (int i = 0; i < 16; i++) {
+								projectionMatrixJson[i] = projectionMatrix.getPtr()[i];
+							}
 						}
 					}
 				}

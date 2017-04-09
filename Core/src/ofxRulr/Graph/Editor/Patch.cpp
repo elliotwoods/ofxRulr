@@ -290,7 +290,10 @@ namespace ofxRulr {
 						}
 						this->addNodeHost(nodeHost, ID);
 					}
-					RULR_CATCH_ALL_TO_ERROR
+					RULR_CATCH_ALL_TO({
+						ofLogError() << e.what() << endl;
+						cout << nodeJson;
+					})
 				}
 
 				//Deserialise links into the nodes

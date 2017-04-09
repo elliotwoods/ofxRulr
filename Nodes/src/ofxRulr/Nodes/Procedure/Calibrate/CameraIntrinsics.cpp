@@ -154,7 +154,7 @@ namespace ofxRulr {
 											&& !grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)
 											&& grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::OneShot)) {
 											Utils::ScopedProcess scopedProcessTethered("Tethered shoot find board");
-											this->addBoard();
+											this->addCapture(true);
 											scopedProcessTethered.end();
 										}
 									}
@@ -252,7 +252,7 @@ namespace ofxRulr {
 					inspector->addButton("Add capture", [this]() {
 						try {
 							ofxRulr::Utils::ScopedProcess scopedProcess("Finding checkerboard");
-							this->addBoard();
+							this->addCapture(false);
 							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ERROR;
@@ -283,12 +283,17 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraIntrinsics::addBoard() {
+				void CameraIntrinsics::addCapture(bool triggeredFromTetheredCapture) {
 					this->throwIfMissingAnyConnection();
 					
 					auto camera = this->getInput<Item::Camera>();
-					//if it's a DSLR, let's take a single shot and find the board
 					const auto cameraSpecification = camera->getGrabber()->getDeviceSpecification();
+
+					//if it's a DSLR, let's take a single shot and find the board
+					if (cameraSpecification.supports(ofxMachineVision::CaptureSequenceType::OneShot) && !triggeredFromTetheredCapture) {
+						camera->getFreshFrame();
+						this->findBoard();
+					}
 
 					if (!this->isFrameNew && !this->parameters.capture.checkAllIncomingFrames) {
 						//in this case let's try again to capture

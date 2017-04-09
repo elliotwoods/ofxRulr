@@ -46,7 +46,7 @@ namespace ofxRulr {
 					bool getRunFinderEnabled() const;
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void addBoard();
+					void addCapture(bool triggeredFromTetheredCapture);
 					void findBoard();
 					void calibrate();
 

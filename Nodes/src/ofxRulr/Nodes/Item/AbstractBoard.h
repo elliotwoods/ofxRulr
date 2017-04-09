@@ -10,7 +10,7 @@ namespace ofxRulr{
 				AbstractBoard();
 				virtual string getTypeName() const override;
 
-				virtual bool findBoard(cv::Mat, vector<cv::Point2f> & result, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const;
+				virtual bool findBoard(cv::Mat, vector<cv::Point2f> & result, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix = cv::Mat(), cv::Mat distortionCoefficients = cv::Mat()) const;
 				virtual void drawObject() const { }
 				virtual float getSpacing() const {
 					return 0;
