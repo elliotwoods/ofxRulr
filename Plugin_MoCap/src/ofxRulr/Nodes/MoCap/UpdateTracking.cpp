@@ -1,4 +1,4 @@
-	#include "pch_Plugin_MoCap.h"
+#include "pch_Plugin_MoCap.h"
 #include "UpdateTracking.h"
 
 #include "Body.h"
@@ -21,44 +21,46 @@ namespace ofxRulr {
 			void UpdateTracking::init() {
 				RULR_NODE_UPDATE_LISTENER;
 
-				this->addInput<Body>();
+				this->addInput<Item::RigidBody>();
+
+				this->manageParameters(this->parameters);
 			}
 
 			//----------
 			void UpdateTracking::update() {
 				{
-					auto lock = unique_lock<mutex>(bodyNodeMutex);
-					this->bodyNode = this->getInput<Body>();
+					auto rigidBodyNode = this->getInput<Item::RigidBody>();
+					if (rigidBodyNode) {
+						shared_ptr<UpdateTrackingFrame> updateTrackingFrame;
+						while (this->trackingUpdateToMainThread.tryReceive(updateTrackingFrame)) {}
+
+						if (updateTrackingFrame) {
+							rigidBodyNode->setTransform(updateTrackingFrame->transform);
+						}
+					}
 				}
 			}
 
 			//----------
 			void UpdateTracking::processFrame(shared_ptr<MatchMarkersFrame> incomingFrame) {
 				//ignore if less than 3
-				if (incomingFrame->matchCount < 4) {
-					return;
-				}
-
-				//get the body to update
-				this->bodyNodeMutex.lock();
-				auto bodyNode = this->bodyNode;
-				this->bodyNodeMutex.unlock();
-				if (!bodyNode) {
+				if (incomingFrame->result.count < 4) {
 					return;
 				}
 				
 				//construct output
 				auto outgoingFrame = make_shared<UpdateTrackingFrame>();
 				outgoingFrame->incomingFrame = incomingFrame;
-				outgoingFrame->modelViewRotationVector = incomingFrame->modelViewRotationVector;
-				outgoingFrame->modelViewTranslation = incomingFrame->modelViewTranslation;
+				outgoingFrame->updateTarget = this->parameters.updateTarget;
+				outgoingFrame->bodyModelViewRotationVector = incomingFrame->modelViewRotationVector;
+				outgoingFrame->bodyModelViewTranslation = incomingFrame->modelViewTranslation;
 				
-				cv::solvePnP(incomingFrame->matchedObjectSpacePoints
-					, incomingFrame->matchedCentroids
+				cv::solvePnP(incomingFrame->result.objectSpacePoints
+					, incomingFrame->result.centroids
 					, incomingFrame->cameraDescription->cameraMatrix
 					, incomingFrame->cameraDescription->distortionCoefficients
-					, outgoingFrame->modelViewRotationVector
-					, outgoingFrame->modelViewTranslation
+					, outgoingFrame->bodyModelViewRotationVector
+					, outgoingFrame->bodyModelViewTranslation
 					, true);
 
 				//apply the inverse of the camera transform
@@ -71,19 +73,35 @@ namespace ofxRulr {
 						, cameraRotationInverse
 						, cameraTranslationInverse);
 
-					cv::composeRT(outgoingFrame->modelViewRotationVector
-						, outgoingFrame->modelViewTranslation
+					cv::composeRT(outgoingFrame->bodyModelViewRotationVector
+						, outgoingFrame->bodyModelViewTranslation
 						, cameraRotationInverse
 						, cameraTranslationInverse
 						, outgoingFrame->modelRotationVector
 						, outgoingFrame->modelTranslation);
 				}
 
-				outgoingFrame->transform = bodyNode->updateTracking(outgoingFrame->modelRotationVector
-					, outgoingFrame->modelTranslation
-					, incomingFrame->trackingWasLost);
+				switch (outgoingFrame->updateTarget.get()) {
+					case UpdateTarget::Body:
+					{
+						//nothing to do
+						outgoingFrame->transform = ofxCv::makeMatrix(outgoingFrame->modelRotationVector
+							, outgoingFrame->modelTranslation);
+						break;
+					}
+					case UpdateTarget::Camera:
+					{
+						//special case, only the transform is in camera coords
+						outgoingFrame->transform = ofxCv::makeMatrix(outgoingFrame->bodyModelViewRotationVector
+							, outgoingFrame->bodyModelViewTranslation).getInverse() * incomingFrame->bodyDescription->modelTransform;
+						break;
+					}
+					default:
+						break;
+				}
 
 				this->onNewFrame.notifyListeners(outgoingFrame);
+				this->trackingUpdateToMainThread.send(outgoingFrame);
 			}
 		}
 	}

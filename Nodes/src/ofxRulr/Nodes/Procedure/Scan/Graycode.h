@@ -60,8 +60,8 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<float> captureDelay{ "Capture delay [ms]", 200 };
-							ofParameter<float> flushOutputFrames{ "Flush output frames", 2 };
-							ofParameter<float> flushInputFrames{ "Flush input frames", 0 };
+							ofParameter<int> flushOutputFrames{ "Flush output frames", 2 };
+							ofParameter<int> flushInputFrames{ "Flush input frames", 0 };
 							ofParameter<float> brightness{ "Brightness [/255]", 255, 0, 255 };
 							PARAM_DECLARE("Scan", captureDelay, flushOutputFrames, flushInputFrames, brightness);
 						} scan;

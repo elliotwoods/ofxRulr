@@ -148,9 +148,9 @@ namespace ofxRulr {
 					auto pixelsPerMeter = this->getPreviewPixelsPerMeter();
 					ofScale(1.0f / pixelsPerMeter, 1.0f / pixelsPerMeter, 1.0f);
 					this->preview.draw(-this->preview.getWidth() / 2.0f
-						, +this->preview.getHeight() / 2.0f
+						, -this->preview.getHeight() / 2.0f
 						, this->preview.getWidth()
-						, -this->preview.getHeight());
+						, +this->preview.getHeight());
 				}
 				ofPopMatrix();
 			}

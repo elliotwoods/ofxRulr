@@ -18,6 +18,11 @@ namespace ofxRulr {
 				float processedFramesPerSecond = 0.0f;
 				float droppedFramesPerSecond = 0.0f;
 				unique_ptr<Utils::ThreadPool> threadPool;
+
+				struct : ofParameterGroup {
+					ofParameter<bool> performInParentThread{ "Perform in parent thread", false };
+					PARAM_DECLARE("ThreadedProcessNode", performInParentThread);
+				} parameters;
 			protected:
 				virtual void processFrame(shared_ptr<IncomingFrameType> incomingFrame) = 0;
 				virtual size_t getThreadPoolSize() const { return 2; }
@@ -37,14 +42,21 @@ namespace ofxRulr {
 					auto input = this->addInput<IncomingNodeType>();
 					input->onNewConnection += [this](shared_ptr<IncomingNodeType> inputNode) {
 						inputNode->onNewFrame.addListener([this](shared_ptr<IncomingFrameType> incomingFrame) {
-							if (!this->threadPool->performAsync([this, incomingFrame]() {
+							auto action = [this, incomingFrame]() {
 								auto timeStart = chrono::high_resolution_clock::now();
 								this->processFrame(incomingFrame);
 								chrono::duration<float, ratio<1, 1000>> duration = chrono::high_resolution_clock::now() - timeStart;
 								this->processingTime.store(duration.count());
 								this->processedFramesSinceLastAppFrame++;
-							})) {
-								this->droppedFramesSinceLastAppFrame++;
+							};
+
+							if (this->parameters.performInParentThread) {
+								action();
+							}
+							else {
+								if (!this->threadPool->performAsync(action)) {
+									this->droppedFramesSinceLastAppFrame++;
+								}
 							}
 						}, this);
 					};
@@ -53,6 +65,8 @@ namespace ofxRulr {
 							inputNode->onNewFrame.removeListeners(this);
 						}
 					};
+
+					this->manageParameters(this->parameters);
 				}
 
 				void update() {

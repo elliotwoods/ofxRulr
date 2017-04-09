@@ -12,6 +12,8 @@ namespace ofxRulr {
 				cv::Mat distortionCoefficients;
 				cv::Mat rotationVector;
 				cv::Mat translation;
+
+				ofMatrix4x4 viewProjectionMatrix;
 			};
 
 			struct MatchMarkersFrame {
@@ -22,19 +24,26 @@ namespace ofxRulr {
 				cv::Mat modelViewRotationVector;
 				cv::Mat modelViewTranslation;
 
-				//These vectors are same layout as bodyDescription
-				vector<cv::Point3f> objectSpacePoints; // note this is empty when doing exhaustive search 
-				vector<cv::Point2f> projectedMarkerImagePoints; // note this is empty when doing exhaustive search
+				struct {
+					size_t count;
+					vector<MarkerID> markerIDs;
+					vector<cv::Point3f> objectSpacePoints; // note this is empty when doing exhaustive search 
+					vector<cv::Point2f> projectedMarkerImagePoints; // note this is empty when doing exhaustive search
+				} search;
+				
+
 				float distanceThresholdSquared; // note this flips to the exhaustive search parameter empty when doing exhaustive search
 
 				bool trackingWasLost = false;
 
-				size_t matchCount = 0;
-				vector<size_t> matchedMarkerListIndex; // index in marker points list coming from Body
-				vector<size_t> matchedMarkerID;
-				vector<cv::Point2f> matchedProjectedPoint;
-				vector<cv::Point2f> matchedCentroids;
-				vector<cv::Point3f> matchedObjectSpacePoints;
+				struct {
+					size_t count = 0;
+					vector<size_t> markerListIndicies; // index in marker points list coming from Body
+					vector<size_t> markerIDs;
+					vector<cv::Point2f> projectedPoints;
+					vector<cv::Point2f> centroids;
+					vector<cv::Point3f> objectSpacePoints;
+				} result;
 			};
 
 			class MatchMarkers : public ThreadedProcessNode<FindMarkerCentroids

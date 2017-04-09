@@ -114,7 +114,7 @@ namespace ofxRulr {
 
 					if (previewFrame) {
 						this->previewImage.getPixels() = previewFrame->imageFrame->getPixels();
-						cv::Mat masked = ofxCv::toCv(previewFrame->imageFrame->getPixels()) & previewFrame->binaryImage;
+						cv::Mat masked = ofxCv::toCv(previewFrame->imageFrame->getPixels()) & previewFrame->binary;
 						ofxCv::copy(masked, this->previewImage.getPixels());
 						this->previewImage.update();
 					}

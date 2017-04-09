@@ -148,7 +148,7 @@ namespace ofxRulr {
 
 				size_t countFinds = 0;
 				for (const auto & markerTrackingResult : markerTrackingResults) {
-					countFinds += markerTrackingResult->matchCount;
+					countFinds += markerTrackingResult->result.count;
 				}
 				if (countFinds < 4) {
 					return;
@@ -173,27 +173,27 @@ namespace ofxRulr {
 				//construct output
 				auto outgoingFrame = make_shared<UpdateTrackingFrame>();
 				outgoingFrame->incomingFrame = incomingFrame;
-				bodyNode->getExtrinsics(outgoingFrame->modelViewRotationVector
-					, outgoingFrame->modelViewTranslation);
+				bodyNode->getExtrinsics(outgoingFrame->bodyModelViewRotationVector
+					, outgoingFrame->bodyModelViewTranslation);
 
 				auto startTime = chrono::high_resolution_clock::now();
 				bool success = stereoSolvePnP->solvePnPStereo(stereoCalibrateNode
-					, resultA->matchedCentroids
-					, resultB->matchedCentroids
-					, resultA->matchedObjectSpacePoints
-					, resultB->matchedObjectSpacePoints
-					, outgoingFrame->modelViewRotationVector
-					, outgoingFrame->modelViewTranslation
+					, resultA->result.centroids
+					, resultB->result.centroids
+					, resultA->result.objectSpacePoints
+					, resultB->result.objectSpacePoints
+					, outgoingFrame->bodyModelViewRotationVector
+					, outgoingFrame->bodyModelViewTranslation
 					, true);
 				auto duration = chrono::high_resolution_clock::now() - startTime;
 				auto micros = chrono::duration_cast<chrono::microseconds>(duration);
 				this->computeTimeChannel.send((float)micros.count() / 1000.0f);
 
 				if(success) {
-					outgoingFrame->transform = bodyNode->updateTracking(outgoingFrame->modelViewRotationVector
-						, outgoingFrame->modelViewTranslation
-						, resultA->trackingWasLost && resultB->trackingWasLost);
-					this->onNewFrame.notifyListeners(outgoingFrame);
+// 					outgoingFrame->transform = bodyNode->updateTracking(outgoingFrame->bodyModelViewRotationVector
+// 						, outgoingFrame->bodyModelViewTranslation
+// 						, resultA->trackingWasLost && resultB->trackingWasLost);
+// 					this->onNewFrame.notifyListeners(outgoingFrame);
 				}
 			}
 		}

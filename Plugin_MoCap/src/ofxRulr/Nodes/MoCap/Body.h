@@ -47,7 +47,6 @@ namespace ofxRulr {
 				void saveCSV(string filename = "");
 
 				bool getTrackingPrediction(cv::Mat & rotationVector, cv::Mat & translation); // returns true if prediction is used
-				ofMatrix4x4 updateTracking(cv::Mat rotationVector, cv::Mat translation, bool newTracking); // returns updated transform with filtering
 			protected:
 				class Marker : public Utils::AbstractCaptureSet::BaseCapture {
 				public:
@@ -84,16 +83,12 @@ namespace ofxRulr {
 				MarkerID getNextAvailableID() const;
 
 				void invalidateBodyDescription();
-				shared_ptr<cv::KalmanFilter> makeKalmanFilter(); 
 
 				ofxCvGui::PanelPtr panel;
 				Utils::CaptureSet<Marker> markers;
 
 				shared_ptr<Description> bodyDescription;
 				mutable mutex bodyDescriptionMutex;
-
-				shared_ptr<cv::KalmanFilter> kalmanFilter;
-				mutex kalmanFilterMutex;
 
 				ofThreadChannel<ofMatrix4x4> transformIncoming;
 

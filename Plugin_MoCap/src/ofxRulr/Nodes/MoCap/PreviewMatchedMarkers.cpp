@@ -41,11 +41,11 @@ namespace ofxRulr {
 							ofSetLineWidth(1.0f);
 
 							//check it's not empty first (e.g. when doing exhaustive search)
-							if (!previewFrame->projectedMarkerImagePoints.empty()) {
-								auto size = previewFrame->bodyDescription->markerCount;
+							if (!previewFrame->search.projectedMarkerImagePoints.empty()) {
+								auto size = previewFrame->search.count;
 								for (auto i = 0; i < size; i++) {
-									const auto & projectedPoint = previewFrame->projectedMarkerImagePoints[i];
-									const auto & ID = previewFrame->bodyDescription->markers.IDs[i];
+									const auto & projectedPoint = previewFrame->search.projectedMarkerImagePoints[i];
+									const auto & ID = previewFrame->search.markerIDs[i];
 									ofPushMatrix();
 									{
 										ofTranslate(ofxCv::toOf(projectedPoint));
@@ -81,11 +81,11 @@ namespace ofxRulr {
 						{
 							ofSetColor(0, 100, 255);
 							ofSetLineWidth(1.0f);
-							for (int i = 0; i < previewFrame->matchCount; i++) {
-								ofDrawLine(ofxCv::toOf(previewFrame->matchedProjectedPoint[i])
-									, ofxCv::toOf(previewFrame->matchedCentroids[i]));
-								ofDrawBitmapString("Marker #" + ofToString(previewFrame->matchedMarkerID[i])
-									, ofxCv::toOf(previewFrame->matchedProjectedPoint[i]));
+							for (int i = 0; i < previewFrame->result.count; i++) {
+								ofDrawLine(ofxCv::toOf(previewFrame->result.projectedPoints[i])
+									, ofxCv::toOf(previewFrame->result.centroids[i]));
+								ofDrawBitmapString("Marker #" + ofToString(previewFrame->result.markerIDs[i])
+									, ofxCv::toOf(previewFrame->result.projectedPoints[i]));
 							}
 						}
 						ofPopStyle();
@@ -99,7 +99,7 @@ namespace ofxRulr {
 				if (this->previewDirty) {
 					auto lock = unique_lock<mutex>(this->previewFrameMutex);
 					if (this->previewFrame) {
-						ofxCv::copy(this->previewFrame->incomingFrame->binaryImage, this->preview.getPixels());
+						ofxCv::copy(this->previewFrame->incomingFrame->difference, this->preview.getPixels());
 						this->preview.update();
 					}
 					else {

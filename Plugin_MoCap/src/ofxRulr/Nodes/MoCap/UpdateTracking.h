@@ -7,11 +7,17 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace MoCap {
+			MAKE_ENUM(UpdateTarget
+				, (Body, Camera)
+				, ("Body", "Camera"));
+
 			struct UpdateTrackingFrame {
 				shared_ptr<MatchMarkersFrame> incomingFrame;
 
-				cv::Mat modelViewRotationVector;
-				cv::Mat modelViewTranslation;
+				UpdateTarget updateTarget;
+
+				cv::Mat bodyModelViewRotationVector;
+				cv::Mat bodyModelViewTranslation;
 
 				cv::Mat modelRotationVector;
 				cv::Mat modelTranslation;
@@ -30,12 +36,11 @@ namespace ofxRulr {
 				void processFrame(shared_ptr<MatchMarkersFrame> incomingFrame) override;
 
 				struct : ofParameterGroup {
-					ofParameter<bool> updateCamera{ "Update camera pose", false };
-					PARAM_DECLARE("UpdateTracking", updateCamera);
+					ofParameter<UpdateTarget> updateTarget{ "Update target", UpdateTarget::Camera };
+					PARAM_DECLARE("UpdateTracking", updateTarget);
 				} parameters;
 
-				shared_ptr<Body> bodyNode;
-				mutex bodyNodeMutex;
+				ofThreadChannel<shared_ptr<UpdateTrackingFrame>> trackingUpdateToMainThread;
 			};
 		}
 	}

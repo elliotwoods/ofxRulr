@@ -21,38 +21,57 @@ namespace ofxRulr {
 
 			//----------
 			void FindMarkerCentroids::processFrame(shared_ptr<ofxMachineVision::Frame> incomingFrame) {
-				auto & pixels = incomingFrame->getPixels();
+				//create the ouput frame;
+				auto outgoingFrame = make_shared<FindMarkerCentroidsFrame>();
+				outgoingFrame->imageFrame = incomingFrame; 
 
 				//convert to grayscale if needs be
-				cv::Mat image = ofxCv::toCv(pixels);
-				switch (pixels.getPixelFormat()) {
+				outgoingFrame->image = ofxCv::toCv(incomingFrame->getPixels());
+				switch (incomingFrame->getPixels().getPixelFormat()) {
 				case ofPixelFormat::OF_PIXELS_GRAY:
 					break;
 				case ofPixelFormat::OF_PIXELS_RGB:
 				case ofPixelFormat::OF_PIXELS_BGR:
-					cv::cvtColor(image, image, CV_RGB2GRAY);
+					cv::cvtColor(outgoingFrame->image, outgoingFrame->image, CV_RGB2GRAY);
 					break;
 				case ofPixelFormat::OF_PIXELS_RGBA:
 				case ofPixelFormat::OF_PIXELS_BGRA:
-					cv::cvtColor(image, image, CV_RGBA2GRAY);
+					cv::cvtColor(outgoingFrame->image, outgoingFrame->image, CV_RGBA2GRAY);
 					break;
 				default:
 					throw(ofxRulr::Exception("Image format not supported by FindContourMarkers"));
 				}
 
-				//create the ouput frame;
-				auto outgoingFrame = make_shared<FindMarkerCentroidsFrame>();
-				outgoingFrame->imageFrame = incomingFrame;
+				//local difference
+				{
+					//iterative blur
+					{
+						int blurSize = this->parameters.localDifference.blurSize;
 
-				//apply the threshold
-				cv::threshold(image
-					, outgoingFrame->binaryImage
-					, this->parameters.threshold.get()
-					, 255
-					, cv::THRESH_BINARY);
+						cv::blur(outgoingFrame->image, outgoingFrame->blurred, cv::Size(blurSize / 2, blurSize / 2));
+						blurSize /= 2;
+						while (blurSize > 1) {
+							if (blurSize <= 32) {
+								cv::blur(outgoingFrame->blurred, outgoingFrame->blurred, cv::Size(blurSize, blurSize));
+								break;
+							}
+							cv::blur(outgoingFrame->blurred, outgoingFrame->blurred, cv::Size(blurSize / 2, blurSize / 2));
+							blurSize /= 2;
+						}
+					}
+
+					outgoingFrame->difference = outgoingFrame->image - outgoingFrame->blurred;
+					outgoingFrame->difference *= this->parameters.localDifference.differenceAmplify;
+
+					cv::threshold(outgoingFrame->difference
+						, outgoingFrame->binary
+						, this->parameters.localDifference.threshold
+						, 255
+						, CV_THRESH_BINARY);
+				}
 
 				//find the contours
-				cv::findContours(outgoingFrame->binaryImage
+				cv::findContours(outgoingFrame->binary
 					, outgoingFrame->contours
 					, CV_RETR_EXTERNAL
 					, CV_CHAIN_APPROX_NONE);
@@ -65,7 +84,7 @@ namespace ofxRulr {
 					auto rect = cv::boundingRect(contour);
 
 					//check area
-					if (rect.area() <= this->parameters.minimumArea) {
+					if (rect.area() <= this->parameters.contourFilter.minimumArea) {
 						continue;
 					}
 
@@ -75,8 +94,8 @@ namespace ofxRulr {
 						auto bottomRight = rect.br();
 						if (rect.x <= distanceThreshold
 							|| rect.y <= distanceThreshold
-							|| image.cols - bottomRight.x <= distanceThreshold
-							|| image.rows - bottomRight.y <= distanceThreshold) {
+							|| outgoingFrame->image.cols - bottomRight.x <= distanceThreshold
+							|| outgoingFrame->image.rows - bottomRight.y <= distanceThreshold) {
 							continue;
 						}
 					}
@@ -89,7 +108,7 @@ namespace ofxRulr {
 						dilatedRect.width += outgoingFrame->dilationSize;
 						dilatedRect.height += outgoingFrame->dilationSize;
 					}
-					auto moment = cv::moments(image(dilatedRect));
+					auto moment = cv::moments(outgoingFrame->image(dilatedRect));
 
 					//check circularity
 					//https://github.com/opencv/opencv/blob/master/modules/features2d/src/blobdetector.cpp#L225
@@ -97,8 +116,8 @@ namespace ofxRulr {
 					{
 						auto area = moment.m00;
 						auto perimeter = cv::arcLength(cv::Mat(contour), true);
-						circularity = 4 * CV_PI * area / (perimeter * perimeter) / pow(max(rect.width, rect.height), this->parameters.circularityGamma.get());
-						if (circularity < this->parameters.minimumCircularity.get()) {
+						circularity = 4 * CV_PI * area / (perimeter * perimeter) / pow(max(rect.width, rect.height), this->parameters.contourFilter.circularityGamma.get());
+						if (circularity < this->parameters.contourFilter.minimumCircularity.get()) {
 							continue;
 						}
 					}

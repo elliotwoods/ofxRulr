@@ -14,9 +14,8 @@ namespace ofxRulr {
 			//----------
 			std::string Body::Marker::getDisplayString() const {
 				stringstream ss;
-				ss << "X : " << this->position.get().x << endl;
-				ss << "Y : " << this->position.get().y << endl;
-				ss << "Z : " << this->position.get().z;
+				ss << "ID : " << this->ID.get() << endl;
+				ss << ofToString(this->position.get(), 3) << endl;
 				return ss.str();
 			}
 
@@ -53,6 +52,10 @@ namespace ofxRulr {
 				RULR_NODE_DRAW_WORLD_LISTENER;
 
 				this->onTransformChange += [this]() {
+					this->invalidateBodyDescription();
+				};
+
+				this->markers.onSelectionChanged += [this]() {
 					this->invalidateBodyDescription();
 				};
 
@@ -355,84 +358,6 @@ namespace ofxRulr {
 			}
 
 			//----------
-			bool Body::getTrackingPrediction(cv::Mat & rotationVector, cv::Mat & translation) {
-				if (this->parameters.kalmanFilter.enabled) {
-					this->kalmanFilterMutex.lock();
-					auto kalmanFilter = this->kalmanFilter;
-					this->kalmanFilterMutex.unlock();
-
-					if(kalmanFilter) {
-						auto predicton = kalmanFilter->predict();
-						translation.at<double>(0) = predicton.at<double>(0);
-						translation.at<double>(1) = predicton.at<double>(1);
-						translation.at<double>(2) = predicton.at<double>(2);
-
-						rotationVector.at<double>(0) = predicton.at<double>(9);
-						rotationVector.at<double>(1) = predicton.at<double>(10);
-						rotationVector.at<double>(2) = predicton.at<double>(11);
-
-						return true;
-					}
-					else {
-						//continue outside to ordinary version
-					}
-				}
-
-				//return our current transform
-				auto transform = this->getTransform();
-				transform = ofxGLM::toOf(glm::inverse(ofxGLM::toGLM(transform)));
-				ofxCv::decomposeMatrix(transform, rotationVector, translation);
-
-				return false;
-			}
-
-			//----------
-			//https://github.com/opencv/opencv/blob/master/samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/src/main_detection.cpp
-			ofMatrix4x4 Body::updateTracking(cv::Mat rotationVector, cv::Mat translation, bool newTracking) {
-				if (this->parameters.kalmanFilter.enabled) {
-					this->kalmanFilterMutex.lock();
-					auto kalmanFilter = this->kalmanFilter;
-					this->kalmanFilterMutex.unlock();
-
-					//if the object was lost, restart the Kalman filter
-					if (newTracking) {
-						kalmanFilter.reset();
-					}
-
-					//create the measurement vector
-					cv::Mat measurement;
-					cv::vconcat(translation, rotationVector, measurement);
-
-					//make a Kalman filter if ours is invalidated
-					if (!kalmanFilter) {
-						kalmanFilter = Body::makeKalmanFilter();
-
-						this->kalmanFilterMutex.lock();
-						this->kalmanFilter = kalmanFilter;
-						this->kalmanFilterMutex.unlock();
-
-						kalmanFilter->statePre = measurement;
-						kalmanFilter->predict();
-					}
-
-					//predict and correct
-					auto estimation = kalmanFilter->correct(measurement);
-
-					translation.at<double>(0) = estimation.at<double>(0);
-					translation.at<double>(1) = estimation.at<double>(1);
-					translation.at<double>(2) = estimation.at<double>(2);
-
-					rotationVector.at<double>(0) = estimation.at<double>(9);
-					rotationVector.at<double>(1) = estimation.at<double>(10);
-					rotationVector.at<double>(2) = estimation.at<double>(11);
-				}
-
-				auto transform = ofxCv::makeMatrix(rotationVector, translation);
-				transformIncoming.send(transform);
-				return transform;
-			}
-
-			//----------
 			void Body::addMarker() {
 				auto inputText = ofSystemTextBoxDialog("Marker position [m] 'x, y, z'");
 				if (!inputText.empty()) {
@@ -467,80 +392,6 @@ namespace ofxRulr {
 			void Body::invalidateBodyDescription() {
 				auto lock = unique_lock<mutex>(this->bodyDescriptionMutex);
 				this->bodyDescription.reset();
-			}
-
-			//----------
-			shared_ptr<cv::KalmanFilter> Body::makeKalmanFilter() {
-				auto kalmanFilter = make_shared<cv::KalmanFilter>();
-				kalmanFilter->init(18, 6, 0, CV_64F);
-
-				cv::setIdentity(kalmanFilter->processNoiseCov, cv::Scalar::all(this->parameters.kalmanFilter.processNoise.get()));
-				cv::setIdentity(kalmanFilter->measurementNoiseCov, cv::Scalar::all(this->parameters.kalmanFilter.measurementNoise.get()));
-				cv::setIdentity(kalmanFilter->errorCovPost, cv::Scalar::all(this->parameters.kalmanFilter.errorPost.get()));
-
-				/** DYNAMIC MODEL **/
-
-				//  [1 0 0 dt  0  0 dt2   0   0 0 0 0  0  0  0   0   0   0]
-				//  [0 1 0  0 dt  0   0 dt2   0 0 0 0  0  0  0   0   0   0]
-				//  [0 0 1  0  0 dt   0   0 dt2 0 0 0  0  0  0   0   0   0]
-				//  [0 0 0  1  0  0  dt   0   0 0 0 0  0  0  0   0   0   0]
-				//  [0 0 0  0  1  0   0  dt   0 0 0 0  0  0  0   0   0   0]
-				//  [0 0 0  0  0  1   0   0  dt 0 0 0  0  0  0   0   0   0]
-				//  [0 0 0  0  0  0   1   0   0 0 0 0  0  0  0   0   0   0]
-				//  [0 0 0  0  0  0   0   1   0 0 0 0  0  0  0   0   0   0]
-				//  [0 0 0  0  0  0   0   0   1 0 0 0  0  0  0   0   0   0]
-				//  [0 0 0  0  0  0   0   0   0 1 0 0 dt  0  0 dt2   0   0]
-				//  [0 0 0  0  0  0   0   0   0 0 1 0  0 dt  0   0 dt2   0]
-				//  [0 0 0  0  0  0   0   0   0 0 0 1  0  0 dt   0   0 dt2]
-				//  [0 0 0  0  0  0   0   0   0 0 0 0  1  0  0  dt   0   0]
-				//  [0 0 0  0  0  0   0   0   0 0 0 0  0  1  0   0  dt   0]
-				//  [0 0 0  0  0  0   0   0   0 0 0 0  0  0  1   0   0  dt]
-				//  [0 0 0  0  0  0   0   0   0 0 0 0  0  0  0   1   0   0]
-				//  [0 0 0  0  0  0   0   0   0 0 0 0  0  0  0   0   1   0]
-				//  [0 0 0  0  0  0   0   0   0 0 0 0  0  0  0   0   0   1]
-
-				// TODO : how to deal with varying dt?
-				auto dt = 1.0f / 150.0f;
-				auto dt2 = dt * dt;
-
-				// position
-				kalmanFilter->transitionMatrix.at<double>(0, 3) = dt;
-				kalmanFilter->transitionMatrix.at<double>(1, 4) = dt;
-				kalmanFilter->transitionMatrix.at<double>(2, 5) = dt;
-				kalmanFilter->transitionMatrix.at<double>(3, 6) = dt;
-				kalmanFilter->transitionMatrix.at<double>(4, 7) = dt;
-				kalmanFilter->transitionMatrix.at<double>(5, 8) = dt;
-				kalmanFilter->transitionMatrix.at<double>(0, 6) = 0.5 * dt2;
-				kalmanFilter->transitionMatrix.at<double>(1, 7) = 0.5 * dt2;
-				kalmanFilter->transitionMatrix.at<double>(2, 8) = 0.5 * dt2;
-
-				// orientation
-				kalmanFilter->transitionMatrix.at<double>(9, 12) = dt;
-				kalmanFilter->transitionMatrix.at<double>(10, 13) = dt;
-				kalmanFilter->transitionMatrix.at<double>(11, 14) = dt;
-				kalmanFilter->transitionMatrix.at<double>(12, 15) = dt;
-				kalmanFilter->transitionMatrix.at<double>(13, 16) = dt;
-				kalmanFilter->transitionMatrix.at<double>(14, 17) = dt;
-				kalmanFilter->transitionMatrix.at<double>(9, 15) = 0.5 * dt2;
-				kalmanFilter->transitionMatrix.at<double>(10, 16) = 0.5 * dt2;
-				kalmanFilter->transitionMatrix.at<double>(11, 17) = 0.5 * dt2;
-
-				/** MEASUREMENT MODEL **/
-
-				//  [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-				//  [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-				//  [0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-				//  [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0]
-				//  [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
-				//  [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]
-				kalmanFilter->measurementMatrix.at<double>(0, 0) = 1;  // x
-				kalmanFilter->measurementMatrix.at<double>(1, 1) = 1;  // y
-				kalmanFilter->measurementMatrix.at<double>(2, 2) = 1;  // z
-				kalmanFilter->measurementMatrix.at<double>(3, 9) = 1;  // roll
-				kalmanFilter->measurementMatrix.at<double>(4, 10) = 1; // pitch
-				kalmanFilter->measurementMatrix.at<double>(5, 11) = 1; // yaw
-
-				return kalmanFilter;
 			}
 		}
 	}

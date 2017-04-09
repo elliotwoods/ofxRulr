@@ -44,6 +44,7 @@ namespace ofxRulr {
 						cameraDescription->cameraMatrix = cameraNode->getCameraMatrix();
 						cameraDescription->distortionCoefficients = cameraNode->getDistortionCoefficients();
 						cameraNode->getExtrinsics(cameraDescription->rotationVector, cameraDescription->translation, true);
+						cameraDescription->viewProjectionMatrix = cameraNode->getViewInWorldSpace().getViewMatrix() * cameraNode->getViewInWorldSpace().getProjectionMatrix();
 					}
 				}
 
@@ -103,14 +104,39 @@ namespace ofxRulr {
 					, outputFrame->modelViewRotationVector
 					, outputFrame->modelViewTranslation);
 
+				//first check the markers are inside the camera image
+				//(cvProjectPoints will happily give us weird results for markers outside view, e.g. distortion loop back, behind cam)
+				{
+					vector<ofVec3f> matrixProjections;
+					for (int i = 0; i < bodyDescription->markerCount; i++) {
+						const auto & objectSpacePoint = bodyDescription->markers.positions[i];
+						const auto worldSpace = objectSpacePoint * bodyDescription->modelTransform;
+						const auto projectionSpace = worldSpace * cameraDescription->viewProjectionMatrix;
+						if (projectionSpace.z < -1 || projectionSpace.z > 1) {
+							//outside of depth clipping range
+							continue;
+						}
+						if (projectionSpace.x < -2.0
+							|| projectionSpace.x > 2.0
+							|| projectionSpace.y < -2.0
+							|| projectionSpace.y > 2.0) {
+							//outside of image space (with some allowance for distortion)
+							continue;
+						}
+						outputFrame->search.markerIDs.push_back(bodyDescription->markers.IDs[i]);
+						outputFrame->search.objectSpacePoints.emplace_back(move(ofxCv::toCv(objectSpacePoint)));
+					}
+					outputFrame->search.count = outputFrame->search.markerIDs.size();
+				}
+
+
 				//project all 3D points from marker body (based on existing/predicted pose) into camera space
-				outputFrame->objectSpacePoints = ofxCv::toCv(outputFrame->bodyDescription->markers.positions);
-				cv::projectPoints(outputFrame->objectSpacePoints
+				cv::projectPoints(outputFrame->search.objectSpacePoints
 					, outputFrame->modelViewRotationVector
 					, outputFrame->modelViewTranslation
 					, outputFrame->cameraDescription->cameraMatrix
 					, outputFrame->cameraDescription->distortionCoefficients
-					, outputFrame->projectedMarkerImagePoints);
+					, outputFrame->search.projectedMarkerImagePoints);
 
 
 				//get the distance threshold
@@ -126,7 +152,7 @@ namespace ofxRulr {
 				else {
 					//look for any matches from incoming frame of tracked markers against markers' predicted projection into camera image
 					this->processTrackingSearch(outputFrame);
-					if (outputFrame->matchCount < 3 && this->parameters.searchWhenTrackingLost.get()) {
+					if (outputFrame->result.count < 3 && this->parameters.searchWhenTrackingLost.get()) {
 						this->processFullSearch(outputFrame);
 					}
 				}
@@ -144,16 +170,16 @@ namespace ofxRulr {
 					
 					//do the test
 					for (const auto & bodyMarkerIndex : bodyMarkerIndiciesForTest) {
-						outputFrame->matchedObjectSpacePoints.push_back(ofxCv::toCv(matchedMarkersFrame.bodyDescription->markers.positions[bodyMarkerIndex]));
+						outputFrame->result.objectSpacePoints.push_back(ofxCv::toCv(matchedMarkersFrame.bodyDescription->markers.positions[bodyMarkerIndex]));
 					}
 
-					outputFrame->matchCount = bodyMarkerIndiciesForTest.size();
-					outputFrame->matchedCentroids = matchedMarkersFrame.incomingFrame->centroids;
-					outputFrame->matchedCentroids.resize(outputFrame->matchCount); //we might not have used all centroids if there's fewer body points
+					outputFrame->result.count = bodyMarkerIndiciesForTest.size();
+					outputFrame->result.centroids = matchedMarkersFrame.incomingFrame->centroids;
+					outputFrame->result.centroids.resize(outputFrame->result.count); //we might not have used all centroids if there's fewer body points than centroids
 
 					//find the state with this presumed arrangement
-					cv::solvePnP(outputFrame->matchedObjectSpacePoints
-						, outputFrame->matchedCentroids
+					cv::solvePnP(outputFrame->result.objectSpacePoints
+						, outputFrame->result.centroids
 						, matchedMarkersFrame.cameraDescription->cameraMatrix
 						, matchedMarkersFrame.cameraDescription->distortionCoefficients
 						, outputFrame->modelViewRotationVector
@@ -161,23 +187,24 @@ namespace ofxRulr {
 						, false);
 
 					//project the points back
-					cv::projectPoints(outputFrame->matchedObjectSpacePoints
+					cv::projectPoints(outputFrame->result.objectSpacePoints
 						, outputFrame->modelViewRotationVector
 						, outputFrame->modelViewTranslation
 						, matchedMarkersFrame.cameraDescription->cameraMatrix
 						, matchedMarkersFrame.cameraDescription->distortionCoefficients
-						, outputFrame->matchedProjectedPoint);
+						, outputFrame->result.projectedPoints);
 
 					//calculate the reprojection error
 					float sumErrorSquared = 0.0f;
 					for (int i = 0; i < bodyMarkerIndiciesForTest.size(); i++) {
-						auto delta = outputFrame->matchedProjectedPoint[i] - matchedMarkersFrame.incomingFrame->centroids[i];
+						auto delta = outputFrame->result.projectedPoints[i] - matchedMarkersFrame.incomingFrame->centroids[i];
 						sumErrorSquared += delta.x * delta.x + delta.y * delta.y;
 					}
 
-					outputFrame->matchedMarkerListIndex = bodyMarkerIndiciesForTest;
+					//construct the result
+					outputFrame->result.markerListIndicies = bodyMarkerIndiciesForTest;
 					for (auto & markerIndex : bodyMarkerIndiciesForTest) {
-						outputFrame->matchedMarkerID.push_back(matchedMarkersFrame.bodyDescription->markers.IDs[markerIndex]);
+						outputFrame->result.markerIDs.push_back(outputFrame->bodyDescription->markers.IDs[markerIndex]);
 					}
 
 					//TODO : what if some of the centroids don't belong to this body
@@ -241,12 +268,12 @@ namespace ofxRulr {
 						, outputFrame->modelViewTranslation);
 
 					outputFrame->trackingWasLost = true;
-					outputFrame->matchCount = searchResult->matchCount;
-					outputFrame->matchedMarkerListIndex = searchResult->matchedMarkerListIndex;
-					outputFrame->matchedMarkerID = searchResult->matchedMarkerID;
-					outputFrame->matchedProjectedPoint = searchResult->matchedProjectedPoint;
-					outputFrame->matchedCentroids = searchResult->matchedCentroids;
-					outputFrame->matchedObjectSpacePoints = searchResult->matchedObjectSpacePoints;
+					outputFrame->result.count = searchResult->result.count;
+					outputFrame->result.markerListIndicies = searchResult->result.markerListIndicies;
+					outputFrame->result.markerIDs = searchResult->result.markerIDs;
+					outputFrame->result.projectedPoints = searchResult->result.projectedPoints;
+					outputFrame->result.centroids = searchResult->result.centroids;
+					outputFrame->result.objectSpacePoints= searchResult->result.objectSpacePoints;
 				}
 
 				this->searchInProgress.store(false);
@@ -258,9 +285,9 @@ namespace ofxRulr {
 					map<float, size_t> matchesByDistance; // { distanceSquared, marker index in incoming frame vector}
 
 					//find all matching markers
-					for (size_t i = 0; i < outputFrame->bodyDescription->markerCount; i++) {
+					for (size_t i = 0; i < outputFrame->search.count; i++) {
 						//find distance
-						const auto & markerProjected = outputFrame->projectedMarkerImagePoints[i];
+						const auto & markerProjected = outputFrame->search.projectedMarkerImagePoints[i];
 						const auto delta = centroid - markerProjected;
 						const auto distanceSquared = delta.x * delta.x + delta.y * delta.y;
 
@@ -275,14 +302,14 @@ namespace ofxRulr {
 					}
 
 					auto matchIndex = matchesByDistance.begin()->second;
-					outputFrame->matchedMarkerListIndex.push_back(matchIndex);
-					outputFrame->matchedMarkerID.push_back(outputFrame->bodyDescription->markers.IDs[matchIndex]);
-					outputFrame->matchedProjectedPoint.push_back(outputFrame->projectedMarkerImagePoints[matchIndex]);
-					outputFrame->matchedCentroids.push_back(centroid);
-					outputFrame->matchedObjectSpacePoints.push_back(outputFrame->objectSpacePoints[matchIndex]);
+					outputFrame->result.markerListIndicies.push_back(matchIndex);
+					outputFrame->result.markerIDs.push_back(outputFrame->search.markerIDs[matchIndex]);
+					outputFrame->result.projectedPoints.push_back(outputFrame->search.projectedMarkerImagePoints[matchIndex]);
+					outputFrame->result.centroids.push_back(centroid);
+					outputFrame->result.objectSpacePoints.push_back(outputFrame->search.objectSpacePoints[matchIndex]);
 				}
 
-				outputFrame->matchCount = outputFrame->matchedMarkerListIndex.size();
+				outputFrame->result.count = outputFrame->result.markerIDs.size();
 			}
 		}
 	}
