@@ -10,8 +10,8 @@ namespace ofxRulr {
 			struct CameraDescription {
 				cv::Mat cameraMatrix;
 				cv::Mat distortionCoefficients;
-				cv::Mat rotationVector;
-				cv::Mat translation;
+				cv::Mat inverseRotationVector;
+				cv::Mat inverseTranslation;
 
 				ofMatrix4x4 viewProjectionMatrix;
 			};
@@ -24,19 +24,18 @@ namespace ofxRulr {
 				cv::Mat modelViewRotationVector;
 				cv::Mat modelViewTranslation;
 
-				struct {
+				struct Search {
 					size_t count;
 					vector<MarkerID> markerIDs;
-					vector<cv::Point3f> objectSpacePoints; // note this is empty when doing exhaustive search 
-					vector<cv::Point2f> projectedMarkerImagePoints; // note this is empty when doing exhaustive search
+					vector<cv::Point3f> objectSpacePoints;
+					vector<cv::Point2f> projectedMarkerImagePoints;
 				} search;
-				
 
-				float distanceThresholdSquared; // note this flips to the exhaustive search parameter empty when doing exhaustive search
+				float distanceThresholdSquared;
 
 				bool trackingWasLost = false;
 
-				struct {
+				struct Result {
 					size_t count = 0;
 					vector<size_t> markerListIndicies; // index in marker points list coming from Body
 					vector<size_t> markerIDs;
@@ -50,31 +49,45 @@ namespace ofxRulr {
 			, FindMarkerCentroidsFrame
 			, MatchMarkersFrame> {
 			public:
+				//The captures define positions which the camera is likely to find itself in
+				//We check these when we loose tracking
+				class Capture : public Utils::AbstractCaptureSet::BaseCapture {
+				public:
+					Capture();
+					string getDisplayString() const override;
+					void serialize(Json::Value &);
+					void deserialize(const Json::Value &);
+
+					cv::Point3d modelViewRotationVector;
+					cv::Point3d modelViewTranslation;
+				};
+				
 				MatchMarkers();
 				string getTypeName() const override;
 				void init();
 				void update();
 				void populateInspector(ofxCvGui::InspectArguments &);
-
-				void performSearch();
+				void serialize(Json::Value &);
+				void deserialize(const Json::Value &);
 			protected:
 				void processFrame(shared_ptr<FindMarkerCentroidsFrame>) override;
-				void processFullSearch(shared_ptr<MatchMarkersFrame> &);
 				void processTrackingSearch(shared_ptr<MatchMarkersFrame> &);
+				void processCheckKnownPoses(shared_ptr<MatchMarkersFrame> &);
+				bool processModelViewTransform(shared_ptr<MatchMarkersFrame> &);
 
 				struct : ofParameterGroup {
 					ofParameter<float> trackingDistanceThreshold{ "Tracking distance threshold [px]", 20, 0, 300 };
-					ofParameter<float> searchDistanceThreshold{ "Search distance threshold [px]", 5, 0, 300 };
-					ofParameter<bool> searchWhenTrackingLost{ "Search when tracking lost", false };
-					PARAM_DECLARE("MatchMarkers", trackingDistanceThreshold, searchDistanceThreshold, searchWhenTrackingLost);
+					PARAM_DECLARE("MatchMarkers", trackingDistanceThreshold);
 				} parameters;
+
+				Utils::CaptureSet<Capture> captures;
 
 				shared_ptr<Body::Description> bodyDescription;
 				shared_ptr<CameraDescription> cameraDescription;
 				mutex descriptionMutex;
 
-				atomic<bool> needsFullSearch = false;
-				atomic<bool> searchInProgress = false;
+				atomic<bool> needsTakeCapture = false;
+				ofThreadChannel<shared_ptr<Capture>> newCaptures;
 			};
 		}
 	}

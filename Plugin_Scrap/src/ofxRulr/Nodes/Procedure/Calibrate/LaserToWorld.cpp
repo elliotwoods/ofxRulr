@@ -117,13 +117,41 @@ namespace ofxRulr {
 
 						panel->onMouse += [this](ofxCvGui::MouseArguments & args) {
 							args.takeMousePress(this->panel); //this should be valid by the time it happens
-							float speed = ofGetKeyPressed(OF_KEY_SHIFT) || args.button == 2 ? 1.0f / 4.0f : 1.0f;
+							float speed = args.button == 2 ? 0.5f / 20.0f : 1.0f;
 							if (args.action == ofxCvGui::MouseArguments::Action::Dragged) {
 								this->parameters.target.x += args.movement.x / this->panel->getWidth() * speed;
 								this->parameters.target.y -= args.movement.y / this->panel->getHeight() * speed;
 								
 								this->parameters.target.x = ofClamp(this->parameters.target.x, -1.0f, 1.0f);
 								this->parameters.target.y = ofClamp(this->parameters.target.y, -1.0f, 1.0f);
+							}
+						};
+						panel->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
+							if (this->isBeingInspected()) {
+								ofVec2f movement;
+								switch (args.key) {
+								case OF_KEY_LEFT:
+									movement.x = -0.5;
+									break;
+								case OF_KEY_RIGHT:
+									movement.x = +0.5;
+									break;
+								case OF_KEY_UP:
+									movement.y = -0.5;
+									break;
+								case OF_KEY_DOWN:
+									movement.y = +0.5;
+									break;
+								default:
+									break;
+								}
+
+								if (ofGetKeyPressed(OF_KEY_SHIFT)) {
+									movement *= 20;
+								}
+
+								this->parameters.target.x += movement.x;
+								this->parameters.target.y += movement.y;
 							}
 						};
 						this->panel = panel;
@@ -195,12 +223,14 @@ namespace ofxRulr {
 				//----------
 				void LaserToWorld::serialize(Json::Value & json) {
 					Utils::Serializable::serialize(json, this->parameters);
+					Utils::Serializable::serialize(json, this->reprojectionError);
 					this->captures.serialize(json);
 				}
 
 				//----------
 				void LaserToWorld::deserialize(const Json::Value & json) {
 					Utils::Serializable::deserialize(json, this->parameters);
+					Utils::Serializable::deserialize(json, this->reprojectionError);
 					this->captures.deserialize(json);
 				}
 

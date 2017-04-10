@@ -238,9 +238,11 @@ namespace ofxRulr {
 		void AbstractCaptureSet::remove(shared_ptr<BaseCapture> capture) {
 			auto findCapture = find(this->captures.begin(), this->captures.end(), capture);
 			if (findCapture != this->captures.end()) {
-				capture->setSelected(false); // to notify upwards
-				capture->onDeletePressed.removeListeners(this);
-				capture->onSelectionChanged.removeListeners(this);
+				if (capture) {
+					capture->setSelected(false); // to notify upwards
+					capture->onDeletePressed.removeListeners(this);
+					capture->onSelectionChanged.removeListeners(this);
+				}
 				this->captures.erase(findCapture);
 				this->viewDirty = true;
 			}

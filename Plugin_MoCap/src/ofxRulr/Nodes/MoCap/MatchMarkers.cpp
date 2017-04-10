@@ -6,6 +6,55 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace MoCap {
+#pragma mark Capture
+			//----------
+			MatchMarkers::Capture::Capture() {
+				RULR_SERIALIZE_LISTENERS;
+			}
+
+			//----------
+			string MatchMarkers::Capture::getDisplayString() const {
+				stringstream ss;
+				ss << "MV[R] : " << this->modelViewRotationVector << endl;
+				ss << "MV[T] : " << this->modelViewTranslation;
+				return ss.str();
+			}
+
+			//----------
+			void MatchMarkers::Capture::serialize(Json::Value & json) {
+				{
+					auto & jsonModelViewRotationVector = json["modelViewRotationVector"];
+					jsonModelViewRotationVector["x"] = this->modelViewRotationVector.x;
+					jsonModelViewRotationVector["y"] = this->modelViewRotationVector.y;
+					jsonModelViewRotationVector["z"] = this->modelViewRotationVector.z;
+				}
+
+				{
+					auto & jsonModelViewTranslation = json["modelViewTranslation"];
+					jsonModelViewTranslation["x"] = this->modelViewTranslation.x;
+					jsonModelViewTranslation["y"] = this->modelViewTranslation.y;
+					jsonModelViewTranslation["z"] = this->modelViewTranslation.z;
+				}
+			}
+
+			//----------
+			void MatchMarkers::Capture::deserialize(const Json::Value & json) {
+				{
+					const auto & jsonModelViewRotationVector = json["modelViewRotationVector"];
+					this->modelViewRotationVector.x = jsonModelViewRotationVector["x"].asDouble();
+					this->modelViewRotationVector.y = jsonModelViewRotationVector["y"].asDouble();
+					this->modelViewRotationVector.z = jsonModelViewRotationVector["z"].asDouble();
+				}
+
+				{
+					const auto & jsonModelViewTranslation = json["modelViewTranslation"];
+					this->modelViewTranslation.x = jsonModelViewTranslation["x"].asDouble();
+					this->modelViewTranslation.y = jsonModelViewTranslation["y"].asDouble();
+					this->modelViewTranslation.z = jsonModelViewTranslation["z"].asDouble();
+				}
+			}
+
+#pragma mark MatchMarkers
 			//----------
 			MatchMarkers::MatchMarkers() {
 				RULR_NODE_INIT_LISTENER;
@@ -20,6 +69,7 @@ namespace ofxRulr {
 			void MatchMarkers::init() {
 				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
+				RULR_NODE_SERIALIZATION_LISTENERS;
 
 				this->manageParameters(this->parameters);
 				this->addInput<Body>();
@@ -43,7 +93,7 @@ namespace ofxRulr {
 						cameraDescription = make_shared<CameraDescription>();
 						cameraDescription->cameraMatrix = cameraNode->getCameraMatrix();
 						cameraDescription->distortionCoefficients = cameraNode->getDistortionCoefficients();
-						cameraNode->getExtrinsics(cameraDescription->rotationVector, cameraDescription->translation, true);
+						cameraNode->getExtrinsics(cameraDescription->inverseRotationVector, cameraDescription->inverseTranslation, true);
 						cameraDescription->viewProjectionMatrix = cameraNode->getViewInWorldSpace().getViewMatrix() * cameraNode->getViewInWorldSpace().getProjectionMatrix();
 					}
 				}
@@ -53,22 +103,32 @@ namespace ofxRulr {
 					this->bodyDescription = bodyDescription;
 					this->cameraDescription = cameraDescription;
 				}
+
+				{
+					shared_ptr<Capture> newCapture;
+					while (this->newCaptures.tryReceive(newCapture)) {
+						this->captures.add(newCapture);
+					}
+				}
 			}
 
 			//----------
 			void MatchMarkers::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 				auto inspector = inspectArgs.inspector;
-				inspector->addButton("Search", [this]() {
-					this->performSearch();
-				}, OF_KEY_RETURN)->setHeight(100.0f);
-				inspector->addIndicatorBool("Search in progress", [this]() {
-					return this->searchInProgress.load();
+				this->captures.populateWidgets(inspector);
+				inspector->addButton("Add capture", [this]() {
+					this->needsTakeCapture.store(true);
 				});
 			}
 
 			//----------
-			void MatchMarkers::performSearch() {
-				this->needsFullSearch.store(true);
+			void MatchMarkers::serialize(Json::Value & json) {
+				this->captures.serialize(json);
+			}
+
+			//----------
+			void MatchMarkers::deserialize(const Json::Value & json) {
+				this->captures.deserialize(json);
 			}
 
 			//----------
@@ -96,11 +156,37 @@ namespace ofxRulr {
 					}
 				}
 
+
+				//get the distance threshold
+				outputFrame->distanceThresholdSquared = this->parameters.trackingDistanceThreshold.get();
+				outputFrame->distanceThresholdSquared *= outputFrame->distanceThresholdSquared;
+
+				//process the normal tracking search
+				this->processTrackingSearch(outputFrame);
+
+				//try our pre-recorded poses if we failed tracking
+				if (outputFrame->result.count < 4) {
+					this->processCheckKnownPoses(outputFrame);
+				}
+
+				if (this->needsTakeCapture.load()) {
+					auto capture = make_shared<Capture>();
+					capture->modelViewRotationVector = (cv::Point3d) outputFrame->modelViewRotationVector;
+					capture->modelViewTranslation = (cv::Point3d) outputFrame->modelViewTranslation;
+					this->newCaptures.send(capture);
+					this->needsTakeCapture.store(false);
+				}
+
+				this->onNewFrame.notifyListeners(move(outputFrame));
+			}
+
+			//----------
+			void MatchMarkers::processTrackingSearch(shared_ptr<MatchMarkersFrame> & outputFrame) {
 				//combine the camera and body transforms
 				cv::composeRT(outputFrame->bodyDescription->rotationVector
 					, outputFrame->bodyDescription->translation
-					, outputFrame->cameraDescription->rotationVector
-					, outputFrame->cameraDescription->translation
+					, outputFrame->cameraDescription->inverseRotationVector
+					, outputFrame->cameraDescription->inverseTranslation
 					, outputFrame->modelViewRotationVector
 					, outputFrame->modelViewTranslation);
 
@@ -129,7 +215,26 @@ namespace ofxRulr {
 					outputFrame->search.count = outputFrame->search.markerIDs.size();
 				}
 
+				this->processModelViewTransform(outputFrame);
+			}
 
+			//----------
+			void MatchMarkers::processCheckKnownPoses(shared_ptr<MatchMarkersFrame> & searchFrame) {
+				auto captures = this->captures.getSelection();
+				for (auto capture : captures) {
+					searchFrame->modelViewRotationVector = cv::Mat(capture->modelViewRotationVector);
+					searchFrame->modelViewTranslation = cv::Mat(capture->modelViewTranslation);
+
+					this->processModelViewTransform(searchFrame);
+					if (searchFrame->result.count >= 4) {
+						//this is a result
+						return;
+					}
+				}
+			}
+
+			//----------
+			bool MatchMarkers::processModelViewTransform(shared_ptr<MatchMarkersFrame> & outputFrame) {
 				//project all 3D points from marker body (based on existing/predicted pose) into camera space
 				cv::projectPoints(outputFrame->search.objectSpacePoints
 					, outputFrame->modelViewRotationVector
@@ -138,153 +243,13 @@ namespace ofxRulr {
 					, outputFrame->cameraDescription->distortionCoefficients
 					, outputFrame->search.projectedMarkerImagePoints);
 
+				//clear the result
+				outputFrame->result = MatchMarkersFrame::Result();
 
-				//get the distance threshold
-				outputFrame->distanceThresholdSquared = this->parameters.trackingDistanceThreshold.get();
-				outputFrame->distanceThresholdSquared *= outputFrame->distanceThresholdSquared;
-
-				//check if we should do a full search
-				if (this->needsFullSearch.load()) {
-					//do an exhaustive search for any combination of input markers vs markers on body we want to track
-					this->processFullSearch(outputFrame);
-					this->needsFullSearch.store(false);
-				}
-				else {
-					//look for any matches from incoming frame of tracked markers against markers' predicted projection into camera image
-					this->processTrackingSearch(outputFrame);
-					if (outputFrame->result.count < 3 && this->parameters.searchWhenTrackingLost.get()) {
-						this->processFullSearch(outputFrame);
-					}
-				}
-
-				this->onNewFrame.notifyListeners(move(outputFrame));
-			}
-
-			//----------
-			void traverseBranch(MatchMarkersFrame & matchedMarkersFrame, vector<size_t> bodyMarkerIndiciesForTest, map<float, shared_ptr<MatchMarkersFrame>> & results, const float & successErrorThresholdSquared) {
-				if (bodyMarkerIndiciesForTest.size() == matchedMarkersFrame.incomingFrame->centroids.size()
-					|| bodyMarkerIndiciesForTest.size() == matchedMarkersFrame.bodyDescription->markerCount) {
-					//we have a full set
-
-					auto outputFrame = make_shared<MatchMarkersFrame>();
-					
-					//do the test
-					for (const auto & bodyMarkerIndex : bodyMarkerIndiciesForTest) {
-						outputFrame->result.objectSpacePoints.push_back(ofxCv::toCv(matchedMarkersFrame.bodyDescription->markers.positions[bodyMarkerIndex]));
-					}
-
-					outputFrame->result.count = bodyMarkerIndiciesForTest.size();
-					outputFrame->result.centroids = matchedMarkersFrame.incomingFrame->centroids;
-					outputFrame->result.centroids.resize(outputFrame->result.count); //we might not have used all centroids if there's fewer body points than centroids
-
-					//find the state with this presumed arrangement
-					cv::solvePnP(outputFrame->result.objectSpacePoints
-						, outputFrame->result.centroids
-						, matchedMarkersFrame.cameraDescription->cameraMatrix
-						, matchedMarkersFrame.cameraDescription->distortionCoefficients
-						, outputFrame->modelViewRotationVector
-						, outputFrame->modelViewTranslation
-						, false);
-
-					//project the points back
-					cv::projectPoints(outputFrame->result.objectSpacePoints
-						, outputFrame->modelViewRotationVector
-						, outputFrame->modelViewTranslation
-						, matchedMarkersFrame.cameraDescription->cameraMatrix
-						, matchedMarkersFrame.cameraDescription->distortionCoefficients
-						, outputFrame->result.projectedPoints);
-
-					//calculate the reprojection error
-					float sumErrorSquared = 0.0f;
-					for (int i = 0; i < bodyMarkerIndiciesForTest.size(); i++) {
-						auto delta = outputFrame->result.projectedPoints[i] - matchedMarkersFrame.incomingFrame->centroids[i];
-						sumErrorSquared += delta.x * delta.x + delta.y * delta.y;
-					}
-
-					//construct the result
-					outputFrame->result.markerListIndicies = bodyMarkerIndiciesForTest;
-					for (auto & markerIndex : bodyMarkerIndiciesForTest) {
-						outputFrame->result.markerIDs.push_back(outputFrame->bodyDescription->markers.IDs[markerIndex]);
-					}
-
-					//TODO : what if some of the centroids don't belong to this body
-
-					if (sumErrorSquared < 1.0f) {
-						//this is classed as a 'definite match', we throw it up (no, not like that :)
-						throw(outputFrame);
-					}
-					results.emplace(sumErrorSquared, move(outputFrame));
-				}
-				else {
-					//build the branch
-					for (int i = 0; i < matchedMarkersFrame.bodyDescription->markerCount; i++) {
-						if (find(bodyMarkerIndiciesForTest.begin(), bodyMarkerIndiciesForTest.end(), i) == bodyMarkerIndiciesForTest.end()) {
-							//go down this branch
-							auto branchMarkerListIndicies = bodyMarkerIndiciesForTest;
-							branchMarkerListIndicies.push_back(i);
-							traverseBranch(matchedMarkersFrame, branchMarkerListIndicies, results, successErrorThresholdSquared);
-						}
-					}
-				}
-			}
-
-			//----------
-			void MatchMarkers::processFullSearch(shared_ptr<MatchMarkersFrame> & outputFrame) {
-				this->searchInProgress.store(true);
-
-				//performs a brute force nPr search on possible candidates for marker tracking
-
-				if (outputFrame->incomingFrame->centroids.size() < 4
-					|| outputFrame->bodyDescription->markerCount < 4) {
-					//can't work properly
-					return;
-				}
-
-				shared_ptr<MatchMarkersFrame> searchResult;
-				try {
-					map<float, shared_ptr<MatchMarkersFrame>> results;
-					auto thresholdErrorSquared = this->parameters.searchDistanceThreshold.get();
-					thresholdErrorSquared *= thresholdErrorSquared;
-					traverseBranch(*outputFrame, vector<size_t>(), results, thresholdErrorSquared);
-
-					if (!results.empty()) {
-						if (results.begin()->first < this->parameters.searchDistanceThreshold.get()) {
-							searchResult = results.begin()->second;
-						}
-					}
-				}
-				catch (shared_ptr<MatchMarkersFrame> & result) {
-					//we threw early
-					searchResult = result;
-				}
-
-				if (searchResult) {
-					//combine the camera and body transforms
-					cv::composeRT(searchResult->modelViewRotationVector
-						, searchResult->modelViewTranslation
-						, outputFrame->cameraDescription->rotationVector
-						, outputFrame->cameraDescription->translation
-						, outputFrame->modelViewRotationVector
-						, outputFrame->modelViewTranslation);
-
-					outputFrame->trackingWasLost = true;
-					outputFrame->result.count = searchResult->result.count;
-					outputFrame->result.markerListIndicies = searchResult->result.markerListIndicies;
-					outputFrame->result.markerIDs = searchResult->result.markerIDs;
-					outputFrame->result.projectedPoints = searchResult->result.projectedPoints;
-					outputFrame->result.centroids = searchResult->result.centroids;
-					outputFrame->result.objectSpacePoints= searchResult->result.objectSpacePoints;
-				}
-
-				this->searchInProgress.store(false);
-			}
-
-			//----------
-			void MatchMarkers::processTrackingSearch(shared_ptr<MatchMarkersFrame> & outputFrame) {
 				for (const auto & centroid : outputFrame->incomingFrame->centroids) {
 					map<float, size_t> matchesByDistance; // { distanceSquared, marker index in incoming frame vector}
 
-					//find all matching markers
+														  //find all matching markers
 					for (size_t i = 0; i < outputFrame->search.count; i++) {
 						//find distance
 						const auto & markerProjected = outputFrame->search.projectedMarkerImagePoints[i];
@@ -311,6 +276,7 @@ namespace ofxRulr {
 
 				outputFrame->result.count = outputFrame->result.markerIDs.size();
 			}
+
 		}
 	}
 }

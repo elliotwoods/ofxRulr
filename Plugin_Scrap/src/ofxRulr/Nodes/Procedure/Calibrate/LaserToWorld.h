@@ -60,7 +60,7 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<float> outputDelay{ "Output delay [s]", 0.1, 0, 10 };
 							ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
-							ofParameter<ofVec2f> offsetSquares{ "Offset squares", ofVec2f(0, 0) };
+							ofParameter<ofVec2f> offsetSquares{ "Offset squares", ofVec2f(1, 1) };
 							PARAM_DECLARE("Capture", outputDelay, findBoardMode, offsetSquares);
 						} capture;
 
