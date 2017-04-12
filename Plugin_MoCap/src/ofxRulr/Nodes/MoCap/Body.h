@@ -41,6 +41,8 @@ namespace ofxRulr {
 				//thread safe
 				shared_ptr<Description> getBodyDescription() const;
 
+				void addMarker(const ofVec3f &);
+
 				float getMarkerDiameter() const;
 
 				void loadCSV(string filename = "");

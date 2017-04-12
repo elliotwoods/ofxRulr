@@ -202,9 +202,9 @@ namespace ofxRulr {
 
 				inspector->add(new Widgets::Spacer());
 
-				inspector->add(new Widgets::Button("Export View matrix...", [this]() {
+				inspector->add(new Widgets::Button("Export Projection matrix...", [this]() {
 					try {
-						this->exportViewMatrix();
+						this->exportProjectionMatrix();
 					}
 					RULR_CATCH_ALL_TO_ALERT
 				}));
@@ -350,7 +350,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void View::exportViewMatrix() {
+			void View::exportProjectionMatrix() {
 				const auto matrix = this->getViewInObjectSpace().getClippedProjectionMatrix();
 				auto result = ofSystemSaveDialog(this->getName() + "-Projection.mat", "Export View matrix");
 				if (result.bSuccess) {

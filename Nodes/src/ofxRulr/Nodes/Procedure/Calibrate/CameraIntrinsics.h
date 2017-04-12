@@ -61,7 +61,7 @@ namespace ofxRulr {
 					ofParameter<float> error{ "Reprojection error [px]", 0.0f };
 
 					struct : ofParameterGroup {
-						ofParameter<WhenDrawBoards> drawBoards{ "Draw boards", WhenDrawBoards::Selected };
+						ofParameter<WhenDrawWorld> drawBoards{ "Draw boards", WhenDrawWorld::Selected };
 						struct : ofParameterGroup {
 							ofParameter<bool> checkAllIncomingFrames{ "Check all incoming frames", true };
 							ofParameter<bool> tetheredShootEnabled{ "Tethered shoot enabled", true };

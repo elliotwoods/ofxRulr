@@ -81,6 +81,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewMatchedMarkers.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewRecordMarkerImageFrame.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\AddMarkerFromStereo.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\RecordMarkerImages.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\StereoSolvePnP.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.cpp" />
@@ -100,6 +101,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewMatchedMarkers.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewRecordMarkerImageFrame.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\AddMarkerFromStereo.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\RecordMarkerImages.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\StereoSolvePnP.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\ThreadedProcessNode.h" />

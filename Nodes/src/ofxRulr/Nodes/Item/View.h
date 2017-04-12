@@ -46,7 +46,7 @@ namespace ofxRulr {
 			protected:
 				void markViewDirty();
 
-				void exportViewMatrix();
+				void exportProjectionMatrix();
 				void exportRayCamera();
 				void exportYaml();
 

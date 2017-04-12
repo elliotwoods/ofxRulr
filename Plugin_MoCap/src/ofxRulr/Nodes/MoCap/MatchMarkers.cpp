@@ -15,8 +15,9 @@ namespace ofxRulr {
 			//----------
 			string MatchMarkers::Capture::getDisplayString() const {
 				stringstream ss;
-				ss << "MV[R] : " << this->modelViewRotationVector << endl;
-				ss << "MV[T] : " << this->modelViewTranslation;
+				ss << "R : " << this->modelViewRotationVector << endl;
+				ss << "T : " << this->modelViewTranslation << endl;
+				ss << "error : " << this->reprojectionError;
 				return ss.str();
 			}
 
@@ -52,6 +53,9 @@ namespace ofxRulr {
 					this->modelViewTranslation.y = jsonModelViewTranslation["y"].asDouble();
 					this->modelViewTranslation.z = jsonModelViewTranslation["z"].asDouble();
 				}
+
+				this->previewTransform = ofxCv::makeMatrix(cv::Mat(this->modelViewRotationVector)
+					, cv::Mat(this->modelViewTranslation)).getInverse();
 			}
 
 #pragma mark MatchMarkers
@@ -70,6 +74,7 @@ namespace ofxRulr {
 				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
+				RULR_NODE_DRAW_WORLD_LISTENER;
 
 				this->manageParameters(this->parameters);
 				this->addInput<Body>();
@@ -110,6 +115,38 @@ namespace ofxRulr {
 						this->captures.add(newCapture);
 					}
 				}
+
+				{
+					//tracking distance threshold should always be less than re-find threshold
+					//because we use it as the 'sanity check' on the re-find (which is performed on lost tracking)
+					if (this->parameters.trackingDistanceThreshold > this->parameters.refindTrackingThreshold) {
+						this->parameters.refindTrackingThreshold = this->parameters.trackingDistanceThreshold;
+					}
+				}
+			}
+
+			//----------
+			void MatchMarkers::drawWorld() {
+				if (this->parameters.whenDraw.get() == WhenDrawWorld::Always
+					|| this->parameters.whenDraw.get() == WhenDrawWorld::Selected && this->isBeingInspected()) {
+					auto captures = this->captures.getSelection();
+					for (auto capture : captures) {
+						ofPushMatrix();
+						{
+							ofMultMatrix(capture->previewTransform);
+							ofPushStyle();
+							{
+								//draw a little axis to represent recorded pose
+								ofSetColor(capture->color);
+								ofDrawLine(ofVec3f(), ofVec3f(0.1, 0.0, 0.0));
+								ofDrawLine(ofVec3f(), ofVec3f(0.0, 0.1, 0.0));
+								ofDrawLine(ofVec3f(), ofVec3f(0.0, 0.0, 0.1));
+							}
+							ofPopStyle();
+						}
+						ofPopMatrix();
+					}
+				}
 			}
 
 			//----------
@@ -118,6 +155,9 @@ namespace ofxRulr {
 				this->captures.populateWidgets(inspector);
 				inspector->addButton("Add capture", [this]() {
 					this->needsTakeCapture.store(true);
+				});
+				inspector->addButton("Force use capture", [this]() {
+					this->needsForceUseCapture.store(true);
 				});
 			}
 
@@ -165,16 +205,47 @@ namespace ofxRulr {
 				this->processTrackingSearch(outputFrame);
 
 				//try our pre-recorded poses if we failed tracking
-				if (outputFrame->result.count < 4) {
-					this->processCheckKnownPoses(outputFrame);
+				if (!outputFrame->result.success) {
+					auto searchFrame = this->processCheckKnownPoses(outputFrame);
+					if (searchFrame) {
+						//found a historic pose which works
+						outputFrame = searchFrame;
+					}
+					else {
+						//we failed
+					}
 				}
 
 				if (this->needsTakeCapture.load()) {
 					auto capture = make_shared<Capture>();
-					capture->modelViewRotationVector = (cv::Point3d) outputFrame->modelViewRotationVector;
-					capture->modelViewTranslation = (cv::Point3d) outputFrame->modelViewTranslation;
+					cv::Mat modelViewRotationVector;
+					cv::Mat modelViewTranslation;
+					cv::solvePnP(outputFrame->result.objectSpacePoints
+						, outputFrame->result.centroids
+						, outputFrame->cameraDescription->cameraMatrix
+						, outputFrame->cameraDescription->distortionCoefficients
+						, modelViewRotationVector
+						, modelViewTranslation);
+
+					capture->modelViewRotationVector = (cv::Point3d)modelViewRotationVector;
+					capture->modelViewTranslation = (cv::Point3d)modelViewTranslation;
+					capture->previewTransform = ofxCv::makeMatrix(modelViewRotationVector
+						, modelViewTranslation).getInverse() * outputFrame->bodyDescription->modelTransform;
+					
 					this->newCaptures.send(capture);
 					this->needsTakeCapture.store(false);
+				}
+
+				if (this->needsForceUseCapture.load()) {
+					auto captures = this->captures.getSelection();
+					if (!captures.empty()) {
+						auto capture = * captures.begin();
+						outputFrame->modelViewRotationVector = cv::Mat(capture->modelViewRotationVector);
+						outputFrame->modelViewTranslation = cv::Mat(capture->modelViewTranslation);
+						this->processModelViewTransform(outputFrame);
+						outputFrame->result.forceTakeTransform = true;
+					}
+					this->needsForceUseCapture.store(false);
 				}
 
 				this->onNewFrame.notifyListeners(move(outputFrame));
@@ -219,22 +290,46 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MatchMarkers::processCheckKnownPoses(shared_ptr<MatchMarkersFrame> & searchFrame) {
+			shared_ptr<MatchMarkersFrame> MatchMarkers::processCheckKnownPoses(shared_ptr<MatchMarkersFrame> & outputFrame) {
 				auto captures = this->captures.getSelection();
 				for (auto capture : captures) {
+					auto searchFrame = make_shared<MatchMarkersFrame>(* outputFrame);
+
 					searchFrame->modelViewRotationVector = cv::Mat(capture->modelViewRotationVector);
 					searchFrame->modelViewTranslation = cv::Mat(capture->modelViewTranslation);
+					
+					searchFrame->distanceThresholdSquared = this->parameters.refindTrackingThreshold;
+					searchFrame->distanceThresholdSquared *= searchFrame->distanceThresholdSquared;
 
 					this->processModelViewTransform(searchFrame);
-					if (searchFrame->result.count >= 4) {
-						//this is a result
-						return;
+					capture->reprojectionError = searchFrame->result.reprojectionError;
+
+					if (searchFrame->result.success) {
+						//now check it with the tracking distance threshold
+						searchFrame->distanceThresholdSquared = this->parameters.trackingDistanceThreshold;
+						this->processModelViewTransform(searchFrame);
+
+						if (searchFrame->result.success) {
+							//great we passed the test!
+
+							//mark that we've jumped to somewhere new
+							searchFrame->result.trackingWasLost = true;
+							
+							return searchFrame;
+						}
 					}
 				}
+
+				//we failed
+				return nullptr;
 			}
 
 			//----------
-			bool MatchMarkers::processModelViewTransform(shared_ptr<MatchMarkersFrame> & outputFrame) {
+			void MatchMarkers::processModelViewTransform(shared_ptr<MatchMarkersFrame> & outputFrame) {
+				if (outputFrame->search.objectSpacePoints.empty()) {
+					return;
+				}
+
 				//project all 3D points from marker body (based on existing/predicted pose) into camera space
 				cv::projectPoints(outputFrame->search.objectSpacePoints
 					, outputFrame->modelViewRotationVector
@@ -246,7 +341,9 @@ namespace ofxRulr {
 				//clear the result
 				outputFrame->result = MatchMarkersFrame::Result();
 
-				for (const auto & centroid : outputFrame->incomingFrame->centroids) {
+				for (size_t centroidIndex = 0; centroidIndex < outputFrame->incomingFrame->centroids.size(); centroidIndex++) {
+					const auto & centroid = outputFrame->incomingFrame->centroids[centroidIndex];
+
 					map<float, size_t> matchesByDistance; // { distanceSquared, marker index in incoming frame vector}
 
 														  //find all matching markers
@@ -271,10 +368,22 @@ namespace ofxRulr {
 					outputFrame->result.markerIDs.push_back(outputFrame->search.markerIDs[matchIndex]);
 					outputFrame->result.projectedPoints.push_back(outputFrame->search.projectedMarkerImagePoints[matchIndex]);
 					outputFrame->result.centroids.push_back(centroid);
+					outputFrame->result.centroidIndex.push_back(centroidIndex);
 					outputFrame->result.objectSpacePoints.push_back(outputFrame->search.objectSpacePoints[matchIndex]);
 				}
 
 				outputFrame->result.count = outputFrame->result.markerIDs.size();
+				outputFrame->result.success = outputFrame->result.count >= 4;
+
+				if (outputFrame->result.success) {
+					//calculate reprojection error
+					float sumErrorsSquared = 0.0f;
+					for (int i = 0; i < outputFrame->result.count; i++) {
+						auto delta = outputFrame->result.centroids[i] - outputFrame->result.projectedPoints[i];
+						sumErrorsSquared += delta.dot(delta);
+					}
+					outputFrame->result.reprojectionError = sqrt(sumErrorsSquared);
+				}
 			}
 
 		}

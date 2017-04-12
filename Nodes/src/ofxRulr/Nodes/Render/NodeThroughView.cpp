@@ -43,7 +43,9 @@ namespace ofxRulr {
 
 			if (node && view) {
 				view->getViewInWorldSpace().beginAsCamera(true);
-				node->drawWorld();
+				{
+					node->drawWorld();
+				}
 				view->getViewInWorldSpace().endAsCamera();
 			}
 		}

@@ -167,8 +167,8 @@ namespace ofxRulr {
 
 				//----------
 				void CameraIntrinsics::drawWorld() {
-					if (this->parameters.drawBoards.get() == WhenDrawBoards::Always
-						|| this->isBeingInspected() && this->parameters.drawBoards.get() == WhenDrawBoards::Selected) {
+					if (this->parameters.drawBoards.get() == WhenDrawWorld::Always
+						|| this->isBeingInspected() && this->parameters.drawBoards.get() == WhenDrawWorld::Selected) {
 						ofPushMatrix();
 						{
 							//transform into camera frame of reference

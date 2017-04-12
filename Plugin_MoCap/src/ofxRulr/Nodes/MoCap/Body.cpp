@@ -377,6 +377,14 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void Body::addMarker(const ofVec3f & position) {
+				auto marker = make_shared<Marker>();
+				marker->ID = this->getNextAvailableID();
+				marker->position = position;
+				this->markers.add(marker);
+			}
+
+			//----------
 			MarkerID Body::getNextAvailableID() const {
 				auto markers = this->markers.getAllCaptures();
 				MarkerID ID = 0;

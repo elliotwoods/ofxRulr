@@ -20,6 +20,7 @@ namespace ofxRulr {
 			//----------
 			void UpdateTracking::init() {
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_INSPECTOR_LISTENER;
 
 				this->addInput<Item::RigidBody>();
 
@@ -42,9 +43,18 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void UpdateTracking::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
+				auto insepctor = inspectArgs.inspector;
+				insepctor->addLiveValue<float>("Reprojection error [px]", [this]() {
+					return this->reprojectionError.load();
+				});
+			}
+
+			//----------
 			void UpdateTracking::processFrame(shared_ptr<MatchMarkersFrame> incomingFrame) {
 				//ignore if less than 3
-				if (incomingFrame->result.count < 4) {
+				if (!(incomingFrame->result.success || incomingFrame->result.forceTakeTransform)) {
+					//do nothing
 					return;
 				}
 				
@@ -55,13 +65,42 @@ namespace ofxRulr {
 				outgoingFrame->bodyModelViewRotationVector = incomingFrame->modelViewRotationVector;
 				outgoingFrame->bodyModelViewTranslation = incomingFrame->modelViewTranslation;
 				
-				cv::solvePnP(incomingFrame->result.objectSpacePoints
-					, incomingFrame->result.centroids
-					, incomingFrame->cameraDescription->cameraMatrix
-					, incomingFrame->cameraDescription->distortionCoefficients
-					, outgoingFrame->bodyModelViewRotationVector
-					, outgoingFrame->bodyModelViewTranslation
-					, true);
+				if (incomingFrame->result.forceTakeTransform) {
+					outgoingFrame->bodyModelViewRotationVector = incomingFrame->modelViewRotationVector;
+					outgoingFrame->bodyModelViewTranslation = incomingFrame->modelViewTranslation;
+				}
+				else {
+					cv::solvePnP(incomingFrame->result.objectSpacePoints
+						, incomingFrame->result.centroids
+						, incomingFrame->cameraDescription->cameraMatrix
+						, incomingFrame->cameraDescription->distortionCoefficients
+						, outgoingFrame->bodyModelViewRotationVector
+						, outgoingFrame->bodyModelViewTranslation
+						, true);
+				}
+
+				//ignore if reprojection error is too high
+				{
+					cv::projectPoints(incomingFrame->result.objectSpacePoints
+						, outgoingFrame->bodyModelViewRotationVector
+						, outgoingFrame->bodyModelViewTranslation
+						, incomingFrame->cameraDescription->cameraMatrix
+						, incomingFrame->cameraDescription->distortionCoefficients
+						, outgoingFrame->reprojectedAfterTracking);
+
+					float sumErrorSquared = 0.0f;
+					for (int i = 0; i < incomingFrame->result.count; i++) {
+						const auto delta = outgoingFrame->reprojectedAfterTracking[i] - incomingFrame->result.centroids[i];
+						sumErrorSquared += delta.dot(delta);
+					}
+					auto reprojectionError = sqrt(sumErrorSquared);
+					this->reprojectionError.store(reprojectionError);
+					auto reprojectionThreshold = this->parameters.reprojectionThreshold.get();
+					if (reprojectionError > reprojectionThreshold && !incomingFrame->result.forceTakeTransform) {
+						//reprojection error is too high
+						return;
+					}
+				}
 
 				//apply the inverse of the camera transform
 				{

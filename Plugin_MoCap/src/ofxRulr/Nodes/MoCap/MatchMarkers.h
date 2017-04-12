@@ -33,15 +33,18 @@ namespace ofxRulr {
 
 				float distanceThresholdSquared;
 
-				bool trackingWasLost = false;
-
 				struct Result {
+					bool success = false;
+					bool forceTakeTransform = false;
+					bool trackingWasLost = false;
 					size_t count = 0;
 					vector<size_t> markerListIndicies; // index in marker points list coming from Body
-					vector<size_t> markerIDs;
+					vector<MarkerID> markerIDs;
 					vector<cv::Point2f> projectedPoints;
 					vector<cv::Point2f> centroids;
+					vector<size_t> centroidIndex;
 					vector<cv::Point3f> objectSpacePoints;
+					float reprojectionError = 0.0f;
 				} result;
 			};
 
@@ -60,24 +63,31 @@ namespace ofxRulr {
 
 					cv::Point3d modelViewRotationVector;
 					cv::Point3d modelViewTranslation;
+					ofMatrix4x4 previewTransform;
+					atomic<float> reprojectionError = 0.0f;
 				};
 				
 				MatchMarkers();
 				string getTypeName() const override;
 				void init();
 				void update();
+				void drawWorld();
+
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
+
 			protected:
 				void processFrame(shared_ptr<FindMarkerCentroidsFrame>) override;
 				void processTrackingSearch(shared_ptr<MatchMarkersFrame> &);
-				void processCheckKnownPoses(shared_ptr<MatchMarkersFrame> &);
-				bool processModelViewTransform(shared_ptr<MatchMarkersFrame> &);
+				shared_ptr<MatchMarkersFrame> processCheckKnownPoses(shared_ptr<MatchMarkersFrame> &);
+				void processModelViewTransform(shared_ptr<MatchMarkersFrame> &);
 
 				struct : ofParameterGroup {
 					ofParameter<float> trackingDistanceThreshold{ "Tracking distance threshold [px]", 20, 0, 300 };
-					PARAM_DECLARE("MatchMarkers", trackingDistanceThreshold);
+					ofParameter<float> refindTrackingThreshold{ "Re-find tracking threshold [px]", 30, 0, 300 };
+					ofParameter<WhenDrawWorld> whenDraw{ "Draw when", WhenDrawWorld::Selected };
+					PARAM_DECLARE("MatchMarkers", trackingDistanceThreshold, refindTrackingThreshold, whenDraw);
 				} parameters;
 
 				Utils::CaptureSet<Capture> captures;
@@ -87,6 +97,7 @@ namespace ofxRulr {
 				mutex descriptionMutex;
 
 				atomic<bool> needsTakeCapture = false;
+				atomic<bool> needsForceUseCapture = false;
 				ofThreadChannel<shared_ptr<Capture>> newCaptures;
 			};
 		}

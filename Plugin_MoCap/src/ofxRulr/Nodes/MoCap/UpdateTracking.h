@@ -19,6 +19,8 @@ namespace ofxRulr {
 				cv::Mat bodyModelViewRotationVector;
 				cv::Mat bodyModelViewTranslation;
 
+				vector<cv::Point2f> reprojectedAfterTracking;
+
 				cv::Mat modelRotationVector;
 				cv::Mat modelTranslation;
 				ofMatrix4x4 transform;
@@ -32,15 +34,18 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 				void update();
+				void populateInspector(ofxCvGui::InspectArguments &);
 			protected:
 				void processFrame(shared_ptr<MatchMarkersFrame> incomingFrame) override;
 
 				struct : ofParameterGroup {
 					ofParameter<UpdateTarget> updateTarget{ "Update target", UpdateTarget::Camera };
-					PARAM_DECLARE("UpdateTracking", updateTarget);
+					ofParameter<float> reprojectionThreshold{ "Reprojection threshold [px]", 5 };
+					PARAM_DECLARE("UpdateTracking", updateTarget, reprojectionThreshold);
 				} parameters;
 
 				ofThreadChannel<shared_ptr<UpdateTrackingFrame>> trackingUpdateToMainThread;
+				atomic<float> reprojectionError;
 			};
 		}
 	}

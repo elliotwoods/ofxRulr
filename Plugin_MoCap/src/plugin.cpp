@@ -14,6 +14,7 @@
 #include "ofxRulr/Nodes/MoCap/RecordMarkerImages.h"
 #include "ofxRulr/Nodes/MoCap/PreviewRecordMarkerImageFrame.h"
 #include "ofxRulr/Nodes/MoCap/MarkerTagger.h"
+#include "ofxRulr/Nodes/MoCap/AddMarkerFromStereo.h"
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::FindMarkerCentroids);
@@ -28,4 +29,5 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::RecordMarkerImages);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::PreviewRecordMarkerImagesFrame);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::MarkerTagger);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MoCap::AddMarkerFromStereo);
 OFXPLUGIN_PLUGIN_MODULES_END

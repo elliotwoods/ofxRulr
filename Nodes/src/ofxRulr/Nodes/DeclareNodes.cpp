@@ -16,7 +16,7 @@
 
 #include "ofxRulr/Nodes/Item/Board.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
-//#include "Nodes/Item/Model.h"
+#include "ofxRulr/Nodes/Item/Model.h"
 #include "ofxRulr/Nodes/Item/Projector.h"
 #include "ofxRulr/Nodes/Item/RigidBody.h"
 #include "ofxRulr/Nodes/Item/View.h"
@@ -63,7 +63,7 @@ namespace ofxRulr {
 
 			RULR_DECLARE_NODE(Item::Board);
 			RULR_DECLARE_NODE(Item::Camera);
-			//RULR_DECLARE_NODE(Item::Model);
+			RULR_DECLARE_NODE(Item::Model);
 			RULR_DECLARE_NODE(Item::Projector);
 			RULR_DECLARE_NODE(Item::RigidBody);
 			RULR_DECLARE_NODE(Item::View);

@@ -106,6 +106,7 @@ EXPORTS
 	?ofTranslate@@YAXMMM@Z
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
 	?limit@?$ofColor_@E@@SAMXZ
+	?setHueAngle@?$ofColor_@E@@QEAAXM@Z
 	?allocate@?$ofImage_@E@@QEAAXHHW4ofImageType@@@Z
 	?bind@?$ofImage_@E@@QEBAXH@Z
 	?clear@?$ofImage_@E@@QEAAXXZ
@@ -126,6 +127,7 @@ EXPORTS
 	?rotate90@?$ofPixels_@E@@QEAAXH@Z
 	?swap@?$ofPixels_@E@@QEAAXAEAV1@@Z
 	??0?$ofColor_@E@@QEAA@MM@Z
+	??0?$ofColor_@E@@QEAA@MMMM@Z
 	??0?$ofImage_@E@@QEAA@XZ
 	??0?$ofPixels_@E@@QEAA@XZ
 	??1?$ofImage_@E@@UEAA@XZ
@@ -397,6 +399,7 @@ EXPORTS
 	??0StereoCalibrate@Calibrate@Procedure@Nodes@ofxRulr@@QEAA@XZ
 	?getOpenCVCalibration@StereoCalibrate@Calibrate@Procedure@Nodes@ofxRulr@@QEBAAEBUOpenCVCalibration@12345@XZ
 	?throwIfACameraIsDisconnected@StereoCalibrate@Calibrate@Procedure@Nodes@ofxRulr@@QEAAXXZ
+	?triangulate@StereoCalibrate@Calibrate@Procedure@Nodes@ofxRulr@@QEAA?AV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@AEBV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@7@0_N@Z
 	?getSingletonStore@?$Singleton@VGraphicsManager@Nodes@ofxRulr@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	??0AbstractCaptureSet@Utils@ofxRulr@@QEAA@XZ
 	??0ScopedProcess@Utils@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N@Z

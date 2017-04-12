@@ -178,6 +178,9 @@ namespace ofxRulr {
 					if (!this->getInput<System::VideoOutput>()->isWindowOpen()) {
 						throw(ofxRulr::Exception("Cannot run Graycode scan whilst VideoOutput window is not open"));
 					}
+					if (this->getInput<System::VideoOutput>()->getMute()) {
+						throw(ofxRulr::Exception("Cannot run Graycode scan whilst VideoOutput window is muted"));
+					}
 				}
 
 				//----------

@@ -172,8 +172,8 @@ namespace ofxRulr {
 
 				//----------
 				void StereoCalibrate::drawWorld() {
-					if (this->parameters.draw.enabled.get() == WhenDrawBoards::Always
-						|| this->isBeingInspected() && this->parameters.draw.enabled.get() == WhenDrawBoards::Selected) {
+					if (this->parameters.draw.enabled.get() == WhenDrawWorld::Always
+						|| this->isBeingInspected() && this->parameters.draw.enabled.get() == WhenDrawWorld::Selected) {
 						auto captures = this->captures.getSelection();
 						for (auto & capture : captures) {
 

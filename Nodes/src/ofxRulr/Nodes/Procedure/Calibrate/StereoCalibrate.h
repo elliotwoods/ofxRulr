@@ -62,6 +62,7 @@ namespace ofxRulr {
 					vector<ofVec3f> triangulate(const vector<ofVec2f> & imagePointsA, const vector<ofVec2f> & imagePointsB, bool correctMatches);
 
 					void throwIfACameraIsDisconnected();
+					void updateTransform();
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
 					void addCapture();
@@ -84,12 +85,12 @@ namespace ofxRulr {
 						} capture;
 
 						struct : ofParameterGroup {
-							ofParameter<bool> fixIntrinsics{ "Fix intrinsics", false };
+							ofParameter<bool> fixIntrinsics{ "Fix intrinsics", true };
 							PARAM_DECLARE("Calibrate", fixIntrinsics);
 						} calibration;
 
 						struct : ofParameterGroup {
-							ofParameter<WhenDrawBoards> enabled{ "Enabled", WhenDrawBoards::Selected };
+							ofParameter<WhenDrawWorld> enabled{ "Enabled", WhenDrawWorld::Selected };
 							ofParameter<bool> points{ "Points", true };
 							ofParameter<bool> distances{ "Distances", false };
 							PARAM_DECLARE("Draw", enabled, points, distances);
