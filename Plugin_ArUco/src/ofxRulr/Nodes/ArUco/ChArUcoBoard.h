@@ -9,6 +9,12 @@ namespace ofxRulr {
 		namespace ArUco {
 			class ChArUcoBoard : public Nodes::Item::AbstractBoard {
 			public:
+				struct PaperSize {
+					string name;
+					float width;
+					float height;
+				};
+
 				ChArUcoBoard();
 				string getTypeName() const override;
 				void init();
@@ -30,25 +36,38 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<int> width{ "Width", 12 };
 						ofParameter<int> height{ "Height", 8 };
-						PARAM_DECLARE("Size", width, height);
+						PARAM_DECLARE("Size [squares]", width, height);
 					} size;
 
-					ofParameter<float> squareLength{ "Square length", 0.034875, 0.001, 0.10 }; // noah's board
-					ofParameter<float> markerLength{ "Marker length", 0.0175, 0.001, 1.0 };
-					ofParameter<int> previewDPI{ "Preview DPI", 75 };
+					struct : ofParameterGroup {
+						ofParameter<float> square{ "Square", 0.034875, 0.001, 0.10 }; // noah's board
+						ofParameter<float> marker{ "Marker", 0.0175, 0.001, 0.1 };
+						PARAM_DECLARE("Length [m]", square, marker);
+					} length;
+					
 
 					struct : ofParameterGroup {
 						ofParameter<bool> refineStrategy{ "Refine strategy", true };
 						PARAM_DECLARE("Detection", refineStrategy);
 					} detection;
 
-					PARAM_DECLARE("ChAruCoBoard", size, squareLength, markerLength, detection);
+					struct : ofParameterGroup {
+						ofParameter<int> DPI{ "Preview DPI", 75 };
+						ofParameter<bool> showPaperSizes{ "Show paper sizes", false };
+						PARAM_DECLARE("Preview", DPI, showPaperSizes);
+					} preview;
+
+					PARAM_DECLARE("ChAruCoBoard", size, length, detection, preview);
 				} parameters;
 
 				cv::Ptr<cv::aruco::Dictionary> dictionary;
 				cv::Ptr<cv::aruco::CharucoBoard> board;
+				float cachedDPI = 0;
+
 				ofImage preview;
 				ofxCvGui::PanelPtr panel;
+
+				set<shared_ptr<PaperSize>> paperSizes;
 			};
 		}
 	}

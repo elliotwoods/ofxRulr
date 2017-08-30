@@ -84,8 +84,8 @@ namespace ofxRulr {
 							for (int i = 0; i < previewFrame->result.count; i++) {
 								ofDrawLine(ofxCv::toOf(previewFrame->result.projectedPoints[i])
 									, ofxCv::toOf(previewFrame->result.centroids[i]));
-								ofDrawBitmapString("Marker #" + ofToString(previewFrame->result.markerIDs[i])
-									, ofxCv::toOf(previewFrame->result.projectedPoints[i]));
+								ofDrawBitmapString("\nMarker #" + ofToString(previewFrame->result.markerIDs[i])
+									, ofxCv::toOf(previewFrame->result.projectedPoints[i])); //draw on next line
 							}
 						}
 						ofPopStyle();

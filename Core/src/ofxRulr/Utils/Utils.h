@@ -7,6 +7,10 @@
 
 namespace ofxRulr {
 	namespace Utils {
-		RULR_EXPORTS string formatDuration(chrono::system_clock::duration, bool showHours = true, bool showMinutes = true, bool showSeconds = true, bool showMilliseconds = false);
+		RULR_EXPORTS string formatDuration(chrono::duration<double, ratio<1,1>>
+			, bool showHours = true
+			, bool showMinutes = true
+			, bool showSeconds = true
+			, bool showMilliseconds = false);
 	}
 }

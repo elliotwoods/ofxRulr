@@ -43,6 +43,9 @@
 #include "ofxRulr/Nodes/Test/ARCube.h"
 #include "ofxRulr/Nodes/Test/Focus.h"
 
+#include "ofxRulr/Nodes/Watchdog/Camera.h"
+#include "ofxRulr/Nodes/Watchdog/Startup.h"
+
 #include "ofxRulr/Graph/FactoryRegister.h"
 
 namespace ofxRulr {
@@ -91,6 +94,9 @@ namespace ofxRulr {
 			
 			RULR_DECLARE_NODE(Test::ARCube);
 			RULR_DECLARE_NODE(Test::Focus);
+
+			RULR_DECLARE_NODE(Watchdog::Camera);
+			RULR_DECLARE_NODE(Watchdog::Startup);
 		}
 
 		void loadPluginNodes() {

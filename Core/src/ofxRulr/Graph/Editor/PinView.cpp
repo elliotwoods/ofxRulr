@@ -20,7 +20,7 @@ namespace ofxRulr {
 
 			//---------
 			void PinView::setup(Nodes::Base & node) {
-				this->icon = node.getIcon();
+				this->icon = & node.getIcon();
 				this->nodeTypeName = node.getTypeName();
 			}
 		}

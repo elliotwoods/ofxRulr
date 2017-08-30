@@ -4,7 +4,7 @@
 namespace ofxRulr {
 	namespace Utils {
 		//----------
-		string Utils::formatDuration(chrono::system_clock::duration duration
+		string Utils::formatDuration(chrono::duration<double, ratio<1, 1>> duration
 		, bool showHours
 		, bool showMinutes
 		, bool showSeconds

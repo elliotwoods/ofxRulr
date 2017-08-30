@@ -5,6 +5,7 @@
 #include "opencv2/core/core.hpp"
 
 #include "ofxRulr/Utils/Constants.h"
+#include "ofxMachineVision/Constants.h"
 
 namespace ofxRulr {
 	class RULR_EXPORTS Exception : public std::exception {
@@ -19,6 +20,7 @@ namespace ofxRulr {
 #define RULR_CATCH_ALL_TO(X) \
 	catch (ofxRulr::Exception e) { X; } \
 	catch (cv::Exception e) { X; } \
+	catch (ofxMachineVision::Exception e) { X; } \
 	catch (std::exception e) { X; }
 
 #define RULR_CATCH_ALL_TO_ALERT \

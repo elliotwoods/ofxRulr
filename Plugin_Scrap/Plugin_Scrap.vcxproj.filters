@@ -16,6 +16,12 @@
     <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
       <UniqueIdentifier>{cdad591d-1ad5-43a2-823b-94c7e38bedb5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\polyfit">
+      <UniqueIdentifier>{d8ebbc54-4aa9-42ee-a285-b2d973db9758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Item">
+      <UniqueIdentifier>{a34390c5-331d-4187-816d-2e7addc0721d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -25,11 +31,40 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\polyfit\polyfit.c">
+      <Filter>src\polyfit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\CircleLaser.cpp">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Scrap.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\polyfit\polyfit.h">
+      <Filter>src\polyfit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\CircleLaser.h">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\polyfit\readme.txt">
+      <Filter>src\polyfit</Filter>
+    </Text>
   </ItemGroup>
 </Project>

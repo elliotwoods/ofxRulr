@@ -10,10 +10,10 @@
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp">
       <Filter>addons\ofxSplashScreen\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.cpp">
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonLiveView.cpp">
       <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonLiveView.cpp">
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.cpp">
       <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
     </ClCompile>
   </ItemGroup>

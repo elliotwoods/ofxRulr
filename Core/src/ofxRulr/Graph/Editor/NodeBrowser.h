@@ -15,10 +15,10 @@ namespace ofxRulr {
 				public:
 					ListItem(shared_ptr<BaseFactory>);
 					shared_ptr<BaseFactory> getFactory();
-					const ofImage & getIcon();
+					const ofBaseDraws & getIcon();
 				protected:
 					shared_ptr<BaseFactory> factory;
-					shared_ptr<ofImage> icon;
+					const ofBaseDraws * icon = nullptr;
 				};
 
 			public:

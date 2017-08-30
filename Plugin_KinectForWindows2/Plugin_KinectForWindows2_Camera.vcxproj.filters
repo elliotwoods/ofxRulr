@@ -23,9 +23,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{7cb23bcc-0fb3-4499-b761-25860287bbd0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Nodes">
-      <UniqueIdentifier>{5298b00f-faab-425c-b58d-8fc893f88157}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Nodes\Procedure">
       <UniqueIdentifier>{faa2746c-f704-43a1-bcb3-f2eb4fca83e1}</UniqueIdentifier>
     </Filter>

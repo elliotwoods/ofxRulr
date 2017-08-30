@@ -322,7 +322,7 @@ namespace ofxRulr {
 						}
 
 						//add a button for devices not returned by listDevices
-						this->cameraOpenPanel->addButton("Unknown " + factory.first,
+						this->cameraOpenPanel->addButton("Default " + factory.first,
 							[this, factory]() {
 							auto device = factory.second->makeUntyped();
 							this->setDevice(device);

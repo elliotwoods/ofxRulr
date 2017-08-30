@@ -101,6 +101,8 @@ namespace ofxRulr {
 					return ofVec4f(0, 0, -1, 0);
 				case Model::Axes::PosZ:
 					return ofVec4f(0, 0, +1, 0);
+				default:
+					return ofVec4f();
 				}
 			}
 			//----------

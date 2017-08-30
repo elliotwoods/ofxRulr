@@ -35,9 +35,24 @@ namespace ofxRulr {
 				if (trySerialize<float>(jsonGroup, parameter)) continue;
 				if (trySerialize<bool>(jsonGroup, parameter)) continue;
 
+				if (trySerialize<uint8_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<uint16_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<uint32_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<uint64_t>(jsonGroup, parameter)) continue;
+
+				if (trySerialize<int8_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<int16_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<int32_t>(jsonGroup, parameter)) continue;
+				if (trySerialize<int64_t>(jsonGroup, parameter)) continue;
+
 				if (trySerialize<ofVec2f>(jsonGroup, parameter)) continue;
 				if (trySerialize<ofVec3f>(jsonGroup, parameter)) continue;
 				if (trySerialize<ofVec4f>(jsonGroup, parameter)) continue;
+				if (trySerialize<ofMatrix3x3>(jsonGroup, parameter)) continue;
+				if (trySerialize<ofMatrix4x4>(jsonGroup, parameter)) continue;
+
+				if (trySerialize<ofColor>(jsonGroup, parameter)) continue;
+				if (trySerialize<ofRectangle>(jsonGroup, parameter)) continue;
 
 				if (trySerialize<string>(jsonGroup, parameter)) continue;
 
@@ -119,10 +134,25 @@ namespace ofxRulr {
 				if (tryDeserialize<float>(jsonGroup, parameter)) continue;
 				if (tryDeserialize<bool>(jsonGroup, parameter)) continue;
 
+				if (tryDeserialize<uint8_t>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<uint16_t>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<uint32_t>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<uint64_t>(jsonGroup, parameter)) continue;
+
+				if (tryDeserialize<int8_t>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<int16_t>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<int32_t>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<int64_t>(jsonGroup, parameter)) continue;
+
 				if (tryDeserialize<ofVec2f>(jsonGroup, parameter)) continue;
 				if (tryDeserialize<ofVec3f>(jsonGroup, parameter)) continue;
 				if (tryDeserialize<ofVec4f>(jsonGroup, parameter)) continue;
-			
+				if (tryDeserialize<ofMatrix3x3>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<ofMatrix4x4>(jsonGroup, parameter)) continue;
+
+				if (tryDeserialize<ofColor>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<ofRectangle>(jsonGroup, parameter)) continue;
+
 				if (tryDeserialize<string>(jsonGroup, parameter)) continue;
 
 				//group

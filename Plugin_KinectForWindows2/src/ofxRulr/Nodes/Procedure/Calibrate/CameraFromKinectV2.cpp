@@ -2,7 +2,7 @@
 #include "CameraFromKinectV2.h"
 
 #include "ofxRulr/Nodes/Item/Camera.h"
-#include "ofxRulr/Nodes/Item/Board.h"
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
 #include "ofxRulr/Nodes/Item/KinectV2.h"
 
 #include "ofxRulr/Exception.h"
@@ -46,7 +46,7 @@ namespace ofxRulr {
 
 					this->addInput(MAKE(Pin<Item::KinectV2>));
 					this->addInput(MAKE(Pin<Item::Camera>));
-					this->addInput(MAKE(Pin<Item::Board>));
+					this->addInput(MAKE(Pin<Item::AbstractBoard>));
 
 					this->error = 0.0f;
 
@@ -70,30 +70,13 @@ namespace ofxRulr {
 
 				//----------
 				void CameraFromKinectV2::serialize(Json::Value & json) {
-					auto & jsonCorrespondences = json["correspondences"];
-					int index = 0;
-					for (const auto & correspondence : this->correspondences) {
-						auto & jsonCorrespondence = jsonCorrespondences[index++];
-						jsonCorrespondence["kinectObject"] << correspondence.kinectObject;
-						jsonCorrespondence["camera"] << correspondence.camera;
-						jsonCorrespondence["cameraNormalized"] << correspondence.cameraNormalized;
-					}
-
+					this->captures.serialize(json);
 					json["error"] = this->error;
 				}
 
 				//----------
 				void CameraFromKinectV2::deserialize(const Json::Value & json) {
-					this->correspondences.clear();
-					auto & jsonCorrespondences = json["correspondences"];
-					for (const auto & jsonCorrespondence : jsonCorrespondences) {
-						Correspondence correspondence;
-						jsonCorrespondence["kinectObject"] >> correspondence.kinectObject;
-						jsonCorrespondence["camera"] >> correspondence.camera;
-						jsonCorrespondence["cameraNormalized"] >> correspondence.cameraNormalized;
-						this->correspondences.push_back(correspondence);
-					}
-
+					this->captures.deserialize(json);
 					this->error = json["error"].asFloat();
 				}
 
@@ -114,7 +97,7 @@ namespace ofxRulr {
 					auto cameraWidth = cameraPixels.getWidth();
 					auto cameraHeight = cameraPixels.getHeight();
 
-					auto boardNode = this->getInput<Item::Board>();
+					auto boardNode = this->getInput<Item::AbstractBoard>();
 
 					//convert to grayscale
 					if (cameraColorImage.channels() == 3) {
@@ -129,9 +112,12 @@ namespace ofxRulr {
 					//flip the kinect's image
 					cv::flip(kinectColorImage, kinectColorImage, 1);
 
-					vector<ofVec2f> kinectCameraPoints;
-					bool foundInKinect = boardNode->findBoard(kinectColorImage, toCv(kinectCameraPoints), this->parameters.findBoardMode);
-
+					vector<cv::Point2f> kinectCameraPoints;
+					vector<cv::Point3f> kinectBoardObjectPoints;
+					bool foundInKinect = boardNode->findBoard(kinectColorImage, kinectCameraPoints, kinectBoardObjectPoints, this->parameters.findBoardMode);
+					if (kinectCameraPoints.size() != kinectBoardObjectPoints.size()) {
+						throw(ofxRulr::Exception("This node currently doesn't support finding a sub-set of board image points"));
+					}
 
 					//flip the results back again
 					int colorWidth = kinectColorPixels.getWidth();
@@ -146,8 +132,12 @@ namespace ofxRulr {
 					//find the points in camera space
 					//--
 					//
-					vector<ofVec2f> cameraPoints;
-					bool foundInCamera = boardNode->findBoard(cameraColorImage, toCv(cameraPoints), this->parameters.findBoardMode);
+					vector<cv::Point2f> cameraPoints;
+					vector<cv::Point3f> cameraObjectPoints;
+					bool foundInCamera = boardNode->findBoard(cameraColorImage, cameraPoints, cameraObjectPoints, this->parameters.findBoardMode);
+					if (cameraPoints.size() != cameraObjectPoints.size()) {
+						throw(ofxRulr::Exception("This node currently doesn't support finding a sub-set of board image points"));
+					}
 					//
 					//--
 
@@ -157,9 +147,6 @@ namespace ofxRulr {
 					if (foundInCamera) {
 						lastTimeCheckerboardSeenInCamera = chrono::system_clock::now();
 					}
-
-					this->previewCornerFindsKinect.clear();
-					this->previewCornerFindsCamera.clear();
 
 					if (!foundInKinect || !foundInCamera) {
 						stringstream error;
@@ -173,26 +160,38 @@ namespace ofxRulr {
 					auto kinectCameraToWorldPointer = (ofVec3f*)kinectCameraToWorldMap.getData();
 					auto kinectCameraWidth = kinectCameraToWorldMap.getWidth();
 					int pointIndex = 0;
+
+					auto capture = make_shared<Capture>();
+					capture->kinectImageSpace = kinectCameraPoints;
+					capture->cameraImageSpace = cameraPoints;
+
 					for (int i = 0; i < cameraPoints.size(); i++) {
-						this->previewCornerFindsKinect.push_back(kinectCameraPoints[i]);
-						this->previewCornerFindsCamera.push_back(cameraPoints[i]);
-
-						auto & kinectCameraPoint = kinectCameraPoints[i];
-						auto & cameraPoint = cameraPoints[i];
-
-						Correspondence correspondence;
-
-						correspondence.kinectObject = kinectCameraToWorldPointer[(int)kinectCameraPoint.x + (int)kinectCameraPoint.y * kinectCameraWidth];
-						correspondence.camera = cameraPoint;
-						correspondence.cameraNormalized = ofVec2f(ofMap(cameraPoint.x, 0, cameraWidth, 0, 1),
-							ofMap(cameraPoint.y, 0, cameraHeight, 0, 1));
-
-						if (correspondence.kinectObject.z > 0.5f) {
-							this->correspondences.push_back(correspondence);
-						}
-
-						pointIndex++;
+						capture->kinectObjectSpace.push_back((const cv::Point3f &) kinectCameraToWorldPointer[(int)kinectCameraPoints[i].x + (int)kinectCameraPoints[i].y * kinectCameraWidth]);
+						capture->cameraNormalizedSpace.emplace_back(ofMap(cameraPoints[i].x, 0, cameraWidth, 0, 1),
+							ofMap(cameraPoints[i].y, 0, cameraHeight, 0, 1));
 					}
+
+
+					//remove any points where kinect reading of z is zero
+					auto kinectImageSpaceIt = capture->kinectImageSpace.begin();
+					auto kinectObjectSpaceIt = capture->kinectObjectSpace.begin();
+					auto cameraImageSpaceIt = capture->cameraImageSpace.begin();
+					auto cameraNormalizedSpaceIt = capture->cameraNormalizedSpace.begin();
+					for (int i = 0; i < cameraPoints.size(); i++) {
+						if (kinectObjectSpaceIt->z == 0) {
+							kinectImageSpaceIt = capture->kinectImageSpace.erase(kinectImageSpaceIt);
+							kinectObjectSpaceIt = capture->kinectObjectSpace.erase(kinectObjectSpaceIt);
+							cameraImageSpaceIt = capture->cameraImageSpace.erase(cameraImageSpaceIt);
+							cameraNormalizedSpaceIt = capture->cameraNormalizedSpace.erase(cameraNormalizedSpaceIt);
+						}
+						else {
+							kinectImageSpaceIt++;
+							kinectObjectSpaceIt++;
+							cameraImageSpaceIt++;
+							cameraNormalizedSpaceIt++;
+						}
+					}
+					this->captures.add(capture);
 				}
 
 				//----------
@@ -206,9 +205,14 @@ namespace ofxRulr {
 					vector<ofVec3f> worldPoints;
 					vector<ofVec2f> cameraPoints;
 
-					for (auto correpondence : this->correspondences) {
-						worldPoints.push_back(correpondence.kinectObject * kinectTransform);
-						cameraPoints.push_back(correpondence.camera);
+					auto captures = this->captures.getSelection();
+					for (auto capture : captures) {
+						for (auto objectPoint : capture->kinectObjectSpace) {
+							worldPoints.push_back(ofxCv::toOf(objectPoint) * kinectTransform);
+						}
+						for (auto cameraImageSpacePoint : capture->cameraImageSpace) {
+							cameraPoints.push_back(ofxCv::toOf(cameraImageSpacePoint));
+						}
 					}
 
 					const auto worldPointsRows = vector<vector<cv::Point3f> >(1, ofxCv::toCv(worldPoints));
@@ -237,9 +241,7 @@ namespace ofxRulr {
 				void CameraFromKinectV2::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 					auto inspector = inspectArgs.inspector;
 
-					inspector->add(new ofxCvGui::Widgets::LiveValue<int>("Correspondences found", [this]() {
-						return (int) this->correspondences.size();
-					}));
+					this->captures.populateWidgets(inspector);
 
 					auto addButton = new ofxCvGui::Widgets::Button("Add Capture", [this]() {
 						try {
@@ -251,10 +253,6 @@ namespace ofxRulr {
 					}, ' ');
 					addButton->setHeight(100.0f);
 					inspector->add(addButton);
-
-					inspector->add(MAKE(ofxCvGui::Widgets::Button, "Clear correspondences", [this]() {
-						this->correspondences.clear();
-					}));
 
 					auto calibrateButton = new ofxCvGui::Widgets::Button("Calibrate", [this]() {
 						try {
@@ -275,19 +273,10 @@ namespace ofxRulr {
 					if (kinect) {
 						auto kinectTransform = kinect->getTransform();
 
-						ofMesh preview;
-						for (auto correspondence : this->correspondences) {
-							preview.addVertex(correspondence.kinectObject * kinectTransform);
-							preview.addColor(ofColor(
-								correspondence.cameraNormalized.x * 255.0f,
-								correspondence.cameraNormalized.y * 255.0f,
-								0));
+						auto captures = this->captures.getSelection();
+						for (auto capture : captures) {
+							capture->drawObjectSpace();
 						}
-						Utils::Graphics::pushPointSize(10.0f);
-						{
-							preview.drawVertices();
-						}
-						Utils::Graphics::popPointSize();
 					}
 				}
 
@@ -316,19 +305,10 @@ namespace ofxRulr {
 						auto kinectColorSource = kinect->getDevice()->getColorSource();
 						auto kinectColorView = MAKE(ofxCvGui::Panels::Draws, kinectColorSource->getTexture());
 						kinectColorView->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
-							ofPolyline previewLine;
-							if (!this->previewCornerFindsKinect.empty()) {
-								ofDrawCircle(this->previewCornerFindsKinect.front(), 10.0f);
-								for (const auto & previewCornerFind : this->previewCornerFindsKinect) {
-									previewLine.addVertex(previewCornerFind);
-								}
+							auto captures = this->captures.getSelection();
+							for (auto capture : captures) {
+								capture->drawKinectImageSpace();
 							}
-							ofPushStyle();
-							{
-								ofSetColor(255, 0, 0);
-								previewLine.draw();
-							}
-							ofPopStyle();
 						};
 						kinectColorView->onDraw += [this, drawSuccessIndicator] (ofxCvGui::DrawArguments & args) {
 							drawSuccessIndicator(args.localBounds, this->lastTimeCheckerboardSeenInKinect);
@@ -338,20 +318,10 @@ namespace ofxRulr {
 
 						auto cameraColorView = MAKE(ofxCvGui::Panels::Draws, camera->getGrabber()->getTexture());
 						cameraColorView->onDrawImage += [this, drawSuccessIndicator](ofxCvGui::DrawImageArguments & args) {
-							ofPolyline previewLine;
-							if (!this->previewCornerFindsCamera.empty()) {
-								ofDrawCircle(this->previewCornerFindsCamera.front(), 10.0f);
-								for (const auto & previewCornerFind : this->previewCornerFindsCamera) {
-									previewLine.addVertex(previewCornerFind);
-								}
+							auto captures = this->captures.getSelection();
+							for (auto capture : captures) {
+								capture->drawKinectImageSpace();
 							}
-							ofPushStyle();
-							{
-								ofSetColor(255, 0, 0);
-								previewLine.draw();
-
-							}
-							ofPopStyle();
 						};
 						cameraColorView->onDraw += [this, drawSuccessIndicator](ofxCvGui::DrawArguments & args) {
 							drawSuccessIndicator(args.localBounds, this->lastTimeCheckerboardSeenInCamera);
@@ -359,6 +329,54 @@ namespace ofxRulr {
 						cameraColorView->setCaption("Camera");
 						this->view->add(cameraColorView);
 					}
+				}
+
+				//----------
+				CameraFromKinectV2::Capture::Capture() {
+					RULR_SERIALIZE_LISTENERS;
+				}
+
+				//----------
+				std::string CameraFromKinectV2::Capture::getDisplayString() const {
+					stringstream ss;
+					ss << kinectObjectSpace.size() << " points found.";
+					return ss.str();
+				}
+
+				//----------
+				void CameraFromKinectV2::Capture::serialize(Json::Value & json) {
+					json["kinectObjectSpace"] << ofxCv::toOf(this->kinectImageSpace);
+					json["kinectObjectSpace"] << ofxCv::toOf(this->kinectObjectSpace);
+					json["cameraImageSpace"] << ofxCv::toOf(this->cameraImageSpace);
+					json["cameraNormalizedSpace"] << ofxCv::toOf(this->cameraNormalizedSpace);
+				}
+
+				//----------
+ 				void CameraFromKinectV2::Capture::deserialize(const Json::Value & json) {
+					json["kinectObjectSpace"] >> ofxCv::toOf(this->kinectImageSpace);
+					json["kinectObjectSpace"] >> ofxCv::toOf(this->kinectObjectSpace);
+ 					json["cameraImageSpace"] >> ofxCv::toOf(this->cameraImageSpace);
+ 					json["cameraNormalizedSpace"] >> ofxCv::toOf(this->cameraNormalizedSpace);
+				}
+
+				//----------
+				void CameraFromKinectV2::Capture::drawObjectSpace() {
+					ofPushStyle();
+					{
+						ofSetColor(this->color);
+						ofxCv::drawCorners(this->kinectObjectSpace, true);
+					}
+					ofPopStyle();
+				}
+
+				//----------
+				void CameraFromKinectV2::Capture::drawKinectImageSpace() {
+					ofPushStyle();
+					{
+						ofSetColor(this->color);
+						ofxCv::drawCorners(this->kinectImageSpace, true);
+					}
+					ofPopStyle();
 				}
 			}
 		}

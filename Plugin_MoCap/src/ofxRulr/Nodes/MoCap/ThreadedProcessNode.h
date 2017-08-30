@@ -30,7 +30,6 @@ namespace ofxRulr {
 			public:
 				ThreadedProcessNode() {
 					RULR_NODE_INIT_LISTENER;
-					this->setIcon(Nodes::GraphicsManager::X().getIcon("MoCap::icon"));
 				}
 
 				void init() {

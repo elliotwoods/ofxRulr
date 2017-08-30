@@ -23,7 +23,7 @@ namespace ofxRulr {
 					this->setup(tempNode);
 				}
 			protected:
-				shared_ptr<ofImage> icon;
+				const ofBaseDraws * icon = nullptr;
 				string nodeTypeName;
 			};
 		}

@@ -73,16 +73,30 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\CircleLaser.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.cpp" />
     <ClCompile Include="src\pch_Plugin_Scrap.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\plugin.cpp" />
+    <ClCompile Include="src\polyfit\polyfit.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\CircleLaser.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.h" />
     <ClInclude Include="src\pch_Plugin_Scrap.h" />
+    <ClInclude Include="src\polyfit\polyfit.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\polyfit\readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

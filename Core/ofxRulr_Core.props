@@ -5,6 +5,7 @@
     <Import Project="..\..\..\addons\ofxCvGui\ofxCvGuiLib\ofxCvGui.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin_includes_only.props" />
     <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin_libraries_only.props" />
+    <Import Project="..\..\ofxMachineVision\ofxMachineVisionLib\ofxMachineVision.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />

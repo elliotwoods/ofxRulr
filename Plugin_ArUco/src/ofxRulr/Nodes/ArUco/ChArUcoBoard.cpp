@@ -1,6 +1,8 @@
 #include "pch_Plugin_ArUco.h"
 #include "ChArUcoBoard.h"
 
+#define INCHES_PER_METER (1.0f / 0.0254f)
+
 using namespace cv;
 
 namespace ofxRulr {
@@ -19,19 +21,63 @@ namespace ofxRulr {
 			//----------
 			void ChArUcoBoard::init() {
 				RULR_NODE_UPDATE_LISTENER;
-				this->panel = ofxCvGui::Panels::makeImage(this->preview);
+				auto panel = ofxCvGui::Panels::makeImage(this->preview);
+				panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
+					//paper sizes
+					ofPushMatrix();
+					{
+						float mmToPixels = 1/1000.0f * INCHES_PER_METER * this->parameters.preview.DPI;
+						ofScale(mmToPixels, mmToPixels);
+
+						ofColor baseColor(200, 100, 100);
+						int index = 0;
+						for (auto paperSize : this->paperSizes) {
+							auto paperColor = baseColor;
+							paperColor.setHue(index * 40);
+
+							ofPushStyle();
+							{
+								ofSetColor(paperColor);
+
+								//outline
+								ofNoFill();
+								ofDrawRectangle(0, 0, 297, 210);
+
+								//text
+								ofDrawBitmapString(paperSize->name, paperSize->width, paperSize->height);
+							}
+							ofPopStyle();
+
+							index++;
+						}
+					}
+					ofPopMatrix();
+				};
+				this->panel = panel;
+
 				this->manageParameters(this->parameters);
+
+				{
+					this->paperSizes.emplace(new PaperSize{ "A0", 1189, 841 });
+					this->paperSizes.emplace(new PaperSize{ "A1", 841, 594 });
+					this->paperSizes.emplace(new PaperSize{ "A2", 594, 420 });
+					this->paperSizes.emplace(new PaperSize{ "A3", 420, 297 });
+					this->paperSizes.emplace(new PaperSize{ "A4", 297, 210 });
+				}
 			}
 
-#define INCHES_PER_METER (1.0f / 0.0254f)
 			//----------
 			void ChArUcoBoard::update() {
+				if (this->parameters.length.marker > this->parameters.length.square) {
+					this->parameters.length.marker = this->parameters.length.square;
+				}
 				//delete board if it's wrong
 				if (this->board) {
 					if (this->board->getChessboardSize().width != this->parameters.size.width
 						|| this->board->getChessboardSize().height != this->parameters.size.height
-						|| this->board->getSquareLength() != this->parameters.squareLength
-						|| this->board->getMarkerLength() != this->parameters.markerLength) {
+						|| this->board->getSquareLength() != this->parameters.length.square
+						|| this->board->getMarkerLength() != this->parameters.length.marker
+						|| this->cachedDPI != this->parameters.preview.DPI) {
 						this->board.release();
 						this->dictionary.release();
 					}
@@ -39,22 +85,31 @@ namespace ofxRulr {
 
 				//create board if we have none
 				if (!this->board) {
-					this->dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_50);
-					this->board = cv::aruco::CharucoBoard::create(this->parameters.size.width
-						, this->parameters.size.height
-						, this->parameters.squareLength
-						, this->parameters.markerLength
-						, dictionary);
+					bool success = false;
+					try {
+						this->dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_50);
+						this->board = cv::aruco::CharucoBoard::create(this->parameters.size.width
+							, this->parameters.size.height
+							, this->parameters.length.square
+							, this->parameters.length.marker
+							, dictionary);
 
-					cv::Mat boardImage;
-					auto pixelsPerSquare = this->parameters.squareLength.get() * INCHES_PER_METER * this->parameters.previewDPI;
+						cv::Mat boardImage;
+						auto pixelsPerSquare = this->parameters.length.square.get() * INCHES_PER_METER * this->parameters.preview.DPI;
 
-					this->board->draw(cv::Size(this->parameters.size.width * pixelsPerSquare
-						, this->parameters.size.height * pixelsPerSquare)
-						, boardImage
-						, 0);
-					ofxCv::copy(boardImage, this->preview.getPixels());
-					this->preview.update();
+						this->board->draw(cv::Size(this->parameters.size.width * pixelsPerSquare
+							, this->parameters.size.height * pixelsPerSquare)
+							, boardImage
+							, 0);
+						ofxCv::copy(boardImage, this->preview.getPixels());
+						this->preview.update();
+						this->cachedDPI = this->parameters.preview.DPI;
+						success = true;
+					}
+					RULR_CATCH_ALL_TO_ERROR;
+					if (!success) {
+						this->preview.clear();
+					}
 				}
 			}
 
@@ -143,7 +198,7 @@ namespace ofxRulr {
 			void ChArUcoBoard::drawObject() const {
 				ofPushMatrix();
 				{
-					ofTranslate(ofVec3f(this->parameters.size.width, this->parameters.size.height, 0) / 2.0f * this->parameters.squareLength);
+					ofTranslate(ofVec3f(this->parameters.size.width, this->parameters.size.height, 0) / 2.0f * this->parameters.length.square);
 
 					auto pixelsPerMeter = this->getPreviewPixelsPerMeter();
 					ofScale(1.0f / pixelsPerMeter, 1.0f / pixelsPerMeter, 1.0f);
@@ -157,7 +212,7 @@ namespace ofxRulr {
 
 			//----------
 			float ChArUcoBoard::getSpacing() const {
-				return this->parameters.squareLength.get();
+				return this->parameters.length.square.get();
 			}
 
 			//----------
@@ -167,7 +222,7 @@ namespace ofxRulr {
 
 			//----------
 			float ChArUcoBoard::getPreviewPixelsPerMeter() const {
-				return INCHES_PER_METER * this->parameters.previewDPI;
+				return INCHES_PER_METER * this->parameters.preview.DPI;
 			}
 		}
 	}

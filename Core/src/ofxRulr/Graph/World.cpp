@@ -126,6 +126,11 @@ namespace ofxRulr {
 				inspector->add(new Widgets::LiveValueHistory("GUI fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));
+				inspector->addLiveValue<string>("Up time", []() {
+					auto duration = chrono::milliseconds(ofGetElapsedTimeMillis());
+					return Utils::formatDuration(duration, true, true, true);
+				});
+				inspector->addMemoryUsage();
 
 				auto saveAllButton = inspector->add(new Widgets::Button("Save all", [this]() {
 					this->saveAll();

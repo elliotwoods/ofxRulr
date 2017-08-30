@@ -142,6 +142,9 @@
     <Filter Include="addons\ofxAssimpModelLoader\src">
       <UniqueIdentifier>{a4b45006-59d3-442e-a61c-4a367d9652c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Watchdog">
+      <UniqueIdentifier>{234df221-fa97-4ae6-9da2-86b30767da39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h">
@@ -702,6 +705,12 @@
     <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.h">
       <Filter>addons\ofxAssimpModelLoader\src</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Camera.h">
+      <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Startup.h">
+      <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -877,6 +886,12 @@
     </ClCompile>
     <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp">
       <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Camera.cpp">
+      <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Startup.cpp">
+      <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

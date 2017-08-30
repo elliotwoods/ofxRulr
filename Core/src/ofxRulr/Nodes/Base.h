@@ -56,11 +56,13 @@ namespace ofxRulr {
 			void setNodeHost(Graph::Editor::NodeHost *);
 			Graph::Editor::NodeHost * getNodeHost() const;
 
-			///Calling getIcon caches the icon and the color
-			shared_ptr<ofImage> getIcon();
 			const ofColor & getColor();
-			void setIcon(shared_ptr<ofImage>);
 			void setColor(const ofColor &);
+
+			///Calling getIcon caches the icon and the color
+			const ofBaseDraws & getIcon();
+			void setIcon(shared_ptr<ofBaseDraws>); // custom icon (e.g. live)
+			void setIcon(shared_ptr<ofxAssets::Image>); // standard icon
 
 			const Graph::PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::InspectArguments &);
@@ -168,7 +170,8 @@ namespace ofxRulr {
 		private:
 			Graph::Editor::NodeHost * nodeHost;
 			Graph::PinSet inputPins;
-			shared_ptr<ofImage> icon;
+			shared_ptr<ofBaseDraws> customIcon;
+			shared_ptr<ofxAssets::Image> standardIcon;
 			shared_ptr<ofColor> color;
 
 			string name;

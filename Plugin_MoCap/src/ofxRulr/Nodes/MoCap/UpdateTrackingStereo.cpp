@@ -11,7 +11,6 @@ namespace ofxRulr {
 			//----------
 			UpdateTrackingStereo::UpdateTrackingStereo() {
 				RULR_NODE_INIT_LISTENER;
-				this->setIcon(Nodes::GraphicsManager::X().getIcon("MoCap::icon"));
 			}
 
 			//----------

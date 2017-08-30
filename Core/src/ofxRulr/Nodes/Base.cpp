@@ -87,14 +87,6 @@ namespace ofxRulr {
 		}
 
 		//----------
-		shared_ptr<ofImage> Base::getIcon() {
-			if (!this->icon) {
-				this->icon = GraphicsManager::X().getIcon(this->getTypeName());
-			}
-			return this->icon;
-		}
-
-		//----------
 		const ofColor & Base::getColor() {
 			if (!this->color) {
 				this->color = make_shared<ofColor>(GraphicsManager::X().getColor(this->getTypeName()));
@@ -103,13 +95,31 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Base::setIcon(shared_ptr<ofImage> icon) {
-			this->icon = icon;
+		void Base::setColor(const ofColor & color) {
+			this->color = make_shared<ofColor>(color);
 		}
 
 		//----------
-		void Base::setColor(const ofColor & color) {
-			this->color = make_shared<ofColor>(color);
+		const ofBaseDraws & Base::getIcon() {
+			if (this->customIcon) {
+				return * this->customIcon;
+			} else if (this->standardIcon) {
+				return this->standardIcon->get();
+			}
+			else {
+				this->standardIcon = GraphicsManager::X().getIcon(this->getTypeName());
+				return this->standardIcon->get();
+			}
+		}
+
+		//----------
+		void Base::setIcon(shared_ptr<ofBaseDraws> customIcon) {
+			this->customIcon = customIcon;
+		}
+
+		//----------
+		void Base::setIcon(shared_ptr<ofxAssets::Image> standardIcon) {
+			this->standardIcon = standardIcon;
 		}
 
 		//----------
