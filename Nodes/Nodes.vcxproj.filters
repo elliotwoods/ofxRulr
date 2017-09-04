@@ -133,6 +133,18 @@
     <Filter Include="addons\ofxObjLoader\libs">
       <UniqueIdentifier>{ed074027-ab4f-4be2-8199-4e7e3b3dbff5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Utils">
+      <UniqueIdentifier>{08482660-a69e-4f25-816f-43c7b263d001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader">
+      <UniqueIdentifier>{1ea87235-b336-409d-bbe9-0dc97e5e3c5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxAssimpModelLoader\src">
+      <UniqueIdentifier>{a4b45006-59d3-442e-a61c-4a367d9652c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Watchdog">
+      <UniqueIdentifier>{234df221-fa97-4ae6-9da2-86b30767da39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxGLM\src\ofxGLM.h">
@@ -654,6 +666,51 @@
     <ClInclude Include="src\ofxRulr\Nodes\Application\openFrameworks.h">
       <Filter>src\ofxRulr\Nodes\Application</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Test\Latency.h">
+      <Filter>src\ofxRulr\Nodes\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\VideoOutputListener.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\AbstractBoard.h">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.h">
+      <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpModelLoader.h">
+      <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpTexture.h">
+      <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpUtils.h">
+      <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.h">
+      <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Camera.h">
+      <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Startup.h">
+      <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -687,9 +744,6 @@
       <Filter>src\ofxRulr\Nodes\Procedure</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp">
@@ -793,6 +847,51 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Application\openFrameworks.cpp">
       <Filter>src\ofxRulr\Nodes\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Test\Latency.cpp">
+      <Filter>src\ofxRulr\Nodes\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\VideoOutputListener.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\AbstractBoard.cpp">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.cpp">
+      <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpModelLoader.cpp">
+      <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpTexture.cpp">
+      <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp">
+      <Filter>addons\ofxAssimpModelLoader\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Camera.cpp">
+      <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Startup.cpp">
+      <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

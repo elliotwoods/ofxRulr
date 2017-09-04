@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{53695f24-0430-4196-b53c-3cce472d160b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{f8a6306b-29fd-4ca4-936e-6f0ee4df836c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{60ec25bc-832b-4697-b4e5-7499887d252d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\ArUco">
+      <UniqueIdentifier>{750b2512-0b15-435f-b812-c19cebfc2e7d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\Dictionary.cpp">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch_Plugin_ArUco.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\TrackMarkers.cpp">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\Detector.cpp">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\MarkerMap.cpp">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\FitRoomPlanes.cpp">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.cpp">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\Dictionary.h">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch_Plugin_ArUco.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\TrackMarkers.h">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\Detector.h">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\MarkerMap.h">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\FitRoomPlanes.h">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.h">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

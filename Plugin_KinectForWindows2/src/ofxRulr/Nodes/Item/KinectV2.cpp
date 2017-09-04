@@ -40,13 +40,6 @@ namespace ofxRulr {
 
 				this->playState.set("Play state", 0, 0, 1);
 				this->viewType.set("View type", 3, 0, 3);
-
-				{
-					this->enabledViews.rgb.set("RGB", true);
-					this->enabledViews.depth.set("Depth", true);
-					this->enabledViews.ir.set("IR", false);
-					this->enabledViews.body.set("Body", false);
-				}
 			}
 
 			//----------

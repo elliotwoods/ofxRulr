@@ -3,7 +3,7 @@
 
 #include "ofxRulr/Graph/Editor/NodeHost.h"
 #include "../Exception.h"
-#include "Graphics.h"
+#include "GraphicsManager.h"
 
 using namespace ofxCvGui;
 
@@ -37,8 +37,9 @@ namespace ofxRulr {
 		void Base::init() {
 			this->onPopulateInspector.addListener([this](ofxCvGui::InspectArguments & args) {
 				this->populateInspector(args);
-			}, this, 99999); // populate the instpector with this at the top. We call notify in reverse for inheritance
+			}, this, 99999); // populate the inspector with this at the top. We call notify in reverse for inheritance
 
+			
 			//notify the subclasses to init
 			this->onInit.notifyListeners();
 			this->initialized = true;
@@ -86,29 +87,39 @@ namespace ofxRulr {
 		}
 
 		//----------
-		shared_ptr<ofImage> Base::getIcon() {
-			if (!this->icon) {
-				this->icon = Graphics::X().getIcon(this->getTypeName());
-			}
-			return this->icon;
-		}
-
-		//----------
 		const ofColor & Base::getColor() {
 			if (!this->color) {
-				this->color = make_shared<ofColor>(Graphics::X().getColor(this->getTypeName()));
+				this->color = make_shared<ofColor>(GraphicsManager::X().getColor(this->getTypeName()));
 			}
 			return * this->color;
 		}
 
 		//----------
-		void Base::setIcon(shared_ptr<ofImage> icon) {
-			this->icon = icon;
+		void Base::setColor(const ofColor & color) {
+			this->color = make_shared<ofColor>(color);
 		}
 
 		//----------
-		void Base::setColor(const ofColor & color) {
-			this->color = make_shared<ofColor>(color);
+		const ofBaseDraws & Base::getIcon() {
+			if (this->customIcon) {
+				return * this->customIcon;
+			} else if (this->standardIcon) {
+				return this->standardIcon->get();
+			}
+			else {
+				this->standardIcon = GraphicsManager::X().getIcon(this->getTypeName());
+				return this->standardIcon->get();
+			}
+		}
+
+		//----------
+		void Base::setIcon(shared_ptr<ofBaseDraws> customIcon) {
+			this->customIcon = customIcon;
+		}
+
+		//----------
+		void Base::setIcon(shared_ptr<ofxAssets::Image> standardIcon) {
+			this->standardIcon = standardIcon;
 		}
 
 		//----------
@@ -140,7 +151,7 @@ namespace ofxRulr {
 
 			inspector->add(new Widgets::Button("Save Node...", [this] () {
 				try {
-					auto result = ofSystemSaveDialog(this->getDefaultFilename(), "Save node [" + this->getName() + "] as json");
+					auto result = ofSystemSaveDialog(this->getDefaultFilename() + ".json", "Save node [" + this->getName() + "] as json");
 					if (result.bSuccess) {
 						this->save(result.getPath());
 					}

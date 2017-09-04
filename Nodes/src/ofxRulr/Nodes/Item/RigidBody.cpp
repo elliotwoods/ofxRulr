@@ -39,18 +39,20 @@ namespace ofxRulr {
 				this->translation[0].set("Translation X", 0, -30.0f, 30.0f);
 				this->translation[1].set("Translation Y", 0, -30.0f, 30.0f);
 				this->translation[2].set("Translation Z", 0, -30.0f, 30.0f);
-				this->rotationEuler[0].set("Rotation X", 0, -360.0f, 360.0f);
-				this->rotationEuler[1].set("Rotation Y", 0, -360.0f, 360.0f);
-				this->rotationEuler[2].set("Rotation Z", 0, -360.0f, 360.0f);
+				this->rotationEuler[0].set("Rotation X", 0, -180.0f, 180.0f);
+				this->rotationEuler[1].set("Rotation Y", 0, -180.0f, 180.0f);
+				this->rotationEuler[2].set("Rotation Z", 0, -180.0f, 180.0f);
 			}
 
 			//---------
 			void RigidBody::drawWorld() {
 				ofPushMatrix();
-				ofMultMatrix(this->getTransform());
-				ofDrawAxis(0.3f);
-				ofDrawBitmapString(this->getName(), ofVec3f());
-				this->onDrawObject.notifyListeners();
+				{
+					ofMultMatrix(this->getTransform());
+					ofDrawAxis(0.3f);
+					ofDrawBitmapString(this->getName(), ofVec3f());
+					this->onDrawObject.notifyListeners();
+				}
 				ofPopMatrix();
 			}
 
@@ -67,6 +69,8 @@ namespace ofxRulr {
 				for (int i = 0; i < 3; i++){
 					jsonRotationEuler[i] = this->rotationEuler[i].get();
 				}
+
+				Utils::Serializable::serialize(json, this->movementSpeed);
 			}
 
 			//---------
@@ -82,6 +86,8 @@ namespace ofxRulr {
 				for (int i = 0; i < 3; i++){
 					this->rotationEuler[i] = jsonRotationEuler[i].asFloat();
 				}
+
+				Utils::Serializable::deserialize(json, this->movementSpeed);
 			}
 
 			//---------
@@ -99,7 +105,7 @@ namespace ofxRulr {
 
 				for (int i = 0; i < 3; i++) {
 					auto slider = new Widgets::Slider(this->translation[i]);
-					slider->onValueChange += [this](ofParameter<float> &) {
+					slider->onValueChange += [this](const float &) {
 						this->onTransformChange.notifyListeners();
 					};
 					inspector->add(slider);
@@ -107,7 +113,7 @@ namespace ofxRulr {
 				}
 				for (int i = 0; i < 3; i++) {
 					auto slider = new Widgets::Slider(this->rotationEuler[i]);
-					slider->onValueChange += [this](ofParameter<float> &) {
+					slider->onValueChange += [this](const float &) {
 						this->onTransformChange.notifyListeners();
 					};
 					inspector->add(slider);
@@ -119,6 +125,122 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ALERT
 				}));
+
+				//WASD controls
+				{
+					auto element = make_shared<ofxCvGui::Element>();
+					auto movementEnabled = make_shared<ofParameter<bool>>("Enabled", false);
+					
+					//we put it into the scope of the elemnt so that it will be deleted when that scope is deleted
+					auto enabledButton = make_shared<Widgets::Toggle>(*movementEnabled);
+					enabledButton->addListenersToParent(element);
+
+					element->onDraw += [this, enabledButton, movementEnabled](ofxCvGui::DrawArguments & args) {
+						auto drawKey = [movementEnabled](char key, float x, float y) {
+							ofPushStyle();
+							{
+								auto keyIsPressed = movementEnabled->get() ? (ofGetKeyPressed(key) || ofGetKeyPressed(key - ('A' - 'a'))) : false;
+								if (keyIsPressed) {
+									ofFill();
+								}
+								else {
+									ofSetLineWidth(1.0f);
+									ofNoFill();
+								}
+								ofDrawRectangle(x, y, 30, 30);
+
+								if (keyIsPressed) {
+									ofSetColor(40);
+								}
+								else {
+									ofSetColor(200);
+								}
+								ofDrawBitmapString(string(1, key), x + (30 - 8) / 2, y + (30 + 10) / 2);
+							}
+							ofPopStyle();
+						};
+						ofPushStyle();
+						{
+							ofSetColor(150, 200, 150);
+							drawKey('W', 50, 10);
+							drawKey('A', 10, 50);
+
+							ofSetColor(200, 150, 150);
+							drawKey('S', 50, 50);
+							drawKey('D', 90, 50);
+
+							ofSetColor(150, 150, 200);
+							drawKey('T', 150, 10);
+							drawKey('G', 150, 50);
+						}
+						ofPopStyle();
+					};
+					element->onKeyboard += [this, enabledButton, movementEnabled](ofxCvGui::KeyboardArguments & args) {
+						if (movementEnabled && args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
+							int axes = 0;
+							switch (args.key) {
+							case 'w':
+							case 'W':
+							case 's':
+							case 'S':
+								axes = 1;
+								break;
+							case 'a':
+							case 'A':
+							case 'd':
+							case 'D':
+								axes = 0;
+								break;
+							case 't':
+							case 'T':
+							case 'g':
+							case 'G':
+								axes = 2;
+								break;
+							default:
+								//no action
+								return;
+								break;
+							};
+
+							float difference = 1.0f;
+							switch (args.key)
+							{
+							case 'w':
+							case 'W':
+							case 'a':
+							case 'A':
+							case 'g':
+							case 'G':
+								difference = -1.0f;
+								break;
+
+							case 's':
+							case 'S':
+							case 'd':
+							case 'D':
+							case 't':
+							case 'T':
+								difference = +1.0f;
+								break;
+
+							default:
+								break;
+							}
+							this->translation[axes] += difference * this->movementSpeed;
+							this->onTransformChange.notifyListeners();
+						}
+					};
+					element->onBoundsChange += [enabledButton](ofxCvGui::BoundsChangeArguments & args) {
+						auto bounds = args.localBounds;
+						bounds.x = 150 + 30 + 10;
+						bounds.width -= bounds.x;
+						enabledButton->setBounds(bounds);
+					};
+					element->setHeight(80.0f);
+					inspector->add(element);
+					inspector->addSlider(this->movementSpeed);
+				}
 
 				inspector->add(make_shared<Widgets::Spacer>());
 			}
@@ -205,6 +327,15 @@ namespace ofxRulr {
 				else {
 					this->setTransform(extrinsicsMatrix);
 				}
+			}
+
+			//----------
+			void RigidBody::getExtrinsics(cv::Mat & rotationVector, cv::Mat & translation, bool inverse /*= false*/) {
+				auto transform = this->getTransform();
+				if (inverse) {
+					transform = toOf(glm::inverse(toGLM(transform)));
+				}
+				ofxCv::decomposeMatrix(transform, rotationVector, translation);
 			}
 
 			//----------

@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9BF86707-A2E9-4727-B3E1-7D0A3B4CE3E3}</ProjectGuid>
+    <RootNamespace>examplePlugin</RootNamespace>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
+    <ProjectName>Plugin_MoCap</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\addons\ofxRulr\ofxRulr_Plugin.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch_Plugin_MoCap.h</PrecompiledHeaderFile>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch_Plugin_MoCap.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\Body.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\FindMarkerCentroids.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\MarkerTagger.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\MatchMarkers.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\OSCRelay.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewMatchedMarkers.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\PreviewRecordMarkerImageFrame.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\AddMarkerFromStereo.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\RecordMarkerImages.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\StereoSolvePnP.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MoCap\UpdateTrackingStereo.cpp" />
+    <ClCompile Include="src\pch_Plugin_MoCap.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\plugin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\Body.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\FindMarkerCentroids.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\MarkerTagger.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\MatchMarkers.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\OSCRelay.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewCentroids.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewMatchedMarkers.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\PreviewRecordMarkerImageFrame.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\AddMarkerFromStereo.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\RecordMarkerImages.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\StereoSolvePnP.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\ThreadedProcessNode.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MoCap\UpdateTrackingStereo.h" />
+    <ClInclude Include="src\pch_Plugin_MoCap.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

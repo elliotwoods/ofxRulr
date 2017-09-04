@@ -2,7 +2,7 @@
 #include "ARCube.h"
 
 #include "ofxRulr/Nodes/Item/Camera.h"
-#include "ofxRulr/Nodes/Item/Board.h"
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
 
 #include "ofxCvMin.h"
 #include "ofxCvGui/Widgets/LiveValue.h"
@@ -36,7 +36,7 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
 				this->addInput<Item::Camera>();
-				this->addInput<Item::Board>();
+				this->addInput<Item::AbstractBoard>();
 
 				this->view = make_shared<Panels::Draws>(this->fbo);
 				this->view->onDraw += [this](DrawArguments & args) {
@@ -75,9 +75,6 @@ namespace ofxRulr {
 				//--
 
 				this->foundBoard = false;
-
-				this->activewhen.set("Active when", 0, 0, 1);
-				this->drawStyle.set("Draw style", 2, 0, 2);
 			}
 
 			//----------
@@ -115,15 +112,26 @@ namespace ofxRulr {
 								this->undistorted.update();
 
 								//find the board
-								auto board = this->getInput<Item::Board>();
+								auto board = this->getInput<Item::AbstractBoard>();
 								if (board) {
 									//find board in distorted image
-									vector<ofVec2f> imagePoints;
-									auto success = board->findBoard(toCv(distorted), toCv(imagePoints));
+									vector<cv::Point2f> imagePoints;
+									vector<cv::Point3f> objectPoints;
+									auto success = board->findBoard(toCv(distorted)
+										, imagePoints
+										, objectPoints
+										, this->parameters.findBoardMode
+										, camera->getCameraMatrix()
+										, camera->getDistortionCoefficients());
 									if (success) {
 										//use solvePnP to resolve transform
 										Mat rotation, translation;
-										cv::solvePnP(board->getObjectPoints(), toCv(imagePoints), cameraMatrix, distortionCoefficients, rotation, translation);
+										cv::solvePnP(objectPoints
+											, imagePoints
+											, cameraMatrix
+											, distortionCoefficients
+											, rotation
+											, translation);
 
 										this->boardTransform = makeMatrix(rotation, translation);
 										this->foundBoard = true;
@@ -159,12 +167,10 @@ namespace ofxRulr {
 			//----------
 			void ARCube::populateInspector(InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
-				auto activeWhenWidget = new Widgets::MultipleChoice("Active", { "When Selected", "Always" });
-				activeWhenWidget->entangle(this->activewhen);
-				inspector->add(activeWhenWidget);
+				inspector->addParameterGroup(this->parameters);
 
 				inspector->add(new Widgets::Indicator("Found board", [this]() {
-					if (this->getInputPin<Item::Board>()->isConnected() && this->getInputPin<Item::Camera>()->isConnected()) {
+					if (this->getInputPin<Item::AbstractBoard>()->isConnected() && this->getInputPin<Item::Camera>()->isConnected()) {
 						if (this->foundBoard) {
 							return Widgets::Indicator::Status::Good;
 						}
@@ -186,32 +192,22 @@ namespace ofxRulr {
 						return string("");
 					}
 				}));
-
-				auto drawStyleSelector = inspector->add(new Widgets::MultipleChoice("Draw style"));
-				{
-					drawStyleSelector->addOption("Axes");
-					drawStyleSelector->addOption("Board");
-					drawStyleSelector->addOption("Cube");
-					drawStyleSelector->entangle(this->drawStyle);
-				}
 			}
 
 			//----------
 			void ARCube::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->activewhen);
-				Utils::Serializable::serialize(json, this->drawStyle);
+				Utils::Serializable::serialize(json, this->parameters);
 			}
 
 			//----------
 			void ARCube::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->activewhen);
-				Utils::Serializable::deserialize(json, this->drawStyle);
+				Utils::Serializable::deserialize(json, this->parameters);
 			}
 
 			//----------
 			void ARCube::drawWorld() {
 				auto camera = this->getInput<Item::Camera>();
-				auto board = this->getInput<Item::Board>();
+				auto board = this->getInput<Item::AbstractBoard>();
 				if (board && camera && this->foundBoard) {
 					ofPushStyle();
 					{
@@ -222,8 +218,8 @@ namespace ofxRulr {
 							ofMultMatrix(camera->getTransform());
 							ofMultMatrix(this->boardTransform);
 
-							switch (this->drawStyle) {
-							case 0:
+							switch (this->parameters.drawStyle.get()) {
+							case DrawStyle::Axes:
 							{
 								ofDrawAxis(spacing);
 								auto position = ofVec3f() * this->boardTransform;
@@ -234,12 +230,7 @@ namespace ofxRulr {
 								ofPopStyle();
 								break;
 							}
-							case 1:
-							{
-								board->drawObject();
-								break;
-							}
-							case 2:
+							case DrawStyle::Cube:
 							{
 								ofPushMatrix();
 								{
@@ -247,7 +238,12 @@ namespace ofxRulr {
 									ofScale(scale, scale, scale);
 									ofPushStyle();
 									{
-										ofFill();
+										if (this->parameters.fillMode.get() == FillMode::Fill) {
+											ofFill();
+										}
+										else {
+											ofNoFill();
+										}
 										this->cube.draw();
 									}
 									ofPopStyle();
@@ -255,6 +251,19 @@ namespace ofxRulr {
 								ofPopMatrix();
 								break;
 							}
+							case DrawStyle::Board:
+							{
+								if (this->parameters.fillMode.get() == FillMode::Fill) {
+									ofFill();
+								}
+								else {
+									ofNoFill();
+								}
+								board->drawObject();
+								break;
+							}
+							default:
+								break;
 							}
 						}
 						ofPopMatrix();
@@ -274,21 +283,23 @@ namespace ofxRulr {
 					return false;
 				}
 				
-				if (this->activewhen == 1) {
-					//find when we're set to always find
+				switch (this->parameters.activewhen.get()) {
+				case ActiveWhen::Always:
 					return true;
+				case ActiveWhen::Selected:
+					if (this->isBeingInspected()) {
+						return true;
+					}
+					break;
+				default:
+					break;
 				}
-				else if (this->isBeingInspected()) {
-					//find when we're selected
-					return true;
-				}
-				else {
-					if (camera) {
-						auto grabber = camera->getGrabber();
-						if (!grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_FreeRun)) {
-							//find when the camera is a single shot camera
-							return true;
-						}
+
+				if (camera) {
+					auto grabber = camera->getGrabber();
+					if (!grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)) {
+						//find when the camera is a single shot camera
+						return true;
 					}
 				}
 				

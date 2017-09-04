@@ -1,8 +1,10 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Base.h"
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
 
 #include "ofxCvGui/Panels/Draws.h"
+#include "ofxCvGui/Utils/Enum.h"
 
 #include "of3dPrimitives.h"
 
@@ -34,13 +36,23 @@ namespace ofxRulr {
 				bool foundBoard;
 				ofFbo fbo;
 
-				// 0 = when selected
-				// 1 = always
-				ofParameter<int> activewhen;
-				// 0 - axes
-				// 1 - board
-				// 2 - cube
-				ofParameter<int> drawStyle;
+				MAKE_ENUM(ActiveWhen
+					, (Selected, Always)
+					, ("Selected", "Always"));
+				MAKE_ENUM(DrawStyle
+					, (Axes, Board, Cube)
+					, ("Axes", "Board", "Cube"));
+				MAKE_ENUM(FillMode
+					, (Fill, Wireframe)
+					, ("Fill", "Wireframe"));
+
+				struct : ofParameterGroup {
+					ofParameter<ActiveWhen> activewhen{ "Active when", ActiveWhen::Selected };
+					ofParameter<DrawStyle> drawStyle{ "Draw style", DrawStyle::Cube };
+					ofParameter<FillMode> fillMode{ "Fill mode", FillMode::Fill };
+					ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
+					PARAM_DECLARE("ARCube", activewhen, drawStyle, fillMode, findBoardMode);
+				} parameters;
 
 				ofBoxPrimitive cube;
 			};

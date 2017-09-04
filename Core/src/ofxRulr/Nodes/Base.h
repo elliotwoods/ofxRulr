@@ -7,7 +7,7 @@
 #include "../Version.h"
 
 #include "ofxCvGui/InspectController.h"
-#include "ofxCvGui/Utils/Sugar.h"
+#include "ofxCvGui.h"
 
 #include "ofImage.h"
 #include "ofxAssets.h"
@@ -30,13 +30,7 @@
 	this->onPopulateInspector += [this](ofxCvGui::InspectArguments & args) { \
 		this->populateInspector(args); \
 	}
-#define RULR_NODE_SERIALIZATION_LISTENERS \
-	this->onSerialize += [this](Json::Value & json) { \
-		this->serialize(json); \
-	}; \
-	this->onDeserialize += [this](Json::Value const & json) { \
-		this->deserialize(json); \
-	}
+#define RULR_NODE_SERIALIZATION_LISTENERS RULR_SERIALIZE_LISTENERS
 
 namespace ofxRulr {
 	namespace Graph {
@@ -46,7 +40,7 @@ namespace ofxRulr {
 	}
 
 	namespace Nodes {
-		class Base : public ofxCvGui::IInspectable, public Utils::Serializable {
+		class RULR_EXPORTS Base : public ofxCvGui::IInspectable, public Utils::Serializable {
 		public:
 			Base();
 			~Base();
@@ -62,11 +56,13 @@ namespace ofxRulr {
 			void setNodeHost(Graph::Editor::NodeHost *);
 			Graph::Editor::NodeHost * getNodeHost() const;
 
-			///Calling getIcon caches the icon and the color
-			shared_ptr<ofImage> getIcon();
 			const ofColor & getColor();
-			void setIcon(shared_ptr<ofImage>);
 			void setColor(const ofColor &);
+
+			///Calling getIcon caches the icon and the color
+			const ofBaseDraws & getIcon();
+			void setIcon(shared_ptr<ofBaseDraws>); // custom icon (e.g. live)
+			void setIcon(shared_ptr<ofxAssets::Image>); // standard icon
 
 			const Graph::PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::InspectArguments &);
@@ -170,16 +166,21 @@ namespace ofxRulr {
 
 			void setUpdateAllInputsFirst(bool);
 			bool getUpdateAllInputsFirst() const;
+
 		private:
 			Graph::Editor::NodeHost * nodeHost;
 			Graph::PinSet inputPins;
-			shared_ptr<ofImage> icon;
+			shared_ptr<ofBaseDraws> customIcon;
+			shared_ptr<ofxAssets::Image> standardIcon;
 			shared_ptr<ofColor> color;
 
 			string name;
 			bool initialized;
 			uint64_t lastFrameUpdate;
 			bool updateAllInputsFirst;
+
+			//we'd love to have parameters for drawWorldEnabled, etc
+			//but adding ofParameters here seems to cause crashes
 		};
 	}
 }

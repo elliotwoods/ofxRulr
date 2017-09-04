@@ -9,8 +9,15 @@
 #include "ofxRulr/Nodes/MultiTrack/Publisher.h"
 #include "ofxRulr/Nodes/MultiTrack/Subscriber.h"
 #include "ofxRulr/Nodes/MultiTrack/World.h"
+#include "ofxRulr/Nodes/MultiTrack/ImageBox.h"
 #include "ofxRulr/Nodes/MultiTrack/Procedure/Calibrate.h"
 #include "ofxRulr/Nodes/MultiTrack/Test/FindMarker.h"
+
+#pragma warning(push)
+#pragma warning(disable:4073)
+#pragma init_seg(lib)
+asio::detail::winsock_init<>::manual manual_winsock_init;
+#pragma warning(pop)
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::ChannelGenerator::LocalKinect);
@@ -22,6 +29,7 @@ OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::Receiver);
 OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::Publisher);
 OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::Subscriber);
 OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::World);
+OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::ImageBox);
 OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::Procedure::Calibrate);
 OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MultiTrack::Test::FindMarker);
 OFXPLUGIN_PLUGIN_MODULES_END

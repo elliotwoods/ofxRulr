@@ -54,6 +54,9 @@ namespace ofxRulr {
 					if (this->mute) {
 						ofxCvGui::Utils::drawText("MUTE [SPACE]", args.localBounds);
 					}
+					if (!this->window) {
+						ofxCvGui::Utils::drawText("CLOSED", args.localBounds);
+					}
 				};
 
 				this->monitorSelectionView = MAKE(ofxCvGui::Panels::ElementHost);
@@ -136,7 +139,6 @@ namespace ofxRulr {
 					}
 				};
 
-				this->showWindow.set("Show window", false);
 				this->useFullScreenMode.set("Use real fullscreen", false);
 				this->splitHorizontal.set("Split Horizontal", 1, 1, 8);
 				this->splitVertical.set("Split Vertical", 1, 1, 8);
@@ -202,13 +204,14 @@ namespace ofxRulr {
 					this->refreshMonitors();
 				});
 
-				auto showWindowToggle = MAKE(ofxCvGui::Widgets::Toggle, this->showWindow, OF_KEY_RETURN);
+				auto showWindowToggle = inspector->addToggle("Show window", [this]() {
+					return this->isWindowOpen();
+				}, [this](bool value) {
+					this->setWindowOpen(value);
+				});
 				{
+					showWindowToggle->setHotKey(OF_KEY_RETURN);
 					showWindowToggle->setHeight(100.0f);
-					inspector->add(showWindowToggle);
-					showWindowToggle->onValueChange += [this](ofParameter<bool> & value) {
-						this->setWindowOpen(value);
-					};
 				}
 
 				inspector->add(make_shared<ofxCvGui::Widgets::LiveValue<string>>("Monitor selection", [this]() {
@@ -279,8 +282,10 @@ namespace ofxRulr {
 				}
 
 				//show and then clear the window
-				this->presentFbo();
-				this->clearFbo(true);
+				if (this->window) {
+					this->presentFbo();
+					this->clearFbo(true);
+				}
 				
 				//set the window title
 				if(this->window && this->windowTitle != this->getName()) {
@@ -364,6 +369,16 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void VideoOutput::setMute(bool mute) {
+				this->mute = mute;
+			}
+
+			//----------
+			bool VideoOutput::getMute() const {
+				return this->mute;
+			}
+
+			//----------
 			ofFbo & VideoOutput::getFbo() {
 				return this->fbo;
 			}
@@ -391,8 +406,6 @@ namespace ofxRulr {
 				this->scissorWasEnabled = ofxCvGui::Utils::ScissorManager::X().getScissorEnabled();
 				ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(false); 
 				this->fbo.begin(true);
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ACCUM_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-				ofClear(0, 0, 0, 255);
 			}
 
 			//----------
@@ -413,51 +426,38 @@ namespace ofxRulr {
 				auto scissorEnabled = ofxCvGui::Utils::ScissorManager::X().getScissorEnabled();
 				ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(false);
 
-				//cache the viewport
-				auto mainViewport = ofGetCurrentViewport();
+				ofMesh mesh;
 
 				//Open and draw to the window
-				auto mainWindow = std::static_pointer_cast<ofAppGLFWWindow>(ofGetCurrentWindow());
-				this->window->update();
+				auto appWindow = ofGetCurrentWindow();
+				ofGetMainLoop()->setCurrentWindow(this->window);
 				this->window->makeCurrent();
+				this->window->update();
 				this->window->renderer()->startRender();
-				
-				//switch to window viewport
-				glViewport(0, 0, this->width, this->height); //ofViewport would poll the wrong window resolution, so need to use gl
+				{
+					ofPushView();
+					{
+						//ofClear(0, 255);
+						ofSetupScreenOrtho();
+						
+ 						ofDrawCircle(50, 50, 50);
+ 						ofDrawBitmapStringHighlight("this is the client window", 20, 20);
+ 						this->fbo.draw(20, 50);
 
-				//clear the entire video output
-				ofClear(0, 0);
+						//clear the entire video output
+						ofClear(0, 0);
 
-				//draw the fbo if mute is disabled
-				if (!this->mute) {
-					//set the drawing matrices to normalised coordinates
-					ofSetMatrixMode(OF_MATRIX_PROJECTION);
-					ofPushMatrix();
-					ofLoadMatrix(ofMatrix4x4());
-					ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-					ofPushMatrix();
-					ofLoadMatrix(ofMatrix4x4());
-
-					//check if we need to invert y
-					if (this->window->getSettings().glVersionMajor > 2) {
-						ofScale(1.0f, -1.0f, 1.0f);
+						//draw the fbo if mute is disabled
+						if (!this->mute) {
+							this->fbo.draw(0, 0);
+						}
 					}
-
-					this->fbo.draw(-1, -1, 2, +2);
-
-					//reset all transforms
-					ofSetMatrixMode(OF_MATRIX_PROJECTION);
-					ofPopMatrix();
-					ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-					ofPopMatrix();
+					ofPopView();
 				}
-
 				this->window->swapBuffers();
-
-				//return to main window
 				this->window->renderer()->finishRender();
-				mainWindow->makeCurrent();
-				ofViewport(mainViewport);
+				ofGetMainLoop()->setCurrentWindow(appWindow);
+				appWindow->makeCurrent();
 
 				if (scissorEnabled) {
 					ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(true);
@@ -543,7 +543,7 @@ namespace ofxRulr {
 					};
 
 					//turn the scissor on
-					selectButton->setScissor(true);
+					selectButton->setScissorEnabled(true);
 
 					this->monitorSelectionView->getElementGroup()->add(selectButton);
 				}
@@ -577,25 +577,22 @@ namespace ofxRulr {
 					//--
 
 
+
 					//--
-					//create window and fbo
+					//create window
 					//--
 					//
-					auto mainWindow = std::static_pointer_cast<ofAppGLFWWindow>(ofGetCurrentWindow());
 					{
+						auto appWindow = ofGetCurrentWindow();
 						ofGLFWWindowSettings windowSettings;
-						windowSettings.glVersionMajor = mainWindow->getSettings().glVersionMajor;
-						windowSettings.glVersionMinor = mainWindow->getSettings().glVersionMinor;
-						
-						windowSettings.doubleBuffering = false;
-						windowSettings.shareContextWith = mainWindow;
+						windowSettings.shareContextWith = appWindow;
 
 						auto hasSplit = this->splitHorizontal > 1 || this->splitVertical > 1;
 						bool useFullScreen = !hasSplit && this->useFullScreenMode;
 						if (useFullScreen) {
 							windowSettings.monitor = videoOutput.index;
-							windowSettings.width = this->videoMode->width;
-							windowSettings.height = this->videoMode->height;
+							windowSettings.width = this->width;
+							windowSettings.height = this->height;
 							windowSettings.windowMode = OF_GAME_MODE;
 						}
 						else {
@@ -607,37 +604,38 @@ namespace ofxRulr {
 							windowSettings.setPosition(ofVec2f(x, y));
 						}
 
-						//--
-						//allocate fbo to match the window
-						//--
-						//
+						this->window = make_shared<ofAppGLFWWindow>();
+						this->window->setup(windowSettings);
+						this->window->update();
+
+						appWindow->makeCurrent();
+					}
+					//
+					//--
+
+
+
+					//--
+					//allocate fbo to match the window
+					//--
+					//
+					{
 						ofFbo::Settings fboSettings;
 						fboSettings.width = this->width;
 						fboSettings.height = this->height;
 						fboSettings.minFilter = GL_NEAREST;
 						fboSettings.maxFilter = GL_NEAREST;
 						this->fbo.allocate(fboSettings);
-
-						//--
-						//create the window
-						//--
-						//
-						this->window.reset(new ofAppGLFWWindow);
-						this->window->setup(windowSettings);
-						this->window->update();
 					}
 					//
 					//--
-					mainWindow->makeCurrent();
-				}
-				else {
-					this->showWindow = false;
 				}
 			}
 
 			//----------
 			void VideoOutput::destroyWindow() {
 				this->window.reset();
+				this->fbo.clear();
 			}
 
 			//----------

@@ -10,19 +10,18 @@ namespace ofxRulr {
 			namespace Procedure {
 				class Calibrate : public ofxRulr::Nodes::Procedure::Base {
 				public:
-					enum Step {
-						StepIdle = 0,
-						StepBegin,
-						StepCapture,
-						StepSolve,
-
-						NumSteps
+					enum DialogStep {
+						DialogStepClosed,
+						DialogStepBegin,
+						DialogStepCapture,
+						DialogStepComplete
 					};
 
 					struct Marker {
 						ofVec2f center;
 						float radius;
 						ofVec3f position;
+						bool valid;
 					};
 
 					Calibrate();
@@ -37,27 +36,24 @@ namespace ofxRulr {
 					void serialize(Json::Value &);
 					void deserialize(const Json::Value &);
 
-					void goToStep(Step nextStep);
+					void dialogStepTo(DialogStep nextStep);
 
 					void captureFrame(bool record);
 					vector<Marker> findMarkersInFrame(const ofxMultiTrack::Frame & frame);
+					bool mapMarkerToWorld(Marker & marker, int frameWidth, int frameHeight, const unsigned short * depthData, const float * lutData);
 
 					void setupSolveSets();
-					void triggerSolvers();
 
 					void applyTransforms();
-
-					const ofColor & getSubscriberColor(size_t key);
 
 				protected:
 					chrono::system_clock::duration getTimeSinceCaptureStarted() const;
 
 					shared_ptr<ofxCvGui::Panels::Widgets> panel;
 					ofxCvGui::PanelPtr dialog;
-					Step currStep;
+					DialogStep dialogStep;
 
 					chrono::system_clock::time_point captureStartTime;
-					map<size_t, ofColor> subscriberColors;
 					map<size_t, vector<Marker>> dataToPreview;
 					map<size_t, map<size_t, Marker>> dataToSolve;
 					map<size_t, ofxRulr::Utils::SolveSet> solveSets;
@@ -74,15 +70,17 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<float> threshold{ "Threshold", 100, 0, 255 };
-							ofParameter<float> minimumArea{ "Minimum area", 5 * 5 };
-							ofParameter<float> markerPadding{ "Marker padding [%]", 50, 0, 100 };
-							PARAM_DECLARE("Find Marker", threshold, minimumArea);
+							ofParameter<float> minimumArea{ "Minimum area", 3 * 3 };
+							ofParameter<float> clipNear{ "Clip near (m)", 0.4, 0.0, 8.0 };
+							ofParameter<float> clipFar{ "Clip far (m)", 8.0, 0.0, 8.0 };
+							PARAM_DECLARE("Find Marker", threshold, minimumArea, clipNear, clipFar);
 						} findMarker;
 
 						struct : ofParameterGroup {
+							ofParameter<bool> liveMarker{ "Live Marker", false };
 							ofParameter<bool> drawPoints{ "Draw Points", true };
 							ofParameter<bool> drawLines{ "Draw Lines", true };
-							PARAM_DECLARE("Debug World", drawPoints, drawLines);
+							PARAM_DECLARE("Debug World", liveMarker, drawPoints, drawLines);
 						} debugWorld;
 
 						PARAM_DECLARE("Calibrate", capture, findMarker, debugWorld);

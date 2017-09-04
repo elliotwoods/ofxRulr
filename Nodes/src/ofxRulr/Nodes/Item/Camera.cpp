@@ -28,26 +28,23 @@ namespace ofxRulr {
 
 				this->showSpecification.set("Show specification", false);
 				this->showFocusLine.set("Show focus line", true);
-				this->exposure.set("Exposure [us]", 500.0f, 0.0f, 1000000.0f);
-				this->gain.set("Gain", 0.5f, 0.0f, 1.0f);
-				this->focus.set("Focus ", 0.5f, 0.0f, 1.0f);
-				this->sharpness.set("Sharpness", 0.5f, 0.0f, 1.0f);
-
-				this->exposure.addListener(this, &Camera::exposureCallback);
-				this->gain.addListener(this, &Camera::gainCallback);
-				this->focus.addListener(this, &Camera::focusCallback);
-				this->sharpness.addListener(this, &Camera::sharpnessCallback);
 
 				this->grabber = make_shared<ofxMachineVision::Grabber::Simple>();
-				
+				this->grabber->onNewFrameReceived += [this](shared_ptr<Frame> frame) {
+					this->onNewFrame.notifyListeners(move(frame));
+				};
 				this->placeholderPanel = make_shared<Panels::Groups::Strip>();
 				this->cameraOpenPanel = make_shared<ofxCvGui::Panels::Widgets>();
+
 				this->buildGrabberPanel();
 				this->rebuildPanel();
 
 				this->onDrawObject += [this]() {
 					if (this->grabber->getIsDeviceOpen()) {
-						this->getViewInObjectSpace().drawOnNearPlane(* this->getGrabber());
+						auto & grabberTexture = this->getGrabber()->getTexture();
+						if (grabberTexture.isAllocated()) {
+							this->getViewInObjectSpace().drawOnNearPlane(*this->getGrabber());
+						}
 					}
 				};
 			}
@@ -64,19 +61,17 @@ namespace ofxRulr {
 				if (this->showFocusLine) {
 					if (this->grabber->isFrameNew()) {
 						auto frame = this->grabber->getFrame();
-						frame->lockForReading();
 						const auto & pixels = frame->getPixels();
 						if (pixels.isAllocated()) {
 							auto middleRow = pixels.getData() + pixels.getWidth() * pixels.getNumChannels() * pixels.getHeight() / 2;
 
 							this->focusLineGraph.clear();
 							this->focusLineGraph.setMode(OF_PRIMITIVE_LINE_STRIP);
-							for (int i = 0; i<pixels.getWidth(); i++) {
+							for (int i = 0; i < pixels.getWidth(); i++) {
 								this->focusLineGraph.addVertex(ofVec3f(i, *middleRow, 0));
 								middleRow += pixels.getNumChannels();
 							}
 						}
-						frame->unlock();
 					}
 				}
 			}
@@ -92,35 +87,35 @@ namespace ofxRulr {
 				{
 					jsonDevice["width"] = this->getWidth();
 					jsonDevice["height"] = this->getHeight();
-					
+
 				}
 
-				auto & jsonSettings = json["properties"];
-				{
-					Utils::Serializable::serialize(jsonSettings, this->exposure);
-					Utils::Serializable::serialize(jsonSettings, this->gain);
-					Utils::Serializable::serialize(jsonSettings, this->focus);
-					Utils::Serializable::serialize(jsonSettings, this->sharpness);
-				}
+				this->buildCachedInitialisationSettings();
+				json["cachedInitialisationSettings"] = this->cachedInitialisationSettings;
 			}
 
 			//----------
 			void Camera::deserialize(const Json::Value & json) {
-				auto & jsonDevice = json["device"];
+				const auto & jsonDevice = json["device"];
 				{
 					//take in the saved resolution, this will be overwritten when the device is open and running
-					this->viewInObjectSpace.setWidth(jsonDevice["width"].asFloat());
-					this->viewInObjectSpace.setHeight(jsonDevice["height"].asFloat());
+					this->setWidth(jsonDevice["width"].asFloat());
+					this->setHeight(jsonDevice["height"].asFloat());
 				}
 
-				auto & jsonSettings = json["properties"];
-				{
-					Utils::Serializable::deserialize(jsonSettings, this->exposure);
-					Utils::Serializable::deserialize(jsonSettings, this->gain);
-					Utils::Serializable::deserialize(jsonSettings, this->focus);
-					Utils::Serializable::deserialize(jsonSettings, this->sharpness);
-					
-					this->setAllGrabberProperties();
+				this->cachedInitialisationSettings = json["cachedInitialisationSettings"];
+				if (!this->grabber->getDevice()) {
+					if (this->cachedInitialisationSettings.isMember("deviceType")) {
+						this->setDevice(this->cachedInitialisationSettings["deviceType"].asString());
+					}
+				}
+				if (this->grabber->getDevice()) {
+					if (this->cachedInitialisationSettings["isOpen"].asBool()) {
+						try {
+							this->openDevice();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+					}
 				}
 			}
 
@@ -143,8 +138,15 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Camera::setDevice(DevicePtr device) {
+			void Camera::setDevice(DevicePtr device, shared_ptr<ofxMachineVision::Device::Base::InitialisationSettings> initialisationSettings) {
 				this->grabber->setDevice(device);
+				if (device) {
+					if (!initialisationSettings) {
+						initialisationSettings = this->grabber->getDefaultInitialisationSettings();
+						this->applyAnyCachedInitialisationSettings(initialisationSettings);
+					}
+					this->initialisationSettings = initialisationSettings;
+				}
 				this->rebuildPanel();
 			}
 
@@ -158,7 +160,7 @@ namespace ofxRulr {
 			void Camera::openDevice() {
 				auto device = this->grabber->getDevice();
 				if (device) {
-					ofxCvGui::Utils::drawProcessingNotice("Opening grabber device...");
+					Utils::ScopedProcess scopedProcess("Opening grabber device");
 					this->grabber->open(this->initialisationSettings);
 					if (!this->grabber->getIsDeviceOpen()) {
 						throw(ofxRulr::Exception("Cannot open device of type [" + device->getTypeName() + "]"));
@@ -185,11 +187,10 @@ namespace ofxRulr {
 						ofSystemAlertDialog("Warning : Camera image size is not yet valid");
 					}
 
-					this->setAllGrabberProperties();
-
 					const auto & deviceSpecification = this->getGrabber()->getDeviceSpecification();
 					this->grabberPanel->setCaption(deviceSpecification.getManufacturer() + " : " + deviceSpecification.getModelName());
 
+					scopedProcess.end();
 				}
 				else {
 					throw(ofxRulr::Exception("Cannot open device until one is set."));
@@ -209,6 +210,16 @@ namespace ofxRulr {
 			//----------
 			shared_ptr<Grabber::Simple> Camera::getGrabber() {
 				return this->grabber;
+			}
+
+			//----------
+			shared_ptr<ofxMachineVision::Frame> Camera::getFrame() {
+				if (!this->grabber) {
+					return nullptr;
+				}
+				else {
+					return this->grabber->getFrame();
+				}
 			}
 
 			//----------
@@ -252,9 +263,9 @@ namespace ofxRulr {
 						ofPushMatrix();
 						ofPushStyle();
 
-						ofTranslate(0, args.drawSize.y / 2.0f);
+						ofTranslate(0, args.drawBounds.height / 2.0f);
 						ofSetColor(100, 255, 100);
-						ofDrawLine(0, 0, args.drawSize.x, 0);
+						ofDrawLine(0, 0, args.drawBounds.width, 0);
 
 						ofTranslate(0, +128);
 						ofScale(1.0f, -1.0f);
@@ -274,7 +285,7 @@ namespace ofxRulr {
 					ofSetLineWidth(1);
 					ofSetColor(255);
 					ofPushMatrix();
-					ofTranslate(args.drawSize.x / 2.0f, args.drawSize.y / 2.0f);
+					ofTranslate(args.drawBounds.getCenter());
 					ofDrawLine(-10, 0, 10, 0);
 					ofDrawLine(0, -10, 0, 10);
 					ofPopMatrix();
@@ -290,25 +301,37 @@ namespace ofxRulr {
 				{
 					auto & factories = ofxMachineVision::Device::FactoryRegister::X();
 					for (auto factory : factories) {
-						auto toggle = this->cameraOpenPanel->addToggle(factory.first,
+						//add section title
+						this->cameraOpenPanel->addTitle(factory.first, Widgets::Title::H3);
+
+						//add buttons for listed devices
+						{
+							try {
+								auto listDevicesDevice = factory.second->makeUntyped();
+								auto foundDevices = listDevicesDevice->listDevices();
+								for (auto foundDevice : foundDevices) {
+									auto button = this->cameraOpenPanel->addButton(foundDevice.manufacturer + "\n" + foundDevice.model,
+										[this, factory, foundDevice] {
+										auto device = factory.second->makeUntyped();
+										this->setDevice(device, foundDevice.initialisationSettings);
+									});
+									button->setHeight(50.0f);
+								}
+							}
+							RULR_CATCH_ALL_TO_ERROR;
+						}
+
+						//add a button for devices not returned by listDevices
+						this->cameraOpenPanel->addButton("Default " + factory.first,
 							[this, factory]() {
-								auto device = this->grabber->getDevice();
-								if (device) {
-									return device->getTypeName() == factory.first;
-								}
-								else {
-									return false;
-								}
-							},
-							[this, factory](bool set) {
-								if (set) {
-									this->grabber->setDevice(factory.second->makeUntyped());
-									this->initialisationSettings = this->grabber->getDefaultInitialisationSettings();
-									this->rebuildOpenCameraPanel();
-								}
-							});
+							auto device = factory.second->makeUntyped();
+							this->setDevice(device);
+						});
+
 					}
 				}
+
+				this->cameraOpenPanel->addSpacer();
 
 				auto device = this->grabber->getDevice();
 				if (device) {
@@ -330,9 +353,36 @@ namespace ofxRulr {
 			}
 
 			//----------
+			template<typename DataType, typename WidgetType>
+			bool addParameterWidget(shared_ptr<ofxCvGui::Panels::Inspector> inspector
+				, shared_ptr<AbstractParameter> parameter
+				, shared_ptr<ofxMachineVision::Grabber::Simple> grabber) {
+				auto typedOfParameter = parameter->getParameterTyped<DataType>();
+				if (typedOfParameter) {
+					auto widget = make_shared<WidgetType>(*typedOfParameter);
+
+					auto units = parameter->getUnits();
+					if (!units.empty()) {
+						widget->setCaption(widget->getCaption() + " [" + units + "]");
+					}
+
+					//we don't use weak pointers here, just presume that we should never arrive here if grabber closed / param disappeared
+					widget->onValueChange += [grabber, parameter](const DataType &) {
+						grabber->syncToDevice(*parameter);
+					};
+
+					inspector->add(widget);
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+
+			//----------
 			void Camera::populateInspector(InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
-				
+
 				inspector->add(new Widgets::Toggle(this->showSpecification));
 				inspector->add(new Widgets::Toggle(this->showFocusLine));
 
@@ -349,8 +399,8 @@ namespace ofxRulr {
 				inspector->add(new Widgets::LiveValueHistory("Fps [Hz]", [this]() {
 					return this->grabber->getFps();
 				}, true));
-				inspector->add(new Widgets::LiveValueHistory("Timestamp [us]", [this]() {
-					return this->grabber->getLastTimestamp();
+				inspector->add(new Widgets::LiveValueHistory("Timestamp [s]", [this]() {
+					return (float)this->grabber->getLastTimestamp().count() / 1e9;
 				}, false));
 				inspector->add(new Widgets::LiveValueHistory("Frame index", [this]() {
 					return this->grabber->getLastFrameIndex();
@@ -359,21 +409,20 @@ namespace ofxRulr {
 				inspector->add(new Widgets::Title("Properties", Widgets::Title::H2));
 				auto grabber = this->getGrabber();
 				if (grabber) {
-					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Exposure)) {
-						auto exposureSlider = new Widgets::Slider(this->exposure);
-						exposureSlider->addIntValidator();
-						inspector->add(exposureSlider);
+					//Add device parameters
+					{
+						const auto & deviceParameters = grabber->getDeviceParameters();
+						for (const auto & parameter : deviceParameters) {
+							//try and add the parameter to the inspector
+							if (addParameterWidget<float, Widgets::Slider>(inspector, parameter, grabber))	{}
+							else if (addParameterWidget<int, Widgets::EditableValue<int>>(inspector, parameter, grabber)) {}
+							else if (addParameterWidget<bool, Widgets::Toggle>(inspector, parameter, grabber)) {}
+							else if (addParameterWidget<string, Widgets::EditableValue<string>>(inspector, parameter, grabber)) {}
+						}
 					}
-					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Gain)) {
-						inspector->add(new Widgets::Slider(this->gain));
-					}
-					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Focus)) {
-						inspector->add(new Widgets::Slider(this->focus));
-					}
-					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_Sharpness)) {
-						inspector->add(new Widgets::Slider(this->sharpness));
-					}
-					if (grabber->getDeviceSpecification().supports(ofxMachineVision::Feature::Feature_OneShot)) {
+
+
+					if (grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::OneShot)) {
 						inspector->add(MAKE(Widgets::Button, "Take Photo", [this]() {
 							Utils::ScopedProcess scopedProcess("Take Photo");
 							this->getGrabber()->singleShot();
@@ -384,41 +433,23 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Camera::setAllGrabberProperties() {
-				auto deviceSpecification = this->grabber->getDeviceSpecification();
+			void Camera::buildCachedInitialisationSettings() {
+				this->cachedInitialisationSettings.clear();
 
-				if (deviceSpecification.supports(Feature::Feature_Exposure)) {
-					this->grabber->setExposure(this->exposure);
-				}
-				if (deviceSpecification.supports(Feature::Feature_Gain)) {
-					this->grabber->setGain(this->gain);
-				}
-				if (deviceSpecification.supports(Feature::Feature_Focus)) {
-					this->grabber->setFocus(this->focus);
-				}
-				if (deviceSpecification.supports(Feature::Feature_Sharpness)) {
-					this->grabber->setSharpness(this->sharpness);
+				if (this->initialisationSettings) {
+					this->cachedInitialisationSettings["deviceType"] = this->grabber->getDeviceTypeName();
+					this->cachedInitialisationSettings["isOpen"] = this->grabber->getIsDeviceOpen();
+					Utils::Serializable::serialize(this->cachedInitialisationSettings["content"], *this->initialisationSettings);
 				}
 			}
 
 			//----------
-			void Camera::exposureCallback(float & value) {
-				this->grabber->setExposure(value);
-			}
-
-			//----------
-			void Camera::gainCallback(float & value) {
-				this->grabber->setGain(value);
-			}
-
-			//----------
-			void Camera::focusCallback(float & value) {
-				this->grabber->setFocus(value);
-			}
-
-			//----------
-			void Camera::sharpnessCallback(float & value) {
-				this->grabber->setSharpness(value);
+			void Camera::applyAnyCachedInitialisationSettings(shared_ptr<ofxMachineVision::Device::Base::InitialisationSettings> initialisationSettings) {
+				auto cachedDeviceType = this->cachedInitialisationSettings["deviceType"].asString();
+				if (initialisationSettings
+					&& this->grabber->getDeviceTypeName() == cachedDeviceType) {
+					Utils::Serializable::deserialize(this->cachedInitialisationSettings["content"], *initialisationSettings);
+				}
 			}
 		}
 	}

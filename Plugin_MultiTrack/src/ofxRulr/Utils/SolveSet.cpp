@@ -17,49 +17,66 @@ namespace ofxRulr {
 		void SolveSet::clear() {
 			this->completed = false;
 			this->result.success = false;
+
 			this->dataSet.clear();
-			this->fitter.reset();
+			this->inPoints.clear();
+			this->outPoints.clear();
 		}
 
 		//----------
 		void SolveSet::setup(const vector<ofVec3f> & srcPoints, const vector<ofVec3f> & dstPoints) {
 			clear();
 
+			if (srcPoints.empty()) {
+				throw(ofxRulr::Exception("Data set is empty!"));
+			}
 			if (srcPoints.size() != dstPoints.size()) {
-				ofLogError("SolveSet") << "Source and destination sets mismatch!";
-				return;
+				throw(ofxRulr::Exception("Source and destination sets mismatch!"));
 			}
 
-			//Copy the data.
-			for (size_t i = 0; i < srcPoints.size(); ++i) {
-				ofxNonLinearFit::Models::RigidBody::DataPoint dataPoint;
-				dataPoint.x = srcPoints[i];
-				dataPoint.xdash = dstPoints[i];
-				this->dataSet.push_back(dataPoint);
+			const auto dataSize = srcPoints.size();
+
+			//Copy the data for NL optimizer.
+			{
+				this->dataSet.resize(dataSize);
+				for (size_t i = 0; i < dataSize; ++i) {
+					dataSet[i].x = srcPoints[i];
+					dataSet[i].xdash = dstPoints[i];
+				}
+			}
+
+			//Copy the data for CV.
+			{
+				inPoints.resize(dataSize);
+				outPoints.resize(dataSize);
+				for (size_t i = 0; i < dataSize; ++i) {
+					inPoints[i] = cv::Point3f(srcPoints[i].x, srcPoints[i].y, srcPoints[i].z);
+					outPoints[i] = cv::Point3f(dstPoints[i].x, dstPoints[i].y, dstPoints[i].z);
+				}
 			}
 		}
 
 		//----------
-		void SolveSet::trySolve() {
+		void SolveSet::solveNL() {
 			if (this->dataSet.empty()) {
 				throw(ofxRulr::Exception("Data set is empty!"));
 			}
 
-			this->fitter = make_shared<ofxNonLinearFit::Fit<ofxNonLinearFit::Models::RigidBody>>();
-
 			this->model.initialiseParameters();
+
+			auto fitter = make_shared<ofxNonLinearFit::Fit<ofxNonLinearFit::Models::RigidBody>>();
 
 			double residual;
 			bool success;
 			auto startTime = chrono::system_clock::now();
-			if (this->parameters.trimOutliers == 0.0f) {
+			if (this->parameters.nlSettings.trimOutliers == 0.0f) {
 				//Use full data set.
 				success = fitter->optimise(this->model, &this->dataSet, &residual);
 			}
 			else {
 				//Use subset with top results. This will only work if the full set is calculated previously.
-				auto firstIt = this->dataSet.begin();
-				auto lastIt = firstIt + (int)(this->dataSet.size() * (1.0f - this->parameters.trimOutliers));
+				auto firstIt = dataSet.begin();
+				auto lastIt = firstIt + (int)(this->dataSet.size() * (1.0f - this->parameters.nlSettings.trimOutliers));
 				ofxNonLinearFit::Models::RigidBody::DataSet subSet(firstIt, lastIt);
 				success = fitter->optimise(this->model, &subSet, &residual);
 			}
@@ -69,12 +86,36 @@ namespace ofxRulr {
 				return (this->model.getResidual(a) < this->model.getResidual(b));
 			});
 
-			this->fitter.reset();
-
 			this->result.success = success;
 			this->result.totalTime = endTime - startTime;
 			this->result.residual = residual;
 			this->result.transform = this->model.getCachedTransform();
+
+			this->completed = true;
+		}
+
+		//----------
+		void SolveSet::solveCv() {
+			if (this->inPoints.empty()) {
+				throw(ofxRulr::Exception("Data set is empty!"));
+			}
+
+			//Estimate the transform.
+			vector<uchar> inliers;
+			cv::Mat transform(3, 4, CV_64F);
+
+			auto startTime = chrono::system_clock::now();
+			int ret = cv::estimateAffine3D(this->inPoints, this->outPoints, transform, inliers, this->parameters.cvSettings.ransacThreshold);
+			auto endTime = chrono::system_clock::now();
+
+			this->result.success = ret;
+			this->result.totalTime = endTime - startTime;
+			this->result.residual = 1.0f - (inliers.size() / (float)this->inPoints.size());
+			auto m = transform.ptr<double>(0);
+			this->result.transform = ofMatrix4x4(m[0], m[4], m[8],  0.0f,
+												 m[1], m[5], m[9],  0.0f,
+												 m[2], m[6], m[10], 0.0f,
+												 m[3], m[7], m[11], 1.0f);
 
 			this->completed = true;
 		}
@@ -93,8 +134,8 @@ namespace ofxRulr {
 				int index = 0;
 				for (const auto & dataPoint : this->dataSet) {
 					auto & jsonDataPoint = jsonDataSet[index++];
-					jsonDataPoint["x"] << dataPoint.x;
-					jsonDataPoint["xdash"] << dataPoint.xdash;
+					jsonDataPoint["src"] << dataPoint.x;
+					jsonDataPoint["dst"] << dataPoint.xdash;
 				}
 			}
 
@@ -112,12 +153,19 @@ namespace ofxRulr {
 			}
 			{
 				this->dataSet.clear();
+				this->inPoints.clear();
+				this->outPoints.clear();
 				const auto & jsonDataSet = json["dataSet"];
 				for (const auto & jsonDataPoint : jsonDataSet) {
 					ofxNonLinearFit::Models::RigidBody::DataPoint dataPoint;
 					jsonDataPoint["x"] >> dataPoint.x;
 					jsonDataPoint["xdash"] >> dataPoint.xdash;
 					this->dataSet.push_back(dataPoint);
+
+					cv::Point3f inPoint = cv::Point3f(dataPoint.x.x, dataPoint.x.y, dataPoint.x.z);
+					cv::Point3f outPoint = cv::Point3f(dataPoint.xdash.x, dataPoint.xdash.y, dataPoint.xdash.z);
+					this->inPoints.push_back(inPoint);
+					this->outPoints.push_back(outPoint);
 				}
 			}
 

@@ -1,5 +1,6 @@
 #include "pch_RulrCore.h"
 #include "Patch.h"
+#include "ofxRulr/Utils/ScopedProcess.h"
 
 #include "ofxCvGui/Widgets/Button.h"
 
@@ -46,6 +47,11 @@ namespace ofxRulr {
 					this->drawGridLines();
 				}, this, -1);
 
+				this->onUpdate += [this](ofxCvGui::UpdateArguments &) {
+					if (this->dirty) {
+						this->rebuild();
+					}
+				};
 				this->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
 					if (args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
 						if (args.key == OF_KEY_BACKSPACE || args.key == OF_KEY_DEL) {
@@ -91,7 +97,12 @@ namespace ofxRulr {
 			}
 			
 			//----------
-			void Patch::View::resync() {
+			void Patch::View::markDirty() {
+				this->dirty = true;
+			}
+
+			//----------
+			void Patch::View::rebuild() {
 				this->canvasElements->clear();
 				const auto & nodeHosts = this->patchInstance.getNodeHosts();
 				for (const auto & it : nodeHosts) {
@@ -177,6 +188,11 @@ namespace ofxRulr {
 			}
 
 			//----------
+			Patch::~Patch() {
+
+			}
+
+			//----------
 			string Patch::getTypeName() const {
 				return "Patch";
 			}
@@ -241,7 +257,6 @@ namespace ofxRulr {
 				ofVec2f canvasScrollPosiition;
 				canvasJson["Scroll"] >> canvasScrollPosiition;
 				this->view->setScrollPosition(canvasScrollPosiition);
-
 			}
 
 			//----------
@@ -250,8 +265,14 @@ namespace ofxRulr {
 				map<int, int> reassignIDs;
 
 				const auto & nodesJson = json["Nodes"];
+
+				Utils::ScopedProcess scopedProcess("Loading nodes", false, nodesJson.size());
+
 				//Deserialise nodes
 				for (const auto & nodeJson : nodesJson) {
+					auto name = nodeJson["Name"].asString();
+					Utils::ScopedProcess scopedProcessNode(name, false);
+
 					auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
 					if (useNewIDs) {
 						//use a new ID instead, store a reference to what we changed
@@ -269,7 +290,10 @@ namespace ofxRulr {
 						}
 						this->addNodeHost(nodeHost, ID);
 					}
-					RULR_CATCH_ALL_TO_ERROR
+					RULR_CATCH_ALL_TO({
+						ofLogError() << e.what() << endl;
+						cout << nodeJson;
+					})
 				}
 
 				//Deserialise links into the nodes
@@ -310,7 +334,8 @@ namespace ofxRulr {
 				}
 
 				this->rebuildLinkHosts();
-				this->view->resync();
+				this->view->markDirty();
+				scopedProcess.end();
 			}
 
 			//----------
@@ -402,12 +427,12 @@ namespace ofxRulr {
 					this->callbackReleaseMakeConnection(args);
 				};
 				nodeHost->onDropInputConnection += [this](const shared_ptr<AbstractPin> &) {
-					this->view->resync();
+					this->view->markDirty();
 				};
 				nodeHost->getNodeInstance()->onAnyInputConnectionChanged += [this]() {
 					this->rebuildLinkHosts();
 				};
-				this->view->resync();
+				this->view->markDirty();
 			}
 			
 			//----------
@@ -421,11 +446,15 @@ namespace ofxRulr {
 				for (auto nodeHost : this->nodeHosts) {
 					if (nodeHost.second == selection) {
 						this->nodeHosts.erase(nodeHost.first);
+
+						//this shouldn't be entirely necessary since the node should become outdated and disappear
+						//but this is much safer
+						ofxCvGui::InspectController::X().clear();
 						break;
 					}
 				}
 				this->rebuildLinkHosts();
-				this->view->resync();
+				this->view->markDirty();
 			}
 
 			//----------
@@ -510,6 +539,12 @@ namespace ofxRulr {
 			void Patch::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
+				inspector->addButton("Clear patch", [this]() {
+					this->nodeHosts.clear();
+					this->rebuildLinkHosts();
+					this->view->markDirty();
+				});
+				
 				inspector->add(new Widgets::Button("Duplicate patch down", [this]() {
 					Json::Value json;
 					this->serialize(json);
@@ -552,7 +587,7 @@ namespace ofxRulr {
 				if (args.button == 2) {
 					//right click, clear the link
 					this->newLink.reset();
-					this->view->resync();
+					this->view->markDirty();
 				}
 				else if (args.button == 0) {
 					//left click, try and make the link
@@ -560,7 +595,7 @@ namespace ofxRulr {
 
 					//clear the temporary link regardless of success
 					this->newLink.reset();
-					this->view->resync();
+					this->view->markDirty();
 				}
 			}
 		}

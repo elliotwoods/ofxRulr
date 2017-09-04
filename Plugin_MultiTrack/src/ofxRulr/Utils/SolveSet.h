@@ -20,7 +20,9 @@ namespace ofxRulr {
 
 			void clear();
 			void setup(const vector<ofVec3f> & srcPoints, const vector<ofVec3f> & dstPoints);
-			void trySolve();
+			
+			void solveNL();
+			void solveCv();
 
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);
@@ -29,15 +31,23 @@ namespace ofxRulr {
 			const Result & getResult() const;
 
 			struct : ofParameterGroup {
-				ofParameter<float> trimOutliers{ "Trim Outliers [%]", 0, 0.0f, 1.0f };
-
-				PARAM_DECLARE("Options", trimOutliers);
+				struct : ofParameterGroup {
+					ofParameter<float> trimOutliers{ "Trim Outliers [%]", 0, 0.0f, 1.0f };
+					PARAM_DECLARE("NL Optimize", trimOutliers);
+				} nlSettings;
+				struct : ofParameterGroup {
+					ofParameter<float> ransacThreshold{ "RANSAC Threshold", 3.0f, 0.0f, 10.0f };
+					PARAM_DECLARE("CV Estimate", ransacThreshold);
+				} cvSettings;
+				PARAM_DECLARE("Settings", nlSettings, cvSettings);
 			} parameters;
 
 		protected:
 			ofxNonLinearFit::Models::RigidBody::DataSet dataSet;
 			ofxNonLinearFit::Models::RigidBody model;
-			shared_ptr<ofxNonLinearFit::Fit<ofxNonLinearFit::Models::RigidBody>> fitter;
+			
+			vector<cv::Point3f> inPoints;
+			vector<cv::Point3f> outPoints;
 
 			bool completed;
 			Result result;

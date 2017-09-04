@@ -12,6 +12,11 @@ namespace ofxRulr {
 			}
 
 			//----------
+			Subscriber::~Subscriber() {
+				
+			}
+
+			//----------
 			string Subscriber::getTypeName() const {
 				return "MultiTrack::Subscriber";
 			}
@@ -23,9 +28,21 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
-				this->previewPanel = ofxCvGui::Panels::makeTexture(this->previewTexture);
+				this->previewPanel = ofxCvGui::Panels::makeTexture(this->depthTexture);
 				this->previewPanel->setInputRange(0.0f, 8000.0f / 0xffff);
-
+				
+				//apply color to the preview panel
+				this->previewPanel->onDrawImage.addListener([this](ofxCvGui::DrawImageArguments &) {
+					if (this->parameters.draw.gpuPointCloud.style.applyIndexColor) {
+						ofPushStyle();
+						ofSetColor(this->getSubscriberColor());
+					}
+				}, this, -1);
+				this->previewPanel->onDrawImage.addListener([this](ofxCvGui::DrawImageArguments &) {
+					if (this->parameters.draw.gpuPointCloud.style.applyIndexColor) {
+						ofPopStyle();
+					}
+				}, this, +1);
 				this->uiPanel = ofxCvGui::Panels::makeWidgets();
 				this->uiPanel->addLiveValue<float>("Framerate", [this]() {
 					if (this->subscriber) {
@@ -33,6 +50,20 @@ namespace ofxRulr {
 					}
 					else {
 						return 0.0f;
+					}
+				});
+				this->uiPanel->addToggle(this->parameters.draw.gpuPointCloud.style.applyIndexColor);
+				this->uiPanel->addIndicator("Depth to World loaded", [this]() {
+					if (this->depthToWorldLUT.isAllocated()) {
+						if (this->depthToWorldLUT.getWidth() == 512 && this->depthToWorldLUT.getHeight() == 424) {
+							return ofxCvGui::Widgets::Indicator::Status::Good;
+						}
+						else {
+							return ofxCvGui::Widgets::Indicator::Status::Warning;
+						}
+					}
+					else {
+						return ofxCvGui::Widgets::Indicator::Status::Clear;
 					}
 				});
 				this->uiPanel->addIndicator("New frame arrived", [this]() {
@@ -69,65 +100,32 @@ namespace ofxRulr {
 					ofPopStyle();
 				}, this, -200);
 
-				this->controlSocket = make_unique<Utils::ControlSocket>();
-				this->controlSocket->init("127.0.0.1", ofxMultiTrack::NodeControl);
-
-				this->controlSocket->addHandler("getDepthToWorldTable::response", [this](const Json::Value & arguments) {
-					if (!arguments["error"].empty()) {
-						try {
-							throw(ofxRulr::Exception(arguments["error"].toStyledString()));
-						}
-						RULR_CATCH_ALL_TO_ERROR;
-					}
-					else if (!arguments["image"].empty()) {
-						//try {
-						//	string decodedMessage;
-
-						//	{
-						//		const auto encodedString = arguments["image"].asString();
-						//		istringstream istr(encodedString);
-						//		ostringstream ostr;
-						//		Poco::Base64Decoder b64in(istr);
-						//		copy(std::istreambuf_iterator<char>(b64in),
-						//			std::istreambuf_iterator<char>(),
-						//			std::ostreambuf_iterator<char>(ostr));
-
-						//		decodedMessage = ostr.str();;
-						//	}
-
-						//	if (decodedMessage.empty()) {
-						//		throw(ofxRulr::Exception("Can't decode Base64 message"));
-						//	}
-
-						//	ofxSquashBuddies::Message message;
-						//	message.pushData(decodedMessage.data(), decodedMessage.size());
-
-						//	if (message.empty()) {
-						//		throw(ofxRulr::Exception("Initialise ofxSquashBuddies::Message failed"));
-						//	}
-						//	if (!message.getData(this->depthToCameraLUT)) {
-						//		throw(ofxRulr::Exception("Decode ofxSquashBuddies::Message to image failed"));
-						//	}
-						//}
-						//RULR_CATCH_ALL_TO_ERROR;
-					}
-				});
-
 				static auto inc = 11;
 				this->parameters.connection.publisherAddress = "10.0.0." + ofToString(inc++);
 
 				this->parameters.calibration.depthToWorldTableFile.addListener(this, &Subscriber::depthToWorldTableFileCallback);
 
-				this->subscriber = make_shared<ofxMultiTrack::Subscriber>();
+				static int colorCounter = 0;
+				this->debugColor.setHsb(ofRandom(0.05f) + (0.15f * colorCounter++), 1.0f, 1.0f);
 			}
 
 			//----------
 			void Subscriber::update() {
-				if (this->controlSocket) {
-					this->controlSocket->update();
+				//connect/disconnect
+				if (!this->subscriber && this->parameters.connection.connect) {
+					this->subscriber = make_shared<ofxMultiTrack::Subscriber>();
+					this->subscriber->init(this->parameters.connection.publisherAddress, this->parameters.connection.publisherPort);
+				}
+				else if (this->subscriber && !this->parameters.connection.connect) {
+					this->subscriber.reset();
+				}
 
-					if (!this->depthToWorldLUT.isAllocated()) {
-						this->controlSocket->sendMessage("getDepthToWorldTable");
+				//change connection properties
+				if (this->subscriber) {
+					if (this->subscriber->getSubscriber().getAddress().compare(this->parameters.connection.publisherAddress) != 0 ||
+						this->subscriber->getSubscriber().getPort() != this->parameters.connection.publisherPort) {
+
+						this->subscriber->init(this->parameters.connection.publisherAddress, this->parameters.connection.publisherPort);
 					}
 				}
 
@@ -141,11 +139,27 @@ namespace ofxRulr {
 					this->subscriber->update();
 
 					if (this->subscriber->getSubscriber().isFrameNew()) {
-						auto & pixels = this->subscriber->getFrame().getDepth();
-						if (!this->previewTexture.isAllocated()) {
-							this->previewTexture.allocate(pixels);
+						const auto & depthPixels = this->subscriber->getFrame().getDepth();
+						const auto & irPixels = this->subscriber->getFrame().getInfrared();
+
+						if (depthPixels.isAllocated()) {
+							this->depthTexture.loadData(depthPixels);
 						}
-						this->previewTexture.loadData(pixels);
+						if (irPixels.isAllocated()) {
+							this->irTexture.loadData(irPixels);
+						}
+
+						//Mesh update.
+						if (this->parameters.draw.gpuPointCloud.enabled) {
+							auto & meshDimensions = this->meshProvider.getDimensions();
+							if (meshDimensions.x != depthPixels.getWidth() || meshDimensions.y != depthPixels.getHeight()) {
+								this->meshProvider.setDimensions(ofVec2f(depthPixels.getWidth(), depthPixels.getHeight()));
+							}
+
+							if (this->parameters.draw.gpuPointCloud.downsampleExp != this->meshProvider.getDownsampleExp()) {
+								this->meshProvider.setDownsampleExp(this->parameters.draw.gpuPointCloud.downsampleExp);
+							}
+						}
 					}
 				}
 			}
@@ -157,13 +171,30 @@ namespace ofxRulr {
 
 			//----------
 			void Subscriber::drawObject() {
-				auto & frame = this->subscriber->getFrame();
-
 				if (this->parameters.draw.bodies) {
-					const auto & bodies = frame.getBodies();
-					for (const auto & body : bodies) {
-						body.drawWorld(); // actually this is in kinect camera space
+					ofPushStyle();
+					{
+						ofSetColor(this->debugColor);
+
+						if (this->subscriber) {
+							const auto & bodies = this->subscriber->getFrame().getBodies();
+							for (const auto & body : bodies) {
+								body.drawWorld(); // actually this is in kinect camera space
+							}
+						}
 					}
+					ofPopStyle();
+				}
+
+				if (this->parameters.draw.gpuPointCloud.enabled) {
+					PointCloudStyle style;
+					style.applyIR = this->parameters.draw.gpuPointCloud.style.applyIR;
+					style.applyIndexColor = this->parameters.draw.gpuPointCloud.style.applyIndexColor;
+					this->drawPointCloudGpu(style);
+				}
+
+				if (this->parameters.draw.cpuPointCloud.enabled) {
+					this->drawPointCloudCpu();
 				}
 			}
 
@@ -196,16 +227,6 @@ namespace ofxRulr {
 						else {
 							return 0.0f;
 						}
-					});
-				}
-
-				args.inspector->addTitle("Control Socket");
-				{
-					args.inspector->addIndicator("Active", [this]() {
-						return (Widgets::Indicator::Status) this->controlSocket->isSocketActive();
-					});
-					args.inspector->addLiveValueHistory("Heartbeat age [ms]", [this]() {
-						return chrono::duration_cast<chrono::milliseconds>(this->controlSocket->getTimeSinceLastHeartbeatReceived()).count();
 					});
 				}
 
@@ -256,8 +277,88 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const ofTexture & Subscriber::getPreviewTexture() const {
-				return this->previewTexture;
+			const ofTexture & Subscriber::getDepthTexture() const {
+				return this->depthTexture;
+			}
+
+			//----------
+			const ofTexture & Subscriber::getIRTexture() const {
+				return this->irTexture;
+			}
+
+			//----------
+			const ofFloatColor & Subscriber::getSubscriberColor() const {
+				return this->debugColor;
+			}
+
+			//----------
+			void Subscriber::drawPointCloudCpu() {
+				if (this->depthToWorldLUT.isAllocated() && this->subscriber) {
+					const auto & frame = this->subscriber->getFrame();
+
+					vector<ofVec3f> vertices;
+					vector<ofFloatColor> colors;
+
+					auto depth = frame.getDepth().getData();
+
+					auto useIR = this->parameters.draw.cpuPointCloud.applyIRTexture.get() && frame.getInfrared().isAllocated();
+					auto IR = frame.getInfrared().getData();
+					auto depthToXY = this->depthToWorldLUT.getData();
+
+					auto colorAmplitude = this->parameters.draw.IRAmplitude;
+
+					for (int i = 0; i < frame.getDepth().size(); i++) {
+						vertices.emplace_back(ofVec3f{
+							(float)depth[i] * depthToXY[i * 2 + 0] / 1000.0f,
+							(float)depth[i] * depthToXY[i * 2 + 1] / 1000.0f,
+							(float)depth[i] / 1000.0f
+						});
+						if (useIR) {
+							colors.emplace_back(ofFloatColor{
+								(float)IR[i] / (float)0xffff * colorAmplitude
+							});
+						}
+					}
+					ofVbo vbo;
+					vbo.setVertexData(vertices.data(), vertices.size(), GL_STATIC_DRAW);
+					if (useIR) {
+						vbo.setColorData(colors.data(), colors.size(), GL_STATIC_DRAW);
+					}
+					vbo.draw(GL_POINTS, 0, vertices.size());
+				}
+			}
+
+			//----------
+			void Subscriber::drawPointCloudGpu(PointCloudStyle pointCloudStyle) {
+				auto & worldShader = this->getWorldShader();
+				worldShader.begin();
+				{
+					worldShader.setUniformTexture("uWorldTable", this->depthToWorldTexture, 1);
+					worldShader.setUniform2f("uDimensions", ofVec2f(this->depthTexture.getWidth(), this->depthTexture.getHeight()));
+					worldShader.setUniform1f("uMaxDisparity", this->parameters.draw.gpuPointCloud.maxDisparity);
+					worldShader.setUniformTexture("uDepthTexture", this->depthTexture, 2);
+
+					ofPushStyle();
+					{
+						if (pointCloudStyle.applyIndexColor) {
+							ofSetColor(this->getSubscriberColor());
+						}
+
+						if (pointCloudStyle.applyIR) {
+							worldShader.setUniformTexture("uColorTexture", this->irTexture, 3);
+							worldShader.setUniform1f("uColorScale", this->parameters.draw.IRAmplitude);
+							worldShader.setUniform1i("uUseColorTexture", 1);
+						}
+						else {
+							worldShader.setUniform1i("uUseColorTexture", 0);
+							worldShader.setUniform1f("uColorScale", 1.0f);
+						}
+
+						this->meshProvider.getMesh().draw(OF_MESH_FILL);
+					}
+					ofPopStyle();
+				}
+				worldShader.end();
 			}
 
 			//----------
@@ -266,25 +367,38 @@ namespace ofxRulr {
 					try {
 						this->loadDepthToWorldTableFile();
 					}
-					RULR_CATCH_ALL_TO_ALERT;
+					RULR_CATCH_ALL_TO_ERROR;
 				}
 			}
 
 			//----------
 			void Subscriber::loadDepthToWorldTableFile() {
-				const auto & filename = this->parameters.calibration.depthToWorldTableFile.get();
-				if (!ofFile::doesFileExist(filename)) {
-					throw(ofxRulr::Exception("File not found : " + filename));
-				}
+				//load the file
+				{
+					const auto & filename = this->parameters.calibration.depthToWorldTableFile.get();
+					if (!ofFile::doesFileExist(filename)) {
+						throw(ofxRulr::Exception("File not found : " + filename));
+					}
 
-				auto loadBuffer = ofBufferFromFile(filename);
-				if (!loadBuffer.size()) {
-					throw(ofxRulr::Exception("File empty"));
-				}
+					auto loadBuffer = ofBufferFromFile(filename);
+					if (!loadBuffer.size()) {
+						throw(ofxRulr::Exception("File empty"));
+					}
 
-				ofxSquashBuddies::Message message;
-				message.pushData(loadBuffer.getData(), loadBuffer.size());
-				message.getData(this->depthToWorldLUT);
+					ofxSquashBuddies::Message message;
+					message.pushData(loadBuffer.getData(), loadBuffer.size());
+					message.getData(this->depthToWorldLUT);
+				}
+				
+				//load the texture and setup shader
+				{
+					this->depthToWorldTexture.loadData(this->depthToWorldLUT);
+				}
+			}
+
+			//----------
+			ofShader & Subscriber::getWorldShader() {
+				return ofxAssets::shader("ofxRulr::Nodes::MultiTrack::depthToWorld");
 			}
 		}
 	}

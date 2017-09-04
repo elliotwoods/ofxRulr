@@ -131,16 +131,16 @@ struct UdpSocket {
   UdpSocket() : handle(-1) { 
 #ifdef WIN32
     WSADATA wsa_data;
-    if (WSAStartup(MAKEWORD(2,2), &wsa_data) != 0) {
-      setErr("winsock failed to initialise");
-    }
+    //if (WSAStartup(MAKEWORD(2,2), &wsa_data) != 0) {
+    //  setErr("winsock failed to initialise");
+    //}
 #endif
   }
 
   ~UdpSocket() { 
     close(); 
 #ifdef WIN32
-    WSACleanup();
+    //WSACleanup();
 #endif
   }
 

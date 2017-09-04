@@ -305,14 +305,12 @@ namespace ofxRulr {
 						ofPushMatrix();
 						{
 							ofMultMatrix(depthCameraTransform);
-							glPushAttrib(GL_POINT_BIT);
+							
+							Utils::Graphics::pushPointSize(10.0f);
 							{
-								glEnable(GL_POINT_SMOOTH);
-								glPointSize(10.0f);
 								preview.drawVertices();
-								
 							}
-							glPopAttrib();
+							Utils::Graphics::popPointSize();
 							
 						}
 						ofPopMatrix();

@@ -41,6 +41,7 @@ namespace ofxRulr {
 			auto & camera = this->view->getCamera();
 			camera.setNearClip(0.01f);
 			camera.setFarClip(10000.0f);
+			this->camera = &camera;
 
 			auto wasArbTex = ofGetUsingArbTex();
 			ofDisableArbTex();
@@ -114,28 +115,42 @@ namespace ofxRulr {
 			
 #ifdef OFXCVGUI_USE_OFXGRABCAM
 			inspector->add(new Widgets::Title("Cursor", Widgets::Title::Level::H3));
-			inspector->add(new Widgets::Toggle(this->parameters.showCursor));
+			{
+				inspector->add(new Widgets::Toggle(this->parameters.showCursor));
 
-			auto formatMeters = [](float distance) {
-				stringstream formatted;
+				auto formatMeters = [](float distance) {
+					stringstream formatted;
 
-				formatted << floor(distance) << "m ";
-				distance = fmod(distance * 100.0f, 100.0f);
-				formatted << floor(distance) << "cm ";
-				distance = fmod(distance * 10.0f, 10.0f);
-				formatted << floor(distance) << "mm";
-				return formatted.str();
-			};
-			inspector->add(new Widgets::LiveValue<string>("Position X", [this, formatMeters]() {
-				return formatMeters(this->view->getCamera().getCursorWorld().x);
-			}));
-			inspector->add(new Widgets::LiveValue<string>("Position Y", [this, formatMeters]() {
-				return formatMeters(this->view->getCamera().getCursorWorld().y);
-			}));
-			inspector->add(new Widgets::LiveValue<string>("Position Z", [this, formatMeters]() {
-				return formatMeters(this->view->getCamera().getCursorWorld().z);
-			}));
+					formatted << floor(distance) << "m ";
+					distance = fmod(distance * 100.0f, 100.0f);
+					formatted << floor(distance) << "cm ";
+					distance = fmod(distance * 10.0f, 10.0f);
+					formatted << floor(distance) << "mm";
+					return formatted.str();
+				};
+				inspector->add(new Widgets::LiveValue<string>("Position X", [this, formatMeters]() {
+					return formatMeters(this->view->getCamera().getCursorWorld().x);
+				}));
+				inspector->add(new Widgets::LiveValue<string>("Position Y", [this, formatMeters]() {
+					return formatMeters(this->view->getCamera().getCursorWorld().y);
+				}));
+				inspector->add(new Widgets::LiveValue<string>("Position Z", [this, formatMeters]() {
+					return formatMeters(this->view->getCamera().getCursorWorld().z);
+				}));
+			}
 #endif
+			if (this->camera) {
+				inspector->addEditableValue<ofVec3f>("Camera position", [this]() {
+					return this->camera->getPosition();
+				}, [this](string & positionString) {
+					if (!positionString.empty()) {
+						stringstream stream(positionString);
+						ofVec3f newPosition;
+						stream >> newPosition;
+						this->camera->setPosition(newPosition);
+					}
+				});
+			}
 
 			inspector->addParameterGroup(this->parameters.grid);
 		}

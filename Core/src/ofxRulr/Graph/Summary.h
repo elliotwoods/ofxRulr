@@ -8,7 +8,7 @@
 
 namespace ofxRulr {
 	namespace Graph {
-		class Summary : public Nodes::Base {
+		class RULR_EXPORTS Summary : public Nodes::Base {
 		public:
 			Summary();
 			string getTypeName() const override;
@@ -37,7 +37,7 @@ namespace ofxRulr {
 					ofParameter<bool> enabled{ "Enabled", true };
 					ofParameter<ofVec3f> roomMinimum{ "Room minimum", ofVec3f(-5, -4, 0) };
 					ofParameter<ofVec3f> roomMaximum{ "Room maximum", ofVec3f(+5, 0, 6) };
-					ofParameter<bool> dark{ "Dark", false };
+					ofParameter<bool> dark{ "Dark", true };
 					PARAM_DECLARE("Grid", enabled, roomMinimum, roomMaximum, dark);
 				} grid;
 				
@@ -46,6 +46,7 @@ namespace ofxRulr {
 
 			const Utils::Set<Nodes::Base> * world;
 
+			ofCamera * camera = nullptr;
 			ofTexture * grid;
 			ofLight light;
 		};

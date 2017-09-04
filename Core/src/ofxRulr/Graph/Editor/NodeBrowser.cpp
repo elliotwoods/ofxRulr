@@ -10,7 +10,7 @@ namespace ofxRulr {
 				this->setBounds(ofRectangle(0, 0, 300, 48 + 20));
 				this->setCachedView(true);
 				this->factory = factory;
-				this->icon = factory->makeUntyped()->getIcon();
+				this->icon = & factory->makeUntyped()->getIcon();
 
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					//background to hide ofFbo bad text
@@ -31,7 +31,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const ofImage & NodeBrowser::ListItem::getIcon() {
+			const ofBaseDraws & NodeBrowser::ListItem::getIcon() {
 				return * this->icon;
 			}
 

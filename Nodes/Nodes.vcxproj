@@ -65,11 +65,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -90,14 +89,18 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpModelLoader.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpTexture.h" />
+    <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpUtils.h" />
     <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_common.hpp" />
     <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_exponential.hpp" />
     <ClInclude Include="..\..\ofxGLM\libs\glm\core\func_geometric.hpp" />
@@ -248,6 +251,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Sharpy.h" />
     <ClInclude Include="src\ofxRulr\Nodes\DMX\Transmit.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Base.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\AbstractBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Board.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Model.h" />
@@ -255,6 +259,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Item\RigidBody.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\View.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Base.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h" />
@@ -262,6 +267,10 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Triangulate.h" />
@@ -270,9 +279,29 @@
     <ClInclude Include="src\ofxRulr\Nodes\Template.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\ARCube.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\Focus.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Test\Latency.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Camera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Startup.h" />
+    <ClInclude Include="src\ofxRulr\Utils\VideoOutputListener.h" />
     <ClInclude Include="src\pch_RulrNodes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpModelLoader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxAssimpModelLoader\src\ofxAssimpTexture.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -321,12 +350,14 @@
     <ClCompile Include="src\ofxRulr\Nodes\DMX\MovingHead.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Sharpy.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\DMX\Transmit.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\AbstractBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Board.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Model.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Projector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\RigidBody.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\View.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp" />
@@ -334,6 +365,10 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp" />
@@ -342,6 +377,10 @@
     <ClCompile Include="src\ofxRulr\Nodes\Template.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\ARCube.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\Focus.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Test\Latency.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Camera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Startup.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\VideoOutputListener.cpp" />
     <ClCompile Include="src\pch_RulrNodes.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

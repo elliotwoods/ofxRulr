@@ -3,16 +3,28 @@
 #include "ofxRulr/Nodes/Procedure/Base.h"
 #include "ofxCvGui/Panels/Groups/Grid.h"
 
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
+#include "ofxRulr/Utils/CaptureSet.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
 			namespace Calibrate {
 				class CameraFromKinectV2 : public ofxRulr::Nodes::Procedure::Base {
 				public:
-					struct Correspondence {
-						ofVec3f kinectObject;
-						ofVec2f camera;
-						ofVec2f cameraNormalized;
+					class Capture : public Utils::AbstractCaptureSet::BaseCapture {
+					public:
+						Capture();
+						string getDisplayString() const override;
+						void serialize(Json::Value &);
+						void deserialize(const Json::Value &);
+						void drawObjectSpace();
+						void drawKinectImageSpace();
+
+						vector<cv::Point2f> kinectImageSpace;
+						vector<cv::Point3f> kinectObjectSpace;
+						vector<cv::Point2f> cameraImageSpace;
+						vector<cv::Point2f> cameraNormalizedSpace;
 					};
 
 					CameraFromKinectV2();
@@ -32,12 +44,17 @@ namespace ofxRulr {
 					void rebuildView();
 					shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
 
-					ofParameter<bool> usePreTest;
+					struct : ofParameterGroup {
+						ofParameter<FindBoardMode> findBoardMode{ "Mode", FindBoardMode::Raw };
+						PARAM_DECLARE("CameraFromKinectV2", findBoardMode);
+					} parameters;
 
-					vector<Correspondence> correspondences;
-					vector<ofVec2f> previewCornerFindsKinect;
-					vector<ofVec2f> previewCornerFindsCamera;
-					float error;
+					Utils::CaptureSet<Capture> captures;
+
+					float error = 0.0f;
+
+					chrono::system_clock::time_point lastTimeCheckerboardSeenInKinect;
+					chrono::system_clock::time_point lastTimeCheckerboardSeenInCamera;
 				};
 			}
 		}

@@ -266,10 +266,10 @@ namespace ofxRulr {
 
 						{
 							Utils::ScopedProcess scopedProcess("Finding boards in images");
-							if (!boardNode->findBoard(toCv(irFrame), toCv(capture.irImagePoints))) {
+							if (!boardNode->findBoard(toCv(irFrame), toCv(capture.irImagePoints), FindBoardMode::Optimized)) {
 								throw(ofxRulr::Exception("Board not seen in IR image"));
 							}
-							if (!boardNode->findBoard(toCv(colorFrame), toCv(capture.colorImagePoints))) {
+							if (!boardNode->findBoard(toCv(colorFrame), toCv(capture.colorImagePoints), FindBoardMode::Optimized)) {
 								throw(ofxRulr::Exception("Board not seen in IR image"));
 							}
 							scopedProcess.end();

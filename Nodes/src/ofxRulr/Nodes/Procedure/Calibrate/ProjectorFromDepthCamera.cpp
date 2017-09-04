@@ -54,13 +54,6 @@ namespace ofxRulr {
 						ofPopStyle();
 					};
 					
-					this->checkerboard.scale.set("Checkerboard Scale", 0.2f, 0.01f, 1.0f);
-					this->checkerboard.cornersX.set("Checkerboard Corners X", 5, 1, 10);
-					this->checkerboard.cornersY.set("Checkerboard Corners Y", 4, 1, 10);
-					this->checkerboard.positionX.set("Checkerboard Position X", 0, -1, 1);
-					this->checkerboard.positionY.set("Checkerboard Position Y", 0, -1, 1);
-					this->checkerboard.brightness.set("Checkerboard Brightness", 0.5, 0, 1);
-					
 					this->initialLensOffset.set("Initial Lens Offset", 0.5f, -1.0f, 1.0f);
 				}
 				
@@ -233,10 +226,11 @@ namespace ofxRulr {
 						projectorPoints.push_back(correpondence.projector);
 					}
 					cv::Mat cameraMatrix, rotation, translation;
-					this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
-															worldPoints, projectorPoints,
-															this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight(),
-															this->initialLensOffset, 1.4f);
+					this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation
+						, worldPoints, projectorPoints
+						, this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight()
+						, true
+						, this->initialLensOffset, 1.4f);
 					
 					auto view = ofxCv::makeMatrix(rotation, translation);
 					projector->setTransform(view.getInverse());
@@ -253,11 +247,11 @@ namespace ofxRulr {
 												 ofMap(correspondence.projector.y, -1, 1, 0, 255),
 												 0));
 					}
-					glPushAttrib(GL_POINT_BIT);
-					glEnable(GL_POINT_SMOOTH);
-					glPointSize(10.0f);
-					preview.drawVertices();
-					glPopAttrib();
+					Utils::Graphics::pushPointSize(10.0f);
+					{
+						preview.drawVertices();
+					}
+					Utils::Graphics::popPointSize();
 				}
 				
 				//----------

@@ -9,7 +9,12 @@ namespace ofxRulr {
 		SoundEngine::SoundEngine() {
 			//try default output device
 			bool success = false;
-			auto devices = this->soundStream.getDeviceList();
+#ifdef TARGET_WIN32
+			auto device = ofSoundDevice::MS_DS;
+#else
+			auto device = ofSoundDevice::DEFAULT;
+#endif
+			auto devices = this->soundStream.getDeviceList(device);
 			for (auto & device : devices) {
 				if (device.isDefaultOutput) {
 					ofSoundStreamSettings settings;
@@ -48,6 +53,11 @@ namespace ofxRulr {
 			}
 
 			this->soundStream.setOutput(this);
+		}
+
+		//----------
+		SoundEngine::~SoundEngine() {
+			this->soundStream.close();
 		}
 		
 		//----------

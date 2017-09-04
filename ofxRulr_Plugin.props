@@ -4,6 +4,7 @@
     <Import Project="Core\ofxRulr_Core.props" />
     <Import Project="Nodes\ofxRulr_Nodes.props" />
     <Import Project="..\ofxAddonLib\openFrameworksIncludePathsOnly.props" />
+    <Import Project="..\ofxCvMin\ofxCvMinLib\ofxCvMin_libraries_only.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -20,7 +21,7 @@
       <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Link>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>RulrLibrary_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

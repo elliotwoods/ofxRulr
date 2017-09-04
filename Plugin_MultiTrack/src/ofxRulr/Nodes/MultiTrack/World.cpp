@@ -44,9 +44,18 @@ namespace ofxRulr {
 					auto subscriberPin = this->addInput<Subscriber>("Subscriber " + ofToString(i + 1));
 					subscriberPin->onNewConnection += [this, i](shared_ptr<Subscriber> subscriber) {
 						this->subscribers[i] = subscriber;
+						ofxCvGui::refreshInspector(this);
 					};
 					subscriberPin->onDeleteConnection += [this, i](shared_ptr<Subscriber> subscriber) {
-						this->subscribers.erase(i);
+						//this is a double check. if it's empty then we might be being destroyed (which can cause subscribers to be invalid)
+						if (!this->subscribers.empty()) {
+							auto findSubscriber = this->subscribers.find(i);
+							if (findSubscriber != this->subscribers.end()) {
+								this->subscribers.erase(findSubscriber);
+							}
+						}
+
+						ofxCvGui::refreshInspector(this);
 					};
 				}
 
@@ -137,6 +146,20 @@ namespace ofxRulr {
 				args.inspector->addLiveValue<size_t>("Connected subscribers", [this]() {
 					return this->subscribers.size();
 				});
+				for (auto subscriberIt : this->subscribers) {
+					auto subscriberWeak = subscriberIt.second;
+					args.inspector->addLiveValueHistory("Subscriber " + ofToString(subscriberIt.first), [subscriberWeak] {
+						auto subscriberNode = subscriberWeak.lock();
+						if (subscriberNode) {
+							auto subscriber = subscriberNode->getSubscriber();
+							if (subscriber) {
+								return subscriber->getSubscriber().getIncomingFramerate();
+							}
+						}
+
+						return 0.0f;
+					});
+				}
 			}
 
 
@@ -189,6 +212,7 @@ namespace ofxRulr {
 				// 2. Add any bodies which weren't seen previously (adding them to existing when distance is low)
 				// 3. Calculate the merged position
 				// as bodies are handled, we remove them from our WorldBodiesUnmerged set
+				// 4. Remove inactive bodies
 
 				//--
 				//Update bodies seen previously
@@ -245,7 +269,7 @@ namespace ofxRulr {
 						//check this body against any built bodies so far (this is often empty)
 						for (auto & combinedBody : newCombinedBodies) {
 							//find the mean of the combinedBody
-							auto meanOfExistingBodies = mean(combinedBody.second.originalBodiesWorldSpace);
+							auto meanOfExistingBodies = mean(combinedBody.second.originalBodiesWorldSpace, this->getMergeSettings());
 
 							//if the distance between this body and that body is < threshold, add it to the combined body
 							auto distance = meanDistance(meanOfExistingBodies, *bodyIterator, true);
@@ -281,7 +305,25 @@ namespace ofxRulr {
 				//--
 				//
 				for (auto & newCombinedBody : newCombinedBodies) {
-					newCombinedBody.second.combinedBody = mean(newCombinedBody.second.originalBodiesWorldSpace);
+					newCombinedBody.second.combinedBody = mean(newCombinedBody.second.originalBodiesWorldSpace, this->getMergeSettings());
+				}
+				//
+				//--
+
+
+
+				//--
+				//Remove inactive bodies
+				//--
+				//
+				for (auto newCombinedBodyIterator = newCombinedBodies.begin(); newCombinedBodyIterator != newCombinedBodies.end(); ) {
+					if (newCombinedBodyIterator->second.combinedBody.tracked) {
+						newCombinedBodyIterator++;
+					}
+					else {
+						newCombinedBodyIterator = newCombinedBodies.erase(newCombinedBodyIterator);
+					}
+
 				}
 				//
 				//--
@@ -298,15 +340,31 @@ namespace ofxRulr {
 
 					vector<int> indices;
 					for (auto body : this->combinedBodies) {
-						indices.push_back(body.first);
+						indices.push_back((int) body.first);
 					}
 					bodies["indices"] = indices;
 
+					//remove untracked bodies from database
+					{
+						auto & bodyChannels = bodies["body"].getSubChannels();
+						for (auto bodyChannelIterator = bodyChannels.begin(); bodyChannelIterator != bodyChannels.end(); ) {
+							const auto bodyIndex = ofToInt(bodyChannelIterator->first);
+							if (this->combinedBodies.find(bodyIndex) == this->combinedBodies.end()) {
+								bodyChannelIterator = bodyChannels.erase(bodyChannelIterator);
+							}
+							else {
+								bodyChannelIterator++;
+							}
+						}
+					}
+
+
+					//set data for tracked bodies
 					for (auto & combinedBody : this->combinedBodies) {
 						auto & bodyChannel = bodies["body"][ofToString(combinedBody.first)];
 
 						auto & body = combinedBody.second.combinedBody;
-						bodyChannel["tracked"] = (int) body.tracked;
+						bodyChannel["tracked"] = (bool) body.tracked;
 
 						if (!body.tracked) {
 							bodyChannel.removeSubChannel("centroid");
@@ -322,12 +380,12 @@ namespace ofxRulr {
 								bodyChannel.removeSubChannel("centroid");
 							}
 
-							auto & jointChannel = bodyChannel["joints"];
-							jointChannel["count"] = body.joints.size();
+							auto & jointsChannel = bodyChannel["joints"];
+							jointsChannel["count"] = (int) body.joints.size();
 
 							for (auto & joint : body.joints) {
 								auto jointName = ofxKinectForWindows2::toString(joint.first);
-								auto & jointChannel = bodyChannel[jointName];
+								auto & jointChannel = jointsChannel[jointName];
 								jointChannel["position"] = joint.second.getPosition();
 								jointChannel["orientation"] = joint.second.getOrientation().asVec4();
 								jointChannel["trackingState"] = joint.second.getTrackingState() == TrackingState::TrackingState_Tracked;
@@ -335,6 +393,15 @@ namespace ofxRulr {
 						}
 					}
  				}
+			}
+
+			//----------
+			MergeSettings World::getMergeSettings() const {
+				MergeSettings mergeSettings = {
+					this->parameters.fusion.crossoverEnabled.get(),
+					this->parameters.fusion.crossoverMargin.get()
+				};
+				return mergeSettings;
 			}
 		}
 	}

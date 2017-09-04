@@ -34,34 +34,7 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
-				this->modelLoader = make_shared<ofxAssimpModelLoader>();
-
-				this->drawVertices.set("Draw vertices", false);
-				this->drawWireframe.set("Draw wireframe", false);
-				this->drawFaces.set("Draw faces", true);
-
-				this->flipX.set("Flip X", false);
-				this->flipY.set("Flip Y", true);
-				this->flipZ.set("Flip Z", true);
-				this->inputUnitScale.set("Input unit scale", 0.0254f, 1e-6f, 1e6f);
-
-				this->view = make_shared<Panels::World>();
-				this->view->onDrawWorld += [this](ofCamera &) {
-					this->drawWorld();
-				};
-#ifdef OFXCVGUI_USE_OFXGRABCAM
-				this->view->onMouse += [this](MouseArguments & args) {
-					if (args.action & (MouseArguments::Action::Pressed | MouseArguments::Action::Dragged)) {
-						auto & camera = this->view->getCamera();
-						camera.updateCursorWorld();
-					}
-				};
-#endif
-			}
-
-			//----------
-			ofxCvGui::PanelPtr Model::getPanel() {
-				return this->view;
+				this->modelLoader = make_unique<ofxAssimpModelLoader>();
 			}
 
 			//----------
@@ -72,29 +45,21 @@ namespace ofxRulr {
 			//----------
 			void Model::drawWorld() {
 				ofPushMatrix();
-				if (this->flipX) {
-					ofScale(-1, 1, 1);
+				{
+					ofMultMatrix(this->getMeshTransform());
 				}
-				if (this->flipY) {
-					ofScale(1, -1, 1);
-				}
-				if (this->flipZ) {
-					ofScale(1, 1, -1);
-				}
-				const auto scale = this->inputUnitScale.get();
-				ofScale(scale, scale, scale);
 
-				if (this->drawVertices) {
-					glPushAttrib(GL_POINT_BIT);
-					glEnable(GL_POINT_SMOOTH);
-					glPointSize(3.0f);
-					this->modelLoader->drawVertices();
-					glPopAttrib();
+				if (this->parameters.drawStyle.vertices) {
+					Utils::Graphics::pushPointSize(3.0f);
+					{
+						this->modelLoader->drawVertices();
+					}
+					Utils::Graphics::popPointSize();
 				}
-				if (this->drawWireframe) {
+				if (this->parameters.drawStyle.wireframe) {
 					this->modelLoader->drawWireframe();
 				}
-				if (this->drawFaces) {
+				if (this->parameters.drawStyle.faces) {
 					this->modelLoader->drawFaces();
 				}
 				ofPopMatrix();
@@ -103,32 +68,53 @@ namespace ofxRulr {
 			//----------
 			void Model::serialize(Json::Value & json) {
 				Utils::Serializable::serialize(json, this->filename);
-				Utils::Serializable::serialize(json, this->drawVertices);
-				Utils::Serializable::serialize(json, this->drawWireframe);
-				Utils::Serializable::serialize(json, this->drawFaces);
-				Utils::Serializable::serialize(json, this->flipX);
-				Utils::Serializable::serialize(json, this->flipY);
-				Utils::Serializable::serialize(json, this->flipZ);
-				Utils::Serializable::serialize(json, this->inputUnitScale);
+				Utils::Serializable::serialize(json, this->parameters);
 			}
 
 			//----------
 			void Model::deserialize(const Json::Value & json) {
 				Utils::Serializable::deserialize(json, this->filename);
-				Utils::Serializable::deserialize(json, this->drawVertices);
-				Utils::Serializable::deserialize(json, this->drawWireframe);
-				Utils::Serializable::deserialize(json, this->drawFaces);
-				Utils::Serializable::deserialize(json, this->flipX);
-				Utils::Serializable::deserialize(json, this->flipY);
-				Utils::Serializable::deserialize(json, this->flipZ);
-				Utils::Serializable::deserialize(json, this->inputUnitScale);
 
 				if (this->filename.get().empty()) {
 					this->modelLoader->clear();
 				}
 				else {
 					this->modelLoader->loadModel(this->filename.get());
+					modelLoader->calculateDimensions();
 				}
+
+				Utils::Serializable::deserialize(json, this->parameters);
+			}
+
+
+			ofVec4f axesToVector(const Model::Axes & axis) {
+				switch (axis.get()) {
+				case Model::Axes::NegX:
+					return ofVec4f(-1, 0, 0, 0);
+				case Model::Axes::PosX:
+					return ofVec4f(+1, 0, 0, 0);
+				case Model::Axes::NegY:
+					return ofVec4f(0, -1, 0, 0);
+				case Model::Axes::PosY:
+					return ofVec4f(0, +1, 0, 0);
+				case Model::Axes::NegZ:
+					return ofVec4f(0, 0, -1, 0);
+				case Model::Axes::PosZ:
+					return ofVec4f(0, 0, +1, 0);
+				default:
+					return ofVec4f();
+				}
+			}
+			//----------
+			ofMatrix4x4 Model::getMeshTransform() const {
+				ofMatrix4x4 transform;
+				auto row = (ofVec4f*)transform.getPtr();
+				*row++ = axesToVector(this->parameters.transform.theirXIsOur);
+				*row++ = axesToVector(this->parameters.transform.theirYIsOur);
+				*row++ = axesToVector(this->parameters.transform.theirZIsOur);
+
+				transform.postMultScale(ofVec3f(this->parameters.transform.scale));
+				return transform;
 			}
 
 			//----------
@@ -139,6 +125,7 @@ namespace ofxRulr {
 					auto result = ofSystemLoadDialog("Load model using Assimp");
 					if (result.bSuccess) {
 						this->modelLoader->loadModel(result.filePath);
+						this->modelLoader->calculateDimensions();
 						this->filename.set(result.filePath);
 					}
 				});
@@ -158,16 +145,24 @@ namespace ofxRulr {
 				};
 				inspector->add(clearModelButton);
 
-				inspector->add(make_shared<Title>("Draw options", Title::Level::H3));
-				inspector->add(make_shared<Toggle>(this->drawVertices));
-				inspector->add(make_shared<Toggle>(this->drawWireframe));
-				inspector->add(make_shared<Toggle>(this->drawFaces));
+				inspector->addLiveValue<ofVec3f>("Bounds min", [this]() {
+					if (this->modelLoader) {
+						return this->modelLoader->getSceneMin();
+					}
+					else {
+						return ofVec3f();
+					}
+				});
+				inspector->addLiveValue<ofVec3f>("Bounds max", [this]() {
+					if (this->modelLoader) {
+						return this->modelLoader->getSceneMax();
+					}
+					else {
+						return ofVec3f();
+					}
+				});
 
-				inspector->add(make_shared<Title>("Model transform", Title::Level::H3));
-				inspector->add(make_shared<Toggle>(this->flipX));
-				inspector->add(make_shared<Toggle>(this->flipY));
-				inspector->add(make_shared<Toggle>(this->flipZ));
-				inspector->add(make_shared<Slider>(this->inputUnitScale));
+				inspector->addParameterGroup(this->parameters);
 			}
 		}
 	}

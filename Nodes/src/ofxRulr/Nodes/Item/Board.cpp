@@ -20,10 +20,6 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
-				this->parameters.boardType.set("Board Type", 0, 0, 1);
-				this->parameters.sizeX.set("Size X", 10.0f, 2.0f, 20.0f);
-				this->parameters.sizeY.set("Size Y", 7.0f, 2.0f, 20.0f);
-				this->parameters.spacing.set("Spacing [m]", 0.026f, 0.001f, 1.0f);
 				this->updatePreviewMesh();
 
 				auto view = make_shared<ofxCvGui::Panels::World>();
@@ -91,25 +87,49 @@ namespace ofxRulr {
 
 			//----------
 			vector<cv::Point3f> Board::getObjectPoints() const {
-				return ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing());
+				if (this->parameters.offset.x == 0.0f && this->parameters.offset.y == 0.0f) {
+					return ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing(), this->parameters.offset.centered);
+				}
+				else {
+					auto objectPoints = ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing(), this->parameters.offset.centered);
+					for (auto & objectPoint : objectPoints) {
+						objectPoint += cv::Point3f(this->parameters.offset.x, this->parameters.offset.y, this->parameters.offset.z);
+					}
+					return objectPoints;
+				}
 			}
 
 			//----------
 			void Board::drawObject() const {
-				this->previewMesh.draw();
+				if (ofGetFill() == ofFillFlag::OF_FILLED) {
+					this->previewMesh.draw();
+				}
+				else {
+					this->previewMesh.drawWireframe();
+				}
 			}
 
 			//----------
-			bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results, bool useOptimisers) const {
+			bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const {
 				auto size = this->getSize();
-				return ofxCv::findBoard(image, this->getBoardType(), size, results, useOptimisers);
+				switch (findBoardMode) {
+				case FindBoardMode::Raw:
+					return ofxCv::findBoard(image, this->getBoardType(), size, results, false);
+				case FindBoardMode::Optimized:
+					return ofxCv::findBoard(image, this->getBoardType(), size, results, true);
+				case FindBoardMode::Assistant:
+					return ofxCv::findBoardWithAssistant(image, this->getBoardType(), size, results);
+				default:
+					return false;
+				}
+				objectPoints = this->getObjectPoints();
 			}
 
 			//----------
 			void Board::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				auto sliderCallback = [this](ofParameter<float> &) {
+				auto sliderCallback = [this](const float &) {
 					this->updatePreviewMesh();
 				};
 
@@ -123,6 +143,7 @@ namespace ofxRulr {
 				};
 
 				inspector->add(typeChooser);
+				inspector->addParameterGroup(this->parameters.offset);
 
 				Utils::Gui::addIntSlider(this->parameters.sizeX, inspector->getElementGroup())->onValueChange += sliderCallback;
 				Utils::Gui::addIntSlider(this->parameters.sizeY, inspector->getElementGroup())->onValueChange += sliderCallback;

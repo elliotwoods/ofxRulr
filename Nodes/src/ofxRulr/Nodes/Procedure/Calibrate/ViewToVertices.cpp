@@ -89,7 +89,7 @@ namespace ofxRulr {
 						if (!referenceVertices) {
 							return;
 						}
-						auto scaleDrawToScreenFactor = args.drawSize / args.viewSize;
+						auto scaleDrawToScreenFactor = args.drawBounds.getBottomRight() / args.drawArguments.localBounds.getBottomRight();
 
 						ofPushMatrix();
 						const auto & vertices = referenceVertices->getVertices();
@@ -99,7 +99,11 @@ namespace ofxRulr {
 							ofTranslate(vertex->viewPosition);
 
 							//text label
-							ofDrawBitmapString(ofToString(index++), 0, 0);
+							auto caption = vertex->getCaption();
+							if (caption.empty()) {
+								caption = ofToString(index);
+							}
+							ofDrawBitmapString(caption, 0, 0);
 
 							//cross
 							ofPushStyle();
@@ -119,6 +123,8 @@ namespace ofxRulr {
 							ofPopMatrix();
 						}
 						ofPopMatrix();
+
+						index++;
 					};
 					view->onMouse += [this, viewWeak](ofxCvGui::MouseArguments & args) {
 						auto view = viewWeak.lock();
@@ -147,24 +153,24 @@ namespace ofxRulr {
 							ofVec2f movement;
 							switch (args.key) {
 							case OF_KEY_LEFT:
-								movement.x = -1;
+								movement.x = -0.5;
 								break;
 							case OF_KEY_RIGHT:
-								movement.x = +1;
+								movement.x = +0.5;
 								break;
 							case OF_KEY_UP:
-								movement.y = -1;
+								movement.y = -0.5;
 								break;
 							case OF_KEY_DOWN:
-								movement.y = +1;
+								movement.y = +0.5;
 								break;
 							default:
 								break;
 							}
 
-							if (movement != ofVec2f() && this->dragVerticesEnabled) {
+							if (movement != ofVec2f() && this->isBeingInspected()) {
 								if (ofGetKeyPressed(OF_KEY_SHIFT)) {
-									movement *= 5;
+									movement *= 20;
 								}
 								auto referenceVertices = this->getInput<IReferenceVertices>();
 								if (referenceVertices) {
@@ -438,19 +444,12 @@ namespace ofxRulr {
 					this->reprojectionError = reprojectionError;
 					//
 					//--
-
-					for (auto & point : worldRows[0]) {
-						cout << point << endl;
-					}
-					for (auto & point : viewRows[0]) {
-						cout << point << endl;
-					}
 				}
 
 				//---------
 				void ViewToVertices::drawOnProjector() {
 					auto referenceVerticesNode = this->getInput<IReferenceVertices>();
-					if (referenceVerticesNode) {
+					if (this->isBeingInspected() && referenceVerticesNode) {
 						auto vertices = referenceVerticesNode->getVertices();
 						for (auto vertex : vertices) {
 							if (vertex->isSelected()){

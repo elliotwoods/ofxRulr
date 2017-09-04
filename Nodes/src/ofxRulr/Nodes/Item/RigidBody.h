@@ -30,7 +30,8 @@ namespace ofxRulr {
 				void setTransform(const ofMatrix4x4 &);
 				void setPosition(const ofVec3f &);
 				void setRotationEuler(const ofVec3f &);
-				void setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse = false);
+				void setExtrinsics(cv::Mat rotationVector, cv::Mat translation, bool inverse = false);
+				void getExtrinsics(cv::Mat & rotationVector, cv::Mat & translation, bool inverse = false);
 				void clearTransform();
 
 				ofxLiquidEvent<void> onDrawObject;
@@ -40,7 +41,7 @@ namespace ofxRulr {
 
 				ofParameter<float> translation[3];
 				ofParameter<float> rotationEuler[3];
-
+				ofParameter<float> movementSpeed{ "Movement speed [m/s]", 0.1, 0, 10 };
 			private:
 			};
 

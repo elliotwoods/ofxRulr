@@ -4,29 +4,48 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace MultiTrack {
+
 			//----------
-			ofxKinectForWindows2::Data::Body mean(const vector<ofxKinectForWindows2::Data::Body> & bodies) {
+			float getWeight(const ofVec2f & positionInDepthMap, const MergeSettings & mergeSettings) {
+				if (!mergeSettings.crossoverEnabled) {
+					return 1.0f;
+				}
+
+				auto scoreX = 1.0f;
+				scoreX *= ofMap(positionInDepthMap.x, 0, mergeSettings.crossoverMargin, 0.01f, 1.0f, true);
+				scoreX *= 1.0f - ofMap(positionInDepthMap.x, DepthMapSize::Width - mergeSettings.crossoverMargin, DepthMapSize::Width - 1, 0.0f, 0.99f, true);
+
+				auto scoreY = 1.0f;
+				scoreY *= ofMap(positionInDepthMap.y, 0, mergeSettings.crossoverMargin, 0.01f, 1.0f, true);
+				scoreY *= 1.0f - ofMap(positionInDepthMap.y, DepthMapSize::Height - mergeSettings.crossoverMargin, DepthMapSize::Height - 1, 0.0f, 0.99f, true);
+
+				return scoreX * scoreY;
+			}
+
+			//----------
+			ofxKinectForWindows2::Data::Body mean(const vector<ofxKinectForWindows2::Data::Body> & bodies, const MergeSettings & mergeSettings) {
 				if (bodies.size() == 0) {
 					return ofxKinectForWindows2::Data::Body();
 				}
 
 				map<JointType, ofVec3f> positions;
 				map<JointType, ofQuaternion> orientations;
-				map<JointType, int> count;
+				map<JointType, float> accumulatedWeights;
 
 				//get all tracked joints
 				for (auto & body : bodies) {
 					for (auto & joint : body.joints) {
 						if (joint.second.getTrackingState() == TrackingState_Tracked) {
-							positions[joint.first] += joint.second.getPosition();
+							auto weight = getWeight(joint.second.getPositionInDepthMap(), mergeSettings);
+							positions[joint.first] += joint.second.getPosition() * weight;
 							orientations[joint.first] = joint.second.getOrientation();
 							
-							auto findCount = count.find(joint.first);
-							if (findCount == count.end()) {
-								count[joint.first] = 1;
+							auto findAccumulatedWeight = accumulatedWeights.find(joint.first);
+							if (findAccumulatedWeight == accumulatedWeights.end()) {
+								accumulatedWeights[joint.first] = weight;
 							}
 							else {
-								count[joint.first]++;
+								accumulatedWeights[joint.first] += weight;
 							}
 						}
 					}
@@ -36,15 +55,17 @@ namespace ofxRulr {
 				for (auto & body : bodies) {
 					for (auto & joint : body.joints) {
 						if (positions.find(joint.first) == positions.end()) {
-							positions[joint.first] += joint.second.getPosition();
+							auto weight = getWeight(joint.second.getPositionInDepthMap(), mergeSettings);
+
+							positions[joint.first] += joint.second.getPosition() * weight;
 							orientations[joint.first] = joint.second.getOrientation();
 
-							auto findCount = count.find(joint.first);
-							if (findCount == count.end()) {
-								count[joint.first] = 1;
+							auto findAccumulatedWeight = accumulatedWeights.find(joint.first);
+							if (findAccumulatedWeight == accumulatedWeights.end()) {
+								accumulatedWeights[joint.first] = weight;
 							}
 							else {
-								count[joint.first]++;
+								accumulatedWeights[joint.first] += weight;
 							}
 						}
 					}
@@ -53,10 +74,10 @@ namespace ofxRulr {
 				//accumulate the body
 				auto body = bodies.front();
 				for (auto & joint : body.joints) {
-					if (count[joint.first] > 0) {
+					if (accumulatedWeights[joint.first] > 0) {
 						_Joint rawJoint = {
 							joint.first,
-							(CameraSpacePoint&)(positions[joint.first] / (float)count[joint.first]),
+							(CameraSpacePoint&)(positions[joint.first] / (float)accumulatedWeights[joint.first]),
 							TrackingState::TrackingState_Tracked
 						};
 
@@ -65,7 +86,7 @@ namespace ofxRulr {
 							(Vector4&)orientations[joint.first]
 						};
 
-						joint.second.set(rawJoint, rawJointOrientation);
+						joint.second.set(rawJoint, rawJointOrientation, ofVec2f());
 					}
 				}
 
@@ -73,12 +94,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofxKinectForWindows2::Data::Body mean(const map<SubscriberID, ofxKinectForWindows2::Data::Body> & bodiesMap) {
+			ofxKinectForWindows2::Data::Body mean(const map<SubscriberID, ofxKinectForWindows2::Data::Body> & bodiesMap, const MergeSettings & mergeSettings) {
 				vector<ofxKinectForWindows2::Data::Body> bodies;
 				for (auto bodyMap : bodiesMap) {
 					bodies.push_back(bodyMap.second);
 				}
-				return mean(bodies);
+				return mean(bodies, mergeSettings);
 			}
 
 			//----------

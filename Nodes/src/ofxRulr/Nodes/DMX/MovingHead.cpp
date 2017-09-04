@@ -24,15 +24,6 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
-				this->parameters.pan.set("Pan", 0.0f, -180.0f, 180.0f);
-				this->parameters.tilt.set("Tilt", 0.0f, -100.0f, 100.0f);
-				this->parameters.brightness.set("Brightness", 0.0f, 0.0f, 1.0f);
-				this->parameters.iris.set("Iris", 1.0f, 0.0f, 1.0f);
-				this->parameters.power.set("Power", false);
-				this->parameters.powerCircuit.set("Power circuit (mutex)", "main ring");
-				this->parameters.pauseBetweenPowerUps.set("Pause between power ups [s]", 2);
-				this->parameters.tiltOffset.set("Tilt offset", 0.0f, -90.0f, 90.0f);
-
 				this->powerStateSignal = false;
 			}
 

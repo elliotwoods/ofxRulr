@@ -35,12 +35,15 @@
     <Import Project="..\..\ofxAddonLib\openFrameworksIncludePathsOnly.props" />
     <Import Project="..\Nodes\ofxRulr_Nodes.props" />
     <Import Project="..\Core\ofxRulr_Core.props" />
+    <Import Project="..\..\ofxCanon\ofxCanonLib\ofxCanon.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\ofxAddonLib\openFrameworksIncludePathsOnly.props" />
     <Import Project="..\Nodes\ofxRulr_Nodes.props" />
     <Import Project="..\Core\ofxRulr_Core.props" />
+    <Import Project="..\..\ofxCanon\ofxCanonLib\ofxCanon.props" />
+    <Import Project="..\..\ofxCvMin\ofxCvMinLib\ofxCvMin_copy_binaries_only.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -63,7 +66,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(KINECTSDK20_DIR)\inc;..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxEdsdk\pairs\ofxRulr\Nodes\Monitor;..\..\..\addons\ofxEdsdk\pairs\ofxMachineVision\Device;..\..\..\addons\ofxSplashScreen\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -72,9 +75,10 @@
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <AdditionalDependencies>RulrLibrary_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application\bin;..\..\..\addons\ofxMessagePack\libs\msgpack-c\lib\win64;F:\openFrameworks\addons\ofxNonLinearFit\libs\NLopt\lib\vs\x64;..\..\..\addons\ofxUeye\libs\ueye\vs2012;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxSplashScreen\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -83,7 +87,7 @@
       <PreprocessorDefinitions>__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(KINECTSDK20_DIR)\inc;..\..\..\addons\ofxEdsdk\libs\EDSDK\include;..\..\..\addons\ofxEdsdk\src;..\..\..\addons\ofxMessagePack\libs\msgpack-c\include;..\..\..\addons\ofxMessagePack\src;..\..\..\addons\ofxGraycode\src;..\..\..\addons\ofxPolyfit\libs\polyNfit\src\Data;..\..\..\addons\ofxPolyfit\libs\polyNfit\src;..\..\..\addons\ofxPolyfit\src;..\..\..\addons\ofxHomography\src;..\..\..\addons\ofxUeye\src;..\..\..\addons\ofxSplashScreen\src;..\..\..\addons\ofxMachineVision\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxEdsdk\pairs\ofxRulr\Nodes\Monitor;..\..\..\addons\ofxEdsdk\pairs\ofxMachineVision\Device;..\..\..\addons\ofxSplashScreen\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -95,7 +99,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <AdditionalDependencies>RulrLibrary_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxRulr\Application\bin;..\..\..\addons\ofxMessagePack\libs\msgpack-c\lib\win64;..\..\..\addons\ofxNonLinearFit\libs\NLopt\lib\win64;..\..\..\addons\ofxUeye\libs\ueye\vs2012;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AssemblyDebug>
       </AssemblyDebug>
       <ModuleDefinitionFile>
@@ -104,11 +108,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp" />
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.cpp" />
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonLiveView.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.h" />
+    <ClInclude Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.h" />
+    <ClInclude Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonLiveView.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\ofApp.h" />
   </ItemGroup>
@@ -117,6 +125,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="main_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ofxCanon\ofxCanonLib\ofxCanonLib.vcxproj">
+      <Project>{b6ef2661-4d10-4dae-b4cf-bd0a92ea864c}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

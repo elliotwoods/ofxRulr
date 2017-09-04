@@ -23,12 +23,15 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::InspectArguments &);
 				map<size_t, weak_ptr<Subscriber>> & getSubscribers();
 
+				MergeSettings getMergeSettings() const;
 			protected:
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", false };
 						ofParameter<float> mergeDistanceThreshold{ "Merge distance threshold", 0.3, 0.0, 5.0 };
-						PARAM_DECLARE("Fusion", enabled, mergeDistanceThreshold);
+						ofParameter<bool> crossoverEnabled{ "Crossover enabled", true };
+						ofParameter<float> crossoverMargin{ "Crossover margin [px]", 50 };
+						PARAM_DECLARE("Fusion", enabled, mergeDistanceThreshold, crossoverEnabled, crossoverMargin);
 					} fusion;
 
 					struct : ofParameterGroup {

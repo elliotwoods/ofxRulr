@@ -16,9 +16,7 @@ using namespace std;
 
 namespace ofxRulr {
 	namespace Graph {
-		class Node;
-
-		class AbstractPin : public ofxCvGui::Element {
+		class RULR_EXPORTS AbstractPin : public ofxCvGui::Element {
 		public:
 			AbstractPin(string name);
 			virtual string getTypeName() = 0;
@@ -29,7 +27,7 @@ namespace ofxRulr {
 			virtual bool checkSupports(shared_ptr<Nodes::Base>) const = 0;
 			virtual shared_ptr<Nodes::Base> getConnectionUntyped() const = 0;
 
-			virtual shared_ptr<ofImage> getNodeIcon() = 0;
+			virtual const ofBaseDraws & getNodeIcon() = 0;
 			virtual const ofColor & getNodeColor() const = 0;
 			
 			string getName() const;
@@ -53,8 +51,8 @@ namespace ofxRulr {
 		public:
 			Pin(string name) : AbstractPin(name) {
 				this->pinView->template setup<NodeType>();
-				auto tempNode = NodeType();
-				this->color = tempNode.getColor();
+				auto tempNode = make_unique<NodeType>();
+				this->color = tempNode->getColor();
 				this->connectionMade = false;
 			}
 
@@ -140,11 +138,11 @@ namespace ofxRulr {
 				return this->connection.lock();
 			}
 
-			shared_ptr<ofImage> getNodeIcon() override {
+			const ofBaseDraws & getNodeIcon() override {
 				if (!this->icon) {
-					this->icon = NodeType().getIcon();
+					this->icon = & NodeType().getIcon();
 				}
-				return this->icon;
+				return * this->icon;
 			}
 
 			const ofColor & getNodeColor() const override {
@@ -156,7 +154,7 @@ namespace ofxRulr {
 		protected:
 			weak_ptr<NodeType> connection;
 			bool connectionMade; // this will stay true temporarily to handle the case where connected node is deleted and weak_ptr becomes invalid
-			shared_ptr<ofImage> icon;
+			const ofBaseDraws * icon = nullptr;
 			ofColor color;
 		};
 

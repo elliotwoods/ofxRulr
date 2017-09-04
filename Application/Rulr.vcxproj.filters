@@ -10,6 +10,12 @@
     <ClCompile Include="..\..\..\addons\ofxSplashScreen\src\ofxSplashScreen.cpp">
       <Filter>addons\ofxSplashScreen\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonLiveView.cpp">
+      <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.cpp">
+      <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -27,6 +33,15 @@
     <Filter Include="pairs">
       <UniqueIdentifier>{6a4e7b4c-ca4b-40ed-a1cf-9eadf6c8cb23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pairs\ofxCanon">
+      <UniqueIdentifier>{1f8eb060-d8b7-4b37-aac7-5a61f1073905}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxCanon\ofxMachineVision">
+      <UniqueIdentifier>{3f19a0a3-5a06-4de2-a353-4f4d848e73df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxCanon\ofxMachineVision\Device">
+      <UniqueIdentifier>{463238f6-700c-49b6-9a9c-bc36a00a6f1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -36,6 +51,12 @@
       <Filter>addons\ofxSplashScreen\src</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.h">
+      <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonLiveView.h">
+      <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Rulr.rc" />

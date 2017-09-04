@@ -34,14 +34,14 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::InspectArguments &);
 
 				struct : ofParameterGroup {
-					ofParameter<float> pan;
-					ofParameter<float> tilt;
-					ofParameter<float> brightness;
-					ofParameter<float> iris;
-					ofParameter<bool> power;
-					ofParameter<string> powerCircuit;
-					ofParameter<int> pauseBetweenPowerUps;
-					ofParameter<float> tiltOffset;
+					ofParameter<float> pan{ "Pan", 0.0f, -180.0f, 180.0f };
+					ofParameter<float> tilt{ "Tilt", 0.0f, -100.0f, 100.0f };
+					ofParameter<float> brightness{ "Brightness", 0.0f, 0.0f, 1.0f };
+					ofParameter<float> iris{ "Iris", 1.0f, 0.0f, 1.0f };
+					ofParameter<bool> power{ "Power", false };
+					ofParameter<string> powerCircuit{ "Power circuit (mutex)", "main ring" };
+					ofParameter<int> pauseBetweenPowerUps{ "Pause between power ups [s]", 2 };
+					ofParameter<float> tiltOffset{ "Tilt offset", 0.0f, -90.0f, 90.0f };
 
 					PARAM_DECLARE("Moving head", pan, tilt, brightness, iris, power, powerCircuit, pauseBetweenPowerUps, tiltOffset);
 				} parameters;

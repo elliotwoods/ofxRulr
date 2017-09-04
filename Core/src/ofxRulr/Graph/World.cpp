@@ -3,9 +3,10 @@
 
 #include "Summary.h"
 
-#include "../Exception.h"
-#include "../Utils/Initialiser.h"
-#include "../Version.h"
+#include "ofxRulr/Exception.h"
+#include "ofxRulr/Utils/Initialiser.h"
+#include "ofxRulr/Utils/Utils.h"
+#include "ofxRulr/Version.h"
 
 using namespace ofxCvGui;
 
@@ -18,6 +19,11 @@ namespace ofxRulr {
 
 		//-----------
 		World::World() {
+
+		}
+
+		//-----------
+		World::~World() {
 
 		}
 
@@ -113,18 +119,38 @@ namespace ofxRulr {
 			horizontalGroup->add(inspector);
 			inspector->setTitleEnabled(false);
 
-			//whenever the instpector clears, setup default elements
+			//whenever the inspector clears, setup default elements
 			InspectController::X().onClear += [this] (InspectArguments & args) {
 				auto inspector = args.inspector;
-				inspector->add(new Widgets::LiveValueHistory("Application fps [Hz]", [] () {
+
+				inspector->add(new Widgets::LiveValueHistory("GUI fps [Hz]", [] () {
 					return ofGetFrameRate();
 				}, true));
-				inspector->add(new Widgets::Button("Save all", [this]() {
+				inspector->addLiveValue<string>("Up time", []() {
+					auto duration = chrono::milliseconds(ofGetElapsedTimeMillis());
+					return Utils::formatDuration(duration, true, true, true);
+				});
+				inspector->addMemoryUsage();
+
+				auto saveAllButton = inspector->add(new Widgets::Button("Save all", [this]() {
 					this->saveAll();
 				}));
+				saveAllButton->onDraw += [this](ofxCvGui::DrawArguments & args) {
+					//show time since last save if >1min
+					auto duration = chrono::system_clock::now() - this->lastSaveOrLoad;
+					if (duration > chrono::minutes(1)) {
+						ofxAssets::font(ofxCvGui::getDefaultTypeface(), 8).drawString(Utils::formatDuration(duration, true, true, false) + "[since last save]", 6, 27);
+					}
+				};
+
+				/*
+				HACK
+				Until this doesn't result in a crash always let's remove
 				inspector->add(new Widgets::Button("Load all", [this]() {
 					this->loadAll();
 				}));
+				*/
+
 				inspector->add(new Widgets::Spacer());
 			};
 			//
@@ -177,8 +203,9 @@ namespace ofxRulr {
 		//-----------
 		void World::saveAll() const {
 			for(auto node : * this) {
-				node->save(node->getDefaultFilename());
+				node->save(node->getDefaultFilename() + ".json");
 			}
+			const_cast<World*>(this)->lastSaveOrLoad = chrono::system_clock::now();
 		}
 
 		//-----------
@@ -187,8 +214,9 @@ namespace ofxRulr {
 				if (printDebug) {
 					ofLogNotice("ofxRulr") << "Loading node [" << node->getName() << "]";
 				}
-				node->load(node->getDefaultFilename());
+				node->load(node->getDefaultFilename() + ".json");
 			}
+			this->lastSaveOrLoad = chrono::system_clock::now();
 		}
 
 		//-----------

@@ -299,13 +299,13 @@ namespace ofxRulr {
 				//x, y, vx, vy
 
 				//transition
-				this->steveJobs.kalmanFilter.transitionMatrix = *(Mat_<float>(6, 6) <<
+				this->steveJobs.kalmanFilter.transitionMatrix = Mat_<float>(6, 6) <<
 					1, 0, 0, 1, 0, 0,
 					0, 1, 0, 0, 1, 0,
 					0, 0, 1, 0, 0, 1,
 					0, 0, 0, 1, 0, 0,
 					0, 0, 0, 0, 1, 0,
-					0, 0, 0, 0, 0, 1);
+					0, 0, 0, 0, 0, 1;
 				
 				//opening state (presume no velocity to begin)
 				this->steveJobs.kalmanFilter.statePre.at<float>(0) = startPostiion.x;

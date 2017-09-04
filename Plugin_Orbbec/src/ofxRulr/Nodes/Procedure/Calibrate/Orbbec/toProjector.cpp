@@ -210,6 +210,7 @@ namespace ofxRulr {
 						this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
 							worldPoints, projectorPoints,
 							this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight(),
+							true,
 							this->parameters.calibration.initialLensOffset, this->parameters.calibration.initialThrowRatio);
 
 						auto view = ofxCv::makeMatrix(rotation, translation);

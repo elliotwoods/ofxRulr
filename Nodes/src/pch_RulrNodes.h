@@ -15,6 +15,7 @@
 
 //utils
 #include "ofxRulr/Utils/Constants.h"
+#include "ofxRulr/Utils/Graphics.h"
 #include "ofxRulr/Utils/Gui.h"
 #include "ofxRulr/Utils/Initialiser.h"
 #include "ofxRulr/Utils/PolyFit.h"
@@ -22,3 +23,5 @@
 #include "ofxRulr/Utils/Serializable.h"
 #include "ofxRulr/Utils/Set.h"
 #include "ofxRulr/Utils/SoundEngine.h"
+#include "ofxRulr/Utils/Utils.h"
+#include "ofxRulr/Nodes/GraphicsManager.h"

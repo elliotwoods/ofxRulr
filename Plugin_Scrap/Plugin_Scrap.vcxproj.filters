@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{53695f24-0430-4196-b53c-3cce472d160b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{f8a6306b-29fd-4ca4-936e-6f0ee4df836c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{102be500-d5fe-4e78-a303-22dcfe9a58dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure">
+      <UniqueIdentifier>{56f907bf-1697-4b37-9dda-c7415c2283ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
+      <UniqueIdentifier>{cdad591d-1ad5-43a2-823b-94c7e38bedb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\polyfit">
+      <UniqueIdentifier>{d8ebbc54-4aa9-42ee-a285-b2d973db9758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Item">
+      <UniqueIdentifier>{a34390c5-331d-4187-816d-2e7addc0721d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch_Plugin_Scrap.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\polyfit\polyfit.c">
+      <Filter>src\polyfit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\CircleLaser.cpp">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_Scrap.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\polyfit\polyfit.h">
+      <Filter>src\polyfit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\CircleLaser.h">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\polyfit\readme.txt">
+      <Filter>src\polyfit</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

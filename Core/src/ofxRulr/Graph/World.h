@@ -9,9 +9,10 @@
 
 namespace ofxRulr {
 	namespace Graph {
-		class World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
+		class RULR_EXPORTS World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
 		public:
 			World();
+			virtual ~World();
 			void init(ofxCvGui::Controller &, bool enableSummaryView = true);
 			void loadAll(bool printDebug = false);
 			void saveAll() const;
@@ -20,6 +21,7 @@ namespace ofxRulr {
 		protected:
 			static ofxCvGui::Controller * gui; ///< Why is this static? Needs comment.  I presume it's so we can grid multiple worlds?
 			ofxCvGui::PanelGroupPtr guiGrid;
+			chrono::system_clock::time_point lastSaveOrLoad = chrono::system_clock::now();
 		};
 	}
 }

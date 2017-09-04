@@ -3,10 +3,12 @@
 #include <exception>
 #include <string>
 #include "opencv2/core/core.hpp"
-#include <Poco/Exception.h>
+
+#include "ofxRulr/Utils/Constants.h"
+#include "ofxMachineVision/Constants.h"
 
 namespace ofxRulr {
-	class Exception : public std::exception {
+	class RULR_EXPORTS Exception : public std::exception {
 	public:
 		Exception(const std::string message);
 		const char * what() const throw() override;
@@ -18,6 +20,7 @@ namespace ofxRulr {
 #define RULR_CATCH_ALL_TO(X) \
 	catch (ofxRulr::Exception e) { X; } \
 	catch (cv::Exception e) { X; } \
+	catch (ofxMachineVision::Exception e) { X; } \
 	catch (std::exception e) { X; }
 
 #define RULR_CATCH_ALL_TO_ALERT \
