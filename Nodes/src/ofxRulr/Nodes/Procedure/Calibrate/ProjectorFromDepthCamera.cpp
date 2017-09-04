@@ -302,9 +302,9 @@ namespace ofxRulr {
 					addButton->setHeight(100.0f);
 					inspector->add(addButton);
 					
-					inspector->add(MAKE(ofxCvGui::Widgets::Button, "Clear correspondences", [this]() {
+					inspector->addButton("Clear correspondences", [this]() {
 						this->correspondences.clear();
-					}));
+					});
 					
 					inspector->add(MAKE(ofxCvGui::Widgets::Slider, this->initialLensOffset));
 
@@ -316,9 +316,9 @@ namespace ofxRulr {
 					}, OF_KEY_RETURN);
 					calibrateButton->setHeight(100.0f);
 					inspector->add(calibrateButton);
-					inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<float>, "Reprojection error [px]", [this]() {
+					inspector->addLiveValue<float>("Reprojection error [px]", [this]() {
 						return this->error;
-					}));
+					});
 				}
 			}
 		}

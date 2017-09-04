@@ -19,7 +19,7 @@ namespace ofxRulr {
 
 				//A position offset within the objects coordinates
 				//We will apply the object's rotation to this
-				const ofVec3f & getObjectPositionOffset() const;
+				ofVec3f getObjectPositionOffset() const;
 				void setObjectPositionOffset(const ofVec3f &);
 
 				string getTargetName();

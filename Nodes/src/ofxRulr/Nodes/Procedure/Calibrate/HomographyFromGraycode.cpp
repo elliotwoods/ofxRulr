@@ -341,15 +341,15 @@ namespace ofxRulr {
 					findHomographyButton->setHeight(100.0f);
 					inspector->add(findHomographyButton);
 
-					inspector->add(MAKE(ofxCvGui::Widgets::Button, "Export mapping image and matrix...", [this]() {
+					inspector->addButton("Export mapping image and matrix...", [this]() {
 						try {
 							this->exportMappingImage();
 						}
 						RULR_CATCH_ALL_TO_ALERT
-					}));
+					});
 
-					inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->undistortFirst));
-					inspector->add(MAKE(ofxCvGui::Widgets::Toggle, this->doubleExportSize));
+					inspector->addToggle(this->undistortFirst);
+					inspector->addToggle(this->doubleExportSize);
 				}
 			}
 		}
