@@ -200,9 +200,9 @@ namespace ofxRulr {
 			void VideoOutput::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				inspector->add(MAKE(ofxCvGui::Widgets::Button, "Refresh monitors", [this]() {
+				inspector->addButton("Refresh monitors", [this]() {
 					this->refreshMonitors();
-				}));
+				});
 
 				auto showWindowToggle = inspector->addToggle("Show window", [this]() {
 					return this->isWindowOpen();
@@ -218,20 +218,20 @@ namespace ofxRulr {
 					return ofToString(this->videoOutputSelection) + " of " + ofToString(this->videoOutputs.size());
 				}));
 
-				inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<string>, "Window status", [this]() {
+				inspector->addLiveValue<string>("Window status", [this]() {
 					if (!this->window) {
 						return string("closed");
 					}
 					else {
 						return string("open");
 					}
-				}));
+				});
 
 				inspector->addToggle(this->useFullScreenMode);
 
-				inspector->add(MAKE(ofxCvGui::Widgets::LiveValue<ofVec2f>, "Output Size", [this]() {
+				inspector->addLiveValue<ofVec2f>("Output Size", [this]() {
 					return ofVec2f(this->getWidth(), this->getHeight());
-				}));
+				});
 
 				inspector->add(MAKE(ofxCvGui::Widgets::Title, "Split output", ofxCvGui::Widgets::Title::Level::H3));
 				{
