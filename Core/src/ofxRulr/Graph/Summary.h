@@ -18,6 +18,10 @@ namespace ofxRulr {
 
 			void update();
 			ofxCvGui::PanelPtr getPanel() override;
+#ifdef OFXCVGUI_USE_OFXGRABCAM
+			ofVec3f getCursorWorld(bool forceUpdate = false) const;
+			ofxGrabCam & getCamera();
+#endif
 		protected:
 			void serialize(Json::Value &);
 			void deserialize(const Json::Value &);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Base.h"
+#include "RigidBody.h"
 
 #include <ofxCvGui/Panels/World.h>
 #include "ofxAssimpModelLoader.h"
@@ -8,26 +8,28 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
-			class Model : public Base {
+			class Mesh : public RigidBody {
 			public:
 				MAKE_ENUM(Axes
 					, (NegX, PosX, NegY, PosY, NegZ, PosZ)
 					, ("-X", "+X", "-Y", "+Y", "-Z", "+Z"));
 
-				Model();
+				Mesh();
 				string getTypeName() const override;
 				void init();
 				void update();
-				void drawWorld();
+				void drawObject();
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 
 				ofMatrix4x4 getMeshTransform() const;
+
+				ofVec3f getVertexCloseToWorldPosition(const ofVec3f &) const;
+				ofVec3f getVertexCloseToMouse(float maxDistance = 30.0f) const;
+				ofVec3f getVertexCloseToMouse(const ofVec3f & mousePosition, float maxDistance = 30.0f) const;
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
-
-				void updatePreviewMesh();
 
 				ofParameter<string> filename;
 
@@ -37,8 +39,9 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<bool> vertices{ "Vertices", false };
 						ofParameter<bool> wireframe{ "Wireframe", false };
-						ofParameter<bool> faces{ "Faces", true };
-						PARAM_DECLARE("Draw style", vertices, wireframe, faces);
+						ofParameter<bool> faces{ "Faces", false };
+						ofParameter<ofFloatColor> color{ "Color", ofColor(1.0f) };
+						PARAM_DECLARE("Draw style", vertices, wireframe, faces, color);
 					} drawStyle;
 
 					struct : ofParameterGroup {

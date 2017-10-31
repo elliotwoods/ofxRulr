@@ -77,6 +77,24 @@ namespace ofxRulr {
 			return this->view;
 		}
 
+#ifdef OFXCVGUI_USE_OFXGRABCAM
+		//----------
+		ofVec3f Summary::getCursorWorld(bool forceUpdate) const {
+			auto camera = static_cast<ofxGrabCam *>(this->camera);
+			if (forceUpdate) {
+				ofMouseEventArgs mouseArgs(ofMouseEventArgs::Type::Moved, ofGetMouseX(), ofGetMouseY());
+				camera->mouseMoved(mouseArgs);
+				camera->updateCursorWorld();
+			}
+			return camera->getCursorWorld();
+		}
+
+		//----------
+		ofxGrabCam & Summary::getCamera() {
+			return * (ofxGrabCam*) this->camera;
+		}
+#endif
+
 		//----------
 		void Summary::serialize(Json::Value & json) {
 			Utils::Serializable::serialize(json, this->parameters);

@@ -17,7 +17,7 @@ namespace ofxRulr {
 
 				//----------
 				string Mesh2DFromGraycode::getTypeName() const {
-					return "Nodes::Procedure::Calibrate::MeshFrom2DGraycode";
+					return "Procedure::Calibrate::MeshFrom2DGraycode";
 				}
 
 				//----------

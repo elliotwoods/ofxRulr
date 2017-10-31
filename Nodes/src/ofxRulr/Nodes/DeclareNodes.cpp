@@ -5,10 +5,12 @@
 
 #include "ofxRulr/Nodes/Application/Assets.h"
 #include "ofxRulr/Nodes/Application/openFrameworks.h"
+#include "ofxRulr/Nodes/Application/HTTPServerControl.h"
 
 #include "ofxRulr/Nodes/Data/Channels/Database.h"
 #include "ofxRulr/Nodes/Data/Channels/Generator/Application.h"
 #include "ofxRulr/Nodes/Data/Mesh.h"
+#include "ofxRulr/Nodes/Data/SelectMeshVertices.h"
 #include "ofxRulr/Nodes/Data/Recorder.h"
 
 #include "ofxRulr/Nodes/DMX/Sharpy.h"
@@ -16,7 +18,7 @@
 
 #include "ofxRulr/Nodes/Item/Board.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
-#include "ofxRulr/Nodes/Item/Model.h"
+#include "ofxRulr/Nodes/Item/Mesh.h"
 #include "ofxRulr/Nodes/Item/Projector.h"
 #include "ofxRulr/Nodes/Item/RigidBody.h"
 #include "ofxRulr/Nodes/Item/View.h"
@@ -55,10 +57,12 @@ namespace ofxRulr {
 
 			RULR_DECLARE_NODE(Application::Assets);
 			RULR_DECLARE_NODE(Application::openFrameworks);
+			RULR_DECLARE_NODE(Application::HTTPServerControl);
 			
 			RULR_DECLARE_NODE(Data::Channels::Database);
 			RULR_DECLARE_NODE(Data::Channels::Generator::Application);
 			RULR_DECLARE_NODE(Data::Mesh);
+			RULR_DECLARE_NODE(Data::SelectMeshVertices);
 			RULR_DECLARE_NODE(Data::Recorder);
 
 			RULR_DECLARE_NODE(DMX::Sharpy);
@@ -66,7 +70,7 @@ namespace ofxRulr {
 
 			RULR_DECLARE_NODE(Item::Board);
 			RULR_DECLARE_NODE(Item::Camera);
-			RULR_DECLARE_NODE(Item::Model);
+			RULR_DECLARE_NODE(Item::Mesh);
 			RULR_DECLARE_NODE(Item::Projector);
 			RULR_DECLARE_NODE(Item::RigidBody);
 			RULR_DECLARE_NODE(Item::View);

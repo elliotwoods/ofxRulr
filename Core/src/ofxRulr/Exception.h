@@ -7,15 +7,38 @@
 #include "ofxRulr/Utils/Constants.h"
 #include "ofxMachineVision/Constants.h"
 
+#ifndef __func__
+#define __func__ __FUNCTION__
+#endif
+
 namespace ofxRulr {
 	class RULR_EXPORTS Exception : public std::exception {
 	public:
-		Exception(const std::string message);
+		Exception(const std::string & errorMessage);
 		const char * what() const throw() override;
 	protected:
-		const std::string message;
+		const std::string errorMessage;
+	};
+
+	class TracebackException : public Exception {
+	public:
+		TracebackException(const std::string & errorMessage
+			, const std::string & fileName
+			, const std::string & functionName
+			, const std::size_t lineNumber);
+		std::string getTraceback() const;
+	protected:
+		const std::string fileName;
+		const std::string functionName;
+		const std::size_t lineNumber;
 	};
 }
+
+#define RULR_EXCEPTION(X) \
+	ofxRulr::TracebackException(X \
+		, string(__FILE__ ) \
+		, string(__func__) \
+		, __LINE__)
 
 #define RULR_CATCH_ALL_TO(X) \
 	catch (ofxRulr::Exception e) { X; } \
