@@ -23,7 +23,7 @@ namespace ofxRulr {
 
 						unsigned int getParameterCount() const;
 						void resetParameters() override;
-						double getResidual(DataPoint) const override;
+						void getResidual(DataPoint, double & residual, double * gradient) const override;
 						void evaluate(DataPoint & point) const;
 						void cacheModel() override;
 

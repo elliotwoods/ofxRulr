@@ -77,7 +77,11 @@ namespace ofxRulr {
 				}
 
 				//---------
-				double MovingHeadToWorld::Model::getResidual(DataPoint point) const {
+				void MovingHeadToWorld::Model::getResidual(DataPoint point, double & residual, double * gradient) const {
+					if (gradient) {
+						RULR_ERROR << "ofxNonLinearFit::Models::RigidBody does not support gradient algorithms";
+					}
+
 					auto pointEvaluated = point;
 					this->evaluate(pointEvaluated);
 					auto difference = pointEvaluated.panTilt - point.panTilt;
@@ -87,7 +91,7 @@ namespace ofxRulr {
 					while (difference.x < -180.0f) {
 						difference.x += 360.0f;
 					}
-					return difference.lengthSquared();
+					residual = difference.lengthSquared();
 				}
 
 				//---------
@@ -446,7 +450,7 @@ namespace ofxRulr {
 								auto dataPointEvaluated = dataPoint;
 								model.evaluate(dataPointEvaluated);
 								double residual;
-								residual = model.getResidual(dataPoint);
+								model.getResidual(dataPoint, residual, nullptr);
 								dataPoint.residual = residual;
 								dataPoint.panTiltEvaluated = dataPointEvaluated.panTilt;
 							}
