@@ -40,6 +40,8 @@ namespace ofxRulr {
 				const Passes & getPasses(Pass::Level requiredPassLevel);
 				Pass & getPass(Pass::Level passLevel, bool ensureRendered = true);
 				void render(Pass::Level requiredPass);
+
+				float getBrightness() const;
 			protected:
 
 				ofxCvGui::PanelGroupPtr panelGroup;
@@ -47,8 +49,9 @@ namespace ofxRulr {
 				Passes passes;
 
 				struct : ofParameterGroup {
+					ofParameter<float> brightness{ "Brightness", 1, 0, 10 };
 					ofParameter<bool> autoRender{ "Auto render", true };
-					PARAM_DECLARE("Projector", autoRender);
+					PARAM_DECLARE("Projector", brightness, autoRender);
 				} parameters;
 			};
 		}

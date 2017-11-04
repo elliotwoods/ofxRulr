@@ -16,6 +16,7 @@ namespace ofxRulr {
 			//----------
 			void World::init() {
 				this->addInput<Nodes::Base>("Scene");
+				this->manageParameters(this->parameters);
 			}
 
 			//----------
@@ -48,6 +49,11 @@ namespace ofxRulr {
 					}
 				}
 				return projectors;
+			}
+
+			//----------
+			const ofParameterGroup & World::getParameters() const {
+				return this->parameters;
 			}
 		}
 	}

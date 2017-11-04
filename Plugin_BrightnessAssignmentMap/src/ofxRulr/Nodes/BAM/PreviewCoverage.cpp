@@ -23,6 +23,10 @@ namespace ofxRulr {
 			void PreviewCoverage::drawWorldStage() {
 				auto world = this->getInput<World>();
 				if (world) {
+					const auto & worldParameters = world->getParameters();
+					const auto normalCutoffAngle = worldParameters.getFloat("Normal cutoff angle (°)").get();
+					const auto featherSize = worldParameters.getFloat("Feather size").get();
+
 					auto projectors = world->getProjectors();
 					if (!projectors.empty()) {
 						auto scene = world->getInput<Nodes::Base>("Scene");
@@ -35,6 +39,9 @@ namespace ofxRulr {
 							auto & shader = ofxAssets::shader("ofxRulr::Nodes::BAM::PreviewCoverage");
 							shader.begin();
 							{
+								shader.setUniform1f("normalCutoff", cos(normalCutoffAngle * DEG_TO_RAD));
+								shader.setUniform1f("featherSize", featherSize);
+
 								int projectorCount = 0;
 								for (auto projector : projectors) {
 									auto projectorIndexString = ofToString(projectorCount);
@@ -45,6 +52,8 @@ namespace ofxRulr {
 										shader.setUniformMatrix4f("projectorVP" + projectorIndexString
 											, view.getViewMatrix() * view.getClippedProjectionMatrix());
 										shader.setUniform2f("projectorResolution" + projectorIndexString, ofVec2f(view.getWidth(), view.getHeight()));
+										shader.setUniform3f("projectorPosition" + projectorIndexString, view.getPosition());
+										shader.setUniform1f("projectorBrightness" + projectorIndexString, projector->getBrightness());
 									}
 
 									{
@@ -56,6 +65,7 @@ namespace ofxRulr {
 									projectorCount++;
 								}
 								shader.setUniform1i("projectorCount", projectorCount);
+
 								DrawWorldAdvancedArgs drawArgs;
 								{
 									drawArgs.enableMaterials = false;

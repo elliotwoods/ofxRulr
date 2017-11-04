@@ -268,6 +268,11 @@ namespace ofxRulr {
 					}
 				}
 			}
+
+			//---------
+			float Projector::getBrightness() const {
+				return this->parameters.brightness;
+			}
 		}
 	}
 }
