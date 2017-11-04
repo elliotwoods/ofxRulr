@@ -126,7 +126,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Triangulate::drawWorld() {
+			void Triangulate::drawWorldStage() {
 				Utils::Graphics::pushPointSize(this->drawPointSize);
 				{
 					this->mesh.drawVertices();

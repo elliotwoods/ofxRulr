@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{b1d0fa64-bf15-48de-951c-6e38578cb33d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{bdbd6410-7313-45de-8e92-d0a95a9b3fc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{a20783b9-2183-425a-bd97-71b80cc0cd7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\BAM">
+      <UniqueIdentifier>{fbbbd090-6914-4bb1-9266-6b9fffde88ec}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\pch_Plugin_BrightnessAssignmentMap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\BAM\World.cpp">
+      <Filter>src\ofxRulr\Nodes\BAM</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\BAM\Projector.cpp">
+      <Filter>src\ofxRulr\Nodes\BAM</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\BAM\PreviewCoverage.cpp">
+      <Filter>src\ofxRulr\Nodes\BAM</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_BrightnessAssignmentMap.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\BAM\World.h">
+      <Filter>src\ofxRulr\Nodes\BAM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\BAM\Projector.h">
+      <Filter>src\ofxRulr\Nodes\BAM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\BAM\PreviewCoverage.h">
+      <Filter>src\ofxRulr\Nodes\BAM</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

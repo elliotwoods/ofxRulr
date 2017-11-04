@@ -126,7 +126,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MatchMarkers::drawWorld() {
+			void MatchMarkers::drawWorldStage() {
 				if (this->parameters.whenDraw.get() == WhenDrawWorld::Always
 					|| this->parameters.whenDraw.get() == WhenDrawWorld::Selected && this->isBeingInspected()) {
 					auto captures = this->captures.getSelection();

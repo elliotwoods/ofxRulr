@@ -260,7 +260,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void ProjectorFromKinectV2::drawWorld() {
+				void ProjectorFromKinectV2::drawWorldStage() {
 					auto kinect = this->getInput<Item::KinectV2>();
 					auto projector = this->getInput<Item::Projector>();
 

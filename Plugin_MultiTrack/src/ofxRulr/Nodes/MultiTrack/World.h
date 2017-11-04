@@ -18,7 +18,7 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 				void update();
-				void drawWorld();
+				void drawWorldStage();
 
 				void populateInspector(ofxCvGui::InspectArguments &);
 				map<size_t, weak_ptr<Subscriber>> & getSubscribers();

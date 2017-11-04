@@ -154,7 +154,7 @@ namespace ofxRulr {
 								view.beginAsCamera(true);
 								glEnable(GL_DEPTH_TEST);
 								glClear(GL_DEPTH_BUFFER_BIT);
-								this->drawWorld();
+								this->drawWorldStage();
 								glDisable(GL_DEPTH_TEST);
 								view.endAsCamera();
 							}
@@ -205,7 +205,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void ARCube::drawWorld() {
+			void ARCube::drawWorldStage() {
 				auto camera = this->getInput<Item::Camera>();
 				auto board = this->getInput<Item::AbstractBoard>();
 				if (board && camera && this->foundBoard) {

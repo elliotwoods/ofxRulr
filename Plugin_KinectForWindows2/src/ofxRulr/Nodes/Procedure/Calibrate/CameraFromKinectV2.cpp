@@ -268,7 +268,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraFromKinectV2::drawWorld() {
+				void CameraFromKinectV2::drawWorldStage() {
 					auto kinect = this->getInput<Item::KinectV2>();
 					if (kinect) {
 						auto kinectTransform = kinect->getTransform();

@@ -10,7 +10,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Test {
-			class Focus : public Nodes::Base, public ofBaseSoundOutput, public enable_shared_from_this<Focus> {
+			class Focus : public Nodes::Base, public ofBaseSoundOutput {
 			public:
 				Focus();
 				string getTypeName() const override;

@@ -83,7 +83,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void FitRoomPlanes::drawWorld() {
+			void FitRoomPlanes::drawWorldStage() {
 
 			}
 

@@ -19,6 +19,7 @@ namespace ofxRulr {
 				void init();
 				void update();
 				void drawObject();
+				void drawObjectAdvanced(DrawWorldAdvancedArgs &);
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
@@ -30,10 +31,17 @@ namespace ofxRulr {
 				ofVec3f getVertexCloseToMouse(const ofVec3f & mousePosition, float maxDistance = 30.0f) const;
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
+				void loadMesh();
+				void loadTexture();
 
-				ofParameter<string> filename;
+				bool meshDirty = true;
+				bool textureDirty = true;
+
+				ofParameter<string> meshFilename{ "Mesh filename", "" };
+				ofParameter<string> textureFilename{ "Texture filename", "" };
 
 				unique_ptr<ofxAssimpModelLoader> modelLoader;
+				ofImage texture;
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {

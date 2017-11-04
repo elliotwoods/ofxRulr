@@ -10,7 +10,6 @@
 #include "ofxRulr/Nodes/Data/Channels/Database.h"
 #include "ofxRulr/Nodes/Data/Channels/Generator/Application.h"
 #include "ofxRulr/Nodes/Data/Mesh.h"
-#include "ofxRulr/Nodes/Data/SelectMeshVertices.h"
 #include "ofxRulr/Nodes/Data/Recorder.h"
 
 #include "ofxRulr/Nodes/DMX/Sharpy.h"
@@ -23,22 +22,12 @@
 #include "ofxRulr/Nodes/Item/RigidBody.h"
 #include "ofxRulr/Nodes/Item/View.h"
 
-#include "ofxRulr/Nodes/Procedure/Calibrate/CameraIntrinsics.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/CameraExtrinsicsFromBoard.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/HomographyFromGraycode.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/Mesh2DFromGraycode.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/ViewToVertices.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/MovingHeadToWorld.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromDepthCamera.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/CameraFromDepthCamera.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromGraycode.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/StereoCalibrate.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromStereoCameras.h"
-#include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromStereoAndHelperCamera.h"
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Procedure/Triangulate.h"
 
 #include "ofxRulr/Nodes/Render/NodeThroughView.h"
+#include "ofxRulr/Nodes/Render/Draw.h"
+#include "ofxRulr/Nodes/Render/Lighting.h"
 
 #include "ofxRulr/Nodes/System/VideoOutput.h"
 
@@ -62,7 +51,6 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Data::Channels::Database);
 			RULR_DECLARE_NODE(Data::Channels::Generator::Application);
 			RULR_DECLARE_NODE(Data::Mesh);
-			RULR_DECLARE_NODE(Data::SelectMeshVertices);
 			RULR_DECLARE_NODE(Data::Recorder);
 
 			RULR_DECLARE_NODE(DMX::Sharpy);
@@ -75,24 +63,13 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Item::RigidBody);
 			RULR_DECLARE_NODE(Item::View);
 
-			RULR_DECLARE_NODE(Procedure::Calibrate::CameraIntrinsics);
-			RULR_DECLARE_NODE(Procedure::Calibrate::CameraExtrinsicsFromBoard);
-			RULR_DECLARE_NODE(Procedure::Calibrate::HomographyFromGraycode);
-			RULR_DECLARE_NODE(Procedure::Calibrate::Mesh2DFromGraycode);
-			RULR_DECLARE_NODE(Procedure::Calibrate::ViewToVertices);
-			RULR_DECLARE_NODE(Procedure::Calibrate::MovingHeadToWorld);
-			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromDepthCamera);
-			RULR_DECLARE_NODE(Procedure::Calibrate::CameraFromDepthCamera);
-			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromGraycode);
-			RULR_DECLARE_NODE(Procedure::Calibrate::StereoCalibrate);
-			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromStereoCamera);
-			RULR_DECLARE_NODE(Procedure::Calibrate::ProjectorFromStereoAndHelperCamera);
-
 			RULR_DECLARE_NODE(Procedure::Scan::Graycode);
 
 			RULR_DECLARE_NODE(Procedure::Triangulate);
 
 			RULR_DECLARE_NODE(Render::NodeThroughView);
+			RULR_DECLARE_NODE(Render::Draw);
+			RULR_DECLARE_NODE(Render::Lighting);
 
 			RULR_DECLARE_NODE(System::VideoOutput);
 			

@@ -40,7 +40,7 @@ namespace ofxRulr {
 					void calibrate();
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void drawWorld();
+					void drawWorldStage();
 					void rebuildView();
 					shared_ptr<ofxCvGui::Panels::Groups::Grid> view;
 

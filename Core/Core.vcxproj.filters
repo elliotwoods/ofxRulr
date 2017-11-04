@@ -81,9 +81,6 @@
     <ClCompile Include="src\ofxRulr\Graph\Pin.cpp">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\Summary.cpp">
-      <Filter>src\ofxRulr\Graph</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Graph\World.cpp">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
@@ -198,12 +195,12 @@
     <ClCompile Include="src\ofxRulr\Utils\ThreadPool.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\WorldStage.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
-      <Filter>src\ofxRulr\Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\Summary.h">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\World.h">
@@ -373,6 +370,12 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\ThreadPool.h">
       <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\WorldStage.h">
+      <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

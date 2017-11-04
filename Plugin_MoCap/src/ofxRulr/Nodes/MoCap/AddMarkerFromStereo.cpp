@@ -189,7 +189,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void AddMarkerFromStereo::drawWorld() {
+			void AddMarkerFromStereo::drawWorldStage() {
 				try {
 					auto position = this->getMarkerPositionEstimation();
 

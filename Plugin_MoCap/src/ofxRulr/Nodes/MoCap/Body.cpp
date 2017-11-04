@@ -206,7 +206,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Body::drawWorld() const {
+			void Body::drawWorldStage() const {
 				auto selection = this->markers.getSelection();
 
 				//the trails are in world space so we treat these outside of drawObject

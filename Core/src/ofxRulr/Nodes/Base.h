@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../Graph/Pin.h"
-#include "../Utils/Constants.h"
-#include "../Utils/Serializable.h"
-#include "../Exception.h"
-#include "../Version.h"
+#include "ofxRulr/Graph/Pin.h"
+#include "ofxRulr/Utils/Constants.h"
+#include "ofxRulr/Utils/Serializable.h"
+#include "ofxRulr/Exception.h"
+#include "ofxRulr/Version.h"
 
 #include "ofxCvGui/InspectController.h"
 #include "ofxCvGui.h"
@@ -23,8 +23,12 @@
 		this->update(); \
 	}
 #define RULR_NODE_DRAW_WORLD_LISTENER \
-	this->onDrawWorld += [this]() { \
-		this->drawWorld(); \
+	this->onDrawWorldStage += [this]() { \
+		this->drawWorldStage(); \
+	}
+#define RULR_NODE_DRAW_WORLD_ADVANCED_LISTENER \
+	this->onDrawWorldAdvanced += [this](ofxRulr::DrawWorldAdvancedArgs & args) { \
+		this->drawWorldAdvanced(args); \
 	}
 #define RULR_NODE_INSPECTOR_LISTENER \
 	this->onPopulateInspector += [this](ofxCvGui::InspectArguments & args) { \
@@ -33,14 +37,23 @@
 #define RULR_NODE_SERIALIZATION_LISTENERS RULR_SERIALIZE_LISTENERS
 
 namespace ofxRulr {
+	struct DrawWorldAdvancedArgs {
+		bool useStandardDrawWhereCustomIsNotAvailable = true;
+		bool enableGui = false;
+		bool enableStyle = false;
+		bool enableMaterials = false;
+		bool enableColors = false;
+		bool enableTextures = false;
+		bool enableNormals = true;
+	};
+
 	namespace Graph {
 		namespace Editor {
 			class NodeHost;
 		}
 	}
-
 	namespace Nodes {
-		class RULR_EXPORTS Base : public ofxCvGui::IInspectable, public Utils::Serializable {
+		class RULR_EXPORTS Base : public ofxCvGui::IInspectable, public Utils::Serializable, protected enable_shared_from_this<Base> {
 		public:
 			Base();
 			~Base();
@@ -68,8 +81,9 @@ namespace ofxRulr {
 			void populateInspector(ofxCvGui::InspectArguments &);
 			virtual ofxCvGui::PanelPtr getPanel() { return ofxCvGui::PanelPtr(); };
 
-			void drawWorld();
-			void drawStencil();
+			void drawWorldStage();
+			void drawWorldAdvanced(DrawWorldAdvancedArgs &);
+			WhenDrawOnWorldStage::Options getWhenDrawOnWorldStage() const;
 
 			template<typename NodeType>
 			void connect(shared_ptr<NodeType> node) {
@@ -136,9 +150,8 @@ namespace ofxRulr {
 			ofxLiquidEvent<void> onInit;
 			ofxLiquidEvent<void> onDestroy;
 			ofxLiquidEvent<void> onUpdate;
-			ofxLiquidEvent<void> onDrawWorld;
-			ofxLiquidEvent<void> onDrawStencil;
-
+			ofxLiquidEvent<void> onDrawWorldStage;
+			ofxLiquidEvent<DrawWorldAdvancedArgs> onDrawWorldAdvanced;
 
 			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onConnect;
 			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onDisconnect;
@@ -178,6 +191,8 @@ namespace ofxRulr {
 			bool initialized;
 			uint64_t lastFrameUpdate;
 			bool updateAllInputsFirst;
+
+			WhenDrawOnWorldStage::Options whenDrawOnWorldStage;
 
 			//we'd love to have parameters for drawWorldEnabled, etc
 			//but adding ofParameters here seems to cause crashes

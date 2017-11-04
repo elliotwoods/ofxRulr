@@ -29,7 +29,7 @@ namespace ofxRulr {
 		}
 
 		//-----------
-		void World::init(Controller & controller, bool enableSummaryView) {
+		void World::init(Controller & controller, bool enableWorldStage) {
 			Utils::initialiser.checkInitialised();
 
 			ofSetWindowTitle("Rulr v" + RULR_VERSION_STRING);
@@ -97,15 +97,15 @@ namespace ofxRulr {
 
 
 			//--
-			// SUMMARY VIEW
+			// WORLD STAGE VIEW
 			//
-			if (enableSummaryView) {
-				this->summary = make_shared<Summary>();
-				this->summary->setWorld(*this);
-				this->summary->init();
-				this->summary->setName("World");
-				this->add(this->summary); // we intentionally do this after building the Node grid
-				verticalGroup->add(this->summary->getPanel());
+			if (enableWorldStage) {
+				this->worldStage = make_shared<WorldStage>();
+				this->worldStage->setWorld(*this);
+				this->worldStage->init();
+				this->worldStage->setName("WorldStage");
+				this->add(this->worldStage); // we intentionally do this after building the Node grid
+				verticalGroup->add(this->worldStage->getPanel());
 			}
 			//
 			//--
@@ -246,8 +246,8 @@ namespace ofxRulr {
 		}
 
 		//----------
-		shared_ptr<ofxRulr::Graph::Summary> World::getSummary() const {
-			return this->summary;
+		shared_ptr<ofxRulr::Graph::WorldStage> World::getWorldStage() const {
+			return this->worldStage;
 		}
 	}
 }

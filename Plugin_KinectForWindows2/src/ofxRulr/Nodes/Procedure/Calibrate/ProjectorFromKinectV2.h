@@ -35,7 +35,7 @@ namespace ofxRulr {
 					void calibrate();
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void drawWorld();
+					void drawWorldStage();
 					shared_ptr<ofxCvGui::Panels::Draws> view;
 
 					struct : ofParameterGroup {

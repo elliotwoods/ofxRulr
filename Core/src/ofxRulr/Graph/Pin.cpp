@@ -76,5 +76,15 @@ namespace ofxRulr {
 		ofVec2f AbstractPin::getPinHeadPosition() const {
 			return this->pinHeadPosition;
 		}
+
+		//----------
+		void AbstractPin::setLoopbackEnabled(bool loopbackEnabled) {
+			this->loopbackEnabled = loopbackEnabled;
+		}
+
+		//----------
+		bool AbstractPin::getLoopbackEnabled() const {
+			return this->loopbackEnabled;
+		}
 	}
 }

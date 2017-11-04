@@ -16,7 +16,7 @@ namespace ofxRulr {
 				void init();
 				void update();
 				ofxCvGui::PanelPtr getPanel() override;
-				void drawWorld();
+				void drawWorldStage();
 				
 				bool solvePnPStereo(shared_ptr<Procedure::Calibrate::StereoCalibrate> stereoCalibrateNode
 					, const vector<cv::Point2f> & imagePointsA

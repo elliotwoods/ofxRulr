@@ -21,7 +21,7 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 				void update();
-				void drawWorld();
+				void drawWorldStage();
 				ofxCvGui::PanelPtr getPanel() override;
 
 				const multimap<int, unique_ptr<TrackedMarker>> & getTrackedMarkers() const;

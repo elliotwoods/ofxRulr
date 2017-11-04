@@ -29,6 +29,9 @@ namespace ofxRulr {
 
 				this->rebuildDateStrings();
 			};
+			this->onSelectionChanged += [this](bool &) {
+				this->onChange.notifyListeners();
+			};
 
 			{
 				ofColor color = ofColor(200, 100, 100);
@@ -215,6 +218,10 @@ namespace ofxRulr {
 				}
 			};
 
+			capture->onChange += [this]() {
+				this->onChange.notifyListeners();
+			};
+
 			capture->onSelectionChanged += [captureWeak, this](bool selection) {
 				if (!this->getIsMultipleSelectionAllowed() && selection) {
 					auto selectionSet = this->getSelectionUntyped();
@@ -228,6 +235,7 @@ namespace ofxRulr {
 				this->onSelectionChanged.notifyListeners();
 			};
 
+			this->onChange.notifyListeners();
 			this->onSelectionChanged.notifyListeners();
 
 			this->captures.push_back(capture);
@@ -239,7 +247,7 @@ namespace ofxRulr {
 			auto findCapture = find(this->captures.begin(), this->captures.end(), capture);
 			if (findCapture != this->captures.end()) {
 				if (capture) {
-					capture->setSelected(false); // to notify upwards
+					capture->setSelected(false); // to notify upwards (onChange, onSelectionChange)
 					capture->onDeletePressed.removeListeners(this);
 					capture->onSelectionChanged.removeListeners(this);
 				}

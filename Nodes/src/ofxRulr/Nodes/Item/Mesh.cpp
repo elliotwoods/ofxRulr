@@ -12,6 +12,7 @@
 #include "ofSystemUtils.h"
 
 #include "ofxRulr/Graph/World.h"
+#include "ofxRulr/Nodes/Render/Style.h"
 
 using namespace ofxCvGui;
 using namespace ofxCvGui::Widgets;
@@ -32,27 +33,24 @@ namespace ofxRulr {
 			//----------
 			void Mesh::init() {
 				RULR_NODE_UPDATE_LISTENER;
-				RULR_NODE_DRAW_WORLD_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
+				RULR_RIGIDBODY_DRAW_OBJECT_LISTENER;
+				RULR_RIGIDBODY_DRAW_OBJECT_ADVANCED_LISTENER;
+
+				this->addInput<Render::Style>();
 
 				this->modelLoader = make_unique<ofxAssimpModelLoader>();
-				this->onDrawObject += [this]() {
-					static ofLight light;
-					ofPushStyle();
-					{
-						light.enable();
-						ofSetColor(this->parameters.drawStyle.color.get());
-						this->drawObject();
-						light.disable();
-					}
-					ofPopStyle();
-				};
 			}
 
 			//----------
 			void Mesh::update() {
-
+				if (this->meshDirty) {
+					this->loadMesh();
+				}
+				if (this->textureDirty) {
+					this->loadTexture();
+				}
 			}
 
 			//----------
@@ -61,46 +59,112 @@ namespace ofxRulr {
 					return;
 				}
 
+				auto style = this->getInput<Render::Style>();
+
+				if (style) {
+					style->begin();
+				}
+
+				auto & texture = this->texture.getTexture();
+				if (texture.isAllocated()) {
+					texture.bind();
+				}
+
 				ofPushMatrix();
 				{
 					ofMultMatrix(this->getMeshTransform());
-				}
 
-				if (this->parameters.drawStyle.vertices) {
-					Utils::Graphics::pushPointSize(3.0f);
-					{
-						this->modelLoader->drawVertices();
+					if (this->parameters.drawStyle.vertices) {
+						Utils::Graphics::pushPointSize(3.0f);
+						{
+							this->modelLoader->drawVertices();
+						}
+						Utils::Graphics::popPointSize();
 					}
-					Utils::Graphics::popPointSize();
-				}
-				if (this->parameters.drawStyle.wireframe) {
-					this->modelLoader->drawWireframe();
-				}
-				if (this->parameters.drawStyle.faces) {
-					this->modelLoader->drawFaces();
+					if (this->parameters.drawStyle.wireframe) {
+						this->modelLoader->drawWireframe();
+					}
+					if (this->parameters.drawStyle.faces) {
+						this->modelLoader->drawFaces();
+					}
 				}
 				ofPopMatrix();
+
+				if (texture.isAllocated()) {
+					texture.unbind();
+				}
+
+				if (style) {
+					style->end();
+				}
+			}
+
+			//----------
+			void Mesh::drawObjectAdvanced(DrawWorldAdvancedArgs & args) {
+				auto style = this->getInput<Render::Style>();
+
+				if (args.enableStyle && style) {
+					style->begin();
+				}
+
+				if (args.enableTextures && texture.isAllocated()) {
+					texture.bind();
+				}
+
+				ofPushMatrix();
+				{
+					ofMultMatrix(this->getMeshTransform());
+
+					args.enableMaterials ? modelLoader->enableMaterials() : modelLoader->disableMaterials();
+					args.enableColors ? modelLoader->enableColors() : modelLoader->disableColors();
+					args.enableTextures ? modelLoader->enableTextures() : modelLoader->disableTextures();
+					args.enableNormals ? modelLoader->enableNormals() : modelLoader->disableNormals();
+
+					if (this->parameters.drawStyle.vertices) {
+						Utils::Graphics::pushPointSize(3.0f);
+						{
+							this->modelLoader->drawVertices();
+						}
+						Utils::Graphics::popPointSize();
+					}
+					if (this->parameters.drawStyle.wireframe) {
+						this->modelLoader->drawWireframe();
+					}
+					if (this->parameters.drawStyle.faces) {
+						this->modelLoader->drawFaces();
+					}
+
+					modelLoader->enableMaterials();
+					modelLoader->enableColors();
+					modelLoader->enableTextures();
+					modelLoader->enableNormals();
+				}
+				ofPopMatrix();
+
+				if (args.enableTextures && texture.isAllocated()) {
+					texture.unbind();
+				}
+
+				if (args.enableStyle && style) {
+					style->end();
+				}
 			}
 
 			//----------
 			void Mesh::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->filename);
+				Utils::Serializable::serialize(json, this->meshFilename);
+				Utils::Serializable::serialize(json, this->textureFilename);
 				Utils::Serializable::serialize(json, this->parameters);
 			}
 
 			//----------
 			void Mesh::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->filename);
-
-				if (this->filename.get().empty()) {
-					this->modelLoader->clear();
-				}
-				else {
-					this->modelLoader->loadModel(this->filename.get());
-					modelLoader->calculateDimensions();
-				}
-
+				Utils::Serializable::deserialize(json, this->textureFilename);
+				Utils::Serializable::deserialize(json, this->meshFilename);
 				Utils::Serializable::deserialize(json, this->parameters);
+
+				this->meshDirty = true;
+				this->textureDirty = true;
 			}
 
 
@@ -177,9 +241,9 @@ namespace ofxRulr {
 					ofVec3f closestVertex;
 					bool foundVertex = false;
 
-					auto summary = ofxRulr::Graph::World::X().getSummary();
-					auto & camera = summary->getCamera();
-					auto summaryBounds = summary->getPanel()->getBounds();
+					auto worldStage = ofxRulr::Graph::World::X().getWorldStage();
+					auto & camera = worldStage->getCamera();
+					auto worldStagePanelBounds = worldStage->getPanel()->getBounds();
 
 					for (size_t i = 0; i < meshCount; i++) {
 						const auto & meshHelper = this->modelLoader->getMeshHelper(i);
@@ -188,7 +252,7 @@ namespace ofxRulr {
 							const auto & vertexObject = *(ofVec3f*)&meshHelper.mesh->mVertices[iVertex];
 							auto vertexWorld = vertexObject * meshTransform;
 
-							auto vertexScreen = camera.worldToScreen(vertexWorld, summaryBounds);
+							auto vertexScreen = camera.worldToScreen(vertexWorld, worldStagePanelBounds);
 							vertexScreen.z = 0.0f;
 
 							auto distance = vertexScreen.distance(mousePosition);
@@ -214,29 +278,59 @@ namespace ofxRulr {
 			void Mesh::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 				auto inspector = inspectArguments.inspector;
 				
-				auto loadButton = make_shared<ofxCvGui::Widgets::Button>("Load model...", [this]() {
-					auto result = ofSystemLoadDialog("Load model using Assimp");
-					if (result.bSuccess) {
-						this->modelLoader->loadModel(result.filePath);
-						this->modelLoader->calculateDimensions();
-						this->filename.set(result.filePath);
-					}
-				});
-				inspector->add(loadButton);
+				{
+					inspector->addTitle("Mesh", ofxCvGui::Widgets::Title::H3);
 
-				inspector->add(make_shared<LiveValue<string>>("Filename", [this]() {
-					return this->filename.get();
-				}));
-				auto clearModelButton = make_shared <ofxCvGui::Widgets::Button>("Clear model", [this]() {
-					this->modelLoader->clear();
-					this->filename.set("");
-				});
-				//we put the listener on the loadButton since we'll be disabling clearModelButton
-				//also it stops there being a circular reference where loadButton owns a listener stack which owns a lambda which owns loadButton
-				loadButton->onUpdate += [this, clearModelButton](ofxCvGui::UpdateArguments &) {
-					clearModelButton->setEnabled(!this->filename.get().empty());
-				};
-				inspector->add(clearModelButton);
+					auto loadButton = make_shared<ofxCvGui::Widgets::Button>("Load...", [this]() {
+						auto result = ofSystemLoadDialog("Load model using Assimp");
+						if (result.bSuccess) {
+							this->meshFilename.set(result.filePath);
+							this->meshDirty = true;
+						}
+					});
+					inspector->add(loadButton);
+
+					inspector->add(make_shared<LiveValue<string>>("Filename", [this]() {
+						return this->meshFilename.get();
+					}));
+					auto clearModelButton = make_shared <ofxCvGui::Widgets::Button>("Clear", [this]() {
+						this->meshFilename.set("");
+						this->meshDirty = true;
+					});
+					//we put the listener on the loadButton since we'll be disabling clearModelButton
+					//also it stops there being a circular reference where loadButton owns a listener stack which owns a lambda which owns loadButton
+					loadButton->onUpdate += [this, clearModelButton](ofxCvGui::UpdateArguments &) {
+						clearModelButton->setEnabled(!this->meshFilename.get().empty());
+					};
+					inspector->add(clearModelButton);
+				}
+				{
+					inspector->addTitle("Texture", ofxCvGui::Widgets::Title::H3);
+
+					auto loadButton = make_shared<ofxCvGui::Widgets::Button>("Load...", [this]() {
+						auto result = ofSystemLoadDialog("Load texture");
+						if (result.bSuccess) {
+							this->textureFilename.set(result.filePath);
+							this->textureDirty = true;
+						}
+					});
+					inspector->add(loadButton);
+
+					inspector->add(make_shared<LiveValue<string>>("Filename", [this]() {
+						return this->textureFilename.get();
+					}));
+					auto clearButton = make_shared <ofxCvGui::Widgets::Button>("Clear", [this]() {
+						this->textureFilename.set("");
+						this->textureDirty = true;
+					});
+					//we put the listener on the loadButton since we'll be disabling clearModelButton
+					//also it stops there being a circular reference where loadButton owns a listener stack which owns a lambda which owns loadButton
+					loadButton->onUpdate += [this, clearButton](ofxCvGui::UpdateArguments &) {
+						clearButton->setEnabled(!this->textureFilename.get().empty());
+					};
+					inspector->add(clearButton);
+				}
+				
 
 				inspector->addLiveValue<size_t>("Mesh count", [this]() {
 					if (this->modelLoader) {
@@ -295,6 +389,30 @@ namespace ofxRulr {
 				});
 
 				inspector->addParameterGroup(this->parameters);
+			}
+
+			//----------
+			void Mesh::loadMesh() {
+				if (this->meshFilename.get().empty()) {
+					this->modelLoader->clear();
+				}
+				else {
+					this->modelLoader->loadModel(this->meshFilename.get());
+					this->modelLoader->calculateDimensions();
+				}				
+				this->modelLoader->setScaleNormalization(false);
+				this->meshDirty = false;
+			}
+
+			//----------
+			void Mesh::loadTexture() {
+				if (this->textureFilename.get().empty()) {
+					this->texture.clear();
+				}
+				else {
+					this->texture.load(this->textureFilename.get());
+				}
+				this->textureDirty = false;
 			}
 		}
 	}

@@ -32,7 +32,7 @@ namespace ofxRulr {
 				void update();
 				ofxCvGui::PanelPtr getPanel() override;
 				void drawObject() const;
-				void drawWorld() const;
+				void drawWorldStage() const;
 
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void serialize(Json::Value &);

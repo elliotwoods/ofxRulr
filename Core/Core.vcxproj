@@ -87,7 +87,7 @@
     <ClCompile Include="src\ofxRulr\Graph\Editor\PinView.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\FactoryRegister.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\Pin.cpp" />
-    <ClCompile Include="src\ofxRulr\Graph\Summary.cpp" />
+    <ClCompile Include="src\ofxRulr\Graph\WorldStage.cpp" />
     <ClCompile Include="src\ofxRulr\Graph\World.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Base.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\GraphicsManager.cpp" />
@@ -139,6 +139,7 @@
     <ClInclude Include="..\..\ofxOsc\src\ofxOscParameterSync.h" />
     <ClInclude Include="..\..\ofxOsc\src\ofxOscReceiver.h" />
     <ClInclude Include="..\..\ofxOsc\src\ofxOscSender.h" />
+    <ClInclude Include="src\ofxRulr.h" />
     <ClInclude Include="src\ofxRulr\Exception.h" />
     <ClInclude Include="src\ofxRulr\Graph\Editor\LinkHost.h" />
     <ClInclude Include="src\ofxRulr\Graph\Editor\NodeBrowser.h" />
@@ -147,7 +148,7 @@
     <ClInclude Include="src\ofxRulr\Graph\Editor\PinView.h" />
     <ClInclude Include="src\ofxRulr\Graph\FactoryRegister.h" />
     <ClInclude Include="src\ofxRulr\Graph\Pin.h" />
-    <ClInclude Include="src\ofxRulr\Graph\Summary.h" />
+    <ClInclude Include="src\ofxRulr\Graph\WorldStage.h" />
     <ClInclude Include="src\ofxRulr\Graph\World.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\GraphicsManager.h" />

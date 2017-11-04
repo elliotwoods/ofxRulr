@@ -20,7 +20,7 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::InspectArguments &);
 
 				ofVec3f getMarkerPositionEstimation() const;
-				void drawWorld();
+				void drawWorldStage();
 			protected:
 				void addMarker();
 				ofxCvGui::PanelPtr panel;

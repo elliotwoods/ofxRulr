@@ -90,7 +90,7 @@ namespace ofxRulr {
 					}
 
 					//----------
-					void ToProjector::drawWorld() {
+					void ToProjector::drawWorldStage() {
 						ofMesh preview;
 						for (auto correspondence : this->correspondences) {
 							preview.addVertex(correspondence.world);

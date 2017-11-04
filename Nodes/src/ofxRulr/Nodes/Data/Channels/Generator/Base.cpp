@@ -61,7 +61,7 @@ namespace ofxRulr {
 
 					//----------
 					void Base::connectDatabase(shared_ptr<Database> database) {
-						database->addGenerator(shared_from_this());
+						database->addGenerator(static_pointer_cast<Base>(this->shared_from_this()));
 					}
 
 					//----------

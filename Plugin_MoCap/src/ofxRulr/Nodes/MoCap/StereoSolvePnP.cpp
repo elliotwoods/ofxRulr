@@ -751,7 +751,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void StereoSolvePnP::drawWorld() {
+			void StereoSolvePnP::drawWorldStage() {
 				if (this->parameters.draw.a) {
 					ofPushMatrix();
 					{

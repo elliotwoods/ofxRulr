@@ -101,7 +101,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Receiver::drawWorld() {
+			void Receiver::drawWorldStage() {
 				//this->setExtrinsics() // Directly from CV
 				//this->setTransform()  // Use getTransform for the initial values in ofxNonLinearFit
 				//ofxCv::estimateAffine3D()
