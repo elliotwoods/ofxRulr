@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxRulr.h"
+#include "Projector.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -36,14 +37,13 @@ namespace ofxRulr {
 				void init();
 				void update();
 				ofxCvGui::PanelPtr getPanel() override;
-				void renderPasses(Pass::Level requiredPassLevel = Pass::Level::Done);
 				const Passes & getPasses(Pass::Level requiredPassLevel);
 				Pass & getPass(Pass::Level passLevel, bool ensureRendered = true);
 				void render(Pass::Level requiredPass);
 
 				float getBrightness() const;
 			protected:
-
+				void renderAvailability(shared_ptr<Projector>, shared_ptr<World>, ofxRay::Camera & view, shared_ptr<Nodes::Base> scene);
 				ofxCvGui::PanelGroupPtr panelGroup;
 
 				Passes passes;

@@ -36,7 +36,7 @@ float getProjectorFactor(float projectorBrightness
 	{
 		factor *= projectorBrightness;
 	}
-
+	
 	//feather
 	{
 		float featherPosition = max(abs(posProjector.x), abs(posProjector.y));
@@ -59,7 +59,6 @@ float getProjectorFactor(float projectorBrightness
 		float distanceFactor = 1.0f / (distance * distance);
 		factor *= distanceFactor;
 	}
-	return clamp(factor, 0, 1);
 
 	//shadow
 	{

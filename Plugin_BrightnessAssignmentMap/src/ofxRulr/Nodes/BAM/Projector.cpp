@@ -75,6 +75,7 @@ namespace ofxRulr {
 					ofFbo::Settings oneChannel3D;
 					{
 						oneChannel3D.useDepth = true;
+						oneChannel3D.depthStencilAsTexture = true;
 						oneChannel3D.internalformat = GL_R32F;
 						oneChannel3D.depthStencilInternalFormat = GL_DEPTH_COMPONENT32;
 					}
@@ -160,8 +161,6 @@ namespace ofxRulr {
 						plane.set(width, height, 2, 2);
 						plane.setPosition(ofVec3f(width / 2.0f, height / 2.0f, 0.0f));
 
-						ofxRulr::Utils::Graphics::glPushAttrib(GL_POLYGON_BIT);
-						ofxRulr::Utils::Graphics::glDisable(GL_CULL_FACE);
 						{
 							//go through requires levels
 							for (uint8_t i = 0; i <= requiredPass; i++) {
@@ -202,13 +201,13 @@ namespace ofxRulr {
 										break;
 									case Pass::Level::Color:
 									{
-										view.beginAsCamera(true);
+										view.beginAsCamera();
 										{
 											ofxRulr::Utils::Graphics::glEnable(GL_DEPTH_TEST);
 											{
 												ofxRulr::DrawWorldAdvancedArgs args;
 												args.enableGui = false;
-												args.enableStyle = false;
+												args.enableStyle = true;
 												args.enableMaterials = true;
 												args.enableColors = true;
 												args.enableTextures = true;
@@ -222,7 +221,8 @@ namespace ofxRulr {
 									}
 									case Pass::Level::Depth:
 									{
-										view.beginAsCamera(true);
+										view.beginAsCamera();
+										ofxRulr::Utils::Graphics::glEnable(GL_DEPTH_TEST);
 										{
 											auto & shader = ofxAssets::shader("ofxRulr::Nodes::BAM::Depth");
 											shader.begin();
@@ -242,6 +242,7 @@ namespace ofxRulr {
 											}
 											shader.end();
 										}
+										ofxRulr::Utils::Graphics::glDisable(GL_DEPTH_TEST);
 										view.endAsCamera();
 										break;
 									}
@@ -260,82 +261,72 @@ namespace ofxRulr {
 										break;
 									}
 									case Pass::Level::AvailabilityProjection:
-									{
-										ofClear(0, 0);
-									}
-									break;
+										this->renderAvailability(static_pointer_cast<Projector>(shared_from_this()), world, view, scene);
+										break;
 									case Pass::Level::AccumulateAvailability:
 									{
+										//Unbind, since we shouldn't be binded to the pass since we need to render to some other buffers first
 										pass.fbo->unbind();
 										{
-											//temporarily unbind the fbo since we need to draw into the fbo for one projector
 											auto allProjectors = world->getProjectors();
-											const auto & accumulateFbo = this->passes[Pass::Level::AvailabilityProjection].fbo;
 											auto & shader = ofxAssets::shader("ofxRulr::Nodes::BAM::AvailabilityProjection");
-
-											//setup parameters from world
+											auto thisProjector = static_pointer_cast<Projector>(shared_from_this());
+											
+											//Setup a temporary fbo to draw each into
+											ofFbo availabilityFromOtherProjector;
 											{
-												const auto & worldParameters = world->getParameters();
-												const auto normalCutoffAngle = worldParameters.getFloat("Normal cutoff angle (°)").get();
-												const auto featherSize = worldParameters.getFloat("Feather size").get();
-												shader.setUniform1f("normalCutoff", cos(normalCutoffAngle * DEG_TO_RAD));
-												shader.setUniform1f("featherSize", featherSize);
+												ofFbo::Settings fboSettings;
+												fboSettings.width = width;
+												fboSettings.height = height;
+												fboSettings.useDepth = true;
+												fboSettings.depthStencilAsTexture = true;
+												fboSettings.internalformat = GL_R32F;
+												fboSettings.depthStencilInternalFormat = GL_DEPTH_COMPONENT32;
+												availabilityFromOtherProjector.allocate(fboSettings);
 											}
 
+											//Add the contribution from the other projectors
 											for (auto otherProjector : allProjectors) {
-												accumulateFbo->begin();
+												//Skip this projector
+												if (otherProjector == thisProjector) {
+													continue;
+												}
+
+												//Draw the 3D scene into fbo with Availability Projection shader
+												availabilityFromOtherProjector.begin();
 												{
 													ofClear(0, 0);
-													view.beginAsCamera(true);
-													{
-														shader.begin();
-														{
-															auto viewOtherProjectorNode = otherProjector->getInput<Item::Projector>();
-															if (!viewOtherProjectorNode) {
-																continue;
-															}
-
-															auto viewOtherProjector = viewOtherProjectorNode->getViewInWorldSpace();
-															shader.setUniformMatrix4f("projectorVP0"
-																, viewOtherProjector.getViewMatrix() * viewOtherProjector.getClippedProjectionMatrix());
-															shader.setUniform2f("projectorResolution0", ofVec2f(viewOtherProjector.getWidth(), viewOtherProjector.getHeight()));
-															shader.setUniform3f("projectorPosition0", view.getPosition());
-															shader.setUniform1f("projectorBrightness0", otherProjector->getBrightness());
-
-															{
-																auto & depthTexture = otherProjector->getPass(Pass::Level::Color, false).fbo->getDepthTexture();
-																shader.setUniformTexture("projectorDepthTexture0", depthTexture, 0);
-																shader.setUniformTexture("projectorDepthTextureShadow0", depthTexture, 1);
-															}
-
-															DrawWorldAdvancedArgs drawArgs;
-															{
-																drawArgs.enableMaterials = false;
-																drawArgs.enableColors = false;
-																drawArgs.enableNormals = true;
-																drawArgs.enableStyle = false;
-																drawArgs.enableTextures = false;
-															}
-															scene->drawWorldAdvanced(drawArgs);
-														}
-														shader.end();
-													}
-													view.endAsCamera();
+													this->renderAvailability(otherProjector, world, view, scene);
 												}
-												accumulateFbo->end();
+												availabilityFromOtherProjector.end();
 
+												//Add the result of the render to the accumulation buffer
 												pass.fbo->begin();
 												{
 													ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ADD);
 													{
-														accumulateFbo->draw(0, 0);
+														availabilityFromOtherProjector.draw(0, 0);
 													}
 													ofDisableBlendMode();
 												}
 												pass.fbo->end();
 											}
 
+											//Finally let's add the contribution from this projector which we calculated in previous pass
+											{
+												pass.fbo->begin();
+												{
+													ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ADD);
+													{
+														this->passes[Pass::Level::AvailabilityProjection].fbo->draw(0, 0);
+													}
+													ofDisableBlendMode();
+												}
+												pass.fbo->end();
+											}
 										}
+
+										//Undo unbind
 										pass.fbo->bind();
 									}
 									break;
@@ -355,6 +346,60 @@ namespace ofxRulr {
 			//---------
 			float Projector::getBrightness() const {
 				return this->parameters.brightness;
+			}
+
+			//---------
+			void Projector::renderAvailability(shared_ptr<Projector> projector, shared_ptr<World> world, ofxRay::Camera & view, shared_ptr<Nodes::Base> scene) {
+				auto & shader = ofxAssets::shader("ofxRulr::Nodes::BAM::AvailabilityProjection");
+				
+				//Get constants for shader
+				const auto & worldParameters = world->getParameters();
+				const auto normalCutoffAngle = worldParameters.getFloat("Normal cutoff angle (°)").get();
+				const auto featherSize = worldParameters.getFloat("Feather size").get();
+
+				auto viewOtherProjectorNode = projector->getInput<Item::Projector>();
+				if (!viewOtherProjectorNode) {
+					return;
+				}
+
+				view.beginAsCamera();
+				{
+					ofxRulr::Utils::Graphics::glEnable(GL_DEPTH_TEST);
+					{
+						shader.begin();
+						{
+							shader.setUniform1f("normalCutoff", cos(normalCutoffAngle * DEG_TO_RAD));
+							shader.setUniform1f("featherSize", featherSize);
+
+							auto viewOtherProjector = viewOtherProjectorNode->getViewInWorldSpace();
+							shader.setUniformMatrix4f("projectorVP0"
+								, viewOtherProjector.getViewMatrix() * viewOtherProjector.getClippedProjectionMatrix());
+							shader.setUniform2f("projectorResolution0", ofVec2f(viewOtherProjector.getWidth(), viewOtherProjector.getHeight()));
+							shader.setUniform3f("projectorPosition0", view.getPosition());
+							shader.setUniform1f("projectorBrightness0", projector->getBrightness());
+
+							{
+								auto & depthTexture = projector->getPass(Pass::Level::Color, false).fbo->getDepthTexture();
+								shader.setUniformTexture("projectorDepthTexture0", depthTexture, 0);
+								shader.setUniformTexture("projectorDepthTextureShadow0", depthTexture, 1);
+							}
+
+							DrawWorldAdvancedArgs drawArgs;
+							{
+								drawArgs.enableMaterials = false;
+								drawArgs.enableColors = false;
+								drawArgs.enableNormals = true;
+								drawArgs.enableStyle = false;
+								drawArgs.enableTextures = false;
+							}
+
+							scene->drawWorldAdvanced(drawArgs);
+						}
+						shader.end();
+					}
+					ofxRulr::Utils::Graphics::glDisable(GL_DEPTH_TEST);
+				}
+				view.endAsCamera();
 			}
 		}
 	}

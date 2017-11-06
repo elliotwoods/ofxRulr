@@ -278,6 +278,7 @@ EXPORTS
 	?allocate@ofFbo@@QEAAXUSettings@1@@Z
 	?begin@ofFbo@@QEBAX_N@Z
 	?bind@ofFbo@@QEBAXXZ
+	?draw@ofFbo@@UEBAXMM@Z
 	?end@ofFbo@@QEBAXXZ
 	?getDepthTexture@ofFbo@@QEAAAEAVofTexture@@XZ
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@M@@H@Z
@@ -729,6 +730,7 @@ EXPORTS
 	?isSelected@BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@QEBA_NXZ
 	?glDisable@Graphics@Utils@ofxRulr@@SAXI@Z
 	?glEnable@Graphics@Utils@ofxRulr@@SAXI@Z
+	?glPopAttrib@Graphics@Utils@ofxRulr@@SAXXZ
 	?glPushAttrib@Graphics@Utils@ofxRulr@@SAXI@Z
 	?popPointSize@Graphics@Utils@ofxRulr@@SAXXZ
 	?pushPointSize@Graphics@Utils@ofxRulr@@SAXM_N@Z
