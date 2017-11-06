@@ -14,7 +14,8 @@ namespace ofxRulr {
 					DepthPreview,
 					AvailabilityProjection,
 					AccumulateAvailability,
-					Done = AccumulateAvailability,
+					BrightnessAssignmentMap,
+					Done = BrightnessAssignmentMap,
 					End
 				};
 				

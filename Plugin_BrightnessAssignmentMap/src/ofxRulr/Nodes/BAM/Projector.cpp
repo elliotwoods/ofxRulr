@@ -27,6 +27,8 @@ namespace ofxRulr {
 					return "AvailabilityProjection";
 				case AccumulateAvailability:
 					return "AccumulateAvailability";
+				case BrightnessAssignmentMap:
+					return "BrightnessAssignmentMap";
 				case End:
 					return "End";
 				default:
@@ -85,7 +87,8 @@ namespace ofxRulr {
 						//{ Pass::Level::Depth, depth3D },
 						{ Pass::Level::DepthPreview, color2D },
 						{ Pass::Level::AvailabilityProjection, oneChannel3D },
-						{ Pass::Level::AccumulateAvailability, oneChannel2D }
+						{ Pass::Level::AccumulateAvailability, oneChannel2D },
+						{ Pass::Level::BrightnessAssignmentMap, oneChannel2D }
 					};
 				}
 				
@@ -183,10 +186,6 @@ namespace ofxRulr {
 									fboSettings.width = projector->getWidth();
 									fboSettings.height = projector->getHeight();
 									pass.fbo->allocate(fboSettings);
-
-									if (i == Pass::Level::Color) {
-										this->panelGroup->add(ofxCvGui::Panels::makeTexture(pass.fbo->getDepthTexture(), "Depth RAW"));
-									}
 								}
 
 								plane.mapTexCoordsFromTexture(pass.fbo->getTexture());
@@ -255,7 +254,6 @@ namespace ofxRulr {
 											shader.setUniformTexture("depthTexture", depthTexture, 0);
 											shader.setUniformTexture("depthTextureShadow", depthTexture, 1);
 											plane.draw();
-											depthTexture.unbind(0);
 										}
 										shader.end();
 										break;
@@ -328,6 +326,24 @@ namespace ofxRulr {
 
 										//Undo unbind
 										pass.fbo->bind();
+									}
+									break;
+									case Pass::Level::BrightnessAssignmentMap:
+									{
+										auto & shader = ofxAssets::shader("ofxRulr::Nodes::BAM::BrightnessAssignmentMap");
+										const auto & worldParameters = world->getParameters();
+										const auto featherSize = worldParameters.getFloat("Feather size").get();
+
+										shader.begin();
+										{
+											shader.setUniformTexture("AvailabilitySelf", this->passes[Pass::Level::AvailabilityProjection].fbo->getTexture(), 0);
+											shader.setUniformTexture("AvailabilityAll", this->passes[Pass::Level::AccumulateAvailability].fbo->getTexture(), 1);
+											shader.setUniform2f("TextureResolution", ofVec2f(width, height));
+											shader.setUniform1f("FeatherSize", featherSize);
+
+											plane.draw();
+										}
+										shader.end();
 									}
 									break;
 									default:
