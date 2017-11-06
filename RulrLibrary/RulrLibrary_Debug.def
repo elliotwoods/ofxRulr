@@ -277,9 +277,11 @@ EXPORTS
 	?allocate@ofFbo@@QEAAXHHHH@Z
 	?allocate@ofFbo@@QEAAXUSettings@1@@Z
 	?begin@ofFbo@@QEBAX_N@Z
+	?bind@ofFbo@@QEBAXXZ
 	?end@ofFbo@@QEBAXXZ
 	?getDepthTexture@ofFbo@@QEAAAEAVofTexture@@XZ
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@M@@H@Z
+	?unbind@ofFbo@@QEBAXXZ
 	?exists@ofFile@@QEBA_NXZ
 	?removeExt@ofFilePath@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@@Z
 	?defaultSetting@ofImageLoadSettings@@2U1@A
@@ -727,6 +729,7 @@ EXPORTS
 	?isSelected@BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@QEBA_NXZ
 	?glDisable@Graphics@Utils@ofxRulr@@SAXI@Z
 	?glEnable@Graphics@Utils@ofxRulr@@SAXI@Z
+	?glPushAttrib@Graphics@Utils@ofxRulr@@SAXI@Z
 	?popPointSize@Graphics@Utils@ofxRulr@@SAXXZ
 	?pushPointSize@Graphics@Utils@ofxRulr@@SAXM_N@Z
 	?evaluate@PolyFit@Utils@ofxRulr@@YAMAEBUModel@123@M@Z

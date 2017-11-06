@@ -1,0 +1,90 @@
+//Proejctor simulation parameters
+uniform float normalCutoff;
+uniform float featherSize;
+
+//Required varying for projector simulation
+in vec4 worldVarying;
+in vec4 normalWorldVarying;
+
+#define PROJECTOR_INPUT(X) \
+	uniform float projectorBrightness ## X ; \
+	uniform mat4 projectorVP ## X ; \
+	uniform sampler2DRect projectorDepthTexture ## X; \
+	uniform sampler2DRectShadow projectorDepthTextureShadow ## X; \
+	uniform vec2 projectorResolution ## X; \
+	uniform vec3 projectorPosition ## X; \
+
+#define PROJECTOR_FACTOR(X) getProjectorFactor(projectorBrightness ## X \
+	, projectorVP ## X \
+	, projectorDepthTexture ## X \
+	, projectorResolution ## X \
+	, projectorPosition ## X);
+
+float getProjectorFactor(float projectorBrightness
+	, mat4 projectorVP
+	, sampler2DRect projectorDepthTexture
+	, vec2 projectorResolution
+	, vec3 projectorPosition) {
+
+	vec4 posWorld = worldVarying / worldVarying.w;
+	vec4 posProjector = projectorVP * posWorld;
+	posProjector.xyz /= posProjector.w;
+
+	float factor = 1.0f;
+
+	//brightness
+	{
+		factor *= projectorBrightness;
+	}
+
+	//feather
+	{
+		float featherPosition = max(abs(posProjector.x), abs(posProjector.y));
+		float featherFactor = smoothstep(0, featherSize, 1.0f - featherPosition);
+		factor *= featherFactor;
+	}
+
+	// projector edges
+	{
+		float edgeFactor = abs(posProjector.x) < 1.0f
+		 						&& abs(posProjector.y) < 1.0f
+								&& abs(posProjector.z) < 1.0
+								? 1.0f : 0.0f;
+		factor *= edgeFactor;
+	}
+
+	//distance
+	{
+		float distance = length(posWorld.xyz - projectorPosition);
+		float distanceFactor = 1.0f / (distance * distance);
+		factor *= distanceFactor;
+	}
+	return clamp(factor, 0, 1);
+
+	//shadow
+	{
+		vec3 projectorTextureCoords = posProjector.xyz;
+		projectorTextureCoords += vec3(1, 1, 1);
+		projectorTextureCoords /= vec3(2, 2, 2);
+		projectorTextureCoords.xy *= projectorResolution;
+
+		float bias = 0.00001;
+		float depthLookup = texture(projectorDepthTexture, projectorTextureCoords.xy).r;
+		float depthProjected = projectorTextureCoords.z;
+		float shadowFactor = abs(depthProjected - depthLookup) < bias ? 1.0 : 0.0;
+		factor *= shadowFactor;
+	}
+
+	//normals
+	{
+		vec3 lookVector = normalize(posWorld.xyz - projectorPosition);
+		float normalFactor = clamp(dot(lookVector, - normalWorldVarying.xyz), 0, 1);
+		if(normalFactor < normalCutoff) {
+			normalFactor = 0.0;
+		}
+
+		factor *= normalFactor;
+	}
+
+	return clamp(factor, 0, 1);
+}

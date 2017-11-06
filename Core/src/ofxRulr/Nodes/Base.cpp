@@ -171,7 +171,7 @@ namespace ofxRulr {
 			inspector->add(new Widgets::Title(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H3));
 			
 			{
-				auto widget = inspector->addMultipleChoice("When draw on World Stage", { "Always", "Selected", "Never" });
+				auto widget = inspector->addMultipleChoice("Draw on World Stage", { "Always", "Selected", "Never" });
 				widget->setSelection(this->whenDrawOnWorldStage);
 				widget->onValueChange += [this](int value) {
 					this->whenDrawOnWorldStage= (WhenDrawOnWorldStage::Options) value;

@@ -11,9 +11,9 @@ namespace ofxRulr {
 					Color,
 					Depth,
 					DepthPreview,
-					Accumulate,
-					Availability,
-					Done = Availability,
+					AvailabilityProjection,
+					AccumulateAvailability,
+					Done = AccumulateAvailability,
 					End
 				};
 				
