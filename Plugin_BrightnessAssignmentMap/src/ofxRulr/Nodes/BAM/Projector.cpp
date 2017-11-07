@@ -50,6 +50,7 @@ namespace ofxRulr {
 			//----------
 			void BAM::Projector::init() {
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_INSPECTOR_LISTENER;
 
 				this->addInput<Item::Projector>();
 
@@ -110,14 +111,14 @@ namespace ofxRulr {
 						for (const auto & pass : this->passes) {
 							auto panel = ofxCvGui::Panels::makeBaseDraws(* pass.second.fbo, Pass::toString(pass.first));
 							this->panelGroup->add(panel);
+							auto passLevel = pass.first;
+							panel->addToolBarElement("ofxCvGui::save", [this, passLevel] {
+								this->exportPass(passLevel);
+							});
 						}
 					}
 				}
-				this->manageParameters(this->parameters);				
-
-				this->panelGroup->onDraw += [this](ofxCvGui::DrawArguments &) {
-
-				};
+				this->manageParameters(this->parameters);
 			}
 
 			//----------
@@ -130,6 +131,17 @@ namespace ofxRulr {
 			//----------
 			ofxCvGui::PanelPtr Projector::getPanel() {
 				return this->panelGroup;
+			}
+
+			//----------
+			void Projector::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
+				auto inspector = inspectArgs.inspector;
+				inspector->addButton("Export BAM...", [this]() {
+					try {
+						this->exportPass(Pass::Level::BrightnessAssignmentMap);
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				})->setHeight(100.0f);
 			}
 
 			//----------
@@ -332,14 +344,15 @@ namespace ofxRulr {
 									{
 										auto & shader = ofxAssets::shader("ofxRulr::Nodes::BAM::BrightnessAssignmentMap");
 										const auto & worldParameters = world->getParameters();
-										const auto featherSize = worldParameters.getFloat("Feather size").get();
-
+										const auto & featherSize = worldParameters.getFloat("Feather size").get();
+										const auto & targetBrightness = worldParameters.getFloat("Target brightness").get();
 										shader.begin();
 										{
 											shader.setUniformTexture("AvailabilitySelf", this->passes[Pass::Level::AvailabilityProjection].fbo->getTexture(), 0);
 											shader.setUniformTexture("AvailabilityAll", this->passes[Pass::Level::AccumulateAvailability].fbo->getTexture(), 1);
 											shader.setUniform2f("TextureResolution", ofVec2f(width, height));
 											shader.setUniform1f("FeatherSize", featherSize);
+											shader.setUniform1f("TargetBrightness", targetBrightness);
 
 											plane.draw();
 										}
@@ -365,13 +378,55 @@ namespace ofxRulr {
 			}
 
 			//---------
+			void Projector::exportPass(Pass::Level passLevel, string filename /*= ""*/) {
+				if (filename.empty()) {
+					auto passString = Pass::toString(passLevel);
+					auto result = ofSystemSaveDialog(passString + ".exr", "Save " + passString);
+					if (!result.bSuccess) {
+						throw(ofxRulr::Exception("No valid filename selected"));
+					}
+					filename = result.filePath;
+				}
+
+				//read the data from the pass
+				auto & pass = this->getPass(passLevel, true);
+				ofFloatPixels floatPixels;
+				pass.fbo->getTexture().readToPixels(floatPixels);
+				
+				auto extension = ofFilePath::getFileExt(filename);
+				if (extension == "exr" || extension == "hdr") {
+					//save the float data directly into these formats
+					ofSaveImage(floatPixels, filename);
+				}
+				else {
+					//convert to 8bit for other formats
+					ofPixels pixels;
+					pixels.allocate(floatPixels.getWidth()
+						, floatPixels.getHeight()
+						, floatPixels.getPixelFormat());
+
+					auto size = (size_t) floatPixels.size();
+					auto input = floatPixels.getData();
+					auto output = pixels.getData();
+					for (size_t i = 0; i < size; i++) {
+						float value = *input * 255.0f;
+						*output = value > 255.0f ? 255.0f : value;
+						input++;
+						output++;
+					}
+
+					ofSaveImage(pixels, filename);
+				}
+			}
+
+			//---------
 			void Projector::renderAvailability(shared_ptr<Projector> projector, shared_ptr<World> world, ofxRay::Camera & view, shared_ptr<Nodes::Base> scene) {
 				auto & shader = ofxAssets::shader("ofxRulr::Nodes::BAM::AvailabilityProjection");
 				
 				//Get constants for shader
 				const auto & worldParameters = world->getParameters();
-				const auto normalCutoffAngle = worldParameters.getFloat("Normal cutoff angle (°)").get();
-				const auto featherSize = worldParameters.getFloat("Feather size").get();
+				const auto & normalCutoffAngle = worldParameters.getFloat("Normal cutoff angle (°)").get();
+				const auto & featherSize = worldParameters.getFloat("Feather size").get();
 
 				auto viewOtherProjectorNode = projector->getInput<Item::Projector>();
 				if (!viewOtherProjectorNode) {

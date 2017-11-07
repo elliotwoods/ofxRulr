@@ -119,6 +119,7 @@ EXPORTS
 	?ofRunApp@@YAHPEAVofBaseApp@@@Z
 	?ofSaveImage@@YAXAEBV?$ofPixels_@E@@AEAVofBuffer@@W4ofImageFormat@@W4ofImageQualityType@@@Z
 	?ofSaveImage@@YAXAEBV?$ofPixels_@E@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4ofImageQualityType@@@Z
+	?ofSaveImage@@YAXAEBV?$ofPixels_@M@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4ofImageQualityType@@@Z
 	?ofScale@@YAXAEBVofVec3f@@@Z
 	?ofScale@@YAXMMM@Z
 	?ofSetCircleResolution@@YAXH@Z
@@ -245,9 +246,11 @@ EXPORTS
 	?getData@?$ofPixels_@M@@QEAAPEAMXZ
 	?getHeight@?$ofPixels_@M@@QEBAHXZ
 	?getNumChannels@?$ofPixels_@M@@QEBAHXZ
+	?getPixelFormat@?$ofPixels_@M@@QEBA?AW4ofPixelFormat@@XZ
 	?getPixels@?$ofPixels_@M@@QEAAPEAMXZ
 	?getWidth@?$ofPixels_@M@@QEBAHXZ
 	?setFromPixels@?$ofPixels_@M@@QEAAXPEBMHHH@Z
+	?size@?$ofPixels_@M@@QEBAHXZ
 	??0?$ofColor_@M@@QEAA@MM@Z
 	??0?$ofColor_@M@@QEAA@MMMM@Z
 	??0?$ofImage_@M@@QEAA@XZ
@@ -284,6 +287,7 @@ EXPORTS
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@M@@H@Z
 	?unbind@ofFbo@@QEBAXXZ
 	?exists@ofFile@@QEBA_NXZ
+	?getFileExt@ofFilePath@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@@Z
 	?removeExt@ofFilePath@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@@Z
 	?defaultSetting@ofImageLoadSettings@@2U1@A
 	?getPadding@ofLog@@CAAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -395,6 +399,7 @@ EXPORTS
 	?isAllocated@ofTexture@@QEBA_NXZ
 	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@E@@@Z
 	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@G@@@Z
+	?readToPixels@ofTexture@@QEBAXAEAV?$ofPixels_@M@@@Z
 	?setTextureMinMagFilter@ofTexture@@QEAAXHH@Z
 	?unbind@ofTexture@@QEBAXH@Z
 	?drawString@ofTrueTypeFont@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM@Z
@@ -484,6 +489,7 @@ EXPORTS
 	?makeTexture@Panels@ofxCvGui@@YA?AV?$shared_ptr@VTexture@Panels@ofxCvGui@@@std@@AEBVofTexture@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeWidgets@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWidgets@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeWorld@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWorld@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
+	?addToolBarElement@Base@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@$$QEAV?$function@$$A6AXXZ@5@@Z
 	?getPanelToImageTransform@BaseImage@Panels@ofxCvGui@@QEBA?AVofMatrix4x4@@XZ
 	?getZoomFactor@BaseImage@Panels@ofxCvGui@@QEBAMXZ
 	?clearDrawObject@Draws@Panels@ofxCvGui@@QEAAXXZ

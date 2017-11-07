@@ -38,11 +38,14 @@ namespace ofxRulr {
 				void init();
 				void update();
 				ofxCvGui::PanelPtr getPanel() override;
+				void populateInspector(ofxCvGui::InspectArguments &);
 				const Passes & getPasses(Pass::Level requiredPassLevel);
 				Pass & getPass(Pass::Level passLevel, bool ensureRendered = true);
 				void render(Pass::Level requiredPass);
 
 				float getBrightness() const;
+
+				void exportPass(Pass::Level, string filename = "");
 			protected:
 				void renderAvailability(shared_ptr<Projector>, shared_ptr<World>, ofxRay::Camera & view, shared_ptr<Nodes::Base> scene);
 				ofxCvGui::PanelGroupPtr panelGroup;

@@ -2,7 +2,11 @@
 
 uniform sampler2DRect AvailabilitySelf;
 uniform sampler2DRect AvailabilityAll;
+
+//World parameters
 uniform float FeatherSize;
+uniform float TargetBrightness;
+
 uniform vec2 TextureResolution;
 
 in vec2 gTexCoord;
@@ -30,7 +34,7 @@ void main(){
 
 	//Apply inverse of total availability
 	{
-		factor *= 1.0 / availabilityAll;
+		factor *= TargetBrightness / availabilityAll;
 	}
 
 	//Mask where we can't project for definite

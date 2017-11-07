@@ -22,7 +22,8 @@ namespace ofxRulr {
 				struct : ofParameterGroup {
 					ofParameter<float> normalCutoffAngle{ "Normal cutoff angle (°)", 80.0, 0.0, 90.0 };
 					ofParameter<float> featherSize{ "Feather size", 0.2, 0.0, 1.0 };
-					PARAM_DECLARE("World", normalCutoffAngle, featherSize);
+					ofParameter<float> targetBrightness{ "Target brightness", 0.8f };
+					PARAM_DECLARE("World", normalCutoffAngle, featherSize, targetBrightness);
 				} parameters;
 			};
 		}

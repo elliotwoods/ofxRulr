@@ -24,8 +24,8 @@ namespace ofxRulr {
 				auto world = this->getInput<World>();
 				if (world) {
 					const auto & worldParameters = world->getParameters();
-					const auto normalCutoffAngle = worldParameters.getFloat("Normal cutoff angle (°)").get();
-					const auto featherSize = worldParameters.getFloat("Feather size").get();
+					const auto & normalCutoffAngle = worldParameters.getFloat("Normal cutoff angle (°)").get();
+					const auto & featherSize = worldParameters.getFloat("Feather size").get();
 
 					auto projectors = world->getProjectors();
 					if (!projectors.empty()) {
