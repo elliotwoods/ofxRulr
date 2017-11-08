@@ -201,78 +201,26 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofVec3f Mesh::getVertexCloseToWorldPosition(const ofVec3f & pickPosition) const {
-				ofVec3f closestVertex = pickPosition; // default value
+			vector<ofVec3f> Mesh::getVertices() const {
+				vector<ofVec3f> vertices;
 
 				if (this->modelLoader) {
 					ofMatrix4x4 transform = this->getMeshTransform();
 					const auto meshCount = this->modelLoader->getMeshCount();
-
-					float minDistance = numeric_limits<float>::max();
 
 					for (size_t i = 0; i < meshCount; i++) {
 						const auto & meshHelper = this->modelLoader->getMeshHelper(i);
 						const auto & mesh = this->modelLoader->getMesh(i);
 						auto meshTransform = transform * meshHelper.matrix;
 						for (const auto & vertex : mesh.getVertices()) {
-							auto vertexWorld = vertex * transform;
-							auto distance = vertexWorld.distance(pickPosition);
-							if (minDistance > distance) {
-								closestVertex = vertexWorld;
-								minDistance = distance;
-							}
+							vertices.push_back(vertex * transform);
 						}
 					}
 				}
 
-				return closestVertex;
+				return vertices;
 			}
 
-			//----------
-			ofVec3f Mesh::getVertexCloseToMouse(float maxDistance /*= 30.0f*/) const {
-				return getVertexCloseToMouse(ofVec3f(ofGetMouseX(), ofGetMouseY(), 0.0f), maxDistance);
-			}
-
-			//----------
-			ofVec3f Mesh::getVertexCloseToMouse(const ofVec3f & mousePosition, float maxDistance) const {
-				if (this->modelLoader) {
-					const auto meshCount = this->modelLoader->getMeshCount();
-					float minDistance = std::numeric_limits<float>::max();
-					ofVec3f closestVertex;
-					bool foundVertex = false;
-
-					auto worldStage = ofxRulr::Graph::World::X().getWorldStage();
-					auto & camera = worldStage->getCamera();
-					auto worldStagePanelBounds = worldStage->getPanel()->getBounds();
-
-					for (size_t i = 0; i < meshCount; i++) {
-						const auto & meshHelper = this->modelLoader->getMeshHelper(i);
-						auto meshTransform = meshHelper.matrix * this->modelLoader->getModelMatrix() * this->getMeshTransform() * RigidBody::getTransform();
-						for (size_t iVertex = 0; iVertex < meshHelper.mesh->mNumVertices; iVertex++) {
-							const auto & vertexObject = *(ofVec3f*)&meshHelper.mesh->mVertices[iVertex];
-							auto vertexWorld = vertexObject * meshTransform;
-
-							auto vertexScreen = camera.worldToScreen(vertexWorld, worldStagePanelBounds);
-							vertexScreen.z = 0.0f;
-
-							auto distance = vertexScreen.distance(mousePosition);
-							if (distance > maxDistance) {
-								continue;
-							}
-							if (minDistance > distance) {
-								closestVertex = vertexWorld;
-								minDistance = distance;
-								foundVertex = true;
-							}
-						}
-					}
-
-					if (foundVertex) {
-						return closestVertex;
-					}
-				}
-				throw(ofxRulr::Exception("No vertex could be found"));
-			}
 
 			//----------
 			void Mesh::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {

@@ -1,8 +1,7 @@
 #include "pch_Plugin_Calibration.h"
 #include "SelectSceneVertices.h"
 
-#include "ofxRulr/Nodes/Item/Mesh.h"
-#include "ofxRulr/Nodes/Item/Mesh.h"
+#include "ofxRulr/Nodes/IHasVertices.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -70,11 +69,11 @@ namespace ofxRulr {
 								text = ofToString(this->selectedVertex.worldPosition);
 							}
 							else {
-								if (node->getInput<Item::Mesh>()) {
-									text = "Drag cursor to mesh vertex";
+								if (node->getInput<IHasVertices>()) {
+									text = "Drag cursor to vertex";
 								}
 								else {
-									text = "No mesh connected";
+									text = "No input connected";
 								}
 							}
 						}
@@ -90,10 +89,10 @@ namespace ofxRulr {
 				this->onMouse += [this, node](ofxCvGui::MouseArguments & args) {
 					args.takeMousePress(this);
 					if (args.isDragging(this)) {
-						auto meshInput = node->getInput<Item::Mesh>();
-						if (meshInput) {
+						auto hasVerticesInput = node->getInput<IHasVertices>();
+						if (hasVerticesInput) {
 							try {
-								this->selectedVertex.worldPosition = meshInput->getVertexCloseToMouse();
+								this->selectedVertex.worldPosition = hasVerticesInput->getVertexCloseToMouse();
 								{
 									auto worldStage = ofxRulr::Graph::World::X().getWorldStage();
 									this->selectedVertex.screenPosition = worldStage->getCamera().worldToScreen(this->selectedVertex.worldPosition, worldStage->getPanel()->getBounds());
@@ -122,7 +121,7 @@ namespace ofxRulr {
 
 			//----------
 			void SelectSceneVertices::init() {
-				this->addInput<Item::Mesh>();
+				this->addInput<IHasVertices>();
 
 				RULR_NODE_UPDATE_LISTENER;
 
@@ -140,7 +139,7 @@ namespace ofxRulr {
 				{
 					{
 						this->selectNewVertex = make_shared<VertexPicker>(this);
-						this->selectNewVertex->setCaption("Drag to select mesh vertex");
+						this->selectNewVertex->setCaption("Drag to select vertex");
 						this->selectNewVertex->onVertexFound += [this](ofVec3f & vertexPosition) {
 							this->setNewVertexPosition(vertexPosition);
 						};
