@@ -112,17 +112,24 @@ namespace ofxRulr {
 			//----------
 			bool Board::findBoard(cv::Mat image, vector<cv::Point2f> & results, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const {
 				auto size = this->getSize();
+				bool success;
 				switch (findBoardMode) {
 				case FindBoardMode::Raw:
-					return ofxCv::findBoard(image, this->getBoardType(), size, results, false);
+					success = ofxCv::findBoard(image, this->getBoardType(), size, results, false);
+					break;
 				case FindBoardMode::Optimized:
-					return ofxCv::findBoard(image, this->getBoardType(), size, results, true);
+					success = ofxCv::findBoard(image, this->getBoardType(), size, results, true);
+					break;
 				case FindBoardMode::Assistant:
-					return ofxCv::findBoardWithAssistant(image, this->getBoardType(), size, results);
+					success = ofxCv::findBoardWithAssistant(image, this->getBoardType(), size, results);
+					break;
 				default:
 					return false;
 				}
-				objectPoints = this->getObjectPoints();
+				if (success) {
+					objectPoints = this->getObjectPoints();
+				}
+				return success;
 			}
 
 			//----------

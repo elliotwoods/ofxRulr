@@ -79,7 +79,7 @@ namespace ofxRulr {
 						const auto totalTimePrediced = timeSpentInMillis * (1.0f / progress);
 						const auto timeRemaining = chrono::milliseconds((long long) ((1.0f - progress) * (float)totalTimePrediced));
 						if (timeRemaining > chrono::milliseconds(0)) {
-							message << Utils::formatDuration(timeRemaining) << " remaining.";
+							message << Utils::formatDuration(timeSpent) << " spent. " << Utils::formatDuration(timeRemaining) << " remaining.";
 						}
 						message << endl;
 					}
