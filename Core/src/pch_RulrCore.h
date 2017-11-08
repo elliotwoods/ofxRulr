@@ -22,3 +22,4 @@
 #include "ofxCvMin.h"
 #include "ofxPlugin.h"
 #include "ofxSingleton.h"
+#include "ofxWebWidgets.h"

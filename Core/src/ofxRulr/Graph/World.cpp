@@ -8,6 +8,8 @@
 #include "ofxRulr/Utils/Utils.h"
 #include "ofxRulr/Version.h"
 
+#include "ofxWebWidgets.h"
+
 using namespace ofxCvGui;
 
 OFXSINGLETON_DEFINE(ofxRulr::Graph::World);
@@ -19,7 +21,7 @@ namespace ofxRulr {
 
 		//-----------
 		World::World() {
-
+			ofxWebWidgets::Server::X().addRequestHandler(this);
 		}
 
 		//-----------
@@ -231,6 +233,23 @@ namespace ofxRulr {
 		//----------
 		ofxCvGui::PanelGroupPtr World::getGuiGrid() const {
 			return this->guiGrid;
+		}
+
+		//----------
+		shared_ptr<Graph::Editor::Patch> World::getPatch() const {
+			for (auto & node : (*this)) {
+				auto patch = dynamic_pointer_cast<Graph::Editor::Patch>(node);
+				if (patch) {
+					return patch;
+				}
+			}
+			return shared_ptr<Graph::Editor::Patch>();
+		}
+
+		//----------
+		void World::handleRequest(const ofxWebWidgets::Request & request
+			, shared_ptr<ofxWebWidgets::Response> & response) {
+
 		}
 	}
 }

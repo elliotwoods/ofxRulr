@@ -28,9 +28,14 @@ namespace ofxRulr {
 
 				//----------
 				void IReferenceVertices::Vertex::drawObjectLines() {
-					ofDrawLine(-ofVec3f(0.1f, 0.0f, 0.0f), ofVec3f(0.1f, 0.0f, 0.0f));
-					ofDrawLine(-ofVec3f(0.0f, 0.1f, 0.0f), ofVec3f(0.0f, 0.1f, 0.0f));
-					ofDrawLine(-ofVec3f(0.0f, 0.0f, 0.1f), ofVec3f(0.0f, 0.0f, 0.1f));
+					ofPushStyle();
+					{
+						ofSetColor(this->isSelected() ? 255 : 100);
+						ofDrawLine(-ofVec3f(0.1f, 0.0f, 0.0f), ofVec3f(0.1f, 0.0f, 0.0f));
+						ofDrawLine(-ofVec3f(0.0f, 0.1f, 0.0f), ofVec3f(0.0f, 0.1f, 0.0f));
+						ofDrawLine(-ofVec3f(0.0f, 0.0f, 0.1f), ofVec3f(0.0f, 0.0f, 0.1f));
+					}
+					ofPopStyle();
 				}
 
 #pragma mark ISelectTargetVertex

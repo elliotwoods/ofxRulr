@@ -38,6 +38,7 @@ namespace ofxRulr {
 					ofParameter<string> projectorReferenceImageFilename;
 					ofImage projectorReferenceImage;
 					ofParameter<bool> dragVerticesEnabled;
+					ofParameter<bool> useSimpleCursor{ "Simple cursor", false };
 					ofParameter<bool> calibrateOnVertexChange;
 					ofParameter<bool> useExistingParametersAsInitial;
 					bool success;
