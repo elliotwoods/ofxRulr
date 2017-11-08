@@ -39,6 +39,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\addons\ofxRulr\ofxRulr_Plugin.props" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\Plugin_Calibration\Plugin_Calibration.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\Plugin_Calibration\Plugin_Calibration.props" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -108,6 +114,11 @@
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\UpdateTracking.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MoCap\UpdateTrackingStereo.h" />
     <ClInclude Include="src\pch_Plugin_MoCap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Plugin_Calibration\Plugin_Calibration.vcxproj">
+      <Project>{c135c231-f751-482d-9e4c-c29473e3dd98}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

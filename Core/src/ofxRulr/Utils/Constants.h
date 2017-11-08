@@ -25,9 +25,9 @@
 #endif
 
 namespace ofxRulr {
-	MAKE_ENUM(WhenDrawWorld
-		, (Selected, Always, Never)
-		, ("Selected", "Always", "Never"));
+	MAKE_ENUM(WhenDrawOnWorldStage
+		, (Always, Selected, Never)
+		, ("Always", "Selected", "Never"));
 
 	MAKE_ENUM(FindBoardMode
 		, (Raw, Optimized, Assistant)

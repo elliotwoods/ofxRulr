@@ -19,7 +19,7 @@ namespace ofxRulr {
 
 						void init();
 						void populateInspector(ofxCvGui::InspectArguments &);
-						void drawWorld();
+						void drawWorldStage();
 						void serialize(Json::Value &);
 						void deserialize(const Json::Value &);
 

@@ -237,6 +237,7 @@
     <ClInclude Include="src\ofxRulr\Data\Channels\Address.h" />
     <ClInclude Include="src\ofxRulr\Data\Channels\Channel.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Application\Assets.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Application\HTTPServerControl.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Application\openFrameworks.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Database.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.h" />
@@ -254,27 +255,17 @@
     <ClInclude Include="src\ofxRulr\Nodes\Item\AbstractBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Board.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Item\Model.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Mesh.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Projector.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\RigidBody.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\View.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Base.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Triangulate.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Render\Draw.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Render\Lighting.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Render\NodeThroughView.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Render\Style.h" />
     <ClInclude Include="src\ofxRulr\Nodes\System\VideoOutput.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Template.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\ARCube.h" />
@@ -337,6 +328,7 @@
     <ClCompile Include="src\ofxRulr\Data\Channels\Address.cpp" />
     <ClCompile Include="src\ofxRulr\Data\Channels\Channel.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Application\Assets.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Application\HTTPServerControl.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Application\openFrameworks.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Database.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.cpp" />
@@ -353,26 +345,16 @@
     <ClCompile Include="src\ofxRulr\Nodes\Item\AbstractBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Board.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Item\Model.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Mesh.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Projector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\RigidBody.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\View.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Render\Draw.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Render\Lighting.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Render\NodeThroughView.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Render\Style.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\System\VideoOutput.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Template.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\ARCube.cpp" />
@@ -501,6 +483,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\addons\ofxRay\ofxRayLib\ofxRayLib.vcxproj">
       <Project>{048e1ec4-64fe-4aac-b524-1bd56a1fc726}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxWebWidgets\ofxWebWidgets\ofxWebWidgets.vcxproj">
+      <Project>{5c557280-e9e7-4789-83f6-7185a89772bd}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

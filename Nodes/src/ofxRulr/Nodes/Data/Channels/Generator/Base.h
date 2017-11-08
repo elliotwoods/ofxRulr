@@ -11,7 +11,7 @@ namespace ofxRulr {
 				namespace Generator {
 					using namespace ofxRulr::Data::Channels;
 
-					class Base : public Nodes::Base, public enable_shared_from_this<Base> {
+					class Base : public Nodes::Base {
 					public:
 						Base();
 						virtual string getTypeName() const override;

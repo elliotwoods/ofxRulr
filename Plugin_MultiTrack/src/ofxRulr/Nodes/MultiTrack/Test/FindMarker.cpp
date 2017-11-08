@@ -115,7 +115,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void FindMarker::drawWorld() {
+				void FindMarker::drawWorldStage() {
 
 				}
 

@@ -32,6 +32,9 @@ namespace ofxRulr {
 			
 			string getName() const;
 			ofVec2f getPinHeadPosition() const;
+
+			void setLoopbackEnabled(bool);
+			bool getLoopbackEnabled() const;
 			
 			ofxLiquidEvent<ofEventArgs> onBeginMakeConnection;
 			ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
@@ -42,6 +45,7 @@ namespace ofxRulr {
 			shared_ptr<Editor::PinView> pinView;
 		private:
 			const string name;
+			bool loopbackEnabled = false;
 			ofVec2f pinHeadPosition;
 			ofVec2f globalElementPosition;
 		};

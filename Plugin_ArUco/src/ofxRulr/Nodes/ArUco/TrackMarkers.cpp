@@ -167,7 +167,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void TrackMarkers::drawWorld() {
+			void TrackMarkers::drawWorldStage() {
 				//preview markers
 				auto detectorNode = this->getInput<Detector>();
 				if (detectorNode) {

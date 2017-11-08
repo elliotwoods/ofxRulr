@@ -72,7 +72,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Calibrate::drawWorld() {
+				void Calibrate::drawWorldStage() {
 					if (!(this->parameters.debugWorld.drawLines || this->parameters.debugWorld.drawPoints || this->parameters.debugWorld.liveMarker)) {
 						return;
 					}

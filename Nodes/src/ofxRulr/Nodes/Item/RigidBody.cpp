@@ -33,6 +33,7 @@ namespace ofxRulr {
 			//---------
 			void RigidBody::init() {
 				RULR_NODE_DRAW_WORLD_LISTENER;
+				RULR_NODE_DRAW_WORLD_ADVANCED_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
@@ -45,15 +46,47 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void RigidBody::drawWorld() {
+			void RigidBody::drawWorldStage() {
 				ofPushMatrix();
 				{
 					ofMultMatrix(this->getTransform());
 					ofDrawAxis(0.3f);
-					ofDrawBitmapString(this->getName(), ofVec3f());
+					if (this->isBeingInspected()) {
+						ofPushStyle();
+						{
+							ofSetColor(ofxCvGui::Utils::getBeatingSelectionColor());
+							ofDrawBitmapString(this->getName(), ofVec3f());
+						}
+						ofPopStyle();
+					}
+					else {
+						ofDrawBitmapString(this->getName(), ofVec3f());
+					}
+
 					this->onDrawObject.notifyListeners();
 				}
 				ofPopMatrix();
+			}
+
+			//----------
+			void RigidBody::drawWorldAdvanced(DrawWorldAdvancedArgs & args) {
+				if (this->onDrawObjectAdvanced.empty()) {
+					if (args.useStandardDrawWhereCustomIsNotAvailable) {
+						this->drawWorldStage();
+					}
+				}
+				else {
+					ofPushMatrix();
+					{
+						ofMultMatrix(this->getTransform());
+						if (args.enableGui) {
+							ofDrawAxis(0.3f);
+							ofDrawBitmapString(this->getName(), ofVec3f());
+						}
+						this->onDrawObjectAdvanced.notifyListeners(args);
+					}
+					ofPopMatrix();
+				}
 			}
 
 			//---------

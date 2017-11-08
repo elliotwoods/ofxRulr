@@ -1,11 +1,16 @@
 #pragma once
 
+#include "ofxRulr/Utils/Constants.h"
 #include "ofxRulr/Nodes/Base.h"
 #include "ofxCvMin/src/ofxCvMin.h"
 
 #define RULR_RIGIDBODY_DRAW_OBJECT_LISTENER \
 	this->onDrawObject += [this]() { \
 		this->drawObject(); \
+	}
+#define RULR_RIGIDBODY_DRAW_OBJECT_ADVANCED_LISTENER \
+	this->onDrawObjectAdvanced += [this](ofxRulr::DrawWorldAdvancedArgs & args) { \
+		this->drawObjectAdvanced(args); \
 	}
 
 namespace ofxRulr {
@@ -16,7 +21,8 @@ namespace ofxRulr {
 				RigidBody();
 				virtual string getTypeName() const override;
 				void init();
-				void drawWorld();
+				void drawWorldStage();
+				void drawWorldAdvanced(DrawWorldAdvancedArgs &);
 
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
@@ -35,6 +41,8 @@ namespace ofxRulr {
 				void clearTransform();
 
 				ofxLiquidEvent<void> onDrawObject;
+				ofxLiquidEvent<DrawWorldAdvancedArgs> onDrawObjectAdvanced;
+
 				ofxLiquidEvent<void> onTransformChange;
 			protected:
 				void exportRigidBodyMatrix();

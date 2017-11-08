@@ -46,7 +46,7 @@ namespace ofxRulr {
 
 					this->manageParameters(this->parameters);
 
-					this->onDrawWorld += [this]() {
+					this->onDrawWorldStage += [this]() {
 						if (this->parameters.drawToWorld) {
 							this->drawFeature();
 						}

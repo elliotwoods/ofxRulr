@@ -356,9 +356,23 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Patch::drawWorld() {
+			void Patch::drawWorldStage() {
 				for (auto nodeHost : this->nodeHosts) {
-					nodeHost.second->getNodeInstance()->drawWorld();
+					auto node = nodeHost.second->getNodeInstance();
+					const auto & whenDrawOnWorldStage = node->getWhenDrawOnWorldStage();
+					switch (whenDrawOnWorldStage) {
+					case WhenDrawOnWorldStage::Selected:
+						if (node->isBeingInspected()) {
+							node->drawWorldStage();
+						}
+						break;
+					case WhenDrawOnWorldStage::Always:
+						node->drawWorldStage();
+						break;
+					case WhenDrawOnWorldStage::Never:
+					default:
+						break;
+					}
 				}
 			}
 

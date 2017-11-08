@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C135C231-F751-482D-9E4C-C29473E3DD98}</ProjectGuid>
+    <RootNamespace>Plugin_Calibration</RootNamespace>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
+    <ProjectName>Plugin_Calibration</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\addons\ofxRulr\ofxRulr_Plugin.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PrecompiledHeaderFile>pch_Plugin_Calibration.h</PrecompiledHeaderFile>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PrecompiledHeaderFile>pch_Plugin_Calibration.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Nodes\Data\SelectSceneVertices.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp" />
+    <ClCompile Include="src\pch_Plugin_Calibration.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\plugin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Constants_Plugin_Calibration.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Data\SelectSceneVertices.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h" />
+    <ClInclude Include="src\pch_Plugin_Calibration.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

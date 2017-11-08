@@ -26,7 +26,7 @@ namespace ofxRulr {
 
 					void init();
 					void update();
-					void drawWorld();
+					void drawWorldStage();
 
 					ofxCvGui::PanelPtr getPanel() override;
 

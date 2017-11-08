@@ -10,9 +10,6 @@
     <Filter Include="src\ofxRulr\Nodes\Procedure\Scan">
       <UniqueIdentifier>{6418dc67-8def-4cd4-8807-01a4ef065686}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
-      <UniqueIdentifier>{a37713d8-b5cf-46c5-a0e8-f306919ad0e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Nodes\Render">
       <UniqueIdentifier>{434e707b-75f8-4610-90d2-b5df5fa14f60}</UniqueIdentifier>
     </Filter>
@@ -525,9 +522,6 @@
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h">
       <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Item\Model.h">
-      <Filter>src\ofxRulr\Nodes\Item</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Item\Projector.h">
       <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClInclude>
@@ -548,18 +542,6 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Base.h">
       <Filter>src\ofxRulr\Nodes\Procedure</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Scan</Filter>
@@ -591,9 +573,6 @@
     <ClInclude Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.h">
       <Filter>src\ofxRulr\Nodes\DMX</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\System\VideoOutput.h">
       <Filter>src\ofxRulr\Nodes\System</Filter>
     </ClInclude>
@@ -605,12 +584,6 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Application\Assets.h">
       <Filter>src\ofxRulr\Nodes\Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Database.h">
       <Filter>src\ofxRulr\Nodes\Data\Channels</Filter>
@@ -657,9 +630,6 @@
     <ClInclude Include="src\ofxRulr\Nodes\Data\Mesh.h">
       <Filter>src\ofxRulr\Nodes\Data</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Template.h">
       <Filter>src\ofxRulr\Nodes</Filter>
     </ClInclude>
@@ -668,21 +638,6 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Test\Latency.h">
       <Filter>src\ofxRulr\Nodes\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\VideoOutputListener.h">
       <Filter>src\ofxRulr\Utils</Filter>
@@ -711,6 +666,21 @@
     <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Startup.h">
       <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Application\HTTPServerControl.h">
+      <Filter>src\ofxRulr\Nodes\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Mesh.h">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Render\Style.h">
+      <Filter>src\ofxRulr\Nodes\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Render\Lighting.h">
+      <Filter>src\ofxRulr\Nodes\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Render\Draw.h">
+      <Filter>src\ofxRulr\Nodes\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -723,9 +693,6 @@
       <Filter>addons\ofxTriangulate\src</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp">
-      <Filter>src\ofxRulr\Nodes\Item</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Item\Model.cpp">
       <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Item\Projector.cpp">
@@ -742,15 +709,6 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\IReferenceVertices.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Scan</Filter>
@@ -779,9 +737,6 @@
     <ClCompile Include="src\ofxRulr\Nodes\DMX\AimMovingHeadAt.cpp">
       <Filter>src\ofxRulr\Nodes\DMX</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\MovingHeadToWorld.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\System\VideoOutput.cpp">
       <Filter>src\ofxRulr\Nodes\System</Filter>
     </ClCompile>
@@ -793,12 +748,6 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Application\Assets.cpp">
       <Filter>src\ofxRulr\Nodes\Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromDepthCamera.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Database.cpp">
       <Filter>src\ofxRulr\Nodes\Data\Channels</Filter>
@@ -820,9 +769,6 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Generator\Application.cpp">
       <Filter>src\ofxRulr\Nodes\Data\Channels\Generator</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\Mesh2DFromGraycode.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ofxTriangle\src\ofxTriangle.cpp">
       <Filter>addons\ofxTriangle\src</Filter>
@@ -851,24 +797,6 @@
     <ClCompile Include="src\ofxRulr\Nodes\Test\Latency.cpp">
       <Filter>src\ofxRulr\Nodes\Test</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromGraycode.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\StereoCalibrate.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoCameras.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectorFromStereoAndHelperCamera.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\VideoOutputListener.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
@@ -892,6 +820,21 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Startup.cpp">
       <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Application\HTTPServerControl.cpp">
+      <Filter>src\ofxRulr\Nodes\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Mesh.cpp">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Render\Style.cpp">
+      <Filter>src\ofxRulr\Nodes\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Render\Lighting.cpp">
+      <Filter>src\ofxRulr\Nodes\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Render\Draw.cpp">
+      <Filter>src\ofxRulr\Nodes\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

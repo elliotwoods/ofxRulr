@@ -1,12 +1,13 @@
 #include "pch_RulrCore.h"
 #include "World.h"
 
-#include "Summary.h"
 
 #include "ofxRulr/Exception.h"
 #include "ofxRulr/Utils/Initialiser.h"
 #include "ofxRulr/Utils/Utils.h"
 #include "ofxRulr/Version.h"
+
+#include "ofxWebWidgets.h"
 
 using namespace ofxCvGui;
 
@@ -19,7 +20,7 @@ namespace ofxRulr {
 
 		//-----------
 		World::World() {
-
+			
 		}
 
 		//-----------
@@ -28,7 +29,7 @@ namespace ofxRulr {
 		}
 
 		//-----------
-		void World::init(Controller & controller, bool enableSummaryView) {
+		void World::init(Controller & controller, bool enableWorldStage) {
 			Utils::initialiser.checkInitialised();
 
 			ofSetWindowTitle("Rulr v" + RULR_VERSION_STRING);
@@ -96,15 +97,15 @@ namespace ofxRulr {
 
 
 			//--
-			// SUMMARY VIEW
+			// WORLD STAGE VIEW
 			//
-			if (enableSummaryView) {
-				auto summary = make_shared<Summary>();
-				summary->setWorld(*this);
-				summary->init();
-				summary->setName("World");
-				this->add(summary); // we intentionally do this after building the Node grid
-				verticalGroup->add(summary->getPanel());
+			if (enableWorldStage) {
+				this->worldStage = make_shared<WorldStage>();
+				this->worldStage->setWorld(*this);
+				this->worldStage->init();
+				this->worldStage->setName("WorldStage");
+				this->add(this->worldStage); // we intentionally do this after building the Node grid
+				verticalGroup->add(this->worldStage->getPanel());
 			}
 			//
 			//--
@@ -231,6 +232,22 @@ namespace ofxRulr {
 		//----------
 		ofxCvGui::PanelGroupPtr World::getGuiGrid() const {
 			return this->guiGrid;
+		}
+
+		//----------
+		shared_ptr<Graph::Editor::Patch> World::getPatch() const {
+			for (auto & node : (*this)) {
+				auto patch = dynamic_pointer_cast<Graph::Editor::Patch>(node);
+				if (patch) {
+					return patch;
+				}
+			}
+			return shared_ptr<Graph::Editor::Patch>();
+		}
+
+		//----------
+		shared_ptr<ofxRulr::Graph::WorldStage> World::getWorldStage() const {
+			return this->worldStage;
 		}
 	}
 }

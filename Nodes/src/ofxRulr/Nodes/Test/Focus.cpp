@@ -94,7 +94,7 @@ namespace ofxRulr {
 				this->lowValue.set("Low value", 0.0, 0, 1);
 				
 				this->updateProcessSettings();
-				Utils::SoundEngine::X().addSource(this->shared_from_this());
+				Utils::SoundEngine::X().addSource(static_pointer_cast<Focus>(this->shared_from_this()));
 			}
 			
 			//----------

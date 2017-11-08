@@ -14,6 +14,7 @@ namespace ofxRulr {
 			this->initialized = false;
 			this->lastFrameUpdate = 0;
 			this->updateAllInputsFirst = true;
+			this->whenDrawOnWorldStage = WhenDrawOnWorldStage::Always;
 		}
 
 		//----------
@@ -38,6 +39,14 @@ namespace ofxRulr {
 			this->onPopulateInspector.addListener([this](ofxCvGui::InspectArguments & args) {
 				this->populateInspector(args);
 			}, this, 99999); // populate the inspector with this at the top. We call notify in reverse for inheritance
+			this->onSerialize.addListener([this](Json::Value & json) {
+				json["whenDrawOnWorldStage"] = (int) this->whenDrawOnWorldStage;
+			}, this);
+			this->onDeserialize.addListener([this](const Json::Value & json) {
+				{
+					this->whenDrawOnWorldStage = (WhenDrawOnWorldStage::Options) json["whenDrawOnWorldStage"].asInt();
+				}
+			}, this);
 
 			
 			//notify the subclasses to init
@@ -59,6 +68,18 @@ namespace ofxRulr {
 					}
 				}
 				this->onUpdate.notifyListeners();
+			}
+
+			//check for loopback connections
+			for (auto pin : this->inputPins) {
+				if (pin->isConnected() && !pin->getLoopbackEnabled()) {
+					//check if it's a loopback
+					const auto connection = pin->getConnectionUntyped();
+					if (connection == this->shared_from_this()) {
+						//it's a loopback, reset it
+						pin->resetConnection();
+					}
+				}
 			}
 		}
 
@@ -148,6 +169,14 @@ namespace ofxRulr {
 			};
 
 			inspector->add(new Widgets::Title(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H3));
+			
+			{
+				auto widget = inspector->addMultipleChoice("Draw on World Stage", { "Always", "Selected", "Never" });
+				widget->setSelection(this->whenDrawOnWorldStage);
+				widget->onValueChange += [this](int value) {
+					this->whenDrawOnWorldStage= (WhenDrawOnWorldStage::Options) value;
+				};
+			}
 
 			inspector->add(new Widgets::Button("Save Node...", [this] () {
 				try {
@@ -181,13 +210,25 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Base::drawWorld() {
-			this->onDrawWorld.notifyListeners();
+		void Base::drawWorldStage() {
+			this->onDrawWorldStage.notifyListeners();
 		}
 
 		//----------
-		void Base::drawStencil() {
-			this->onDrawStencil.notifyListeners();
+		void Base::drawWorldAdvanced(DrawWorldAdvancedArgs & args) {
+			if (this->onDrawWorldAdvanced.empty()) {
+				if (args.useStandardDrawWhereCustomIsNotAvailable) {
+					this->drawWorldStage();
+				}
+			}
+			else {
+				this->onDrawWorldAdvanced.notifyListeners(args);
+			}
+		}
+
+		//----------
+		WhenDrawOnWorldStage::Options Base::getWhenDrawOnWorldStage() const {
+			return this->whenDrawOnWorldStage;
 		}
 
 		//----------

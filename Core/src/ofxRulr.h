@@ -4,6 +4,7 @@
 #include "ofxRulr/Version.h"
 
 #include "ofxRulr/Nodes/Base.h"
+#include "ofxRulr/Nodes/Procedure/Base.h"
 
 #include "ofxRulr/Graph/World.h"
 #include "ofxRulr/Graph/FactoryRegister.h"
@@ -14,3 +15,4 @@
 #include "ofxRulr/Utils/SoundEngine.h"
 #include "ofxRulr/Utils/Graphics.h"
 #include "ofxRulr/Utils/ScopedProcess.h"
+#include "ofxRulr/Utils/Utils.h"

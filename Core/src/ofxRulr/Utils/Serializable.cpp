@@ -52,6 +52,8 @@ namespace ofxRulr {
 				if (trySerialize<ofMatrix4x4>(jsonGroup, parameter)) continue;
 
 				if (trySerialize<ofColor>(jsonGroup, parameter)) continue;
+				if (trySerialize<ofShortColor>(jsonGroup, parameter)) continue;
+				if (trySerialize<ofFloatColor>(jsonGroup, parameter)) continue;
 				if (trySerialize<ofRectangle>(jsonGroup, parameter)) continue;
 
 				if (trySerialize<string>(jsonGroup, parameter)) continue;
@@ -151,6 +153,8 @@ namespace ofxRulr {
 				if (tryDeserialize<ofMatrix4x4>(jsonGroup, parameter)) continue;
 
 				if (tryDeserialize<ofColor>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<ofShortColor>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<ofFloatColor>(jsonGroup, parameter)) continue;
 				if (tryDeserialize<ofRectangle>(jsonGroup, parameter)) continue;
 
 				if (tryDeserialize<string>(jsonGroup, parameter)) continue;

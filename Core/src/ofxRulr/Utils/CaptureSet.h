@@ -22,6 +22,8 @@ namespace ofxRulr {
 
 				ofParameter<ofColor> color{ "Color", ofColor() };
 
+				ofxLiquidEvent<void> onChange;
+
 				ofxLiquidEvent<void> onDeletePressed;
 				ofxLiquidEvent<bool> onSelectionChanged;
 			protected:
@@ -56,6 +58,7 @@ namespace ofxRulr {
 
 			virtual shared_ptr<BaseCapture> makeEmpty() const = 0;
 
+			ofxLiquidEvent<void> onChange;
 			ofxLiquidEvent<void> onSelectionChanged;
 		protected:
 			virtual bool getIsMultipleSelectionAllowed() = 0;

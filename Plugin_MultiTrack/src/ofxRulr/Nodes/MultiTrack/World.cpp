@@ -71,7 +71,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void World::drawWorld() {
+			void World::drawWorldStage() {
 				ofPushStyle();
 				{
 					for (const auto & combinedBody : this->combinedBodies) {

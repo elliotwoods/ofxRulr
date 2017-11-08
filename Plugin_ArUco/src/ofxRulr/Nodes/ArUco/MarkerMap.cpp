@@ -103,7 +103,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MarkerMap::drawWorld() {
+			void MarkerMap::drawWorldStage() {
 				//get the detector for use previewing the markers
 				auto detectorNode = this->getInput<Detector>();
 

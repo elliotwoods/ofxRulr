@@ -18,5 +18,25 @@ namespace ofxRulr {
 			//glPopAttrib();
 			glPointSize(1.0f);
 		}
+
+		//----------
+		void Graphics::glEnable(GLenum cap) {
+			::glEnable(cap);
+		}
+
+		//----------
+		void Graphics::glDisable(GLenum cap) {
+			::glDisable(cap);
+		}
+
+		//----------
+		void Graphics::glPushAttrib(GLbitfield mask) {
+			::glPushAttrib(mask);
+		}
+
+		//----------
+		void Graphics::glPopAttrib() {
+			::glPopAttrib();
+		}
 	}
 }

@@ -196,7 +196,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void LaserToWorld::drawWorld() {
+				void LaserToWorld::drawWorldStage() {
 					auto captures = this->captures.getSelection();
 					for (auto capture : captures) {
 						ofPushMatrix();
