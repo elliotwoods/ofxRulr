@@ -358,7 +358,7 @@ namespace ofxRulr {
 					auto size = projectorNode->getSize();
 
 
-					int decimation = count / 16;
+					auto decimation = count / 16;
 					if (!this->parameters.calibrate.useDecimation || decimation <= 1) {
 						this->reprojectionError = ofxCv::calibrateProjector(cameraMatrix
 							, rotation

@@ -2,14 +2,19 @@
 
 #include "../Utils/Set.h"
 #include "../Nodes/Base.h"
+#include "Editor/Patch.h"
 
 #include "ofxCvGui/Controller.h"
 #include "ofxCvGui/Panels/SharedView.h"
 #include "ofxSingleton.h"
+#include "ofxWebWidgets.h"
 
 namespace ofxRulr {
 	namespace Graph {
-		class RULR_EXPORTS World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
+		class RULR_EXPORTS World
+			: public Utils::Set<Nodes::Base>
+			, public ofxWebWidgets::RequestHandler
+			, public ofxSingleton::Singleton<World> {
 		public:
 			World();
 			virtual ~World();
@@ -18,6 +23,10 @@ namespace ofxRulr {
 			void saveAll() const;
 			static ofxCvGui::Controller & getGuiController();
 			ofxCvGui::PanelGroupPtr getGuiGrid() const;
+			shared_ptr<Graph::Editor::Patch> getPatch() const;
+
+			void handleRequest(const ofxWebWidgets::Request & request
+				, shared_ptr<ofxWebWidgets::Response> & response);
 		protected:
 			static ofxCvGui::Controller * gui; ///< Why is this static? Needs comment.  I presume it's so we can grid multiple worlds?
 			ofxCvGui::PanelGroupPtr guiGrid;

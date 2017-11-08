@@ -711,6 +711,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Startup.h">
       <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Application\HTTPServerControl.h">
+      <Filter>src\ofxRulr\Nodes\Application</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -892,6 +895,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Startup.cpp">
       <Filter>src\ofxRulr\Nodes\Watchdog</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Application\HTTPServerControl.cpp">
+      <Filter>src\ofxRulr\Nodes\Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

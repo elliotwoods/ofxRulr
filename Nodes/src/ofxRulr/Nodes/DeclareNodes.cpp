@@ -5,6 +5,7 @@
 
 #include "ofxRulr/Nodes/Application/Assets.h"
 #include "ofxRulr/Nodes/Application/openFrameworks.h"
+#include "ofxRulr/Nodes/Application/HTTPServerControl.h"
 
 #include "ofxRulr/Nodes/Data/Channels/Database.h"
 #include "ofxRulr/Nodes/Data/Channels/Generator/Application.h"
@@ -55,6 +56,7 @@ namespace ofxRulr {
 
 			RULR_DECLARE_NODE(Application::Assets);
 			RULR_DECLARE_NODE(Application::openFrameworks);
+			RULR_DECLARE_NODE(Application::HTTPServerControl);
 			
 			RULR_DECLARE_NODE(Data::Channels::Database);
 			RULR_DECLARE_NODE(Data::Channels::Generator::Application);

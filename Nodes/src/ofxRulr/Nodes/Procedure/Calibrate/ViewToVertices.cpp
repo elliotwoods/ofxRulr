@@ -242,6 +242,7 @@ namespace ofxRulr {
 				void ViewToVertices::serialize(Json::Value & json) {
 					ofxRulr::Utils::Serializable::serialize(json, this->projectorReferenceImageFilename);
 					ofxRulr::Utils::Serializable::serialize(json, this->dragVerticesEnabled);
+					ofxRulr::Utils::Serializable::serialize(json, this->useSimpleCursor);
 					ofxRulr::Utils::Serializable::serialize(json, this->calibrateOnVertexChange);
 					ofxRulr::Utils::Serializable::serialize(json, this->useExistingParametersAsInitial);
 				}
@@ -257,6 +258,7 @@ namespace ofxRulr {
 					}
 
 					ofxRulr::Utils::Serializable::deserialize(json, this->dragVerticesEnabled);
+					ofxRulr::Utils::Serializable::deserialize(json, this->useSimpleCursor);
 					ofxRulr::Utils::Serializable::deserialize(json, this->calibrateOnVertexChange);
 					ofxRulr::Utils::Serializable::deserialize(json, this->useExistingParametersAsInitial);
 				}
@@ -453,7 +455,25 @@ namespace ofxRulr {
 						auto vertices = referenceVerticesNode->getVertices();
 						for (auto vertex : vertices) {
 							if (vertex->isSelected()){
-								ofxSpinCursor::draw(vertex->viewPosition);
+								if (this->useSimpleCursor) {
+									ofPushMatrix();
+									{
+										ofTranslate(vertex->viewPosition);
+										ofDrawLine(-5, 0, 5, 0);
+										ofDrawLine(0, -5, 0, 5);
+
+										ofPushStyle();
+										{
+											ofSetColor((int)(ofGetElapsedTimef() * 255.0f) % 255);
+											ofDrawRectangle(0, 0, 1, 1);
+										}
+										ofPopStyle();
+									}
+									ofPopMatrix();
+								}
+								else {
+									ofxSpinCursor::draw(vertex->viewPosition);
+								}
 							}
 						}
 					}
