@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Base.h"
+#include "ofxRulr/Nodes/Item/Camera.h"
 #include <aruco.h>
 
 #define ARUCO_PREVIEW_RESOLUTION 64
@@ -25,8 +26,9 @@ namespace ofxRulr {
 
 				float getMarkerLength() const;
 
-				virtual ofxCvGui::PanelPtr getPanel() override;
-
+				ofxCvGui::PanelPtr getPanel() override;
+				
+				const vector<aruco::Marker> & findMarkers(const cv::Mat &, shared_ptr<Item::View> camera = nullptr);
 			protected:
 				MAKE_ENUM(DetectorType
 					, (Original, MIP_3612h, ARTKP, ARTAG)
@@ -67,6 +69,7 @@ namespace ofxRulr {
 				map<int, unique_ptr<ofImage>> cachedMarkerImages;
 
 				ofImage preview;
+				vector<aruco::Marker> foundMarkers;
 				ofxCvGui::PanelPtr panel;
 			};
 		}

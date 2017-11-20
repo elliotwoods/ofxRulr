@@ -24,26 +24,40 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 
 				this->rebuildDetector();
-
+				aruco::Marker;
 				//set the default
 				this->parameters.detectorType = DetectorType::MIP_3612h;
 
-				this->panel = ofxCvGui::Panels::makeImage(this->preview);
+				{
+					auto panel = ofxCvGui::Panels::makeImage(this->preview);
+					panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
+						ofPushStyle();
+						{
+							ofNoFill();
+							ofSetColor(255, 100, 100);
+							ofSetLineWidth(2.0f);
+
+							for (const auto & marker : this->foundMarkers) {
+								ofPolyline line;
+								for (const cv::Point2f & point : marker) {
+									line.addVertex(ofxCv::toOf(point));
+								}
+								line.close();
+								line.draw();
+
+								ofDrawBitmapString(ofToString(marker.id), ofxCv::toOf(marker.getCenter()));
+							}
+						}
+						ofPopStyle();
+					};
+					this->panel = panel;
+				}
 			}
 
 			//----------
 			void Detector::update() {
 				if (this->cachedDetector != this->parameters.detectorType.get()) {
 					this->rebuildDetector();
-				}
-
-				//update preview
-				{
-					auto thresholdedImage = this->markerDetector.getThresholdedImage();
-					if (!thresholdedImage.empty()) {
-						ofxCv::copy(thresholdedImage, this->preview);
-						this->preview.update();
-					}
 				}
 			}
 
@@ -103,6 +117,23 @@ namespace ofxRulr {
 			}
 
 			//----------
+			const std::vector<aruco::Marker> & Detector::findMarkers(const cv::Mat & image, shared_ptr<Item::View> camera) {
+				if (!camera) {
+					this->foundMarkers = this->markerDetector.detect(image);
+				}
+				else {
+					aruco::CameraParameters cameraParameters(camera->getCameraMatrix(), camera->getDistortionCoefficients(), camera->getSize());
+					this->foundMarkers = this->markerDetector.detect(image, cameraParameters, this->parameters.markerLength);
+				}
+				auto thresholdedImage = this->markerDetector.getThresholdedImage();
+				if (!thresholdedImage.empty()) {
+					ofxCv::copy(thresholdedImage, this->preview);
+					this->preview.update();
+				}
+				return this->foundMarkers;
+			}
+
+			//----------
 			void Detector::rebuildDetector() {
 				this->markerDetector.setThresholdParams(this->parameters.threshold.areaSize, this->parameters.threshold.subtract);
 				this->markerDetector.setThresholdParamRange(this->parameters.threshold.parameterRange, 0);
@@ -148,6 +179,7 @@ namespace ofxRulr {
 					}
 					this->markerDetector.setCornerRefinementMethod(cornerRefinementMethod, this->parameters.refinement.windowSize);
 				}
+
 				this->cachedMarkerImages.clear();
 			}
 		}

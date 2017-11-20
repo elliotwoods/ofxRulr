@@ -140,11 +140,11 @@ namespace ofxRulr {
 					vector<vector<Point2f>> markerCorners, rejectedMarkers;
 					vector<Point2f> charucoCorners;
 					Vec3d rvec, tvec;
+					
+					cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
+					cv::Ptr<cv::aruco::Board> untypedBoard = this->board.staticCast<cv::aruco::Board>();
 
-					Ptr<aruco::DetectorParameters> detectorParams = aruco::DetectorParameters::create();
-					Ptr<aruco::Board> untypedBoard = this->board.staticCast<aruco::Board>();
-
-					aruco::detectMarkers(image
+					cv::aruco::detectMarkers(image
 						, this->dictionary
 						, markerCorners
 						, markerIds
@@ -152,7 +152,7 @@ namespace ofxRulr {
 						, rejectedMarkers);
 
 					if (this->parameters.detection.refineStrategy.get()) {
-						aruco::refineDetectedMarkers(image
+						cv::aruco::refineDetectedMarkers(image
 							, this->board
 							, markerCorners
 							, markerIds
@@ -163,7 +163,7 @@ namespace ofxRulr {
 						return false;
 					}
 
-					auto interpolatedCorners = aruco::interpolateCornersCharuco(markerCorners
+					auto interpolatedCorners = cv::aruco::interpolateCornersCharuco(markerCorners
 						, markerIds
 						, image
 						, this->board

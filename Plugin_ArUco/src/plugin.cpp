@@ -2,20 +2,15 @@
 
 #include "ofxPlugin.h"
 
-#include "ofxRulr/Nodes/ArUco/Detector.h"
-#include "ofxRulr/Nodes/ArUco/Dictionary.h"
-#include "ofxRulr/Nodes/ArUco/TrackMarkers.h"
-#include "ofxRulr/Nodes/ArUco/MarkerMap.h"
-#include "ofxRulr/Nodes/ArUco/FitRoomPlanes.h"
-#include "ofxRulr/Nodes/ArUco/ChArUcoBoard.h"
-#include "ofxRulr/Nodes/ArUco/OSCRelay.h"
-
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
+{
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::Detector);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::Dictionary);
-	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::TrackMarkers);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::FindMarkers);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::MarkerMap);
-	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::FitRoomPlanes);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::MarkerMapPoseTracker);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::AlignMarkerMap);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::ChArUcoBoard);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::ArUco::OSCRelay);
+}
 OFXPLUGIN_PLUGIN_MODULES_END

@@ -110,12 +110,20 @@ namespace ofxRulr {
 			}
 
 			auto dataDisplayElement = this->getDataDisplay();
-			{
-				dataDisplayElement->setPosition(ofVec2f(120.0f, 0.0f));
-				dataDisplayElement->setWidth(190.0f); // this is a little hacky
-				dataDisplayElement->setHeight(element->getHeight());
-				element->addChild(dataDisplayElement);
+			if (dataDisplayElement->getHeight() > element->getHeight()) {
+				element->setHeight(dataDisplayElement->getHeight());
 			}
+			element->addChild(dataDisplayElement);
+
+			auto elementWeak = weak_ptr<ofxCvGui::Element>(element);
+			element->onBoundsChange += [dataDisplayElement, elementWeak](ofxCvGui::BoundsChangeArguments & args) {
+				auto left = 120.0f;
+				auto element = elementWeak.lock();
+				dataDisplayElement->setPosition(ofVec2f(left, 0.0f));
+				dataDisplayElement->setWidth(element->getWidth() - left);
+				dataDisplayElement->setHeight(element->getHeight());
+			};
+			element->arrange();
 
 			return element;
 		}

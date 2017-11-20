@@ -15,6 +15,50 @@ namespace ofxRulr {
 			}
 
 			//----------
+			cv::Mat Pass::getHistogram(cv::Mat histogram) {
+				//read image
+				ofFloatPixels floatPixels;
+				this->fbo->readToPixels(floatPixels);
+				
+				const int histogramSize = 32;
+				float ranges[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+
+				//setup ranges on a logarithmic scale
+				{
+					float rangeMinExponent = -3;
+					float rangeMaxExponent = +3;
+					for (auto & range : ranges) {
+						auto rangeExponent = ofMap(range
+							, 0
+							, 32
+							, rangeMinExponent
+							, rangeMaxExponent);
+						range = pow(10, rangeExponent);
+					}
+				}
+				
+				//calculate histogram
+				{
+					int histogramSizeSet[] = { histogramSize };
+					int channelSet[] = { 0 };
+					const float * rangeSet[] = { ranges };
+					cv::Mat image = ofxCv::toCv(floatPixels);
+// 					cv::calcHist(&image
+// 						, 1
+// 						, channelSet
+// 						, cv::Mat()
+// 						, histogram
+// 						, 1
+// 						, histogramSizeSet
+// 						, rangeSet
+// 						, false
+// 						, !histogram.empty());
+				}
+
+				return histogram;
+			}
+
+			//----------
 			string Pass::toString(Level level) {
 				switch (level) {
 				case Color:

@@ -1,8 +1,6 @@
 #include "pch_Plugin_ArUco.h"
 #include "MarkerMap.h"
 
-#include "Detector.h"
-
 namespace ofxRulr {
 	namespace Nodes {
 		namespace ArUco {
@@ -19,87 +17,11 @@ namespace ofxRulr {
 
 			//----------
 			void MarkerMap::init() {
-				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_DRAW_WORLD_LISTENER;
 
-				this->addInput<Item::Camera>();
 				this->addInput<Detector>();
-			}
-
-			//----------
-			void MarkerMap::update() {
-				auto cameraNode = this->getInput<Item::Camera>();
-				auto detectorNode = this->getInput<Detector>();
-
-				if (this->loadedMarkerMap != this->parameters.filename.get()) {
-					if (this->parameters.filename.get().empty()) {
-						this->markerMap.clear();
-						this->loadedMarkerMap.clear();
-					}
-					else {
-						try {
-							this->markerMap.clear();
-							this->markerMap.readFromFile(ofToDataPath(this->parameters.filename));
-							this->loadedMarkerMap = this->parameters.filename;
-						}
-						RULR_CATCH_ALL_TO({
-							RULR_ERROR << e.what();
-							this->clear();
-						});
-					}
-				}
-
-				if (!this->markerMap.isExpressedInMeters() && !this->markerMap.empty()) {
-					if (detectorNode) {
-						this->markerMap.convertToMeters(detectorNode->getMarkerLength());
-					}
-				}
-
-				//check if we have a new camera frame
-				shared_ptr<ofxMachineVision::Frame> frame;
-				{
-					if (cameraNode) {
-						if (cameraNode->getGrabber()->isFrameNew()) {
-							frame = cameraNode->getFrame();
-						}
-					}
-				}
-
-				//do the tracking
-				if (this->parameters.updateCamera.get()
-					&& (bool)detectorNode
-					&& !this->markerMap.empty()
-					&& (bool)frame) {
-					try {
-						auto & markerDetector = detectorNode->getMarkerDetector();
-						auto markers = markerDetector.detect(ofxCv::toCv(frame->getPixels()));
-
-						auto cameraParams = aruco::CameraParameters();
-						{
-							cameraNode->getCameraMatrix().convertTo(cameraParams.CameraMatrix, CV_32F);
-							cameraNode->getDistortionCoefficients().convertTo(cameraParams.Distorsion, CV_32F);
-							cameraParams.CamSize = cameraNode->getSize();
-						}
-
-						this->markerMapPoseTracker.setParams(cameraParams
-							, this->markerMap
-							, detectorNode->getMarkerLength());
-
-						//try and estimate camera pose
-						if (this->markerMapPoseTracker.estimatePose(markers)) {
-							cv::Mat rotation, translation;
-
-							this->markerMapPoseTracker.getRvec().convertTo(rotation, CV_64F);
-							this->markerMapPoseTracker.getTvec().convertTo(translation, CV_64F);
-
-							//if successful then jump out
-							cameraNode->setExtrinsics(rotation, translation, true);
-						}
-					}
-					RULR_CATCH_ALL_TO_ERROR;
-				}
 			}
 
 			//----------
@@ -107,53 +29,59 @@ namespace ofxRulr {
 				//get the detector for use previewing the markers
 				auto detectorNode = this->getInput<Detector>();
 
-				//build a mesh to use for previews 
-				ofMesh markerPreview;
-				{
-					markerPreview.setMode(ofPrimitiveMode::OF_PRIMITIVE_TRIANGLE_FAN);
-					markerPreview.addTexCoords({
-						{ 0, 0 }
-						,{ ARUCO_PREVIEW_RESOLUTION, 0 }
-						,{ ARUCO_PREVIEW_RESOLUTION, ARUCO_PREVIEW_RESOLUTION }
-						,{ 0, ARUCO_PREVIEW_RESOLUTION }
-					});
-				}
-				
-				//cycle through markers and draw them
-				for (const auto & marker3D : this->markerMap) {
-					markerPreview.clearVertices();
-
-					for (auto & vertex : marker3D) {
-						markerPreview.addVertex(ofxCv::toOf(vertex));
+				if (this->markerMap) {
+					//build a mesh to use for previews 
+					ofMesh markerPreview;
+					{
+						markerPreview.setMode(ofPrimitiveMode::OF_PRIMITIVE_TRIANGLE_FAN);
+						markerPreview.addTexCoords({
+							{ 0, 0 }
+							,{ ARUCO_PREVIEW_RESOLUTION, 0 }
+							,{ ARUCO_PREVIEW_RESOLUTION, ARUCO_PREVIEW_RESOLUTION }
+							,{ 0, ARUCO_PREVIEW_RESOLUTION }
+						});
 					}
 
-					if (detectorNode) {
-						auto & image = detectorNode->getMarkerImage(marker3D.id);
+					//cycle through markers and draw them
+					const auto & markerMap = *this->markerMap;
+					for (const auto & marker3D : markerMap) {
+						markerPreview.clearVertices();
 
-						image.bind();
-						{
+						for (auto & vertex : marker3D) {
+							markerPreview.addVertex(ofxCv::toOf(vertex));
+						}
+
+						if (detectorNode) {
+							auto & image = detectorNode->getMarkerImage(marker3D.id);
+
+							image.bind();
+							{
+								markerPreview.draw();
+							}
+							image.unbind();
+						}
+						else {
 							markerPreview.draw();
 						}
-						image.unbind();
-					}
-					else {
-						markerPreview.draw();
-					}
 
-					ofDrawBitmapString(ofToString(marker3D.id), ofxCv::toOf(marker3D[0]));
+						ofDrawBitmapString(ofToString(marker3D.id), ofxCv::toOf(marker3D[0]));
+					}
 				}
 			}
 
 			//----------
 			void MarkerMap::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 				auto inspector = inspectArgs.inspector;
-				inspector->addParameterGroup(this->parameters);
 
-				inspector->addButton("Select file...", [this]() {
+				inspector->addButton("Import...", [this]() {
 					try {
 						auto result = ofSystemLoadDialog("Select marker map YML");
 						if (result.bSuccess) {
-							this->parameters.filename = result.filePath;
+							auto markerMap = make_shared<aruco::MarkerMap>(result.filePath);
+							if (markerMap->empty()) {
+								throw(ofxRulr::Exception("Failed to load marker map"));
+							}
+							this->markerMap = move(markerMap);
 						}
 					}
 					RULR_CATCH_ALL_TO_ALERT;
@@ -165,19 +93,60 @@ namespace ofxRulr {
 
 			//----------
 			void MarkerMap::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+				if(this->markerMap) {
+					auto & jsonMarkerMap = json["markerMap"];
+					jsonMarkerMap["mInfoType"] = this->markerMap->mInfoType;
+					jsonMarkerMap["dictionary"] = this->markerMap->getDictionary();
+					auto & jsonMarkers = jsonMarkerMap["markers"];
+					for (const auto & marker : *this->markerMap) {
+						Json::Value jsonMarker;
+						jsonMarker["id"] = marker.id;
+						auto & jsonPoints = jsonMarker["points"];
+						for (const auto & point : marker) {
+							Json::Value jsonPoint;
+							jsonPoint.append(point.x);
+							jsonPoint.append(point.y);
+							jsonPoint.append(point.z);
+							jsonPoints.append(jsonPoint);
+						}
+						jsonMarkers.append(jsonMarker);
+					}
+				}
 			}
 
 			//----------
 			void MarkerMap::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+				if (json.isMember("markerMap")) {
+					auto markerMap = make_shared<aruco::MarkerMap>();
+					const auto & jsonMarkerMap = json["markerMap"];
+					markerMap->mInfoType = jsonMarkerMap["mInfoType"].asInt();
+					markerMap->setDictionary(jsonMarkerMap["dictionary"].asString());
+					const auto & jsonMarkers = jsonMarkerMap["markers"];
+					for (const auto & jsonMarker : jsonMarkers) {
+						aruco::Marker3DInfo marker;
+						marker.id = jsonMarker["id"].asInt();
+						const auto & jsonPoints = jsonMarker["points"];
+						for (const auto & jsonPoint : jsonPoints) {
+							cv::Point3f point;
+							point.x = jsonPoint[0].asFloat();
+							point.y = jsonPoint[1].asFloat();
+							point.z = jsonPoint[2].asFloat();
+							marker.push_back(point);
+						}
+						markerMap->push_back(marker);
+					}
+					this->markerMap = markerMap;
+				}
+			}
+
+			//----------
+			shared_ptr<aruco::MarkerMap> MarkerMap::getMarkerMap() {
+				return this->markerMap;
 			}
 
 			//----------
 			void MarkerMap::clear() {
-				this->loadedMarkerMap.clear();
-				this->markerMap.clear();
-				this->parameters.filename = "";
+				this->markerMap.reset();
 			}
 		}
 	}

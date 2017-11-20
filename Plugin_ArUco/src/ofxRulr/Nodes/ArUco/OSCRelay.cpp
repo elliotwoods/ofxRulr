@@ -1,7 +1,7 @@
 #include "pch_Plugin_ArUco.h"
 #include "OSCRelay.h"
 
-#include "TrackMarkers.h"
+#include "FindMarkers.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -21,7 +21,7 @@ namespace ofxRulr {
 			void OSCRelay::init() {
 				RULR_NODE_UPDATE_LISTENER;
 
-				this->addInput<TrackMarkers>();
+				this->addInput<FindMarkers>();
 				this->manageParameters(this->parameters);
 			}
 
@@ -43,11 +43,11 @@ namespace ofxRulr {
 
 				//if we have a sender then do the thing
 				if (this->sender) {
-					auto trackMarkersNode = this->getInput<TrackMarkers>();
-					if (trackMarkersNode) {
+					auto findMarkersNode = this->getInput<FindMarkers>();
+					if (findMarkersNode) {
 						ofxOscBundle bundle;
 
-						const auto & markers = trackMarkersNode->getTrackedMarkers();
+						const auto & markers = findMarkersNode->getTrackedMarkers();
 						for (const auto & marker : markers) {
 							ofxOscMessage message;
 							message.setAddress("/aruco/" + ofToString(marker.second->ID));

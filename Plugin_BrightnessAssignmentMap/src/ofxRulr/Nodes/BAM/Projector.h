@@ -21,6 +21,9 @@ namespace ofxRulr {
 				
 				Pass();
 				Pass(ofFbo::Settings settings);
+
+				cv::Mat getHistogram(cv::Mat existingHistogram = cv::Mat());
+
 				shared_ptr<ofFbo> fbo;
 				ofFbo::Settings settings;
 				uint64_t renderedFrameIndex = numeric_limits<uint64_t>::max();

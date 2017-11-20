@@ -1,4 +1,5 @@
 #include "pch_Plugin_BrightnessAssignmentMap.h"
+#include "HistogramWidget.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -15,8 +16,34 @@ namespace ofxRulr {
 
 			//----------
 			void World::init() {
+				RULR_NODE_INSPECTOR_LISTENER;
+
 				this->addInput<Nodes::Base>("Scene");
 				this->manageParameters(this->parameters);
+			}
+
+			//----------
+			void World::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
+				auto inspector = inspectArgs.inspector;
+
+				auto histogramWidget = make_shared<HistogramWidget>();
+				auto histogramWidgetWeak = weak_ptr<HistogramWidget>(histogramWidget);
+				auto updateHistogram = [this, histogramWidgetWeak]() {
+					auto histogramWidget = histogramWidgetWeak.lock();
+					if (histogramWidget) {
+						cv::Mat histogram;
+						auto projectors = this->getProjectors();
+						for (auto projector : projectors) {
+							auto & bamPass = projector->getPass(Pass::Level::BrightnessAssignmentMap, true);
+							histogram = bamPass.getHistogram(histogram);
+						}
+						histogramWidget->setData(histogram);
+					}
+				};
+				//updateHistogram();
+				inspector->add(histogramWidget);
+
+				inspector->addButton("Update histogram", updateHistogram);
 			}
 
 			//----------

@@ -6,7 +6,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace ArUco {
-			class TrackMarkers : public Nodes::Base {
+			class FindMarkers : public Nodes::Base {
 			public:
 				struct TrackedMarker {
 					int ID;
@@ -17,7 +17,7 @@ namespace ofxRulr {
 					ofVec3f cornersInObjectSpace[4];
 				};
 
-				TrackMarkers();
+				FindMarkers();
 				string getTypeName() const override;
 				void init();
 				void update();
@@ -35,6 +35,20 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr panel;
 
 				ofMesh previewPlane;
+
+				struct : ofParameterGroup {
+					struct : ofParameterGroup {
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", false };
+							ofParameter<bool> onlySaveOnFind{ "Only save on find", false };
+							ofParameter<filesystem::path> folder{ "Save folder", "" };
+							PARAM_DECLARE("Save", enabled, onlySaveOnFind, folder);
+						} save;
+						ofParameter<bool> speakCount{ "Speak count", true };
+						PARAM_DECLARE("Tethered options", save, speakCount);
+					} tetheredOptions;
+					PARAM_DECLARE("FindMarkers", tetheredOptions);
+				} parameters;
 			};
 		}
 	}

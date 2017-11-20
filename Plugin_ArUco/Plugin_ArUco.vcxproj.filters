@@ -24,19 +24,25 @@
     <ClCompile Include="src\pch_Plugin_ArUco.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\TrackMarkers.cpp">
-      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\Detector.cpp">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\MarkerMap.cpp">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\FitRoomPlanes.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.cpp">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\FindMarkers.cpp">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\MarkerMapPoseTracker.cpp">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\OSCRelay.cpp">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\AlignMarkerMap.cpp">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,19 +53,25 @@
     <ClInclude Include="src\pch_Plugin_ArUco.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\TrackMarkers.h">
-      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\Detector.h">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\MarkerMap.h">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\FitRoomPlanes.h">
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.h">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.h">
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\FindMarkers.h">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\MarkerMapPoseTracker.h">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\OSCRelay.h">
+      <Filter>src\ofxRulr\Nodes\ArUco</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\AlignMarkerMap.h">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClInclude>
   </ItemGroup>

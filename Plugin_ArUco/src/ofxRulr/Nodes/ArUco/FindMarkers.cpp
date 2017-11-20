@@ -1,5 +1,5 @@
 #include "pch_Plugin_ArUco.h"
-#include "TrackMarkers.h"
+#include "FindMarkers.h"
 
 #include "Detector.h"
 #include "aruco.h"
@@ -8,23 +8,23 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace ArUco {
 			//----------
-			TrackMarkers::TrackMarkers() {
+			FindMarkers::FindMarkers() {
 				RULR_NODE_INIT_LISTENER;
 				this->setIcon(Nodes::GraphicsManager::X().getIcon("ArUco::Base"));
 			}
 
 			//----------
-			std::string TrackMarkers::getTypeName() const {
-				return "ArUco::TrackMarkers";
+			std::string FindMarkers::getTypeName() const {
+				return "ArUco::FindMarkers";
 			}
 
 			//----------
-			void TrackMarkers::init() {
+			void FindMarkers::init() {
 				RULR_NODE_DRAW_WORLD_LISTENER;
 				RULR_NODE_UPDATE_LISTENER;
 
-				this->addInput<Detector>();
 				this->addInput<Item::Camera>();
+				this->addInput<Detector>();
 
 				this->panel = ofxCvGui::Panels::makeBaseDraws(this->previewComposite);
 
@@ -42,37 +42,36 @@ namespace ofxRulr {
 					,{ ARUCO_PREVIEW_RESOLUTION, ARUCO_PREVIEW_RESOLUTION }
 					,{ ARUCO_PREVIEW_RESOLUTION, 0 }
 				});
+
+				this->manageParameters(this->parameters);
 			}
 
 			//----------
-			void TrackMarkers::update() {
+			void FindMarkers::update() {
 				auto cameraNode = this->getInput<Item::Camera>();
 				auto detectorNode = this->getInput<Detector>();
-
-				//build a multimap for this frame
-				multimap<int, unique_ptr<TrackedMarker>> trackedMarkersPreviousFrame;
-				std::swap(this->trackedMarkers, trackedMarkersPreviousFrame);
-
-				this->rawMarkers.clear();
 				
-				if ((bool) cameraNode && (bool)detectorNode) {
+				if (cameraNode && detectorNode) {
 					auto grabber = cameraNode->getGrabber();
 					if (grabber) {
 						if (grabber->isFrameNew()) {
 							auto frame = grabber->getFrame();
 							if (frame) {
 								try {
+									//build a multimap for this frame
+									multimap<int, unique_ptr<TrackedMarker>> trackedMarkersPreviousFrame;
+									std::swap(this->trackedMarkers, trackedMarkersPreviousFrame);
+
 									vector<vector<cv::Point2f>> corners;
 									vector<int> ids;
 
 									auto & pixels = frame->getPixels();
 									auto image = ofxCv::toCv(pixels);
-									auto & markerDetector = detectorNode->getMarkerDetector();
 
 									auto cameraMatrix = cameraNode->getCameraMatrix();
 									auto distortionCoefficients = cameraNode->getDistortionCoefficients();
 
-									markerDetector.detect(image, this->rawMarkers);
+									this->rawMarkers = detectorNode->findMarkers(image, cameraNode);
 
 									//update preview image
 									{
@@ -114,7 +113,7 @@ namespace ofxRulr {
 											}
 											ofDisableBlendMode();
 
-											for (auto & marker : rawMarkers) {
+											for (auto & marker : this->rawMarkers) {
 												ofDrawBitmapString(ofToString(marker.id), ofxCv::toOf(marker[0]));
 											}
 										}
@@ -125,7 +124,7 @@ namespace ofxRulr {
 									//calculate 3D pose and store markers
 									auto markerLength = detectorNode->getMarkerLength();
 									auto objectPoints = aruco::Marker::get3DPoints(markerLength);
-									for (auto & rawMarker : rawMarkers) {
+									for (auto & rawMarker : this->rawMarkers) {
 										unique_ptr<TrackedMarker> newMarker;
 
 										auto findPrevious = trackedMarkersPreviousFrame.find(rawMarker.id);
@@ -149,7 +148,7 @@ namespace ofxRulr {
 											, newMarker->rotation
 											, newMarker->translation
 											, foundInPrevious);
-
+										
 										newMarker->transform = ofxCv::makeMatrix(newMarker->rotation, newMarker->translation) * cameraNode->getTransform();
 
 										for (int i = 0; i < 4; i++) {
@@ -157,6 +156,47 @@ namespace ofxRulr {
 											newMarker->cornersInObjectSpace[i] = ofxCv::toOf(objectPoints[i]);
 										}
 										this->trackedMarkers.emplace(newMarker->ID, move(newMarker));
+									}
+
+									//perform tethered actions
+									if(grabber->isSingleShot()) {
+										if (this->parameters.tetheredOptions.save.enabled) {
+											if (this->parameters.tetheredOptions.save.onlySaveOnFind
+												&& this->trackedMarkers.empty()) {
+											}
+											else {
+												try {
+													auto saveFolder = this->parameters.tetheredOptions.save.folder.get();
+													if (saveFolder.empty()) {
+														throw(ofxRulr::Exception("No save path selected"));
+													}
+													static size_t index = 0;
+													auto saveFile = saveFolder;
+													saveFile.append(ofToString(index++) + ".png");
+													auto pathString = saveFile.string();
+													if (pathString.size() > 2 && pathString[0] == '"') {
+														//strip quotes
+														pathString = pathString.substr(1, pathString.size() - 2);
+													}
+													ofSaveImage(grabber->getPixels(), pathString);
+												}
+												RULR_CATCH_ALL_TO_ERROR;
+											}
+										}
+
+										if (this->parameters.tetheredOptions.speakCount) {
+											auto count = this->trackedMarkers.size();
+											if(count == 0) {
+												ofxAssets::sound("ofxRulr::failure").play();
+											}
+											else if (count <= 20) {
+												auto & sound = ofxAssets::sound("ofxRulr::" + ofToString(count));
+												sound.play();
+											}
+											else {
+												ofxAssets::sound("ofxRulr::success").play();
+											}
+										}
 									}
 								}
 								RULR_CATCH_ALL_TO_ERROR;
@@ -167,7 +207,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void TrackMarkers::drawWorldStage() {
+			void FindMarkers::drawWorldStage() {
 				//preview markers
 				auto detectorNode = this->getInput<Detector>();
 				if (detectorNode) {
@@ -198,17 +238,17 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofxCvGui::PanelPtr TrackMarkers::getPanel() {
+			ofxCvGui::PanelPtr FindMarkers::getPanel() {
 				return this->panel;
 			}
 
 			//----------
-			const multimap<int, unique_ptr<TrackMarkers::TrackedMarker>> & TrackMarkers::getTrackedMarkers() const {
+			const multimap<int, unique_ptr<FindMarkers::TrackedMarker>> & FindMarkers::getTrackedMarkers() const {
 				return this->trackedMarkers;
 			}
 
 			//----------
-			const vector<aruco::Marker> TrackMarkers::getRawMarkers() const {
+			const vector<aruco::Marker> FindMarkers::getRawMarkers() const {
 				return this->rawMarkers;
 			}
 		}

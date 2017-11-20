@@ -30,6 +30,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\BAM\PreviewCoverage.cpp">
       <Filter>src\ofxRulr\Nodes\BAM</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\BAM\HistogramWidget.cpp">
+      <Filter>src\ofxRulr\Nodes\BAM</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_BrightnessAssignmentMap.h">
@@ -42,6 +45,9 @@
       <Filter>src\ofxRulr\Nodes\BAM</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\BAM\PreviewCoverage.h">
+      <Filter>src\ofxRulr\Nodes\BAM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\BAM\HistogramWidget.h">
       <Filter>src\ofxRulr\Nodes\BAM</Filter>
     </ClInclude>
   </ItemGroup>

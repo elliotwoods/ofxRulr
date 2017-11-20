@@ -37,7 +37,7 @@ namespace ofxRulr {
 					ViewArea viewArea;
 					ofxCvGui::PanelPtr view;
 
-					ofParameter<string> projectorReferenceImageFilename;
+					ofParameter<filesystem::path> projectorReferenceImageFilename;
 					ofImage projectorReferenceImage;
 					ofParameter<bool> dragVerticesEnabled;
 					ofParameter<bool> calibrateOnVertexChange;

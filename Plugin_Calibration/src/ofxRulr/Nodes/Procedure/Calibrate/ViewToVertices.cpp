@@ -317,12 +317,14 @@ namespace ofxRulr {
 					inspector->add(new Widgets::Toggle(this->dragVerticesEnabled));
 
 					inspector->add(new Widgets::Title("Reference image", Widgets::Title::Level::H3));
-					inspector->add(new Widgets::SelectFile(this->projectorReferenceImageFilename.getName(), [this](){
-						return this->projectorReferenceImageFilename.get();
-					}, [this](string & newFilename) {
-						this->projectorReferenceImageFilename = newFilename;
-						this->projectorReferenceImage.load(newFilename);
-					}));
+					{
+						auto widget = new Widgets::SelectFile(this->projectorReferenceImageFilename);
+						widget->onValueChange += [this](const filesystem::path & path) {
+							this->projectorReferenceImage.load(path.string());
+						};
+
+						inspector->add(widget);
+					}
 					inspector->add(new Widgets::Button("Clear image", [this]() {
 						this->projectorReferenceImage.clear();
 						this->projectorReferenceImageFilename.set("");

@@ -73,6 +73,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Nodes\BAM\HistogramWidget.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\BAM\PreviewCoverage.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\BAM\Projector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\BAM\World.cpp" />
@@ -83,6 +84,7 @@
     <ClCompile Include="src\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Nodes\BAM\HistogramWidget.h" />
     <ClInclude Include="src\ofxRulr\Nodes\BAM\PreviewCoverage.h" />
     <ClInclude Include="src\ofxRulr\Nodes\BAM\Projector.h" />
     <ClInclude Include="src\ofxRulr\Nodes\BAM\World.h" />

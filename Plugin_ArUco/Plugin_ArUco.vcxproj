@@ -77,10 +77,11 @@
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\Detector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\Dictionary.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\FitRoomPlanes.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\AlignMarkerMap.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\MarkerMap.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\MarkerMapPoseTracker.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\OSCRelay.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\TrackMarkers.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\ArUco\FindMarkers.cpp" />
     <ClCompile Include="src\pch_Plugin_ArUco.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -91,10 +92,11 @@
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\Detector.h" />
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\Dictionary.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\FitRoomPlanes.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\AlignMarkerMap.h" />
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\MarkerMap.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\MarkerMapPoseTracker.h" />
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\OSCRelay.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\TrackMarkers.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\ArUco\FindMarkers.h" />
     <ClInclude Include="src\pch_Plugin_ArUco.h" />
   </ItemGroup>
   <ItemGroup>

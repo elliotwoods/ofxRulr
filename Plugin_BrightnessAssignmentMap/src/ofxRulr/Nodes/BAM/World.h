@@ -12,6 +12,7 @@ namespace ofxRulr {
 				World();
 				string getTypeName() const override;
 				void init();
+				void populateInspector(ofxCvGui::InspectArguments &);
 				void registerProjector(shared_ptr<Projector>);
 				void unregisterProjector(shared_ptr<Projector>);
 				vector<shared_ptr<Projector>> getProjectors() const;

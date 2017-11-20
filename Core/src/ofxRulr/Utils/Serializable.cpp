@@ -57,6 +57,7 @@ namespace ofxRulr {
 				if (trySerialize<ofRectangle>(jsonGroup, parameter)) continue;
 
 				if (trySerialize<string>(jsonGroup, parameter)) continue;
+				if (trySerialize<filesystem::path>(jsonGroup, parameter)) continue;
 
 				//group
 				{
@@ -71,6 +72,7 @@ namespace ofxRulr {
 				{
 					const auto name = parameter->getName();
 					jsonGroup[name] << parameter->toString();
+					RULR_ERROR << "Can't serialize contents of " << name;
 					continue;
 				}
 
@@ -158,6 +160,7 @@ namespace ofxRulr {
 				if (tryDeserialize<ofRectangle>(jsonGroup, parameter)) continue;
 
 				if (tryDeserialize<string>(jsonGroup, parameter)) continue;
+				if (tryDeserialize<filesystem::path>(jsonGroup, parameter)) continue;
 
 				//group
 				{

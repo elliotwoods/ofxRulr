@@ -157,6 +157,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Calibration", "Calibration", "{DB1A8915-E9B1-47A2-8331-CA76EBA11A00}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_Calibration", "..\Plugin_Calibration\Plugin_Calibration.vcxproj", "{C135C231-F751-482D-9E4C-C29473E3DD98}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BrightnessAssignmentMap", "BrightnessAssignmentMap", "{BF44EFB4-1225-4F66-8ACC-349133784013}"
 EndProject
