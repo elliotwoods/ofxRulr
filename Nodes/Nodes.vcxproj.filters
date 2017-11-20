@@ -681,6 +681,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\Render\Draw.h">
       <Filter>src\ofxRulr\Nodes\Render</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\IHasVertices.h">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxGLM\src\ofxGLM.cpp">
@@ -835,6 +838,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Render\Draw.cpp">
       <Filter>src\ofxRulr\Nodes\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\IHasVertices.cpp">
+      <Filter>src\ofxRulr\Nodes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

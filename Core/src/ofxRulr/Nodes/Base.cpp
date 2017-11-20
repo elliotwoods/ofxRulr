@@ -43,7 +43,7 @@ namespace ofxRulr {
 				json["whenDrawOnWorldStage"] = (int) this->whenDrawOnWorldStage;
 			}, this);
 			this->onDeserialize.addListener([this](const Json::Value & json) {
-				{
+				if (json.isMember("whenDrawOnWorldStage")) {
 					this->whenDrawOnWorldStage = (WhenDrawOnWorldStage::Options) json["whenDrawOnWorldStage"].asInt();
 				}
 			}, this);

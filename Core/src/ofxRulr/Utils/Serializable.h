@@ -8,6 +8,7 @@
 #include <type_traits>
 
 #include "ofxRulr/Utils/Constants.h"
+#include "ofxRulr/Exception.h"
 
 #define RULR_SERIALIZE_LISTENERS \
 	this->onSerialize += [this](Json::Value & json) { \
@@ -185,6 +186,9 @@ template<class T,
 	typename = std::enable_if_t<!std::is_base_of<ofAbstractParameter, T>::value &&
 	!is_vector<T>::value>>
 void operator>> (const Json::Value & json, T & streamSerializableObject) {
+	if (!json.isString()) {
+		throw(ofxRulr::Exception("Json cannot be read as string"));
+	}
 	stringstream stream(json.asString());
 	stream >> streamSerializableObject;
 }

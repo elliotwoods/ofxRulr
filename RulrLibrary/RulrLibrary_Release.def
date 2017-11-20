@@ -297,6 +297,7 @@ EXPORTS
 	?makeIdentityMatrix@ofMatrix4x4@@QEAAXXZ
 	?makeLookAtMatrix@ofMatrix4x4@@QEAAXAEBVofVec3f@@00@Z
 	?makeRotationMatrix@ofMatrix4x4@@QEAAXAEBVofQuaternion@@@Z
+	?makeRotationMatrix@ofMatrix4x4@@QEAAXMAEBVofVec3f@@M0M0@Z
 	?makeScaleMatrix@ofMatrix4x4@@QEAAXMMM@Z
 	?makeTranslationMatrix@ofMatrix4x4@@QEAAXMMM@Z
 	?postMult@ofMatrix4x4@@QEAAXAEBV1@@Z

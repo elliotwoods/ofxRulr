@@ -5,11 +5,13 @@
 #include "ofxCvGui/Panels/Image.h"
 #include "ofxRulr/Utils/CaptureSet.h"
 
+#include "Constants_Plugin_Calibration.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
 			namespace Calibrate {
-				class IReferenceVertices : public Procedure::Base {
+				class PLUGIN_CALIBRATION_EXPORTS IReferenceVertices : public Procedure::Base {
 				public:
 					class Vertex : public Utils::AbstractCaptureSet::BaseCapture {
 					public:

@@ -49,6 +49,7 @@
       <PrecompiledHeaderFile>pch_Plugin_Calibration.h</PrecompiledHeaderFile>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>BUILD_Plugin_Calibration;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -64,6 +65,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>pch_Plugin_Calibration.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>BUILD_Plugin_Calibration;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

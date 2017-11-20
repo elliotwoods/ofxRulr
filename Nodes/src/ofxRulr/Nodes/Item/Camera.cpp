@@ -448,7 +448,12 @@ namespace ofxRulr {
 				auto cachedDeviceType = this->cachedInitialisationSettings["deviceType"].asString();
 				if (initialisationSettings
 					&& this->grabber->getDeviceTypeName() == cachedDeviceType) {
-					Utils::Serializable::deserialize(this->cachedInitialisationSettings["content"], *initialisationSettings);
+					try {
+						Utils::Serializable::deserialize(this->cachedInitialisationSettings["content"], *initialisationSettings);
+					}
+					catch (...) {
+
+					}
 				}
 			}
 		}

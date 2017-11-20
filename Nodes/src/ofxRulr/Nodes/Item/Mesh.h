@@ -5,10 +5,12 @@
 #include <ofxCvGui/Panels/World.h>
 #include "ofxAssimpModelLoader.h"
 
+#include "ofxRulr/Nodes/IHasVertices.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
-			class Mesh : public RigidBody {
+			class Mesh : public RigidBody, public IHasVertices {
 			public:
 				MAKE_ENUM(Axes
 					, (NegX, PosX, NegY, PosY, NegZ, PosZ)
@@ -26,9 +28,8 @@ namespace ofxRulr {
 
 				ofMatrix4x4 getMeshTransform() const;
 
-				ofVec3f getVertexCloseToWorldPosition(const ofVec3f &) const;
-				ofVec3f getVertexCloseToMouse(float maxDistance = 30.0f) const;
-				ofVec3f getVertexCloseToMouse(const ofVec3f & mousePosition, float maxDistance = 30.0f) const;
+				virtual vector<ofVec3f> getVertices() const override;
+
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void loadMesh();
