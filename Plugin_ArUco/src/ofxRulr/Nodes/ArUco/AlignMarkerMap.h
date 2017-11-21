@@ -31,7 +31,8 @@ namespace ofxRulr {
 					ofParameter<float> residual{ "Residual (m)", 0.0f };
 
 					float getResidual(const ofMatrix4x4 & transform);
-					void cachePointsForFit(shared_ptr<aruco::MarkerMap>);
+					void updatePoints(shared_ptr<aruco::MarkerMap>);
+					void drawWorld();
 				protected:
 					ofxCvGui::ElementPtr getDataDisplay() override;
 					void serialize(Json::Value &);

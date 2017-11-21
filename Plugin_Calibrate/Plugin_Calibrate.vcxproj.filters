@@ -21,7 +21,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\pch_Plugin_Calibration.cpp">
+    <ClCompile Include="src\plugin.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Data\SelectSceneVertices.cpp">
@@ -66,17 +66,11 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
-    <ClCompile Include="src\plugin.cpp">
+    <ClCompile Include="src\pch_Plugin_Calibrate.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\pch_Plugin_Calibration.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Constants_Plugin_Calibration.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Data\SelectSceneVertices.h">
       <Filter>src\ofxRulr\Nodes\Data</Filter>
     </ClInclude>
@@ -118,6 +112,12 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ViewToVertices.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Constants_Plugin_Calibration.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch_Plugin_Calibrate.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

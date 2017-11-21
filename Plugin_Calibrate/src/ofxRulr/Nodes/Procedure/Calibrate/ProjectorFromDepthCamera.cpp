@@ -1,4 +1,4 @@
-#include "pch_Plugin_Calibration.h"
+#include "pch_Plugin_Calibrate.h"
 #include "ProjectorFromDepthCamera.h"
 
 #include "ofxRulr/Nodes/Item/IDepthCamera.h"

@@ -1,4 +1,4 @@
-#include "pch_Plugin_Calibration.h"
+#include "pch_Plugin_Calibrate.h"
 #include "HomographyFromGraycode.h"
 
 #include "ofxRulr/Exception.h"

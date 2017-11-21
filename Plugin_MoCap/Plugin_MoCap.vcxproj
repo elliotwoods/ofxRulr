@@ -40,10 +40,10 @@
     <Import Project="..\..\..\addons\ofxRulr\ofxRulr_Plugin.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="..\Plugin_Calibration\Plugin_Calibration.props" />
+    <Import Project="..\Plugin_Calibrate\Plugin_Calibrate.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="..\Plugin_Calibration\Plugin_Calibration.props" />
+    <Import Project="..\Plugin_Calibrate\Plugin_Calibrate.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -116,7 +116,7 @@
     <ClInclude Include="src\pch_Plugin_MoCap.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Plugin_Calibration\Plugin_Calibration.vcxproj">
+    <ProjectReference Include="..\Plugin_Calibrate\Plugin_Calibrate.vcxproj">
       <Project>{c135c231-f751-482d-9e4c-c29473e3dd98}</Project>
     </ProjectReference>
   </ItemGroup>

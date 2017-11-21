@@ -1,6 +1,7 @@
-#include "pch_Plugin_Calibration.h"
+#include "pch_Plugin_Calibrate.h"
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
+{
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Data::SelectSceneVertices);
 
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Procedure::Calibrate::CameraExtrinsicsFromBoard);
@@ -15,4 +16,5 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Procedure::Calibrate::ProjectorFromStereoCamera);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Procedure::Calibrate::StereoCalibrate);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Procedure::Calibrate::ViewToVertices);
+}
 OFXPLUGIN_PLUGIN_MODULES_END

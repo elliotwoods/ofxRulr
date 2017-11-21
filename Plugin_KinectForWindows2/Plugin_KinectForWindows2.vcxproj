@@ -14,6 +14,7 @@
     <ProjectGuid>{CBFC3D47-1E57-4291-90B6-C344B836B8DA}</ProjectGuid>
     <RootNamespace>Plugin_KinectForWindows2</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Plugin_KFW2</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

@@ -37,9 +37,8 @@ namespace ofxRulr {
 					selectPoints->entangle(this->points);
 					element->addChild(selectPoints);
 				}
-				auto showResidual = make_shared<ofxCvGui::Widgets::LiveValue<float>>(this->residual);
 
-				element->onBoundsChange += [this, selectMarker, selectPlane, selectPoints, showResidual](ofxCvGui::BoundsChangeArguments & args) {
+				element->onBoundsChange += [this, selectMarker, selectPlane, selectPoints](ofxCvGui::BoundsChangeArguments & args) {
 					auto bounds = args.localBounds;
 					bounds.height = 40.0f;
 					selectMarker->setBounds(bounds);
@@ -48,10 +47,19 @@ namespace ofxRulr {
 					selectPlane->setBounds(bounds);
 					bounds.y = 90.0f;
 					selectPoints->setBounds(bounds);
-					bounds.y = 130.0f;
-					showResidual->setBounds(bounds);
 				};
-				element->setHeight(170.0f);
+
+				element->onDraw += [this](ofxCvGui::DrawArguments) {
+					if (this->isSelected()) {
+						auto residual = this->residual.get();
+						if (residual != 0.0f) {
+							ofxCvGui::Utils::drawText("Residual " + ofToString(residual, 3) + "m"
+								, 0, 130, false);
+						}
+					}
+				};
+
+				element->setHeight(150.0f);
 
 				return element;
 			}
@@ -81,14 +89,14 @@ namespace ofxRulr {
 				float residual = 0.0f;
 				for (const auto & point : this->cachedPoints) {
 					auto transformedPoint = point * transform;
-					const auto & delta = transformedPoint[this->points.get()];
+					const auto & delta = transformedPoint[this->plane.get()];
 					residual += delta * delta;
 				}
 				return residual;
 			}
 
 			//----------
-			void AlignMarkerMap::Constraint::cachePointsForFit(shared_ptr<aruco::MarkerMap> markerMap) {
+			void AlignMarkerMap::Constraint::updatePoints(shared_ptr<aruco::MarkerMap> markerMap) {
 				//will throw cv::exception if not available
 				const auto & markerInfo = markerMap->getMarker3DInfo(this->markerID);
 				this->cachedPoints.clear();
@@ -105,6 +113,37 @@ namespace ofxRulr {
 					this->cachedPoints.clear();
 					this->cachedPoints.push_back(accumulatePoint / (float) markerInfo.size());
 				}
+
+				this->residual = this->getResidual(ofMatrix4x4());
+				{
+					auto color = ofColor(100, 100, 100, 255);
+					color[this->plane.get()] = 255;
+					this->color = color;
+				}
+			}
+
+			//----------
+			void AlignMarkerMap::Constraint::drawWorld() {
+				ofMesh lines;
+				lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
+
+				auto planeIndex = this->plane.get();
+
+				for (const auto & point : this->cachedPoints) {
+					lines.addVertex(point);
+					{
+						auto pointFlattened = point;
+						pointFlattened[planeIndex] = 0.0f;
+						lines.addVertex(pointFlattened);
+					}
+
+					{
+						lines.addColor(this->color.get());
+						lines.addColor(ofFloatColor(0.5, 0.5, 0.5, 1.0));
+					}
+				}
+
+				lines.draw();
 			}
 
 #pragma mark Model
@@ -174,12 +213,27 @@ namespace ofxRulr {
 
 			//----------
 			void AlignMarkerMap::update() {
-
+				auto markerMap = this->getInput<MarkerMap>();
+				if (markerMap) {
+					auto markerMapRaw = markerMap->getMarkerMap();
+					if (markerMapRaw) {
+						auto constraints = this->constraints.getSelection();
+						for (auto constraint : constraints) {
+							try {
+								constraint->updatePoints(markerMapRaw);
+							}
+							RULR_CATCH_ALL_TO_ERROR;
+						}
+					}
+				}
 			}
 
 			//----------
 			void AlignMarkerMap::drawWorldStage() {
-
+				auto constraints = this->constraints.getSelection();
+				for (auto constraint : constraints) {
+					constraint->drawWorld();
+				}
 			}
 
 			//----------
@@ -235,7 +289,7 @@ namespace ofxRulr {
 
 				auto constraints = this->constraints.getSelection();
 				for (const auto & constraint : constraints) {
-					constraint->cachePointsForFit(markerMapRaw);
+					constraint->updatePoints(markerMapRaw);
 				}
 
 				ofxNonLinearFit::Fit<Model> fit;

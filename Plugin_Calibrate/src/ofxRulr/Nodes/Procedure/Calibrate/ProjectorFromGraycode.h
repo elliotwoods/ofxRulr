@@ -3,11 +3,14 @@
 #include "ofxRulr/Nodes/Base.h"
 #include "ofxRulr/Nodes/Item/AbstractBoard.h"
 
+#include "ofxRulr/Nodes/Item/AbstractBoard.h"
+#include "Constants_Plugin_Calibration.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
 			namespace Calibrate {
-				class ProjectorFromGraycode : public Base {
+				class PLUGIN_CALIBRATION_EXPORTS ProjectorFromGraycode : public Base {
 				public:
 					struct Capture {
 						vector<ofVec3f> worldPoints;
