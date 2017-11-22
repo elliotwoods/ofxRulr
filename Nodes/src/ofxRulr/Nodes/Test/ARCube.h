@@ -48,9 +48,9 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					ofParameter<ActiveWhen> activewhen{ "Active when", ActiveWhen::Selected };
-					ofParameter<DrawStyle> drawStyle{ "Draw style", DrawStyle::Cube };
+					ofParameter<DrawStyle> drawStyle{ "Draw style", DrawStyle::Board };
 					ofParameter<FillMode> fillMode{ "Fill mode", FillMode::Fill };
-					ofParameter<float> alpha{ "Alpha", 1.0f, 0.0f, 1.0f };
+					ofParameter<float> alpha{ "Alpha", 0.5f, 0.0f, 1.0f };
 					ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
 					PARAM_DECLARE("ARCube", activewhen, drawStyle, fillMode, alpha, findBoardMode);
 				} parameters;
