@@ -28,7 +28,9 @@ namespace ofxRulr {
 
 				ofxCvGui::PanelPtr getPanel() override;
 				
-				const vector<aruco::Marker> & findMarkers(const cv::Mat &, shared_ptr<Item::View> camera = nullptr);
+				const vector<aruco::Marker> & findMarkers(const cv::Mat & image
+					, const cv::Mat & cameraMatrix = cv::Mat()
+					, const cv::Mat & distortionCoefficients = cv::Mat());
 			protected:
 				MAKE_ENUM(DetectorType
 					, (Original, MIP_3612h, ARTKP, ARTAG)
@@ -39,6 +41,11 @@ namespace ofxRulr {
 					, ("None", "SubPix", "Lines"));
 
 				void rebuildDetector();
+
+				void changeDetectorCallback(DetectorType &);
+				void changeFloatCallback(float &);
+				void changeIntCallback(int &);
+				void changeRefinementTypeCallback(RefinementType &);
 
 				struct : ofParameterGroup {
 					ofParameter<DetectorType> detectorType{ "Detector type", DetectorType::Original };
@@ -63,14 +70,21 @@ namespace ofxRulr {
 				aruco::Dictionary dictionary;
 				aruco::Dictionary::DICT_TYPES dictionaryType;
 				aruco::MarkerDetector markerDetector;
-				DetectorType cachedDetector;
-				RefinementType cachedRefinement;
 
 				map<int, unique_ptr<ofImage>> cachedMarkerImages;
+
+				//useful when debugging to research quickly
+				struct {
+					cv::Mat image;
+					cv::Mat cameraMatrix;
+					cv::Mat distortionCoefficients;
+				} lastDetection;
 
 				ofImage preview;
 				vector<aruco::Marker> foundMarkers;
 				ofxCvGui::PanelPtr panel;
+
+				bool detectorDirty = true;
 			};
 		}
 	}

@@ -362,11 +362,13 @@ namespace ofxRulr {
 		//----------
 		void AbstractCaptureSet::deserialize(const Json::Value & json) {
 			this->captures.clear();
-			auto & jsonCaptures = json["captures"];
-			for (const auto & jsonCapture : jsonCaptures) {
-				auto capture = this->makeEmpty();
-				capture->deserialize(jsonCapture);
-				this->add(capture); //ensure event listeners are attached
+			if (json.isMember("captures")) {
+				auto & jsonCaptures = json["captures"];
+				for (const auto & jsonCapture : jsonCaptures) {
+					auto capture = this->makeEmpty();
+					capture->deserialize(jsonCapture);
+					this->add(capture); //ensure event listeners are attached
+				}
 			}
 		}
 

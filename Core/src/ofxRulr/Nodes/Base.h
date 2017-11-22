@@ -156,7 +156,6 @@ namespace ofxRulr {
 			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onConnect;
 			ofxLiquidEvent<shared_ptr<Graph::AbstractPin>> onDisconnect;
 			ofxLiquidEvent<void> onAnyInputConnectionChanged;
-
 		protected:
 			void addInput(shared_ptr<Graph::AbstractPin>);
 

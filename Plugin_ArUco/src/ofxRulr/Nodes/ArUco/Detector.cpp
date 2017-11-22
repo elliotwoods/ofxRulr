@@ -52,11 +52,20 @@ namespace ofxRulr {
 					};
 					this->panel = panel;
 				}
+
+				//add listeners
+				this->parameters.detectorType.addListener(this, &Detector::changeDetectorCallback);
+				this->parameters.markerLength.addListener(this, &Detector::changeFloatCallback);
+				this->parameters.threshold.areaSize.addListener(this, &Detector::changeIntCallback);
+				this->parameters.threshold.subtract.addListener(this, &Detector::changeIntCallback);
+				this->parameters.threshold.parameterRange.addListener(this, &Detector::changeIntCallback);
+				this->parameters.refinement.refinementType.addListener(this, &Detector::changeRefinementTypeCallback);
+				this->parameters.refinement.windowSize.addListener(this, &Detector::changeIntCallback);
 			}
 
 			//----------
 			void Detector::update() {
-				if (this->cachedDetector != this->parameters.detectorType.get()) {
+				if(this->detectorDirty) {
 					this->rebuildDetector();
 				}
 			}
@@ -67,6 +76,11 @@ namespace ofxRulr {
 				inspector->addParameterGroup(this->parameters);
 				inspector->addLiveValue<string>("Dictionary type", [this]() {
 					return aruco::Dictionary::getTypeString(this->dictionaryType);
+				});
+				inspector->addButton("Retry detect", [this]() {
+					this->findMarkers(this->lastDetection.image
+						, this->lastDetection.cameraMatrix
+						, this->lastDetection.distortionCoefficients);
 				});
 			}
 
@@ -117,12 +131,21 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const std::vector<aruco::Marker> & Detector::findMarkers(const cv::Mat & image, shared_ptr<Item::View> camera) {
-				if (!camera) {
+			const std::vector<aruco::Marker> & Detector::findMarkers(const cv::Mat & image
+				, const cv::Mat & cameraMatrix
+				, const cv::Mat & distortionCoefficients) {
+				this->lastDetection = { image
+					, cameraMatrix
+					, distortionCoefficients
+				};
+
+				if (cameraMatrix.empty()) {
 					this->foundMarkers = this->markerDetector.detect(image);
 				}
 				else {
-					aruco::CameraParameters cameraParameters(camera->getCameraMatrix(), camera->getDistortionCoefficients(), camera->getSize());
+					aruco::CameraParameters cameraParameters(cameraMatrix
+						, distortionCoefficients
+						, cv::Size(image.cols, image.rows));
 					this->foundMarkers = this->markerDetector.detect(image, cameraParameters, this->parameters.markerLength);
 				}
 				auto thresholdedImage = this->markerDetector.getThresholdedImage();
@@ -159,7 +182,6 @@ namespace ofxRulr {
 
 				this->dictionary = aruco::Dictionary::loadPredefined(this->dictionaryType);
 				this->markerDetector.setDictionary(this->dictionaryType);
-				this->cachedDetector = this->parameters.detectorType;
 
 				//setup refinement method
 				{
@@ -181,6 +203,27 @@ namespace ofxRulr {
 				}
 
 				this->cachedMarkerImages.clear();
+				this->detectorDirty = false;
+			}
+
+			//----------
+			void Detector::changeDetectorCallback(DetectorType &) {
+				this->detectorDirty = true;
+			}
+
+			//----------
+			void Detector::changeFloatCallback(float &) {
+				this->detectorDirty = true;
+			}
+
+			//----------
+			void Detector::changeIntCallback(int &) {
+				this->detectorDirty = true;
+			}
+
+			//----------
+			void Detector::changeRefinementTypeCallback(RefinementType &){
+				this->detectorDirty = true;
 			}
 		}
 	}

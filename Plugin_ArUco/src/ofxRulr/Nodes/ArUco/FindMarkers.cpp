@@ -71,7 +71,9 @@ namespace ofxRulr {
 									auto cameraMatrix = cameraNode->getCameraMatrix();
 									auto distortionCoefficients = cameraNode->getDistortionCoefficients();
 
-									this->rawMarkers = detectorNode->findMarkers(image, cameraNode);
+									this->rawMarkers = detectorNode->findMarkers(image
+										, cameraNode->getCameraMatrix()
+										, cameraNode->getDistortionCoefficients());
 
 									//update preview image
 									{

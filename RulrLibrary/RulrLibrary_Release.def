@@ -31,8 +31,6 @@ EXPORTS
 	??0ofRectangle@@QEAA@AEBV0@@Z
 	??0ofRectangle@@QEAA@MMMM@Z
 	??0ofSerial@@QEAA@XZ
-	??0ofTexture@@QEAA@$$QEAV0@@Z
-	??0ofTexture@@QEAA@AEBV0@@Z
 	??0ofTexture@@QEAA@XZ
 	??0ofVbo@@QEAA@AEBV0@@Z
 	??0ofVbo@@QEAA@XZ
@@ -52,8 +50,6 @@ EXPORTS
 	??1ofVboMesh@@UEAA@XZ
 	??1ofxOscBundle@@QEAA@XZ
 	??1ofxOscMessage@@QEAA@XZ
-	??4ofTexture@@QEAAAEAV0@$$QEAV0@@Z
-	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
 	??9tpp@@YA_NAEBVfIterator@Delaunay@0@0@Z
 	?ofCircle@@YAXAEBVofVec3f@@M@Z
 	?ofCircle@@YAXMMM@Z
@@ -63,6 +59,7 @@ EXPORTS
 	?ofCreateWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@AEBVofWindowSettings@@@Z
 	?ofDisableAlphaBlending@@YAXXZ
 	?ofDisableBlendMode@@YAXXZ
+	?ofDrawAxis@@YAXM@Z
 	?ofDrawCircle@@YAXAEBVofVec3f@@M@Z
 	?ofDrawCircle@@YAXMMM@Z
 	?ofDrawGridPlane@@YAXM_K_N@Z
@@ -154,30 +151,30 @@ EXPORTS
 	?isAllocated@?$ofPixels_@E@@QEBA_NXZ
 	?resize@?$ofPixels_@E@@QEAA_NHHW4ofInterpolationMethod@@@Z
 	?rotate90@?$ofPixels_@E@@QEAAXH@Z
-	?size@?$ofPixels_@E@@QEBAHXZ
+	?size@?$ofPixels_@E@@QEBA_KXZ
 	?swap@?$ofPixels_@E@@QEAAXAEAV1@@Z
 	??0?$ofColor_@E@@QEAA@MM@Z
 	??0?$ofColor_@E@@QEAA@MMMM@Z
 	??0?$ofImage_@E@@QEAA@XZ
-	??0?$ofPixels_@E@@QEAA@$$QEAV0@@Z
 	??0?$ofPixels_@E@@QEAA@AEBV0@@Z
 	??0?$ofPixels_@E@@QEAA@XZ
 	??1?$ofImage_@E@@UEAA@XZ
 	??1?$ofPixels_@E@@QEAA@XZ
 	??4?$ofImage_@E@@QEAAAEAV0@AEAV?$ofPixels_@E@@@Z
 	??4?$ofImage_@E@@QEAAAEAV0@AEBV0@@Z
-	??4?$ofPixels_@E@@QEAAAEAV0@$$QEAV0@@Z
 	??4?$ofPixels_@E@@QEAAAEAV0@AEBV0@@Z
 	??A?$ofColor_@E@@QEAAAEAE_K@Z
 	??A?$ofColor_@E@@QEBAAEBE_K@Z
+	?allocate@?$ofPixels_@G@@QEAAXHHH@Z
 	?allocate@?$ofPixels_@G@@QEAAXHHW4ofImageType@@@Z
 	?getData@?$ofPixels_@G@@QEAAPEAGXZ
 	?getData@?$ofPixels_@G@@QEBAPEBGXZ
 	?getHeight@?$ofPixels_@G@@QEBAHXZ
+	?getNumChannels@?$ofPixels_@G@@QEBAHXZ
 	?getPixels@?$ofPixels_@G@@QEAAPEAGXZ
 	?getPixels@?$ofPixels_@G@@QEBAPEBGXZ
 	?getWidth@?$ofPixels_@G@@QEBAHXZ
-	?size@?$ofPixels_@G@@QEBAHXZ
+	?size@?$ofPixels_@G@@QEBA_KXZ
 	??0?$ofPixels_@G@@QEAA@XZ
 	??1?$ofPixels_@G@@QEAA@XZ
 	?getData@?$ofPixels_@I@@QEBAPEBIXZ
@@ -230,18 +227,13 @@ EXPORTS
 	?getPixels@?$ofPixels_@M@@QEAAPEAMXZ
 	?getWidth@?$ofPixels_@M@@QEBAHXZ
 	?setFromPixels@?$ofPixels_@M@@QEAAXPEBMHHH@Z
-	?size@?$ofPixels_@M@@QEBAHXZ
+	?size@?$ofPixels_@M@@QEBA_KXZ
 	??0?$ofColor_@M@@QEAA@MM@Z
 	??0?$ofColor_@M@@QEAA@MMMM@Z
-	??0?$ofImage_@M@@QEAA@$$QEAV0@@Z
-	??0?$ofImage_@M@@QEAA@AEBV0@@Z
 	??0?$ofImage_@M@@QEAA@XZ
 	??0?$ofPixels_@M@@QEAA@XZ
 	??1?$ofImage_@M@@UEAA@XZ
 	??1?$ofPixels_@M@@QEAA@XZ
-	??4?$ofImage_@M@@QEAAAEAV0@$$QEAV0@@Z
-	??4?$ofImage_@M@@QEAAAEAV0@AEBV0@@Z
-	??A?$ofColor_@M@@QEAAAEAM_K@Z
 	??X?$ofColor_@M@@QEAAAEAV0@AEBM@Z
 	??1BaseFunctionId@priv@of@@UEAA@XZ
 	?draw@of3dPrimitive@@UEBAXXZ
@@ -356,6 +348,7 @@ EXPORTS
 	?getHeight@ofRectangle@@QEBAMXZ
 	?getTopRight@ofRectangle@@QEBA?AVofVec3f@@XZ
 	?getWidth@ofRectangle@@QEBAMXZ
+	?inside@ofRectangle@@QEBA_NAEBVofVec3f@@@Z
 	?close@ofSerial@@QEAAXXZ
 	?isInitialized@ofSerial@@QEBA_NXZ
 	?setup@ofSerial@@QEAA_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
@@ -374,6 +367,7 @@ EXPORTS
 	?isAllocated@ofTexture@@QEBA_NXZ
 	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@E@@@Z
 	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@G@@@Z
+	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@M@@@Z
 	?readToPixels@ofTexture@@QEBAXAEAV?$ofPixels_@M@@@Z
 	?setTextureMinMagFilter@ofTexture@@QEAAXHH@Z
 	?unbind@ofTexture@@QEBAXH@Z
@@ -406,6 +400,7 @@ EXPORTS
 	?toCv@ofxCv@@YAAEBV?$Point_@M@cv@@AEBVofVec2f@@@Z
 	?toCv@ofxCv@@YAAEBV?$Point3_@M@cv@@AEBVofVec3f@@@Z
 	?toCv@ofxCv@@YAAEBV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@AEBV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@3@@Z
+	?toOf@ofxCv@@YA?AVofRectangle@@V?$Rect_@H@cv@@@Z
 	?toOf@ofxCv@@YAAEAV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@std@@AEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@3@@Z
 	?toOf@ofxCv@@YAAEAV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@AEAV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@3@@Z
 	?toOf@ofxCv@@YAAEAVofVec2f@@AEAV?$Point_@M@cv@@@Z
@@ -516,6 +511,7 @@ EXPORTS
 	?getHasData@DataSet@ofxGraycode@@QEBA_NXZ
 	?getHeight@DataSet@ofxGraycode@@QEBAIXZ
 	?getMedian@DataSet@ofxGraycode@@QEBAAEBV?$ofPixels_@E@@XZ
+	?getMedianInverse@DataSet@ofxGraycode@@QEBAAEBV?$ofPixels_@E@@XZ
 	?getPayloadHeight@DataSet@ofxGraycode@@QEBAIXZ
 	?getPayloadWidth@DataSet@ofxGraycode@@QEBAIXZ
 	?getWidth@DataSet@ofxGraycode@@QEBAIXZ
@@ -565,6 +561,7 @@ EXPORTS
 	?setup@ofxOscSender@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	??0Ray@ofxRay@@QEAA@VofVec3f@@0_N@Z
 	?beginAsCamera@Projector@ofxRay@@QEBAX_N@Z
+	?castPixel@Projector@ofxRay@@QEBA?AVRay@2@AEBVofVec2f@@@Z
 	?endAsCamera@Projector@ofxRay@@QEBAXXZ
 	?getClippedProjectionMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getHeight@Projector@ofxRay@@QEBAHXZ

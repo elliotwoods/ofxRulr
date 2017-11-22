@@ -152,11 +152,26 @@ namespace ofxRulr {
 								//draw the 3D world on top
 								const auto & view = camera->getViewInWorldSpace();
 								view.beginAsCamera(true);
-								glEnable(GL_DEPTH_TEST);
-								glClear(GL_DEPTH_BUFFER_BIT);
-								this->drawWorldStage();
-								glDisable(GL_DEPTH_TEST);
+								{
+									glEnable(GL_DEPTH_TEST);
+									{
+										glClear(GL_DEPTH_BUFFER_BIT);
+										this->drawWorldStage();
+									}
+									glDisable(GL_DEPTH_TEST);
+								}
 								view.endAsCamera();
+
+								//emulate alpha by drawing undistorted image again on top
+								if (this->parameters.alpha < 1.0f) {
+									ofEnableAlphaBlending();
+									{
+										ofSetColor(255, 255.0f * (1.0f - this->parameters.alpha));
+										//draw the undistorted image
+										this->undistorted.draw(0, 0);
+									}
+									ofDisableAlphaBlending();
+								}
 							}
 							this->fbo.end();
 						}

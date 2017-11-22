@@ -14,6 +14,140 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
 			namespace Calibrate {
+#pragma mark Capture
+				//----------
+				ProjectorFromGraycode::Capture::Capture() {
+					RULR_NODE_SERIALIZATION_LISTENERS;
+				}
+
+				//----------
+				string ProjectorFromGraycode::Capture::getDisplayString() const {
+					stringstream ss;
+					ss << this->worldPoints.size() << " points";
+					return ss.str();
+				}
+
+				//----------
+				void ProjectorFromGraycode::Capture::serialize(Json::Value & json) {
+					json["worldPoints"] << this->worldPoints;
+					json["projectorImagePoints"] << this->projectorImagePoints;
+				}
+
+				//----------
+				void ProjectorFromGraycode::Capture::deserialize(const Json::Value & json) {
+					json["worldPoints"] >> this->worldPoints;
+					json["projectorImagePoints"] >> this->projectorImagePoints;
+				}
+
+				//----------
+				void ProjectorFromGraycode::Capture::drawWorld(shared_ptr<Item::Projector> projector)
+				{
+					ofMesh points;
+					points.setMode(ofPrimitiveMode::OF_PRIMITIVE_POINTS);
+
+					ofMesh zigzag;
+					zigzag.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINE_STRIP);
+
+					for (int i = 0; i < this->worldPoints.size(); i++) {
+						const auto & worldPoint = this->worldPoints[i];
+						if (i == 0) {
+							ofPushStyle();
+							{
+								ofSetColor(this->color);
+								ofDrawSphere(worldPoint, 0.05f);
+							}
+							ofPopStyle();
+						}
+
+						zigzag.addVertex(worldPoint);
+						zigzag.addColor((float)i / (float)this->worldPoints.size());
+					}
+					zigzag.draw();
+
+					Utils::Graphics::pushPointSize(5.0f);
+					{
+						points.drawVertices();
+					}
+					Utils::Graphics::popPointSize();
+
+					//draw transform axes
+					ofPushMatrix();
+					{
+						ofMultMatrix(this->transform);
+						ofDrawAxis(0.1f);
+					}
+					ofPopMatrix();
+
+					//draw lines to projector
+					if (projector) {
+						const auto projectorWidth = projector->getWidth();
+						const auto projectorHeight = projector->getHeight();
+						const auto projectorPosition = projector->getPosition();
+						const auto projectorView = projector->getViewInWorldSpace();
+
+						ofMesh projectorRays;
+						projectorRays.setMode(ofPrimitiveMode::OF_PRIMITIVE_TRIANGLES);
+
+						for (int i = 0; i < this->worldPoints.size(); i++) {
+							const auto & worldPoint = this->worldPoints[i];
+							auto color = ofFloatColor(
+								this->projectorImagePoints[i].x / projector->getWidth(),
+								this->projectorImagePoints[i].y / projector->getHeight(),
+								0
+							);
+							points.addVertex(worldPoint);
+							points.addColor(color);
+
+							auto distance = worldPoint.distance(projectorPosition);
+							auto projectorRay = projectorView.castPixel(this->projectorImagePoints[i]);
+							projectorRays.addVertex(projectorRay.s);
+							projectorRays.addVertex(projectorRay.s + projectorRay.t * distance / projectorRay.t.length());
+							projectorRays.addVertex(worldPoint);
+
+							projectorRays.addColor(ofFloatColor(0.5, 0.5, 0.5, 0.0f));
+							color.a = 0.5f;
+							projectorRays.addColor(color);
+							color.a = 1.0f;
+							projectorRays.addColor(color);
+						}
+
+						ofPushStyle();
+						{
+							ofEnableAlphaBlending();
+							projectorRays.drawWireframe();
+							ofDisableAlphaBlending();
+						}
+						ofPopStyle();
+					}
+					else {
+						for (int i = 0; i < this->worldPoints.size(); i++) {
+							const auto & worldPoint = this->worldPoints[i];
+							points.addVertex(worldPoint);
+						}
+					}
+				}
+
+				//----------
+				void ProjectorFromGraycode::Capture::drawOnCameraImage() {
+					ofPushStyle();
+					{
+						ofSetColor(this->color);
+						ofxCv::drawCorners(ofxCv::toCv(this->cameraImagePoints), false);
+					}
+					ofPopStyle();
+				}
+
+				//----------
+				void ProjectorFromGraycode::Capture::drawOnProjectorImage() {
+					ofPushStyle();
+					{
+						ofSetColor(this->color);
+						ofxCv::drawCorners(ofxCv::toCv(this->projectorImagePoints), false);
+					}
+					ofPopStyle();
+				}
+
+#pragma mark ProjectorFromGraycode
 				//----------
 				ProjectorFromGraycode::ProjectorFromGraycode() {
 					RULR_NODE_INIT_LISTENER;
@@ -31,6 +165,7 @@ namespace ofxRulr {
 
 				//----------
 				void ProjectorFromGraycode::init() {
+					RULR_NODE_UPDATE_LISTENER;
 					RULR_NODE_DRAW_WORLD_LISTENER;
 					RULR_NODE_INSPECTOR_LISTENER;
 					RULR_NODE_SERIALIZATION_LISTENERS;
@@ -40,58 +175,77 @@ namespace ofxRulr {
 					this->addInput<Item::AbstractBoard>();
 					this->addInput<Scan::Graycode>();
 
-					this->panel = ofxCvGui::Panels::makeTexture(this->preview.getTexture());
+					{
+						auto panel = ofxCvGui::Panels::Groups::makeStrip();
+						
+						{
+							auto cameraPanel = ofxCvGui::Panels::makeTexture(this->preview.projectorInCamera, "Camera");
+							cameraPanel->onDrawImage += [this](ofxCvGui::DrawImageArguments &) {
+								auto captures = this->captures.getSelection();
+								for (auto capture : captures) {
+									capture->drawOnCameraImage();
+								}
+							};
+							panel->add(cameraPanel);
+						}
+						{
+							auto projectorPanel = ofxCvGui::Panels::makeTexture(this->preview.cameraInProjector, "Projector");
+							projectorPanel->onDrawImage += [this](ofxCvGui::DrawImageArguments &) {
+								auto captures = this->captures.getSelection();
+								for (auto capture : captures) {
+									capture->drawOnProjectorImage();
+								}
+							};
+							panel->add(projectorPanel);
+						}
+						this->panel = panel;
+					}
+				}
+
+				//----------
+				void ProjectorFromGraycode::update() {
+					{
+						auto projector = this->getInput<Item::Projector>();
+						if (projector) {
+							auto width = this->preview.cameraInProjector.getWidth();
+							auto height = this->preview.cameraInProjector.getHeight();
+							if (width != projector->getWidth()
+								|| height != projector->getHeight()) {
+								this->preview.cameraInProjector.allocate(projector->getWidth()
+									, projector->getHeight()
+									, GL_LUMINANCE);
+							}
+						}
+					}
+					{
+						auto camera = this->getInput<Item::Camera>();
+						if (camera) {
+							auto width = this->preview.projectorInCamera.getWidth();
+							auto height = this->preview.projectorInCamera.getHeight();
+							if (width != camera->getWidth()
+								|| height != camera->getHeight()) {
+								this->preview.projectorInCamera.allocate(camera->getWidth()
+									, camera->getHeight()
+									, GL_LUMINANCE);
+							}
+						}
+					}
 				}
 
 				//----------
 				void ProjectorFromGraycode::drawWorldStage() {
-					ofMesh preview;
-					preview.setMode(ofPrimitiveMode::OF_PRIMITIVE_POINTS);
-
 					auto projectorNode = this->getInput<Item::Projector>();
 
-					bool useColor = false;
-					float projectorWidth, projectorHeight;
+					float projectorWidth = 0, projectorHeight = 0;
 					if (projectorNode) {
-						useColor = true;
 						projectorWidth = projectorNode->getWidth();
 						projectorHeight = projectorNode->getHeight();
 					}
 
-					auto selection = this->getSelection();
-
-					for (auto index : selection) {
-						ofMesh line;
-						auto & capture = this->captures[index];
-						line.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINE_STRIP);
-
-						for (int i = 0; i < capture.worldPoints.size(); i++) {
-							const auto & worldPoint = capture.worldPoints[i];
-							if (i == 0) {
-								ofDrawBitmapString(ofToString(index), worldPoint);
-							}
-							preview.addVertex(worldPoint);
-							line.addVertex(worldPoint);
-							line.addColor((float)i / (float)capture.worldPoints.size());
-						}
-
-						for (auto & projectorImagePoint : capture.projectorImagePoints) {
-							if (useColor) {
-								preview.addColor(ofColor(
-									ofMap(projectorImagePoint.x, 0, projectorWidth, 0, 255),
-									ofMap(projectorImagePoint.y, 0, projectorHeight, 0, 255),
-									0));
-							}
-						}
-
-						line.draw();
+					auto captures = this->captures.getSelection();
+					for (auto & capture : captures) {
+						capture->drawWorld(projectorNode);
 					}
-
-					Utils::Graphics::pushPointSize(5.0f);
-					{
-						preview.drawVertices();
-					}
-					Utils::Graphics::popPointSize();
 				}
 
 				//----------
@@ -116,6 +270,7 @@ namespace ofxRulr {
 					auto projectorNode = this->getInput<Item::Projector>();
 					
 					if (this->parameters.capture.autoScan) {
+						Utils::ScopedProcess scopedProcess("Graycode scan", false);
 						graycodeNode->runScan();
 					}
 
@@ -137,71 +292,13 @@ namespace ofxRulr {
 						ofPixels medianCopy(median);
 						auto medianCopyMat = toCv(medianCopy);
 
-						if (this->parameters.capture.searchBrightArea) {
-							vector<vector<cv::Point>> contours;
-
-							//crop the image down to active area
-							cv::Rect bounds;
-							cv::Mat croppedImage;
-							{
-								//threshold the image
-								cv::Mat thresholded;
-								cv::threshold(medianCopyMat, thresholded, this->parameters.capture.brightAreaThreshold, 255, THRESH_BINARY);
-
-								//find contours
-								cv::findContours(thresholded, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-
-								//add all contours into one set of points
-								vector<cv::Point> contoursCollapsed;
-								for (auto & contour : contours) {
-									auto contourBounds = cv::boundingRect(cv::Mat(contour));
-									if (contourBounds.area() < 25) {
-										continue;
-									}
-									for (auto & point : contour) {
-										contoursCollapsed.push_back(point);
-									}
-								}
-								if (contoursCollapsed.size() > 0) {
-									bounds = cv::boundingRect(cv::Mat(contoursCollapsed));
-									croppedImage = medianCopyMat(bounds);
-								}
-								else {
-									croppedImage = medianCopyMat;
-								}
-							}
-
-							ofxCv::copy(croppedImage, this->preview.getPixels());
-							this->preview.update();
-
-							//find checkerboard in cropped image
-							if (!boardNode->findBoard(croppedImage
-								, pointsInCameraImage
-								, boardObjectPoints
-								, this->parameters.capture.findBoardMode
-								, cameraNode->getCameraMatrix()
-								, cameraNode->getDistortionCoefficients())) {
-								throw(ofxRulr::Exception("Board not found in camera image"));
-							}
-
-							//relocate points back into non-cropped space
-							for (auto & point : pointsInCameraImage) {
-								point.x += bounds.x;
-								point.y += bounds.y;
-							}
-						}
-						else {
-							ofxCv::copy(medianCopyMat, this->preview.getPixels());
-							this->preview.update();
-
-							if (!boardNode->findBoard(medianCopyMat
-								, pointsInCameraImage
-								, boardObjectPoints
-								, this->parameters.capture.findBoardMode
-								, cameraNode->getCameraMatrix()
-								, cameraNode->getDistortionCoefficients())) {
-								throw(ofxRulr::Exception("Board not found in camera image"));
-							}
+						if (!boardNode->findBoard(medianCopyMat
+							, pointsInCameraImage
+							, boardObjectPoints
+							, this->parameters.capture.findBoardMode
+							, cameraNode->getCameraMatrix()
+							, cameraNode->getDistortionCoefficients())) {
+							throw(ofxRulr::Exception("Board not found in camera image"));
 						}
 					}
 					
@@ -217,9 +314,7 @@ namespace ofxRulr {
 								, cameraNode->getDistortionCoefficients()
 								, rotation
 								, translation
-								, false
-								, 1.0f
-								, boardObjectPoints.size() / 2 * 3);
+								, false);
 						}
 						else {
 							cv::solvePnP(boardObjectPoints
@@ -237,7 +332,7 @@ namespace ofxRulr {
 					vector<ofVec3f> boardPointsInWorldSpace;
 					{
 						for (auto & boardObjectPoint : boardObjectPoints) {
-							boardPointsInWorldSpace.push_back(toOf(boardObjectPoint) * boardTransform * cameraNode->getTransform());
+							boardPointsInWorldSpace.push_back(toOf(boardObjectPoint) * (boardTransform * cameraNode->getTransform()));
 						}
 					}
 
@@ -246,30 +341,22 @@ namespace ofxRulr {
 					{
 						Utils::ScopedProcess scopedProcessBuildMesh("Build delauney mesh", false);
 						auto & projectorInCameraPreview = graycodeNode->getDecoder().getProjectorInCamera().getPixels();
+						auto boardBoundsInCamera = cv::boundingRect(Mat(pointsInCameraImage));
 
+						//erode away the active (to reduce noise)
 						auto activeEroded = dataSet.getActive();
 						auto activeErodedMat = toCv(activeEroded);
 						{
-							auto boardBounds = cv::boundingRect(Mat(pointsInCameraImage));
-							ofVec2f boardSizeInCamera(boardBounds.width, boardBounds.height);
+							ofVec2f boardSizeInCamera(boardBoundsInCamera.width, boardBoundsInCamera.height);
 							float erosionSize = boardSizeInCamera.length() * this->parameters.capture.erosion;
 							cv::erode(activeErodedMat, activeErodedMat, cv::Mat(), cv::Point(-1, -1), (int)erosionSize);
 						}
-
-						//show preview of eroded
-						{
-							Mat copy;
-							toCv(projectorInCameraPreview).copyTo(copy, activeErodedMat);
-							ofxCv::copy(copy, this->preview.getPixels());
-							this->preview.update();
-						}
-						
-
 
 						//make vertices and tex coords
 						Delaunay::Point tempP;
 						vector<Delaunay::Point> delauneyPoints;
 						auto activeErodedPixel = activeEroded.getData();
+						auto maskInCameraSpace = ofxCv::toOf(boardBoundsInCamera);
 						for (auto & pixel : dataSet) {
 							if (!*activeErodedPixel++) {
 								continue;
@@ -277,10 +364,20 @@ namespace ofxRulr {
 
 							auto projectorXY = pixel.getProjectorXY();
 							auto cameraXY = pixel.getCameraXY();
+							if (!maskInCameraSpace.inside(cameraXY)) {
+								continue;
+							}
 
 							delauneyPoints.emplace_back(cameraXY.x, cameraXY.y);
 							projectorInCameraMesh.addVertex(cameraXY);
 							projectorInCameraMesh.addColor(ofFloatColor(projectorXY.x, projectorXY.y, 0));
+						}
+
+						//check delauney point count
+						if (delauneyPoints.size() > this->parameters.capture.maximumDelauneyPoints) {
+							stringstream message;
+							message << "Too many points found in scan (" << delauneyPoints.size() << " found. Maximum is " << this->parameters.capture.maximumDelauneyPoints.get() << ")";
+							throw(ofxRulr::Exception(message.str()));
 						}
 
 						//triangulate
@@ -331,8 +428,8 @@ namespace ofxRulr {
 					}
 
 					//read all projector pixel positions and add working points into capture
-					Capture capture;
 					{
+						auto capture = make_shared<Capture>();
 						auto worldPoint = boardPointsInWorldSpace.begin();
 
 						for (auto & cameraPoint : pointsInCameraImage) {
@@ -344,28 +441,20 @@ namespace ofxRulr {
 								continue;
 							}
 
-							capture.projectorImagePoints.push_back(toOf((cv::Point2f) projectorPoint));
-							capture.worldPoints.push_back(*worldPoint++);
+							capture->cameraImagePoints.push_back(toOf(cameraPoint));
+							capture->projectorImagePoints.push_back(toOf((cv::Point2f) projectorPoint));
+							capture->worldPoints.push_back(*worldPoint++);
 						}
+						capture->transform = boardTransform;
+						this->captures.add(capture);
 					}
 
-					this->captures.push_back(capture);
-
+					//make previews
+					{
+						this->preview.projectorInCamera.loadData(dataSet.getMedian());
+						this->preview.cameraInProjector.loadData(dataSet.getMedianInverse());
+					}
 					scopedProcess.end();
-				}
-
-				//----------
-				void ProjectorFromGraycode::deleteLastCapture() {
-					if (!this->captures.empty()) {
-						this->captures.pop_back();
-					}
-					this->preview.clear();
-				}
-
-				//----------
-				void ProjectorFromGraycode::clearCaptures() {
-					this->captures.clear();
-					this->preview.clear();
 				}
 
 				//----------
@@ -381,23 +470,26 @@ namespace ofxRulr {
 					vector<ofVec3f> worldPoints;
 					vector<ofVec2f> projectorImagePoints;
 
-					auto selection = this->getSelection();
-					for (auto index : selection) {
-						auto & capture = this->captures[index];
-
+					auto selection = this->captures.getSelection();
+					for (auto capture : selection) {
 						worldPoints.insert(worldPoints.end()
-							, capture.worldPoints.begin()
-							, capture.worldPoints.end());
+							, capture->worldPoints.begin()
+							, capture->worldPoints.end());
 						projectorImagePoints.insert(projectorImagePoints.end()
-							, capture.projectorImagePoints.begin()
-							, capture.projectorImagePoints.end());
+							, capture->projectorImagePoints.begin()
+							, capture->projectorImagePoints.end());
 					}
 					cv::Mat cameraMatrix, rotation, translation;
-					this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
-						worldPoints, projectorImagePoints,
-						this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight(),
-						false,
-						0.5f, 1.4f);
+					this->error = ofxCv::calibrateProjector(cameraMatrix
+						, rotation
+						, translation
+						, worldPoints
+						, projectorImagePoints
+						, this->getInput<Item::Projector>()->getWidth()
+						, this->getInput<Item::Projector>()->getHeight()
+						, false
+						, 0.5f
+						, 1.4f);
 
 					auto view = ofxCv::makeMatrix(rotation, translation);
 					projectorNode->setTransform(view.getInverse());
@@ -414,20 +506,9 @@ namespace ofxRulr {
 						try {
 							this->addCapture();
 						}
-						RULR_CATCH_ALL_TO_ERROR;
+						RULR_CATCH_ALL_TO_ALERT;
 					}, ' ');
-					inspector->addButton("Delete last capture", [this]() {
-						this->deleteLastCapture();
-					});
-					inspector->addButton("Delete selection", [this]() {
-						this->deleteSelection();
-					});
-					inspector->addButton("Clear captures", [this]() {
-						this->clearCaptures();
-					});
-					inspector->addLiveValue<size_t>("Capture count", [this]() {
-						return this->captures.size();
-					});
+					this->captures.populateWidgets(inspector);
 					inspector->addButton("Calibrate", [this]() {
 						try {
 							this->calibrate();
@@ -443,81 +524,14 @@ namespace ofxRulr {
 				//----------
 				void ProjectorFromGraycode::serialize(Json::Value & json) {
 					Utils::Serializable::serialize(json, this->parameters);
-
-					auto & jsonCaptures = json["captures"];
-					for (int i = 0; i < this->captures.size(); i++) {
-						auto & capture = this->captures[i];
-						auto & jsonCapture = jsonCaptures[i];
-						
-						for (int j = 0; j < capture.worldPoints.size(); j++) {
-							auto & jsonCorrespondence = jsonCapture[j];
-							jsonCorrespondence["worldPoint"] << capture.worldPoints[j];
-							jsonCorrespondence["projectorImagePoint"] << capture.projectorImagePoints[j];
-						}
-					}
+					this->captures.serialize(json["captures"]);
 				}
 
 				//----------
 				void ProjectorFromGraycode::deserialize(const Json::Value & json) {
 					Utils::Serializable::deserialize(json, this->parameters);
-
-					this->captures.clear();
-					const auto & jsonCaptures = json["captures"];
-					for (const auto & jsonCapture : jsonCaptures) {
-						Capture capture;
-						int pointIndex = 0;
-						for (const auto & jsonCorrespondence : jsonCapture) {
-							ofVec3f worldPoint;
-							ofVec2f projectorImagePoint;
-							jsonCorrespondence["worldPoint"] >> worldPoint;
-							jsonCorrespondence["projectorImagePoint"] >> projectorImagePoint;
-							capture.worldPoints.push_back(worldPoint);
-							capture.projectorImagePoints.push_back(projectorImagePoint);
-						}
-						this->captures.push_back(move(capture));
-					}
+					this->captures.deserialize(json["captures"]);
 				}
-
-				//----------
-				vector<int> ProjectorFromGraycode::getSelection() const {
-					auto selectionString = this->parameters.selection.get();
-					auto selectionItemStrings = ofSplitString(selectionString, ",", true, true);
-					
-					vector<int> selectionInts;
-					for (auto & selectionStringItem : selectionItemStrings) {
-						if (selectionStringItem.empty()) {
-							continue;
-						}
-						auto value = ofToInt(selectionStringItem);
-						if (value >= 0 && value < this->captures.size()) {
-							selectionInts.push_back(value);
-						}
-					}
-
-					if (selectionInts.empty()) {
-						for (int i = 0; i < this->captures.size(); i++) {
-							selectionInts.push_back(i);
-						}
-					}
-
-					return selectionInts;
-				}
-
-				//----------
-				void ProjectorFromGraycode::deleteSelection() {
-					int index = 0;
-					auto selection = this->getSelection();
-					for (auto it = this->captures.begin(); it != this->captures.end(); index++) {
-						if (find(selection.begin(), selection.end(), index) != selection.end()) {
-							it = this->captures.erase(it);
-						}
-						else {
-							it++;
-						}
-					}
-					this->parameters.selection = "";
-				}
-
 			}
 		}
 	}

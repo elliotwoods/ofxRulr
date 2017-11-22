@@ -2,6 +2,7 @@
 #include "Base.h"
 
 #include "ofxRulr/Graph/Editor/NodeHost.h"
+#include "ofxRulr/Graph/World.h"
 #include "../Exception.h"
 #include "GraphicsManager.h"
 
@@ -168,7 +169,14 @@ namespace ofxRulr {
 				}
 			};
 
-			inspector->add(new Widgets::Title(this->getTypeName(), ofxCvGui::Widgets::Title::Level::H3));
+			inspector->addToggle("Lock selection"
+				, []() {
+				return ofxCvGui::InspectController::X().getInspectorLocked();
+			}, [](bool inspectorLocked) {
+				ofxCvGui::InspectController::X().setInspectorLocked(inspectorLocked);
+			});
+
+			inspector->add(new Widgets::Title("Type : " + this->getTypeName(), ofxCvGui::Widgets::Title::Level::H3));
 			
 			{
 				auto widget = inspector->addMultipleChoice("Draw on World Stage", { "Always", "Selected", "Never" });
@@ -177,26 +185,6 @@ namespace ofxRulr {
 					this->whenDrawOnWorldStage= (WhenDrawOnWorldStage::Options) value;
 				};
 			}
-
-			inspector->add(new Widgets::Button("Save Node...", [this] () {
-				try {
-					auto result = ofSystemSaveDialog(this->getDefaultFilename() + ".json", "Save node [" + this->getName() + "] as json");
-					if (result.bSuccess) {
-						this->save(result.getPath());
-					}
-				}
-				RULR_CATCH_ALL_TO_ALERT
-			}));
-
-			inspector->add(new Widgets::Button("Load Node...", [this] () {
-				try {
-					auto result = ofSystemLoadDialog("Load node [" + this->getName() + "] from json");
-					if (result.bSuccess) {
-						this->load(result.getPath());
-					}
-				}
-				RULR_CATCH_ALL_TO_ALERT
-			}));
 
 			//pin status
 			for (auto inputPin : this->getInputPins()) {

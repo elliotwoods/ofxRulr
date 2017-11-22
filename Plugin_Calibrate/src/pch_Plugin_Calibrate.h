@@ -17,3 +17,5 @@
 #include "ofxRulr/Nodes/Procedure/Calibrate/ProjectorFromStereoCameras.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/StereoCalibrate.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/ViewToVertices.h"
+
+#include "ofxCvMin.h"

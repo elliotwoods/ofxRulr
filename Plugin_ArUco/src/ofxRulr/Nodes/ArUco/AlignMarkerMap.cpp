@@ -51,7 +51,7 @@ namespace ofxRulr {
 
 				element->onDraw += [this](ofxCvGui::DrawArguments) {
 					if (this->isSelected()) {
-						auto residual = this->residual.get();
+						auto residual = sqrt(this->residual.get());
 						if (residual != 0.0f) {
 							ofxCvGui::Utils::drawText("Residual " + ofToString(residual, 3) + "m"
 								, 0, 130, false);

@@ -39,7 +39,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxBlackmagicLib", "..\..\o
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "..\Core\Core.vcxproj", "{3E918808-ADEE-4B04-9042-25F795280BAD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_KinectForWindows2", "..\Plugin_KinectForWindows2\Plugin_KinectForWindows2.vcxproj", "{CBFC3D47-1E57-4291-90B6-C344B836B8DA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_KFW2", "..\Plugin_KinectForWindows2\Plugin_KinectForWindows2.vcxproj", "{CBFC3D47-1E57-4291-90B6-C344B836B8DA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
 	EndProjectSection
@@ -164,6 +164,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_BrightnessAssignment
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_Calibrate", "..\Plugin_Calibrate\Plugin_Calibrate.vcxproj", "{C135C231-F751-482D-9E4C-C29473E3DD98}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SLS", "SLS", "{B5D96B9A-620B-49D9-8A5D-B30C62FC76E4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_SLS", "..\Plugin_SLS\Plugin_SLS.vcxproj", "{651FDD8B-6C0C-4A82-89ED-182CFF129D03}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C400D413-78E4-4F60-B5E2-7965FCAC0EEC} = {C400D413-78E4-4F60-B5E2-7965FCAC0EEC}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -327,6 +334,10 @@ Global
 		{C135C231-F751-482D-9E4C-C29473E3DD98}.Debug|x64.Build.0 = Debug|x64
 		{C135C231-F751-482D-9E4C-C29473E3DD98}.Release|x64.ActiveCfg = Release|x64
 		{C135C231-F751-482D-9E4C-C29473E3DD98}.Release|x64.Build.0 = Release|x64
+		{651FDD8B-6C0C-4A82-89ED-182CFF129D03}.Debug|x64.ActiveCfg = Debug|x64
+		{651FDD8B-6C0C-4A82-89ED-182CFF129D03}.Debug|x64.Build.0 = Debug|x64
+		{651FDD8B-6C0C-4A82-89ED-182CFF129D03}.Release|x64.ActiveCfg = Release|x64
+		{651FDD8B-6C0C-4A82-89ED-182CFF129D03}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -387,5 +398,7 @@ Global
 		{BF44EFB4-1225-4F66-8ACC-349133784013} = {148566DA-E924-4085-B479-ACA0D1601C9A}
 		{5C78C8F2-6D2D-4B46-9D92-E29015F0E66A} = {BF44EFB4-1225-4F66-8ACC-349133784013}
 		{C135C231-F751-482D-9E4C-C29473E3DD98} = {DB1A8915-E9B1-47A2-8331-CA76EBA11A00}
+		{B5D96B9A-620B-49D9-8A5D-B30C62FC76E4} = {148566DA-E924-4085-B479-ACA0D1601C9A}
+		{651FDD8B-6C0C-4A82-89ED-182CFF129D03} = {B5D96B9A-620B-49D9-8A5D-B30C62FC76E4}
 	EndGlobalSection
 EndGlobal

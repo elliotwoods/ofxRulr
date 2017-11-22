@@ -50,8 +50,9 @@ namespace ofxRulr {
 					ofParameter<ActiveWhen> activewhen{ "Active when", ActiveWhen::Selected };
 					ofParameter<DrawStyle> drawStyle{ "Draw style", DrawStyle::Cube };
 					ofParameter<FillMode> fillMode{ "Fill mode", FillMode::Fill };
+					ofParameter<float> alpha{ "Alpha", 1.0f, 0.0f, 1.0f };
 					ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
-					PARAM_DECLARE("ARCube", activewhen, drawStyle, fillMode, findBoardMode);
+					PARAM_DECLARE("ARCube", activewhen, drawStyle, fillMode, alpha, findBoardMode);
 				} parameters;
 
 				ofBoxPrimitive cube;
