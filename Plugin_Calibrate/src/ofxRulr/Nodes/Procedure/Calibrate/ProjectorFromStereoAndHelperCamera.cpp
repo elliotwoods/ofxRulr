@@ -89,9 +89,7 @@ namespace ofxRulr {
 					auto graycodeNode = this->getInput<Scan::Graycode>();
 					auto boardNode = this->getInput<Item::AbstractBoard>();
 
-					Utils::ThreadPool threadPool(2, 5);
-
-					//find the checkerboard corners in stereo space
+					//find the board corners in stereo space
 					// (this would ideally use a stereoSolvePnP, but for now we triangulate
 					vector<ofVec3f> worldPointsFromStereo;
 					vector<cv::Point3f> objectPointsFromStereo;
@@ -342,7 +340,7 @@ namespace ofxRulr {
 					}
 
 					auto count = worldPoints.size();
-					if (count < 6) { //unlikely it'd be between 0 and 100 anyway
+					if (count < 6) {
 						throw(ofxRulr::Exception("Not enough points to calibrate projector"));
 					}
 

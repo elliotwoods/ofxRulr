@@ -112,8 +112,8 @@ namespace ofxRulr {
 							this->updateTestPattern();
 						}
 
-						if (this->suite->decoder.getThreshold() != this->parameters.processing.threshold) {
-							this->suite->decoder.setThreshold(this->parameters.processing.threshold);
+						if ((int) this->suite->decoder.getThreshold() != this->parameters.processing.threshold) {
+							this->suite->decoder.setThreshold((int) this->parameters.processing.threshold);
 							this->previewDirty = true;
 						}
 					}
