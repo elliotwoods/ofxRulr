@@ -175,6 +175,12 @@ namespace ofxRulr {
 					this->addInput<Item::AbstractBoard>();
 					this->addInput<Scan::Graycode>();
 
+					//for drawing on output
+					auto videoOutputPin = this->addInput<System::VideoOutput>();
+					videoOutputListener = make_unique<Utils::VideoOutputListener>(videoOutputPin, [this](const ofRectangle & bounds) {
+						this->drawOnVideoOutput(bounds);
+					});
+
 					{
 						auto panel = ofxCvGui::Panels::Groups::makeStrip();
 						
@@ -211,9 +217,9 @@ namespace ofxRulr {
 							auto height = this->preview.cameraInProjector.getHeight();
 							if (width != projector->getWidth()
 								|| height != projector->getHeight()) {
-								this->preview.cameraInProjector.allocate(projector->getWidth()
-									, projector->getHeight()
-									, GL_LUMINANCE);
+// 								this->preview.cameraInProjector.allocate(projector->getWidth()
+// 									, projector->getHeight()
+// 									, GL_LUMINANCE);
 							}
 						}
 					}
@@ -224,9 +230,9 @@ namespace ofxRulr {
 							auto height = this->preview.projectorInCamera.getHeight();
 							if (width != camera->getWidth()
 								|| height != camera->getHeight()) {
-								this->preview.projectorInCamera.allocate(camera->getWidth()
-									, camera->getHeight()
-									, GL_LUMINANCE);
+// 								this->preview.projectorInCamera.allocate(camera->getWidth()
+// 									, camera->getHeight()
+// 									, GL_LUMINANCE);
 							}
 						}
 					}
@@ -263,13 +269,16 @@ namespace ofxRulr {
 				void ProjectorFromGraycode::addCapture() {
 					Utils::ScopedProcess scopedProcess("Add capture");
 
-					this->throwIfMissingAnyConnection();
+					this->throwIfMissingAConnection<Procedure::Scan::Graycode>();
+					this->throwIfMissingAConnection<Item::Camera>();
+					this->throwIfMissingAConnection<Item::AbstractBoard>();
+
 					auto graycodeNode = this->getInput<Procedure::Scan::Graycode>();
 					auto cameraNode = this->getInput<Item::Camera>();
 					auto boardNode = this->getInput<Item::AbstractBoard>();
-					auto projectorNode = this->getInput<Item::Projector>();
 					
-					if (this->parameters.capture.autoScan) {
+					//Graycode scan
+					if (!this->parameters.capture.useExistingGraycodeScan) {
 						Utils::ScopedProcess scopedProcess("Graycode scan", false);
 						graycodeNode->runScan();
 					}
@@ -279,11 +288,14 @@ namespace ofxRulr {
 						throw(ofxRulr::Exception("Graycode node has no data"));
 					}
 
-					projectorNode->setWidth(dataSet.getPayloadWidth());
-					projectorNode->setHeight(dataSet.getPayloadHeight());
+					//Make previews (use graycode data)
+					{
+						this->preview.projectorInCamera.loadData(dataSet.getMedian());
+						this->preview.cameraInProjector.loadData(dataSet.getMedianInverse());
+					}
 
 					//Find board in camera
-					vector<cv::Point2f> pointsInCameraImage;
+					vector<cv::Point2f> cameraImagePoints;
 					vector<cv::Point3f> boardObjectPoints;
 					{
 						Utils::ScopedProcess scopedProcessFindBoard("Find board in camera image", false);
@@ -293,12 +305,16 @@ namespace ofxRulr {
 						auto medianCopyMat = toCv(medianCopy);
 
 						if (!boardNode->findBoard(medianCopyMat
-							, pointsInCameraImage
+							, cameraImagePoints
 							, boardObjectPoints
 							, this->parameters.capture.findBoardMode
 							, cameraNode->getCameraMatrix()
 							, cameraNode->getDistortionCoefficients())) {
 							throw(ofxRulr::Exception("Board not found in camera image"));
+						}
+
+						if (cameraImagePoints.size() < 4) {
+							throw(ofxRulr::Exception("Found less than 4 image points (" + ofToString(cameraImagePoints.size()) + ")"));
 						}
 					}
 					
@@ -307,23 +323,12 @@ namespace ofxRulr {
 					{
 						Mat rotation, translation;
 
-						if (this->parameters.capture.useRansacForSolvePnp) {
-							cv::solvePnPRansac(boardObjectPoints
-								, pointsInCameraImage
-								, cameraNode->getCameraMatrix()
-								, cameraNode->getDistortionCoefficients()
-								, rotation
-								, translation
-								, false);
-						}
-						else {
-							cv::solvePnP(boardObjectPoints
-								, pointsInCameraImage
-								, cameraNode->getCameraMatrix()
-								, cameraNode->getDistortionCoefficients()
-								, rotation
-								, translation);
-						}
+						cv::solvePnP(boardObjectPoints
+							, cameraImagePoints
+							, cameraNode->getCameraMatrix()
+							, cameraNode->getDistortionCoefficients()
+							, rotation
+							, translation);
 						
 						boardTransform = makeMatrix(rotation, translation);
 					}
@@ -336,166 +341,234 @@ namespace ofxRulr {
 						}
 					}
 
-					//build a look up mesh for projector coords within camera image
-					ofMesh projectorInCameraMesh;
+					auto capture = make_shared<Capture>();
 					{
-						Utils::ScopedProcess scopedProcessBuildMesh("Build delauney mesh", false);
-						auto & projectorInCameraPreview = graycodeNode->getDecoder().getProjectorInCamera().getPixels();
-						auto boardBoundsInCamera = cv::boundingRect(Mat(pointsInCameraImage));
+						Utils::ScopedProcess scopedProcessFindBoardInProjectorImage("Find sub-pixel projector coordinates on board", false);
+						//build the projectorImagePoints by searching and applying homography
+						for (int i = 0; i < cameraImagePoints.size(); i++) {
+							const auto & cameraImagePoint = cameraImagePoints[i];
 
-						//erode away the active (to reduce noise)
-						auto activeEroded = dataSet.getActive();
-						auto activeErodedMat = toCv(activeEroded);
-						{
-							ofVec2f boardSizeInCamera(boardBoundsInCamera.width, boardBoundsInCamera.height);
-							float erosionSize = boardSizeInCamera.length() * this->parameters.capture.erosion;
-							cv::erode(activeErodedMat, activeErodedMat, cv::Mat(), cv::Point(-1, -1), (int)erosionSize);
-						}
+							auto distanceThresholdSquared = this->parameters.capture.pixelSearchDistance.get();
+							distanceThresholdSquared *= distanceThresholdSquared;
 
-						//make vertices and tex coords
-						Delaunay::Point tempP;
-						vector<Delaunay::Point> delauneyPoints;
-						auto activeErodedPixel = activeEroded.getData();
-						auto maskInCameraSpace = ofxCv::toOf(boardBoundsInCamera);
-						for (auto & pixel : dataSet) {
-							if (!*activeErodedPixel++) {
+							vector<cv::Point2f> cameraSpace;
+							vector<cv::Point2f> projectorSpace;
+
+							//build up search area
+							for (const auto & pixel : dataSet) {
+								const auto distanceSquared = pixel.getCameraXY().squareDistance(ofxCv::toOf(cameraImagePoint));
+								if (distanceSquared < distanceThresholdSquared) {
+									cameraSpace.push_back(ofxCv::toCv(pixel.getCameraXY()));
+									projectorSpace.push_back(ofxCv::toCv(pixel.getProjectorXY()));
+								}
+							}
+
+							//if we didn't find enough data
+							if (cameraSpace.size() < 6) {
+								//ignore this checkerboard corner
 								continue;
 							}
 
-							auto projectorXY = pixel.getProjectorXY();
-							auto cameraXY = pixel.getCameraXY();
-							if (!maskInCameraSpace.inside(cameraXY)) {
+							cv::Mat ransacMask;
+
+							auto homographyMatrix = ofxCv::findHomography(cameraSpace
+								, projectorSpace
+								, ransacMask
+								, CV_RANSAC
+								, 1);
+
+							if (homographyMatrix.empty()) {
 								continue;
 							}
 
-							delauneyPoints.emplace_back(cameraXY.x, cameraXY.y);
-							projectorInCameraMesh.addVertex(cameraXY);
-							projectorInCameraMesh.addColor(ofFloatColor(projectorXY.x, projectorXY.y, 0));
+							vector<cv::Point2f> cameraSpacePointsForHomography(1, cameraImagePoint);
+							vector<cv::Point2f> projectionSpacePointsFromHomography(1);
+
+							cv::perspectiveTransform(cameraSpacePointsForHomography
+								, projectionSpacePointsFromHomography
+								, homographyMatrix);
+
+							capture->worldPoints.push_back(boardPointsInWorldSpace[i]);
+							capture->cameraImagePoints.push_back(ofxCv::toOf(cameraImagePoints[i]));
+							capture->projectorImagePoints.push_back(ofxCv::toOf(projectionSpacePointsFromHomography[0]));
 						}
-
-						//check delauney point count
-						if (delauneyPoints.size() > this->parameters.capture.maximumDelauneyPoints) {
-							stringstream message;
-							message << "Too many points found in scan (" << delauneyPoints.size() << " found. Maximum is " << this->parameters.capture.maximumDelauneyPoints.get() << ")";
-							throw(ofxRulr::Exception(message.str()));
-						}
-
-						//triangulate
-						auto delauney = make_shared<Delaunay>(delauneyPoints);
-						delauney->Triangulate();
-
-						//apply indices
-						for (auto it = delauney->fbegin(); it != delauney->fend(); ++it) {
-							//cut off big triangles
-							if (delauney->area(it) > this->parameters.capture.maxTriangleArea) {
-								continue;
-							}
-							projectorInCameraMesh.addIndex(delauney->Org(it));
-							projectorInCameraMesh.addIndex(delauney->Dest(it));
-							projectorInCameraMesh.addIndex(delauney->Apex(it));
-						}
-					}
-
-					//draw the look up mesh into an fbo
-					ofFbo projectorInCameraFbo;
-					{
-						Utils::ScopedProcess scopedProcessBuildFbo("Build fbo", false);
-
-						{
-							ofFbo::Settings fboSettings;
-							fboSettings.width = cameraNode->getWidth();
-							fboSettings.height = cameraNode->getHeight();
-							fboSettings.internalformat = GL_RGBA32F;
-							projectorInCameraFbo.allocate(fboSettings);
-						}
-
-						projectorInCameraFbo.begin();
-						{
-							ofClear(0, 255);
-							projectorInCameraMesh.draw();
-						}
-						projectorInCameraFbo.end();
-					}
-
-					//read back to pixels;
-					ofFloatPixels projectorInCameraPixels;
-					{
-						//pre-allocate to dodge memory error
-						projectorInCameraPixels.allocate(cameraNode->getWidth(), cameraNode->getHeight(), ofPixelFormat::OF_PIXELS_RGBA);
-
-						Utils::ScopedProcess scopedProcessBuildFbo("Read back fbo", false);
-						projectorInCameraFbo.readToPixels(projectorInCameraPixels);
-					}
-
-					//read all projector pixel positions and add working points into capture
-					{
-						auto capture = make_shared<Capture>();
-						auto worldPoint = boardPointsInWorldSpace.begin();
-
-						for (auto & cameraPoint : pointsInCameraImage) {
-							auto projectorPoint = getColorSubpix<cv::Vec2f>(toCv(projectorInCameraPixels), cameraPoint);
-
-							if (projectorPoint[0] == 0 && projectorPoint[1] == 0) {
-								//skip projector and world points if we can't find the proj coord for this corner
-								worldPoint++;
-								continue;
-							}
-
-							capture->cameraImagePoints.push_back(toOf(cameraPoint));
-							capture->projectorImagePoints.push_back(toOf((cv::Point2f) projectorPoint));
-							capture->worldPoints.push_back(*worldPoint++);
-						}
-						capture->transform = boardTransform;
 						this->captures.add(capture);
-					}
-
-					//make previews
-					{
-						this->preview.projectorInCamera.loadData(dataSet.getMedian());
-						this->preview.cameraInProjector.loadData(dataSet.getMedianInverse());
 					}
 					scopedProcess.end();
 				}
 
+				//from ProjectorFromStereoAndHelperCamera
 				//----------
 				void ProjectorFromGraycode::calibrate() {
-					Utils::ScopedProcess scopedProcess("Calibrate projector");
-					
 					this->throwIfMissingAConnection<Item::Projector>();
+					this->throwIfMissingAConnection<System::VideoOutput>();
+
+					auto videoOutputNode = this->getInput<System::VideoOutput>();
+					if (!videoOutputNode->isWindowOpen()) {
+						throw(ofxRulr::Exception("Window must be open to perform projector calibration"));
+					}
 					auto projectorNode = this->getInput<Item::Projector>();
 
-					auto projectorWidth = projectorNode->getWidth();
-					auto projectorHeight = projectorNode->getHeight();
+					//set size of output
+					projectorNode->setWidth(videoOutputNode->getWidth());
+					projectorNode->setHeight(videoOutputNode->getHeight());
 
 					vector<ofVec3f> worldPoints;
 					vector<ofVec2f> projectorImagePoints;
 
-					auto selection = this->captures.getSelection();
-					for (auto capture : selection) {
-						worldPoints.insert(worldPoints.end()
-							, capture->worldPoints.begin()
-							, capture->worldPoints.end());
-						projectorImagePoints.insert(projectorImagePoints.end()
-							, capture->projectorImagePoints.begin()
-							, capture->projectorImagePoints.end());
+					auto selectedCaptures = this->captures.getSelection();
+					for (auto capture : selectedCaptures) {
+						worldPoints.insert(worldPoints.end(), capture->worldPoints.begin(), capture->worldPoints.end());
+						projectorImagePoints.insert(projectorImagePoints.end(), capture->projectorImagePoints.begin(), capture->projectorImagePoints.end());
 					}
-					cv::Mat cameraMatrix, rotation, translation;
-					this->error = ofxCv::calibrateProjector(cameraMatrix
-						, rotation
-						, translation
-						, worldPoints
-						, projectorImagePoints
-						, this->getInput<Item::Projector>()->getWidth()
-						, this->getInput<Item::Projector>()->getHeight()
-						, false
-						, 0.5f
-						, 1.4f);
 
-					auto view = ofxCv::makeMatrix(rotation, translation);
-					projectorNode->setTransform(view.getInverse());
+					if (worldPoints.size() != projectorImagePoints.size()) {
+						throw(ofxRulr::Exception("Size mismatch error between world points and projector points"));
+					}
+
+					auto count = worldPoints.size();
+					if (count < 6) {
+						throw(ofxRulr::Exception("Not enough points to calibrate projector"));
+					}
+
+					cv::Mat cameraMatrix, distortionCoefficients, rotationMatrix, translation;
+					auto size = projectorNode->getSize();
+
+					int decimation = count / 16;
+					if (!this->parameters.calibrate.useDecimation || decimation <= 1) {
+						this->reprojectionError = ofxCv::calibrateProjector(cameraMatrix
+							, rotationMatrix
+							, translation
+							, worldPoints
+							, projectorImagePoints
+							, size.width
+							, size.height
+							, false
+							, this->parameters.calibrate.initialLensOffset
+							, this->parameters.calibrate.initialThrowRatio);
+					}
+					else {
+						Utils::ScopedProcess scopedProcessDecimatedFit("Decimated fit", false, log(decimation) / log(2) + 1);
+
+						vector<cv::Point2f> remainingImagePoints(ofxCv::toCv(projectorImagePoints));
+						vector<cv::Point3f> remainingWorldPoints(ofxCv::toCv(worldPoints));
+
+						vector<cv::Point2f> imagePointsDecimated;
+						vector<cv::Point3f> worldPointsDecimated;
+
+						auto flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6
+							| CV_CALIB_ZERO_TANGENT_DIST | CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_ASPECT_RATIO;
+						vector<cv::Mat> rotationVector, translationVector;
+
+						decimation *= 2;
+						do {
+							decimation /= 2;
+
+							int remainingCount = remainingImagePoints.size();
+							auto remainingImagePointsIterator = remainingImagePoints.begin();
+							auto remainingWorldPointsIterator = remainingWorldPoints.begin();
+
+							for (int i = 0; i < remainingCount; i++) {
+								if (i % (decimation + 1) == 0) {
+									imagePointsDecimated.emplace_back(move(*remainingImagePointsIterator));
+									worldPointsDecimated.emplace_back(move(*remainingWorldPointsIterator));
+
+									remainingImagePointsIterator = remainingImagePoints.erase(remainingImagePointsIterator);
+									remainingWorldPointsIterator = remainingWorldPoints.erase(remainingWorldPointsIterator);
+								}
+								else {
+									remainingImagePointsIterator++;
+									remainingWorldPointsIterator++;
+								}
+							}
+
+							Utils::ScopedProcess scopedProcessDecimationInner("Decimation by " + ofToString(decimation) + " with " + ofToString(imagePointsDecimated.size()) + "points", false);
+
+							//build a camera matrix + distortion coefficients if we don't have yet
+							if (cameraMatrix.empty()) {
+								cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
+								cameraMatrix.at<double>(0, 0) = size.width * this->parameters.calibrate.initialThrowRatio;
+								cameraMatrix.at<double>(1, 1) = size.width * this->parameters.calibrate.initialThrowRatio;
+								cameraMatrix.at<double>(0, 2) = size.width / 2.0f;
+								cameraMatrix.at<double>(1, 2) = size.height * (0.50f - this->parameters.calibrate.initialLensOffset / 2.0f);
+								distortionCoefficients = cv::Mat::zeros(5, 1, CV_64F);
+							}
+							else {
+								//ensure positive focal length
+								cameraMatrix.at<double>(0, 0) = ofClamp(cameraMatrix.at<double>(0, 0), 1, 100 * (float)size.width);
+								cameraMatrix.at<double>(1, 1) = ofClamp(cameraMatrix.at<double>(1, 1), 1, 100 * (float)size.width);
+
+								//calibrateCamera doesn't like if principal point is outside of image, so we clamp it
+								cameraMatrix.at<double>(0, 2) = ofClamp(cameraMatrix.at<double>(0, 2), 0.01, 0.99 * (float)size.width);
+								cameraMatrix.at<double>(1, 2) = ofClamp(cameraMatrix.at<double>(1, 2), 0.01, 0.99 * (float)size.height);
+							}
+
+							auto error = cv::calibrateCamera(vector<vector<cv::Point3f>>(1, worldPointsDecimated)
+								, vector<vector<cv::Point2f>>(1, imagePointsDecimated)
+								, size
+								, cameraMatrix
+								, distortionCoefficients
+								, rotationVector
+								, translationVector
+								, flags);
+
+							cout << "Reprojection error = " << error << "px" << endl;
+							this->reprojectionError = error;
+						} while (decimation > 0);
+
+						rotationMatrix = rotationVector[0];
+						translation = translationVector[0];
+					}
+
+					//remove outliers
+					if (this->parameters.calibrate.removeOutliers.enabled) {
+						vector<cv::Point2f> reprojectedPoints;
+						cv::projectPoints(ofxCv::toCv(worldPoints)
+							, rotationMatrix
+							, translation
+							, cameraMatrix
+							, distortionCoefficients
+							, reprojectedPoints);
+
+						vector<cv::Point3f> worldPointsNoOutliers;
+						vector<cv::Point2f> projectorImagePointsNoOutliers;
+
+						auto thresholdSquared = pow(this->parameters.calibrate.removeOutliers.maxReprojectionError, 2);
+						for (int i = 0; i < count; i++) {
+							if (projectorImagePoints[i].squareDistance(ofxCv::toOf(reprojectedPoints[i])) < thresholdSquared) {
+								worldPointsNoOutliers.emplace_back(ofxCv::toCv(worldPoints[i]));
+								projectorImagePointsNoOutliers.emplace_back(ofxCv::toCv(projectorImagePoints[i]));
+							}
+						}
+
+						cout << "fitting with " << worldPointsNoOutliers.size() << " points reduced" << endl;
+
+						this->reprojectionError = ofxCv::calibrateProjector(cameraMatrix
+							, rotationMatrix
+							, translation
+							, worldPoints
+							, projectorImagePoints
+							, size.width
+							, size.height
+							, false
+							, this->parameters.calibrate.initialLensOffset
+							, this->parameters.calibrate.initialThrowRatio);
+					}
+
+					//reproject points for preview
+					{
+						for (auto capture : selectedCaptures) {
+							cv::projectPoints(ofxCv::toCv(capture->worldPoints)
+								, rotationMatrix
+								, translation
+								, cameraMatrix
+								, distortionCoefficients
+								, ofxCv::toCv(capture->reprojectedProjectorImagePoints));
+						}
+					}
+
+					projectorNode->setExtrinsics(rotationMatrix, translation, true);
 					projectorNode->setIntrinsics(cameraMatrix);
-
-					scopedProcess.end();
 				}
 
 				//----------
@@ -515,9 +588,7 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 					}, OF_KEY_RETURN)->setHeight(100.0f);
-					inspector->addLiveValue<float>("Reprojection error", [this]() {
-						return this->error;
-					});
+					inspector->addLiveValue<float>(this->reprojectionError);
 					inspector->addParameterGroup(this->parameters);
 				}
 
@@ -531,6 +602,45 @@ namespace ofxRulr {
 				void ProjectorFromGraycode::deserialize(const Json::Value & json) {
 					Utils::Serializable::deserialize(json, this->parameters);
 					this->captures.deserialize(json["captures"]);
+				}
+
+				//----------
+				void ProjectorFromGraycode::drawOnVideoOutput(const ofRectangle & bounds) {
+					auto captures = this->captures.getSelection();
+					for (const auto & capture : captures) {
+						//draw data points as lines
+						if (this->parameters.draw.dataOnVideoOutput) {
+							ofPushStyle();
+							{
+								ofSetColor(capture->color);
+								ofMesh line;
+								line.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINE_STRIP);
+								for (auto projectorPoint : capture->projectorImagePoints) {
+									line.addVertex(projectorPoint);
+								}
+								line.draw();
+							}
+							ofPopStyle();
+						}
+
+						//draw reprojected points
+						if (this->parameters.draw.reprojectedOnVideoOutput) {
+							ofPushStyle();
+							{
+								ofSetColor(255, 0, 0);
+								for (const auto reprojectedPoint : capture->reprojectedProjectorImagePoints) {
+									ofPushMatrix();
+									{
+										ofTranslate(reprojectedPoint);
+										ofDrawLine(-5, -5, +5, +5);
+										ofDrawLine(-5, +5, +5, -5);
+									}
+									ofPopMatrix();
+								}
+							}
+							ofPopStyle();
+						}
+					}
 				}
 			}
 		}

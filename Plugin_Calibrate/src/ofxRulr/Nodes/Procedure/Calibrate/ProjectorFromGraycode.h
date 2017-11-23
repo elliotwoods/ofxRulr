@@ -6,6 +6,8 @@
 #include "ofxRulr/Nodes/Item/AbstractBoard.h"
 #include "ofxRulr/Nodes/Item/Projector.h"
 #include "ofxRulr/Utils/CaptureSet.h"
+#include "ofxRulr/Utils/VideoOutputListener.h"
+
 #include "Constants_Plugin_Calibration.h"
 
 namespace ofxRulr {
@@ -21,6 +23,7 @@ namespace ofxRulr {
 						vector<ofVec3f> worldPoints;
 						vector<ofVec2f> cameraImagePoints;
 						vector<ofVec2f> projectorImagePoints;
+						vector<ofVec2f> reprojectedProjectorImagePoints;
 						ofMatrix4x4 transform;
 
 						void serialize(Json::Value &);
@@ -46,32 +49,48 @@ namespace ofxRulr {
 					void serialize(Json::Value &);
 					void deserialize(const Json::Value &);
 				protected:
+					void drawOnVideoOutput(const ofRectangle & bounds);
+
 					ofxCvGui::PanelPtr panel;
 
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
-							ofParameter<bool> autoScan{ "Automatically scan", true };
-							ofParameter<float> brightAreaThreshold{ "Bright area threshold", 64, 0, 255 };
-							ofParameter<int> maximumDelauneyPoints{"Maximum delauney points", 100000 };
+							ofParameter<bool> useExistingGraycodeScan{ "Use existing graycode scan", false };
 							ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
-							ofParameter<bool> useRansacForSolvePnp{ "Use RANSAC for SolvePNP", false };
-							ofParameter<float> erosion{ "Erosion (/Board size)", 0.02f, 0.0f, 0.1f };
-							ofParameter<int> maxTriangleArea{ "Max triangle area", 100*100 };
+							ofParameter<float> pixelSearchDistance { "Pixel search distance", 3, 0, 10 };
+
 							PARAM_DECLARE("Capture"
-								, autoScan
-								, brightAreaThreshold
-								, maximumDelauneyPoints
+								, useExistingGraycodeScan
 								, findBoardMode
-								, useRansacForSolvePnp
-								, erosion
-								, maxTriangleArea);
+								, pixelSearchDistance);
 						} capture;
-						ofParameter<string> selection{ "Selection", "" };
-						PARAM_DECLARE("ProjectorFromGraycode", capture, selection);
+
+						struct : ofParameterGroup {
+							ofParameter<float> initialLensOffset{ "Initial lens offset", 0, -1.0, 1.0 };
+							ofParameter<float> initialThrowRatio{ "Initial throw ratio", 1, 0, 5 };
+							ofParameter<bool> useDecimation{ "Use decimation", false };
+							struct : ofParameterGroup {
+								ofParameter<bool> enabled{ "Enabled", false };
+								ofParameter<float> maxReprojectionError{ "Max reprojection error [px]", 10.0f };
+								PARAM_DECLARE("Remove outliers", enabled, maxReprojectionError);
+							} removeOutliers;
+
+							PARAM_DECLARE("Calibrate", initialLensOffset, initialThrowRatio, useDecimation, removeOutliers);
+						} calibrate;
+
+						struct : ofParameterGroup {
+							ofParameter<bool> dataOnVideoOutput{ "Data on VideoOutput", true };
+							ofParameter<bool> reprojectedOnVideoOutput{ "Reprojected points on VideoOutput", true };
+
+							PARAM_DECLARE("Draw", dataOnVideoOutput, reprojectedOnVideoOutput)
+						} draw;
+
+						PARAM_DECLARE("ProjectorFromGraycode", capture, calibrate, draw);
 					} parameters;
 
 					Utils::CaptureSet<Capture> captures;
-					float error = 0.0f;
+					ofParameter<float> reprojectionError{ "Reprojection error [px]", 0 };
+					unique_ptr<Utils::VideoOutputListener> videoOutputListener;
 
 					struct {
 						ofTexture projectorInCamera;

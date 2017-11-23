@@ -21,6 +21,7 @@ namespace ofxRulr {
 			//----------
 			void ChArUcoBoard::init() {
 				RULR_NODE_UPDATE_LISTENER;
+
 				auto panel = ofxCvGui::Panels::makeImage(this->preview);
 				panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 					//paper sizes
@@ -136,14 +137,23 @@ namespace ofxRulr {
 					return false;
 				}
 				else {
-					vector<int> markerIds, charucoIds;
+					vector<int> markerIds;
 					vector<vector<Point2f>> markerCorners, rejectedMarkers;
-					vector<Point2f> charucoCorners;
-					Vec3d rvec, tvec;
 					
-					cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
 					cv::Ptr<cv::aruco::Board> untypedBoard = this->board.staticCast<cv::aruco::Board>();
 
+					cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
+					detectorParams->adaptiveThreshWinSizeMin = 3;
+					detectorParams->adaptiveThreshWinSizeMax = 33;
+					detectorParams->adaptiveThreshWinSizeStep = 5;
+					if (image.cols > 5000) {
+						detectorParams->minMarkerPerimeterRate = 0.003;
+					}
+					else if (image.cols > 1000) {
+						detectorParams->minMarkerPerimeterRate = 0.01;
+					}
+
+					//Use OpenCV wrapped version
 					cv::aruco::detectMarkers(image
 						, this->dictionary
 						, markerCorners
@@ -158,6 +168,10 @@ namespace ofxRulr {
 							, markerIds
 							, rejectedMarkers);
 					}
+
+					Vec3d rvec, tvec;
+					vector<Point2f> charucoCorners;
+					vector<int> charucoIds;
 
 					if (markerIds.empty()) {
 						return false;

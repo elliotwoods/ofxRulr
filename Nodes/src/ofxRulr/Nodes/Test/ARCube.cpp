@@ -85,97 +85,107 @@ namespace ofxRulr {
 					if (grabber->isFrameNew()) {
 						//if we're not using freerun, then we presume we're using single shot (since there's a frame available)
 						if (this->getRunFinderEnabled()) {
-							//allocate the undistorted image and fbo when required
-							auto distorted = grabber->getPixels();
-							auto & undistorted = this->undistorted.getPixels();
-							if (undistorted.getWidth() != distorted.getWidth() || undistorted.getHeight() != distorted.getHeight() || undistorted.getNumChannels() != distorted.getNumChannels()) {
-								//if undistorted isn't the right shape/format, then reallocate undistorted and the fbo
-								undistorted = distorted;
-
-								ofFbo::Settings fboSettings;
-								fboSettings.width = undistorted.getWidth();
-								fboSettings.height = undistorted.getHeight();
-								fboSettings.useDepth = true;
-								fboSettings.depthStencilInternalFormat = GL_DEPTH_COMPONENT24;
-								fboSettings.minFilter = GL_NEAREST;
-								fboSettings.maxFilter = GL_NEAREST;
-								this->fbo.allocate(fboSettings);
-							}
-
-							//perform computer vision tasks
-							try {
-								auto cameraMatrix = camera->getCameraMatrix();
-								auto distortionCoefficients = camera->getDistortionCoefficients();
-
-								//make the undistorted preview image
-								cv::undistort(toCv(distorted), toCv(undistorted), cameraMatrix, distortionCoefficients);
-								this->undistorted.update();
-
-								//find the board
-								auto board = this->getInput<Item::AbstractBoard>();
-								if (board) {
-									//find board in distorted image
-									vector<cv::Point2f> imagePoints;
-									vector<cv::Point3f> objectPoints;
-									auto success = board->findBoard(toCv(distorted)
-										, imagePoints
-										, objectPoints
-										, this->parameters.findBoardMode
-										, camera->getCameraMatrix()
-										, camera->getDistortionCoefficients());
-									if (success) {
-										//use solvePnP to resolve transform
-										Mat rotation, translation;
-										cv::solvePnP(objectPoints
-											, imagePoints
-											, cameraMatrix
-											, distortionCoefficients
-											, rotation
-											, translation);
-
-										this->boardTransform = makeMatrix(rotation, translation);
-										this->foundBoard = true;
-									}
-									else {
-										this->foundBoard = false;
-									}
-								}
-							}
-							RULR_CATCH_ALL_TO_ERROR
-
-							//update the fbo
-							this->fbo.begin();
-							{
-								//draw the undistorted image
-								this->undistorted.draw(0, 0);
-
-								//draw the 3D world on top
-								const auto & view = camera->getViewInWorldSpace();
-								view.beginAsCamera(true);
-								{
-									glEnable(GL_DEPTH_TEST);
-									{
-										glClear(GL_DEPTH_BUFFER_BIT);
-										this->drawWorldStage();
-									}
-									glDisable(GL_DEPTH_TEST);
-								}
-								view.endAsCamera();
-
-								//emulate alpha by drawing undistorted image again on top
-								if (this->parameters.alpha < 1.0f) {
-									ofEnableAlphaBlending();
-									{
-										ofSetColor(255, 255.0f * (1.0f - this->parameters.alpha));
-										//draw the undistorted image
-										this->undistorted.draw(0, 0);
-									}
-									ofDisableAlphaBlending();
-								}
-							}
-							this->fbo.end();
+							this->updateTracking();
 						}
 					}
+				}
+			}
+
+			//----------
+			void ARCube::updateTracking() {
+				auto camera = this->getInput<Item::Camera>();
+				if (camera) {
+					auto grabber = camera->getGrabber();
+
+					//allocate the undistorted image and fbo when required
+					auto distorted = grabber->getPixels();
+					auto & undistorted = this->undistorted.getPixels();
+					if (undistorted.getWidth() != distorted.getWidth() || undistorted.getHeight() != distorted.getHeight() || undistorted.getNumChannels() != distorted.getNumChannels()) {
+						//if undistorted isn't the right shape/format, then reallocate undistorted and the fbo
+						undistorted = distorted;
+
+						ofFbo::Settings fboSettings;
+						fboSettings.width = undistorted.getWidth();
+						fboSettings.height = undistorted.getHeight();
+						fboSettings.useDepth = true;
+						fboSettings.depthStencilInternalFormat = GL_DEPTH_COMPONENT24;
+						fboSettings.minFilter = GL_NEAREST;
+						fboSettings.maxFilter = GL_NEAREST;
+						this->fbo.allocate(fboSettings);
+					}
+
+					//perform computer vision tasks
+					try {
+						auto cameraMatrix = camera->getCameraMatrix();
+						auto distortionCoefficients = camera->getDistortionCoefficients();
+
+						//make the undistorted preview image
+						cv::undistort(toCv(distorted), toCv(undistorted), cameraMatrix, distortionCoefficients);
+						this->undistorted.update();
+
+						//find the board
+						auto board = this->getInput<Item::AbstractBoard>();
+						if (board) {
+							//find board in distorted image
+							vector<cv::Point2f> imagePoints;
+							vector<cv::Point3f> objectPoints;
+							auto success = board->findBoard(toCv(distorted)
+								, imagePoints
+								, objectPoints
+								, this->parameters.findBoardMode
+								, camera->getCameraMatrix()
+								, camera->getDistortionCoefficients());
+							if (success) {
+								//use solvePnP to resolve transform
+								Mat rotation, translation;
+								cv::solvePnP(objectPoints
+									, imagePoints
+									, cameraMatrix
+									, distortionCoefficients
+									, rotation
+									, translation);
+
+								this->boardTransform = makeMatrix(rotation, translation);
+								this->foundBoard = true;
+							}
+							else {
+								this->foundBoard = false;
+							}
+						}
+					}
+					RULR_CATCH_ALL_TO_ERROR
+
+						//update the fbo
+						this->fbo.begin();
+					{
+						//draw the undistorted image
+						this->undistorted.draw(0, 0);
+
+						//draw the 3D world on top
+						const auto & view = camera->getViewInWorldSpace();
+						view.beginAsCamera(true);
+						{
+							glEnable(GL_DEPTH_TEST);
+							{
+								glClear(GL_DEPTH_BUFFER_BIT);
+								this->drawWorldStage();
+							}
+							glDisable(GL_DEPTH_TEST);
+						}
+						view.endAsCamera();
+
+						//emulate alpha by drawing undistorted image again on top
+						if (this->parameters.alpha < 1.0f) {
+							ofEnableAlphaBlending();
+							{
+								ofSetColor(255, 255.0f * (1.0f - this->parameters.alpha));
+								//draw the undistorted image
+								this->undistorted.draw(0, 0);
+							}
+							ofDisableAlphaBlending();
+						}
+					}
+					this->fbo.end();
 				}
 			}
 
@@ -207,6 +217,9 @@ namespace ofxRulr {
 						return string("");
 					}
 				}));
+				inspector->addButton("Force update", [this]() {
+					this->updateTracking();
+				}, ' ');
 			}
 
 			//----------

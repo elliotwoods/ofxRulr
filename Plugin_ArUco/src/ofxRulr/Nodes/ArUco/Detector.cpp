@@ -134,7 +134,7 @@ namespace ofxRulr {
 			const std::vector<aruco::Marker> & Detector::findMarkers(const cv::Mat & image
 				, const cv::Mat & cameraMatrix
 				, const cv::Mat & distortionCoefficients) {
-				this->lastDetection = { image
+				this->lastDetection = { image.clone()
 					, cameraMatrix
 					, distortionCoefficients
 				};

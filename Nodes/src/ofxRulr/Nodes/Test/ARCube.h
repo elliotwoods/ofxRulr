@@ -18,6 +18,7 @@ namespace ofxRulr {
 
 				void init();
 				void update();
+				void updateTracking();
 
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void serialize(Json::Value &);
