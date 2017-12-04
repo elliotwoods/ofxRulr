@@ -47,7 +47,7 @@ namespace ofxRulr {
 					for (const auto & marker3D : markerMap) {
 						markerPreview.clearVertices();
 
-						for (auto & vertex : marker3D) {
+						for (auto & vertex : marker3D.points) {
 							markerPreview.addVertex(ofxCv::toOf(vertex));
 						}
 
@@ -102,7 +102,7 @@ namespace ofxRulr {
 						Json::Value jsonMarker;
 						jsonMarker["id"] = marker.id;
 						auto & jsonPoints = jsonMarker["points"];
-						for (const auto & point : marker) {
+						for (const auto & point : marker.points) {
 							Json::Value jsonPoint;
 							jsonPoint.append(point.x);
 							jsonPoint.append(point.y);

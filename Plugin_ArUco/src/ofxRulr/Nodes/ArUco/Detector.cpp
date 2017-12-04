@@ -26,7 +26,7 @@ namespace ofxRulr {
 				this->rebuildDetector();
 				aruco::Marker;
 				//set the default
-				this->parameters.detectorType = DetectorType::MIP_3612h;
+				this->parameters.dictionary = DetectorType::MIP_3612h;
 
 				{
 					auto panel = ofxCvGui::Panels::makeImage(this->preview);
@@ -54,13 +54,8 @@ namespace ofxRulr {
 				}
 
 				//add listeners
-				this->parameters.detectorType.addListener(this, &Detector::changeDetectorCallback);
+				this->parameters.dictionary.addListener(this, &Detector::changeDetectorCallback);
 				this->parameters.markerLength.addListener(this, &Detector::changeFloatCallback);
-				this->parameters.threshold.areaSize.addListener(this, &Detector::changeIntCallback);
-				this->parameters.threshold.subtract.addListener(this, &Detector::changeIntCallback);
-				this->parameters.threshold.parameterRange.addListener(this, &Detector::changeIntCallback);
-				this->parameters.refinement.refinementType.addListener(this, &Detector::changeRefinementTypeCallback);
-				this->parameters.refinement.windowSize.addListener(this, &Detector::changeIntCallback);
 			}
 
 			//----------
@@ -158,10 +153,7 @@ namespace ofxRulr {
 
 			//----------
 			void Detector::rebuildDetector() {
-				this->markerDetector.setThresholdParams(this->parameters.threshold.areaSize, this->parameters.threshold.subtract);
-				this->markerDetector.setThresholdParamRange(this->parameters.threshold.parameterRange, 0);
-
-				switch (this->parameters.detectorType.get())
+				switch (this->parameters.dictionary.get())
 				{
 				case DetectorType::Original:
 					this->dictionaryType = aruco::Dictionary::ARUCO;
@@ -182,25 +174,6 @@ namespace ofxRulr {
 
 				this->dictionary = aruco::Dictionary::loadPredefined(this->dictionaryType);
 				this->markerDetector.setDictionary(this->dictionaryType);
-
-				//setup refinement method
-				{
-					aruco::MarkerDetector::CornerRefinementMethod cornerRefinementMethod;
-					switch (this->parameters.refinement.refinementType.get()) {
-
-					case RefinementType::SubPix:
-						cornerRefinementMethod = aruco::MarkerDetector::CornerRefinementMethod::SUBPIX;
-						break;
-					case RefinementType::Lines:
-						cornerRefinementMethod = aruco::MarkerDetector::CornerRefinementMethod::LINES;
-						break;
-					case RefinementType::None:
-					default:
-						cornerRefinementMethod = aruco::MarkerDetector::CornerRefinementMethod::NONE;
-						break;
-					}
-					this->markerDetector.setCornerRefinementMethod(cornerRefinementMethod, this->parameters.refinement.windowSize);
-				}
 
 				this->cachedMarkerImages.clear();
 				this->detectorDirty = false;

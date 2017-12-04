@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofxRulr/Nodes/Base.h"
-#include <aruco.h>
+#include <aruco/aruco.h>
 
 namespace ofxRulr {
 	namespace Nodes {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <opencv2/aruco.hpp>
+#include <aruco/aruco.h>
 
 #include "pch_RulrNodes.h"
 #include "pch_RulrCore.h"

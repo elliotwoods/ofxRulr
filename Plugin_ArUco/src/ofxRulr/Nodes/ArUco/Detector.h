@@ -2,7 +2,7 @@
 
 #include "ofxRulr/Nodes/Base.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
-#include <aruco.h>
+#include <aruco/aruco.h>
 
 #define ARUCO_PREVIEW_RESOLUTION 64
 
@@ -48,23 +48,10 @@ namespace ofxRulr {
 				void changeRefinementTypeCallback(RefinementType &);
 
 				struct : ofParameterGroup {
-					ofParameter<DetectorType> detectorType{ "Detector type", DetectorType::Original };
+					ofParameter<DetectorType> dictionary{ "Detector type", DetectorType::Original };
 					ofParameter<float> markerLength{ "Marker length [m]", 0.05, 0.001, 10 };
-					
-					struct : ofParameterGroup {
-						ofParameter<int> areaSize{ "Area size", 7 };
-						ofParameter<int> subtract{ "Subtract", 7 };
-						ofParameter<int> parameterRange{ "Parameter range", 2 };
-						PARAM_DECLARE("Threshold", areaSize, subtract, parameterRange);
-					} threshold;
 
-					struct : ofParameterGroup {
-						ofParameter<RefinementType> refinementType{ "Refinement type", RefinementType::SubPix };
-						ofParameter<int> windowSize{ "Window size", 3 };
-						PARAM_DECLARE("Refinement", refinementType, windowSize);
-					} refinement;
-
-					PARAM_DECLARE("Dictionary", detectorType, markerLength, threshold, refinement);
+					PARAM_DECLARE("Detector", dictionary, markerLength);
 				} parameters;
 
 				aruco::Dictionary dictionary;

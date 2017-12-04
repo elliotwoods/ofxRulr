@@ -2,7 +2,6 @@
 #include "FindMarkers.h"
 
 #include "Detector.h"
-#include "aruco.h"
 
 namespace ofxRulr {
 	namespace Nodes {

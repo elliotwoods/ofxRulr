@@ -5,7 +5,7 @@
 #include "ofxNonLinearFit.h"
 #include "MarkerMap.h"
 
-#include <aruco.h>
+#include <aruco/aruco.h>
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -27,6 +27,7 @@ namespace ofxRulr {
 
 					ofParameter<int> markerID{ "Marker ID", 0 };
 					ofParameter<int> plane{ "Plane", (int)Plane::X };
+					ofParameter<float> offset{ "Offset", 0.0f };
 					ofParameter<int> points{ "Points", (int)Points::All };
 					ofParameter<float> residual{ "Residual (m)", 0.0f };
 
