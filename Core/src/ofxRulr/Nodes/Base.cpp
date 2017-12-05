@@ -220,6 +220,22 @@ namespace ofxRulr {
 		}
 
 		//----------
+		bool Base::checkDrawOnWorldStage(const WhenDrawOnWorldStage & whenDrawOnWorldStage) {
+			switch (whenDrawOnWorldStage.get()) {
+			case WhenDrawOnWorldStage::Selected:
+				if (!this->isBeingInspected()) {
+					return false;
+				}
+			case WhenDrawOnWorldStage::Always:
+				return true;
+				break;
+			case WhenDrawOnWorldStage::Never:
+			default:
+				return false;
+			}
+		}
+
+		//----------
 		void Base::throwIfMissingAnyConnection() const {
 			const auto inputPins = this->getInputPins();
 			for(auto & inputPin : inputPins) {

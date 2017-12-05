@@ -50,8 +50,8 @@ namespace ofxRulr {
 				struct : ofParameterGroup {
 					ofParameter<DetectorType> dictionary{ "Detector type", DetectorType::Original };
 					ofParameter<float> markerLength{ "Marker length [m]", 0.05, 0.001, 10 };
-
-					PARAM_DECLARE("Detector", dictionary, markerLength);
+					ofParameter<bool> normalizeImage{ "Normalize image", false };
+					PARAM_DECLARE("Detector", dictionary, markerLength, normalizeImage);
 				} parameters;
 
 				aruco::Dictionary dictionary;

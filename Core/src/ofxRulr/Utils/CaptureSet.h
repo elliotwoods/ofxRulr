@@ -26,13 +26,13 @@ namespace ofxRulr {
 
 				ofxLiquidEvent<void> onDeletePressed;
 				ofxLiquidEvent<bool> onSelectionChanged;
+				ofParameter<chrono::system_clock::time_point> timestamp{ "Timestamp", chrono::system_clock::now() };
 			protected:
 				ofParameter<bool> selected{ "Selected", true };
 				virtual ofxCvGui::ElementPtr getDataDisplay();
 				void callbackSelectedChanged(bool &);
 
 				void rebuildDateStrings();
-				ofParameter<chrono::system_clock::time_point> timestamp{ "Timestamp", chrono::system_clock::now() };
 				string timeString;
 				string secondString;
 				string dateString;

@@ -21,7 +21,8 @@ namespace ofxRulr {
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_DRAW_WORLD_LISTENER;
 
-				this->addInput<Detector>();
+				this->addInput<Detector>("Detector for preview");
+				this->manageParameters(this->parameters);
 			}
 
 			//----------
@@ -64,7 +65,18 @@ namespace ofxRulr {
 							markerPreview.draw();
 						}
 
-						ofDrawBitmapString(ofToString(marker3D.id), ofxCv::toOf(marker3D[0]));
+						switch (this->parameters.drawLabels.get().get()) {
+						case WhenDrawOnWorldStage::Selected:
+							if (!this->isBeingInspected()) {
+								break;
+							}
+						case WhenDrawOnWorldStage::Always:
+							ofDrawBitmapString(ofToString(marker3D.id), ofxCv::toOf(marker3D[0]));
+							break;
+						case WhenDrawOnWorldStage::Never:
+						default:
+							break;
+						}
 					}
 				}
 			}

@@ -18,6 +18,7 @@ EXPORTS
 	glfwWindowHint
 	??0ofBuffer@@QEAA@AEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
 	??0ofBuffer@@QEAA@PEBD_K@Z
+	??0ofBuffer@@QEAA@XZ
 	??0ofFbo@@QEAA@XZ
 	??0ofFile@@QEAA@AEBVpath@filesystem@boost@@W4Mode@0@_N@Z
 	??0ofLogError@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -163,6 +164,7 @@ EXPORTS
 	??4?$ofImage_@E@@QEAAAEAV0@AEAV?$ofPixels_@E@@@Z
 	??4?$ofImage_@E@@QEAAAEAV0@AEBV0@@Z
 	??4?$ofPixels_@E@@QEAAAEAV0@AEBV0@@Z
+	??8?$ofColor_@E@@QEBA_NAEBV0@@Z
 	??A?$ofColor_@E@@QEAAAEAE_K@Z
 	??A?$ofColor_@E@@QEBAAEBE_K@Z
 	?allocate@?$ofPixels_@G@@QEAAXHHH@Z
@@ -248,6 +250,9 @@ EXPORTS
 	?audioOut@ofBaseSoundOutput@@UEAAXAEAVofSoundBuffer@@@Z
 	?audioOut@ofBaseSoundOutput@@UEAAXPEAMHH@Z
 	?audioOut@ofBaseSoundOutput@@UEAAXPEAMHHH_K@Z
+	?getData@ofBuffer@@QEBAPEBDXZ
+	?set@ofBuffer@@QEAAXPEBD_K@Z
+	?size@ofBuffer@@QEBA_KXZ
 	?worldToScreen@ofCamera@@QEBA?AVofVec3f@@V2@VofRectangle@@@Z
 	??0Settings@ofFbo@@QEAA@V?$shared_ptr@VofBaseGLRenderer@@@std@@@Z
 	?allocate@ofFbo@@QEAAXUSettings@1@@Z
@@ -560,6 +565,7 @@ EXPORTS
 	?sendMessage@ofxOscSender@@QEAAXAEAVofxOscMessage@@_N@Z
 	?setup@ofxOscSender@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
 	??0Ray@ofxRay@@QEAA@VofVec3f@@0_N@Z
+	??0Ray@ofxRay@@QEAA@XZ
 	?beginAsCamera@Projector@ofxRay@@QEBAX_N@Z
 	?castPixel@Projector@ofxRay@@QEBA?AVRay@2@AEBVofVec2f@@@Z
 	?endAsCamera@Projector@ofxRay@@QEBAXXZ
@@ -568,8 +574,13 @@ EXPORTS
 	?getNormalizedSCoordinateOfWorldPosition@Projector@ofxRay@@QEBA?AVofVec3f@@V3@@Z
 	?getViewMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getWidth@Projector@ofxRay@@QEBAHXZ
+	?distanceTo@Ray@ofxRay@@QEBAMAEBVofVec3f@@@Z
+	?draw@Ray@ofxRay@@UEBAXXZ
+	?getEnd@Ray@ofxRay@@QEBA?AVofVec3f@@XZ
 	?getMidpoint@Ray@ofxRay@@QEBA?AVofVec3f@@XZ
+	?getStart@Ray@ofxRay@@QEBAAEBVofVec3f@@XZ
 	?intersect@Ray@ofxRay@@QEBA?AV12@AEBV12@@Z
+	?randomiseVectors@Ray@ofxRay@@UEAAXM@Z
 	??0Exception@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?what@Exception@ofxRulr@@UEBAPEBDXZ
 	??0AbstractPin@Graph@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -588,6 +599,7 @@ EXPORTS
 	?loadCoreNodes@Nodes@ofxRulr@@YAXXZ
 	?loadPluginNodes@Nodes@ofxRulr@@YAXXZ
 	?addInput@Base@Nodes@ofxRulr@@IEAAXV?$shared_ptr@VAbstractPin@Graph@ofxRulr@@@std@@@Z
+	?checkDrawOnWorldStage@Base@Nodes@ofxRulr@@QEAA_NAEBVWhenDrawOnWorldStage@3@@Z
 	?drawWorldAdvanced@Base@Nodes@ofxRulr@@QEAAXAEAUDrawWorldAdvancedArgs@3@@Z
 	?getColor@Base@Nodes@ofxRulr@@QEAAAEBV?$ofColor_@E@@XZ
 	?getIcon@Base@Nodes@ofxRulr@@QEAAAEBVofBaseDraws@@XZ
@@ -653,6 +665,7 @@ EXPORTS
 	?end@VideoOutput@System@Nodes@ofxRulr@@QEAAXXZ
 	?getFbo@VideoOutput@System@Nodes@ofxRulr@@QEAAAEAVofFbo@@XZ
 	?getHeight@VideoOutput@System@Nodes@ofxRulr@@QEBAMXZ
+	?getMute@VideoOutput@System@Nodes@ofxRulr@@QEBA_NXZ
 	?getWidth@VideoOutput@System@Nodes@ofxRulr@@QEBAMXZ
 	?isWindowOpen@VideoOutput@System@Nodes@ofxRulr@@QEBA_NXZ
 	?presentFbo@VideoOutput@System@Nodes@ofxRulr@@QEAAXXZ
@@ -683,6 +696,7 @@ EXPORTS
 	?evaluate@PolyFit@Utils@ofxRulr@@YAMAEBUModel@123@M@Z
 	?fit@PolyFit@Utils@ofxRulr@@YA?AUModel@123@AEBV?$vector@VofVec2f@@V?$allocator@VofVec2f@@@std@@@std@@H@Z
 	?end@ScopedProcess@Utils@ofxRulr@@QEAAX_N@Z
+	?nextChildProcess@ScopedProcess@Utils@ofxRulr@@QEAAXXZ
 	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAV?$ofParameter@_N@@@Z
 	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAV?$ofParameter@H@@@Z
 	?deserialize@Serializable@Utils@ofxRulr@@SAXAEBVValue@Json@@AEAV?$ofParameter@M@@@Z

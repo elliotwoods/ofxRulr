@@ -129,19 +129,29 @@ namespace ofxRulr {
 			const std::vector<aruco::Marker> & Detector::findMarkers(const cv::Mat & image
 				, const cv::Mat & cameraMatrix
 				, const cv::Mat & distortionCoefficients) {
-				this->lastDetection = { image.clone()
+
+				this->lastDetection = {
+					image.clone()
 					, cameraMatrix
 					, distortionCoefficients
 				};
 
+				if (this->parameters.normalizeImage) {
+					cv::normalize(this->lastDetection.image
+						, this->lastDetection.image
+						, 255
+						, 0
+						, cv::NormTypes::NORM_MINMAX);
+				}
+
 				if (cameraMatrix.empty()) {
-					this->foundMarkers = this->markerDetector.detect(image);
+					this->foundMarkers = this->markerDetector.detect(this->lastDetection.image);
 				}
 				else {
 					aruco::CameraParameters cameraParameters(cameraMatrix
 						, distortionCoefficients
 						, cv::Size(image.cols, image.rows));
-					this->foundMarkers = this->markerDetector.detect(image, cameraParameters, this->parameters.markerLength);
+					this->foundMarkers = this->markerDetector.detect(this->lastDetection.image, cameraParameters, this->parameters.markerLength);
 				}
 				auto thresholdedImage = this->markerDetector.getThresholdedImage();
 				if (!thresholdedImage.empty()) {

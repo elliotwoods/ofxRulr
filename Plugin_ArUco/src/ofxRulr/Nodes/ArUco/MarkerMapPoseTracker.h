@@ -12,10 +12,12 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 				void update();
+				void track();
+				void populateInspector(ofxCvGui::InspectArguments &);
 			protected:
 				struct : ofParameterGroup {
-					ofParameter<bool> enabled{ "Enabled", true };
-					PARAM_DECLARE("MarkerMapPoseTracker", enabled);
+					ofParameter<bool> onNewFrame{ "On new frame", true };
+					PARAM_DECLARE("MarkerMapPoseTracker", onNewFrame);
 				} parameters;
 				aruco::MarkerMapPoseTracker markerMapPoseTracker;
 			};

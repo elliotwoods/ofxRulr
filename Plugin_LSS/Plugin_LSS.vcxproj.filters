@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch_Plugin_LSS.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\LSS\World.cpp">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\LSS\Projector.cpp">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\LSS\Scan.cpp">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.cpp">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Packer.cpp">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Stream.cpp">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{cbc2aa11-f629-44f1-8a35-3e1941a95761}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{689a618a-7684-4c7e-84fa-d23515db1316}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{41612ea4-ecf3-47f3-b62f-e7584aaf14eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\LSS">
+      <UniqueIdentifier>{03cf3a80-4631-4119-a58a-ace92a56810f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons">
+      <UniqueIdentifier>{973deae1-d7fe-493a-92d0-589e8fcab594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMessagePack">
+      <UniqueIdentifier>{daaeeb00-d2b2-4d03-94d5-4ffde6c72d99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMessagePack\src">
+      <UniqueIdentifier>{d46bde71-2bc8-45ca-9cdd-12bde598ebc3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_LSS.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\LSS\World.h">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\LSS\Projector.h">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\LSS\Scan.h">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack.h">
+      <Filter>addons\ofxMessagePack</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Stream.h">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.h">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Packer.h">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

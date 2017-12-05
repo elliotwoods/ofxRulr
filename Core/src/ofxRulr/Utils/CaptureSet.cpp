@@ -166,13 +166,13 @@ namespace ofxRulr {
 
 			{
 				char buff[10];
-				strftime(buff, 20, "%H:%M", localtime(&time));
+				strftime(buff, 10, "%H:%M", localtime(&time));
 				this->timeString = string(buff);
 			}
 
 			{
 				char buff[5];
-				strftime(buff, 20, ":%S", localtime(&time));
+				strftime(buff, 5, ":%S", localtime(&time));
 				this->secondString = string(buff);
 			}
 

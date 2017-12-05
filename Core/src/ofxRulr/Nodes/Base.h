@@ -84,6 +84,7 @@ namespace ofxRulr {
 			void drawWorldStage();
 			void drawWorldAdvanced(DrawWorldAdvancedArgs &);
 			WhenDrawOnWorldStage::Options getWhenDrawOnWorldStage() const;
+			bool checkDrawOnWorldStage(const WhenDrawOnWorldStage &);
 
 			template<typename NodeType>
 			void connect(shared_ptr<NodeType> node) {
