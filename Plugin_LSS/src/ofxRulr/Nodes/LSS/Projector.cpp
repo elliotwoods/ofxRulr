@@ -28,10 +28,11 @@ namespace ofxRulr {
 					auto filename = json["filename"].asString();
 					ofxMessagePack::Unpacker unpacker;
 					unpacker.load(filename);
-					if (unpacker) {
-						this->projectorPixels.clear();
-						unpacker >> this->projectorPixels;
+					if (!unpacker) {
+						throw(ofxRulr::Exception("Couldn't load scan "  + filename));
 					}
+					this->projectorPixels.clear();
+					unpacker >> this->projectorPixels;
 				}
 
 				Utils::Serializable::deserialize(json, this->cameraPosition);
@@ -132,6 +133,8 @@ namespace ofxRulr {
 					this->scans.populateWidgets(panel);
 					this->panel = panel;
 				}
+
+				this->manageParameters(this->parameters);
 			}
 
 			//----------
@@ -164,11 +167,14 @@ namespace ofxRulr {
 				inspector->addButton("Triangulate", [this]() {
 					Utils::ScopedProcess scopedProcess("Triangulate " + this->getName());
 					try {
-						this->triangulate();
+						this->triangulate(this->parameters.maximumResidual);
 						scopedProcess.end();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 				}, OF_KEY_RETURN)->setHeight(100.0f);
+				inspector->addLiveValue<size_t>("Triangulated points", [this]() {
+					return this->triangulatedMesh.getNumVertices();
+				});
 			}
 
 			//----------
@@ -199,7 +205,7 @@ namespace ofxRulr {
 			};
 
 			//----------
-			void Projector::triangulate() {
+			void Projector::triangulate(float maximumResidual) {
 				map<uint32_t, vector<ProjectorPixelFind>> projectorPixelFindsSets;
 				{
 					//gather all rays per pixel
@@ -213,8 +219,17 @@ namespace ofxRulr {
 
 				ofMesh vertices;
 				{
+					Utils::ScopedProcess scopedProcessFitPoints("Fit points", false, 100);
+					auto pointsPerPercent = projectorPixelFindsSets.size() / 100;
+					int count = 0;
+
 					vertices.setMode(OF_PRIMITIVE_POINTS);
 					for (const auto & projectorPixelFindSet : projectorPixelFindsSets) {
+						if (count++ > pointsPerPercent) {
+							Utils::ScopedProcess scopedProcessDummy("Found " + ofToString(vertices.getNumVertices()) + "points", false);
+							count = 0;
+						}
+
 						if (projectorPixelFindSet.second.size() < 2) {
 							continue;
 						}
@@ -224,12 +239,15 @@ namespace ofxRulr {
 							ofxNonLinearFit::Fit<VertexFindModel> fit;
 							VertexFindModel model;
 							
-							if (fit.optimise(model, &projectorPixelFindSet.second)) {
+							double residual;
+							fit.optimise(model, &projectorPixelFindSet.second, & residual);
+							if (residual <= maximumResidual) {
 								vertices.addVertex(model.point);
 							}
 						}
 					}
 				}
+				swap(this->triangulatedMesh, vertices);
 			}
 
 			//----------

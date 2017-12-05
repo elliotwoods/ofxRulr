@@ -395,14 +395,11 @@ namespace ofxRulr {
 				this->viewInObjectSpaceCached.setProjection(projection);
 
 				if (this->hasDistortion) {
-					/*
-					//HACK - distortion doesn't really work for ofxRay::Camera
 					auto distortionVector = vector<float>(RULR_VIEW_DISTORTION_COEFFICIENT_COUNT);
 					for (int i = 0; i < RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 						distortionVector[i] = this->distortion[i].get();
 					}
 					this->viewInObjectSpaceCached.distortion = distortionVector;
-					*/
 				}
 
 				this->viewIsDirty = false;

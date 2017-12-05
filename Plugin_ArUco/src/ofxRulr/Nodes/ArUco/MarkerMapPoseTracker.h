@@ -8,6 +8,10 @@ namespace ofxRulr {
 		namespace ArUco {
 			class MarkerMapPoseTracker : public Nodes::Base {
 			public:
+				MAKE_ENUM(Method
+					, (Tracker, solvePnP, RANSAC)
+					, ("Tracker", "solvePnP", "RANSAC"));
+
 				MarkerMapPoseTracker();
 				string getTypeName() const override;
 				void init();
@@ -17,7 +21,9 @@ namespace ofxRulr {
 			protected:
 				struct : ofParameterGroup {
 					ofParameter<bool> onNewFrame{ "On new frame", true };
-					PARAM_DECLARE("MarkerMapPoseTracker", onNewFrame);
+					ofParameter<int> minMarkerCount{ "Minimum marker count", 3 };
+					ofParameter<Method> method{ "Method", Method::Tracker };
+					PARAM_DECLARE("MarkerMapPoseTracker", onNewFrame, minMarkerCount, method);
 				} parameters;
 				aruco::MarkerMapPoseTracker markerMapPoseTracker;
 			};

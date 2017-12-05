@@ -76,6 +76,9 @@ namespace ofxRulr {
 				try {
 					auto camera = graycode->getInput<Item::Camera>();
 					auto cameraViewWorld = camera->getViewInWorldSpace();
+					//cameraViewWorld.distortion.clear(); //We undistort ourselves
+					//auto cameraMatrix = camera->getCameraMatrix();
+					//auto distortionCoefficients = camera->getDistortionCoefficients();
 
 					{
 						//check if we're scanning the same transform as last time
@@ -102,7 +105,7 @@ namespace ofxRulr {
 							continue;
 						}
 
-						auto scopedProcessScanProjector = Utils::ScopedProcess("Scan " + projector->getName());
+						auto scopedProcessScanProjector = Utils::ScopedProcess("Scan " + projector->getName(), false);
 						{
 							projector->throwIfMissingAnyConnection();
 							auto videoOutput = projector->getInput<System::VideoOutput>();
@@ -112,6 +115,21 @@ namespace ofxRulr {
 							if (!videoOutput->isWindowOpen() || videoOutput->getMute()) {
 								continue;
 							}
+
+							//set all projectors to black
+							for(auto otherProjector : projectors) {
+								if (otherProjector == projector) {
+									continue;
+								}
+								auto videoOutput = otherProjector->getInput<System::VideoOutput>();
+								if (videoOutput) {
+									if (videoOutput->isWindowOpen()) {
+										videoOutput->clearFbo(false);
+										videoOutput->presentFbo();
+									}
+								}
+							}
+
 
 							//perform the graycode scan
 							if (!this->parameters.useExistingData) {

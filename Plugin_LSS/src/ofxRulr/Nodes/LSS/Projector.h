@@ -11,7 +11,10 @@ namespace ofxRulr {
 				struct ProjectorPixelFind {
 					ofxRay::Ray cameraPixelRay;
 					ofVec2f cameraPixelXY;
-					MSGPACK_DEFINE(cameraPixelRay.s.x, cameraPixelRay.s.y, cameraPixelRay.s.z, cameraPixelRay.t.x, cameraPixelRay.t.y, cameraPixelRay.t.z);
+					ofVec2f cameraPixelXYUndistorted;
+					MSGPACK_DEFINE(cameraPixelRay.s.x, cameraPixelRay.s.y, cameraPixelRay.s.z, cameraPixelRay.t.x, cameraPixelRay.t.y, cameraPixelRay.t.z
+						, cameraPixelXY.x, cameraPixelXY.y
+						, cameraPixelXYUndistorted.x, cameraPixelXYUndistorted.y);
 				};
 
 				class Scan : public Utils::AbstractCaptureSet::BaseCapture {
@@ -42,7 +45,7 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::InspectArguments &);
 
 				void addScan(shared_ptr<Scan>);
-				void triangulate();
+				void triangulate(float maxResidual);
 				ofxCvGui::PanelPtr getPanel() override;
 			protected:
 				Utils::CaptureSet<Scan> scans;
@@ -52,7 +55,8 @@ namespace ofxRulr {
 				struct : ofParameterGroup {
 					ofParameter<WhenDrawOnWorldStage> drawRays{ "Draw rays", WhenDrawOnWorldStage::Selected };
 					ofParameter<WhenDrawOnWorldStage> drawVertices{ "Draw vertices", WhenDrawOnWorldStage::Always };
-					PARAM_DECLARE("Projector", drawRays, drawVertices);
+					ofParameter<float> maximumResidual{ "Maximum residual", 0.005, 0.0001, 1.0};
+					PARAM_DECLARE("Projector", drawRays, drawVertices, maximumResidual);
 				} parameters;
 			};
 		}

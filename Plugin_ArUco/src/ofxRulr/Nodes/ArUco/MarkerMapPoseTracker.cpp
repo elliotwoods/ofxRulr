@@ -65,30 +65,87 @@ namespace ofxRulr {
 					}
 
 					auto markers = detectorNode->findMarkers(ofxCv::toCv(frame->getPixels()));
-					if (markers.size() < 3) {
+					if (markers.size() < this->parameters.minMarkerCount) {
 						throw(ofxRulr::Exception("Couldn't find enough markers"));
-					}
-
-					auto cameraParams = aruco::CameraParameters();
-					{
-						cameraNode->getCameraMatrix().convertTo(cameraParams.CameraMatrix, CV_32F);
-						cameraNode->getDistortionCoefficients().convertTo(cameraParams.Distorsion, CV_32F);
-						cameraParams.CamSize = cameraNode->getSize();
-					}
-
-					this->markerMapPoseTracker.setParams(cameraParams
-						, *markerMap
-						, detectorNode->getMarkerLength());
-
-					//try and estimate camera pose
-					if (!this->markerMapPoseTracker.estimatePose(markers)) {
-						throw(ofxRulr::Exception("Failed to estimate camera pose"));
 					}
 
 					cv::Mat rotation, translation;
 
-					this->markerMapPoseTracker.getRvec().convertTo(rotation, CV_64F);
-					this->markerMapPoseTracker.getTvec().convertTo(translation, CV_64F);
+					bool useRansac = false;
+					switch (this->parameters.method.get().get()) {
+					case Method::Tracker:
+					{
+						auto cameraParams = aruco::CameraParameters();
+						{
+							cameraNode->getCameraMatrix().convertTo(cameraParams.CameraMatrix, CV_32F);
+							cameraNode->getDistortionCoefficients().convertTo(cameraParams.Distorsion, CV_32F);
+							cameraParams.CamSize = cameraNode->getSize();
+						}
+
+						this->markerMapPoseTracker.setParams(cameraParams
+							, *markerMap
+							, detectorNode->getMarkerLength());
+
+						//try and estimate camera pose
+						if (!this->markerMapPoseTracker.estimatePose(markers)) {
+							throw(ofxRulr::Exception("Failed to estimate camera pose"));
+						}
+
+						this->markerMapPoseTracker.getRvec().convertTo(rotation, CV_64F);
+						this->markerMapPoseTracker.getTvec().convertTo(translation, CV_64F);
+						break;
+					}
+					case Method::RANSAC:
+						useRansac = true;
+					case Method::solvePnP:
+					{
+						//build up dataset
+						vector<cv::Point2f> imagePoints;
+						vector<cv::Point3f> worldPoints;
+
+						for (const auto & marker : markers) {
+							try {
+								const auto & marker3D = markerMap->getMarker3DInfo(marker.id);
+								worldPoints.push_back(marker3D[0]);
+								worldPoints.push_back(marker3D[1]);
+								worldPoints.push_back(marker3D[2]);
+								worldPoints.push_back(marker3D[3]);
+							}
+							catch (...) {
+								continue;
+							}
+
+							for (const auto & imagePoint : marker) {
+								imagePoints.push_back(imagePoint);
+							}
+						}
+
+						//get extrinsics guess
+						cameraNode->getExtrinsics(rotation, translation);
+
+						if (!useRansac) {
+							cv::solvePnP(worldPoints
+								, imagePoints
+								, cameraNode->getCameraMatrix()
+								, cameraNode->getDistortionCoefficients()
+								, rotation
+								, translation
+								, true);
+						}
+						else {
+							cv::solvePnPRansac(worldPoints
+								, imagePoints
+								, cameraNode->getCameraMatrix()
+								, cameraNode->getDistortionCoefficients()
+								, rotation
+								, translation
+								, true);
+						}
+						break;
+					}
+					default:
+						break;
+					}
 
 					cameraNode->setExtrinsics(rotation, translation, true);
 				}
@@ -102,7 +159,7 @@ namespace ofxRulr {
 						this->track();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
-				});
+				}, ' ')->setHeight(100.0f);
 			}
 		}
 	}
