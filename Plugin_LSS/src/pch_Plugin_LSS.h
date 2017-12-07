@@ -15,3 +15,4 @@
 #include "ofxRulr/Nodes/LSS/World.h"
 #include "ofxRulr/Nodes/LSS/Projector.h"
 #include "ofxRulr/Nodes/LSS/Scan.h"
+#include "ofxRulr/Nodes/LSS/FitLines.h"

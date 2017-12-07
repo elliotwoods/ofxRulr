@@ -39,6 +39,16 @@ namespace ofxRulr {
 					}, OF_KEY_RETURN)->setHeight(100.0f);
 				}
 				{
+					inspector->addButton("Triangulate", [this]() {
+						try {
+							Utils::ScopedProcess scopedProcess("Triangulate");
+							this->triangulate();
+							scopedProcess.end();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+					})->setHeight(100.0f);
+				}
+				{
 					auto lastCameraTransformButton = inspector->addButton("Clear last transform", [this]() {
 						this->lastCameraTransform.makeIdentityMatrix();
 					});
@@ -233,6 +243,8 @@ namespace ofxRulr {
 									projectorScan->color = scanColor;
 								}
 							}
+							itemProjector->setWidth(videoOutput->getWidth());
+							itemProjector->setHeight(videoOutput->getHeight());
 							projector->addScan(projectorScan);
 
 						}
@@ -247,6 +259,18 @@ namespace ofxRulr {
 						graycode->getInputPin<System::VideoOutput>()->connect(priorVideOutputConnection);
 					}
 					throw;
+				}
+			}
+
+			//----------
+			void Scan::triangulate() {
+				this->throwIfMissingAConnection<World>();
+				auto world = this->getInput<World>();
+				auto projectors = world->getProjectors();
+
+				Utils::ScopedProcess triangulateProjectors("Triangulating projectors", false, projectors.size());
+				for (auto projector : projectors) {
+					projector->triangulate(this->parameters.triangulate.maxResidual);
 				}
 			}
 		}

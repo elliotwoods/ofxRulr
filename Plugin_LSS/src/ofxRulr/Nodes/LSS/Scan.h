@@ -14,12 +14,19 @@ namespace ofxRulr {
 				void serialize(Json::Value &);
 				void deserialize(const Json::Value &);
 				void scan();
+				void triangulate();
 			protected:
 				ofMatrix4x4 lastCameraTransform;
 
 				struct : ofParameterGroup {
 					ofParameter<bool> useExistingData{ "Use existing data", false };
-					PARAM_DECLARE("Scan", useExistingData);
+					
+					struct : ofParameterGroup {
+						ofParameter<float> maxResidual{ "Maximum residual", 0.05 };
+						PARAM_DECLARE("Triangulate", maxResidual);
+					} triangulate;
+
+					PARAM_DECLARE("Scan", useExistingData, triangulate);
 				} parameters;
 			};
 		}

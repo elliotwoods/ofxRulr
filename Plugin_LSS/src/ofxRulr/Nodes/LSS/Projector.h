@@ -35,9 +35,77 @@ namespace ofxRulr {
 					bool previewDirty = true;
 				};
 
+				struct ofVec3fs : ofVec3f {
+					ofVec3fs operator=(const ofVec3f & vec) {
+						*(ofVec3f*) this = vec;
+						return *this;
+					}
+					MSGPACK_DEFINE(x, y, z);
+				};
+
+				struct ofVec2fs : ofVec2f {
+					MSGPACK_DEFINE(x, y);
+				};
+
+				struct Vertex {
+					ofVec3f world;
+					size_t projector; // pixel coordinate
+					ofVec2f projectorNormalizedXY;
+					MSGPACK_DEFINE(world.x
+						, world.y
+						, world.z
+						, projector
+						, projectorNormalizedXY.x
+						, projectorNormalizedXY.y);
+				};
+
+				struct Line {
+					Line() {
+						this->color = ofColor(200, 100, 100);
+						static int colorIndex = 0;
+						colorIndex++;
+						this->color.setHueAngle((colorIndex * 10) % 360);
+					}
+					void drawWorld() const;
+
+					vector<Vertex> vertices;
+					ofColor color;
+					ofVbo vbo;
+
+					int lineIndex;
+					int projectorIndex;
+					ofVec2fs startProjector;
+					ofVec2fs endProjector;
+
+					ofVec3fs startWorld;
+					ofVec3fs endWorld;
+
+					string lastUpdate;
+					string lastEditBy;
+					double age;
+
+					MSGPACK_DEFINE(
+						vertices
+						, color.r, color.g, color.b
+						, lineIndex
+						, projectorIndex
+						, startProjector, endProjector
+						, startWorld, endWorld
+						, lastUpdate, lastEditBy, age);
+				};
+
+				struct LineSearchParams : ofParameterGroup {
+					ofParameter<float> headSize{ "Head size", 0.05f };
+					ofParameter<float> trunkThickness{ "Trunk thickness", 0.01f };
+					ofParameter<float> initialInclusionThreshold{ "Inclusion threshold", 0.8f };
+					ofParameter<int> minimumCount{ "Minimum count", 10};
+					PARAM_DECLARE("Line search", headSize, trunkThickness, initialInclusionThreshold, minimumCount);
+				};
+
 				Projector();
 				string getTypeName() const override;
 				void init();
+				void update();
 				void drawWorldStage();
 
 				void deserialize(const Json::Value &);
@@ -46,18 +114,55 @@ namespace ofxRulr {
 
 				void addScan(shared_ptr<Scan>);
 				void triangulate(float maxResidual);
+				void autoMapping(const LineSearchParams & params);
+
+				void loadMapping(const string & filename);
+				void dipLinesInData(); 
+				void trimLinesExceptOne(int lineIndex);
+
 				ofxCvGui::PanelPtr getPanel() override;
+
+				vector<Line> & getLines();
 			protected:
+				void rebuildPreviews();
+
 				Utils::CaptureSet<Scan> scans;
 				ofxCvGui::PanelPtr panel;
-				ofMesh triangulatedMesh;
+				
+				vector<Vertex> unclassifiedVertices;
+				ofVbo unclassifiedVerticesPreview;
+				ofImage projectorSpacePreview;
+
+				bool previewsDirty = true;
 
 				struct : ofParameterGroup {
-					ofParameter<WhenDrawOnWorldStage> drawRays{ "Draw rays", WhenDrawOnWorldStage::Selected };
-					ofParameter<WhenDrawOnWorldStage> drawVertices{ "Draw vertices", WhenDrawOnWorldStage::Always };
+					ofParameter<int> projectorIndex{ "Projector Index", 0 }; 
+
+					struct : ofParameterGroup {
+						ofParameter<WhenDrawOnWorldStage> rays{ "Draw rays", WhenDrawOnWorldStage::Selected };
+						ofParameter<WhenDrawOnWorldStage> unclassifiedVertices{ "Draw unclassified vertices", WhenDrawOnWorldStage::Always };
+						ofParameter<WhenDrawOnWorldStage> lines{ "Lines", WhenDrawOnWorldStage::Always };
+						ofParameter<bool> linesOnProjectorPreview{ "Lines on projector preview", true };
+						PARAM_DECLARE("Draw", rays, unclassifiedVertices, lines, linesOnProjectorPreview);
+					} draw;
+					
 					ofParameter<float> maximumResidual{ "Maximum residual", 0.005, 0.0001, 1.0};
-					PARAM_DECLARE("Projector", drawRays, drawVertices, maximumResidual);
+					LineSearchParams lineSearch;
+
+					struct : ofParameterGroup {
+						ofParameter<float> searchThickness{ "Search thickness", 2.0f };
+						PARAM_DECLARE("Data dip", searchThickness);
+					} dataDip;
+
+					PARAM_DECLARE("Projector"
+						, projectorIndex
+						, draw
+						, maximumResidual
+						, lineSearch
+						, dataDip);
 				} parameters;
+
+				vector<Line> lines;
 			};
 		}
 	}

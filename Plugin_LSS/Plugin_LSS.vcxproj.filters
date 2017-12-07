@@ -23,6 +23,9 @@
     <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Stream.cpp">
       <Filter>addons\ofxMessagePack\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\LSS\FitLines.cpp">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Packer.h">
       <Filter>addons\ofxMessagePack\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\LSS\FitLines.h">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

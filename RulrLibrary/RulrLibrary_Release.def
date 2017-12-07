@@ -21,6 +21,7 @@ EXPORTS
 	??0ofBuffer@@QEAA@XZ
 	??0ofFbo@@QEAA@XZ
 	??0ofFile@@QEAA@AEBVpath@filesystem@boost@@W4Mode@0@_N@Z
+	??0ofFile@@QEAA@XZ
 	??0ofLogError@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogNotice@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogWarning@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -51,6 +52,7 @@ EXPORTS
 	??1ofVboMesh@@UEAA@XZ
 	??1ofxOscBundle@@QEAA@XZ
 	??1ofxOscMessage@@QEAA@XZ
+	??4ofVbo@@QEAAAEAV0@AEBV0@@Z
 	??9tpp@@YA_NAEBVfIterator@Delaunay@0@0@Z
 	?ofCircle@@YAXAEBVofVec3f@@M@Z
 	?ofCircle@@YAXMMM@Z
@@ -129,6 +131,7 @@ EXPORTS
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
 	?limit@?$ofColor_@E@@SAMXZ
 	?setHue@?$ofColor_@E@@QEAAXM@Z
+	?setHueAngle@?$ofColor_@E@@QEAAXM@Z
 	?allocate@?$ofImage_@E@@QEAAXHHW4ofImageType@@@Z
 	?bind@?$ofImage_@E@@QEBAXH@Z
 	?clear@?$ofImage_@E@@QEAAXXZ
@@ -152,6 +155,7 @@ EXPORTS
 	?isAllocated@?$ofPixels_@E@@QEBA_NXZ
 	?resize@?$ofPixels_@E@@QEAA_NHHW4ofInterpolationMethod@@@Z
 	?rotate90@?$ofPixels_@E@@QEAAXH@Z
+	?setColor@?$ofPixels_@E@@QEAAXAEBV?$ofColor_@E@@@Z
 	?size@?$ofPixels_@E@@QEBA_KXZ
 	?swap@?$ofPixels_@E@@QEAAXAEAV1@@Z
 	??0?$ofColor_@E@@QEAA@MM@Z
@@ -251,6 +255,7 @@ EXPORTS
 	?audioOut@ofBaseSoundOutput@@UEAAXPEAMHH@Z
 	?audioOut@ofBaseSoundOutput@@UEAAXPEAMHHH_K@Z
 	?getData@ofBuffer@@QEBAPEBDXZ
+	?getText@ofBuffer@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?set@ofBuffer@@QEAAXPEBD_K@Z
 	?size@ofBuffer@@QEBA_KXZ
 	?worldToScreen@ofCamera@@QEBA?AVofVec3f@@V2@VofRectangle@@@Z
@@ -263,6 +268,8 @@ EXPORTS
 	?getDepthTexture@ofFbo@@QEAAAEAVofTexture@@XZ
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@M@@H@Z
 	?unbind@ofFbo@@QEBAXXZ
+	?open@ofFile@@QEAA_NAEBVpath@filesystem@boost@@W4Mode@1@_N@Z
+	?readToBuffer@ofFile@@QEAA?AVofBuffer@@XZ
 	?getFileExt@ofFilePath@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@@Z
 	?removeExt@ofFilePath@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@@Z
 	?defaultSetting@ofImageLoadSettings@@2U1@A
@@ -378,6 +385,7 @@ EXPORTS
 	?unbind@ofTexture@@QEBAXH@Z
 	?drawString@ofTrueTypeFont@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM@Z
 	?getStringBoundingBox@ofTrueTypeFont@@QEBA?AVofRectangle@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM_N@Z
+	?draw@ofVbo@@QEBAXHHH@Z
 	?setIndexData@ofVbo@@QEAAXPEBIHH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec2f@@HH@Z
 	?setVertexData@ofVbo@@QEAAXPEBVofVec3f@@HH@Z
@@ -457,6 +465,7 @@ EXPORTS
 	??0Strip@Groups@Panels@ofxCvGui@@QEAA@W4Direction@0123@@Z
 	?makeGrid@Groups@Panels@ofxCvGui@@YA?AV?$shared_ptr@VGrid@Groups@Panels@ofxCvGui@@@std@@XZ
 	?makeStrip@Groups@Panels@ofxCvGui@@YA?AV?$shared_ptr@VStrip@Groups@Panels@ofxCvGui@@@std@@W4Direction@Strip@123@@Z
+	?setDirection@Strip@Groups@Panels@ofxCvGui@@QEAAXW4Direction@1234@@Z
 	?setImage@Image@Panels@ofxCvGui@@QEAAXAEAVofAbstractImage@@@Z
 	?add@Scroll@Panels@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?clear@Scroll@Panels@ofxCvGui@@QEAAXXZ
