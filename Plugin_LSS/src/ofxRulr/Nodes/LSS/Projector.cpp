@@ -198,9 +198,10 @@ namespace ofxRulr {
 					this->unclassifiedVerticesPreview.draw(GL_POINTS, 0, this->unclassifiedVertices.size());
 				}
 
+				bool drawLabels = this->checkDrawOnWorldStage(this->parameters.draw.lineLabels.get());
 				if (this->checkDrawOnWorldStage(this->parameters.draw.lines)) {
 					for (const auto & line : this->lines) {
-						line.drawWorld();
+						line.drawWorld(drawLabels);
 					}
 				}
 				if (this->checkDrawOnWorldStage(this->parameters.draw.rays)) {
@@ -295,7 +296,12 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 				});
-
+				inspector->addButton("Calibrate projector", [this]() {
+					try {
+						this->calibrateProjector();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				});
 				inspector->addButton("Dip lines in data..,", [this]() {
 					try {
 						this->dipLinesInData();
@@ -363,7 +369,7 @@ namespace ofxRulr {
 
 				vector<Vertex> unclassifiedVertices;
 				{
-					Utils::ScopedProcess scopedProcessFitPoints("Fit points", false, 100);
+					Utils::ScopedProcess scopedProcessFitPoints("Fit points (%)", false, 100);
 					auto pointsPerPercent = projectorPixelFindsSets.size() / 100;
 					int count = 0;
 
@@ -393,7 +399,7 @@ namespace ofxRulr {
 								auto projectorPixelCoordinatesY = vertex.projector / projectorWidth;
 
 								vertex.projectorNormalizedXY.x = ofMap(projectorPixelCoordinatesX, 0, projectorWidth - 1, -1, +1);
-								vertex.projectorNormalizedXY.x = ofMap(projectorPixelCoordinatesY, 0, projectorHeight - 1, +1, -1);
+								vertex.projectorNormalizedXY.y = ofMap(projectorPixelCoordinatesY, 0, projectorHeight - 1, +1, -1);
 
 								unclassifiedVertices.emplace_back(move(vertex));
 							}
@@ -638,7 +644,6 @@ namespace ofxRulr {
 				if (this->unclassifiedVertices.empty()) {
 					throw(ofxRulr::Exception("No unclassified vertices to use for data dip"));
 				}
-				Utils::ScopedProcess scopedProcess("Dip lines in data", true, this->lines.size());
 				
 				auto projector = this->getInput<Item::Projector>();
 				auto projectorWidth = projector->getWidth();
@@ -648,47 +653,106 @@ namespace ofxRulr {
 				previewPixels.setColor(ofColor(0, 255));
 				auto previewPixelsData = (ofColor*) previewPixels.getData();
 
-				for (auto & line : this->lines) {
-					Utils::ScopedProcess scopedProcessLine("Dip line by " + ofToString(line.lastEditBy), false);
-
-					//pass through vertices
-					for (auto it = this->unclassifiedVertices.begin(); it != this->unclassifiedVertices.end();) {
-						const auto & vertex = *it;
-						
-						//transform to pixel coordinates
-						ofVec2f start, end;
-						{
-							start.x = ofMap(line.startProjector.x, -1, +1, 0, projectorWidth - 1);
-							start.y = ofMap(line.startProjector.y, +1, -1, 0, projectorHeight - 1);
-							end.x = ofMap(line.endProjector.x, -1, +1, 0, projectorWidth - 1);
-							end.y = ofMap(line.endProjector.y, +1, -1, 0, projectorHeight - 1);
-
-							auto pixelIndex = (uint32_t) start.x + (uint32_t) start.y * (uint32_t) projectorHeight;
-							previewPixelsData[pixelIndex].r = 255;
+				vector<float> thicknessesToCheck;
+				{
+					if (this->parameters.dataDip.progressive) {
+						for (int i = 1; i < this->parameters.dataDip.searchThickness; i++) {
+							if (i > 5 && i % 5 != 0) {
+								continue;
+							}
+							thicknessesToCheck.push_back(i);
 						}
+					}
+					else {
+						thicknessesToCheck.push_back(this->parameters.dataDip.searchThickness);
+					}
+				}
 
-						//get pixel coords of projector pixel
-						ofVec2f projector;
-						{
-							projector.x = vertex.projector % (int) projectorWidth;
-							projector.y = vertex.projector / (int) projectorWidth;
-							previewPixelsData[vertex.projector].g = 255;
+				Utils::ScopedProcess scopedProcess("Dip lines in data", true, thicknessesToCheck.size());
+				for(const auto & thickness : thicknessesToCheck) {
+					Utils::ScopedProcess scopedProcessThickness("Dip lines in data, search with thickness "  + ofToString(thickness), false, this->lines.size());
+					for (auto & line : this->lines) {
+						Utils::ScopedProcess scopedProcessLine("Dip line by " + ofToString(line.lastEditBy), false);
+
+						//pass through vertices
+						for (auto it = this->unclassifiedVertices.begin(); it != this->unclassifiedVertices.end();) {
+							const auto & vertex = *it;
+
+							//transform to pixel coordinates
+							ofVec2f start, end;
+							{
+								start.x = ofMap(line.startProjector.x, -1, +1, 0, projectorWidth - 1);
+								start.y = ofMap(line.startProjector.y, +1, -1, 0, projectorHeight - 1);
+								end.x = ofMap(line.endProjector.x, -1, +1, 0, projectorWidth - 1);
+								end.y = ofMap(line.endProjector.y, +1, -1, 0, projectorHeight - 1);
+
+								auto pixelIndex = (uint32_t)start.x + (uint32_t)start.y * (uint32_t)projectorHeight;
+								if (pixelIndex < previewPixels.size() / 4) {
+									previewPixelsData[pixelIndex].r = 255;
+								}
+							}
+
+							//get pixel coords of projector pixel
+							ofVec2f projector;
+							{
+								projector.x = vertex.projector % (int)projectorWidth;
+								projector.y = vertex.projector / (int)projectorWidth;
+								previewPixelsData[vertex.projector].g = 255;
+							}
+
+							//check distance is within thickness
+							auto distanceToLine = minimum_distance(start, end, projector);
+							if (distanceToLine > thickness) {
+								it++;
+								continue;
+							}
+
+							previewPixelsData[vertex.projector].b = 255;
+							line.vertices.push_back(vertex);
+							it = this->unclassifiedVertices.erase(it);
 						}
-
-						//check distance is within thickness
-						auto distanceToLine = minimum_distance(start, end, projector);
-						if (distanceToLine > this->parameters.dataDip.searchThickness) {
-							it++;
-							continue;
-						}
-
-						previewPixelsData[vertex.projector].b = 255;
-						line.vertices.push_back(vertex);
-						it = this->unclassifiedVertices.erase(it);
 					}
 				}
 				this->projectorSpacePreview.update();
 				this->previewsDirty = true;
+				scopedProcess.end();
+			}
+
+			//----------
+			void Projector::calibrateProjector() {
+				Utils::ScopedProcess scopedProcess("Calibrate projector");
+
+				this->throwIfMissingAConnection<Item::Projector>();
+				vector<ofVec2f> imagePoints;
+				vector<ofVec3f> worldPoints;
+				auto projector = this->getInput<Item::Projector>();
+				int projectorWidth = projector->getWidth();
+				int projectorHeight = projector->getHeight();
+				auto size = projector->getSize();
+
+				for (const auto & vertex : this->unclassifiedVertices) {
+					imagePoints.emplace_back(vertex.projector % projectorWidth, vertex.projector / projectorWidth);
+					worldPoints.emplace_back(vertex.world);
+				}
+
+				cv::Mat cameraMatrix, rotationMatrix, translation;
+				auto residual = ofxCv::calibrateProjector(cameraMatrix
+					, rotationMatrix
+					, translation
+					, worldPoints
+					, imagePoints
+					, size.width
+					, size.height
+					, false
+					, 0
+					, 1.2);
+
+				cout << "Calibrate projector with " << imagePoints.size() << " points. Residual = " << residual << endl;
+				
+				auto view = ofxCv::makeMatrix(rotationMatrix, translation);
+				projector->setTransform(view.getInverse());
+				projector->setIntrinsics(cameraMatrix);
+
 				scopedProcess.end();
 			}
 
@@ -712,6 +776,11 @@ namespace ofxRulr {
 			//----------
 			std::vector<Projector::Line> & Projector::getLines() {
 				return this->lines;
+			}
+
+			//----------
+			int Projector::getProjectorIndex() const {
+				return this->parameters.projectorIndex.get();
 			}
 
 			//----------
@@ -742,7 +811,7 @@ namespace ofxRulr {
 
 #pragma mark Line
 			//----------
-			void Projector::Line::drawWorld() const {
+			void Projector::Line::drawWorld(bool labels) const {
 				ofPushStyle();
 				{
 					ofSetColor(this->color);
@@ -753,6 +822,9 @@ namespace ofxRulr {
 					}
 					if (this->startWorld != this->endWorld) {
 						ofDrawLine(this->startWorld, this->endWorld);
+						if (labels) {
+							ofDrawBitmapString(ofToString(this->lineIndex), (this->startWorld + this->endWorld) / 2.0f);
+						}
 					}
 				}
 				ofPopStyle();

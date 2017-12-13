@@ -1,5 +1,7 @@
 #include "pch_Plugin_LSS.h"
 
+using json = nlohmann::json;
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace LSS {
@@ -29,53 +31,111 @@ namespace ofxRulr {
 						this->fit();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
-				}, OF_KEY_RETURN)->setHeight(100.0f);
+				})->setHeight(100.0f);
 				inspector->addButton("Pick lines", [this]() {
 					try {
 						this->pick();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 				})->setHeight(100.0f);
+				inspector->addButton("Full auto", [this]() {
+					try {
+						this->fullAuto();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				}, OF_KEY_RETURN)->setHeight(100.0f);
+				inspector->addButton("Save lines.json", [this]() {
+					try {
+						this->saveResults();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				});
 			}
 
 			//----------
-			struct DataPoint {
-				float x; // position along string
-				ofVec3f position;
-			};
-
-			//----------
-			class FitLineModel : public ofxNonLinearFit::Models::Base<DataPoint, FitLineModel> {
+			class FitRayModel : public ofxNonLinearFit::Models::Base<ofVec3f, FitRayModel> {
 			public:
-				virtual unsigned int getParameterCount() const override {
-					return 6;
+				unsigned int getParameterCount() const override {
+					return 5;
 				}
 
-				virtual void getResidual(DataPoint dataPoint, double & residual, double * gradient = 0) const override {
-					auto actualPosition = dataPoint.position;
-					this->evaluate(dataPoint);
-					residual = (double) dataPoint.position.distance(actualPosition);
+				void getResidual(ofVec3f dataPoint, double & residual, double * gradient = 0) const override {
+					residual = this->ray.distanceTo(dataPoint);
 				}
 
-				virtual void evaluate(DataPoint & dataPoint) const override {
-					dataPoint.position = this->lineStart + (this->lineEnd - this->lineStart) * dataPoint.x;
+				void evaluate(ofVec3f & dataPoint) const override {
+					//we shouldn't be here
 				}
 
-				virtual void cacheModel() override
+				void cacheModel() override
 				{
-					this->lineStart[0] = this->parameters[0];
-					this->lineStart[1] = this->parameters[1];
-					this->lineStart[2] = this->parameters[2];
-					this->lineEnd[0] = this->parameters[3];
-					this->lineEnd[1] = this->parameters[4];
-					this->lineEnd[2] = this->parameters[5];
+					this->ray.s.x = this->parameters[0];
+					this->ray.s.y = this->parameters[1];
+					this->ray.s.z = this->parameters[2];
+
+					auto theta = this->parameters[3];
+					auto thi = this->parameters[4];
+					this->ray.t.x = cos(theta) * cos(thi);
+					this->ray.t.y = sin(theta) * cos(thi);
+					this->ray.t.z = sin(thi);
 				}
 				
-				ofVec3f lineStart;
-				ofVec3f lineEnd;
+				ofxRay::Ray ray;
+			};
+
+			struct FitPositionOnRayDataPoint {
+				float dummy;
+			};
+
+			class FitPositionOnRayModel : public ofxNonLinearFit::Models::Base<FitPositionOnRayDataPoint, FitPositionOnRayModel> {
+			public:
+				unsigned int getParameterCount() const override {
+					return 3; // for some reason, 1 parameter doesn't work
+				}
+
+				void getResidual(FitPositionOnRayDataPoint dataPoint, double & residual, double * gradient = 0) const override {
+					auto projected = this->world * this->projectorViewProjection;
+					residual = ofVec2f(projected.x, projected.y).distance(targetPosition);
+				}
+
+				virtual void evaluate(FitPositionOnRayDataPoint &) const override {
+					RULR_ERROR << "We shouldn't be here";
+				}
+
+				void cacheModel() override {
+					world = this->ray.s + this->ray.t.getNormalized() * this->parameters[0];
+				}
+
+				ofVec2f targetPosition;
+				ofMatrix4x4 projectorViewProjection;
+				ofxRay::Ray ray;
+
+				ofVec3f world;
 			};
 
 			//----------
+			void pickLineEnds(Projector::Line & line) {
+				float minDistanceToStart = numeric_limits<float>::max();
+				float minDistanceToEnd = numeric_limits<float>::max();
+
+				for (const auto & vertex : line.vertices) {
+					auto projectorNormalizedXY = vertex.projectorNormalizedXY;
+					//projectorNormalizedXY.y *= -1;
+					auto distanceToStart = projectorNormalizedXY.squareDistance(line.startProjector);
+					auto distanceToEnd = projectorNormalizedXY.squareDistance(line.endProjector);
+
+					if (distanceToStart < minDistanceToStart) {
+						minDistanceToStart = distanceToStart;
+						line.startWorld = vertex.world;
+					}
+
+					if (distanceToEnd < minDistanceToEnd) {
+						minDistanceToEnd = distanceToEnd;
+						line.endWorld = vertex.world;
+					}
+				}
+			}
+
 			void FitLines::fit() {
 				Utils::ScopedProcess scopedProcess("Fitting lines");
 
@@ -89,34 +149,97 @@ namespace ofxRulr {
 						continue;
 					}
 
-					auto scopedProcessScanProjector = Utils::ScopedProcess("Fit lines for " + projector->getName(), false);
+					auto scopedProcessScanProjector = Utils::ScopedProcess("Fit lines for " + projector->getName(), false, 100);
 					{
+						auto itemProjector = projector->getInput<Item::Projector>();
+						auto projectorView = itemProjector->getViewInWorldSpace();
+						auto projectorViewProjection = projectorView.getViewMatrix() * projectorView.getClippedProjectionMatrix();
+
 						auto & lines = projector->getLines();
+						auto countPerPercent = lines.size() / 100;
+						size_t count = 0;
 						for (auto & line : lines) {
+							if (count++ % countPerPercent == 0) {
+								Utils::ScopedProcess scopedProcessPercent("Fitting line " + ofToString(count) + ", index " + ofToString(line.lineIndex) + " by " + line.lastEditBy);
+							}
+
 							if (line.vertices.size() < 2) {
 								continue;
 							}
-							vector<DataPoint> dataPoints;
-							for (const auto & vertex : line.vertices) {
-								auto x = (vertex.projectorNormalizedXY - line.startProjector).dot((line.endProjector - line.startProjector).getNormalized());
-								x /= (line.endProjector - line.startProjector).length();
+							vector<ofVec3f> dataPoints;
 
-								dataPoints.emplace_back(DataPoint {
-									x
-									, vertex.world
-								});
+							ofVec3f mean;
+							{
+								for (const auto & vertex : line.vertices) {
+									mean += vertex.world;
+									dataPoints.emplace_back(vertex.world);
+								}
+								mean /= line.vertices.size();
 							}
-							ofxNonLinearFit::Fit<FitLineModel> fit;
-							FitLineModel model;
+
+							ofxRay::Ray ray;
 							double residual;
- 							fit.optimise(model, &dataPoints, &residual);
- 							cout << residual << endl;
- 							line.startWorld = model.lineStart;
- 							line.endWorld = model.lineEnd;
+
+							//first fit
+							{
+								ofxNonLinearFit::Fit<FitRayModel> fit;
+								FitRayModel model;
+								model.ray.s = mean;
+
+								//get the (infinite) ray which fits the vertices
+								fit.optimise(model, &dataPoints, &residual);
+								cout << residual << endl;
+								line.startWorld = model.ray.getStart();
+								line.endWorld = model.ray.getEnd();
+								ray = model.ray;
+							}
+
+
+							
+
+							
+
+							//the above is working!
+
+							if (residual < this->parameters.pick.maxResidualForFit) {
+								//fit start and end
+								{
+									FitPositionOnRayModel model;
+									model.projectorViewProjection = projectorViewProjection;
+									model.ray = ray;
+
+									//fit start 
+									{
+										model.targetPosition = line.startProjector;
+										ofxNonLinearFit::Fit<FitPositionOnRayModel> fit;
+										vector<FitPositionOnRayDataPoint> dataSet(1);
+										double residual;
+										fit.optimise(model, &dataSet, &residual);
+										cout << "r2 : " << residual << endl;
+										line.startWorld = model.world;
+									}
+
+									//fit end
+									//fit start 
+									{
+										model.targetPosition = line.endProjector;
+										ofxNonLinearFit::Fit<FitPositionOnRayModel> fit;
+										vector<FitPositionOnRayDataPoint> dataSet(1);
+										double residual;
+										fit.optimise(model, &dataSet, &residual);
+										cout << "r2 : " << residual << endl;
+										line.endWorld = model.world;
+									}
+								}
+							}
+							else {
+								pickLineEnds(line);
+							}
 						}
 					}
-					break;
 				}
+
+				scopedProcess.end();
 			}
 
 			//----------
@@ -143,35 +266,7 @@ namespace ofxRulr {
 							if (line.vertices.size() < 2) {
 								continue;
 							}
-
-							vector<DataPoint> dataPoints;
-							size_t startCount = 0;
-							size_t endCount = 0;
-							ofVec3f start, end;
-							for (const auto & vertex : line.vertices) {
-								if (vertex.projectorNormalizedXY.squareDistance(line.startProjector) < distanceThreshold2) {
-									start += vertex.world;
-									startCount++;
-								}
-								if (vertex.projectorNormalizedXY.squareDistance(line.endProjector) < distanceThreshold2) {
-									end += vertex.world;
-									endCount++;
-								}
-							}
-
-							start /= startCount;
-							end /= endCount;
-
-							cout << start << ", " << startCount << endl;
-							cout << end << ", " << endCount << endl;
-							cout << endl;
-
-							if (startCount == 0 || endCount == 0) {
-								continue;
-							}
-
-							line.startWorld = start;
-							line.endWorld = end;
+							pickLineEnds(line);
 						}
 					}
 					break;
@@ -179,6 +274,75 @@ namespace ofxRulr {
 				scopedProcess.end();
 			}
 
+			//----------
+			void FitLines::fullAuto() {
+				this->throwIfMissingAConnection<World>();
+				auto world = this->getInput<World>();
+				auto projectors = world->getProjectors();
+
+				Utils::ScopedProcess scopedProcess("Full auto", true, projectors.size());
+
+				auto result = ofSystemLoadDialog("Load lines.json from mapping");
+				if (!result.bSuccess) {
+					return;
+				}
+
+				for (auto projector : projectors) {
+					Utils::ScopedProcess scopedProcessProjector(projector->getName());
+					projector->triangulate(0.05f);
+					projector->loadMapping(result.filePath);
+					projector->calibrateProjector();
+					projector->dipLinesInData();
+				}
+
+				this->fit();
+				scopedProcess.end();
+			}
+
+			//----------
+			void FitLines::saveResults() {
+				this->throwIfMissingAConnection<World>();
+
+				auto world = this->getInput<World>();
+				auto projectors = world->getProjectors();
+				Utils::ScopedProcess scopedProcess("Saving", true, projectors.size());
+
+				auto result = ofSystemSaveDialog("lines.json", "Load lines.json with 3D information");
+				if (!result.bSuccess) {
+					return;
+				}
+
+				json jsonLines;
+
+				for (auto projector : projectors) {
+					const auto & lines = projector->getLines();
+					for (auto & line : lines) {
+						json jsonLine;
+						jsonLine["LineIndex"] = line.lineIndex;
+						jsonLine["ProjectorIndex"] = line.projectorIndex;
+						jsonLine["Start"]["x"] = line.startProjector.x;
+						jsonLine["Start"]["y"] = line.startProjector.y;
+						jsonLine["End"]["x"] = line.endProjector.x;
+						jsonLine["End"]["y"] = line.endProjector.y;
+						jsonLine["StartWorld"]["x"] = line.startWorld.x;
+						jsonLine["StartWorld"]["y"] = line.startWorld.y;
+						jsonLine["StartWorld"]["z"] = line.startWorld.z;
+						jsonLine["EndWorld"]["x"] = line.endWorld.x;
+						jsonLine["EndWorld"]["y"] = line.endWorld.y;
+						jsonLine["EndWorld"]["z"] = line.endWorld.z;
+						jsonLine["LastUpdate"] = line.lastUpdate;
+						jsonLine["LastEditBy"] = line.lastEditBy;
+						jsonLine["Age"] = line.age;
+						jsonLines.push_back(jsonLine);
+					}
+				}
+
+				ofFile file;
+				file.open(result.filePath, ofFile::WriteOnly, false);
+				file << jsonLines.dump();
+
+				scopedProcess.end();
+			}
 		}
 	}
 }

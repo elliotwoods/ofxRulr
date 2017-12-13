@@ -581,6 +581,7 @@ EXPORTS
 	?getClippedProjectionMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getHeight@Projector@ofxRay@@QEBAHXZ
 	?getNormalizedSCoordinateOfWorldPosition@Projector@ofxRay@@QEBA?AVofVec3f@@V3@@Z
+	?getProjectionMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getViewMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getWidth@Projector@ofxRay@@QEBAHXZ
 	?distanceTo@Ray@ofxRay@@QEBAMAEBVofVec3f@@@Z

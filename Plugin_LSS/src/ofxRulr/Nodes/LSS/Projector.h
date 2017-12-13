@@ -66,7 +66,7 @@ namespace ofxRulr {
 						colorIndex++;
 						this->color.setHueAngle((colorIndex * 10) % 360);
 					}
-					void drawWorld() const;
+					void drawWorld(bool labels) const;
 
 					vector<Vertex> vertices;
 					ofColor color;
@@ -118,11 +118,13 @@ namespace ofxRulr {
 
 				void loadMapping(const string & filename);
 				void dipLinesInData(); 
+				void calibrateProjector();
 				void trimLinesExceptOne(int lineIndex);
 
 				ofxCvGui::PanelPtr getPanel() override;
 
 				vector<Line> & getLines();
+				int getProjectorIndex() const;
 			protected:
 				void rebuildPreviews();
 
@@ -142,16 +144,18 @@ namespace ofxRulr {
 						ofParameter<WhenDrawOnWorldStage> rays{ "Draw rays", WhenDrawOnWorldStage::Selected };
 						ofParameter<WhenDrawOnWorldStage> unclassifiedVertices{ "Draw unclassified vertices", WhenDrawOnWorldStage::Always };
 						ofParameter<WhenDrawOnWorldStage> lines{ "Lines", WhenDrawOnWorldStage::Always };
+						ofParameter<WhenDrawOnWorldStage> lineLabels{ "Line labels", WhenDrawOnWorldStage::Selected };
 						ofParameter<bool> linesOnProjectorPreview{ "Lines on projector preview", true };
-						PARAM_DECLARE("Draw", rays, unclassifiedVertices, lines, linesOnProjectorPreview);
+						PARAM_DECLARE("Draw", rays, unclassifiedVertices, lines, lineLabels, linesOnProjectorPreview);
 					} draw;
 					
-					ofParameter<float> maximumResidual{ "Maximum residual", 0.005, 0.0001, 1.0};
+					ofParameter<float> maximumResidual{ "Maximum residual", 0.05, 0.0001, 1.0};
 					LineSearchParams lineSearch;
 
 					struct : ofParameterGroup {
-						ofParameter<float> searchThickness{ "Search thickness", 2.0f };
-						PARAM_DECLARE("Data dip", searchThickness);
+						ofParameter<float> searchThickness{ "Search thickness", 10.0f };
+						ofParameter<bool> progressive{ "Progressive", true };
+						PARAM_DECLARE("Data dip", searchThickness, progressive);
 					} dataDip;
 
 					PARAM_DECLARE("Projector"

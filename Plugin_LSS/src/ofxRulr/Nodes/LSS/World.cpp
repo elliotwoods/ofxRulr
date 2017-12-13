@@ -40,15 +40,20 @@ namespace ofxRulr {
 
 			//----------
 			vector<shared_ptr<Projector>> World::getProjectors() const {
-				vector<shared_ptr<Projector>> result;
+				multimap<int, shared_ptr<Projector>> resultMap;
 				for (auto projectorWeak : this->projectors) {
 					auto projector = projectorWeak.lock();
 					if (projector) {
-						result.push_back(projector);
+						resultMap.emplace(projector->getProjectorIndex(), projector);
 					}
 				}
 
-				return result;
+				vector<shared_ptr<Projector>> resultVector;
+				for (const auto & it : resultMap) {
+					resultVector.push_back(it.second);
+				}
+
+				return resultVector;
 			}
 		}
 	}
