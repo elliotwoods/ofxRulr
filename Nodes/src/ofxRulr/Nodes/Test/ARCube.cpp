@@ -155,8 +155,8 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ERROR
 
-						//update the fbo
-						this->fbo.begin();
+					//update the fbo
+					this->fbo.begin();
 					{
 						//draw the undistorted image
 						this->undistorted.draw(0, 0);

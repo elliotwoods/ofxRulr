@@ -110,6 +110,10 @@ namespace ofxRulr {
 									//draw current corners on top
 									ofxCv::drawCorners(this->currentImagePoints);
 
+									for (int i = 0; i < this->currentImagePoints.size(); i++) {
+										ofDrawBitmapString(ofToString(i), this->currentImagePoints[i]);
+									}
+
 									ofPopStyle();
 								}
 								ofPopMatrix();
@@ -239,6 +243,72 @@ namespace ofxRulr {
 				}
 
 				//----------
+				void CameraIntrinsics::addImage(cv::Mat image) {
+					this->throwIfMissingAConnection<Item::AbstractBoard>();
+					this->throwIfMissingAConnection<Item::Camera>();
+
+					auto board = this->getInput<Item::AbstractBoard>();
+					auto camera = this->getInput<Item::Camera>();
+
+					vector<ofVec2f> imagePoints;
+					vector<ofVec3f> objectPoints;
+
+					board->findBoard(image
+						, toCv(imagePoints)
+						, toCv(objectPoints)
+						, this->parameters.capture.findBoardMode
+						, camera->getCameraMatrix()
+						, camera->getDistortionCoefficients());
+
+					{
+						auto capture = make_shared<Capture>();
+						capture->pointsImageSpace = imagePoints;
+						capture->pointsObjectSpace = objectPoints;
+						capture->imageWidth = camera->getWidth();
+						capture->imageHeight = camera->getHeight();
+						this->captures.add(capture);
+					}
+				}
+
+				//----------
+				void CameraIntrinsics::addFolder(const std::filesystem::path & path) {
+
+					//get list of files
+					vector<string> filePaths;
+					for (std::filesystem::directory_iterator it(path)
+						; it != std::filesystem::directory_iterator()
+						; ++it) {
+						filePaths.push_back(it->path().string());
+					}
+
+					Utils::ScopedProcess scopedProcess("Adding folder images", true, filePaths.size());
+
+					//for each file in path
+					for(auto filePath : filePaths) {
+						try {
+							Utils::ScopedProcess fileScopedProcess(filePath, false);
+
+							//load image
+							auto image = cv::imread(filePath);
+
+							//check it loaded
+							if (image.empty()) {
+								continue;
+							}
+							else {
+								//add it to the captures
+								this->addImage(image);
+							}
+						}
+						RULR_CATCH_ALL_TO({
+							RULR_WARNING << e.what();
+						});
+					}
+
+					scopedProcess.end();
+				}
+
+				//----------
 				void CameraIntrinsics::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 					auto inspector = inspectArguments.inspector;
 					
@@ -278,6 +348,15 @@ namespace ofxRulr {
 
 					inspector->addSpacer();
 
+					inspector->addButton("Add folder of images", [this]() {
+						auto result = ofSystemLoadDialog("Folder of calibration images", true);
+						if (result.bSuccess) {
+							this->addFolder(std::filesystem::path(result.getPath()));
+						}
+					});
+
+					inspector->addSpacer();
+
 					inspector->addParameterGroup(this->parameters);
 				}
 
@@ -312,6 +391,7 @@ namespace ofxRulr {
 						this->captures.add(capture);
 					}
 				}
+
 				//----------
 				void CameraIntrinsics::findBoard() {
 					this->throwIfMissingAnyConnection();
@@ -346,18 +426,20 @@ namespace ofxRulr {
 				void CameraIntrinsics::calibrate() {
 					this->throwIfMissingAConnection<Item::Camera>();
 
-					auto allCaptures = this->captures.getAllCaptures();
+					auto captures = this->captures.getSelection();
 					
-					if (allCaptures.size() < 2) {
+					if (captures.size() < 2) {
 						throw(ofxRulr::Exception("You need to add at least 2 captures before trying to calibrate (ideally 10)"));
 					}
 					auto camera = this->getInput<Item::Camera>();
 
 					vector<vector<Point2f>> imagePoints;
 					vector<vector<Point3f>> objectPoints;
-					for (auto & capture : allCaptures) {
-						imagePoints.push_back(toCv(capture->pointsImageSpace));
-						objectPoints.push_back(toCv(capture->pointsObjectSpace));
+					for (auto & capture : captures) {
+						if (capture->pointsImageSpace.size() > 0) {
+							imagePoints.push_back(toCv(capture->pointsImageSpace));
+							objectPoints.push_back(toCv(capture->pointsObjectSpace));
+						}
 					}
 
 					cv::Size cameraResolution(camera->getWidth(), camera->getHeight());
@@ -369,15 +451,16 @@ namespace ofxRulr {
 					this->error = cv::calibrateCamera(objectPoints, imagePoints, cameraResolution, cameraMatrix, distortionCoefficients, Rotations, Translations, flags);
 					camera->setIntrinsics(cameraMatrix, distortionCoefficients);
 
-					for (int i = 0; i < allCaptures.size(); i++) {
-						auto capture = allCaptures[i];
+					for (int i = 0; i < captures.size(); i++) {
+						auto capture = captures[i];
 						capture->extrsinsics = makeMatrix(Rotations[i], Translations[i]);
 						
 						vector<Point2f> reprojectedImageCoordinates;
 						cv::projectPoints(toCv(capture->pointsObjectSpace), Rotations[i], Translations[i], cameraMatrix, distortionCoefficients, reprojectedImageCoordinates);
 						float reprojectionErrorSquaredSum = 0.0f;
-						for (int i = 0; i < reprojectedImageCoordinates.size(); i++) {
-							reprojectionErrorSquaredSum += (toOf(reprojectedImageCoordinates[i]) - capture->pointsImageSpace[i]).lengthSquared();
+
+						for (int j = 0; j < reprojectedImageCoordinates.size(); j++) {
+							reprojectionErrorSquaredSum += (toOf(reprojectedImageCoordinates[j]) - capture->pointsImageSpace[j]).lengthSquared();
 						}
 						capture->reprojectionError = sqrt(reprojectionErrorSquaredSum / (float)reprojectedImageCoordinates.size());
 					}

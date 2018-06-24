@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\pch_Plugin_Experiments.cpp" />
+    <ClCompile Include="src\plugin.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\TestObject.cpp">
+      <Filter>src\ofxRulr\Experiments\SolvePnP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.cpp">
+      <Filter>src\ofxRulr\Experiments\SolvePnP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.cpp">
+      <Filter>src\ofxRulr\Experiments\SolvePnP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolveMirror\SolveMirror.cpp">
+      <Filter>src\ofxRulr\Experiments\SolveMirror</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.cpp">
+      <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_Experiments.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\TestObject.h">
+      <Filter>src\ofxRulr\Experiments\SolvePnP</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.h">
+      <Filter>src\ofxRulr\Experiments\SolvePnP</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.h">
+      <Filter>src\ofxRulr\Experiments\SolvePnP</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolveMirror\SolveMirror.h">
+      <Filter>src\ofxRulr\Experiments\SolveMirror</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.h">
+      <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{9913a1d7-50cf-431a-ba37-d925c1efc463}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{8551b9aa-83e9-4543-977a-36e938e411b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Experiments">
+      <UniqueIdentifier>{fb0eceac-a621-45ff-b656-68b1b3888be2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Experiments\SolvePnP">
+      <UniqueIdentifier>{57879dba-d2a0-4222-8555-3d67ad5d06b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Experiments\SolveMirror">
+      <UniqueIdentifier>{a13b624c-1893-4263-8bc5-3d213d810fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Experiments\MirrorPlaneCapture">
+      <UniqueIdentifier>{6225c5c4-68e7-4fa6-90ab-17ef387eb1a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Experiments\PhotoScan">
+      <UniqueIdentifier>{5b820a98-344a-439f-b8b4-cf8c10af6673}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

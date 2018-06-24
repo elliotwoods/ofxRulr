@@ -146,6 +146,8 @@ namespace ofxRulr {
 					detectorParams->adaptiveThreshWinSizeMin = 3;
 					detectorParams->adaptiveThreshWinSizeMax = 33;
 					detectorParams->adaptiveThreshWinSizeStep = 5;
+					detectorParams->errorCorrectionRate = this->parameters.detection.errorCorrectionRate;
+
 					if (image.cols > 5000) {
 						detectorParams->minMarkerPerimeterRate = 0.003;
 					}

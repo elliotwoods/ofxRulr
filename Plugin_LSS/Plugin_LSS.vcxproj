@@ -79,13 +79,13 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Packer.cpp">
+    <ClCompile Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Packer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Stream.cpp">
+    <ClCompile Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Stream.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.cpp">
+    <ClCompile Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\LSS\FitLines.cpp" />
@@ -99,10 +99,10 @@
     <ClCompile Include="src\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack.h" />
-    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Packer.h" />
-    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Stream.h" />
-    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.h" />
+    <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack.h" />
+    <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Packer.h" />
+    <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Stream.h" />
+    <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.h" />
     <ClInclude Include="src\ofxRulr\Nodes\LSS\FitLines.h" />
     <ClInclude Include="src\ofxRulr\Nodes\LSS\Projector.h" />
     <ClInclude Include="src\ofxRulr\Nodes\LSS\Scan.h" />

@@ -130,7 +130,8 @@ namespace ofxRulr {
 								, cameraNode->getDistortionCoefficients()
 								, rotation
 								, translation
-								, true);
+								, true
+								, cv::SOLVEPNP_ITERATIVE);
 						}
 						else {
 							cv::solvePnPRansac(worldPoints
@@ -139,7 +140,8 @@ namespace ofxRulr {
 								, cameraNode->getDistortionCoefficients()
 								, rotation
 								, translation
-								, true);
+								, true
+								, cv::SOLVEPNP_ITERATIVE);
 						}
 						break;
 					}

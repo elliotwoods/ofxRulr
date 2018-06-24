@@ -26,7 +26,18 @@ namespace ofxRulr {
 			VideoOutput::Output::Output(int index, GLFWmonitor * monitor) {
 				this->index = index;
 				this->monitor = monitor;
-				glfwGetMonitorPhysicalSize(monitor, &this->width, &this->height);
+
+				{
+					auto videoMode = glfwGetVideoMode(monitor);
+					if (videoMode != NULL) {
+						this->width = videoMode->width;
+						this->height = videoMode->height;
+					}
+					else {
+						this->width = 0;
+						this->height = 0;
+					}
+				}
 				this->name = glfwGetMonitorName(monitor);
 			}
 
@@ -532,8 +543,14 @@ namespace ofxRulr {
 							}
 
 							ofSetColor(255);
-							const auto textBounds = font.getStringBoundingBox(videoOutput.name, 0, 0);
-							font.drawString(videoOutput.name, (int)((selectButton->getWidth() - textBounds.width) / 2.0f), (int)((selectButton->getHeight() + textBounds.height) / 2.0f));
+							{
+								stringstream text;
+								text << videoOutput.name << endl;
+								text << videoOutput.width << "x" << videoOutput.height;
+								const auto textBounds = font.getStringBoundingBox(text.str(), 0, 0);
+								font.drawString(text.str(), (int)((selectButton->getWidth() - textBounds.width) / 2.0f), (int)((selectButton->getHeight() + textBounds.height) / 2.0f));
+							}
+							
 						}
 						ofPopStyle();
 					};

@@ -16,3 +16,5 @@
 #include "ofxRulr/Nodes/ArUco/MarkerMap.h"
 #include "ofxRulr/Nodes/ArUco/MarkerMapPoseTracker.h"
 #include "ofxRulr/Nodes/ArUco/OSCRelay.h"
+
+#include "pch_Plugin_ArUco.h"

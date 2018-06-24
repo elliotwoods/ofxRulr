@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Constants_Plugin_ArUco.h"
 #include "ofxRulr/Nodes/Base.h"
 #include <aruco/aruco.h>
 

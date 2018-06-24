@@ -218,8 +218,14 @@ namespace ofxRulr {
 
 		//----------
 		void AbstractCaptureSet::add(shared_ptr<BaseCapture> capture) {
+			if (find(this->captures.begin(), this->captures.end(), capture) != this->captures.end()) {
+				return;
+			}
+
 			auto captureWeak = weak_ptr<BaseCapture>(capture);
 			capture->onDeletePressed += [captureWeak, this]() {
+				this->listView->clear();
+				this->viewDirty = true;
 				auto capture = captureWeak.lock();
 				if (capture) {
 					this->remove(capture);
@@ -266,9 +272,11 @@ namespace ofxRulr {
 
 		//----------
 		void AbstractCaptureSet::clear() {
+			this->listView->clear();
 			while (!this->captures.empty()) {
 				this->remove(* this->captures.begin());
 			}
+			this->viewDirty = true;
 		}
 
 		//----------
@@ -392,6 +400,11 @@ namespace ofxRulr {
 		//----------
 		vector<shared_ptr<ofxRulr::Utils::AbstractCaptureSet::BaseCapture>> AbstractCaptureSet::getAllCapturesUntyped() const {
 			return this->captures;
+		}
+
+		//----------
+		size_t AbstractCaptureSet::size() const {
+			return this->captures.size();
 		}
 	}
 }

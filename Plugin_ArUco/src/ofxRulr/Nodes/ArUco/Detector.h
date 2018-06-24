@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Constants_Plugin_ArUco.h"
 #include "ofxRulr/Nodes/Base.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
 #include <aruco/aruco.h>
@@ -9,7 +10,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace ArUco {
-			class Detector : public Nodes::Base {
+			class PLUGIN_ARUCO_EXPORTS Detector : public Nodes::Base {
 			public:
 				Detector();
 				string getTypeName() const override;
