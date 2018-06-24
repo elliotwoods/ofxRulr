@@ -34,7 +34,7 @@ namespace ofxRulr {
 
 					this->addInput<Item::Camera>();
 
-					this->panel = ofxCvGui::Panels::makeImage(this->previewTiePoints);
+					this->panel = ofxCvGui::Panels::makeTexture(this->previewTilePoints.getTexture());
 
 					this->manageParameters(this->parameters);
 				}
@@ -62,28 +62,32 @@ namespace ofxRulr {
 						const auto cameraWidth = camera->getWidth();
 						const auto cameraHeight = camera->getHeight();
 
-						//clear preview
-						this->previewTiePoints.allocate(cameraWidth, cameraHeight, OF_IMAGE_COLOR_ALPHA);
-						this->previewTiePoints.getPixels().set(0);
-						auto previewTiePointsPixels = this->previewTiePoints.getPixels().getData();
+						//transform the points and draw to preview as we go along
+						this->previewTilePoints.allocate(cameraWidth, cameraHeight, OF_IMAGE_COLOR_ALPHA);
+						this->previewTilePoints.begin();
+						{
+							ofClear(0, 255);
 
-						for (int i = 0; i < capture->imagePoints.size(); i+= this->parameters.calibrate.decimator) {
-							const auto & rawWorldPoint = capture->worldPoints[i];
-							const auto & rawImagePoint = capture->imagePoints[i];
+							for (int i = 0; i < capture->imagePoints.size(); i += this->parameters.calibrate.decimator) {
+								const auto & rawWorldPoint = capture->worldPoints[i];
+								const auto & rawImagePoint = capture->imagePoints[i];
 
-							auto imagePoint = cv::Point2f(cameraWidth / 2.0f + rawImagePoint.x
-								, cameraHeight / 2.0f - rawImagePoint.y
-							);
+								auto imagePoint = cv::Point2f(cameraWidth / 2.0f + rawImagePoint.x
+									, cameraHeight / 2.0f - rawImagePoint.y
+								);
 
-							worldPointsSets[0].push_back(rawWorldPoint);
-							imagePointsSets[0].push_back(imagePoint);
+								worldPointsSets[0].push_back(rawWorldPoint);
+								imagePointsSets[0].push_back(imagePoint);
 
-							//colour the preview pixel
-							int pixelIndex = imagePoint.x + imagePoint.y * cameraWidth;
-							previewTiePointsPixels[pixelIndex] = 255;
+								ofPushStyle();
+								{
+									ofSetColor(capture->tiePointColors[i]);
+									ofDrawCircle(ofxCv::toOf(imagePoint), this->parameters.preview.dotSize);
+								}
+								ofPopStyle();
+							}
 						}
-
-						this->previewTiePoints.update();
+						this->previewTilePoints.end();
 					}
 
 					cv::Mat cameraMatrix = camera->getCameraMatrix();

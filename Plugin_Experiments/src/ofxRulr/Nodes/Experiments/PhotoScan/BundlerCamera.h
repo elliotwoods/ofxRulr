@@ -39,11 +39,16 @@ namespace ofxRulr {
 				protected:
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
+							ofParameter<float> dotSize{ "Dot Size", 5, 1, 256 };
+							PARAM_DECLARE("Preview", dotSize);
+						} preview;
+
+						struct : ofParameterGroup {
 							ofParameter<int> decimator{ "Decimator", 1, 1, 256 };
 							PARAM_DECLARE("Calibrate", decimator);
 						} calibrate;
 
-						PARAM_DECLARE("BundlerCamera", calibrate);
+						PARAM_DECLARE("BundlerCamera", preview, calibrate);
 					} parameters;
 
 					ofxCvGui::PanelPtr panel;
@@ -52,7 +57,7 @@ namespace ofxRulr {
 
 					ofParameter<float> reprojectionError{ "Reprojection error [px]", 0, 0, 100.0 };
 
-					ofImage previewTiePoints;
+					ofFbo previewTilePoints;
 				};
 			}
 		}
