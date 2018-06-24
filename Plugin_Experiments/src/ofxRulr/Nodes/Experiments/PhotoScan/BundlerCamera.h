@@ -44,8 +44,10 @@ namespace ofxRulr {
 						} preview;
 
 						struct : ofParameterGroup {
+							ofParameter<bool> initialiseWithBundlerCalibration{ "Init with bundler calib", true };
+							ofParameter<bool> useAllForCalib{ "Use all for calib", true };
 							ofParameter<int> decimator{ "Decimator", 1, 1, 256 };
-							PARAM_DECLARE("Calibrate", decimator);
+							PARAM_DECLARE("Calibrate", initialiseWithBundlerCalibration, useAllForCalib, decimator);
 						} calibrate;
 
 						PARAM_DECLARE("BundlerCamera", preview, calibrate);

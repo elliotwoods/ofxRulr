@@ -34,6 +34,7 @@ namespace ofxRulr {
 
 					this->addInput<Item::Camera>();
 
+					this->previewTilePoints.allocate(1, 1, GL_RGBA);
 					this->panel = ofxCvGui::Panels::makeTexture(this->previewTilePoints.getTexture());
 
 					this->manageParameters(this->parameters);
@@ -54,19 +55,18 @@ namespace ofxRulr {
 						throw(ofxRulr::Exception("Please select exactly one capture when calibrating camera"));
 					}
 
-					auto capture = captures[0];
+					auto selectedCapture = captures[0];
 
-					vector<vector<cv::Point3f>> worldPointsSets(1);
-					vector<vector<cv::Point2f>> imagePointsSets(1);
+					vector<vector<cv::Point3f>> worldPointsSets;
+					vector<vector<cv::Point2f>> imagePointsSets;
 					{
 						const auto cameraWidth = camera->getWidth();
 						const auto cameraHeight = camera->getHeight();
 
-						//transform the points and draw to preview as we go along
-						this->previewTilePoints.allocate(cameraWidth, cameraHeight, OF_IMAGE_COLOR_ALPHA);
-						this->previewTilePoints.begin();
-						{
-							ofClear(0, 255);
+						//function to add a capture to the dataset
+						auto addToSet = [this, cameraWidth, cameraHeight, &worldPointsSets, &imagePointsSets](shared_ptr<Capture> capture, bool drawOnPreview) {
+							vector<cv::Point3f> worldPoints;
+							vector<cv::Point2f> imagePoints;
 
 							for (int i = 0; i < capture->imagePoints.size(); i += this->parameters.calibrate.decimator) {
 								const auto & rawWorldPoint = capture->worldPoints[i];
@@ -76,23 +76,55 @@ namespace ofxRulr {
 									, cameraHeight / 2.0f - rawImagePoint.y
 								);
 
-								worldPointsSets[0].push_back(rawWorldPoint);
-								imagePointsSets[0].push_back(imagePoint);
+								worldPoints.push_back(rawWorldPoint);
+								imagePoints.push_back(imagePoint);
 
-								ofPushStyle();
-								{
-									ofSetColor(capture->tiePointColors[i]);
-									ofDrawCircle(ofxCv::toOf(imagePoint), this->parameters.preview.dotSize);
+								if (drawOnPreview) {
+									ofPushStyle();
+									{
+										ofSetColor(capture->tiePointColors[i]);
+										ofDrawCircle(ofxCv::toOf(imagePoint), this->parameters.preview.dotSize);
+									}
+									ofPopStyle();
 								}
-								ofPopStyle();
 							}
+
+							worldPointsSets.push_back(worldPoints);
+							imagePointsSets.push_back(imagePoints);
+						};
+
+						//transform the points and draw to preview as we go along
+						this->previewTilePoints.allocate(cameraWidth, cameraHeight, GL_RGBA);
+						this->previewTilePoints.begin();
+						{
+							ofClear(0, 255);
+							addToSet(selectedCapture, true);
 						}
 						this->previewTilePoints.end();
+
+						//add all the other captures if we want them
+						if (this->parameters.calibrate.useAllForCalib) {
+							auto allCaptures = this->captures.getAllCaptures();
+							for (auto capture : allCaptures) {
+								if (capture == selectedCapture) {
+									//don't add it twice
+									continue;
+								}
+								addToSet(capture, false);
+							}
+						}
 					}
 
 					cv::Mat cameraMatrix = camera->getCameraMatrix();
 					cv::Mat distortionCoefficients = camera->getDistortionCoefficients();
 					vector<cv::Mat> rotationVectors, translations;
+
+					if (this->parameters.calibrate.initialiseWithBundlerCalibration) {
+						cameraMatrix.at<double>(0, 0) = selectedCapture->f;
+						cameraMatrix.at<double>(1, 1) = selectedCapture->f;
+						cameraMatrix.at<double>(0, 2) = camera->getWidth() / 2.0f;
+						cameraMatrix.at<double>(1, 2) = camera->getHeight() / 2.0f;
+					}
 
 					this->reprojectionError = cv::calibrateCamera(worldPointsSets
 						, imagePointsSets
@@ -137,7 +169,9 @@ namespace ofxRulr {
 
 					inspector->addButton("Calibrate", [this]() {
 						try {
+							Utils::ScopedProcess scopedProcess("Calibrating...");
 							this->calibrate();
+							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 					}, OF_KEY_RETURN)->setHeight(100.0f);
