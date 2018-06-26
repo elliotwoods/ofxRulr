@@ -36,7 +36,11 @@ namespace ofxRulr {
 								PARAM_DECLARE("Initial", lensOffset, throwRatio);
 							} initial;
 
-							PARAM_DECLARE("Calibrate", initial);
+
+							ofParameter<bool> filterOutliers{ "Filter outliers", true };
+							ofParameter<float> maximumReprojectionError{ "Max reprojection error", 5.0, 0.0, 100.0 };
+
+							PARAM_DECLARE("Calibrate", initial, filterOutliers, maximumReprojectionError);
 						} calibrate;
 
 						PARAM_DECLARE("CalibrateProjector", disocontinuityFiltering, calibrate);

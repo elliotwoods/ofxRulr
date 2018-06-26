@@ -133,7 +133,7 @@ namespace ofxRulr {
 					//initialise the projector fov
 					auto cameraMatrix = projectorNode->getCameraMatrix();
 					auto distortionCoefficients = projectorNode->getDistortionCoefficients();
-					{
+					auto initParams = [&]() {
 						auto initialThrowRatio = this->parameters.calibrate.initial.throwRatio;
 						auto initialLensOffset = this->parameters.calibrate.initial.lensOffset;
 
@@ -143,26 +143,84 @@ namespace ofxRulr {
 						cameraMatrix.at<double>(0, 2) = projectorWidth / 2.0f;
 						cameraMatrix.at<double>(1, 2) = projectorHeight * (0.50f - initialLensOffset / 2.0f);
 						distortionCoefficients = cv::Mat::zeros(5, 1, CV_64F);
-					}
+					};
+					initParams();
 
 					vector<cv::Mat> rotationVectors, translations;
 
-					this->reprojectionError = cv::calibrateCamera(vector<vector<cv::Point3f>>(1, worldPoints)
-						, vector<vector<cv::Point2f>>(1, projectorImagePoints)
-						, projectorNode->getSize()
-						, cameraMatrix
-						, distortionCoefficients
-						, rotationVectors
-						, translations
-						, CV_CALIB_FIX_K1
-						| CV_CALIB_FIX_K2
-						| CV_CALIB_FIX_K3
-						| CV_CALIB_FIX_K4
-						| CV_CALIB_FIX_K5
-						| CV_CALIB_FIX_K6
-						| CV_CALIB_ZERO_TANGENT_DIST
-						| CV_CALIB_USE_INTRINSIC_GUESS
-						| CV_CALIB_FIX_ASPECT_RATIO);
+					cout << "Calibrating projector with " << worldPoints.size() << " points" << endl;
+
+					auto calib = [&]() {
+						this->reprojectionError = cv::calibrateCamera(vector<vector<cv::Point3f>>(1, worldPoints)
+							, vector<vector<cv::Point2f>>(1, projectorImagePoints)
+							, projectorNode->getSize()
+							, cameraMatrix
+							, distortionCoefficients
+							, rotationVectors
+							, translations
+							, CV_CALIB_FIX_K1
+							| CV_CALIB_FIX_K2
+							| CV_CALIB_FIX_K3
+							| CV_CALIB_FIX_K4
+							| CV_CALIB_FIX_K5
+							| CV_CALIB_FIX_K6
+							| CV_CALIB_ZERO_TANGENT_DIST
+							| CV_CALIB_USE_INTRINSIC_GUESS
+							| CV_CALIB_FIX_ASPECT_RATIO);
+					};
+					calib();
+
+					//check reprojections
+					if(this->parameters.calibrate.filterOutliers) {
+						vector<cv::Point2f> imagePointsReprojected;
+						cv::projectPoints(worldPoints
+							, rotationVectors.front()
+							, translations.front()
+							, cameraMatrix
+							, distortionCoefficients
+							, imagePointsReprojected);
+
+						set<int> outlierIndicies;
+						for (int i = 0; i < imagePointsReprojected.size(); i++) {
+							auto delta = ofxCv::toOf(imagePointsReprojected[i]) - ofxCv::toOf(projectorImagePoints[i]);
+							auto reprojectionError = delta.length();
+							cout << "[" << i << "] " << reprojectionError << endl;
+
+							if (reprojectionError > this->parameters.calibrate.maximumReprojectionError) {
+								outlierIndicies.insert(i);
+							}
+						}
+
+						//trim world points
+						{
+							auto index = 0;
+							for (auto it = worldPoints.begin(); it != worldPoints.end(); ) {
+								if (outlierIndicies.find(index++) != outlierIndicies.end()) {
+									it = worldPoints.erase(it);
+								}
+								else {
+									it++;
+								}
+							}
+						}
+
+						//trim image points
+						{
+							auto index = 0;
+							for (auto it = projectorImagePoints.begin(); it != projectorImagePoints.end(); ) {
+								if (outlierIndicies.find(index++) != outlierIndicies.end()) {
+									it = projectorImagePoints.erase(it);
+								}
+								else {
+									it++;
+								}
+							}
+						}
+
+						//calib again with trimmed points
+						initParams();
+						calib();
+					}
 
 					projectorNode->setIntrinsics(cameraMatrix
 						, distortionCoefficients);
