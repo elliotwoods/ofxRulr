@@ -201,6 +201,7 @@ EXPORTS
 	??1?$ofPixels_@G@@QEAA@XZ
 	?getData@?$ofPixels_@I@@QEBAPEBIXZ
 	?getHeight@?$ofPixels_@I@@QEBAHXZ
+	?getPixelIndex@?$ofPixels_@I@@QEBAHHH@Z
 	?getWidth@?$ofPixels_@I@@QEBAHXZ
 	??0?$ofPixels_@I@@QEAA@AEBV0@@Z
 	??0?$ofPixels_@I@@QEAA@XZ
@@ -563,13 +564,14 @@ EXPORTS
 	??0Payload@ofxGraycode@@QEAA@XZ
 	??5Encoder@ofxGraycode@@QEAA_NAEAV?$ofImage_@E@@@Z
 	??6Decoder@ofxGraycode@@QEAAXAEBV?$ofPixels_@E@@@Z
-	?init@BaseCodec@ofxGraycode@@QEAAXAEAVPayload@2@@Z
+	?init@BaseCodec@ofxGraycode@@QEAAXV?$shared_ptr@VPayload@ofxGraycode@@@std@@@Z
 	??9const_iterator@DataSet@ofxGraycode@@QEBA_NAEBU012@@Z
 	??Dconst_iterator@DataSet@ofxGraycode@@QEBA?AUreference@012@XZ
 	??Econst_iterator@DataSet@ofxGraycode@@QEAAXXZ
 	?begin@DataSet@ofxGraycode@@QEBA?AUconst_iterator@12@XZ
 	?end@DataSet@ofxGraycode@@QEBA?AUconst_iterator@12@XZ
 	?getActive@DataSet@ofxGraycode@@QEBAAEBV?$ofPixels_@E@@XZ
+	?getData@DataSet@ofxGraycode@@QEBAAEBV?$ofPixels_@I@@XZ
 	?getDataInverse@DataSet@ofxGraycode@@QEAAAEAV?$ofPixels_@I@@XZ
 	?getFilename@DataSet@ofxGraycode@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getHasData@DataSet@ofxGraycode@@QEBA_NXZ

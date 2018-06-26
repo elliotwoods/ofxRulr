@@ -160,15 +160,15 @@ namespace ofxRulr {
 					auto grabberA = cameraANode->getGrabber();
 					auto grabberB = cameraBNode->getGrabber();
 
-					auto payload = make_unique<ofxGraycode::PayloadGraycode>();
+					auto payload = make_shared<ofxGraycode::PayloadGraycode>();
 					payload->init(videoOutputNode->getWidth(), videoOutputNode->getHeight());
 
 					auto encoder = make_unique<ofxGraycode::Encoder>();
 					auto decoderA = make_unique<ofxGraycode::Decoder>();
 					auto decoderB = make_unique<ofxGraycode::Decoder>();
-					encoder->init(*payload);
-					decoderA->init(*payload);
-					decoderB->init(*payload);
+					encoder->init(payload);
+					decoderA->init(payload);
+					decoderB->init(payload);
 
 					decoderA->setThreshold(this->parameters.scan.threshold);
 					decoderB->setThreshold(this->parameters.scan.threshold);

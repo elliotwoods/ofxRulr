@@ -33,7 +33,7 @@ namespace ofxRulr {
 				public:
 					void run(Latency * parent);
 
-					ofxGraycode::PayloadGraycode payload;
+					shared_ptr<ofxGraycode::PayloadGraycode> payload;
 					ofxGraycode::Encoder encoder;
 					ofxGraycode::Decoder decoder;
 					chrono::high_resolution_clock::time_point lastFrameSent;

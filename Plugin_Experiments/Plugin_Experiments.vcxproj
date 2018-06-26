@@ -88,6 +88,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolveMirror\SolveMirror.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.cpp" />
@@ -106,6 +107,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolveMirror\SolveMirror.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.h" />

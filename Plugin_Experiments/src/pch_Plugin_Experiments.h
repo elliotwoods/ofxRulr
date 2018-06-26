@@ -24,3 +24,6 @@
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/SolarAlignment.h"
 
 #include "ofxRulr/Nodes/Experiments/PhotoScan/BundlerCamera.h"
+#include "ofxRulr/Nodes/Experiments/PhotoScan/CalibrateProjector.h"
+
+#include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"

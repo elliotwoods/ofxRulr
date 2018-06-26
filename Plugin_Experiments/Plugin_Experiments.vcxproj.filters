@@ -36,6 +36,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.cpp">
       <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.cpp">
+      <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -70,6 +73,9 @@
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.h">
+      <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.h">
       <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
     </ClInclude>
   </ItemGroup>

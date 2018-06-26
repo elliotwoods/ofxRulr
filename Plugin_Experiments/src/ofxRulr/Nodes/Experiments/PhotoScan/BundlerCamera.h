@@ -35,6 +35,8 @@ namespace ofxRulr {
 					void populateInspector(ofxCvGui::InspectArguments &);
 					void drawWorldStage();
 
+					vector<shared_ptr<Capture>> getSelectedCaptures() const;
+
 					void importBundler(const string & filePath);
 				protected:
 					struct : ofParameterGroup {

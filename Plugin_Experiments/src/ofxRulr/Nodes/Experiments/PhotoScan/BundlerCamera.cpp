@@ -70,11 +70,7 @@ namespace ofxRulr {
 
 							for (int i = 0; i < capture->imagePoints.size(); i += this->parameters.calibrate.decimator) {
 								const auto & rawWorldPoint = capture->worldPoints[i];
-								const auto & rawImagePoint = capture->imagePoints[i];
-
-								auto imagePoint = cv::Point2f(cameraWidth / 2.0f + rawImagePoint.x
-									, cameraHeight / 2.0f - rawImagePoint.y
-								);
+								const auto & imagePoint = capture->imagePoints[i];
 
 								worldPoints.push_back(rawWorldPoint);
 								imagePoints.push_back(imagePoint);
@@ -188,7 +184,17 @@ namespace ofxRulr {
 				}
 
 				//----------
+				vector<shared_ptr<BundlerCamera::Capture>> BundlerCamera::getSelectedCaptures() const {
+					return this->captures.getSelection();
+				}
+
+				//----------
 				void BundlerCamera::importBundler(const string & filePath) {
+					this->throwIfMissingAConnection<Item::Camera>();
+					auto cameraNode = this->getInput<Item::Camera>();
+					auto cameraWidth = cameraNode->getWidth();
+					auto cameraHeight = cameraNode->getHeight();
+
 					auto fileContents = ofFile(filePath).readToBuffer();
 					Json::Value json;
 					Json::Reader().parse((const string &)fileContents, json);
@@ -209,6 +215,15 @@ namespace ofxRulr {
 							ofVec2f imagePoint;
 							for (int i = 0; i < 2; i++) {
 								imagePoint[i] = jsonTiePoint["imageSpace"][i].asFloat();
+							}
+
+							imagePoint.x = cameraWidth / 2.0f + imagePoint.x;
+							imagePoint.y = cameraHeight / 2.0f - imagePoint.y;
+
+							if (imagePoint.x < 0 || imagePoint.x >= cameraWidth
+								|| imagePoint.y < 0 || imagePoint.y >= cameraHeight) {
+								//image point is outside of the camera size
+								continue;
 							}
 
 							ofFloatColor color(255, 255, 255, 255);
