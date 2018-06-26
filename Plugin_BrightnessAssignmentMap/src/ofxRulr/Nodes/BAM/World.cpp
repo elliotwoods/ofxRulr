@@ -44,6 +44,16 @@ namespace ofxRulr {
 				inspector->add(histogramWidget);
 
 				inspector->addButton("Update histogram", updateHistogram);
+
+				inspector->addButton("Export all...", [this]() {
+					try {
+						auto result = ofSystemLoadDialog("Output path", true);
+						if (result.bSuccess) {
+							this->exportAll(result.filePath);
+						}
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				})->setHeight(100.0f);
 			}
 
 			//----------
@@ -81,6 +91,24 @@ namespace ofxRulr {
 			//----------
 			const ofParameterGroup & World::getParameters() const {
 				return this->parameters;
+			}
+
+			//----------
+			void World::exportAll(const string & folderPath) const {
+				auto bamProjectors = this->getProjectors();
+				for (auto bamProjector : bamProjectors) {
+					auto projectorViewNode = bamProjector->getInput<Item::Projector>();
+					auto pathBase = folderPath + "/" + projectorViewNode->getName();
+					cout << "Exporting to " << pathBase << endl;
+
+					bamProjector->exportPass(ofxRulr::Nodes::BAM::Pass::BrightnessAssignmentMap, pathBase + "-BrightnessAssignmentMap.exr");
+					bamProjector->exportPass(ofxRulr::Nodes::BAM::Pass::BrightnessAssignmentMap, pathBase + "-BrightnessAssignmentMap.png");
+					bamProjector->exportPass(ofxRulr::Nodes::BAM::Pass::AvailabilityProjection, pathBase + "-AvailabilityProjection.exr");
+					bamProjector->exportPass(ofxRulr::Nodes::BAM::Pass::AvailabilityProjection, pathBase + "-AvailabilityProjection.png");
+					bamProjector->exportPass(ofxRulr::Nodes::BAM::Pass::AccumulateAvailability, pathBase + "-AccumulateAvailability.exr");
+					bamProjector->exportPass(ofxRulr::Nodes::BAM::Pass::AccumulateAvailability, pathBase + "-AccumulateAvailability.png");
+					bamProjector->exportPass(ofxRulr::Nodes::BAM::Pass::Color, pathBase + "-Color.png");
+				}
 			}
 		}
 	}

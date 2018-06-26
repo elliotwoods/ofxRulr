@@ -24,7 +24,7 @@ namespace ofxRulr {
 							struct : ofParameterGroup {
 								ofParameter<float> threshold{ "Threshold", 5, 0, 255 };
 								ofParameter<int> dilations{ "Dilations", 3, 0, 10 };
-								PARAM_DECLARE("Mask", threshold);
+								PARAM_DECLARE("Mask", threshold, dilations);
 							} mask;
 							PARAM_DECLARE("Discontinuity filtering", mask);
 						} disocontinuityFiltering;
