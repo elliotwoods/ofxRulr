@@ -79,6 +79,10 @@ namespace ofxRulr {
 
 				//----------
 				void Graycode::update() {
+					if (this->suite) {
+						this->suite->decoder.update();
+					}
+
 					if(this->previewDirty) {
 						this->updatePreview();
 					}
@@ -317,6 +321,9 @@ namespace ofxRulr {
 					this->suite->decoder.loadDataSet(filename);
 					this->suite->payload = suite->decoder.getPayload();
 					this->suite->encoder.init(suite->payload);
+					this->parameters.processing.threshold = this->suite->decoder.getThreshold();
+
+					this->previewDirty = true;
 				}
 
 				//----------

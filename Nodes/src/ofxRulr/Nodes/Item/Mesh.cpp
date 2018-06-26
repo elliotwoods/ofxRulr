@@ -41,6 +41,10 @@ namespace ofxRulr {
 				this->addInput<Render::Style>();
 
 				this->modelLoader = make_unique<ofxAssimpModelLoader>();
+
+				//HACK : This is more common, esp coming from PhotoScan data
+				this->parameters.transform.theirXIsOur = Axes::NegX;
+				this->parameters.transform.theirYIsOur = Axes::NegY;
 			}
 
 			//----------
