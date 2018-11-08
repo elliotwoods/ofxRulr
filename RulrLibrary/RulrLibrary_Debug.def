@@ -552,7 +552,7 @@ EXPORTS
 	??0Payload@ofxGraycode@@QEAA@XZ
 	??5Encoder@ofxGraycode@@QEAA_NAEAV?$ofImage_@E@@@Z
 	??6Decoder@ofxGraycode@@QEAAXAEBV?$ofPixels_@E@@@Z
-	?init@BaseCodec@ofxGraycode@@QEAAXAEAVPayload@2@@Z
+	?init@BaseCodec@ofxGraycode@@QEAAXV?$shared_ptr@VPayload@ofxGraycode@@@std@@@Z
 	??9const_iterator@DataSet@ofxGraycode@@QEBA_NAEBU012@@Z
 	??Dconst_iterator@DataSet@ofxGraycode@@QEBA?AUreference@012@XZ
 	??Econst_iterator@DataSet@ofxGraycode@@QEAAXXZ

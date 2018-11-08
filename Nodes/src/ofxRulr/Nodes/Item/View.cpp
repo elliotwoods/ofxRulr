@@ -386,7 +386,7 @@ namespace ofxRulr {
 
 					{
 						cv::Mat rotationVector, translation, rotationMatrix;
-						this->getExtrinsics(rotationVector, translation);
+						this->getExtrinsics(rotationVector, translation, false);
 						cv::Rodrigues(rotationVector, rotationMatrix);
 
 						fs << "rotationVector" << rotationVector;
