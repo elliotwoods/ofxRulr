@@ -57,13 +57,7 @@ namespace ofxRulr {
 					});
 
 					videoOutputPin->onNewConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
-						//check if this invalidates an existing suite
-						if (this->suite) {
-							if (this->suite->payload.getWidth() != videoOutput->getWidth()
-								|| this->suite->payload.getHeight() != videoOutput->getHeight()) {
-								this->invalidateSuite();
-							}
-						}
+
 					};
 
 					videoOutputPin->onDeleteConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
@@ -85,6 +79,10 @@ namespace ofxRulr {
 
 				//----------
 				void Graycode::update() {
+					if (this->suite) {
+						this->suite->decoder.update();
+					}
+
 					if(this->previewDirty) {
 						this->updatePreview();
 					}
@@ -96,7 +94,8 @@ namespace ofxRulr {
 						if(videoOutput && videoOutput->isWindowOpen()) {
 							//build the suite
 							auto suite = make_unique<Suite>();
-							suite->payload.init(videoOutput->getWidth(), videoOutput->getHeight());
+							suite->payload = make_shared<ofxGraycode::PayloadGraycode>();
+							suite->payload->init(videoOutput->getWidth(), videoOutput->getHeight());
 							suite->encoder.init(suite->payload);
 							suite->decoder.init(suite->payload);
 							this->suite = move(suite);
@@ -106,8 +105,8 @@ namespace ofxRulr {
 					}
 
 					if (this->suite) {
-						if (this->testPattern.getWidth() != this->suite->payload.getWidth()
-							|| this->testPattern.getHeight() != this->suite->payload.getHeight()
+						if (this->testPattern.getWidth() != this->suite->payload->getWidth()
+							|| this->testPattern.getHeight() != this->suite->payload->getHeight()
 							|| this->testPatternBrightness != this->parameters.scan.brightness) {
 							this->updateTestPattern();
 						}
@@ -127,8 +126,8 @@ namespace ofxRulr {
 						json["hasData"] = true;
 
 						auto & jsonPayload = json["payload"];
-						jsonPayload["width"] = (int) this->suite->payload.getWidth();
-						jsonPayload["height"] = (int) this->suite->payload.getHeight();
+						jsonPayload["width"] = (int) this->suite->payload->getWidth();
+						jsonPayload["height"] = (int) this->suite->payload->getHeight();
 
 						auto filename = this->getDefaultFilename() + ".sl";
 						this->suite->decoder.saveDataSet(filename);
@@ -147,19 +146,8 @@ namespace ofxRulr {
 					{
 						auto hasData = json["hasData"].asBool();
 						if (hasData) {
-							auto & jsonPayload = json["payload"];
-							auto payloadWidth = jsonPayload["width"].asInt();
-							auto payloadHeight = jsonPayload["height"].asInt();
-
-							auto suite = make_unique<Suite>();
-							suite->payload.init(payloadWidth, payloadHeight);
-							suite->decoder.init(suite->payload);
-							suite->encoder.init(suite->payload);
-
-							auto filename =  json["filename"].asString();
-							suite->decoder.loadDataSet(filename);
-
-							this->suite = move(suite);
+							auto filename = json["filename"].asString();
+							this->importDataSet(filename);
 						}
 					}
 
@@ -197,7 +185,8 @@ namespace ofxRulr {
 					//rebuild suite
 					{
 						auto suite = make_unique<Suite>();
-						suite->payload.init(videoOutputSize.width, videoOutputSize.height);
+						suite->payload = make_shared<ofxGraycode::PayloadGraycode>();
+						suite->payload->init(videoOutputSize.width, videoOutputSize.height);
 						suite->encoder.init(suite->payload);
 						suite->decoder.init(suite->payload);
 						this->suite = move(suite);
@@ -211,7 +200,7 @@ namespace ofxRulr {
 					ofHideCursor();
 
 					try {
-						Utils::ScopedProcess scopedProcess("Scanning graycode", true, this->suite->payload.getFrameCount());
+						Utils::ScopedProcess scopedProcess("Scanning graycode", true, this->suite->payload->getFrameCount());
 
 						while (this->suite->encoder >> this->message) {
 							Utils::ScopedProcess frameScopedProcess("Scanning frame", false);
@@ -324,6 +313,31 @@ namespace ofxRulr {
 				}
 
 				//----------
+				void Graycode::importDataSet(const string & filename) {
+					if (!this->hasScanSuite()) {
+						this->suite = make_unique<Suite>();
+					}
+					
+					this->suite->decoder.loadDataSet(filename);
+					this->suite->payload = suite->decoder.getPayload();
+					this->suite->encoder.init(suite->payload);
+					this->parameters.processing.threshold = this->suite->decoder.getThreshold();
+
+					this->previewDirty = true;
+				}
+
+				//----------
+				void Graycode::exportDataSet(const string & filename) {
+					if (this->suite) {
+						this->suite->decoder.saveDataSet(filename);
+						this->suite->decoder.savePreviews();
+					}
+					else {
+						ofSystemAlertDialog("No data to save yet. Have you scanned?");
+					}
+				}
+
+				//----------
 				void Graycode::invalidateSuite() {
 					this->suite.reset();
 					this->previewDirty = true;
@@ -354,18 +368,12 @@ namespace ofxRulr {
 						inspector->add(new Widgets::Button("Clear", [this]() {
 							this->clear();
 						}));
-						inspector->add(new Widgets::Button("Save ofxGraycode::DataSet...", [this]() {
-							if (this->suite) {
-								this->suite->decoder.saveDataSet();
-								this->suite->decoder.savePreviews();
-							}
-							else {
-								ofSystemAlertDialog("No data to save yet. Have you scanned?");
-							}
+						inspector->add(new Widgets::Button("Export ofxGraycode::DataSet...", [this]() {
+							this->exportDataSet();
 						}));
-						inspector->add(new Widgets::Button("Load ofxGraycode::DataSet...", [this]() {
+						inspector->add(new Widgets::Button("Import ofxGraycode::DataSet...", [this]() {
 							try {
-								this->getDecoder().loadDataSet();
+								this->importDataSet();
 							}
 							RULR_CATCH_ALL_TO_ALERT;
 						}));
@@ -380,7 +388,7 @@ namespace ofxRulr {
 					{
 						inspector->add(new Widgets::LiveValue<unsigned int>("Width", [this]() {
 							if (this->suite) {
-								return this->suite->payload.getWidth();
+								return this->suite->payload->getWidth();
 							}
 							else {
 								return (uint32_t)0;
@@ -388,7 +396,7 @@ namespace ofxRulr {
 						}));
 						inspector->add(new Widgets::LiveValue<unsigned int>("Height", [this]() {
 							if (this->suite) {
-								return this->suite->payload.getHeight();
+								return this->suite->payload->getHeight();
 							}
 							else {
 								return (uint32_t)0;
@@ -465,8 +473,8 @@ namespace ofxRulr {
 					if(this->suite) {
 						ofPixels testPatternPixels;
 						
-						auto width = this->suite->payload.getWidth();
-						auto height = this->suite->payload.getHeight();
+						auto width = this->suite->payload->getWidth();
+						auto height = this->suite->payload->getHeight();
 						auto value = static_cast<unsigned char>(this->parameters.scan.brightness.get());
 						
 						testPatternPixels.allocate(width, height, 1);

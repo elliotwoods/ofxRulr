@@ -38,9 +38,12 @@ namespace ofxRulr {
 					ofxGraycode::Decoder & getDecoder() const;
 					const ofxGraycode::DataSet & getDataSet() const;
 					void setDataSet(const ofxGraycode::DataSet &);
+
+					void importDataSet(const string & filename = "");
+					void exportDataSet(const string & filename = "");
 				protected:
 					struct Suite {
-						ofxGraycode::PayloadGraycode payload;
+						shared_ptr<ofxGraycode::Payload> payload;
 						ofxGraycode::Encoder encoder;
 						ofxGraycode::Decoder decoder;
 					};

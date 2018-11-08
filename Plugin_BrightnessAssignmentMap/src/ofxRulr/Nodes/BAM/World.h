@@ -17,6 +17,7 @@ namespace ofxRulr {
 				void unregisterProjector(shared_ptr<Projector>);
 				vector<shared_ptr<Projector>> getProjectors() const;
 				const ofParameterGroup & getParameters() const;
+				void exportAll(const string & folderPath) const;
 			protected:
 				vector<weak_ptr<Projector>> projectors;
 

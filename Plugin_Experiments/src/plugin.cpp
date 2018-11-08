@@ -13,5 +13,8 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::Heliostats);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::SolarAlignment);
+
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::PhotoScan::BundlerCamera);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::PhotoScan::CalibrateProjector);
 }
 OFXPLUGIN_PLUGIN_MODULES_END

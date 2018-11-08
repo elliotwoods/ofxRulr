@@ -69,7 +69,8 @@ namespace ofxRulr {
 #pragma mark Scan
 			//----------
 			void Latency::Scan::run(Latency * parent) {
-				this->payload.init(4, 4);
+				this->payload = make_shared<ofxGraycode::PayloadGraycode>();
+				this->payload->init(4, 4);
 				this->encoder.init(this->payload);
 				this->decoder.init(this->payload);
 
