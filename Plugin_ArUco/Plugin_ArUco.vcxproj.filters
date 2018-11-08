@@ -74,5 +74,8 @@
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\AlignMarkerMap.h">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClInclude>
+    <ClInclude Include="src\Constants_Plugin_ArUco.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{85FF8660-9C77-43A1-B8EE-F2B3182A6C52}</ProjectGuid>
+    <RootNamespace>ofxRulr::Nodes::Experiments</RootNamespace>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
+    <ProjectName>Plugin_Experiments</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\addons\ofxRulr\ofxRulr_Plugin.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\..\ofxArUco\ofxArUcoLib\ofxArUco.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\..\ofxArUco\ofxArUcoLib\ofxArUco.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch_Plugin_Experiments.h</PrecompiledHeaderFile>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>../../../addons/ofxRulr/Plugin_ArUco/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch_Plugin_Experiments.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>../../../addons/ofxRulr/Plugin_ArUco/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolveMirror\SolveMirror.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\TestObject.cpp" />
+    <ClCompile Include="src\pch_Plugin_Experiments.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\plugin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolveMirror\SolveMirror.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\TestObject.h" />
+    <ClInclude Include="src\pch_Plugin_Experiments.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ofxArUco\ofxArUcoLib\ofxArUcoLib.vcxproj">
+      <Project>{fc33c381-dc7a-45ad-8ef0-647e3b03db69}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugin_ArUco\Plugin_ArUco.vcxproj">
+      <Project>{45ce5aa6-9dfd-497a-8caf-1743a8075f5a}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

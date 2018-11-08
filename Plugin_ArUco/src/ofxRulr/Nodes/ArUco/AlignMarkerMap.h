@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Constants_Plugin_ArUco.h"
 #include "ofxRulr/Nodes/Base.h"
 #include "ofxRulr/Utils/CaptureSet.h"
 #include "ofxNonLinearFit.h"
@@ -10,7 +11,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace ArUco {
-			class AlignMarkerMap : public Nodes::Base {
+			class PLUGIN_ARUCO_EXPORTS AlignMarkerMap : public Nodes::Base {
 			public:
 				enum class Plane : int {
 					X, Y, Z

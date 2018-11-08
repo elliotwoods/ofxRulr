@@ -4,6 +4,7 @@
 
 #include "ofxCvGui/Panels/Image.h"
 #include "ofxRulr/Utils/CaptureSet.h"
+#include "ofxRulr/Nodes/Procedure/Base.h"
 
 #include "Constants_Plugin_Calibration.h"
 
@@ -20,6 +21,7 @@ namespace ofxRulr {
 						string getDisplayString() const override;
 						ofParameter<ofVec3f> worldPosition{ "World", ofVec3f() };
 						ofParameter<ofVec2f> viewPosition{ "View", ofVec2f() };
+						ofParameter<string> name{ "Name", "" };
 						void setOwner(shared_ptr<IReferenceVertices>);
 					protected:
 						void drawObjectLines();

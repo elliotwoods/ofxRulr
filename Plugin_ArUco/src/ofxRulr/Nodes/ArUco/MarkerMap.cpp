@@ -65,6 +65,8 @@ namespace ofxRulr {
 							markerPreview.draw();
 						}
 
+						ofDrawBitmapString(ofToString(marker3D.id), ofxCv::toOf(marker3D.points[0]));
+
 						switch (this->parameters.drawLabels.get().get()) {
 						case WhenDrawOnWorldStage::Selected:
 							if (!this->isBeingInspected()) {
@@ -101,11 +103,31 @@ namespace ofxRulr {
 				inspector->addButton("Clear", [this]() {
 					this->clear();
 				});
+
+				{
+					inspector->addTitle("Rotate 90", ofxCvGui::Widgets::Title::Level::H3);
+					inspector->addButton("X", [this]() {
+						this->rotateMarkerMap(ofVec3f(1, 0, 0), 90);
+					});
+					inspector->addButton("Y", [this]() {
+						this->rotateMarkerMap(ofVec3f(0, 1, 0), 90);
+					});
+					inspector->addButton("Z", [this]() {
+						this->rotateMarkerMap(ofVec3f(0, 0, 1), 90);
+					});
+					inspector->addButton("Remove...", [this]() {
+						auto removeString = ofSystemTextBoxDialog("Marker index");
+						if (!removeString.empty()) {
+							auto index = ofToInt(removeString);
+							this->removeMarker(index);
+						}
+					});
+				}
 			}
 
 			//----------
 			void MarkerMap::serialize(Json::Value & json) {
-				if(this->markerMap) {
+				if (this->markerMap) {
 					auto & jsonMarkerMap = json["markerMap"];
 					jsonMarkerMap["mInfoType"] = this->markerMap->mInfoType;
 					jsonMarkerMap["dictionary"] = this->markerMap->getDictionary();
@@ -159,6 +181,30 @@ namespace ofxRulr {
 			//----------
 			void MarkerMap::clear() {
 				this->markerMap.reset();
+			}
+
+			//----------
+			void MarkerMap::rotateMarkerMap(const ofVec3f & axis, float angle) {
+				if (this->markerMap) {
+					auto transform = ofMatrix4x4::newRotationMatrix(angle, axis);
+					for (auto & marker : *this->markerMap) {
+						for (auto & point : marker.points) {
+							point = ofxCv::toCv(ofxCv::toOf(point) * transform);
+						}
+					}
+				}
+			}
+
+			//----------
+			void MarkerMap::removeMarker(size_t idToRemove) {
+				if (this->markerMap) {
+					auto toRemove = remove_if(this->markerMap->begin()
+						, this->markerMap->end()
+						, [idToRemove](const aruco::Marker3DInfo & markerInfo) {
+						return markerInfo.id == idToRemove;
+					});
+					this->markerMap->erase(toRemove, this->markerMap->end());
+				}
 			}
 		}
 	}

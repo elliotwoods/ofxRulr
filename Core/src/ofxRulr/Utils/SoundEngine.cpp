@@ -155,9 +155,13 @@ namespace ofxRulr {
 		
 		//----------
 		void SoundEngine::play(ActiveSound activeSound) {
-			this->soundsToAddMutex.lock();
-			this->soundsToAdd.push_back(activeSound);
-			this->soundsToAddMutex.unlock();
+			//HACK
+			return;
+
+			if (this->soundsToAddMutex.try_lock()) {
+				this->soundsToAdd.push_back(activeSound);
+				this->soundsToAddMutex.unlock();
+			}
 		}
 
 		//----------
@@ -169,21 +173,20 @@ namespace ofxRulr {
 		//----------
 		void SoundEngine::stopAll(shared_ptr<ofxAssets::Sound> sound) {
 			if (sound) {
-				this->soundsToAddMutex.lock();
-				{
-					for(auto it = this->soundsToAdd.begin(); it != this->soundsToAdd.end(); ) {
-						if(it->sound == sound) {
+				if (this->soundsToAddMutex.try_lock()) {
+					for (auto it = this->soundsToAdd.begin(); it != this->soundsToAdd.end(); ) {
+						if (it->sound == sound) {
 							it = this->soundsToAdd.erase(it);
-						} else {
+						}
+						else {
 							it++;
 						}
 					}
-					
+
+					this->soundsToAddMutex.unlock();
 				}
-				this->soundsToAddMutex.unlock();
 				
-				this->activeSoundsMutex.lock();
-				{
+				if (this->activeSoundsMutex.try_lock()) {
 					for(auto it = this->activeSounds.begin(); it != this->activeSounds.end(); ) {
 						if(it->sound == sound) {
 							it = this->activeSounds.erase(it);
@@ -191,8 +194,8 @@ namespace ofxRulr {
 							it++;
 						}
 					}
+					this->activeSoundsMutex.unlock();
 				}
-				this->activeSoundsMutex.unlock();
 			}
 		}
 		

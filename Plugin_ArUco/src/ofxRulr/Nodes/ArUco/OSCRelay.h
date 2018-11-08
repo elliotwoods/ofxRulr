@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Constants_Plugin_ArUco.h"
 #include "ofxRulr/Nodes/Base.h"
 #include "ofxOsc.h"
 
 namespace ofxRulr {
 	namespace Nodes {
 		namespace ArUco {
-			class OSCRelay : public ofxRulr::Nodes::Base {
+			class PLUGIN_ARUCO_EXPORTS OSCRelay : public ofxRulr::Nodes::Base {
 			public:
 				OSCRelay();
 				string getTypeName() const override;

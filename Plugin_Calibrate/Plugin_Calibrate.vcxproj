@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C135C231-F751-482D-9E4C-C29473E3DD98}</ProjectGuid>
-    <RootNamespace>ofxRulr::Nodes::BAM</RootNamespace>
+    <RootNamespace>ofxRulr::Nodes::Calibrate</RootNamespace>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <ProjectName>Plugin_Calibrate</ProjectName>
   </PropertyGroup>

@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Constants_Plugin_ArUco.h"
 #include "ofxRulr/Nodes/Base.h"
 #include <opencv2/aruco.hpp>
 
 namespace ofxRulr {
 	namespace Nodes {
 		namespace ArUco {
-			class MarkerMapPoseTracker : public Nodes::Base {
+			class PLUGIN_ARUCO_EXPORTS MarkerMapPoseTracker : public Nodes::Base {
 			public:
 				MAKE_ENUM(Method
 					, (Tracker, solvePnP, RANSAC)

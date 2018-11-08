@@ -44,6 +44,12 @@ namespace ofxRulr {
 					void deserialize(const Json::Value &);
 
 					bool getRunFinderEnabled() const;
+
+					// Manually add an image to the capture set
+					void addImage(cv::Mat);
+
+					// Add a folder of images to the capture set
+					void addFolder(const std::filesystem::path & path);
 				protected:
 					void populateInspector(ofxCvGui::InspectArguments &);
 					void addCapture(bool triggeredFromTetheredCapture);

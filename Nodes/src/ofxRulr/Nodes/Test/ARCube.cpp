@@ -135,7 +135,7 @@ namespace ofxRulr {
 								, this->parameters.findBoardMode
 								, camera->getCameraMatrix()
 								, camera->getDistortionCoefficients());
-							if (success) {
+							if (success && imagePoints.size() >= 4) {
 								//use solvePnP to resolve transform
 								Mat rotation, translation;
 								cv::solvePnP(objectPoints
@@ -155,8 +155,8 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ERROR
 
-						//update the fbo
-						this->fbo.begin();
+					//update the fbo
+					this->fbo.begin();
 					{
 						//draw the undistorted image
 						this->undistorted.draw(0, 0);

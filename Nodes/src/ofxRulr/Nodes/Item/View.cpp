@@ -378,11 +378,21 @@ namespace ofxRulr {
 					//adapted from https://github.com/Itseez/opencv/blob/master/samples/cpp/calibration.cpp#L170
 					cv::FileStorage fs(result.filePath, cv::FileStorage::WRITE);
 
-					fs << "image_width" << this->getWidth();
-					fs << "image_height" << this->getHeight();
+					fs << "image_width" << (int) this->getWidth();
+					fs << "image_height" << (int) this->getHeight();
 
 					fs << "camera_matrix" << this->getCameraMatrix();
 					fs << "distortion_coefficients" << this->getDistortionCoefficients();
+
+					{
+						cv::Mat rotationVector, translation, rotationMatrix;
+						this->getExtrinsics(rotationVector, translation);
+						cv::Rodrigues(rotationVector, rotationMatrix);
+
+						fs << "rotationVector" << rotationVector;
+						fs << "translation" << translation;
+						fs << "rotationMatrix" << rotationMatrix;
+					}
 				}
 			}
 

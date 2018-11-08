@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Constants_Plugin_ArUco.h"
 #include "ofxRulr/Nodes/Item/AbstractBoard.h"
 #include <opencv2/aruco/dictionary.hpp>
 #include <opencv2/aruco/charuco.hpp>
@@ -7,7 +8,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace ArUco {
-			class ChArUcoBoard : public Nodes::Item::AbstractBoard {
+			class PLUGIN_ARUCO_EXPORTS ChArUcoBoard : public Nodes::Item::AbstractBoard {
 			public:
 				struct PaperSize {
 					string name;
@@ -34,13 +35,13 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
-						ofParameter<int> width{ "Width", 12 };
+						ofParameter<int> width{ "Width", 11 };
 						ofParameter<int> height{ "Height", 8 };
 						PARAM_DECLARE("Size [squares]", width, height);
 					} size;
 
 					struct : ofParameterGroup {
-						ofParameter<float> square{ "Square", 0.034875, 0.001, 0.10 }; // noah's board
+						ofParameter<float> square{ "Square", 0.025, 0.001, 0.10 };
 						ofParameter<float> marker{ "Marker", 0.0175, 0.001, 0.1 };
 						PARAM_DECLARE("Length [m]", square, marker);
 					} length;
@@ -48,7 +49,8 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<bool> refineStrategy{ "Refine strategy", true };
-						PARAM_DECLARE("Detection", refineStrategy);
+						ofParameter<float> errorCorrectionRate{ "Error correction rate", 0.6 };
+						PARAM_DECLARE("Detection", refineStrategy, errorCorrectionRate);
 					} detection;
 
 					struct : ofParameterGroup {
