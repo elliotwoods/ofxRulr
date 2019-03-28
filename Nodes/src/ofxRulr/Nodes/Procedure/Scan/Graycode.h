@@ -20,6 +20,10 @@ namespace ofxRulr {
 						, (CameraInProjector, ProjectorInCamera, Median, MedianInverse, Active)
 						, ("CinP", "PinC", "Med", "MedIn", "Active"));
 
+					MAKE_ENUM(ScanMode
+						, (Balanced, Unbalanced)
+						, ("Balanced", "Unbalanced"));
+
 					Graycode();
 					void init();
 					string getTypeName() const override;
@@ -43,16 +47,18 @@ namespace ofxRulr {
 					void exportDataSet(const string & filename = "");
 				protected:
 					struct Suite {
-						shared_ptr<ofxGraycode::Payload> payload;
+						shared_ptr<ofxGraycode::Payload::Base> payload;
 						ofxGraycode::Encoder encoder;
 						ofxGraycode::Decoder decoder;
 					};
 
 					void invalidateSuite();
+					void rebuildSuite();
 					void drawPreviewOnVideoOutput(const ofRectangle &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 					void updatePreview();
 					void updateTestPattern();
+					ofxGraycode::Payload::Type getIntendedPayloadType();
 					
 					ofxCvGui::PanelPtr view;
 
@@ -62,15 +68,18 @@ namespace ofxRulr {
 					
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
+							ofParameter<ScanMode> scanMode{ "Scan mode", ScanMode::Balanced };
 							ofParameter<float> captureDelay{ "Capture delay [ms]", 200 };
 							ofParameter<int> flushOutputFrames{ "Flush output frames", 2 };
 							ofParameter<int> flushInputFrames{ "Flush input frames", 0 };
 							ofParameter<float> brightness{ "Brightness [/255]", 255, 0, 255 };
-							PARAM_DECLARE("Scan", captureDelay, flushOutputFrames, flushInputFrames, brightness);
+
+							PARAM_DECLARE("Scan", scanMode, captureDelay, flushOutputFrames, flushInputFrames, brightness);
 						} scan;
 
 						struct : ofParameterGroup {
 							ofParameter<float> threshold{ "Threshold", 10, 0, 255 };
+
 							PARAM_DECLARE("Processing", threshold)
 						} processing;
 

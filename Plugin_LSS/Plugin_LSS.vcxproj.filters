@@ -14,17 +14,17 @@
     <ClCompile Include="src\ofxRulr\Nodes\LSS\Scan.cpp">
       <Filter>src\ofxRulr\Nodes\LSS</Filter>
     </ClCompile>
-    <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.cpp">
-      <Filter>addons\ofxMessagePack\src</Filter>
-    </ClCompile>
-    <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Packer.cpp">
-      <Filter>addons\ofxMessagePack\src</Filter>
-    </ClCompile>
-    <ClCompile Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Stream.cpp">
-      <Filter>addons\ofxMessagePack\src</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\LSS\FitLines.cpp">
       <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Packer.cpp">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Stream.cpp">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.cpp">
+      <Filter>addons\ofxMessagePack\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,20 +63,20 @@
     <ClInclude Include="src\ofxRulr\Nodes\LSS\Scan.h">
       <Filter>src\ofxRulr\Nodes\LSS</Filter>
     </ClInclude>
-    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack.h">
-      <Filter>addons\ofxMessagePack</Filter>
-    </ClInclude>
-    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Stream.h">
-      <Filter>addons\ofxMessagePack\src</Filter>
-    </ClInclude>
-    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.h">
-      <Filter>addons\ofxMessagePack\src</Filter>
-    </ClInclude>
-    <ClInclude Include="E:\openFrameworks\addons\ofxMessagePack\src\ofxMessagePack\Packer.h">
-      <Filter>addons\ofxMessagePack\src</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\LSS\FitLines.h">
       <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack.h">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Packer.h">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Stream.h">
+      <Filter>addons\ofxMessagePack\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.h">
+      <Filter>addons\ofxMessagePack\src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -549,10 +549,9 @@ EXPORTS
 	?getCursorWorld@ofxGrabCam@@QEBAAEBVofVec3f@@XZ
 	??0BaseCodec@ofxGraycode@@QEAA@XZ
 	??0DataSet@ofxGraycode@@QEAA@XZ
-	??0Payload@ofxGraycode@@QEAA@XZ
 	??5Encoder@ofxGraycode@@QEAA_NAEAV?$ofImage_@E@@@Z
 	??6Decoder@ofxGraycode@@QEAAXAEBV?$ofPixels_@E@@@Z
-	?init@BaseCodec@ofxGraycode@@QEAAXV?$shared_ptr@VPayload@ofxGraycode@@@std@@@Z
+	?init@BaseCodec@ofxGraycode@@QEAAXV?$shared_ptr@VBase@Payload@ofxGraycode@@@std@@@Z
 	??9const_iterator@DataSet@ofxGraycode@@QEBA_NAEBU012@@Z
 	??Dconst_iterator@DataSet@ofxGraycode@@QEBA?AUreference@012@XZ
 	??Econst_iterator@DataSet@ofxGraycode@@QEAAXXZ
@@ -570,7 +569,7 @@ EXPORTS
 	?getWidth@DataSet@ofxGraycode@@QEBAIXZ
 	?getCameraXY@reference@const_iterator@DataSet@ofxGraycode@@QEBA?AVofVec2f@@XZ
 	?getProjectorXY@reference@const_iterator@DataSet@ofxGraycode@@QEBA?AVofVec2f@@XZ
-	?clear@Decoder@ofxGraycode@@QEAAXXZ
+	?clear@Decoder@ofxGraycode@@UEAAXXZ
 	?draw@Decoder@ofxGraycode@@UEBAXMM@Z
 	?draw@Decoder@ofxGraycode@@UEBAXMMMM@Z
 	?getCameraInProjector@Decoder@ofxGraycode@@QEAAAEAV?$ofImage_@E@@XZ
@@ -579,15 +578,17 @@ EXPORTS
 	?getProjectorInCamera@Decoder@ofxGraycode@@QEAAAEAV?$ofImage_@E@@XZ
 	?getWidth@Decoder@ofxGraycode@@UEBAMXZ
 	?setThreshold@Decoder@ofxGraycode@@QEAAXE@Z
-	?reset@Encoder@ofxGraycode@@UEAAXXZ
-	?getFrameCount@Payload@ofxGraycode@@QEBAIXZ
-	?getHeight@Payload@ofxGraycode@@QEBAIXZ
-	?getWidth@Payload@ofxGraycode@@QEBAIXZ
-	?init@Payload@ofxGraycode@@QEAAXII@Z
-	?calc@PayloadGraycode@ofxGraycode@@UEBAXAEBV?$vector@V?$ofPixels_@E@@V?$allocator@V?$ofPixels_@E@@@std@@@std@@AEAVDataSet@2@@Z
-	?fillPixels@PayloadGraycode@ofxGraycode@@UEBAXIAEAV?$ofPixels_@E@@@Z
-	?getImageType@PayloadGraycode@ofxGraycode@@UEBA?AW4ofImageType@@XZ
-	?render@PayloadGraycode@ofxGraycode@@MEAAXXZ
+	?clear@Encoder@ofxGraycode@@UEAAXXZ
+	??0Base@Payload@ofxGraycode@@QEAA@XZ
+	?getFrameCount@Base@Payload@ofxGraycode@@QEBAIXZ
+	?getHeight@Base@Payload@ofxGraycode@@QEBAIXZ
+	?getWidth@Base@Payload@ofxGraycode@@QEBAIXZ
+	?init@Base@Payload@ofxGraycode@@QEAAXII@Z
+	?calc@Graycode@Payload@ofxGraycode@@UEBAXAEBV?$vector@V?$ofPixels_@E@@V?$allocator@V?$ofPixels_@E@@@std@@@std@@AEAVDataSet@3@@Z
+	?fillPixels@Graycode@Payload@ofxGraycode@@UEBAXIAEAV?$ofPixels_@E@@@Z
+	?getImageType@Graycode@Payload@ofxGraycode@@UEBA?AW4ofImageType@@XZ
+	?getType@Graycode@Payload@ofxGraycode@@UEBA?AW4Type@23@XZ
+	?prepare@Graycode@Payload@ofxGraycode@@MEAAXXZ
 	??0Specification@ofxMachineVision@@QEAA@AEBV01@@Z
 	??0Specification@ofxMachineVision@@QEAA@W4CaptureSequenceType@1@HHV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@11@Z
 	??0Specification@ofxMachineVision@@QEAA@XZ

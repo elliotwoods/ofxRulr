@@ -81,10 +81,11 @@ namespace ofxRulr {
 				void Graycode::update() {
 					if (this->suite) {
 						this->suite->decoder.update();
-					}
 
-					if(this->previewDirty) {
-						this->updatePreview();
+						//Invalidate if we need a different payload type
+						if (this->suite->decoder.getPayload()->getType() != this->getIntendedPayloadType()) {
+							this->invalidateSuite();
+						}
 					}
 					
 					//check if suite has been invalidated
@@ -93,28 +94,28 @@ namespace ofxRulr {
 						auto videoOutput = this->getInput<System::VideoOutput>();
 						if(videoOutput && videoOutput->isWindowOpen()) {
 							//build the suite
-							auto suite = make_unique<Suite>();
-							suite->payload = make_shared<ofxGraycode::PayloadGraycode>();
-							suite->payload->init(videoOutput->getWidth(), videoOutput->getHeight());
-							suite->encoder.init(suite->payload);
-							suite->decoder.init(suite->payload);
-							this->suite = move(suite);
-
+							this->rebuildSuite();
 							this->previewDirty = true;
 						}
 					}
 
 					if (this->suite) {
+						// Rebuild test pattern
 						if (this->testPattern.getWidth() != this->suite->payload->getWidth()
 							|| this->testPattern.getHeight() != this->suite->payload->getHeight()
 							|| this->testPatternBrightness != this->parameters.scan.brightness) {
 							this->updateTestPattern();
 						}
 
+						// Invalidate previews
 						if ((int) this->suite->decoder.getThreshold() != this->parameters.processing.threshold) {
 							this->suite->decoder.setThreshold((int) this->parameters.processing.threshold);
 							this->previewDirty = true;
 						}
+					}
+
+					if (this->previewDirty) {
+						this->updatePreview();
 					}
 				}
 
@@ -183,16 +184,7 @@ namespace ofxRulr {
 					auto grabber = camera->getGrabber();
 
 					//rebuild suite
-					{
-						auto suite = make_unique<Suite>();
-						suite->payload = make_shared<ofxGraycode::PayloadGraycode>();
-						suite->payload->init(videoOutputSize.width, videoOutputSize.height);
-						suite->encoder.init(suite->payload);
-						suite->decoder.init(suite->payload);
-						this->suite = move(suite);
-					}
-
-					this->suite->decoder.setThreshold(this->parameters.processing.threshold);
+					this->rebuildSuite();
 
 					//clear the output
 					this->message.clear();
@@ -344,6 +336,24 @@ namespace ofxRulr {
 				}
 
 				//----------
+				void Graycode::rebuildSuite() {
+					this->throwIfMissingAConnection<System::VideoOutput>();
+
+					auto videoOutput = this->getInput<System::VideoOutput>();
+					auto suite = make_unique<Suite>();
+
+					auto payloadType = this->getIntendedPayloadType();
+					suite->payload = ofxGraycode::Payload::make(payloadType);
+
+					suite->payload->init(videoOutput->getWidth(), videoOutput->getHeight());
+					suite->encoder.init(suite->payload);
+					suite->decoder.init(suite->payload);
+					suite->decoder.setThreshold(this->parameters.processing.threshold);
+
+					this->suite = move(suite);
+				}
+
+				//----------
 				void Graycode::drawPreviewOnVideoOutput(const ofRectangle & rectangle) {
 					this->preview.draw(rectangle);
 				}
@@ -490,6 +500,23 @@ namespace ofxRulr {
 				}
 
 				//----------
+				ofxGraycode::Payload::Type Graycode::getIntendedPayloadType() {
+					ofxGraycode::Payload::Type payloadType;
+
+					switch (this->parameters.scan.scanMode.get()) {
+					case ScanMode::Balanced:
+						payloadType = ofxGraycode::Payload::Type::BalancedGraycode;
+						break;
+					case ScanMode::Unbalanced:
+						payloadType = ofxGraycode::Payload::Type::Graycode;
+						break;
+					default:
+						payloadType = ofxGraycode::Payload::Type::Graycode;
+					}
+
+					return payloadType;
+				}
+
 				void Graycode::callbackChangePreviewMode(PreviewMode & previewMode) {
 					this->previewDirty = true;
 				}
