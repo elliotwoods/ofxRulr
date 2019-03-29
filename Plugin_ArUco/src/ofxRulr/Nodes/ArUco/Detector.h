@@ -52,7 +52,9 @@ namespace ofxRulr {
 					ofParameter<DetectorType> dictionary{ "Detector type", DetectorType::Original };
 					ofParameter<float> markerLength{ "Marker length [m]", 0.05, 0.001, 10 };
 					ofParameter<bool> normalizeImage{ "Normalize image", false };
-					PARAM_DECLARE("Detector", dictionary, markerLength, normalizeImage);
+					ofParameter<bool> enclosedMarkers{ "Enclosed markers", false };
+					ofParameter<int> thresholdAttempts{ "Threshold attempts", 3, 1, 10 };
+					PARAM_DECLARE("Detector", dictionary, markerLength, normalizeImage, enclosedMarkers, thresholdAttempts);
 				} parameters;
 
 				aruco::Dictionary dictionary;

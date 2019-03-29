@@ -33,6 +33,12 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.cpp">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.cpp">
+      <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.cpp">
+      <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -66,6 +72,12 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.h">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.h">
+      <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.h">
+      <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -85,6 +97,9 @@
     </Filter>
     <Filter Include="src\ofxRulr\Experiments\MirrorPlaneCapture">
       <UniqueIdentifier>{6225c5c4-68e7-4fa6-90ab-17ef387eb1a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Experiments\PhotoScan">
+      <UniqueIdentifier>{52443c92-0771-4647-aec1-5262a884f9df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

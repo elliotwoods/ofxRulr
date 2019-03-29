@@ -16,6 +16,9 @@
     <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.cpp">
       <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxRulr\Nodes\Canon\Control.cpp">
+      <Filter>pairs\ofxCanon\ofxRulr\Nodes\Canon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -42,6 +45,15 @@
     <Filter Include="pairs\ofxCanon\ofxMachineVision\Device">
       <UniqueIdentifier>{463238f6-700c-49b6-9a9c-bc36a00a6f1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pairs\ofxCanon\ofxRulr">
+      <UniqueIdentifier>{3d0fa87d-7450-4c31-83ef-82509f1ba2f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxCanon\ofxRulr\Nodes">
+      <UniqueIdentifier>{311cd564-0ba7-4249-9f96-a779a85f247b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pairs\ofxCanon\ofxRulr\Nodes\Canon">
+      <UniqueIdentifier>{9d62b940-ae12-4b9a-bc1c-6cddcc5c9354}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -56,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonLiveView.h">
       <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxCanon\pairs\ofxRulr\Nodes\Canon\Control.h">
+      <Filter>pairs\ofxCanon\ofxRulr\Nodes\Canon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

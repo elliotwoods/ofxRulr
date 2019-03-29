@@ -185,6 +185,10 @@ namespace ofxRulr {
 				this->dictionary = aruco::Dictionary::loadPredefined(this->dictionaryType);
 				this->markerDetector.setDictionary(this->dictionaryType);
 
+				auto & parameters = this->markerDetector.getParameters();
+				parameters.enclosedMarker = this->parameters.enclosedMarkers.get();
+				parameters.NAttemptsAutoThresFix = this->parameters.thresholdAttempts.get();
+
 				this->cachedMarkerImages.clear();
 				this->detectorDirty = false;
 			}

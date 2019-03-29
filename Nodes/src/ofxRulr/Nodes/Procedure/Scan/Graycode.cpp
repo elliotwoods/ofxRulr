@@ -99,6 +99,11 @@ namespace ofxRulr {
 						}
 					}
 
+					//enforce an int value on the threshold
+					if (this->parameters.processing.threshold.get() != (float) (int) this->parameters.processing.threshold.get()) {
+						this->parameters.processing.threshold.set((int) this->parameters.processing.threshold.get());
+					}
+
 					if (this->suite) {
 						// Rebuild test pattern
 						if (this->testPattern.getWidth() != this->suite->payload->getWidth()

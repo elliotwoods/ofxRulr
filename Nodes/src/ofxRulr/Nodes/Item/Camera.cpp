@@ -291,6 +291,13 @@ namespace ofxRulr {
 					ofPopMatrix();
 					ofPopStyle();
 				};
+				this->grabberPanel->addToolBarElement("ofxCvGui::save", [this]() {
+					auto defaultFilename = this->getName() + ".png";
+					auto result = ofSystemSaveDialog(defaultFilename, "Save image");
+					if (result.bSuccess) {
+						ofSaveImage(this->grabber->getPixels(), result.filePath);
+					}
+				});
 			}
 
 			//----------
