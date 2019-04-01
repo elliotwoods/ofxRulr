@@ -42,6 +42,8 @@ namespace ofxRulr {
 				void triangulate();
 				void fit();
 			protected:
+				ofxRay::Ray fitRayToProjectorPixels(vector<shared_ptr<ProjectorPixel>> projectorPixels);
+
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
 						ofParameter<float> distanceThreshold{ "Distance threshold", 10, 0, 255 };
@@ -71,7 +73,9 @@ namespace ofxRulr {
 							PARAM_DECLARE("Walk", distance, sizeM, minimumCount);
 						} walk;
 
-						PARAM_DECLARE("Search", head, walk);
+						ofParameter<float> minimumLength{ "Minimum length [m]", 0.1, 0, 10 };
+
+						PARAM_DECLARE("Search", head, walk, minimumLength);
 					} search;
 
 					struct : ofParameterGroup {

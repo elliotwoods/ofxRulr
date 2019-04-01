@@ -34,7 +34,6 @@ namespace ofxRulr {
 				if (this->parameters.preview.lines) {
 					ofPushStyle();
 					{
-						ofSetColor(ofxCvGui::Utils::getBeatingSelectionColor());
 						this->previewLines.draw();
 					}
 					ofPopStyle();
@@ -231,59 +230,43 @@ namespace ofxRulr {
 			}
 
 			//----------
-			class FitRayModelTransmit : public ofxNonLinearFit::Models::Base<ofVec3f, FitRayModelTransmit> {
-			public:
-				FitRayModelTransmit() {
-					this->ray.infinite = true;
-					this->ray.defined = true;
+			ofxRay::Ray FitPointsToLines::fitRayToProjectorPixels(vector<shared_ptr<ProjectorPixel>> projectorPixels) {
+				vector<ofVec3f> dataPoints;
+				for (auto projectorPixel : projectorPixels) {
+					dataPoints.push_back(projectorPixel->world);
 				}
+				auto meanPosition = mean(dataPoints);
 
-				unsigned int getParameterCount() const override {
-					return 2;
-				}
-
-				void getResidual(ofVec3f dataPoint, double & residual, double * gradient = 0) const override {
-					residual = this->ray.distanceTo(dataPoint);
-					residual = residual * residual;
-				}
-
-				void evaluate(ofVec3f & dataPoint) const override {
-					//we shouldn't be here
-				}
-
-				void cacheModel() override
-				{
-					/*
-					this->ray.s.x = this->parameters[0];
-					this->ray.s.y = this->parameters[1];
-					this->ray.s.z = this->parameters[2];
-					*/
-					
-					//POLAR ONLY
-					auto theta = this->parameters[0];
-					auto thi = this->parameters[1];
-					this->ray.t.x = sin(theta) * cos(thi);
-					this->ray.t.y = sin(theta) * sin(thi);
-					this->ray.t.z = cos(thi);
-
-					/*
-					//CARTESIAN
-					this->ray.t.x = this->parameters[3];
-					this->ray.t.y = this->parameters[4];
-					this->ray.t.z = 1.0f;
-
-					this->ray.t = this->ray.t.getNormalized();
-					*/
-				}
+				cv::Vec6f line;
+				cv::fitLine(ofxCv::toCv(dataPoints)
+					, line
+					, CV_DIST_HUBER
+					, 0
+					, this->parameters.search.head.deviationThreshold
+					, 0.01);
 
 				ofxRay::Ray ray;
-			};
+
+				ray.t.x = line(0);
+				ray.t.y = line(1);
+				ray.t.z = line(2);
+				ray.s.x = line(3);
+				ray.s.y = line(4);
+				ray.s.z = line(5);
+
+				ray.s = ray.closestPointOnRayTo(meanPosition);
+
+				this->debugPoints = dataPoints;
+				this->debugRay = ray;
+
+				return ray;
+			}
 
 			void FitPointsToLines::fit() {
 				vector<shared_ptr<Line>> lines;
 
 				for (auto & projectorPixelIt : this->unclassifiedPixels) {
-					auto & projectorPixel = * projectorPixelIt.second;
+					auto & projectorPixel = *projectorPixelIt.second;
 					if (projectorPixel.unavailable) {
 						// This pixel is already used
 						continue;
@@ -311,35 +294,7 @@ namespace ofxRulr {
 					}
 
 					// fit a 3D line
-					ofxRay::Ray ray;
-					{
-						vector<ofVec3f> dataPoints;
-						for (auto projectorPixel2 : newLine->projectorPixels) {
-							dataPoints.push_back(projectorPixel2->world);
-						}
-						this->debugPoints = dataPoints;
-						auto meanPosition = mean(dataPoints);
-
-						cv::Vec6f line;
-						cv::fitLine(ofxCv::toCv(dataPoints)
-							, line
-							, CV_DIST_L2
-							, 0
-							, this->parameters.search.head.deviationThreshold
-							, 0.01);
-
-						ray.t.x = line(0);
-						ray.t.y = line(1);
-						ray.t.z = line(2);
-						ray.s.x = line(3);
-						ray.s.y = line(4);
-						ray.s.z = line(5);
-
-						this->debugRay = ray;
-
-						newLine->startWorld = ray.s;
-						newLine->endWorld = ray.s + ray.t;
-					}
+					ofxRay::Ray ray = this->fitRayToProjectorPixels(newLine->projectorPixels);
 
 					// count deviations
 					size_t deviationCount = 0;
@@ -362,17 +317,17 @@ namespace ofxRulr {
 					// take the pixels
 					newLine->projectorPixels = goodPixels;
 
+					// re-fit to the good pixels
+					ray = this->fitRayToProjectorPixels(goodPixels);
+
 					auto walkDistance = this->parameters.search.walk.distance;
 					vector<float> directions{ -1, +1 };
 					vector<ofVec3f> lineEnds;
 					for (auto direction : directions) {
-						ofVec3f walkPosition = newLine->startWorld;
+						ofVec3f walkPosition = ray.s;
 						bool enoughPieces;
-							
-						while (true) {
-							//walk forwards
-							walkPosition += ray.t * walkDistance * direction;
 
+						while (true) {
 							//find pixels in this region
 							vector<shared_ptr<ProjectorPixel>> addProjectorPixels;
 							for (const auto & projectorPixel2It : this->unclassifiedPixels) {
@@ -395,12 +350,24 @@ namespace ofxRulr {
 								newLine->projectorPixels.push_back(pixelToAdd);
 								debugPoints.push_back(pixelToAdd->world);
 							}
+
+							//re-fit the ray
+							ray = this->fitRayToProjectorPixels(newLine->projectorPixels);
+
+							//walk forwards
+							walkPosition += ray.t * walkDistance * direction;
 						}
 						lineEnds.push_back(walkPosition);
 					}
 					newLine->startWorld = lineEnds[0];
 					newLine->endWorld = lineEnds[1];
+
+					//check the line is long enough to be valuable
+					if (newLine->startWorld.distance(newLine->endWorld) < this->parameters.search.minimumLength) {
+						continue;
+					}
 					
+					//take and mark projector pixels
 					vector<shared_ptr<ProjectorPixel>> uniqueProjectorPixels;
 					for (auto projectorPixel : newLine->projectorPixels) {
 						if (projectorPixel->unavailable) {
@@ -432,8 +399,8 @@ namespace ofxRulr {
 
 						auto color = ofColor(200, 100, 100);
 						color.setHueAngle(ofRandom(360.0));
-						//previewLines.addColor(color);
-						//previewLines.addColor(color);
+						previewLines.addColor(color);
+						previewLines.addColor(color);
 					}
 					this->previewLines = previewLines;
 				}
