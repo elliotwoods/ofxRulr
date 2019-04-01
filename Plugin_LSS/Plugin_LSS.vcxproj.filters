@@ -26,6 +26,12 @@
     <ClCompile Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.cpp">
       <Filter>addons\ofxMessagePack\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\LSS\Planes.cpp">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\LSS\ProjectorToPlanes.cpp">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -77,6 +83,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.h">
       <Filter>addons\ofxMessagePack\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\LSS\Planes.h">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\LSS\ProjectorToPlanes.h">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

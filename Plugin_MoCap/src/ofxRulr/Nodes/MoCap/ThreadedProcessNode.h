@@ -21,12 +21,33 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					ofParameter<bool> performInParentThread{ "Perform in parent thread", false };
-					PARAM_DECLARE("ThreadedProcessNode", performInParentThread);
+
+					struct : ofParameterGroup {
+						ofParameter<bool> keepLastFrame{ "Keep last frame", false };
+						ofParameter<bool> performEveryAppFrame{ "Perform every app frame", false };
+						PARAM_DECLARE("Debug", keepLastFrame, performEveryAppFrame);
+					} debug;
+
+					PARAM_DECLARE("ThreadedProcessNode", performInParentThread, debug);
 				} parameters;
 			protected:
 				virtual void processFrame(shared_ptr<IncomingFrameType> incomingFrame) = 0;
 				virtual size_t getThreadPoolSize() const { return 2; }
 				virtual size_t getThreadPoolQueueSize() const { return 3; }
+
+				// For performEveryAppFrame
+				shared_ptr<IncomingFrameType> lastFrame;
+				ofxCvGui::ElementPtr reprocessLastFrameButton;
+
+				function<void()> constructAction(shared_ptr<IncomingFrameType> incomingFrame) {
+					return [this, incomingFrame]() {
+						auto timeStart = chrono::high_resolution_clock::now();
+						this->processFrame(incomingFrame);
+						chrono::duration<float, ratio<1, 1000>> duration = chrono::high_resolution_clock::now() - timeStart;
+						this->processingTime.store(duration.count());
+						this->processedFramesSinceLastAppFrame++;
+					};
+				}
 			public:
 				ThreadedProcessNode() {
 					RULR_NODE_INIT_LISTENER;
@@ -41,13 +62,7 @@ namespace ofxRulr {
 					auto input = this->addInput<IncomingNodeType>();
 					input->onNewConnection += [this](shared_ptr<IncomingNodeType> inputNode) {
 						inputNode->onNewFrame.addListener([this](shared_ptr<IncomingFrameType> incomingFrame) {
-							auto action = [this, incomingFrame]() {
-								auto timeStart = chrono::high_resolution_clock::now();
-								this->processFrame(incomingFrame);
-								chrono::duration<float, ratio<1, 1000>> duration = chrono::high_resolution_clock::now() - timeStart;
-								this->processingTime.store(duration.count());
-								this->processedFramesSinceLastAppFrame++;
-							};
+							auto action = this->constructAction(incomingFrame);
 
 							if (this->parameters.performInParentThread) {
 								action();
@@ -56,6 +71,10 @@ namespace ofxRulr {
 								if (!this->threadPool->performAsync(action)) {
 									this->droppedFramesSinceLastAppFrame++;
 								}
+							}
+
+							if (this->parameters.debug.keepLastFrame) {
+								this->lastFrame = incomingFrame;
 							}
 						}, this);
 					};
@@ -69,6 +88,15 @@ namespace ofxRulr {
 				}
 
 				void update() {
+					if (this->reprocessLastFrameButton) {
+						if (this->lastFrame) {
+							this->reprocessLastFrameButton->setEnabled(true);
+						}
+						else {
+							this->reprocessLastFrameButton->setEnabled(false);
+						}
+					}
+
 					auto processedFramesPerSecond = (float)processedFramesSinceLastAppFrame.load() / ofGetLastFrameTime();
 					this->processedFramesPerSecond = ofLerp(this->processedFramesPerSecond, processedFramesPerSecond, 0.1f);
 					this->processedFramesSinceLastAppFrame.store(0);
@@ -76,10 +104,42 @@ namespace ofxRulr {
 					auto droppedFramesPerSecond = (float)droppedFramesSinceLastAppFrame.load() / ofGetLastFrameTime();
 					this->droppedFramesPerSecond = ofLerp(this->droppedFramesPerSecond, droppedFramesPerSecond, 0.1f);
 					this->droppedFramesSinceLastAppFrame.store(0);
+
+					// Perform in app frame
+					{
+						auto lastFrame = this->lastFrame; // Take a copy so thread can't change
+						if (lastFrame) {
+							if (this->parameters.debug.performEveryAppFrame) {
+								auto action = this->constructAction(lastFrame);
+								if (!this->threadPool->performAsync(action)) {
+									this->droppedFramesSinceLastAppFrame++;
+								}
+							}
+
+							if (!this->parameters.debug.keepLastFrame) {
+								this->lastFrame.reset();
+							}
+						}
+					}
 				}
 
 				void populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 					auto inspector = inspectArgs.inspector;
+
+					inspector->addIndicatorBool("Last frame available", [this]() {
+						return (bool) this->lastFrame;
+					});
+
+					this->reprocessLastFrameButton = inspector->addButton("Reprocess last frame", [this]() {
+						auto lastFrame = this->lastFrame;
+						if (lastFrame) {
+							auto action = this->constructAction(lastFrame);
+							if (!this->threadPool->performAsync(action)) {
+								this->droppedFramesSinceLastAppFrame++;
+							}
+						}
+					}, ' ');
+
 					inspector->addLiveValueHistory("Processing time [ms]", [this]() {
 						return this->processingTime.load();
 					});

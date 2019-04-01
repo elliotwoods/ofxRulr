@@ -11,7 +11,7 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
 			namespace Calibrate {
-				class PLUGIN_CALIBRATION_EXPORTS StereoCalibrate : public Base {
+				class PLUGIN_CALIBRATE_EXPORTS StereoCalibrate : public Base {
 				public:
 					MAKE_ENUM(PreviewStyle
 						, (Live, LastCapture)

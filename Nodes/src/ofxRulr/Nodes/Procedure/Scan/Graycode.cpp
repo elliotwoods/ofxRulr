@@ -311,11 +311,9 @@ namespace ofxRulr {
 
 				//----------
 				void Graycode::importDataSet(const string & filename) {
-					if (!this->hasScanSuite()) {
-						this->suite = make_unique<Suite>();
-					}
+					this->rebuildSuite();
 					
-					this->suite->decoder.loadDataSet(filename);
+					this->suite->decoder.loadDataSet(filename, this->suite->payload->getType());
 					this->suite->payload = suite->decoder.getPayload();
 					this->suite->encoder.init(suite->payload);
 					this->parameters.processing.threshold = this->suite->decoder.getThreshold();

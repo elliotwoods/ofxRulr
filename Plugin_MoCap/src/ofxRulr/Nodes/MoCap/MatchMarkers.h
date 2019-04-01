@@ -78,6 +78,10 @@ namespace ofxRulr {
 				void deserialize(const Json::Value &);
 
 			protected:
+				MAKE_ENUM(WhenDrawWorld
+					, (Selected, Always)
+					, ("Selected", "Always"));
+
 				void processFrame(shared_ptr<FindMarkerCentroidsFrame>) override;
 				void processTrackingSearch(shared_ptr<MatchMarkersFrame> &);
 				shared_ptr<MatchMarkersFrame> processCheckKnownPoses(shared_ptr<MatchMarkersFrame> &);

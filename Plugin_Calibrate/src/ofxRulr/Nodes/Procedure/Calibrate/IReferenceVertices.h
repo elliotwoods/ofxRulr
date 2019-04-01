@@ -12,7 +12,7 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
 			namespace Calibrate {
-				class PLUGIN_CALIBRATION_EXPORTS IReferenceVertices : public Procedure::Base {
+				class PLUGIN_CALIBRATE_EXPORTS IReferenceVertices : public Procedure::Base {
 				public:
 					class Vertex : public Utils::AbstractCaptureSet::BaseCapture {
 					public:

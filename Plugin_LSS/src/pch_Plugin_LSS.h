@@ -17,3 +17,5 @@
 #include "ofxRulr/Nodes/LSS/Projector.h"
 #include "ofxRulr/Nodes/LSS/Scan.h"
 #include "ofxRulr/Nodes/LSS/FitLines.h"
+#include "ofxRulr/Nodes/LSS/Planes.h"
+#include "ofxRulr/Nodes/LSS/ProjectorToPlanes.h"

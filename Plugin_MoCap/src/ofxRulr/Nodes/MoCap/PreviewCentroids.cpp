@@ -113,8 +113,7 @@ namespace ofxRulr {
 					this->previewFrameMutex.unlock();
 
 					if (previewFrame) {
-						this->previewImage.getPixels() = previewFrame->imageFrame->getPixels();
-						cv::Mat masked = ofxCv::toCv(previewFrame->imageFrame->getPixels()) & previewFrame->binary;
+						cv::Mat masked = previewFrame->image & previewFrame->binary;
 						ofxCv::copy(masked, this->previewImage.getPixels());
 						this->previewImage.update();
 					}

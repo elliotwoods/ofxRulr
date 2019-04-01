@@ -14,7 +14,7 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
 			namespace Calibrate {
-				class PLUGIN_CALIBRATION_EXPORTS ProjectorFromGraycode : public Base {
+				class PLUGIN_CALIBRATE_EXPORTS ProjectorFromGraycode : public Base {
 				public:
 					class Capture : public Utils::AbstractCaptureSet::BaseCapture {
 					public:

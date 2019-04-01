@@ -137,13 +137,13 @@ namespace ofxRulr {
 
 				auto camera = this->getInput<Item::Camera>();
 				if (camera) {
-					if (graycode) {
+					if (graycode && graycode->hasData()) {
 						camera->getViewInWorldSpace().drawOnNearPlane(graycode->getDecoder().getProjectorInCamera());
 					}
 				}
 				auto projector = this->getInput<Item::Projector>();
 				if (projector) {
-					if (graycode) {
+					if (graycode && graycode->hasData()) {
 						projector->getViewInWorldSpace().drawOnNearPlane(graycode->getDecoder().getCameraInProjector());
 					}
 				}
