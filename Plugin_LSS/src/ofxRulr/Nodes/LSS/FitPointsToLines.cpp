@@ -400,12 +400,22 @@ namespace ofxRulr {
 					newLine->startWorld = lineEnds[0];
 					newLine->endWorld = lineEnds[1];
 					
-					lines.push_back(newLine);
+					vector<shared_ptr<ProjectorPixel>> uniqueProjectorPixels;
+					for (auto projectorPixel : newLine->projectorPixels) {
+						if (projectorPixel->unavailable) {
+							continue;
+						}
+						else {
+							uniqueProjectorPixels.push_back(projectorPixel);
+							projectorPixel->unavailable = true;
+						}
+					}
+					newLine->projectorPixels = uniqueProjectorPixels;
 
-					// DEBUG print out and break
-					cout << newLine->startWorld << endl;
-					break;
+					lines.push_back(newLine);
+					cout << "."; // some progress indication
 				}
+				cout << endl;
 
 				this->lines = lines;
 
