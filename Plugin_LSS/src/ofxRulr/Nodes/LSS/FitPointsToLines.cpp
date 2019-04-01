@@ -44,6 +44,7 @@ namespace ofxRulr {
 					if (int(ofGetElapsedTimef()) % 2 == 0) {
 						ofPushStyle();
 						{
+							ofSetSphereResolution(4);
 							ofNoFill();
 							for (auto debugPoint : this->debugPoints) {
 								ofDrawSphere(debugPoint, 0.02);

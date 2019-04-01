@@ -132,6 +132,7 @@ EXPORTS
 	?ofSetEscapeQuitsApp@@YAX_N@Z
 	?ofSetLineWidth@@YAXM@Z
 	?ofSetMatrixMode@@YAXW4ofMatrixMode@@@Z
+	?ofSetSphereResolution@@YAXH@Z
 	?ofSetupScreen@@YAXXZ
 	?ofShowCursor@@YAXXZ
 	?ofSleepMillis@@YAXH@Z
