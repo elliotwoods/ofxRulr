@@ -39,6 +39,11 @@ namespace ofxRulr {
 					} edges;
 
 					struct : ofParameterGroup {
+						ofParameter<bool> customUndistort{ "Custom undistort", true };
+						PARAM_DECLARE("Project pixels", customUndistort);
+					} projectPixels;
+
+					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<float> lensOffset{ "Lens offset", 0, -1.0, 1.0 };
 							ofParameter<float> throwRatio{ "Throw ratio", 1, 0, 5 };
@@ -52,7 +57,7 @@ namespace ofxRulr {
 						PARAM_DECLARE("Calibrate", initial, decimateData, filterOutliers, maximumReprojectionError);
 					} calibrate;
 
-					PARAM_DECLARE("ProjectorToPlanes", edges, calibrate)
+					PARAM_DECLARE("ProjectorToPlanes", edges, projectPixels, calibrate)
 				} parameters;
 
 				struct {

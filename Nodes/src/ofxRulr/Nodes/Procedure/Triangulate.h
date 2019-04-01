@@ -19,12 +19,15 @@ namespace ofxRulr {
 				void deserialize(const Json::Value &);
 
 				void triangulate();
+
+				const ofMesh & getMesh() const;
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void drawWorldStage();
 
 				ofMesh mesh;
 
+				ofParameter<bool> manualUndistort{ "Manual undistort", true };
 				ofParameter<float> maxLength;
 				ofParameter<bool> giveColor;
 				ofParameter<bool> giveTexCoords;

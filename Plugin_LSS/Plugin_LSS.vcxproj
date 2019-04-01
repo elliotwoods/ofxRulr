@@ -89,6 +89,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\LSS\FitLines.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\LSS\FitPointsToLines.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\LSS\Planes.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\LSS\Projector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\LSS\ProjectorToPlanes.cpp" />
@@ -106,6 +107,7 @@
     <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Stream.h" />
     <ClInclude Include="..\..\..\addons\ofxMessagePack\src\ofxMessagePack\Unpacker.h" />
     <ClInclude Include="src\ofxRulr\Nodes\LSS\FitLines.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\LSS\FitPointsToLines.h" />
     <ClInclude Include="src\ofxRulr\Nodes\LSS\Planes.h" />
     <ClInclude Include="src\ofxRulr\Nodes\LSS\Projector.h" />
     <ClInclude Include="src\ofxRulr\Nodes\LSS\ProjectorToPlanes.h" />

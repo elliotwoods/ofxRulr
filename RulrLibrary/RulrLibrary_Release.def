@@ -113,6 +113,7 @@ EXPORTS
 	?ofPushMatrix@@YAXXZ
 	?ofPushStyle@@YAXXZ
 	?ofPushView@@YAXXZ
+	?ofRandom@@YAMM@Z
 	?ofRandomf@@YAMXZ
 	?ofRotate@@YAXM@Z
 	?ofRotate@@YAXMMMM@Z
@@ -499,6 +500,7 @@ EXPORTS
 	?toOf@ofxCv@@YAAEBVofVec2f@@AEBV?$Point_@M@cv@@@Z
 	?toOf@ofxCv@@YAAEBVofVec3f@@AEBV?$Point3_@M@cv@@@Z
 	?undistortPixelCoordinates@ofxCv@@YA?AV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@AEBV23@VMat@cv@@1@Z
+	?undistortPoint@ofxCv@@YA?AVofVec2f@@AEBV2@VMat@cv@@1@Z
 	??0Controller@ofxCvGui@@QEAA@XZ
 	??0Element@ofxCvGui@@QEAA@XZ
 	?getDefaultTypeface@ofxCvGui@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -694,9 +696,11 @@ EXPORTS
 	?getProjectionMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getViewMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getWidth@Projector@ofxRay@@QEBAHXZ
+	?closestPointOnRayTo@Ray@ofxRay@@QEBA?AVofVec3f@@AEBV3@@Z
 	?distanceTo@Ray@ofxRay@@QEBAMAEBVofVec3f@@@Z
 	?draw@Ray@ofxRay@@UEBAXXZ
 	?getEnd@Ray@ofxRay@@QEBA?AVofVec3f@@XZ
+	?getLength@Ray@ofxRay@@QEBAMXZ
 	?getMidpoint@Ray@ofxRay@@QEBA?AVofVec3f@@XZ
 	?getStart@Ray@ofxRay@@QEBAAEBVofVec3f@@XZ
 	?intersect@Ray@ofxRay@@QEBA?AV12@AEBV12@@Z
@@ -781,11 +785,13 @@ EXPORTS
 	?setHeight@View@Item@Nodes@ofxRulr@@QEAAXM@Z
 	?setIntrinsics@View@Item@Nodes@ofxRulr@@QEAAXVMat@cv@@0@Z
 	?setWidth@View@Item@Nodes@ofxRulr@@QEAAXM@Z
+	??0Triangulate@Procedure@Nodes@ofxRulr@@QEAA@XZ
 	??0Graycode@Scan@Procedure@Nodes@ofxRulr@@QEAA@XZ
 	?getDataSet@Graycode@Scan@Procedure@Nodes@ofxRulr@@QEBAAEBVDataSet@ofxGraycode@@XZ
 	?getDecoder@Graycode@Scan@Procedure@Nodes@ofxRulr@@QEBAAEAVDecoder@ofxGraycode@@XZ
 	?hasData@Graycode@Scan@Procedure@Nodes@ofxRulr@@QEBA_NXZ
 	?runScan@Graycode@Scan@Procedure@Nodes@ofxRulr@@QEAAXXZ
+	?getMesh@Triangulate@Procedure@Nodes@ofxRulr@@QEBAAEBVofMesh@@XZ
 	??0VideoOutput@System@Nodes@ofxRulr@@QEAA@XZ
 	?begin@VideoOutput@System@Nodes@ofxRulr@@QEAAXXZ
 	?clearFbo@VideoOutput@System@Nodes@ofxRulr@@QEAAX_N@Z

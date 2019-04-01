@@ -32,6 +32,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\LSS\ProjectorToPlanes.cpp">
       <Filter>src\ofxRulr\Nodes\LSS</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\LSS\FitPointsToLines.cpp">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -88,6 +91,9 @@
       <Filter>src\ofxRulr\Nodes\LSS</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\LSS\ProjectorToPlanes.h">
+      <Filter>src\ofxRulr\Nodes\LSS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\LSS\FitPointsToLines.h">
       <Filter>src\ofxRulr\Nodes\LSS</Filter>
     </ClInclude>
   </ItemGroup>
