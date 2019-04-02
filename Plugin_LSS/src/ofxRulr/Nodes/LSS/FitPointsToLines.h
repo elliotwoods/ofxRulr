@@ -73,9 +73,14 @@ namespace ofxRulr {
 							PARAM_DECLARE("Walk", distance, sizeM, minimumCount);
 						} walk;
 
-						ofParameter<float> minimumLength{ "Minimum length [m]", 0.1, 0, 10 };
+						struct : ofParameterGroup {
+							ofParameter<float> minimumLength{ "Minimum length [m]", 0.1, 0, 10 };
+							ofParameter<float> deviationThreshold{ "Deviation threshold [m]", 0.025, 0, 1.0 };
+							ofParameter<float> deviantPopulationLimit{ "Deviant population limit [%]", 0.1, 0, 1 };
+							PARAM_DECLARE("Test", minimumLength, deviationThreshold, deviantPopulationLimit);
+						} test;
 
-						PARAM_DECLARE("Search", head, walk, minimumLength);
+						PARAM_DECLARE("Search", head, walk, test);
 					} search;
 
 					struct : ofParameterGroup {

@@ -362,10 +362,25 @@ namespace ofxRulr {
 					newLine->startWorld = lineEnds[0];
 					newLine->endWorld = lineEnds[1];
 
-					//check the line is long enough to be valuable
-					if (newLine->startWorld.distance(newLine->endWorld) < this->parameters.search.minimumLength) {
-						continue;
+					//check the tests
+					{
+						if (newLine->startWorld.distance(newLine->endWorld) < this->parameters.search.test.minimumLength) {
+							continue;
+						}
+
+						int deviantCount = 0;
+						for (auto projectorPixel2 : newLine->projectorPixels) {
+							auto deviation = ray.distanceTo(projectorPixel2->world);
+							if (deviation > this->parameters.search.test.deviationThreshold) {
+								deviantCount++;
+							}
+						}
+						float deviantRatio = (float) deviantCount / (float) newLine->projectorPixels.size();
+						if (deviantRatio > this->parameters.search.test.deviantPopulationLimit) {
+							continue;
+						}
 					}
+					
 					
 					//take and mark projector pixels
 					vector<shared_ptr<ProjectorPixel>> uniqueProjectorPixels;
