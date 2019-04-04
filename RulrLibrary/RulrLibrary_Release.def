@@ -61,6 +61,7 @@ EXPORTS
 	??4ofTexture@@QEAAAEAV0@$$QEAV0@@Z
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
 	??4ofVbo@@QEAAAEAV0@AEBV0@@Z
+	??6Json@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV12@AEBVValue@0@@Z
 	??9tpp@@YA_NAEBVfIterator@Delaunay@0@0@Z
 	??BofBuffer@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?ofCircle@@YAXAEBVofVec3f@@M@Z
@@ -312,9 +313,11 @@ EXPORTS
 	?draw@ofFbo@@UEBAXMM@Z
 	?end@ofFbo@@QEBAXXZ
 	?getDepthTexture@ofFbo@@QEAAAEAVofTexture@@XZ
+	?isAllocated@ofFbo@@QEBA_NXZ
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@E@@H@Z
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@M@@H@Z
 	?unbind@ofFbo@@QEBAXXZ
+	?close@ofFile@@QEAAXXZ
 	?open@ofFile@@QEAA_NAEBVpath@filesystem@boost@@W4Mode@1@_N@Z
 	?readToBuffer@ofFile@@QEAA?AVofBuffer@@XZ
 	?getPath@ofFileDialogResult@@QEAA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -695,6 +698,7 @@ EXPORTS
 	?getHeight@Projector@ofxRay@@QEBAHXZ
 	?getNormalizedSCoordinateOfWorldPosition@Projector@ofxRay@@QEBA?AVofVec3f@@V3@@Z
 	?getProjectionMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
+	?getScreenCoordinateOfWorldPosition@Projector@ofxRay@@QEBA?AVofVec3f@@V3@@Z
 	?getViewMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getWidth@Projector@ofxRay@@QEBAHXZ
 	?closestPointOnRayTo@Ray@ofxRay@@QEBA?AVofVec3f@@AEBV3@@Z

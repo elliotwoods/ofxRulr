@@ -3,6 +3,14 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace LSS {
+#pragma mark Line
+			//----------
+			FitPointsToLines::Line::Line() {
+				this->color = ofColor(200, 100, 100);
+				this->color.setHueAngle(ofRandom(360.0));
+			}
+
+#pragma mark FitPointsToLines
 			//----------
 			FitPointsToLines::FitPointsToLines() {
 				RULR_NODE_INIT_LISTENER;
@@ -15,14 +23,41 @@ namespace ofxRulr {
 
 			//----------
 			void FitPointsToLines::init() {
+				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_DRAW_WORLD_LISTENER;
 
 				this->addInput<Item::Camera>();
 				this->addInput<Item::Projector>();
 				this->addInput<Procedure::Scan::Graycode>();
+				auto videoOutput = this->addInput<System::VideoOutput>();
 
 				this->manageParameters(this->parameters);
+
+				{
+					auto panel = ofxCvGui::Panels::makeBaseDraws(this->previewInProjector, "Lines in projector");
+					this->panel = panel;
+				}
+
+				{
+					videoOutput->onNewConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
+						videoOutput->onDrawOutput.addListener([this](ofRectangle & outputRectangle) {
+							this->drawOnProjector();
+						}, this);
+					};
+					videoOutput->onDeleteConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
+						if (videoOutput) {
+							videoOutput->onDrawOutput.removeListeners(this);
+						}
+					};
+				}
+			}
+
+			//----------
+			void FitPointsToLines::update() {
+				if (this->previewDirty) {
+					this->rebuildPreview();
+				}
 			}
 
 			//----------
@@ -39,11 +74,15 @@ namespace ofxRulr {
 					ofPopStyle();
 				}
 
+				if (this->parameters.preview.classifiedPixels) {
+					this->previewClassifiedPixels.draw();
+				}
+
 				if (this->parameters.preview.debug) {
 					if (int(ofGetElapsedTimef()) % 2 == 0) {
 						ofPushStyle();
 						{
-							ofSetSphereResolution(4);
+							ofSetSphereResolution(2);
 							ofNoFill();
 							for (auto debugPoint : this->debugPoints) {
 								ofDrawSphere(debugPoint, 0.02);
@@ -56,40 +95,86 @@ namespace ofxRulr {
 			}
 
 			//----------
+			ofxCvGui::PanelPtr FitPointsToLines::getPanel() {
+				return this->panel;
+			}
+
+			//----------
 			void FitPointsToLines::populateInspector(ofxCvGui::InspectArguments & args) {
 				auto inspector = args.inspector;
 
+				inspector->addButton("Clear", [this]() {
+					this->lines.clear();
+					this->unclassifiedPixels.clear();
+					this->previewDirty = true;
+				});
+
+				inspector->addButton("Calibrate", [this]() {
+					try {
+						this->calibrate();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				}, OF_KEY_RETURN)->setHeight(100.0f);
+
 				inspector->addButton("Gather projector pixels", [this]() {
 					try {
-						Utils::ScopedProcess scopedProcess("Gather projector pixels");
 						this->gatherProjectorPixels();
-						scopedProcess.end();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 				});
 
+				inspector->addLiveValue<size_t>("Unclassified projector pixels", [this]() {
+					return this->unclassifiedPixels.size();
+				});
+
 				inspector->addButton("Triangulate", [this]() {
 					try {
-						Utils::ScopedProcess scopedProcess("Triangulate");
 						this->triangulate();
-						scopedProcess.end();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 				});
 
 				inspector->addButton("Fit", [this]() {
 					try {
-						Utils::ScopedProcess scopedProcess("Fit points to lines");
 						this->fit();
-						scopedProcess.end();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				});
+
+				inspector->addLiveValue<size_t>("Found line count", [this]() {
+					return this->lines.size();
+				});
+
+				inspector->addButton("Project to 2D", [this]() {
+					try {
+						this->projectTo2D();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+				});
+
+				inspector->addButton("Export JSON", [this]() {
+					try {
+						this->exportData();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 				});
 			}
 
 			//----------
+			void FitPointsToLines::calibrate() {
+				Utils::ScopedProcess scopedProcess("Calibrate");
+				this->gatherProjectorPixels();
+				this->triangulate();
+				this->fit();
+				this->projectTo2D();
+				this->exportData();
+				scopedProcess.end();
+			}
+
+			//----------
 			void FitPointsToLines::gatherProjectorPixels() {
-				this->throwIfMissingAnyConnection();
+				Utils::ScopedProcess scopedProcess("Gather projector pixels");
+				this->throwIfMissingAConnection<Procedure::Scan::Graycode>();
 
 				auto graycodeNode = this->getInput<Procedure::Scan::Graycode>();
 
@@ -122,6 +207,9 @@ namespace ofxRulr {
 				}
 
 				this->unclassifiedPixels = unclassifiedPixels;
+				this->previewDirty = true;
+
+				scopedProcess.end();
 			}
 
 			//----------
@@ -174,7 +262,9 @@ namespace ofxRulr {
 			}
 
 			void FitPointsToLines::triangulate() {
-				this->throwIfMissingAnyConnection();
+				Utils::ScopedProcess scopedProcess("Triangulate");
+				this->throwIfMissingAConnection<Item::Camera>();
+				this->throwIfMissingAConnection<Item::Projector>();
 
 				auto cameraNode = this->getInput<Item::Camera>();
 				auto projectorNode = this->getInput<Item::Projector>();
@@ -187,9 +277,6 @@ namespace ofxRulr {
 
 				//we will perform this undistortion ourselves
 				cameraView.distortion.clear();
-
-				ofMesh previewUnclassifiedPixels;
-				previewUnclassifiedPixels.setMode(ofPrimitiveMode::OF_PRIMITIVE_POINTS);
 
 				for (auto & projectorPixelIt : this->unclassifiedPixels) {
 					auto & projectorPixel = * projectorPixelIt.second;
@@ -217,16 +304,24 @@ namespace ofxRulr {
 					auto projectorPixelRay = projectorView.castPixel(projectorPixel.projector);
 
 					auto intersection = cameraPixelRay.intersect(projectorPixelRay);
+
 					projectorPixel.world = intersection.getMidpoint();
 					projectorPixel.intersectionLength = intersection.getLength();
 
-					//preview
-					{
-						previewUnclassifiedPixels.addVertex(projectorPixel.world);
+					//tests
+					projectorPixel.triangulationFailed = false;
+					if (intersection.getLength() > this->parameters.triangulate.maxIntersectionLength) {
+						projectorPixel.triangulationFailed = true;
+					}
+					auto cameraReprojection = cameraView.getScreenCoordinateOfWorldPosition(projectorPixel.world);
+					auto cameraReprojectionError = cameraReprojection.distance(projectorPixel.cameraUndistorted);
+					if (cameraReprojectionError > this->parameters.triangulate.maxCameraDeviation) {
+						projectorPixel.triangulationFailed = true;
 					}
 				}
 
-				this->previewUnclassifiedPixels = previewUnclassifiedPixels;
+				this->previewDirty = true;
+				scopedProcess.end();
 			}
 
 			//----------
@@ -263,12 +358,16 @@ namespace ofxRulr {
 			}
 
 			void FitPointsToLines::fit() {
+				Utils::ScopedProcess scopedProcess("Fit points to lines");
 				vector<shared_ptr<Line>> lines;
 
+				size_t countProgress = 0;
 				for (auto & projectorPixelIt : this->unclassifiedPixels) {
+					countProgress++;
+
 					auto & projectorPixel = *projectorPixelIt.second;
-					if (projectorPixel.unavailable) {
-						// This pixel is already used
+					if (projectorPixel.unavailable || projectorPixel.triangulationFailed) {
+						// This pixel is already used or not suitable
 						continue;
 					}
 
@@ -320,13 +419,11 @@ namespace ofxRulr {
 					// re-fit to the good pixels
 					ray = this->fitRayToProjectorPixels(goodPixels);
 
-					auto walkDistance = this->parameters.search.walk.distance;
+					auto walkDistance = this->parameters.search.walk.length;
 					vector<float> directions{ -1, +1 };
 					vector<ofVec3f> lineEnds;
 					for (auto direction : directions) {
 						ofVec3f walkPosition = ray.s;
-						bool enoughPieces;
-
 						while (true) {
 							//find pixels in this region
 							vector<shared_ptr<ProjectorPixel>> addProjectorPixels;
@@ -335,7 +432,9 @@ namespace ofxRulr {
 								if (projectorPixel2->unavailable) {
 									continue;
 								}
-								if (projectorPixel2->world.distance(walkPosition) < this->parameters.search.walk.sizeM) {
+								auto pointProjectedOnLine = ray.closestPointOnRayTo(projectorPixel2->world);
+								if (ray.distanceTo(projectorPixel2->world) < this->parameters.search.walk.width / 2.0f
+									&& pointProjectedOnLine.distance(walkPosition) < this->parameters.search.walk.length / 2.0f) {
 									addProjectorPixels.push_back(projectorPixel2);
 								}
 							}
@@ -361,6 +460,15 @@ namespace ofxRulr {
 					}
 					newLine->startWorld = lineEnds[0];
 					newLine->endWorld = lineEnds[1];
+
+					//take average of closest points
+					{
+						auto pointNearStart = this->findMeanClosestWorld(newLine->projectorPixels, newLine->startWorld);
+						auto pointNearEnd = this->findMeanClosestWorld(newLine->projectorPixels, newLine->endWorld);
+
+						newLine->startWorld = ray.closestPointOnRayTo(pointNearStart);
+						newLine->endWorld= ray.closestPointOnRayTo(pointNearEnd);
+					}
 
 					//check the tests
 					{
@@ -396,28 +504,255 @@ namespace ofxRulr {
 					newLine->projectorPixels = uniqueProjectorPixels;
 
 					lines.push_back(newLine);
-					cout << "."; // some progress indication
+					{
+						auto progressPercent = countProgress * 100 / this->unclassifiedPixels.size();
+						Utils::ScopedProcess scopedProcess2("Adding line " + ofToString(lines.size()) + " (" + ofToString(progressPercent) + "% progress)", false);
+					}
+
+					if (lines.size() >= this->parameters.search.test.maxLineCount) {
+						ofSystemAlertDialog("Too many lines [" + ofToString(this->lines.size()) + "]");
+						break;
+					}
 				}
-				cout << endl;
 
 				this->lines = lines;
 
+				// Strip classified pixels
+				{
+					map<uint32_t, shared_ptr<ProjectorPixel>> unclassifiedProjectorPixels;
+					for (auto projectorPixel : this->unclassifiedPixels) {
+						if (!projectorPixel.second->unavailable) {
+							unclassifiedProjectorPixels.emplace(projectorPixel.first, projectorPixel.second);
+						}
+					}
+					this->unclassifiedPixels = unclassifiedProjectorPixels;
+				}
 
-				// build preview
+				this->previewDirty = true;
+				scopedProcess.end();
+			}
+
+			//----------
+			void FitPointsToLines::projectTo2D() {
+				Utils::ScopedProcess scopedProcess("Project to 2D");
+				auto fitRayTo2DPoints = [this](const vector<ofVec2f> & points) {
+					cv::Vec4f line;
+					cv::fitLine(ofxCv::toCv(points)
+						, line
+						, CV_DIST_HUBER
+						, 0
+						, this->parameters.projectTo2D.deviationThreshold
+						, 0.01);
+
+					ofxRay::Ray ray;
+					ray.s = ofVec3f(line(2), line(3), 0.0f);
+					ray.t = ofVec3f(line(0), line(1), 0.0f);
+
+					return ray;
+				};
+
+				for (auto line : this->lines) {
+					//create a 2D ray
+					vector<ofVec2f> projectorPixelPositions;
+					for (auto projectorPixel : line->projectorPixels) {
+						projectorPixelPositions.push_back(projectorPixel->projector);
+					}
+					auto rayInProjectionImage = fitRayTo2DPoints(projectorPixelPositions);
+
+					//find closest points to each end
+					auto meanProjectorPixelStart = this->findMeanClosestProjected(line->projectorPixels, line->startWorld);
+					auto meanProjectorPixelEnd = this->findMeanClosestProjected(line->projectorPixels, line->endWorld);
+
+					//project onto ray
+					auto projectedPixelStart = rayInProjectionImage.closestPointOnRayTo(meanProjectorPixelStart);
+					auto projectedPixelEnd = rayInProjectionImage.closestPointOnRayTo(meanProjectorPixelEnd);
+
+					line->startProjector = (ofVec2f)projectedPixelStart;
+					line->endProjector = (ofVec2f)projectedPixelEnd;
+				}
+
+				this->previewDirty = true;
+				scopedProcess.end();
+			}
+
+			//----------
+			template<typename T>
+			void serializeVector(Json::Value & json, const T & vector) {
+				for (int i = 0; i < sizeof(vector) / sizeof(float); i++) {
+					json[i] = vector[i];
+				}
+			}
+
+			void FitPointsToLines::exportData() {
+				Utils::ScopedProcess scopedProcess("Export data");
+
+				Json::Value jsonOuter;
+				auto & json = jsonOuter["lines"];
+
+				int lineIndex = 0;
+				for (auto line : this->lines) {
+					Json::Value jsonLine;
+					
+					serializeVector(jsonLine["startWorld"], line->startWorld);
+					serializeVector(jsonLine["endWorld"], line->endWorld);
+
+					serializeVector(jsonLine["startProjector"], line->startProjector);
+					serializeVector(jsonLine["endProjector"], line->endProjector);
+
+					json.append(jsonLine);
+				}
+
+
+				ofFile file;
+				file.open(this->getName() + "-lines.json", ofFile::WriteOnly, false);
+				file << jsonOuter;
+
+				scopedProcess.end();
+			}
+
+			//----------
+			vector<shared_ptr<FitPointsToLines::ProjectorPixel>> FitPointsToLines::findNClosestPixels(const vector<shared_ptr<ProjectorPixel>> projectorPixels, const ofVec3f & position, int count) {
+				// put all pixels into a map
+				map<float, shared_ptr<ProjectorPixel>> projectorPixelsByDistance;
+				for (auto projectorPixel : projectorPixels) {
+					auto distance = position.squareDistance(projectorPixel->world);
+					projectorPixelsByDistance.emplace(distance, projectorPixel);
+				}
+
+				// copy first N from map into vector
+				auto it = projectorPixelsByDistance.begin();
+				vector<shared_ptr<ProjectorPixel>> results;
+				for (int i = 0; i < count; i++) {
+					//break if we get to end of map
+					if (it == projectorPixelsByDistance.end()) {
+						break;
+					}
+
+					results.push_back(it->second);
+					it++;
+				}
+
+				return results;
+			};
+
+			//----------
+			ofVec2f FitPointsToLines::findMeanClosestProjected(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const ofVec3f & worldPosition) {
+				auto closestPixels = this->findNClosestPixels(projectorPixels
+					, worldPosition
+					, this->parameters.projectTo2D.closePixelCount);
+				vector<ofVec2f> projectorPixelPositions;
+				for (auto closePixel : closestPixels) {
+					projectorPixelPositions.push_back(closePixel->projector);
+				}
+				auto meanProjectorPixel = mean(projectorPixelPositions);
+				return meanProjectorPixel;
+			};
+
+			//----------
+			ofVec3f FitPointsToLines::findMeanClosestWorld(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const ofVec3f & worldPosition) {
+				auto closestPixels = this->findNClosestPixels(projectorPixels
+					, worldPosition
+					, this->parameters.projectTo2D.closePixelCount);
+				vector<ofVec3f> worldPositions;
+				for (auto closePixel : closestPixels) {
+					worldPositions.push_back(closePixel->world);
+				}
+				auto meanWorldPosition = mean(worldPositions);
+				return meanWorldPosition;
+			};
+
+			//----------
+			void FitPointsToLines::rebuildPreview() {
+				Utils::ScopedProcess scopedProcess("Rebuild preview");
+
+				this->previewDirty = false;
+
+				// unclassified pixels
+				{
+					ofMesh previewUnclassifiedPixels;
+					previewUnclassifiedPixels.setMode(ofPrimitiveMode::OF_PRIMITIVE_POINTS);
+
+					for(auto unclassifiedPixel : this->unclassifiedPixels) {
+						previewUnclassifiedPixels.addVertex(unclassifiedPixel.second->world);
+
+						if (unclassifiedPixel.second->triangulationFailed) {
+							previewUnclassifiedPixels.addColor(ofColor(30));
+						}
+						else {
+							previewUnclassifiedPixels.addColor(ofColor(255));
+						}
+					}
+
+					swap(this->previewUnclassifiedPixels, previewUnclassifiedPixels);
+				}
+
+				// classified pixels
+				{
+					ofMesh previewClassifiedPixels;
+					previewClassifiedPixels.setMode(ofPrimitiveMode::OF_PRIMITIVE_POINTS);
+
+					for (auto line : this->lines) {
+						for (auto projectorPixel : line->projectorPixels) {
+							previewClassifiedPixels.addVertex(projectorPixel->world);
+							previewClassifiedPixels.addColor(line->color);
+						}
+					}
+
+					swap(this->previewClassifiedPixels, previewClassifiedPixels);
+				}
+
+				// lines in 3D
 				{
 					ofMesh previewLines;
 					previewLines.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
 
-					for (auto line : lines) {
+					for (auto line : this->lines) {
 						previewLines.addVertex(line->startWorld);
 						previewLines.addVertex(line->endWorld);
 
-						auto color = ofColor(200, 100, 100);
-						color.setHueAngle(ofRandom(360.0));
-						previewLines.addColor(color);
-						previewLines.addColor(color);
+						previewLines.addColor(line->color);
+						previewLines.addColor(line->color);
 					}
-					this->previewLines = previewLines;
+
+					swap(this->previewLines, previewLines);
+				}
+
+				// preview in projector
+				{
+					auto projectorNode = this->getInput<Item::Projector>();
+					if (projectorNode) {
+						//allocate
+						{
+							ofFbo::Settings settings;
+							{
+								settings.width = projectorNode->getWidth();
+								settings.height = projectorNode->getHeight();
+							}
+							this->previewInProjector.allocate(settings);
+						}
+
+						this->previewInProjector.begin();
+						{
+							ofPushStyle();
+							{
+								for (auto line : this->lines) {
+									ofSetColor(line->color);
+									ofDrawLine(line->startProjector, line->endProjector);
+								}
+							}
+							ofPopStyle();
+						}
+						this->previewInProjector.end();
+					}
+				}
+
+				scopedProcess.end();
+			}
+
+			//----------
+			void FitPointsToLines::drawOnProjector() {
+				if (this->parameters.preview.onProjector && this->previewInProjector.isAllocated()) {
+					this->previewInProjector.draw(0, 0);
 				}
 			}
 		}
