@@ -28,6 +28,7 @@ EXPORTS
 	??0ofLogNotice@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogWarning@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofMesh@@QEAA@XZ
+	??0ofNode@@QEAA@AEBV0@@Z
 	??0ofNode@@QEAA@XZ
 	??0ofParameterGroup@@QEAA@XZ
 	??0ofPath@@QEAA@XZ
@@ -58,6 +59,7 @@ EXPORTS
 	??1ofVboMesh@@UEAA@XZ
 	??1ofxOscBundle@@QEAA@XZ
 	??1ofxOscMessage@@QEAA@XZ
+	??4ofNode@@QEAAAEAV0@$$QEAV0@@Z
 	??4ofTexture@@QEAAAEAV0@$$QEAV0@@Z
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
 	??4ofVbo@@QEAAAEAV0@AEBV0@@Z
@@ -379,6 +381,8 @@ EXPORTS
 	?usingNormals@ofMesh@@UEBA_NXZ
 	?usingTextures@ofMesh@@UEBA_NXZ
 	?boom@ofNode@@QEAAXM@Z
+	?customDraw@ofNode@@UEAAXXZ
+	?customDraw@ofNode@@UEBAXPEBVofBaseRenderer@@@Z
 	?getGlobalTransformMatrix@ofNode@@QEBA?AVofMatrix4x4@@XZ
 	?getPosition@ofNode@@QEBA?AVofVec3f@@XZ
 	?lookAt@ofNode@@QEAAXAEBVofVec3f@@@Z
@@ -670,11 +674,14 @@ EXPORTS
 	?sendBundle@ofxOscSender@@QEAAXAEAVofxOscBundle@@@Z
 	?sendMessage@ofxOscSender@@QEAAXAEAVofxOscMessage@@_N@Z
 	?setup@ofxOscSender@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
+	??0Camera@ofxRay@@QEAA@XZ
 	??0Plane@ofxRay@@QEAA@VofVec3f@@00VofVec2f@@@Z
 	??0Plane@ofxRay@@QEAA@XZ
+	??0Projector@ofxRay@@QEAA@HH@Z
 	??0Ray@ofxRay@@QEAA@VofVec3f@@0_N@Z
 	??0Ray@ofxRay@@QEAA@VofVec3f@@0V?$ofColor_@E@@_N@Z
 	??0Ray@ofxRay@@QEAA@XZ
+	?undistortCoordinate@Camera@ofxRay@@UEBA?AVofVec2f@@AEBV3@@Z
 	?draw@Plane@ofxRay@@UEBAXXZ
 	?fitToPoints@Plane@ofxRay@@QEAA_NAEBV?$vector@VofVec3f@@V?$allocator@VofVec3f@@@std@@@std@@AEAM@Z
 	?getABCD@Plane@ofxRay@@QEBA?AVofVec4f@@XZ
@@ -693,6 +700,7 @@ EXPORTS
 	?castCoordinate@Projector@ofxRay@@QEBA?AVRay@2@AEBVofVec2f@@@Z
 	?castPixel@Projector@ofxRay@@QEBA?AVRay@2@AEBVofVec2f@@@Z
 	?castPixel@Projector@ofxRay@@QEBA?AVRay@2@HH@Z
+	?draw@Projector@ofxRay@@UEBAXXZ
 	?endAsCamera@Projector@ofxRay@@QEBAXXZ
 	?getClippedProjectionMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getHeight@Projector@ofxRay@@QEBAHXZ
@@ -701,11 +709,13 @@ EXPORTS
 	?getScreenCoordinateOfWorldPosition@Projector@ofxRay@@QEBA?AVofVec3f@@V3@@Z
 	?getViewMatrix@Projector@ofxRay@@QEBA?AVofMatrix4x4@@XZ
 	?getWidth@Projector@ofxRay@@QEBAHXZ
+	?randomiseVectors@Projector@ofxRay@@UEAAXM@Z
 	?closestPointOnRayTo@Ray@ofxRay@@QEBA?AVofVec3f@@AEBV3@@Z
 	?distanceTo@Ray@ofxRay@@QEBAMAEBVofVec3f@@@Z
 	?draw@Ray@ofxRay@@UEBAXXZ
 	?getEnd@Ray@ofxRay@@QEBA?AVofVec3f@@XZ
 	?getLength@Ray@ofxRay@@QEBAMXZ
+	?getLengthSquared@Ray@ofxRay@@QEBAMXZ
 	?getMidpoint@Ray@ofxRay@@QEBA?AVofVec3f@@XZ
 	?getStart@Ray@ofxRay@@QEBAAEBVofVec3f@@XZ
 	?intersect@Ray@ofxRay@@QEBA?AV12@AEBV12@@Z
@@ -780,6 +790,7 @@ EXPORTS
 	?getRotationQuat@RigidBody@Item@Nodes@ofxRulr@@QEBA?AVofQuaternion@@XZ
 	?getTransform@RigidBody@Item@Nodes@ofxRulr@@QEBA?AVofMatrix4x4@@XZ
 	?setExtrinsics@RigidBody@Item@Nodes@ofxRulr@@QEAAXVMat@cv@@0_N@Z
+	?setPosition@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBVofVec3f@@@Z
 	?setTransform@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBVofMatrix4x4@@@Z
 	?getCameraMatrix@View@Item@Nodes@ofxRulr@@QEBA?AVMat@cv@@XZ
 	?getDistortionCoefficients@View@Item@Nodes@ofxRulr@@QEBA?AVMat@cv@@XZ

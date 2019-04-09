@@ -39,6 +39,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.cpp">
       <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\ProCamSolve\SolveProjector.cpp">
+      <Filter>src\ofxRulr\Experiments\ProCamSolve</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -78,6 +81,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.h">
       <Filter>src\ofxRulr\Experiments\PhotoScan</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\ProCamSolve\SolveProjector.h">
+      <Filter>src\ofxRulr\Experiments\ProCamSolve</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -100,6 +106,9 @@
     </Filter>
     <Filter Include="src\ofxRulr\Experiments\PhotoScan">
       <UniqueIdentifier>{52443c92-0771-4647-aec1-5262a884f9df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Experiments\ProCamSolve">
+      <UniqueIdentifier>{ef206311-6525-4115-bbee-d0a98bcfa1ed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

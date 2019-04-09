@@ -85,8 +85,9 @@ namespace ofxRulr {
 						{
 							ofParameter<float> length{ "Length [m]", 0.02, 0, 1.0 };
 							ofParameter<float> width{ "Width [m]", 0.01, 0, 1.0 };
+							ofParameter<float> depth{ "Depth [m]", 0.01, 0, 1.0 };
 							ofParameter<float> minimumCount{ "Minimum count [px]", 1, 1, 1000 };
-							PARAM_DECLARE("Walk", length, width, minimumCount);
+							PARAM_DECLARE("Walk", length, width, depth, minimumCount);
 						} walk;
 
 						struct : ofParameterGroup {

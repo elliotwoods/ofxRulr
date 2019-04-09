@@ -361,6 +361,9 @@ namespace ofxRulr {
 				Utils::ScopedProcess scopedProcess("Fit points to lines");
 				vector<shared_ptr<Line>> lines;
 
+				this->throwIfMissingAConnection<Item::Camera>();
+				auto cameraPosition = this->getInput<Item::Camera>()->getPosition();
+
 				size_t countProgress = 0;
 				for (auto & projectorPixelIt : this->unclassifiedPixels) {
 					countProgress++;
@@ -433,7 +436,17 @@ namespace ofxRulr {
 									continue;
 								}
 								auto pointProjectedOnLine = ray.closestPointOnRayTo(projectorPixel2->world);
-								if (ray.distanceTo(projectorPixel2->world) < this->parameters.search.walk.width / 2.0f
+
+								auto rayToProjectorPixelDeviation = projectorPixel2->world - ray.closestPointOnRayTo(projectorPixel2->world);
+
+								auto viewDirection = projectorPixel2->world - cameraPosition;
+								viewDirection = viewDirection.getNormalized();
+
+								auto deviationInViewDirection = abs(viewDirection.dot(rayToProjectorPixelDeviation));
+								auto deviationOrthogonalToViewDirection = abs(viewDirection.cross(rayToProjectorPixelDeviation).length());
+
+								if (deviationOrthogonalToViewDirection < this->parameters.search.walk.width / 2.0f
+									&& deviationInViewDirection < this->parameters.search.walk.depth / 2.0f
 									&& pointProjectedOnLine.distance(walkPosition) < this->parameters.search.walk.length / 2.0f) {
 									addProjectorPixels.push_back(projectorPixel2);
 								}
@@ -510,7 +523,7 @@ namespace ofxRulr {
 					}
 
 					if (lines.size() >= this->parameters.search.test.maxLineCount) {
-						ofSystemAlertDialog("Too many lines [" + ofToString(this->lines.size()) + "]");
+						ofSystemAlertDialog("Too many lines [" + ofToString(lines.size()) + "]");
 						break;
 					}
 				}

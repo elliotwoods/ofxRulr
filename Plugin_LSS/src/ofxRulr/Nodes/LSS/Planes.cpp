@@ -50,7 +50,7 @@ namespace ofxRulr {
 				element->arrange();
 				
 				//element->setHeight(element->getLength()); <--doesn't work
-				element->setHeight(40 * 5);
+				element->setHeight(40 * 6);
 
 				return element;
 			}
