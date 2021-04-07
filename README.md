@@ -1,19 +1,49 @@
 Rulr
 ====
 
+A node based modular toolkit for calibration of spatial artworks featuring:
 
-# The problem
-	* Calibration is required to create spatial artworks
-	* Calibration problems are process and object based
-	* Many techniques are available, but are not easily reusable by themselves and others
-	
-# The solution
-	* High level modular toolkit
-	* Increased visibility
-	* User designable calibration
+	* 3D view + Node based view
 	* Standardised models for cameras, projectors
-	* Saving / loading
+	* Many calibration routines
+	* Saving / Loading / Exporting
 	* Dynamic linking
+
+# Requirements
+
+## Addons
+
+* https://github.com/elliotwoods/ofxClipboard.git
+* https://github.com/arturoc/ofxHttpServer.git
+* https://github.com/elliotwoods/ofxCvGui.git
+* https://github.com/elliotwoods/ofxCvMin.git
+* https://github.com/elliotwoods/ofxPlugin
+* https://github.com/elliotwoods/ofxSingleton.git
+* https://github.com/elliotwoods/ofxAssets.git
+* https://github.com/elliotwoods/ofxGrabCam.git
+* https://github.com/elliotwoods/ofxMachineVision.git
+* https://github.com/elliotwoods/ofxWebWidgets.git
+* https://github.com/elliotwoods/ofxWebWidgets.git
+* https://github.com/elliotwoods/ofxRay.git
+* https://github.com/elliotwoods/ofxNonLinearFit.git
+* https://github.com/elliotwoods/ofxMessagePack.git
+* https://github.com/elliotwoods/ofxSpout.git
+* ofxJSON (core)
+* ofxOSC (core)
+
+## Addons for recommended plugins
+
+* https://github.com/elliotwoods/ofxKinectForWindows2.git
+* https://github.com/elliotwoods/ofxArUco.git
+* https://github.com/elliotwoods/ofxBlackmagic2.git
+* https://github.com/elliotwoods/ofxCanon.git
+* https://github.com/elliotwoods/ofxSpinnaker.git
+
+## Addons for additional plugins (disabled by default)
+
+* ofxUEye https://github.com/elliotwoods/ofxUeye.git
+* ofxOrbbec https://github.com/elliotwoods/ofxOrbbec.git
+* ofxZmq https://github.com/elliotwoods/ofxZmq.git
 
 # Changelog
 
