@@ -34,11 +34,11 @@ namespace ofxRulr {
 				double maximumValue = 0;
 				cv::minMaxLoc(histogram, 0, &maximumValue, 0, 0);
 
-				this->graph.addVertex(ofVec2f(0, 0));
+				this->graph.addVertex(0, 0);
 
 				for (int i = 0; i < size; i++) {
 					auto value = histogram.at<float>(i) / maximumValue;
-					this->graph.addVertex(ofVec2f((float) i / (float) 32.0f, value));
+					this->graph.addVertex((float) i / (float) 32.0f, value);
 				}
 			}
 		}

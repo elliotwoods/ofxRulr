@@ -20,14 +20,14 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void ProjectorFromStereoAndHelperCamera::Capture::serialize(Json::Value & json) {
+				void ProjectorFromStereoAndHelperCamera::Capture::serialize(nlohmann::json & json) {
 					json["worldSpacePoints"] << this->worldSpacePoints;
 					json["imageSpacePoints"] << this->imageSpacePoints;
 					json["reprojectedImageSpacePoints"] << this->reprojectedImageSpacePoints;
 				}
 
 				//----------
-				void ProjectorFromStereoAndHelperCamera::Capture::deserialize(const Json::Value & json) {
+				void ProjectorFromStereoAndHelperCamera::Capture::deserialize(const nlohmann::json & json) {
 					json["worldSpacePoints"] >> this->worldSpacePoints;
 					json["imageSpacePoints"] >> this->imageSpacePoints;
 					json["reprojectedImageSpacePoints"] >> this->reprojectedImageSpacePoints;
@@ -91,7 +91,7 @@ namespace ofxRulr {
 
 					//find the board corners in stereo space
 					// (this would ideally use a stereoSolvePnP, but for now we triangulate
-					vector<ofVec3f> worldPointsFromStereo;
+					vector<glm::vec3> worldPointsFromStereo;
 					vector<cv::Point3f> objectPointsFromStereo;
 					{
 						auto cameraANode = stereoCalibrateNode->getInput<Item::Camera>("Camera A");
@@ -219,7 +219,7 @@ namespace ofxRulr {
 					}
 
 					//find board in projector image
-					vector<ofVec3f> worldPoints;
+					vector<glm::vec3> worldPoints;
 					vector<cv::Point2f> projectorImagePoints;
 					vector<cv::Point3f> objectPointsFromProjector;
 					{
@@ -281,7 +281,7 @@ namespace ofxRulr {
 								auto homographyMatrix = ofxCv::findHomography(cameraSpace
 									, projectorSpace
 									, ransacMask
-									, CV_RANSAC
+									, cv::RANSAC
 									, 1);
 
 								if (homographyMatrix.empty()) {
@@ -326,8 +326,8 @@ namespace ofxRulr {
 					projectorNode->setWidth(videoOutputNode->getWidth());
 					projectorNode->setHeight(videoOutputNode->getHeight());
 
-					vector<ofVec3f> worldPoints;
-					vector<ofVec2f> projectorImagePoints;
+					vector<glm::vec3> worldPoints;
+					vector<glm::vec2> projectorImagePoints;
 
 					auto selectedCaptures = this->captures.getSelection();
 					for (auto capture : selectedCaptures) {
@@ -369,8 +369,8 @@ namespace ofxRulr {
 						vector<cv::Point2f> imagePointsDecimated;
 						vector<cv::Point3f> worldPointsDecimated;
 
-						auto flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6
-							| CV_CALIB_ZERO_TANGENT_DIST | CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_ASPECT_RATIO;
+						auto flags = cv::CALIB_FIX_K1 | cv::CALIB_FIX_K2 | cv::CALIB_FIX_K3 | cv::CALIB_FIX_K4 | cv::CALIB_FIX_K5 | cv::CALIB_FIX_K6
+							| cv::CALIB_ZERO_TANGENT_DIST | cv::CALIB_USE_INTRINSIC_GUESS | cv::CALIB_FIX_ASPECT_RATIO;
 						vector<cv::Mat> rotationVector, translationVector;
 
 						decimation *= 2;
@@ -448,7 +448,7 @@ namespace ofxRulr {
 
 						auto thresholdSquared = pow(this->parameters.calibrate.removeOutliers.maxReprojectionError, 2);
 						for (int i = 0; i < count; i++) {
-							if (projectorImagePoints[i].squareDistance(ofxCv::toOf(reprojectedPoints[i])) < thresholdSquared) {
+							if (glm::distance2(projectorImagePoints[i], ofxCv::toOf(reprojectedPoints[i])) < thresholdSquared) {
 								worldPointsNoOutliers.emplace_back(ofxCv::toCv(worldPoints[i]));
 								projectorImagePointsNoOutliers.emplace_back(ofxCv::toCv(projectorImagePoints[i]));
 							}
@@ -516,7 +516,10 @@ namespace ofxRulr {
 								ofMesh line;
 								line.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINE_STRIP);
 								for (auto projectorPoint : capture->imageSpacePoints) {
-									line.addVertex(projectorPoint);
+									line.addVertex({
+										projectorPoint.x
+										, projectorPoint.y
+										, 0.0f });
 								}
 								line.draw();
 							}
@@ -545,17 +548,17 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void ProjectorFromStereoAndHelperCamera::serialize(Json::Value & json) {
+				void ProjectorFromStereoAndHelperCamera::serialize(nlohmann::json & json) {
 					this->captures.serialize(json);
-					Utils::Serializable::serialize(json, this->parameters);
-					Utils::Serializable::serialize(json, this->reprojectionError);
+					Utils::serialize(json, this->parameters);
+					Utils::serialize(json, this->reprojectionError);
 				}
 
 				//----------
-				void ProjectorFromStereoAndHelperCamera::deserialize(const Json::Value & json) {
+				void ProjectorFromStereoAndHelperCamera::deserialize(const nlohmann::json & json) {
 					this->captures.deserialize(json);
-					Utils::Serializable::deserialize(json, this->parameters);
-					Utils::Serializable::deserialize(json, this->reprojectionError);
+					Utils::deserialize(json, this->parameters);
+					Utils::deserialize(json, this->reprojectionError);
 				}
 
 				//----------

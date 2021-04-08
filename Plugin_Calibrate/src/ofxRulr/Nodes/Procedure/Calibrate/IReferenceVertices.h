@@ -19,8 +19,8 @@ namespace ofxRulr {
 						Vertex();
 						void drawWorld(bool selected = false);
 						string getDisplayString() const override;
-						ofParameter<ofVec3f> worldPosition{ "World", ofVec3f() };
-						ofParameter<ofVec2f> viewPosition{ "View", ofVec2f() };
+						ofParameter<glm::vec3> worldPosition{ "World", glm::vec3(0, 0, 0) };
+						ofParameter<glm::vec2> viewPosition{ "View", glm::vec2(0, 0) };
 						ofParameter<string> name{ "Name", "" };
 						void setOwner(shared_ptr<IReferenceVertices>);
 					protected:

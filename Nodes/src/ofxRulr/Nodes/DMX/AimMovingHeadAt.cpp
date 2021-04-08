@@ -68,14 +68,14 @@ namespace ofxRulr {
 					try {
 						//check if transform is blank before using it (blank can be an indicator of bad tracking)
 						if (this->ignoreBlankTransform) {
-							if (target->getTransform().isIdentity()) {
+							if (target->getTransform() == glm::mat4(1.0f)) {
 								this->steveJobs.isTracking = false;
 								throw(Exception("Target has no position data"));
 							}
 						}
 
 						//get either the raw position or the predicted position
-						ofVec3f aimFor;
+						glm::vec3 aimFor;
 						if(this->steveJobs.enabled) {
 							aimFor = this->doASteveJobs(target->getPosition());
 						}
@@ -85,7 +85,7 @@ namespace ofxRulr {
 
 						//calculate the position offset in target coords
 						const auto objectRotation = target->getRotationQuat();
-						const auto offset = this->getObjectPositionOffset() * objectRotation;
+						const auto offset = objectRotation * this->getObjectPositionOffset();
 
 						//perform the lookAt
 						movingHead->lookAt(aimFor + offset);
@@ -98,36 +98,36 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void AimMovingHeadAt::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->ignoreBlankTransform);
+			void AimMovingHeadAt::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->ignoreBlankTransform);
 
 				for (int i = 0; i < 3; i++) {
-					Utils::Serializable::serialize(json, this->objectPositionOffset[i]);
+					Utils::serialize(json, this->objectPositionOffset[i]);
 				}
 
 				auto & jsonPrediction = json["prediction"];
 				{
-					Utils::Serializable::serialize(jsonPrediction, this->steveJobs.enabled);
-					Utils::Serializable::serialize(jsonPrediction, this->steveJobs.steps);
-					Utils::Serializable::serialize(jsonPrediction, this->steveJobs.minimumVelocity);
-					Utils::Serializable::serialize(jsonPrediction, this->steveJobs.maximumAcceleration);
+					Utils::serialize(jsonPrediction, this->steveJobs.enabled);
+					Utils::serialize(jsonPrediction, this->steveJobs.steps);
+					Utils::serialize(jsonPrediction, this->steveJobs.minimumVelocity);
+					Utils::serialize(jsonPrediction, this->steveJobs.maximumAcceleration);
 				}
 			}
 
 			//----------
-			void AimMovingHeadAt::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->ignoreBlankTransform);
+			void AimMovingHeadAt::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->ignoreBlankTransform);
 
 				for (int i = 0; i < 3; i++) {
-					Utils::Serializable::deserialize(json, this->objectPositionOffset[i]);
+					Utils::deserialize(json, this->objectPositionOffset[i]);
 				}
 
 				const auto & jsonPrediction = json["prediction"];
 				{
-					Utils::Serializable::deserialize(jsonPrediction, this->steveJobs.enabled);
-					Utils::Serializable::deserialize(jsonPrediction, this->steveJobs.steps);
-					Utils::Serializable::deserialize(jsonPrediction, this->steveJobs.minimumVelocity);
-					Utils::Serializable::deserialize(jsonPrediction, this->steveJobs.maximumAcceleration);
+					Utils::deserialize(jsonPrediction, this->steveJobs.enabled);
+					Utils::deserialize(jsonPrediction, this->steveJobs.steps);
+					Utils::deserialize(jsonPrediction, this->steveJobs.minimumVelocity);
+					Utils::deserialize(jsonPrediction, this->steveJobs.maximumAcceleration);
 				}
 			}
 
@@ -152,7 +152,7 @@ namespace ofxRulr {
 					{
 						inspector->add(new Widgets::Slider(this->steveJobs.minimumVelocity));
 						auto velocityWidget = new Widgets::LiveValueHistory("Velocity", [this]() {
-							return this->steveJobs.velocity.length();
+							return glm::length(this->steveJobs.velocity);
 						});
 						velocityWidget->onDraw += [this](DrawArguments & args) {
 							if (this->steveJobs.velocityOK) {
@@ -170,7 +170,7 @@ namespace ofxRulr {
 					{
 						inspector->add(new Widgets::Slider(this->steveJobs.maximumAcceleration));
 						auto accelerationWidget = new Widgets::LiveValueHistory("Acceleration", [this]() {
-							return this->steveJobs.acceleration.length();
+							return glm::length(this->steveJobs.acceleration);
 						});
 						accelerationWidget->onDraw += [this](DrawArguments & args) {
 							if (this->steveJobs.accelerationOK) {
@@ -187,12 +187,16 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofVec3f AimMovingHeadAt::getObjectPositionOffset() const {
-				return ofVec3f(this->objectPositionOffset[0], this->objectPositionOffset[1], this->objectPositionOffset[2]);
+			glm::vec3 AimMovingHeadAt::getObjectPositionOffset() const {
+				return {
+					this->objectPositionOffset[0]
+					, this->objectPositionOffset[1]
+					, this->objectPositionOffset[2]
+				};
 			}
 
 			//----------
-			void AimMovingHeadAt::setObjectPositionOffset(const ofVec3f & objectPositionOffset) {
+			void AimMovingHeadAt::setObjectPositionOffset(const glm::vec3 & objectPositionOffset) {
 				for (int i = 0; i < 3; i++) {
 					this->objectPositionOffset[i] = objectPositionOffset[i];
 				}
@@ -206,7 +210,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofVec3f AimMovingHeadAt::doASteveJobs(const ofVec3f & targetPosition) {
+			glm::vec3 AimMovingHeadAt::doASteveJobs(const glm::vec3 & targetPosition) {
 				//we presume a constant frame rate (necessary for Kalman filter)
 
 				auto dt = ofGetLastFrameTime();
@@ -246,8 +250,8 @@ namespace ofxRulr {
 				//if we dont' meet the thresholds, just pass through the raw tracking data
 				//--
 				//
-				this->steveJobs.velocityOK = this->steveJobs.velocity.length() > this->steveJobs.minimumVelocity;
-				this->steveJobs.accelerationOK = this->steveJobs.acceleration.length() < this->steveJobs.maximumAcceleration;
+				this->steveJobs.velocityOK = glm::length(this->steveJobs.velocity) > this->steveJobs.minimumVelocity;
+				this->steveJobs.accelerationOK = glm::length(this->steveJobs.acceleration) < this->steveJobs.maximumAcceleration;
 				if(!this->steveJobs.velocityOK && this->steveJobs.accelerationOK) {
 					return targetPosition;
 				}
@@ -286,7 +290,7 @@ namespace ofxRulr {
 
 
 				//copy the future predicted state back into the measurement position we'll use
-				ofVec3f futurePosition;
+				glm::vec3 futurePosition;
 				for (int i = 0; i < 3; i++) {
 					futurePosition[i] = theNextIPad.at<float>(i);
 				}
@@ -294,7 +298,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void AimMovingHeadAt::initPrediction(const ofVec3f & startPostiion) {
+			void AimMovingHeadAt::initPrediction(const glm::vec3 & startPostiion) {
 				//state
 				//x, y, vx, vy
 
@@ -321,9 +325,9 @@ namespace ofxRulr {
 				setIdentity(this->steveJobs.kalmanFilter.errorCovPre, Scalar::all(0.1));
 
 				this->steveJobs.isTracking = true;
-				this->steveJobs.position = ofVec3f();
-				this->steveJobs.velocity = ofVec3f();
-				this->steveJobs.acceleration = ofVec3f();
+				this->steveJobs.position = glm::vec3();
+				this->steveJobs.velocity = glm::vec3();
+				this->steveJobs.acceleration = glm::vec3();
 			}
 		}
 	}

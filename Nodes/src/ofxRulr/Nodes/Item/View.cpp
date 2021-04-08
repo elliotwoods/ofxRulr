@@ -73,16 +73,16 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void View::serialize(Json::Value & json) {
+			void View::serialize(nlohmann::json & json) {
 				auto & jsonCalibration = json["calibration"];
-				Utils::Serializable::serialize(jsonCalibration, this->focalLengthX);
-				Utils::Serializable::serialize(jsonCalibration, this->focalLengthY);
-				Utils::Serializable::serialize(jsonCalibration, this->principalPointX);
-				Utils::Serializable::serialize(jsonCalibration, this->principalPointY);
+				Utils::serialize(jsonCalibration, this->focalLengthX);
+				Utils::serialize(jsonCalibration, this->focalLengthY);
+				Utils::serialize(jsonCalibration, this->principalPointX);
+				Utils::serialize(jsonCalibration, this->principalPointY);
 
 				auto & jsonDistortion = jsonCalibration["distortion"];
 				for (int i = 0; i < RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-					Utils::Serializable::serialize(jsonDistortion, this->distortion[i]);
+					Utils::serialize(jsonDistortion, this->distortion[i]);
 				}
 
 				auto & jsonResolution = json["resolution"];
@@ -97,42 +97,32 @@ namespace ofxRulr {
 					auto view = this->getViewInWorldSpace();
 					{
 						auto viewMatrix = view.getViewMatrix();
-						if (viewMatrix.isValid()) {
-							auto & viewMatrixJson = jsonOpenGL["viewMatrix"];
-							for (int i = 0; i < 16; i++) {
-								viewMatrixJson[i] = viewMatrix.getPtr()[i];
-							}
-						}
+						Utils::serialize(jsonOpenGL["viewMatrix"], viewMatrix);
 					}
 					{
 						auto projectionMatrix = view.getClippedProjectionMatrix();
-						if (projectionMatrix.isValid()) {
-							auto & projectionMatrixJson = jsonOpenGL["projectionMatrix"];
-							for (int i = 0; i < 16; i++) {
-								projectionMatrixJson[i] = projectionMatrix.getPtr()[i];
-							}
-						}
+						Utils::serialize(jsonOpenGL["projectionMatrix"], projectionMatrix);
 					}
 				}
 			}
 
 			//---------
-			void View::deserialize(const Json::Value & json) {
+			void View::deserialize(const nlohmann::json & json) {
 				const auto & jsonCalibration = json["calibration"];
-				Utils::Serializable::deserialize(jsonCalibration, this->focalLengthX);
-				Utils::Serializable::deserialize(jsonCalibration, this->focalLengthY);
-				Utils::Serializable::deserialize(jsonCalibration, this->principalPointX);
-				Utils::Serializable::deserialize(jsonCalibration, this->principalPointY);
+				Utils::deserialize(jsonCalibration, this->focalLengthX);
+				Utils::deserialize(jsonCalibration, this->focalLengthY);
+				Utils::deserialize(jsonCalibration, this->principalPointX);
+				Utils::deserialize(jsonCalibration, this->principalPointY);
 
 				const auto & jsonResolution = json["resolution"];
-				if (!jsonResolution.isNull()) {
-					this->setWidth(jsonResolution["width"].asFloat());
-					this->setHeight(jsonResolution["height"].asFloat());
+				if (!jsonResolution.is_array()) {
+					this->setWidth(jsonResolution["width"].get<float>());
+					this->setHeight(jsonResolution["height"].get<float>());
 				}
 
 				auto & jsonDistortion = jsonCalibration["distortion"];
 				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-					Utils::Serializable::deserialize(jsonDistortion, this->distortion[i]);
+					Utils::deserialize(jsonDistortion, this->distortion[i]);
 				}
 
 				this->markViewDirty();
@@ -339,7 +329,7 @@ namespace ofxRulr {
 				auto viewInWorldSpace = this->getViewInObjectSpace();
 
 				const auto viewInverse = this->getTransform();
-				viewInWorldSpace.setView(viewInverse.getInverse());
+				viewInWorldSpace.setView(glm::inverse(viewInverse));
 
 				return viewInWorldSpace;
 			}

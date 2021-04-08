@@ -38,17 +38,21 @@ namespace ofxRulr {
 				title->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					//draw line between inputs and outs
 					ofPushStyle();
-					ofSetLineWidth(1.0f);
-					ofSetColor(50);
-					ofDrawLine(0, 0, 0, args.localBounds.height);
-					ofDrawLine(args.localBounds.width - 1, 0, args.localBounds.width - 1, args.localBounds.height); //-1 because of scissor
+					{
+						ofSetLineWidth(1.0f);
+						ofSetColor(50);
+						ofDrawLine(0, 0, 0, args.localBounds.height);
+						ofDrawLine(args.localBounds.width - 1, 0, args.localBounds.width - 1, args.localBounds.height); //-1 because of scissor
+					}
 					ofPopStyle();
 
 					//draw text
 					ofPushMatrix();
-					ofTranslate(0, args.localBounds.height);
-					ofRotate(-90);
-					ofxCvGui::Utils::drawText(this->getNodeInstance()->getName(), ofRectangle(0, 0, args.localBounds.height, args.localBounds.width), false);
+					{
+						ofTranslate(0, args.localBounds.height);
+						ofRotateDeg(-90);
+						ofxCvGui::Utils::drawText(this->getNodeInstance()->getName(), ofRectangle(0, 0, args.localBounds.height, args.localBounds.width), false);
+					}
 					ofPopMatrix();
 				};
 				this->elements->add(title);
@@ -281,7 +285,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void NodeHost::serialize(Json::Value & json) {
+			void NodeHost::serialize(nlohmann::json & json) {
 				json["Bounds"] << this->getBounds();
 
 				//seriaise type name and content

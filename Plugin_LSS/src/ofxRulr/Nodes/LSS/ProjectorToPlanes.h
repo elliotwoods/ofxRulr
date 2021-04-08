@@ -8,8 +8,8 @@ namespace ofxRulr {
 			class ProjectorToPlanes : public Nodes::Base {
 			public:
 				struct ProjectorPixel {
-					ofVec3f world;
-					ofVec2f projection;
+					glm::vec3 world;
+					glm::vec2 projection;
 				};
 
 				ProjectorToPlanes();
@@ -20,8 +20,8 @@ namespace ofxRulr {
 
 				void drawWorldStage();
 				void populateInspector(ofxCvGui::InspectArguments &);
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				void calibrate();
 				void selectProjectorPixels();

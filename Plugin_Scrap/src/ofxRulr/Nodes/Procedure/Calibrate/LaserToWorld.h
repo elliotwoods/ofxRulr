@@ -13,12 +13,12 @@ namespace ofxRulr {
 					class Capture : public Utils::AbstractCaptureSet::BaseCapture {
 					public:
 						Capture();
-						ofParameter<ofVec3f> worldPosition{ "World", ofVec3f() };
-						ofParameter<ofVec2f> projected{ "Projected", ofVec2f() };
+						ofParameter<glm::vec3> worldPosition{ "World", glm::vec3() };
+						ofParameter<glm::vec2> projected{ "Projected", glm::vec2() };
 
 						string getDisplayString() const override;
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 					};
 
 					LaserToWorld();
@@ -30,15 +30,15 @@ namespace ofxRulr {
 
 					ofxCvGui::PanelPtr getPanel() override;
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 				protected:
 					void addCapture();
 					void calibrate();
 					void testCalibration();
 
-					ofVec3f getWorldCursorPosition() const;
+					glm::vec3 getWorldCursorPosition() const;
 
 					ofxCvGui::PanelPtr panel;
 					Utils::CaptureSet<Capture> captures;
@@ -60,7 +60,7 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<float> outputDelay{ "Output delay [s]", 0.1, 0, 10 };
 							ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
-							ofParameter<ofVec2f> offsetSquares{ "Offset squares", ofVec2f(1, 1) };
+							ofParameter<glm::vec2> offsetSquares{ "Offset squares", glm::vec2(1, 1) };
 							PARAM_DECLARE("Capture", outputDelay, findBoardMode, offsetSquares);
 						} capture;
 

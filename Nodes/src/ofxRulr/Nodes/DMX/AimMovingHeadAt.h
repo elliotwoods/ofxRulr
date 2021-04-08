@@ -13,20 +13,20 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void update();
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
 				//A position offset within the objects coordinates
 				//We will apply the object's rotation to this
-				ofVec3f getObjectPositionOffset() const;
-				void setObjectPositionOffset(const ofVec3f &);
+				glm::vec3 getObjectPositionOffset() const;
+				void setObjectPositionOffset(const glm::vec3 &);
 
 				string getTargetName();
 
 			protected:
-				ofVec3f doASteveJobs(const ofVec3f & targetPosition);
-				void initPrediction(const ofVec3f & startPosition);
+				glm::vec3 doASteveJobs(const glm::vec3 & targetPosition);
+				void initPrediction(const glm::vec3 & startPosition);
 
 				ofParameter<bool> ignoreBlankTransform;
 				ofParameter<float> objectPositionOffset[3];
@@ -38,9 +38,9 @@ namespace ofxRulr {
 					ofParameter<float> maximumAcceleration;
 
 					bool isTracking;
-					ofVec3f position;
-					ofVec3f velocity;
-					ofVec3f acceleration;
+					glm::vec3 position;
+					glm::vec3 velocity;
+					glm::vec3 acceleration;
 					bool velocityOK;
 					bool accelerationOK;
 

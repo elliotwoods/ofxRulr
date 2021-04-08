@@ -178,28 +178,33 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void VideoOutput::serialize(Json::Value & json) {
+			void VideoOutput::serialize(nlohmann::json & json) {
 				//we cache the width and height in case anybody wants to know what it is
 				json["width"] = this->width;
 				json["height"] = this->height;
 				json["monitorSelection"] = this->videoOutputSelection;
-				ofxRulr::Utils::Serializable::serialize(json, this->splitHorizontal);
-				ofxRulr::Utils::Serializable::serialize(json, this->splitVertical);
-				ofxRulr::Utils::Serializable::serialize(json, this->splitUseIndex);
-				ofxRulr::Utils::Serializable::serialize(json, this->testPattern);
-				ofxRulr::Utils::Serializable::serialize(json, this->mute);
+				ofxRulr::Utils::serialize(json, this->splitHorizontal);
+				ofxRulr::Utils::serialize(json, this->splitVertical);
+				ofxRulr::Utils::serialize(json, this->splitUseIndex);
+				ofxRulr::Utils::serialize(json, this->testPattern);
+				ofxRulr::Utils::serialize(json, this->mute);
 			}
 
 			//----------
-			void VideoOutput::deserialize(const Json::Value & json) {
-				this->width = json["width"].asInt();
-				this->height = json["height"].asInt();
-				this->setVideoOutputSelection(json["monitorSelection"].asInt());
-				ofxRulr::Utils::Serializable::deserialize(json, this->splitHorizontal);
-				ofxRulr::Utils::Serializable::deserialize(json, this->splitVertical);
-				ofxRulr::Utils::Serializable::deserialize(json, this->splitUseIndex);
-				ofxRulr::Utils::Serializable::deserialize(json, this->testPattern);
-				ofxRulr::Utils::Serializable::deserialize(json, this->mute);
+			void VideoOutput::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json["width"], this->width);
+				Utils::deserialize(json["height"], this->height);
+				{
+					int value;
+					if (Utils::deserialize(json["monitorSelection"], value)) {
+						this->setVideoOutputSelection(value);
+					}
+				}
+				ofxRulr::Utils::deserialize(json, this->splitHorizontal);
+				ofxRulr::Utils::deserialize(json, this->splitVertical);
+				ofxRulr::Utils::deserialize(json, this->splitUseIndex);
+				ofxRulr::Utils::deserialize(json, this->testPattern);
+				ofxRulr::Utils::deserialize(json, this->mute);
 			}
 
 			//----------
@@ -416,7 +421,7 @@ namespace ofxRulr {
 			void VideoOutput::begin() {
 				this->scissorWasEnabled = ofxCvGui::Utils::ScissorManager::X().getScissorEnabled();
 				ofxCvGui::Utils::ScissorManager::X().setScissorEnabled(false); 
-				this->fbo.begin(true);
+				this->fbo.begin(ofFboMode::OF_FBOMODE_PERSPECTIVE);
 			}
 
 			//----------
@@ -608,17 +613,15 @@ namespace ofxRulr {
 						bool useFullScreen = !hasSplit && this->useFullScreenMode;
 						if (useFullScreen) {
 							windowSettings.monitor = videoOutput.index;
-							windowSettings.width = this->width;
-							windowSettings.height = this->height;
+							windowSettings.setSize(this->width, this->height);
 							windowSettings.windowMode = OF_GAME_MODE;
 						}
 						else {
 							windowSettings.decorated = false;
 							windowSettings.resizable = false;
 							windowSettings.windowMode = OF_WINDOW;
-							windowSettings.width = this->width;
-							windowSettings.height = this->height;
-							windowSettings.setPosition(ofVec2f(x, y));
+							windowSettings.setSize(this->width, this->height);
+							windowSettings.setPosition({ x, y });
 						}
 
 						this->window = make_shared<ofAppGLFWWindow>();

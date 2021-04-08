@@ -37,8 +37,8 @@ namespace ofxRulr {
 					void drawWorld();
 				protected:
 					ofxCvGui::ElementPtr getDataDisplay() override;
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					vector<ofVec3f> cachedPoints;
 				};
 
@@ -61,8 +61,8 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr getPanel() override;
 
 				void populateInspector(ofxCvGui::InspectArguments &);
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				void fit();
 			protected:

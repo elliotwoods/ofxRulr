@@ -8,13 +8,13 @@ namespace ofxRulr {
 #pragma mark Vertex
 				//----------
 				IReferenceVertices::Vertex::Vertex() {
-					this->onSerialize += [this](Json::Value & json) {
-						Utils::Serializable::serialize(json, this->worldPosition);
-						Utils::Serializable::serialize(json, this->viewPosition);
+					this->onSerialize += [this](nlohmann::json & json) {
+						Utils::serialize(json, this->worldPosition);
+						Utils::serialize(json, this->viewPosition);
 					};
-					this->onDeserialize += [this](const Json::Value & json) {
-						Utils::Serializable::deserialize(json, this->worldPosition);
-						Utils::Serializable::deserialize(json, this->viewPosition);
+					this->onDeserialize += [this](const nlohmann::json & json) {
+						Utils::deserialize(json, this->worldPosition);
+						Utils::deserialize(json, this->viewPosition);
 						this->onChange.notifyListeners();
 					};
 					this->onChange += [this]() {
@@ -67,9 +67,9 @@ namespace ofxRulr {
 
 				//----------
 				void IReferenceVertices::Vertex::drawObjectLines() {
-					ofDrawLine(-ofVec3f(0.05f, 0.0f, 0.0f), ofVec3f(0.05f, 0.0f, 0.0f));
-					ofDrawLine(-ofVec3f(0.0f, 0.05f, 0.0f), ofVec3f(0.0f, 0.05f, 0.0f));
-					ofDrawLine(-ofVec3f(0.0f, 0.0f, 0.05f), ofVec3f(0.0f, 0.0f, 0.05f));
+					ofDrawLine(-glm::vec3(0.05f, 0.0f, 0.0f), glm::vec3(0.05f, 0.0f, 0.0f));
+					ofDrawLine(-glm::vec3(0.0f, 0.05f, 0.0f), glm::vec3(0.0f, 0.05f, 0.0f));
+					ofDrawLine(-glm::vec3(0.0f, 0.0f, 0.05f), glm::vec3(0.0f, 0.0f, 0.05f));
 				}
 
 #pragma mark ISelectTargetVertex
@@ -87,10 +87,10 @@ namespace ofxRulr {
 				void IReferenceVertices::init() {
 					RULR_NODE_DRAW_WORLD_LISTENER;
 
-					this->onSerialize += [this](Json::Value & json) {
+					this->onSerialize += [this](nlohmann::json & json) {
 						this->vertices.serialize(json["vertices"]);
 					};
-					this->onDeserialize += [this](const Json::Value & json) {
+					this->onDeserialize += [this](const nlohmann::json & json) {
 						this->vertices.deserialize(json["vertices"]);
 					};
 

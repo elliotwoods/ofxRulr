@@ -17,8 +17,8 @@ namespace ofxRulr {
 					void calibrate();
 
 					struct DataPoint {
-						ofVec2f cameraUndistorted;
-						ofVec2f projector;
+						glm::vec2 cameraUndistorted;
+						glm::vec2 projector;
 					};
 
 					class Model : public ofxNonLinearFit::Models::Base<DataPoint, Model> {

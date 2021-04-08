@@ -16,8 +16,8 @@ namespace ofxRulr {
 					ofxCvGui::PanelPtr getPanel() override;
 					void update();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 
 					void findHomography();
 					void findDistortionCoefficients();
@@ -27,7 +27,7 @@ namespace ofxRulr {
 
 					shared_ptr<ofxCvGui::Panels::Image> view;
 
-					ofMatrix4x4 cameraToProjector;
+					glm::mat4 cameraToProjector;
 					ofMesh grid;
 					ofImage dummy;
 

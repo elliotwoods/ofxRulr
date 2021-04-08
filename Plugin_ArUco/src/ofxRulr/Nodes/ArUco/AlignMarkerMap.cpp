@@ -71,7 +71,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void AlignMarkerMap::Constraint::serialize(Json::Value & json) {
+			void AlignMarkerMap::Constraint::serialize(nlohmann::json & json) {
 				json << this->markerID;
 				json << this->plane;
 				json << this->offset;
@@ -80,7 +80,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void AlignMarkerMap::Constraint::deserialize(const Json::Value & json) {
+			void AlignMarkerMap::Constraint::deserialize(const nlohmann::json & json) {
 				json >> this->markerID;
 				json >> this->plane;
 				json >> this->offset;
@@ -277,12 +277,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void AlignMarkerMap::serialize(Json::Value & json) {
+			void AlignMarkerMap::serialize(nlohmann::json & json) {
 				this->constraints.serialize(json["captureSet"]);
 			}
 
 			//----------
-			void AlignMarkerMap::deserialize(const Json::Value & json) {
+			void AlignMarkerMap::deserialize(const nlohmann::json & json) {
 				this->constraints.deserialize(json["captureSet"]);
 			}
 
@@ -311,7 +311,7 @@ namespace ofxRulr {
 				const auto transform = model.getTransform();
 				for (auto & marker : * markerMapRaw) {
 					for (auto & point : marker.points) {
-						point = ofxCv::toCv(ofxCv::toOf(point) * transform);
+						point = ofxCv::toCv(Utils::applyTransform(transform, ofxCv::toOf(point)));
 					}
 				}
 			}

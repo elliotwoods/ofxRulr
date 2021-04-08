@@ -13,14 +13,14 @@ namespace ofxRulr {
 				struct Description {
 					struct Markers {
 						vector<MarkerID> IDs;
-						vector<ofVec3f> positions;
+						vector<glm::vec3> positions;
 						vector<ofColor> colors;
 					} markers;
 
 					size_t markerCount;
 					float markerDiameter;
 
-					ofMatrix4x4 modelTransform;
+					glm::mat4 modelTransform;
 					cv::Mat rotationVector;
 					cv::Mat translation;
 				};
@@ -35,13 +35,13 @@ namespace ofxRulr {
 				void drawWorldStage() const;
 
 				void populateInspector(ofxCvGui::InspectArguments &);
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				//thread safe
 				shared_ptr<Description> getBodyDescription() const;
 
-				void addMarker(const ofVec3f &);
+				void addMarker(const glm::vec3 &);
 
 				float getMarkerDiameter() const;
 
@@ -55,10 +55,10 @@ namespace ofxRulr {
 					Marker();
 					string getDisplayString() const override;
 					ofParameter<MarkerID> ID{ "ID", 0 };
-					ofParameter<ofVec3f> position{ "Position", ofVec3f() };
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
-					deque<ofVec3f> worldHistory;
+					ofParameter<glm::vec3> position{ "Position", glm::vec3() };
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
+					deque<glm::vec3> worldHistory;
 				};
 
 				struct : ofParameterGroup {

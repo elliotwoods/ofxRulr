@@ -50,8 +50,8 @@ namespace ofxRulr {
 			void selectNone();
 
 			void populateWidgets(shared_ptr<ofxCvGui::Panels::Widgets>);
-			void serialize(Json::Value &);
-			void deserialize(const Json::Value &);
+			void serialize(nlohmann::json &);
+			void deserialize(const nlohmann::json &);
 
 			vector<shared_ptr<BaseCapture>> getSelectionUntyped() const;
 			vector<shared_ptr<BaseCapture>> getAllCapturesUntyped() const;

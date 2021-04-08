@@ -104,12 +104,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void ProjectorToPlanes::serialize(Json::Value & json) {
+			void ProjectorToPlanes::serialize(nlohmann::json & json) {
 
 			}
 
 			//----------
-			void ProjectorToPlanes::deserialize(const Json::Value & json) {
+			void ProjectorToPlanes::deserialize(const nlohmann::json & json) {
 
 			}
 
@@ -197,7 +197,7 @@ namespace ofxRulr {
 				auto cameraNode = this->getInput<Item::Camera>();
 				auto cameraView = cameraNode->getViewInWorldSpace();
 				auto cameraPosition = cameraNode->getPosition();
-				auto cameraLookDirection = cameraView.castCoordinate(ofVec2f(0, 0)).t;
+				auto cameraLookDirection = cameraView.castCoordinate(glm::vec2(0, 0)).t;
 				
 				auto cameraMatrix = cameraNode->getCameraMatrix();
 				auto distortionCoefficients = cameraNode->getDistortionCoefficients();
@@ -233,7 +233,7 @@ namespace ofxRulr {
 					}
 
 					// get its ray
-					ofVec2f cameraXY = pixel.getCameraXY();
+					glm::vec2 cameraXY = pixel.getCameraXY();
 					if (this->parameters.projectPixels.customUndistort) {
 						cameraXY = ofxCv::toOf(ofxCv::undistortPixelCoordinates(vector<cv::Point2f>(1, ofxCv::toCv(cameraXY))
 							, cameraMatrix
@@ -243,20 +243,20 @@ namespace ofxRulr {
 
 					// find the closest plane intersection to the camera
 					auto closestDistance = std::numeric_limits<float>::max();
-					ofVec3f closestIntersectionPosition;
+					glm::vec3 closestIntersectionPosition;
 
 					shared_ptr<Planes::Plane> closestPlane;
 
 					for (const auto & plane : planes) {
-						ofVec3f intersectionPosition;
+						glm::vec3 intersectionPosition;
 						plane->getPlane().intersect(pixelRay, intersectionPosition);
 
 						// check it's in front of camera
-						if ((intersectionPosition - cameraPosition).dot(cameraLookDirection) < 0) {
+						if (glm::dot(intersectionPosition - cameraPosition, cameraLookDirection) < 0) {
 							continue;
 						}
 
-						auto distance = cameraPosition.squareDistance(intersectionPosition);
+						auto distance = glm::distance2(cameraPosition, intersectionPosition);
 						if (distance < closestDistance) {
 							closestIntersectionPosition = intersectionPosition;
 							closestDistance = distance;
@@ -270,7 +270,7 @@ namespace ofxRulr {
 					}
 
 					// add it to the dataset
-					if (closestIntersectionPosition != ofVec3f()) {
+					if (closestIntersectionPosition != glm::vec3()) {
 						ProjectorPixel projectorPixel;
 						projectorPixel.world = closestIntersectionPosition;
 						projectorPixel.projection = pixel.getProjectorXY();
@@ -383,15 +383,15 @@ namespace ofxRulr {
 						, distortionCoefficients
 						, rotationVectors
 						, translations
-						, CV_CALIB_FIX_K1
-						| CV_CALIB_FIX_K2
-						| CV_CALIB_FIX_K3
-						| CV_CALIB_FIX_K4
-						| CV_CALIB_FIX_K5
-						| CV_CALIB_FIX_K6
-						| CV_CALIB_ZERO_TANGENT_DIST
-						| CV_CALIB_USE_INTRINSIC_GUESS
-						| CV_CALIB_FIX_ASPECT_RATIO);
+						, cv::CALIB_FIX_K1
+						| cv::CALIB_FIX_K2
+						| cv::CALIB_FIX_K3
+						| cv::CALIB_FIX_K4
+						| cv::CALIB_FIX_K5
+						| cv::CALIB_FIX_K6
+						| cv::CALIB_ZERO_TANGENT_DIST
+						| cv::CALIB_USE_INTRINSIC_GUESS
+						| cv::CALIB_FIX_ASPECT_RATIO);
 					cout << "Reprojection error " << this->data.reprojectionError << endl;
 				};
 				calib();

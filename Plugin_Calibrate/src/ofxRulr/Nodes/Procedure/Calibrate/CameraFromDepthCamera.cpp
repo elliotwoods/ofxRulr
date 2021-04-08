@@ -73,7 +73,7 @@ namespace ofxRulr {
 				}
 				
 				//----------
-				void CameraFromDepthCamera::serialize(Json::Value & json) {
+				void CameraFromDepthCamera::serialize(nlohmann::json & json) {
 					auto & jsonCorrespondences = json["correspondences"];
 					int index = 0;
 					for (const auto & correspondence : this->correspondences) {
@@ -83,11 +83,11 @@ namespace ofxRulr {
 						jsonCorrespondence["cameraNormalized"] << correspondence.cameraNormalized;
 					}
 					
-					json["error"] = this->error;
+					Utils::serialize(json["error"], this->error);
 				}
 				
 				//----------
-				void CameraFromDepthCamera::deserialize(const Json::Value & json) {
+				void CameraFromDepthCamera::deserialize(const nlohmann::json & json) {
 					this->correspondences.clear();
 					auto & jsonCorrespondences = json["correspondences"];
 					for (const auto & jsonCorrespondence : jsonCorrespondences) {
@@ -98,7 +98,7 @@ namespace ofxRulr {
 						this->correspondences.push_back(correspondence);
 					}
 					
-					this->error = json["error"].asFloat();
+					Utils::deserialize(json["error"], this->error);
 				}
 				
 				//----------
@@ -127,7 +127,7 @@ namespace ofxRulr {
 					
 					//convert to grayscale
 					if (cameraColorImage.channels() == 3) {
-						cv::cvtColor(cameraColorImage, cameraColorImage, CV_RGB2GRAY);
+						cv::cvtColor(cameraColorImage, cameraColorImage, cv::COLOR_RGB2GRAY);
 					}
 					
 					//---
@@ -138,7 +138,7 @@ namespace ofxRulr {
 					//flip the depth camera's image
 					cv::flip(irMat, irMat, 1);
 					
-					vector<ofVec2f> irPoints;
+					vector<glm::vec2> irPoints;
 					bool foundInDepthCamera;
 					if (this->usePreTest)
 					{
@@ -162,7 +162,7 @@ namespace ofxRulr {
 					//find the points in camera space
 					//--
 					//
-					vector<ofVec2f> cameraPoints;
+					vector<glm::vec2> cameraPoints;
 					bool foundInCamera;
 					if (this->usePreTest)
 					{
@@ -189,7 +189,7 @@ namespace ofxRulr {
 					if(!world) {
 						throw(Exception("Cannot get world map"));
 					}
-					auto worldVectors = (ofVec3f*) world->getData();
+					auto worldVectors = (glm::vec3*) world->getData();
 					int pointIndex = 0;
 					for (int i = 0; i < cameraPoints.size(); i++) {
 						this->previewCornerFindsDepthCamera.push_back(irPoints[i]);
@@ -202,7 +202,7 @@ namespace ofxRulr {
 						
 						correspondence.depthCameraObject = worldVectors[(int)irPoint.x + (int)irPoint.y * depthMapWidth];
 						correspondence.camera = cameraPoint;
-						correspondence.cameraNormalized = ofVec2f(ofMap(cameraPoint.x, 0, cameraWidth, 0, 1),
+						correspondence.cameraNormalized = glm::vec2(ofMap(cameraPoint.x, 0, cameraWidth, 0, 1),
 																  ofMap(cameraPoint.y, 0, cameraHeight, 0, 1));
 						
 						if (correspondence.depthCameraObject.z > 0.1f) {
@@ -221,11 +221,11 @@ namespace ofxRulr {
 					auto depthCamera = this->getInput<Item::IDepthCamera>();
 					auto depthCameraTransform = depthCamera->getTransform();
 					
-					vector<ofVec3f> worldPoints;
-					vector<ofVec2f> cameraPoints;
+					vector<glm::vec3> worldPoints;
+					vector<glm::vec2> cameraPoints;
 					
 					for (auto correpondence : this->correspondences) {
-						worldPoints.push_back(correpondence.depthCameraObject * depthCameraTransform);
+						worldPoints.push_back(Utils::applyTransform(depthCameraTransform, correpondence.depthCameraObject));
 						cameraPoints.push_back(correpondence.camera);
 					}
 					
@@ -238,8 +238,8 @@ namespace ofxRulr {
 					vector<cv::Mat> rotations, translations;
 					
 					//fix intrinsics
-					int flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST | CV_CALIB_USE_INTRINSIC_GUESS;
-					flags |= CV_CALIB_FIX_PRINCIPAL_POINT | CV_CALIB_FIX_ASPECT_RATIO | CV_CALIB_FIX_FOCAL_LENGTH;
+					int flags = cv::CALIB_FIX_K1 | cv::CALIB_FIX_K2 | cv::CALIB_FIX_K3 | cv::CALIB_FIX_K4 | cv::CALIB_FIX_K5 | cv::CALIB_FIX_K6 | cv::CALIB_ZERO_TANGENT_DIST | cv::CALIB_USE_INTRINSIC_GUESS;
+					flags |= cv::CALIB_FIX_PRINCIPAL_POINT | cv::CALIB_FIX_ASPECT_RATIO | cv::CALIB_FIX_FOCAL_LENGTH;
 					
 					auto width = this->getInput<Item::Camera>()->getWidth();
 					auto height = this->getInput<Item::Camera>()->getHeight();
@@ -334,8 +334,14 @@ namespace ofxRulr {
 							ofPolyline previewLine;
 							if (!this->previewCornerFindsDepthCamera.empty()) {
 								ofDrawCircle(this->previewCornerFindsDepthCamera.front(), 10.0f);
-								for (const auto & previewCornerFind : this->previewCornerFindsDepthCamera) {
-									previewLine.addVertex(previewCornerFind);
+								for (const auto& previewCornerFind : this->previewCornerFindsDepthCamera) {
+									previewLine.addVertex(
+										{
+											previewCornerFind.x
+											, previewCornerFind.y
+											, 0.0f
+										}
+									);
 								}
 							}
 							ofPushStyle();
@@ -352,7 +358,13 @@ namespace ofxRulr {
 							if (!this->previewCornerFindsCamera.empty()) {
 								ofDrawCircle(this->previewCornerFindsCamera.front(), 10.0f);
 								for (const auto & previewCornerFind : this->previewCornerFindsCamera) {
-									previewLine.addVertex(previewCornerFind);
+									previewLine.addVertex(
+										{
+											previewCornerFind.x
+											, previewCornerFind.y
+											, 0.0f
+										}
+									);
 								}
 							}
 							ofPushStyle();

@@ -171,7 +171,7 @@ namespace ofxRulr {
 														, false
 														, false);
 													cv::Mat markerImageColor;
-													cv::cvtColor(markerImage, markerImageColor, CV_GRAY2RGBA);
+													cv::cvtColor(markerImage, markerImageColor, cv::COLOR_GRAY2RGBA);
 													ofxCv::copy(markerImageColor, markerPreview);
 													markerPreview.update();
 
@@ -226,7 +226,7 @@ namespace ofxRulr {
 											{
 												ofPath arc;
 												arc.setCircleResolution(100);
-												arc.arc(ofVec2f(0, 0), outsideSize, outsideSize, 180, 270);
+												arc.arc(glm::vec2(0, 0), outsideSize, outsideSize, 180, 270);
 												arc.setFillColor(ofColor(0));
 												arc.setFilled(true);
 												arc.close();
@@ -237,7 +237,7 @@ namespace ofxRulr {
 											if (height % 2 == 1) {
 												ofPath arc;
 												arc.setCircleResolution(100);
-												arc.arc(ofVec2f(0, height), outsideSize, outsideSize, 90, 180);
+												arc.arc(glm::vec2(0, height), outsideSize, outsideSize, 90, 180);
 												arc.setFillColor(ofColor(0));
 												arc.setFilled(true);
 												arc.close();
@@ -248,7 +248,7 @@ namespace ofxRulr {
 											if (width % 2 == 1) {
 												ofPath arc;
 												arc.setCircleResolution(100);
-												arc.arc(ofVec2f(width, 0), outsideSize, outsideSize, 270, 360);
+												arc.arc(glm::vec2(width, 0), outsideSize, outsideSize, 270, 360);
 												arc.setFillColor(ofColor(0));
 												arc.setFilled(true);
 												arc.close();
@@ -259,7 +259,7 @@ namespace ofxRulr {
 											if (width % 2 == 1 && height % 2 == 1) {
 												ofPath arc;
 												arc.setCircleResolution(100);
-												arc.arc(ofVec2f(width, height), outsideSize, outsideSize, 0, 90);
+												arc.arc(glm::vec2(width, height), outsideSize, outsideSize, 0, 90);
 												arc.setFillColor(ofColor(0));
 												arc.setFilled(true);
 												arc.close();
@@ -341,20 +341,20 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void HaloBoard::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->parameters);
+				void HaloBoard::serialize(nlohmann::json & json) {
+					Utils::serialize(json, (const ofParameterGroup&)this->parameters);
 				}
 
 				//----------
-				void HaloBoard::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->parameters);
+				void HaloBoard::deserialize(const nlohmann::json & json) {
+					Utils::deserialize(json, (ofParameterGroup&)this->parameters);
 				}
 
 				//----------
 				void HaloBoard::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 					auto inspector = inspectArgs.inspector;
 					inspector->addParameterGroup(this->parameters);
-					inspector->addLiveValue<ofVec2f>("Physical size [m]", [this]() {
+					inspector->addLiveValue<glm::vec2>("Physical size [m]", [this]() {
 						return this->getPhysicalSize();
 					});
 				}
@@ -371,7 +371,7 @@ namespace ofxRulr {
 						imageGrey = image;
 					}
 					else {
-						cv::cvtColor(image, imageGrey, CV_RGB2GRAY);
+						cv::cvtColor(image, imageGrey, cv::COLOR_RGB2GRAY);
 					}
 
 					if (this->parameters.detection.openCorners > 0) {
@@ -434,7 +434,7 @@ namespace ofxRulr {
 										markerCornerFinds[boardCornerIndex].push_back(marker[i]);
 
 										//get the length of a square side meeting this corner
-										markerCornerScale.push_back((ofxCv::toOf(marker[(i + 1) % 4]) - ofxCv::toOf(marker[i])).length());
+										markerCornerScale.push_back(glm::length(ofxCv::toOf(marker[(i + 1) % 4]) - ofxCv::toOf(marker[i])));
 
 										//save some time, nothing else should match in this loop
 										break;
@@ -450,9 +450,9 @@ namespace ofxRulr {
 							const auto & boardCorner = this->board->corners[it.first];
 
 							//take the mean
-							ofVec2f mean;
+							glm::vec2 mean;
 							{
-								ofVec2f accumulate;
+								glm::vec2 accumulate;
 								for (const auto & find : it.second) {
 									accumulate += ofxCv::toOf(find);
 								}
@@ -462,7 +462,7 @@ namespace ofxRulr {
 							const auto & position = this->board->corners[it.first].position;
 							
 							imagePoints.push_back(ofxCv::toCv(mean));
-							objectPoints.push_back(ofxCv::toCv(ofVec3f(position.x, position.y, 0.0f) * square));
+							objectPoints.push_back(ofxCv::toCv(glm::vec3(position.x, position.y, 0.0f) * square));
 						}
 					}
 
@@ -496,7 +496,7 @@ namespace ofxRulr {
 								, subPixSearch)
 							, cv::Size(zeroZone
 								, zeroZone)
-							, cv::TermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, 50, 1e-6));
+							, cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50, 1e-6));
 					}
 
 					return true;
@@ -522,8 +522,8 @@ namespace ofxRulr {
 				}
 
 				//----------
-				ofVec3f HaloBoard::getCenter() const {
-					return ofVec3f(this->parameters.size.width * this->parameters.length.square
+				glm::vec3 HaloBoard::getCenter() const {
+					return glm::vec3(this->parameters.size.width * this->parameters.length.square
 						, this->parameters.size.height * this->parameters.length.square
 						, 0.0f) / 2.0f;
 				}
@@ -534,8 +534,8 @@ namespace ofxRulr {
 				}
 
 				//----------
-				ofVec2f HaloBoard::getPhysicalSize() const {
-					return ofVec2f(this->parameters.size.width * this->parameters.length.square
+				glm::vec2 HaloBoard::getPhysicalSize() const {
+					return glm::vec2(this->parameters.size.width * this->parameters.length.square
 						, this->parameters.size.height * this->parameters.length.square)
 						+ (this->parameters.length.outerCorner * 2);
 				}

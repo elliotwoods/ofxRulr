@@ -74,27 +74,28 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void Template::serialize(Json::Value & json) {
+		void Template::serialize(nlohmann::json & json) {
 			// This code is run whenever we save.
-			// `Json::Value & json` is our own personal json value to write to
+			// `nlohmann::json & json` is our own personal json value to write to
 
 			// We can use a utility function to do the writing for us
-			Utils::Serializable::serialize(json, this->parameters);
+			Utils::serialize(json, this->parameters);
 
 			// Or we can write manually
 			json["something"] = 10;
 		}
 
 		//----------
-		void Template::deserialize(const Json::Value & json) {
+		void Template::deserialize(const nlohmann::json & json) {
 			// This code is run whenever we load.
-			// `const Json::Value & json` is our own personal json value to read from
+			// `const nlohmann::json & json` is our own personal json value to read from
 
 			// We can use a utility function to do the reading for us
-			Utils::Serializable::deserialize(json, this->parameters);
+			Utils::deserialize(json, this->parameters);
 
 			// Or we can read manually
-			auto something = json["something"].asInt();
+			int something;
+			ofxRulr::Utils::deserialize(json["something"], something);
 		}
 
 		//----------

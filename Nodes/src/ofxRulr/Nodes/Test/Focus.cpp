@@ -158,19 +158,19 @@ namespace ofxRulr {
 			}
 			
 			//----------
-			void Focus::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->activewhen);
-				Utils::Serializable::serialize(json, this->blurSize);
-				Utils::Serializable::serialize(json, this->highValue);
-				Utils::Serializable::serialize(json, this->lowValue);
+			void Focus::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->activewhen);
+				Utils::serialize(json, this->blurSize);
+				Utils::serialize(json, this->highValue);
+				Utils::serialize(json, this->lowValue);
 			}
 			
 			//----------
-			void Focus::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->activewhen);
-				Utils::Serializable::deserialize(json, this->blurSize);
-				Utils::Serializable::deserialize(json, this->highValue);
-				Utils::Serializable::deserialize(json, this->lowValue);
+			void Focus::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->activewhen);
+				Utils::deserialize(json, this->blurSize);
+				Utils::deserialize(json, this->highValue);
+				Utils::deserialize(json, this->lowValue);
 			}
 			
 			//----------
@@ -316,7 +316,7 @@ namespace ofxRulr {
 							
 							//convert if we need to
 							if(needsGrayscaleConversion) {
-								cv::cvtColor(toCv(input), toCv(this->process.grayscale), CV_RGB2GRAY);
+								cv::cvtColor(toCv(input), toCv(this->process.grayscale), cv::COLOR_RGB2GRAY);
 							}
 							
 							auto & grayscale = needsGrayscaleConversion ? this->process.grayscale : input;

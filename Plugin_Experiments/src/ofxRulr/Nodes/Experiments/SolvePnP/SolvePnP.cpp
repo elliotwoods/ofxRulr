@@ -91,18 +91,18 @@ namespace ofxRulr {
 					auto inspector = args.inspector;
 					
 					inspector->addTitle("Result", ofxCvGui::Widgets::Title::Level::H3);
-					inspector->addLiveValue<ofVec3f>("Rotation", [this]() {
+					inspector->addLiveValue<glm::vec3>("Rotation", [this]() {
 						if (this->rotationVector.empty()) {
-							return ofVec3f();
+							return glm::vec3();
 						}
 						else {
 							auto value = cv::Point3f(this->rotationVector);
 							return ofxCv::toOf(value);
 						}
 					});
-					inspector->addLiveValue<ofVec3f>("Translation", [this]() {
+					inspector->addLiveValue<glm::vec3>("Translation", [this]() {
 						if (this->translation.empty()) {
-							return ofVec3f();
+							return glm::vec3();
 						}
 						else {
 							auto value = cv::Point3f(this->translation);
@@ -111,18 +111,18 @@ namespace ofxRulr {
 					});
 
 					inspector->addTitle("Error", ofxCvGui::Widgets::Title::Level::H3);
-					inspector->addLiveValue<ofVec3f>("Rotation", [this]() {
+					inspector->addLiveValue<glm::vec3>("Rotation", [this]() {
 						if (this->error.rotationVector.empty()) {
-							return ofVec3f();
+							return glm::vec3();
 						}
 						else {
 							auto value = cv::Point3f(this->error.rotationVector);
 							return ofxCv::toOf(value);
 						}
 					});
-					inspector->addLiveValue<ofVec3f>("Translation", [this]() {
+					inspector->addLiveValue<glm::vec3>("Translation", [this]() {
 						if (this->error.translation.empty()) {
-							return ofVec3f();
+							return glm::vec3();
 						}
 						else {
 							auto value = cv::Point3f(this->error.translation);
@@ -131,18 +131,18 @@ namespace ofxRulr {
 					});
 
 					inspector->addTitle("Error (moving average)", ofxCvGui::Widgets::Title::Level::H3);
-					inspector->addLiveValue<ofVec3f>("Rotation", [this]() {
+					inspector->addLiveValue<glm::vec3>("Rotation", [this]() {
 						if (this->movingAverageError.rotationVector.empty()) {
-							return ofVec3f();
+							return glm::vec3();
 						}
 						else {
 							auto value = cv::Point3f(this->movingAverageError.rotationVector);
 							return ofxCv::toOf(value);
 						}
 					});
-					inspector->addLiveValue<ofVec3f>("Translation", [this]() {
+					inspector->addLiveValue<glm::vec3>("Translation", [this]() {
 						if (this->movingAverageError.translation.empty()) {
-							return ofVec3f();
+							return glm::vec3();
 						}
 						else {
 							auto value = cv::Point3f(this->movingAverageError.translation);

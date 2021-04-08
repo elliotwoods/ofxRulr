@@ -12,12 +12,12 @@ namespace ofxRulr {
 				public:
 					VertexPicker(SelectSceneVertices * node);
 					struct {
-						ofVec3f screenPosition;
-						ofVec3f worldPosition;
+						glm::vec3 screenPosition;
+						glm::vec3 worldPosition;
 						bool found = false;
 					} selectedVertex;
 
-					ofxLiquidEvent<ofVec3f> onVertexFound;
+					ofxLiquidEvent<glm::vec3> onVertexFound;
 				};
 
 				SelectSceneVertices();
@@ -26,7 +26,7 @@ namespace ofxRulr {
 				void update();
 				void drawWorldStage();
 			protected:
-				void setNewVertexPosition(const ofVec3f &);
+				void setNewVertexPosition(const glm::vec3 &);
 				shared_ptr<Vertex> newVertex;
 				shared_ptr<VertexPicker> selectNewVertex;
 				shared_ptr<ofxCvGui::Widgets::Button> addVertexButton;

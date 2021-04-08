@@ -6,7 +6,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 
 #define RULR_VIEW_DISTORTION_COEFFICIENT_COUNT 4
-#define RULR_VIEW_CALIBRATION_FLAGS CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST
+#define RULR_VIEW_CALIBRATION_FLAGS cv::CALIB_FIX_K5 | cv::CALIB_FIX_K6 | cv::CALIB_ZERO_TANGENT_DIST
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
@@ -72,8 +72,8 @@ namespace ofxRulr {
 			private:
 				void rebuildView();
 				void parameterCallback(float &);
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
 				ofxRay::Camera * testCamera;

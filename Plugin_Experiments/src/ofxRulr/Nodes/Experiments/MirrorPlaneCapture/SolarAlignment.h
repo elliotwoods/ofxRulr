@@ -14,13 +14,13 @@ namespace ofxRulr {
 						string getDisplayString() const override;
 						void drawWorld();
 
-						ofVec2f centroid;
+						glm::vec2 centroid;
 						ofxRay::Ray ray;
-						ofVec2f azimuthAltitude;
-						ofVec3f solarVectorFromPySolar;
+						glm::vec2 azimuthAltitude;
+						glm::vec3 solarVectorFromPySolar;
 
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 
 						void draw();
 
@@ -28,7 +28,7 @@ namespace ofxRulr {
 							vector<cv::Point2f> imagePoints;
 							vector<cv::Point3f> worldPoints;
 							ofParameter<float> reprojectionError{ "Marker map reprojection error", 0.0f };
-							ofParameter<ofVec3f> cameraPosition{ "Camera position", ofVec3f() };
+							ofParameter<glm::vec3> cameraPosition{ "Camera position", glm::vec3() };
 						} cameraNavigation;
 					};
 
@@ -38,8 +38,8 @@ namespace ofxRulr {
 					void init();
 
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 
 					ofxCvGui::PanelPtr getPanel() override;
 					void drawWorldStage();

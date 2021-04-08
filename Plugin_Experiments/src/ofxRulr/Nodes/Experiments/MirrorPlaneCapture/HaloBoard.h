@@ -20,18 +20,18 @@ namespace ofxRulr {
 					string getTypeName() const override;
 					void init();
 					void update();
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 
 					bool findBoard(cv::Mat, vector<cv::Point2f> & imagePoints, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const override;
 					void drawObject() const override;
 					float getSpacing() const override;
-					ofVec3f getCenter() const;
+					glm::vec3 getCenter() const;
 
 					ofxCvGui::PanelPtr getPanel() override;
 
-					ofVec2f getPhysicalSize() const;
+					glm::vec2 getPhysicalSize() const;
 
 					vector<int> getNonMirroringIDs() const;
 

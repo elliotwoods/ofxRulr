@@ -59,7 +59,7 @@ namespace ofxRulr {
 						ofMesh contourMesh;
 						contourMesh.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINE_STRIP);
 						for (auto point : contour) {
-							contourMesh.addVertex(ofVec3f(point.x, point.y));
+							contourMesh.addVertex(glm::vec3(point.x, point.y, 0.0f));
 						}
 						contours.push_back(move(contourMesh));
 					}

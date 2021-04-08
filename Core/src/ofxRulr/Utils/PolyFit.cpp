@@ -360,7 +360,7 @@ namespace mathalgo
 namespace ofxRulr {
 	namespace Utils {
 		namespace PolyFit {
-			Model fit(const vector<ofVec2f> & data, int order) {
+			Model fit(const vector<glm::vec2> & data, int order) {
 				vector<float> x(data.size()), y(data.size());
 				for (int i = 0; i < data.size(); i++) {
 					x[i] = data[i].x;

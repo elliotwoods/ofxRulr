@@ -38,12 +38,12 @@ namespace ofxRulr {
 
 			//----------
 			void EnttecUsbPro::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->portName);
+				Utils::serialize(json, this->portName);
 			}
 
 			//----------
 			void EnttecUsbPro::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->portName);
+				Utils::deserialize(json, this->portName);
 				this->connect();
 			}
 

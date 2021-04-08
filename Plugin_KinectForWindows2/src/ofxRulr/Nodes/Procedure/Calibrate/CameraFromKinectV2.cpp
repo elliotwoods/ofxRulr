@@ -101,7 +101,7 @@ namespace ofxRulr {
 
 					//convert to grayscale
 					if (cameraColorImage.channels() == 3) {
-						cv::cvtColor(cameraColorImage, cameraColorImage, CV_RGB2GRAY);
+						cv::cvtColor(cameraColorImage, cameraColorImage, cv::COLOR_RGB2GRAY);
 					}
 
 					//---

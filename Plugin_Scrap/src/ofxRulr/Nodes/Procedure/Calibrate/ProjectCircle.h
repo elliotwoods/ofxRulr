@@ -10,14 +10,14 @@ namespace ofxRulr {
 				class ProjectCircle : public Nodes::Base {
 				public:
 					struct Calibration {
-						ofVec2f center;
+						glm::vec2 center;
 						ofxRulr::Utils::PolyFit::Model polyFit;
 
 						double angleCenter;
 						double tangentAngle; // angle away from the center
 
-						pair<ofVec2f, ofVec2f> previewImageExtremities[3];
-						pair<ofVec2f, ofVec2f> previewImageCircleLines[3];
+						pair<glm::vec2, glm::vec2> previewImageExtremities[3];
+						pair<glm::vec2, glm::vec2> previewImageCircleLines[3];
 					};
 
 					ProjectCircle();
@@ -28,8 +28,8 @@ namespace ofxRulr {
 
 					ofxCvGui::PanelPtr getPanel() override;
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 
 					void calibrateAndDrawCircle();

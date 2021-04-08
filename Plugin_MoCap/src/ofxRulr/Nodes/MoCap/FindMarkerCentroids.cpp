@@ -32,11 +32,11 @@ namespace ofxRulr {
 					break;
 				case ofPixelFormat::OF_PIXELS_RGB:
 				case ofPixelFormat::OF_PIXELS_BGR:
-					cv::cvtColor(outgoingFrame->image, outgoingFrame->image, CV_RGB2GRAY);
+					cv::cvtColor(outgoingFrame->image, outgoingFrame->image, cv::COLOR_RGB2GRAY);
 					break;
 				case ofPixelFormat::OF_PIXELS_RGBA:
 				case ofPixelFormat::OF_PIXELS_BGRA:
-					cv::cvtColor(outgoingFrame->image, outgoingFrame->image, CV_RGBA2GRAY);
+					cv::cvtColor(outgoingFrame->image, outgoingFrame->image, cv::COLOR_RGBA2GRAY);
 					break;
 				default:
 					throw(ofxRulr::Exception("Image format not supported by FindContourMarkers"));
@@ -67,14 +67,14 @@ namespace ofxRulr {
 						, outgoingFrame->binary
 						, this->parameters.localDifference.threshold
 						, 255
-						, CV_THRESH_BINARY);
+						, cv::THRESH_BINARY);
 				}
 
 				//find the contours
 				cv::findContours(outgoingFrame->binary
 					, outgoingFrame->contours
-					, CV_RETR_EXTERNAL
-					, CV_CHAIN_APPROX_NONE);
+					, cv::RETR_EXTERNAL
+					, cv::CHAIN_APPROX_NONE);
 
 				auto count = outgoingFrame->contours.size();
 

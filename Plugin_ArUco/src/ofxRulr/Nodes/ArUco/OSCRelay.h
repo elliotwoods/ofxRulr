@@ -13,8 +13,8 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 				void update();
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 			protected:
 				struct Parameters : ofParameterGroup {

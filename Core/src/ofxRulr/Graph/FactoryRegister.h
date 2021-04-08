@@ -16,7 +16,7 @@ namespace ofxRulr {
 		class RULR_EXPORTS FactoryRegister : public ofxPlugin::FactoryRegister<Nodes::Base>, public ofxSingleton::Singleton<FactoryRegister> {
 		public:
 			///Make a NodeHost and Node based on a saved/pasted Json value
-			shared_ptr<Editor::NodeHost> make(const Json::Value &);
+			shared_ptr<Editor::NodeHost> make(const nlohmann::json &);
 		};
 
 		//----------

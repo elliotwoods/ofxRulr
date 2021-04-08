@@ -20,14 +20,14 @@ namespace ofxRulr {
 					public:
 						Capture();
 						string getDisplayString() const override;
-						vector<ofVec3f> worldPoints;
-						vector<ofVec2f> cameraImagePoints;
-						vector<ofVec2f> projectorImagePoints;
-						vector<ofVec2f> reprojectedProjectorImagePoints;
-						ofMatrix4x4 transform;
+						vector<glm::vec3> worldPoints;
+						vector<glm::vec2> cameraImagePoints;
+						vector<glm::vec2> projectorImagePoints;
+						vector<glm::vec2> reprojectedProjectorImagePoints;
+						glm::mat4 transform;
 
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 						void drawWorld(shared_ptr<Item::Projector>);
 
 						void drawOnCameraImage();
@@ -46,8 +46,8 @@ namespace ofxRulr {
 					void calibrate();
 
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 				protected:
 					void drawOnVideoOutput(const ofRectangle & bounds);
 

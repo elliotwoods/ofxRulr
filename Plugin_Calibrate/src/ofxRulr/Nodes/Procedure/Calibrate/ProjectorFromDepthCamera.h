@@ -11,8 +11,8 @@ namespace ofxRulr {
 				class ProjectorFromDepthCamera : public Base {
 				public:
 					struct Correspondence {
-						ofVec3f world;
-						ofVec2f projector;
+						glm::vec3 world;
+						glm::vec2 projector;
 					};
 					
 					ProjectorFromDepthCamera();
@@ -22,8 +22,8 @@ namespace ofxRulr {
 					void init();
 					void update();
 					
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					
 					void addCapture();
 					void calibrate();
@@ -48,7 +48,7 @@ namespace ofxRulr {
 					ofParameter<float> initialLensOffset;
 					
 					vector<Correspondence> correspondences;
-					vector<ofVec2f> previewCornerFinds;
+					vector<glm::vec2> previewCornerFinds;
 					float error;
 				};
 			}

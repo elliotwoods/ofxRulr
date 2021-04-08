@@ -146,7 +146,7 @@ namespace ofxRulr {
 										{
 											ofTranslate(selection->viewPosition.get());
 											ofScale(scaleDrawToScreenFactor.x, scaleDrawToScreenFactor.y);
-											ofDrawCircle(ofVec2f(), 10.0f);
+											ofDrawCircle(glm::vec2(), 10.0f);
 										}
 										ofPopMatrix();
 									}
@@ -185,7 +185,7 @@ namespace ofxRulr {
 
 							auto vertex = this->selection.lock();
 
-							ofVec2f movement;
+							glm::vec2 movement;
 							switch (args.key) {
 							case OF_KEY_LEFT:
 								movement.x = -0.5;
@@ -206,7 +206,7 @@ namespace ofxRulr {
 								break;
 							}
 
-							if (vertex && movement != ofVec2f() && this->isBeingInspected()) {
+							if (vertex && movement != glm::vec2() && this->isBeingInspected()) {
 								if (ofGetKeyPressed(OF_KEY_SHIFT)) {
 									movement *= 20;
 								}
@@ -288,16 +288,16 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void ViewToVertices::serialize(Json::Value & json) {
-					ofxRulr::Utils::Serializable::serialize(json, this->projectorReferenceImageFilename);
-					ofxRulr::Utils::Serializable::serialize(json, this->dragVerticesEnabled);
-					ofxRulr::Utils::Serializable::serialize(json, this->calibrateOnVertexChange);
-					ofxRulr::Utils::Serializable::serialize(json, this->useExistingParametersAsInitial);
+				void ViewToVertices::serialize(nlohmann::json & json) {
+					ofxRulr::Utils::serialize(json, this->projectorReferenceImageFilename);
+					ofxRulr::Utils::serialize(json, this->dragVerticesEnabled);
+					ofxRulr::Utils::serialize(json, this->calibrateOnVertexChange);
+					ofxRulr::Utils::serialize(json, this->useExistingParametersAsInitial);
 				}
 
 				//---------
-				void ViewToVertices::deserialize(const Json::Value & json) {
-					ofxRulr::Utils::Serializable::deserialize(json, this->projectorReferenceImageFilename);
+				void ViewToVertices::deserialize(const nlohmann::json & json) {
+					ofxRulr::Utils::deserialize(json, this->projectorReferenceImageFilename);
 					if (this->projectorReferenceImageFilename.get().empty()) {
 						this->projectorReferenceImage.clear();
 					}
@@ -305,9 +305,9 @@ namespace ofxRulr {
 						this->projectorReferenceImage.load(this->projectorReferenceImageFilename.get());
 					}
 
-					ofxRulr::Utils::Serializable::deserialize(json, this->dragVerticesEnabled);
-					ofxRulr::Utils::Serializable::deserialize(json, this->calibrateOnVertexChange);
-					ofxRulr::Utils::Serializable::deserialize(json, this->useExistingParametersAsInitial);
+					ofxRulr::Utils::deserialize(json, this->dragVerticesEnabled);
+					ofxRulr::Utils::deserialize(json, this->calibrateOnVertexChange);
+					ofxRulr::Utils::deserialize(json, this->useExistingParametersAsInitial);
 				}
 
 				//---------
@@ -365,8 +365,8 @@ namespace ofxRulr {
 
 					const auto & vertices = verticesNode->getSelectedVertices();
 
-					auto worldRows = vector<vector<ofVec3f>>(1);
-					auto viewRows = vector<vector<ofVec2f>>(1);
+					auto worldRows = vector<vector<glm::vec3>>(1);
+					auto viewRows = vector<vector<glm::vec2>>(1);
 					auto & world = worldRows[0];
 					auto & view = viewRows[0];
 					for (auto vertex : vertices) {
@@ -456,25 +456,25 @@ namespace ofxRulr {
 					//INSERT SYNETHESISED DATA
 					//ofLogWarning() << "USING SYNTHESISED DATA for 1280x800 view";
 					//worldRows.clear(); viewRows.clear();
-					//worldRows.push_back(vector<ofVec3f>()); viewRows.push_back(vector<ofVec2f>());
-					//worldRows[0].push_back(ofVec3f(0.4245, -0.3661, 0.4878)); viewRows[0].push_back(ofVec2f(596.9032, 721.8095));
-					//worldRows[0].push_back(ofVec3f(0.3507, 0.4697, -0.4054)); viewRows[0].push_back(ofVec2f(490.7527, 278.5092));
-					//worldRows[0].push_back(ofVec3f(-0.4230, 0.1083, -0.4126)); viewRows[0].push_back(ofVec2f(839.1771, 427.4655));
-					//worldRows[0].push_back(ofVec3f(-0.1699, -0.0651, -0.4814)); viewRows[0].push_back(ofVec2f(709.3167, 524.0535));
-					//worldRows[0].push_back(ofVec3f(0.2611, 0.3133, -0.1917)); viewRows[0].push_back(ofVec2f(563.7585, 382.7776));
-					//worldRows[0].push_back(ofVec3f(0.1478, 0.3996, 0.4931)); viewRows[0].push_back(ofVec2f(689.3846, 419.8475));
-					//worldRows[0].push_back(ofVec3f(0.0032, 0.1185, -0.2893)); viewRows[0].push_back(ofVec2f(656.1019, 455.0570));
+					//worldRows.push_back(vector<glm::vec3>()); viewRows.push_back(vector<glm::vec2>());
+					//worldRows[0].push_back(glm::vec3(0.4245, -0.3661, 0.4878)); viewRows[0].push_back(glm::vec2(596.9032, 721.8095));
+					//worldRows[0].push_back(glm::vec3(0.3507, 0.4697, -0.4054)); viewRows[0].push_back(glm::vec2(490.7527, 278.5092));
+					//worldRows[0].push_back(glm::vec3(-0.4230, 0.1083, -0.4126)); viewRows[0].push_back(glm::vec2(839.1771, 427.4655));
+					//worldRows[0].push_back(glm::vec3(-0.1699, -0.0651, -0.4814)); viewRows[0].push_back(glm::vec2(709.3167, 524.0535));
+					//worldRows[0].push_back(glm::vec3(0.2611, 0.3133, -0.1917)); viewRows[0].push_back(glm::vec2(563.7585, 382.7776));
+					//worldRows[0].push_back(glm::vec3(0.1478, 0.3996, 0.4931)); viewRows[0].push_back(glm::vec2(689.3846, 419.8475));
+					//worldRows[0].push_back(glm::vec3(0.0032, 0.1185, -0.2893)); viewRows[0].push_back(glm::vec2(656.1019, 455.0570));
 
 					//--
 					//setup flags
 					//--
 					//
-					auto flags = CV_CALIB_USE_INTRINSIC_GUESS; // since we're using a single object
+					auto flags = (int) cv::CALIB_USE_INTRINSIC_GUESS; // since we're using a single object
 					if (viewNode->getHasDistortion()) {
 						flags |= RULR_VIEW_CALIBRATION_FLAGS;
 					}
 					else {
-						flags |= (CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST);
+						flags |= (cv::CALIB_FIX_K1 | cv::CALIB_FIX_K2 | cv::CALIB_FIX_K3 | cv::CALIB_FIX_K4 | cv::CALIB_FIX_K5 | cv::CALIB_FIX_K6 | cv::CALIB_ZERO_TANGENT_DIST);
 					}
 					//--
 
@@ -497,7 +497,7 @@ namespace ofxRulr {
 					//
 					viewNode->setIntrinsics(cameraMatrix, distortionCoefficients);
 					auto objectTransform = ofxCv::makeMatrix(rotations[0], translations[0]);
-					viewNode->setTransform(objectTransform.getInverse());
+					viewNode->setTransform(glm::inverse(objectTransform));
 					this->success = true;
 					this->reprojectionError = reprojectionError;
 					//
@@ -520,14 +520,17 @@ namespace ofxRulr {
 						ofPushMatrix();
 						{
 							auto & camera = ofxRulr::Graph::World::X().getWorldStage()->getCamera();
-							auto transform = ofMatrix4x4::newLookAtMatrix(selection->worldPosition, camera.getPosition(), ofVec3f(0, 1, 0));
+							auto transform = glm::lookAt(camera.getPosition()
+								, selection->worldPosition.get()
+								, glm::vec3(0, 1, 0));
+
 							ofMultMatrix(transform);
 
 							ofPushStyle();
 							{
 								ofNoFill();
 								ofSetColor(ofxCvGui::Utils::getBeatingSelectionColor());
-								ofDrawCircle(ofVec3f(), 0.1f);
+								ofDrawCircle(glm::vec3(), 0.1f);
 							}
 							ofPopStyle();
 						}

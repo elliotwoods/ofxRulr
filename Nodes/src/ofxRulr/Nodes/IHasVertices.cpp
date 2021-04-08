@@ -9,18 +9,18 @@ namespace ofxRulr {
 		}
 
 		//----------
-		std::vector<ofVec3f> IHasVertices::getVertices() const {
-			return vector<ofVec3f>();
+		std::vector<glm::vec3> IHasVertices::getVertices() const {
+			return vector<glm::vec3>();
 		}
 
 		//----------
-		ofVec3f IHasVertices::getVertexCloseToWorldPosition(const ofVec3f & pickPosition) const {
+		ofVec3f IHasVertices::getVertexCloseToWorldPosition(const glm::vec3 & pickPosition) const {
 			ofVec3f closestVertex = pickPosition; // default value
 			float minDistance = numeric_limits<float>::max();
 
 			const auto vertices = this->getVertices();
 			for (const auto & vertex : vertices) {
-				auto distance = vertex.distance(pickPosition);
+				auto distance = glm::distance(vertex, pickPosition);
 				if (minDistance > distance) {
 					closestVertex = vertex;
 					minDistance = distance;
@@ -36,7 +36,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		ofVec3f IHasVertices::getVertexCloseToMouse(const ofVec3f & mousePosition, float maxDistance) const {
+		ofVec3f IHasVertices::getVertexCloseToMouse(const glm::vec3 & mousePosition, float maxDistance) const {
 			float minDistance = std::numeric_limits<float>::max();
 			ofVec3f closestVertex;
 			bool foundVertex = false;
@@ -51,7 +51,7 @@ namespace ofxRulr {
 				auto vertexScreen = camera.worldToScreen(vertex, worldStagePanelBounds);
 				vertexScreen.z = 0.0f;
 
-				auto distance = vertexScreen.distance(mousePosition);
+				auto distance = glm::distance(vertexScreen, mousePosition);
 				if (distance > maxDistance) {
 					continue;
 				}

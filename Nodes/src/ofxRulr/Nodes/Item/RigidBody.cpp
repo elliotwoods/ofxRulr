@@ -6,12 +6,11 @@
 #include "ofxCvGui/Widgets/Slider.h"
 #include "ofxCvGui/Widgets/Title.h"
 
-#include "ofxGLM.h"
+#include <glm/gtx/matrix_decompose.hpp>
 
 using namespace ofxCvGui;
 using namespace ofxCv;
 using namespace cv;
-using namespace ofxGLM;
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -90,7 +89,7 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void RigidBody::serialize(Json::Value & json) {
+			void RigidBody::serialize(nlohmann::json & json) {
 				auto & jsonTransform = json["transform"];
 
 				auto & jsonTranslation = jsonTransform["translation"];
@@ -103,24 +102,29 @@ namespace ofxRulr {
 					jsonRotationEuler[i] = this->rotationEuler[i].get();
 				}
 
-				Utils::Serializable::serialize(json, this->movementSpeed);
+				Utils::serialize(json, this->movementSpeed);
 			}
 
 			//---------
-			void RigidBody::deserialize(const Json::Value & json) {
+			void RigidBody::deserialize(const nlohmann::json & json) {
 				auto & jsonTransform = json["transform"];
 
-				auto & jsonTranslation = jsonTransform["translation"];
-				for (int i = 0; i < 3; i++){
-					this->translation[i] = jsonTranslation[i].asFloat();
+				{
+					glm::vec3 value;
+					if (Utils::deserialize(jsonTransform["translation"], value)) {
+						for (int i = 0; i < 3; i++) {
+							this->translation[i].set(value[i]);
+						}
+					}
 				}
-
-				auto & jsonRotationEuler = jsonTransform["rotationEuler"];
-				for (int i = 0; i < 3; i++){
-					this->rotationEuler[i] = jsonRotationEuler[i].asFloat();
+				{
+					glm::vec3 value;
+					if (Utils::deserialize(jsonTransform["rotationEuler"], value)) {
+						for (int i = 0; i < 3; i++) {
+							this->rotationEuler[i].set(value[i]);
+						}
+					}
 				}
-
-				Utils::Serializable::deserialize(json, this->movementSpeed);
 			}
 
 			//---------
@@ -279,7 +283,7 @@ namespace ofxRulr {
 			}
 
 			//---------
-			ofMatrix4x4 RigidBody::getTransform() const {
+			glm::mat4 RigidBody::getTransform() const {
 				//rotation
 				auto quat = glm::quat(glm::vec3(this->rotationEuler[0] * DEG_TO_RAD, this->rotationEuler[1] * DEG_TO_RAD, this->rotationEuler[2] * DEG_TO_RAD));
 				auto transform = toOf(glm::toMat4(quat));
@@ -291,8 +295,8 @@ namespace ofxRulr {
 			}
 
 			//---------
-			ofVec3f RigidBody::getPosition() const {
-				ofVec3f position;
+			glm::vec3 RigidBody::getPosition() const {
+				glm::vec3 position;
 				for (int i = 0; i < 3; i++) {
 					position[i] = this->translation[i];
 				}
@@ -300,13 +304,13 @@ namespace ofxRulr {
 			}
 
 			//---------
-			ofQuaternion RigidBody::getRotationQuat() const {
-				return toOf(glm::quat(toGLM(getRotationEuler())));
+			glm::quat RigidBody::getRotationQuat() const {
+				return glm::quat(this->getRotationEuler());
 			}
 
 			//---------
-			ofVec3f RigidBody::getRotationEuler() const {
-				ofVec3f rotationEuler;
+			glm::vec3 RigidBody::getRotationEuler() const {
+				glm::vec3 rotationEuler;
 				for (int i = 0; i < 3; i++) {
 					rotationEuler[i] = this->rotationEuler[i];
 				}
@@ -314,14 +318,16 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void RigidBody::setTransform(const ofMatrix4x4 & transform) {
-				auto translation = ((ofVec4f*)&transform)[3]; //last row is translation. rip it out;
+			void RigidBody::setTransform(const glm::mat4 & transform) {
+				auto translation4 = transform[3]; //last row is translation. rip it out;
 
 				//first 3x3 is rotation, rip it out and convert it
 				glm::mat3 rotationMatrix;
 				for (int i = 0; i < 3; i++) {
 					for (int j = 0; j < 3; j++) {
-						rotationMatrix[i][j] = transform(i, j); //copy out the 3x3 matrix elements
+						rotationMatrix[i][j] = transform[i][j]; //copy out the 3x3 matrix elements
+						// Note this hasn't been tested since we switched to GLM.
+						// Careful that i and j might need to be switched
 					}
 				}
 				auto rotationEuler = glm::eulerAngles(glm::toQuat(rotationMatrix));
@@ -335,7 +341,7 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void RigidBody::setPosition(const ofVec3f & position) {
+			void RigidBody::setPosition(const glm::vec3 & position) {
 				for (int i = 0; i < 3; i++) {
 					this->translation[i] = position[i];
 				}
@@ -343,7 +349,7 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void RigidBody::setRotationEuler(const ofVec3f & rotationEuler) {
+			void RigidBody::setRotationEuler(const glm::vec3& rotationEuler) {
 				for (int i = 0; i < 3; i++) {
 					this->rotationEuler[i] = rotationEuler[i];
 				}
@@ -354,7 +360,7 @@ namespace ofxRulr {
 			void RigidBody::setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse) {
 				auto extrinsicsMatrix = ofxCv::makeMatrix(rotation, translation);
 				if (inverse) {
-					extrinsicsMatrix = toOf(glm::inverse(toGLM(extrinsicsMatrix)));
+					extrinsicsMatrix = glm::inverse(extrinsicsMatrix);
 					this->setTransform(extrinsicsMatrix);
 				}
 				else {
@@ -366,7 +372,7 @@ namespace ofxRulr {
 			void RigidBody::getExtrinsics(cv::Mat & rotationVector, cv::Mat & translation, bool inverse /*= false*/) {
 				auto transform = this->getTransform();
 				if (inverse) {
-					transform = toOf(glm::inverse(toGLM(transform)));
+					transform = glm::inverse(transform);
 				}
 				ofxCv::decomposeMatrix(transform, rotationVector, translation);
 			}
@@ -378,6 +384,29 @@ namespace ofxRulr {
 					this->rotationEuler[i] = 0.0f;
 				}
 				this->onTransformChange.notifyListeners();
+			}
+
+			//----------
+			void RigidBody::applyTransformToNode(ofNode& node) const {
+				auto transform = this->getTransform();
+				{
+					{
+						glm::vec3 scale;
+						glm::quat orientation;
+						glm::vec3 translation, skew;
+						glm::vec4 perspective;
+
+						glm::decompose(transform
+							, scale
+							, orientation
+							, translation
+							, skew
+							, perspective);
+
+						node.setOrientation(orientation);
+						node.setPosition(translation);
+					}
+				}
 			}
 
 			//----------

@@ -40,7 +40,11 @@ namespace ofxRulr {
 							for (const auto & marker : this->foundMarkers) {
 								ofPolyline line;
 								for (const cv::Point2f & point : marker) {
-									line.addVertex(ofxCv::toOf(point));
+									line.addVertex({
+										point.x
+										, point.y
+										, 0.0f
+										});
 								}
 								line.close();
 								line.draw();
@@ -80,13 +84,13 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Detector::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+			void Detector::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->parameters);
 			}
 
 			//----------
-			void Detector::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+			void Detector::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->parameters);
 			}
 
 			//----------

@@ -12,8 +12,8 @@ namespace ofxRulr {
 					string getTypeName() const override;
 					void init();
 					void drawObject();
-					vector<ofVec3f> getObjectPoints();
-					vector<ofVec3f> getWorldPoints();
+					vector<glm::vec3> getObjectPoints();
+					vector<glm::vec3> getWorldPoints();
 				protected:
 					struct : ofParameterGroup {
 						ofParameter<float> diameter{ "Diameter [m]", 0.1, 0.01, 1.0 };

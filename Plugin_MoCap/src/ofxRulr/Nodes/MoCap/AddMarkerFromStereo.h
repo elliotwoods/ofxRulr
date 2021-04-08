@@ -15,11 +15,11 @@ namespace ofxRulr {
 				void update();
 				ofxCvGui::PanelPtr getPanel() override;
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json&);
+				void deserialize(const nlohmann::json&);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
-				ofVec3f getMarkerPositionEstimation() const;
+				glm::vec3 getMarkerPositionEstimation() const;
 				void drawWorldStage();
 			protected:
 				void addMarker();
@@ -33,9 +33,9 @@ namespace ofxRulr {
 				shared_ptr<FindMarkerCentroidsFrame> frameA;
 				shared_ptr<FindMarkerCentroidsFrame> frameB;
 
-				unique_ptr<ofVec2f> centroidA;
-				unique_ptr<ofVec2f> centroidB;
-				unique_ptr<ofVec3f> estimatedPosition;
+				unique_ptr<glm::vec2> centroidA;
+				unique_ptr<glm::vec2> centroidB;
+				unique_ptr<glm::vec3> estimatedPosition;
 
 				struct : ofParameterGroup {
 					ofParameter<float> previewRadius{ "Preview radius", 0.02, 0, 10 };

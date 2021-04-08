@@ -45,7 +45,11 @@ namespace ofxRulr {
 						if (!this->previewCornerFinds.empty()) {
 							ofDrawCircle(this->previewCornerFinds.front(), 10.0f);
 							for (const auto & previewCornerFind : this->previewCornerFinds) {
-								previewLine.addVertex(previewCornerFind);
+								previewLine.addVertex({
+									previewCornerFind.x
+									, previewCornerFind.y
+									, 0
+									});
 							}
 						}
 						ofPushStyle();
@@ -111,44 +115,36 @@ namespace ofxRulr {
 				}
 				
 				//----------
-				void ProjectorFromDepthCamera::serialize(Json::Value & json) {
-					ofxRulr::Utils::Serializable::serialize(json, this->checkerboard);
-					ofxRulr::Utils::Serializable::serialize(json, this->initialLensOffset);
+				void ProjectorFromDepthCamera::serialize(nlohmann::json & json) {
+					ofxRulr::Utils::serialize(json, this->checkerboard);
+					ofxRulr::Utils::serialize(json, this->initialLensOffset);
 					
 					auto & jsonCorrespondences = json["correspondences"];
 					int index = 0;
 					for (const auto & correspondence : this->correspondences) {
 						auto & jsonCorrespondence = jsonCorrespondences[index++];
-						for (int i = 0; i < 3; i++) {
-							jsonCorrespondence["world"][i] = correspondence.world[i];
-						}
-						for (int i = 0; i < 2; i++) {
-							jsonCorrespondence["projector"][i] = correspondence.projector[i];
-						}
+						Utils::serialize(jsonCorrespondence["world"], correspondence.world);
+						Utils::serialize(jsonCorrespondence["projector"], correspondence.projector);
 					}
 					
-					json["error"] = this->error;
+					Utils::serialize(json["error"], this->error);
 				}
 				
 				//----------
-				void ProjectorFromDepthCamera::deserialize(const Json::Value & json) {
-					ofxRulr::Utils::Serializable::deserialize(json, this->checkerboard);
-					ofxRulr::Utils::Serializable::deserialize(json, this->initialLensOffset);
+				void ProjectorFromDepthCamera::deserialize(const nlohmann::json & json) {
+					ofxRulr::Utils::deserialize(json, this->checkerboard);
+					ofxRulr::Utils::deserialize(json, this->initialLensOffset);
 					
 					this->correspondences.clear();
-					auto & jsonCorrespondences = json["correspondences"];
+					const auto & jsonCorrespondences = json["correspondences"];
 					for (const auto & jsonCorrespondence : jsonCorrespondences) {
 						Correspondence correspondence;
-						for (int i = 0; i < 3; i++) {
-							correspondence.world[i] = jsonCorrespondence["world"][i].asFloat();
-						}
-						for (int i = 0; i < 2; i++) {
-							correspondence.projector[i] = jsonCorrespondence["projector"][i].asFloat();
-						}
+						Utils::deserialize(jsonCorrespondence["world"], correspondence.world);
+						Utils::deserialize(jsonCorrespondence["projector"], correspondence.projector);
 						this->correspondences.push_back(correspondence);
 					}
 					
-					this->error = json["error"].asFloat();
+					Utils::deserialize(json["error"], this->error);
 				}
 				
 				//----------
@@ -171,7 +167,7 @@ namespace ofxRulr {
 					flip(colorImage, colorImage, 1);
 					
 					//find the checkerboard
-					vector<ofVec2f> depthMapPoints;
+					vector<glm::vec2> depthMapPoints;
 					if (!ofxCv::findChessboardCornersPreTest(toCv(colorInDepth->getPixels()), cv::Size(this->checkerboard.cornersX, this->checkerboard.cornersY), toCv(depthMapPoints))) {
 						throw(ofxRulr::Exception("Couldn't find checkerboard in mapped color image"));
 					};
@@ -187,13 +183,13 @@ namespace ofxRulr {
 					auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->checkerboard.cornersX, this->checkerboard.cornersY), this->checkerboard.scale, true));
 					int pointIndex = 0;
 
-					const auto worldPoints = (ofVec3f*) world->getData();
+					const auto worldPoints = (glm::vec3*) world->getData();
 					for (auto depthMapPoint : depthMapPoints) {
 						this->previewCornerFinds.push_back(depthMapPoint);
 						Correspondence correspondence;
 						
 						correspondence.world = worldPoints[(int)depthMapPoint.x + (int)depthMapPoint.y * (int)depthMapWidth];
-						correspondence.projector = (ofVec2f)checkerboardCorners[pointIndex] + ofVec2f(this->checkerboard.positionX, this->checkerboard.positionY);
+						correspondence.projector = (glm::vec2)checkerboardCorners[pointIndex] + glm::vec2(this->checkerboard.positionX, this->checkerboard.positionY);
 						
 						//check correspondence has valid z coordinate before adding it to the calibration set
 						if (correspondence.world.z > 0.2f) {
@@ -218,11 +214,11 @@ namespace ofxRulr {
 					projector->setWidth(videoOutput->getWidth());
 					projector->setHeight(videoOutput->getHeight());
 					
-					vector<ofVec3f> worldPoints;
-					vector<ofVec2f> projectorPoints;
+					vector<glm::vec3> worldPoints;
+					vector<glm::vec2> projectorPoints;
 					
 					for (auto correpondence : this->correspondences) {
-						worldPoints.push_back(correpondence.world * depthCameraTransform);
+						worldPoints.push_back(Utils::applyTransform(depthCameraTransform, correpondence.world));
 						projectorPoints.push_back(correpondence.projector);
 					}
 					cv::Mat cameraMatrix, rotation, translation;
@@ -233,7 +229,7 @@ namespace ofxRulr {
 						, this->initialLensOffset, 1.4f);
 					
 					auto view = ofxCv::makeMatrix(rotation, translation);
-					projector->setTransform(view.getInverse());
+					projector->setTransform(glm::inverse(view));
 					projector->setIntrinsics(cameraMatrix);
 				}
 				

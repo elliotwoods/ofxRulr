@@ -10,9 +10,9 @@ namespace ofxRulr {
 				class CameraFromDepthCamera : public ofxRulr::Nodes::Procedure::Base {
 				public:
 					struct Correspondence {
-						ofVec3f depthCameraObject;
-						ofVec2f camera;
-						ofVec2f cameraNormalized;
+						glm::vec3 depthCameraObject;
+						glm::vec2 camera;
+						glm::vec2 cameraNormalized;
 					};
 					
 					CameraFromDepthCamera();
@@ -21,8 +21,8 @@ namespace ofxRulr {
 					ofxCvGui::PanelPtr getPanel() override;
 					void update();
 					
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					
 					void addCapture();
 					void calibrate();
@@ -35,8 +35,8 @@ namespace ofxRulr {
 					ofParameter<bool> usePreTest;
 					
 					vector<Correspondence> correspondences;
-					vector<ofVec2f> previewCornerFindsDepthCamera;
-					vector<ofVec2f> previewCornerFindsCamera;
+					vector<glm::vec2> previewCornerFindsDepthCamera;
+					vector<glm::vec2> previewCornerFindsCamera;
 					float error;
 				};
 			}

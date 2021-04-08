@@ -62,7 +62,7 @@ namespace ofxRulr {
 
 				inspector->addButton("Draw point", [this]() {
 					stringstream pointText(ofSystemTextBoxDialog("Point coordinate"));
-					ofVec2f position;
+					glm::vec2 position;
 					pointText >> position;
 					this->drawPoint(position);
 				});
@@ -88,18 +88,21 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void CircleLaser::drawPoint(const ofVec2f & point) {
+			void CircleLaser::drawPoint(const glm::vec2 & point) {
 				cout << "Drawing point " << point << endl;
 				
 				ofPolyline line;
-				line.addVertex(point);
+				line.addVertex({
+					point.x
+					, point.y
+					, 0.0f });
 
 
 				this->drawLine(line);
 			}
 
 			//----------
-			void CircleLaser::drawCircle(const ofVec2f & center, float radius) {
+			void CircleLaser::drawCircle(const glm::vec2 & center, float radius) {
 				cout << "Drawing circle " << center << ", " << radius << endl;
 
 				ofPolyline line;

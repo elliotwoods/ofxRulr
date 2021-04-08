@@ -50,12 +50,12 @@ namespace ofxRulr {
 				}
 				{
 					auto lastCameraTransformButton = inspector->addButton("Clear last transform", [this]() {
-						this->lastCameraTransform.makeIdentityMatrix();
+						this->lastCameraTransform = glm::mat4(1.0f);
 					});
 					auto lastCameraTransformButtonWeak = weak_ptr<ofxCvGui::Widgets::Button>(lastCameraTransformButton);
 					lastCameraTransformButton->onUpdate += [this, lastCameraTransformButtonWeak](ofxCvGui::UpdateArguments &) {
 						auto lastCameraTransformButton = lastCameraTransformButtonWeak.lock();
-						lastCameraTransformButton->setCaption(this->lastCameraTransform.isIdentity()
+						lastCameraTransformButton->setCaption(this->lastCameraTransform == glm::mat4(1.0f)
 							? "Ready to scan"
 							: "Clear last transform");
 					};
@@ -63,12 +63,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Scan::serialize(Json::Value & json) {
+			void Scan::serialize(nlohmann::json & json) {
 				
 			}
 
 			//----------
-			void Scan::deserialize(const Json::Value & json) {
+			void Scan::deserialize(const nlohmann::json & json) {
 
 			}
 
@@ -93,11 +93,7 @@ namespace ofxRulr {
 					{
 						//check if we're scanning the same transform as last time
 						auto cameraTransform = camera->getTransform();
-						bool sameTransform = true;
-						for (int i = 0; i < 4; i++) {
-							sameTransform &= cameraTransform.getRowAsVec4f(i)
-								== this->lastCameraTransform.getRowAsVec4f(i);
-						}
+						bool sameTransform = cameraTransform == this->lastCameraTransform;
 						if (sameTransform) {
 							throw(ofxRulr::Exception("Camera extrinsics haven't changes since last scan"));
 						}
@@ -149,7 +145,7 @@ namespace ofxRulr {
 
 							//process the data from the scan
 							const auto & dataSet = graycode->getDataSet();
-							map<uint32_t, vector<ofVec2f>> cameraPixelsPerProjectorPixel;
+							map<uint32_t, vector<glm::vec2>> cameraPixelsPerProjectorPixel;
 							{
 								Utils::ScopedProcess scopedProcessGatherData("Gathering data", false);
 
@@ -173,7 +169,7 @@ namespace ofxRulr {
 
 									auto cameraPixelCount = projectorPixelIt.second.size();
 
-									ofVec2f centroid;
+									glm::vec2 centroid;
 									if (cameraPixelCount == 0) {
 										//avoid issues
 										continue;
@@ -183,7 +179,7 @@ namespace ofxRulr {
 									}
 									else {
 										//otherwise take trimmed mean
-										ofVec2f originalMean;
+										glm::vec2 originalMean;
 										{
 											for (const auto & cameraPixel : projectorPixelIt.second) {
 												originalMean += cameraPixel;
@@ -196,7 +192,7 @@ namespace ofxRulr {
 										{
 											distancePerCameraPixelToMean.reserve(projectorPixelIt.second.size());
 											for (const auto & cameraPixel : projectorPixelIt.second) {
-												auto distance = cameraPixel.squareDistance(originalMean);
+												auto distance = glm::distance2(cameraPixel, originalMean);
 												distancePerCameraPixelToMean.push_back(distance);
 											}
 
@@ -211,7 +207,7 @@ namespace ofxRulr {
 										}
 
 										size_t trimmedMeanCount = 0;
-										ofVec2f trimmedMean;
+										glm::vec2 trimmedMean;
 										for (size_t iCameraPixel = 0; iCameraPixel < projectorPixelIt.second.size(); iCameraPixel++) {
 											const auto & distance = distancePerCameraPixelToMean[iCameraPixel];
 											if (distance < thresholdDistance) {

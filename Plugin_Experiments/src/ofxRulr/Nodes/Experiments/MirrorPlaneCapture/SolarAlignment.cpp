@@ -124,12 +124,12 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void SolarAlignment::serialize(Json::Value & json) {
+				void SolarAlignment::serialize(nlohmann::json & json) {
 					this->captures.serialize(json["captures"]);
 				}
 
 				//----------
-				void SolarAlignment::deserialize(const Json::Value & json) {
+				void SolarAlignment::deserialize(const nlohmann::json & json) {
 					this->captures.deserialize(json["captures"]);
 				}
 
@@ -250,7 +250,7 @@ namespace ofxRulr {
 						cv::Mat image = ofxCv::toCv(frame->getPixels());
 
 						if (image.channels() == 3) {
-							cv::cvtColor(image, image, CV_RGB2GRAY);
+							cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
 						}
 
 						cv::Mat binary;
@@ -259,7 +259,7 @@ namespace ofxRulr {
 							, binary
 							, this->parameters.solarCentroid.threshold
 							, 255
-							, CV_THRESH_BINARY);
+							, cv::THRESH_BINARY);
 
 						vector<vector<cv::Point2i>> contours;
 						vector<cv::Point2f> centroids;
@@ -268,8 +268,8 @@ namespace ofxRulr {
 
 						cv::findContours(binary
 							, contours
-							, CV_RETR_EXTERNAL
-							, CV_CHAIN_APPROX_NONE);
+							, cv::RETR_EXTERNAL
+							, cv::CHAIN_APPROX_NONE);
 
 						if (contours.size() < 1) {
 							throw(ofxRulr::Exception("Found 0 contours. Need 1"));
@@ -295,7 +295,7 @@ namespace ofxRulr {
 						}
 
 						auto moment = cv::moments(image(dilatedRect));
-						capture->centroid = ofVec2f(moment.m10 / moment.m00 + dilatedRect.x
+						capture->centroid = glm::vec2(moment.m10 / moment.m00 + dilatedRect.x
 							, moment.m01 / moment.m00 + dilatedRect.y);
 
 						auto cameraView = camera->getViewInWorldSpace();
@@ -335,7 +335,7 @@ namespace ofxRulr {
 					{
 						auto azRotate = ofMatrix4x4::newRotationMatrix(capture->azimuthAltitude.x, 0, 1, 0);
 						auto elRotate = ofMatrix4x4::newRotationMatrix(capture->azimuthAltitude.y, +1, 0, 0);
-						capture->solarVectorFromPySolar = azRotate * elRotate * ofVec3f(0, 0, -1);
+						capture->solarVectorFromPySolar = Utils::applyTransform(azRotate * elRotate, glm::vec3(0, 0, -1));
 					}
 
 					this->captures.add(capture);
@@ -370,16 +370,16 @@ namespace ofxRulr {
 						ofPushMatrix();
 						{
 							ofSetColor(this->color);
-							ofRotate(this->azimuthAltitude.x, 0, +1, 0);
-							ofRotate(this->azimuthAltitude.y, +1, 0, 0);
-							ofDrawLine(ofVec3f(), ofVec3f(0, 0, -10));
+							ofRotateDeg(this->azimuthAltitude.x, 0, +1, 0);
+							ofRotateDeg(this->azimuthAltitude.y, +1, 0, 0);
+							ofDrawLine(glm::vec3(), glm::vec3(0, 0, -10));
 						}
 						ofPopMatrix();
 
 						ofPushMatrix();
 						{
 							ofTranslate(0.1, 0.0, 0.0);
-							ofDrawLine(ofVec3f(), this->solarVectorFromPySolar);
+							ofDrawLine(glm::vec3(), this->solarVectorFromPySolar);
 						}
 						ofPopMatrix();
 					}
@@ -387,7 +387,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void SolarAlignment::Capture::serialize(Json::Value & json) {
+				void SolarAlignment::Capture::serialize(nlohmann::json & json) {
 					json["ray_s"] << this->ray.s;
 					json["ray_t"] << this->ray.t;
 					json["centroid"] << this->centroid;
@@ -398,12 +398,12 @@ namespace ofxRulr {
 						jsonCameraNavigation["imagePoints"] << ofxCv::toOf(this->cameraNavigation.imagePoints);
 						jsonCameraNavigation["worldPoints"] << ofxCv::toOf(this->cameraNavigation.worldPoints);
 						jsonCameraNavigation["cameraPosition"] << this->cameraNavigation.cameraPosition;
-						Utils::Serializable::serialize(jsonCameraNavigation, this->cameraNavigation.reprojectionError);
+						Utils::serialize(jsonCameraNavigation, this->cameraNavigation.reprojectionError);
 					}
 				}
 
 				//----------
-				void SolarAlignment::Capture::deserialize(const Json::Value & json) {
+				void SolarAlignment::Capture::deserialize(const nlohmann::json & json) {
 					json["ray_s"] >> this->ray.s;
 					json["ray_t"] >> this->ray.t;
 					this->ray.defined = true;
@@ -415,7 +415,7 @@ namespace ofxRulr {
 						jsonCameraNavigation["imagePoints"] >> ofxCv::toOf(this->cameraNavigation.imagePoints);
 						jsonCameraNavigation["worldPoints"] >> ofxCv::toOf(this->cameraNavigation.worldPoints);
 						jsonCameraNavigation["cameraPosition"] >> this->cameraNavigation.cameraPosition;
-						Utils::Serializable::deserialize(jsonCameraNavigation, this->cameraNavigation.reprojectionError);
+						Utils::deserialize(jsonCameraNavigation, this->cameraNavigation.reprojectionError);
 					}
 				}
 

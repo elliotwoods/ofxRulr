@@ -350,7 +350,7 @@ namespace ofxRulr {
 				cv::Mat translationStereoInverse;
 				{
 					auto stereoTransform = ofxCv::makeMatrix(openCVCalibration.rotationVector, openCVCalibration.translation);
-					auto stereoTransformInverse = stereoTransform.getInverse();
+					auto stereoTransformInverse = glm::inverse(stereoTransform);
 					ofxCv::decomposeMatrix(stereoTransformInverse, rotationVectorStereoInverse, translationStereoInverse);
 				}
 

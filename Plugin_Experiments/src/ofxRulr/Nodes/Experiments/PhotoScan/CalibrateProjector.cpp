@@ -158,15 +158,15 @@ namespace ofxRulr {
 							, distortionCoefficients
 							, rotationVectors
 							, translations
-							, CV_CALIB_FIX_K1
-							| CV_CALIB_FIX_K2
-							| CV_CALIB_FIX_K3
-							| CV_CALIB_FIX_K4
-							| CV_CALIB_FIX_K5
-							| CV_CALIB_FIX_K6
-							| CV_CALIB_ZERO_TANGENT_DIST
-							| CV_CALIB_USE_INTRINSIC_GUESS
-							| CV_CALIB_FIX_ASPECT_RATIO);
+							, cv::CALIB_FIX_K1
+							| cv::CALIB_FIX_K2
+							| cv::CALIB_FIX_K3
+							| cv::CALIB_FIX_K4
+							| cv::CALIB_FIX_K5
+							| cv::CALIB_FIX_K6
+							| cv::CALIB_ZERO_TANGENT_DIST
+							| cv::CALIB_USE_INTRINSIC_GUESS
+							| cv::CALIB_FIX_ASPECT_RATIO);
 					};
 					calib();
 
@@ -183,7 +183,7 @@ namespace ofxRulr {
 						set<int> outlierIndicies;
 						for (int i = 0; i < imagePointsReprojected.size(); i++) {
 							auto delta = ofxCv::toOf(imagePointsReprojected[i]) - ofxCv::toOf(projectorImagePoints[i]);
-							auto reprojectionError = delta.length();
+							auto reprojectionError = glm::length(delta);
 							cout << "[" << i << "] " << reprojectionError << endl;
 
 							if (reprojectionError > this->parameters.calibrate.maximumReprojectionError) {

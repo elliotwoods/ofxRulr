@@ -14,7 +14,7 @@
 
 //internal addons
 #include "ofxClipboard.h"
-#include <json/json.h>
+#include <nlohmann/json.hpp>
 
 //external addons
 #include "ofxAssets.h"

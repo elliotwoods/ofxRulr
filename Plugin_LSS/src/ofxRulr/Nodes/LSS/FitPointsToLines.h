@@ -10,13 +10,13 @@ namespace ofxRulr {
 			class FitPointsToLines : public Nodes::Base {
 			public:
 				struct ProjectorPixel {
-					ofVec2f projector;
+					glm::vec2 projector;
 
-					vector<ofVec2f> cameraFinds;
-					ofVec2f camera;
-					ofVec2f cameraUndistorted;
+					vector<glm::vec2> cameraFinds;
+					glm::vec2 camera;
+					glm::vec2 cameraUndistorted;
 
-					ofVec3f world;
+					glm::vec3 world;
 					float intersectionLength;
 
 					bool triangulationFailed = false;
@@ -27,11 +27,11 @@ namespace ofxRulr {
 					Line();
 
 					vector<shared_ptr<ProjectorPixel>> projectorPixels;
-					ofVec3f startWorld;
-					ofVec3f endWorld;
+					glm::vec3 startWorld;
+					glm::vec3 endWorld;
 
-					ofVec2f startProjector;
-					ofVec2f endProjector;
+					glm::vec2 startProjector;
+					glm::vec2 endProjector;
 
 					ofColor color;
 				};
@@ -53,9 +53,9 @@ namespace ofxRulr {
 				void exportData();
 			protected:
 				ofxRay::Ray fitRayToProjectorPixels(vector<shared_ptr<ProjectorPixel>> projectorPixels);
-				vector<shared_ptr<ProjectorPixel>> findNClosestPixels(const vector<shared_ptr<ProjectorPixel>> projectorPixels, const ofVec3f & position, int count);
-				ofVec2f findMeanClosestProjected(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const ofVec3f & worldPosition);
-				ofVec3f findMeanClosestWorld(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const ofVec3f & worldPosition);
+				vector<shared_ptr<ProjectorPixel>> findNClosestPixels(const vector<shared_ptr<ProjectorPixel>> projectorPixels, const glm::vec3 & position, int count);
+				glm::vec2 findMeanClosestProjected(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const glm::vec3 & worldPosition);
+				glm::vec3 findMeanClosestWorld(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const glm::vec3 & worldPosition);
 
 				void rebuildPreview();
 				void drawOnProjector();
@@ -131,7 +131,7 @@ namespace ofxRulr {
 				ofFbo previewInProjector;
 
 				ofxRay::Ray debugRay;
-				vector<ofVec3f> debugPoints;
+				vector<glm::vec3> debugPoints;
 			};
 		}
 	}

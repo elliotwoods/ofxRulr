@@ -21,13 +21,13 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void OSCRelay::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+			void OSCRelay::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->parameters);
 			}
 
 			//----------
-			void OSCRelay::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+			void OSCRelay::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->parameters);
 				this->invalidateSender();
 			}
 

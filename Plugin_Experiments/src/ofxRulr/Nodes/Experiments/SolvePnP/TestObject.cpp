@@ -38,8 +38,8 @@ namespace ofxRulr {
 
 
 				//----------
-				std::vector<ofVec3f> TestObject::getObjectPoints() {
-					vector<ofVec3f> points = {
+				std::vector<glm::vec3> TestObject::getObjectPoints() {
+					vector<glm::vec3> points = {
 						{ -0.5f, -0.5f, 0.0f }
 						,{ +0.5f, -0.5f, 0.0f }
 						,{ +0.5f, +0.5f, 0.0f }
@@ -48,7 +48,7 @@ namespace ofxRulr {
 
 					//apply diameter
 					for (auto & point : points) {
-						point = point * this->parameters.diameter;
+						point = point * this->parameters.diameter.get();
 					}
 
 					return points;
@@ -56,13 +56,13 @@ namespace ofxRulr {
 
 
 				//----------
-				std::vector<ofVec3f> TestObject::getWorldPoints() {
+				std::vector<glm::vec3> TestObject::getWorldPoints() {
 					auto points = this->getObjectPoints();
 
 					//apply diameter and transform
-					ofMatrix4x4 worldTransform = this->getTransform();
+					glm::mat4 worldTransform = this->getTransform();
 					for (auto & point : points) {
-						point = point * worldTransform;
+						point = Utils::applyTransform(worldTransform, point);
 					}
 
 					return points;

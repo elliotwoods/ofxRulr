@@ -15,8 +15,8 @@ namespace ofxRulr {
 				void init();
 				string getTypeName() const override;
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				void triangulate();
 

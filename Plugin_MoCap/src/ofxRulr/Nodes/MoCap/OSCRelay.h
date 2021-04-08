@@ -14,8 +14,8 @@ namespace ofxRulr {
 				OSCRelay();
 				string getTypeName() const override;
 				void init();
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 			protected:
 				struct : ofParameterGroup {

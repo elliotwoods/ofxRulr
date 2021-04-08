@@ -14,7 +14,7 @@ namespace ofxRulr {
 					void update();
 					ofxCvGui::PanelPtr getPanel() override;
 
-					const vector<ofVec2f> & getProjectedPoints();
+					const vector<glm::vec2> & getProjectedPoints();
 				protected:
 					struct : ofParameterGroup {
 						ofParameter<float> noise{ "Noise [px]", 0, 0, 100.0 };
@@ -24,7 +24,7 @@ namespace ofxRulr {
 					shared_ptr<ofxCvGui::Panels::Draws> panel;
 					ofFbo fbo;
 
-					vector<ofVec2f> projectedPoints;
+					vector<glm::vec2> projectedPoints;
 				};
 			}
 		}

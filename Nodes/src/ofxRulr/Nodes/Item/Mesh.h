@@ -23,12 +23,12 @@ namespace ofxRulr {
 				void drawObject();
 				void drawObjectAdvanced(DrawWorldAdvancedArgs &);
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				ofMatrix4x4 getMeshTransform() const;
 
-				virtual vector<ofVec3f> getVertices() const override;
+				virtual vector<glm::vec3> getVertices() const override;
 
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);

@@ -251,7 +251,7 @@ namespace ofxRulr {
 					}
 				};
 				this->listBox->onMouseReleased += [this] (ofxCvGui::MouseArguments & args) {
-					if ((args.local - this->mouseDownInListPosition).lengthSquared() < 5 * 5) {
+					if (glm::length2(args.local - this->mouseDownInListPosition) < 5 * 5) {
 						this->notifyNewNode();
 					}
 				};
@@ -264,7 +264,7 @@ namespace ofxRulr {
 				if (currentSelection) {
 					auto newNode = currentSelection->getFactory()->makeUntyped();
 					newNode->init();
-					newNode->deserialize(Json::Value()); // always call deserialize
+					newNode->deserialize(nlohmann::json()); // always call deserialize
 					this->onNewNode(newNode);
 					ofxCvGui::closeDialog(this);
 				}

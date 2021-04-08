@@ -15,7 +15,7 @@ namespace ofxRulr {
 			Your logger class:
 			* Implement getTypeName()
 			* Implement getNewSourceFrame()
-			* Implement deserializeFrame(const Json::Value &)
+			* Implement deserializeFrame(const nlohmann::json &)
 			* Probably inherit another class which provides data of your type to output the recording
 			**/
 			class Recorder : virtual public ofxRulr::Nodes::Base {
@@ -43,8 +43,8 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr getPanel() override;
 				ofxCvGui::ElementPtr getTrackView();
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				void populateInspector(ofxCvGui::InspectArguments &);
 
@@ -79,7 +79,7 @@ namespace ofxRulr {
 				virtual shared_ptr<AbstractFrame> getNewSourceFrame();
 
 				//returns an empty pointer if can't deserialize
-				virtual shared_ptr<AbstractFrame> deserializeFrame(const Json::Value &) const;
+				virtual shared_ptr<AbstractFrame> deserializeFrame(const nlohmann::json &) const;
 
 				void registerSlave(Recorder *);
 				void unregisterSlave(Recorder *);
@@ -120,10 +120,10 @@ namespace ofxRulr {
 				public:
 					///----------
 					Frame() {
-						this->onSerialize += [this](Json::Value & json) {
+						this->onSerialize += [this](nlohmann::json & json) {
 							json["data64"] = this->encodedData;
 						};
-						this->onDeserialize += [this](const Json::Value & json) {
+						this->onDeserialize += [this](const nlohmann::json & json) {
 							if (json["data64"].isString()) {
 								this->encodedData = json["data64"].asString();
 							}
@@ -171,7 +171,7 @@ namespace ofxRulr {
 					}
 				}
 
-				shared_ptr<AbstractFrame> deserializeFrame(const Json::Value & json) const override {
+				shared_ptr<AbstractFrame> deserializeFrame(const nlohmann::json & json) const override {
 					auto frame = make_shared<Frame>();
 					frame->deserialize(json);
 					return frame;

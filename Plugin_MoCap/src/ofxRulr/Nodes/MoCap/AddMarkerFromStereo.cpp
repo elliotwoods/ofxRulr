@@ -56,7 +56,7 @@ namespace ofxRulr {
 				
 				{
 					auto panel = ofxCvGui::Panels::Groups::makeStrip();
-					auto makeCameraPanel = [panel](ofImage & preview, shared_ptr<FindMarkerCentroidsFrame> & frame, unique_ptr<ofVec2f> & centroidStore) {
+					auto makeCameraPanel = [panel](ofImage & preview, shared_ptr<FindMarkerCentroidsFrame> & frame, unique_ptr<glm::vec2> & centroidStore) {
 						auto panel = ofxCvGui::Panels::makeImage(preview);
 						auto panelWeak = weak_ptr<ofxCvGui::Panels::Image>(panel);
 						panel->onDrawImage += [&centroidStore] (ofxCvGui::DrawImageArguments & args) {
@@ -77,13 +77,19 @@ namespace ofxRulr {
 						};
 						panel->onMouseReleased += [& centroidStore, panelWeak, &frame](ofxCvGui::MouseArguments & args) {
 							auto panel = panelWeak.lock();
-							auto coordInCameraFrame = ofVec3f(args.local) * panel->getPanelToImageTransform().getInverse();
+							auto coordInCameraFrame = Utils::applyTransform(
+								glm::inverse(panel->getPanelToImageTransform())
+								, {
+									args.local.x
+									, args.local.y
+									, 0.0f
+								});
 
 							//search for centroid
 							auto count = frame->centroids.size();
 							for (int i = 0; i < count; i++) {
-								if (frame->boundingRects[i].contains(ofxCv::toCv((ofVec2f) coordInCameraFrame))) {
-									centroidStore = make_unique<ofVec2f>(ofxCv::toOf(frame->centroids[i]));
+								if (frame->boundingRects[i].contains(ofxCv::toCv((glm::vec2) coordInCameraFrame))) {
+									centroidStore = make_unique<glm::vec2>(ofxCv::toOf(frame->centroids[i]));
 								}
 							}
 						};
@@ -127,10 +133,10 @@ namespace ofxRulr {
 					if (this->centroidA && this->centroidB) {
 						auto stereoCalibrateNode = this->getInput<Procedure::Calibrate::StereoCalibrate>();
 						if (stereoCalibrateNode) {
-							vector<ofVec2f> imagePointsA(1, *this->centroidA);
-							vector<ofVec2f> imagePointsB(1, *this->centroidB);
+							vector<glm::vec2> imagePointsA(1, *this->centroidA);
+							vector<glm::vec2> imagePointsB(1, *this->centroidB);
 							auto worldPositions = stereoCalibrateNode->triangulate(imagePointsA, imagePointsB, false);
-							this->estimatedPosition = make_unique<ofVec3f>(worldPositions[0]);
+							this->estimatedPosition = make_unique<glm::vec3>(worldPositions[0]);
 						}
 					}
 					else {
@@ -145,13 +151,13 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void AddMarkerFromStereo::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+			void AddMarkerFromStereo::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->parameters);
 			}
 
 			//----------
-			void AddMarkerFromStereo::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+			void AddMarkerFromStereo::deserialize(const nlohmann::json& json) {
+				Utils::deserialize(json, this->parameters);
 			}
 
 			//----------
@@ -159,12 +165,12 @@ namespace ofxRulr {
 				auto inspector = inspectArgs.inspector;
 				inspector->addParameterGroup(this->parameters);
 
-				inspector->addLiveValue<ofVec3f>("Estimated position", [this]() {
+				inspector->addLiveValue<glm::vec3>("Estimated position", [this]() {
 					if (this->estimatedPosition) {
 						return *this->estimatedPosition;
 					}
 					else {
-						return ofVec3f();
+						return glm::vec3();
 					}
 				});
 				inspector->addButton("Clear estimation", [this]() {
@@ -179,7 +185,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofVec3f AddMarkerFromStereo::getMarkerPositionEstimation() const {
+			glm::vec3 AddMarkerFromStereo::getMarkerPositionEstimation() const {
 				if (this->estimatedPosition) {
 					return * this->estimatedPosition;
 				}
@@ -211,7 +217,7 @@ namespace ofxRulr {
 			void AddMarkerFromStereo::addMarker() {
 				this->throwIfMissingAConnection<Body>();
 				auto body = this->getInput<Body>();
-				body->addMarker(this->getMarkerPositionEstimation() * body->getTransform().getInverse());
+				body->addMarker(Utils::applyTransform(glm::inverse(body->getTransform()), this->getMarkerPositionEstimation()));
 
 				this->centroidA.reset();
 				this->centroidB.reset();

@@ -41,3 +41,4 @@ ipch/
 Application/Rulr\.VC\.db
 
 Application/Rulr\.VC\.VC\.opendb
+**/.vs/*

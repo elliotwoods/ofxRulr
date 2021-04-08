@@ -337,7 +337,7 @@ namespace ofxRulr {
 						plane.boardTransform = ofxCv::makeMatrix(rotation, translation) * cameraTransform;
 
 						for (const auto & objectPoint : plane.objectPoints) {
-							plane.worldPoints.push_back(ofxCv::toOf(objectPoint) * plane.boardTransform);
+							plane.worldPoints.push_back(Utils::applyTransform(plane.boardTransform, ofxCv::toOf(objectPoint)));
 						}
 
 						if (!plane.plane.fitToPoints(plane.worldPoints, plane.planeFitResidual)) {
@@ -350,7 +350,7 @@ namespace ofxRulr {
 						plane.plane.setCenter(plane.meanWorldPoint);
 
 						//this seems to be the data we actually want. And the normal should be consistent
-						plane.plane.setNormal(-(ofVec3f) plane.boardTransform.getRowAsVec3f(2));
+						plane.plane.setNormal(-(glm::vec3) ((ofMatrix4x4)plane.boardTransform).getRowAsVec3f(2));
 					};
 					//
 					//--
@@ -364,7 +364,7 @@ namespace ofxRulr {
 					if (this->parameters.logToServer.enabled) {
 						try {
 							Utils::ScopedProcess scopedProcessLogToServer("Log to server");
-							Json::Value requestJson;
+							nlohmann::json requestJson;
 
 							{
 								auto & data = requestJson["data"];
@@ -378,7 +378,7 @@ namespace ofxRulr {
 
 							ofHttpRequest request(this->parameters.logToServer.address.get(), "log");
 							request.method = ofHttpRequest::Method::POST;
-							request.body = requestJson.toStyledString();
+							request.body = requestJson.dump(4);
 							request.contentType = "application/json";
 
 							ofURLFileLoader urlLoader;
@@ -436,14 +436,14 @@ namespace ofxRulr {
 						throw(Exception("No captures available"));
 					}
 
-					ofVec3f meanCenter, meanNormal;
+					glm::vec3 meanCenter, meanNormal;
 					for (auto capture : captures) {
 						meanCenter += capture->mirrorPlane.plane.getCenter();
 						meanNormal += capture->mirrorPlane.plane.getNormal();
 					}
 					meanCenter /= captures.size();
 					meanNormal /= captures.size();
-					meanNormal.normalize();
+					meanNormal = glm::normalize(meanNormal);
 
 					ofxRay::Plane meanPlane;
 					meanPlane.setCenter(meanCenter);
@@ -472,12 +472,12 @@ namespace ofxRulr {
 					for (auto capture : captures) {
 						auto backPosition = capture->mirrorPlane.meanWorldPoint
 							- capture->mirrorPlane.plane.getNormal()
-							* this->parameters.heliostatProjection.planeToA2;
+							* this->parameters.heliostatProjection.planeToA2.get();
 
 						//check if matching heliostat already exists
 						shared_ptr<Heliostats::Heliostat> heliostat;
 						for (auto heliostatOther : existingHeliostats) {
-							if ((heliostatOther->position.get() - backPosition).length() < this->parameters.heliostatProjection.distanceThreshold) {
+							if (glm::length(heliostatOther->position.get() - backPosition) < this->parameters.heliostatProjection.distanceThreshold) {
 								heliostat = heliostatOther;
 								break;
 							}
@@ -486,7 +486,7 @@ namespace ofxRulr {
 						//if it doesn't already exist, check if it's one we are already trying to add
 						if (!heliostat) {
 							for (auto heliostatOther : heliostatsToAdd) {
-								if ((heliostatOther->position.get() - backPosition).length() < this->parameters.heliostatProjection.distanceThreshold) {
+								if (glm::length(heliostatOther->position.get() - backPosition) < this->parameters.heliostatProjection.distanceThreshold) {
 									heliostat = heliostatOther;
 									break;
 								}
@@ -533,7 +533,7 @@ namespace ofxRulr {
 						//move the captures we moved from our set to that set
 						for (auto capture : captures) {
 							//clone by serialization
-							Json::Value json;
+							nlohmann::json json;
 							capture->serialize(json);
 							auto captureClone = make_shared<Capture>();
 							captureClone->deserialize(json);
@@ -554,12 +554,12 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void BoardOnMirror::serialize(Json::Value & json) {
+				void BoardOnMirror::serialize(nlohmann::json & json) {
 					this->captures.serialize(json["captures"]);
 				}
 
 				//----------
-				void BoardOnMirror::deserialize(const Json::Value & json) {
+				void BoardOnMirror::deserialize(const nlohmann::json & json) {
 					this->captures.deserialize(json["captures"]);
 				}
 
@@ -577,16 +577,16 @@ namespace ofxRulr {
 					ofPushMatrix();
 					{
 						ofQuaternion rotation;
-						rotation.makeRotate(ofVec3f(0, 0, 1), this->mirrorPlane.plane.getNormal());
+						rotation.makeRotate(glm::vec3(0, 0, 1), this->mirrorPlane.plane.getNormal());
 
 						ofTranslate(this->mirrorPlane.plane.getCenter());
-						ofMultMatrix(ofMatrix4x4(rotation));
+						ofMultMatrix(glm::mat4((glm::quat) rotation));
 
 						ofPushStyle();
 						{
 							ofSetColor(this->color);
 							ofNoFill();
-							ofDrawCircle(ofVec3f(), 0.35f / 2.0f);
+							ofDrawCircle(glm::vec3(), 0.35f / 2.0f);
 						}
 						ofPopStyle();
 					}
@@ -645,58 +645,58 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void BoardOnMirror::Capture::serialize(Json::Value & json) {
+				void BoardOnMirror::Capture::serialize(nlohmann::json & json) {
 					json["name"] << this->name;
 					json["heliostatName"] << this->heliostatName;
 
 					{
 						auto & jsonCameraNavigation = json["cameraNavigation"];
-						jsonCameraNavigation["enabled"] = this->cameraNavigation.enabled;
-						jsonCameraNavigation["imagePoints"] << ofxCv::toOf(this->cameraNavigation.imagePoints);
-						jsonCameraNavigation["worldPoints"] << ofxCv::toOf(this->cameraNavigation.worldPoints);
-						jsonCameraNavigation["cameraPosition"] << this->cameraNavigation.cameraPosition;
-						Utils::Serializable::serialize(jsonCameraNavigation, this->cameraNavigation.reprojectionError);
+						Utils::serialize(jsonCameraNavigation["enabled"], this->cameraNavigation.enabled);
+						Utils::serialize(jsonCameraNavigation["imagePoints"], ofxCv::toOf(this->cameraNavigation.imagePoints));
+						Utils::serialize(jsonCameraNavigation["worldPoints"], ofxCv::toOf(this->cameraNavigation.worldPoints));
+						Utils::serialize(jsonCameraNavigation["cameraPosition"], this->cameraNavigation.cameraPosition);
+						Utils::serialize(jsonCameraNavigation, this->cameraNavigation.reprojectionError);
 					}
 
 					{
 						auto & jsonPlane = json["mirrorPlane"];
-						jsonPlane["imagePoints"] << ofxCv::toOf(this->mirrorPlane.imagePoints);
-						jsonPlane["worldPoints"] << ofxCv::toOf(this->mirrorPlane.objectPoints);
-						jsonPlane["plane"] << this->mirrorPlane.plane;
-						jsonPlane["reprojectionError"] << this->mirrorPlane.reprojectionError;
-						jsonPlane["planeFitResidual"] << this->mirrorPlane.planeFitResidual;
-						jsonPlane["boardTransform"] << this->mirrorPlane.boardTransform;
-						jsonPlane["worldPoints"] << this->mirrorPlane.worldPoints;
-						jsonPlane["meanObjectPoint"] << this->mirrorPlane.meanObjectPoint;
-						jsonPlane["meanWorldPoint"] << this->mirrorPlane.meanWorldPoint;
+						Utils::serialize(jsonPlane["imagePoints"], ofxCv::toOf(this->mirrorPlane.imagePoints));
+						Utils::serialize(jsonPlane["worldPoints"], ofxCv::toOf(this->mirrorPlane.objectPoints));
+						Utils::serialize(jsonPlane["plane"], this->mirrorPlane.plane);
+						Utils::serialize(jsonPlane["reprojectionError"], this->mirrorPlane.reprojectionError);
+						Utils::serialize(jsonPlane["planeFitResidual"], this->mirrorPlane.planeFitResidual);
+						Utils::serialize(jsonPlane["boardTransform"], this->mirrorPlane.boardTransform);
+						Utils::serialize(jsonPlane["worldPoints"], this->mirrorPlane.worldPoints);
+						Utils::serialize(jsonPlane["meanObjectPoint"], this->mirrorPlane.meanObjectPoint);
+						Utils::serialize(jsonPlane["meanWorldPoint"], this->mirrorPlane.meanWorldPoint);
 					}
 				}
 
 				//----------
-				void BoardOnMirror::Capture::deserialize(const Json::Value & json) {
+				void BoardOnMirror::Capture::deserialize(const nlohmann::json & json) {
 					json["name"] >> this->name;
 					json["heliostatName"] >> this->heliostatName;
 
 					{
 						const auto & jsonCameraNavigation = json["cameraNavigation"];
-						this->cameraNavigation.enabled = jsonCameraNavigation["enabled"].asBool();
-						jsonCameraNavigation["imagePoints"] >> ofxCv::toOf(this->cameraNavigation.imagePoints);
-						jsonCameraNavigation["worldPoints"] >> ofxCv::toOf(this->cameraNavigation.worldPoints);
-						jsonCameraNavigation["cameraPosition"] >> this->cameraNavigation.cameraPosition;
-						Utils::Serializable::deserialize(jsonCameraNavigation, this->cameraNavigation.reprojectionError);
+						this->cameraNavigation.enabled = jsonCameraNavigation["enabled"].get<bool>();
+						Utils::deserialize(jsonCameraNavigation["imagePoints"], ofxCv::toOf(this->cameraNavigation.imagePoints));
+						Utils::deserialize(jsonCameraNavigation["worldPoints"], ofxCv::toOf(this->cameraNavigation.worldPoints));
+						Utils::deserialize(jsonCameraNavigation["cameraPosition"], this->cameraNavigation.cameraPosition);
+						Utils::deserialize(jsonCameraNavigation, this->cameraNavigation.reprojectionError);
 					}
 
 					{
 						const auto & jsonPlane = json["mirrorPlane"];
-						jsonPlane["imagePoints"] >> ofxCv::toOf(this->mirrorPlane.imagePoints);
-						jsonPlane["worldPoints"] >> ofxCv::toOf(this->mirrorPlane.objectPoints);
-						jsonPlane["plane"] >> this->mirrorPlane.plane;
-						jsonPlane["reprojectionError"] >> this->mirrorPlane.reprojectionError;
-						jsonPlane["planeFitResidual"] >> this->mirrorPlane.planeFitResidual;
-						jsonPlane["boardTransform"] >> this->mirrorPlane.boardTransform;
-						jsonPlane["worldPoints"] >> this->mirrorPlane.worldPoints;
-						jsonPlane["meanObjectPoint"] >> this->mirrorPlane.meanObjectPoint;
-						jsonPlane["meanWorldPoint"] >> this->mirrorPlane.meanWorldPoint;
+						Utils::deserialize(jsonPlane["imagePoints"], ofxCv::toOf(this->mirrorPlane.imagePoints));
+						Utils::deserialize(jsonPlane["worldPoints"], ofxCv::toOf(this->mirrorPlane.objectPoints));
+						Utils::deserialize(jsonPlane["plane"], this->mirrorPlane.plane);
+						Utils::deserialize(jsonPlane["reprojectionError"], this->mirrorPlane.reprojectionError);
+						Utils::deserialize(jsonPlane["planeFitResidual"], this->mirrorPlane.planeFitResidual);
+						Utils::deserialize(jsonPlane["boardTransform"], this->mirrorPlane.boardTransform);
+						Utils::deserialize(jsonPlane["worldPoints"], this->mirrorPlane.worldPoints);
+						Utils::deserialize(jsonPlane["meanObjectPoint"], this->mirrorPlane.meanObjectPoint);
+						Utils::deserialize(jsonPlane["meanWorldPoint"], this->mirrorPlane.meanWorldPoint);
 					}
 				}
 

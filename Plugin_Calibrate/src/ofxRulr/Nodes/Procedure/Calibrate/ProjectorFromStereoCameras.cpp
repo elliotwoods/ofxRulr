@@ -26,12 +26,12 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void ProjectorFromStereoCamera::Capture::serialize(Json::Value & json) {
+				void ProjectorFromStereoCamera::Capture::serialize(nlohmann::json & json) {
 					json["dataPoints"] << this->dataPoints;
 				}
 
 				//----------
-				void ProjectorFromStereoCamera::Capture::deserialize(const Json::Value & json) {
+				void ProjectorFromStereoCamera::Capture::deserialize(const nlohmann::json & json) {
 					json["dataPoints"] >> this->dataPoints;
 				}
 
@@ -92,17 +92,17 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void ProjectorFromStereoCamera::serialize(Json::Value & json) {
+				void ProjectorFromStereoCamera::serialize(nlohmann::json & json) {
 					this->captures.serialize(json);
-					Utils::Serializable::serialize(json, this->parameters);
-					Utils::Serializable::serialize(json, this->reprojectionError);
+					Utils::serialize(json, this->parameters);
+					Utils::serialize(json, this->reprojectionError);
 				}
 
 				//----------
-				void ProjectorFromStereoCamera::deserialize(const Json::Value & json) {
+				void ProjectorFromStereoCamera::deserialize(const nlohmann::json & json) {
 					this->captures.deserialize(json);
-					Utils::Serializable::deserialize(json, this->parameters);
-					Utils::Serializable::deserialize(json, this->reprojectionError);
+					Utils::deserialize(json, this->parameters);
+					Utils::deserialize(json, this->reprojectionError);
 				}
 
 				//----------
@@ -231,16 +231,16 @@ namespace ofxRulr {
 						Utils::ScopedProcess scopedProcessTriangulate("Triangulating points");
 
 						struct GraycodePixel {
-							ofVec2f cameraImageSpace;
-							ofVec2f projectorImageSpace;
+							glm::vec2 cameraImageSpace;
+							glm::vec2 projectorImageSpace;
 							float brightness;
 							uint32_t distance;
 						};
 
 						struct DataPoint {
-							ofVec2f projectorImageSpace;
-							ofVec2f cameraImageSpaceA;
-							ofVec2f cameraImageSpaceB;
+							glm::vec2 projectorImageSpace;
+							glm::vec2 cameraImageSpaceA;
+							glm::vec2 cameraImageSpaceB;
 							float color;
 						};
 
@@ -301,9 +301,9 @@ namespace ofxRulr {
 
 						//triangulate points
 						{
-							vector<ofVec2f> imagePointsA;
-							vector<ofVec2f> imagePointsB;
-							vector<ofVec2f> projectionSpacePoints;
+							vector<glm::vec2> imagePointsA;
+							vector<glm::vec2> imagePointsB;
+							vector<glm::vec2> projectionSpacePoints;
 							vector<ofFloatColor> colors;
 
 							for (const auto & dataPoint : dataPoints) {
@@ -333,8 +333,8 @@ namespace ofxRulr {
 					this->throwIfMissingAConnection<Item::Projector>();
 
 					auto projectorNode = this->getInput<Item::Projector>();
-					vector<ofVec3f> worldPoints;
-					vector<ofVec2f> projectorImagePoints;
+					vector<glm::vec3> worldPoints;
+					vector<glm::vec2> projectorImagePoints;
 
 					auto selectedCaptures = this->captures.getSelection();
 					for (auto capture : selectedCaptures) {
@@ -380,8 +380,8 @@ namespace ofxRulr {
 						vector<cv::Point2f> imagePointsDecimated;
 						vector<cv::Point3f> worldPointsDecimated;
 
-						auto flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6
-							| CV_CALIB_ZERO_TANGENT_DIST | CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_ASPECT_RATIO;
+						auto flags = cv::CALIB_FIX_K1 | cv::CALIB_FIX_K2 | cv::CALIB_FIX_K3 | cv::CALIB_FIX_K4 | cv::CALIB_FIX_K5 | cv::CALIB_FIX_K6
+							| cv::CALIB_ZERO_TANGENT_DIST | cv::CALIB_USE_INTRINSIC_GUESS | cv::CALIB_FIX_ASPECT_RATIO;
 						vector<cv::Mat> rotationVector, translationVector;
 
 						decimation *= 2;
@@ -459,7 +459,7 @@ namespace ofxRulr {
 
 						auto thresholdSquared = pow(this->parameters.calibrate.removeOutliers.maxReprojectionError, 2);
 						for (int i = 0; i < count; i++) {
-							if (projectorImagePoints[i].squareDistance(ofxCv::toOf(reprojectedPoints[i])) < thresholdSquared) {
+							if (glm::distance2(projectorImagePoints[i], ofxCv::toOf(reprojectedPoints[i])) < thresholdSquared) {
 								worldPointsNoOutliers.emplace_back(ofxCv::toCv(worldPoints[i]));
 								projectorImagePointsNoOutliers.emplace_back(ofxCv::toCv(projectorImagePoints[i]));
 							}

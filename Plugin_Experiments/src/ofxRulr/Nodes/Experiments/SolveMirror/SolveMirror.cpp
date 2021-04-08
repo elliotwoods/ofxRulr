@@ -165,7 +165,7 @@ namespace ofxRulr {
 					}
 
 					//resolve pose of inverted marker map relative to camera
-					ofMatrix4x4 flippedMarkerMapTransform;
+					glm::mat4 flippedMarkerMapTransform;
 					{
 						cv::Mat rotation, translation;
 						cv::solvePnP(flippedMarkerMapWorldSpacePoints
@@ -187,7 +187,8 @@ namespace ofxRulr {
 					//resolve 3d points as seen by camera through mirror
 					{
 						for (const auto & flippedWorldSpacePoint : flippedMarkerMapWorldSpacePoints) {
-							capture->reflections.virtualPoints.push_back(ofxCv::toCv(ofxCv::toOf(flippedWorldSpacePoint) * flippedMarkerMapTransform));
+							capture->reflections.virtualPoints.push_back(
+								ofxCv::toCv(Utils::applyTransform(flippedMarkerMapTransform, ofxCv::toOf(flippedWorldSpacePoint))));
 						}
 					}
 
@@ -229,7 +230,7 @@ namespace ofxRulr {
 					plane.setInfinite(true);
 
 					//calculate plane intersection points
-					ofVec3f meanPlaneIntersection;
+					glm::vec3 meanPlaneIntersection;
 					{
 						size_t intersectionCount = 0;
 
@@ -237,7 +238,7 @@ namespace ofxRulr {
 							capture->reflections.pointOnMirror.clear();
 
 							for (auto & viewRay : capture->reflections.viewRays) {
-								ofVec3f position;
+								glm::vec3 position;
 								plane.intersect(viewRay, position);
 								capture->reflections.pointOnMirror.push_back(ofxCv::toCv(position));
 								viewRay.setEnd(position);
@@ -248,7 +249,7 @@ namespace ofxRulr {
 
 						meanPlaneIntersection /= intersectionCount;
 						plane.setCenter(meanPlaneIntersection);
-						plane.setScale(ofVec2f(0.35f, 0.35f));
+						plane.setScale(glm::vec2(0.35f, 0.35f));
 						plane.setInfinite(false);
 					}
 
@@ -324,7 +325,7 @@ namespace ofxRulr {
 
 					auto evaluatedDataPoint = dataPoint;
 					this->evaluate(evaluatedDataPoint);
-					residual = evaluatedDataPoint.virtualPosition.squareDistance(dataPoint.virtualPosition);
+					residual = glm::distance2(evaluatedDataPoint.virtualPosition, dataPoint.virtualPosition);
 				}
 
 				//----------
@@ -334,14 +335,17 @@ namespace ofxRulr {
 
 				//----------
 				void SolveMirror::PlaneModel::cacheModel() {
-					ofVec3f normal(0, 0, 1);
-					ofMatrix4x4 transform;
-					transform.rotate(this->parameters[0], 1, 0, 0);
-					transform.rotate(this->parameters[1], 0, 1, 0);
-
-					this->plane.setUp(ofVec3f(0, 1, 0) * transform);
-					this->plane.setScale(ofVec2f(1.0f, 1.0f));
-					this->plane.setNormal(normal * transform);
+					glm::vec3 normal(0, 0, 1);
+					glm::mat4 transform;
+					{
+						ofMatrix4x4 oftransform;
+						oftransform.rotate(this->parameters[0], 1, 0, 0);
+						oftransform.rotate(this->parameters[1], 0, 1, 0);
+						transform = oftransform;
+					}
+					this->plane.setUp(Utils::applyTransform(transform, glm::vec3(0, 1, 0)));
+					this->plane.setScale(glm::vec2(1.0f, 1.0f));
+					this->plane.setNormal(Utils::applyTransform(transform, normal));
 					this->plane.setCenter(normal * this->parameters[2]);
 				}
 			}

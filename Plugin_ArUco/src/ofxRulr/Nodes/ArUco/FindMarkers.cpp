@@ -97,7 +97,11 @@ namespace ofxRulr {
 											for (auto & rawMarker : this->rawMarkers) {
 												pad.clear();
 												for (auto vertex : rawMarker) {
-													pad.addVertex(ofxCv::toOf(vertex));
+													pad.addVertex({
+														vertex.x
+														, vertex.y
+														, 0.0f
+														});
 												}
 												pad.drawFaces();
 											}

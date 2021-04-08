@@ -14,8 +14,8 @@ namespace ofxRulr {
 				ofColor getColor() const;
 			protected:
 				void callbackDraw(ofxCvGui::DrawArguments &);
-				virtual ofVec2f getSourcePinPosition() const;
-				virtual ofVec2f getTargetPinPosition() const;
+				virtual glm::vec2 getSourcePinPosition() const;
+				virtual glm::vec2 getTargetPinPosition() const;
 				weak_ptr<NodeHost> sourceNode;
 				weak_ptr<NodeHost> targetNode;
 				weak_ptr<AbstractPin> targetPin;
@@ -24,14 +24,14 @@ namespace ofxRulr {
 			class TemporaryLinkHost : public LinkHost {
 			public:
 				TemporaryLinkHost(shared_ptr<NodeHost>, shared_ptr<AbstractPin>);
-				void setCursorPosition(const ofVec2f &);
+				void setCursorPosition(const glm::vec2&);
 				void setSource(shared_ptr<NodeHost>);
 
 				///actually make the connection
 				bool flushConnection();
 			protected:
-				ofVec2f getSourcePinPosition() const override;
-				ofVec2f cursorPosition;
+				glm::vec2 getSourcePinPosition() const override;
+				glm::vec2 cursorPosition;
 			};
 
 			class ObservedLinkHost : public LinkHost {

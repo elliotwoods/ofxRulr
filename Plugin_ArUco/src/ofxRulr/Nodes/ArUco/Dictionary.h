@@ -15,8 +15,8 @@ namespace ofxRulr {
 				void update();
 
 				void populateInspector(ofxCvGui::InspectArguments &);
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				cv::aruco::PREDEFINED_DICTIONARY_NAME getDictionaryType() const;
 				string getDictionaryName() const;

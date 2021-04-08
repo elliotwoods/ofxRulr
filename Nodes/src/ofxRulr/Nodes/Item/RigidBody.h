@@ -24,21 +24,22 @@ namespace ofxRulr {
 				void drawWorldStage();
 				void drawWorldAdvanced(DrawWorldAdvancedArgs &);
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
-				ofMatrix4x4 getTransform() const;
-				ofVec3f getPosition() const;
-				ofQuaternion getRotationQuat() const;
-				ofVec3f getRotationEuler() const;
+				glm::mat4 getTransform() const;
+				glm::vec3 getPosition() const;
+				glm::quat getRotationQuat() const;
+				glm::vec3 getRotationEuler() const;
 
-				void setTransform(const ofMatrix4x4 &);
-				void setPosition(const ofVec3f &);
-				void setRotationEuler(const ofVec3f &);
+				void setTransform(const glm::mat4 &);
+				void setPosition(const glm::vec3 &);
+				void setRotationEuler(const glm::vec3 &);
 				void setExtrinsics(cv::Mat rotationVector, cv::Mat translation, bool inverse = false);
 				void getExtrinsics(cv::Mat & rotationVector, cv::Mat & translation, bool inverse = false);
 				void clearTransform();
+				void applyTransformToNode(ofNode &) const;
 
 				ofxLiquidEvent<void> onDrawObject;
 				ofxLiquidEvent<DrawWorldAdvancedArgs> onDrawObjectAdvanced;
@@ -52,9 +53,6 @@ namespace ofxRulr {
 				ofParameter<float> movementSpeed{ "Movement speed [m/s]", 0.1, 0, 10 };
 			private:
 			};
-
-			ofVec3f toEuler(const ofQuaternion &);
-			ofQuaternion toQuaternion(const ofVec3f & degrees);
 		}
 	}
 }

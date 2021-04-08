@@ -114,7 +114,7 @@ namespace ofxRulr {
 					auto camera = this->getInput<Item::Camera>();
 					auto projector = this->getInput<Item::Projector>();
 
-					auto initialDistance = camera->getPosition().distance(projector->getPosition());
+					auto initialDistance = glm::distance(camera->getPosition(), projector->getPosition());
 
 					Model model;
 					vector<DataPoint> dataPoints;
@@ -203,7 +203,7 @@ namespace ofxRulr {
 					if (this->parameters.treatment.retainDistance) {
 						auto cameraPosition = camera->getPosition();
 						auto cameraToProjector = projector->getPosition() - cameraPosition;
-						auto newDistance = cameraToProjector.length();
+						auto newDistance = glm::length(cameraToProjector);
 						auto treatedCameraToProjector = initialDistance / newDistance * cameraToProjector;
 						projector->setPosition(cameraPosition + treatedCameraToProjector);
 					}

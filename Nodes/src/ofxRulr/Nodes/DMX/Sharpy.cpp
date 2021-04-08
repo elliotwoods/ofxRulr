@@ -107,12 +107,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Sharpy::serialize(Json::Value & json) {
+			void Sharpy::serialize(nlohmann::json & json) {
 				json << this->vectorChannelsEnabled;
 			}
 
 			//----------
-			void Sharpy::deserialize(const Json::Value & json) {
+			void Sharpy::deserialize(const nlohmann::json & json) {
 				json >> this->vectorChannelsEnabled;
 				this->updateVectorChannelsEnabled();
 			}

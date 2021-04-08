@@ -24,15 +24,15 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void LaserToWorld::Capture::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->worldPosition);
-					Utils::Serializable::serialize(json, this->projected);
+				void LaserToWorld::Capture::serialize(nlohmann::json & json) {
+					Utils::serialize(json, this->worldPosition);
+					Utils::serialize(json, this->projected);
 				}
 
 				//----------
-				void LaserToWorld::Capture::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->worldPosition);
-					Utils::Serializable::deserialize(json, this->projected);
+				void LaserToWorld::Capture::deserialize(const nlohmann::json & json) {
+					Utils::deserialize(json, this->worldPosition);
+					Utils::deserialize(json, this->projected);
 				}
 
 #pragma mark LaserToWorld
@@ -128,7 +128,7 @@ namespace ofxRulr {
 						};
 						panel->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
 							if (this->isBeingInspected()) {
-								ofVec2f movement;
+								glm::vec2 movement;
 								switch (args.key) {
 								case OF_KEY_LEFT:
 									movement.x = -0.5;
@@ -221,16 +221,16 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void LaserToWorld::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->parameters);
-					Utils::Serializable::serialize(json, this->reprojectionError);
+				void LaserToWorld::serialize(nlohmann::json & json) {
+					Utils::serialize(json, this->parameters);
+					Utils::serialize(json, this->reprojectionError);
 					this->captures.serialize(json);
 				}
 
 				//----------
-				void LaserToWorld::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->parameters);
-					Utils::Serializable::deserialize(json, this->reprojectionError);
+				void LaserToWorld::deserialize(const nlohmann::json & json) {
+					Utils::deserialize(json, this->parameters);
+					Utils::deserialize(json, this->reprojectionError);
 					this->captures.deserialize(json);
 				}
 
@@ -296,7 +296,7 @@ namespace ofxRulr {
 					{
 						auto capture = make_shared<Capture>();
 						capture->worldPosition = this->getWorldCursorPosition();
-						capture->projected = ofVec2f(this->parameters.target.x
+						capture->projected = glm::vec2(this->parameters.target.x
 							, this->parameters.target.y);
 						this->captures.add(capture);
 					}
@@ -344,10 +344,10 @@ namespace ofxRulr {
 					}
 					
 
-					auto flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6
-						| CV_CALIB_ZERO_TANGENT_DIST | CV_CALIB_USE_INTRINSIC_GUESS;
+					auto flags = cv::CALIB_FIX_K1 | cv::CALIB_FIX_K2 | cv::CALIB_FIX_K3 | cv::CALIB_FIX_K4 | cv::CALIB_FIX_K5 | cv::CALIB_FIX_K6
+						| cv::CALIB_ZERO_TANGENT_DIST | cv::CALIB_USE_INTRINSIC_GUESS;
 					if (this->parameters.calibrate.fixAspectRatio) {
-						flags |= CV_CALIB_FIX_ASPECT_RATIO;
+						flags |= cv::CALIB_FIX_ASPECT_RATIO;
 					}
 					this->reprojectionError = cv::calibrateCamera(vector<vector<cv::Point3f>>(1, worldPoints)
 						, vector<vector<cv::Point2f>>(1, imagePoints)
@@ -384,7 +384,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				ofVec3f LaserToWorld::getWorldCursorPosition() const {
+				glm::vec3 LaserToWorld::getWorldCursorPosition() const {
 					Utils::ScopedProcess scopedProcess("Get world cursor position", false);
 
 					this->throwIfMissingAConnection<Item::Camera>();
@@ -415,10 +415,10 @@ namespace ofxRulr {
 						, translation);
 
 					auto transform = ofxCv::makeMatrix(rotationVector, translation);
-					ofVec3f objectPoint(this->parameters.capture.offsetSquares.get().x * board->getSpacing()
+					glm::vec3 objectPoint(this->parameters.capture.offsetSquares.get().x * board->getSpacing()
 						, this->parameters.capture.offsetSquares.get().y * board->getSpacing()
 						, 0.0f);
-					auto worldPoint = objectPoint * transform;
+					auto worldPoint = Utils::applyTransform(transform, objectPoint);
 					
 					return worldPoint;
 				}

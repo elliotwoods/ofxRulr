@@ -68,13 +68,13 @@ namespace ofxRulr {
 			}
 
 			////----------
-			//void Assets::serialize(Json::Value & json) {
-			//	ofxRulr::Utils::Serializable::serialize(this->filter, json);
+			//void Assets::serialize(nlohmann::json & json) {
+			//	ofxRulr::Utils::serialize(this->filter, json);
 			//}
 
 			////----------
-			//void Assets::deserialize(const Json::Value & json) {
-			//	ofxRulr::Utils::Serializable::deserialize(this->filter, json);
+			//void Assets::deserialize(const nlohmann::json & json) {
+			//	ofxRulr::Utils::deserialize(this->filter, json);
 			//}
 
 			//----------

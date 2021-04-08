@@ -20,7 +20,7 @@ namespace ofxRulr {
 							bool enabled;
 							vector<cv::Point2f> imagePoints;
 							vector<cv::Point3f> worldPoints;
-							ofVec3f cameraPosition;
+							glm::vec3 cameraPosition;
 							ofParameter<float> reprojectionError{ "Reprojection error", 0 };
 						} cameraNavigation;
 
@@ -31,11 +31,11 @@ namespace ofxRulr {
 							ofxRay::Plane plane;
 							float reprojectionError;
 							float planeFitResidual;
-							ofMatrix4x4 boardTransform;
-							vector<ofVec3f> worldPoints;
+							glm::mat4 boardTransform;
+							vector<glm::vec3> worldPoints;
 
-							ofVec3f meanObjectPoint;
-							ofVec3f meanWorldPoint;
+							glm::vec3 meanObjectPoint;
+							glm::vec3 meanWorldPoint;
 						};
 
 						Plane mirrorPlane;
@@ -43,8 +43,8 @@ namespace ofxRulr {
 						string name;
 						string heliostatName;
 
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 					protected:
 						void drawPlane(const Plane &) const;
 					};
@@ -66,8 +66,8 @@ namespace ofxRulr {
 
 					void projectToHeliostats();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 				protected:
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {

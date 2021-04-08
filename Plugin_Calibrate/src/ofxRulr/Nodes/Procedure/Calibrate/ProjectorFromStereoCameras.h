@@ -13,8 +13,8 @@ namespace ofxRulr {
 					public:
 						Capture();
 						string getDisplayString() const override;
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 
 						void drawWorldStage();
 
@@ -29,8 +29,8 @@ namespace ofxRulr {
 					void update();
 					void drawWorldStage();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 
 					ofxCvGui::PanelPtr getPanel() override;

@@ -33,7 +33,7 @@ namespace ofxRulr {
 
 					this->grid = ofMesh::plane(1.0f, 1.0f, 11.0f, 11.0f);
 					for (auto & vertex : grid.getVertices()) {
-						vertex += ofVec3f(0.5f, 0.5f, 0.0f);
+						vertex += glm::vec3(0.5f, 0.5f, 0.0f);
 					}
 
 					this->addInput(MAKE(Graph::Pin<Scan::Graycode>));
@@ -49,7 +49,7 @@ namespace ofxRulr {
 									ofPushMatrix();
 									graycodeNode->getDecoder().draw(0, 0);
 
-									ofMultMatrix(this->cameraToProjector.getInverse());
+									ofMultMatrix(glm::inverse(this->cameraToProjector));
 									ofScale(dataSet.getPayloadWidth(), dataSet.getPayloadHeight());
 									ofPushStyle();
 									ofNoFill();
@@ -89,14 +89,9 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void HomographyFromGraycode::serialize(Json::Value & json) {
+				void HomographyFromGraycode::serialize(nlohmann::json & json) {
 					auto & jsonCameraToProjector = json["cameraToProjector"];
-					for (int j = 0; j < 4; j++) {
-						auto & jsonCameraToProjectorRow = jsonCameraToProjector[j];
-						for (int i = 0; i < 4; i++) {
-							jsonCameraToProjectorRow[i] = this->cameraToProjector(i, j);
-						}
-					}
+					Utils::serialize(jsonCameraToProjector, this->cameraToProjector);
 
 					try {
 						throwIfMissingAnyConnection();
@@ -132,22 +127,17 @@ namespace ofxRulr {
 
 					}
 
-					Utils::Serializable::serialize(json, this->undistortFirst);
-					Utils::Serializable::serialize(json, this->doubleExportSize);
+					Utils::serialize(json, this->undistortFirst);
+					Utils::serialize(json, this->doubleExportSize);
 				}
 
 				//----------
-				void HomographyFromGraycode::deserialize(const Json::Value & json) {
+				void HomographyFromGraycode::deserialize(const nlohmann::json & json) {
 					const auto & jsonCameraToProjector = json["cameraToProjector"];
-					for (int j = 0; j < 4; j++) {
-						const auto & jsonCameraToProjectorRow = jsonCameraToProjector[j];
-						for (int i = 0; i < 4; i++) {
-							this->cameraToProjector(i, j) = jsonCameraToProjectorRow[i].asFloat();
-						}
-					}
+					Utils::deserialize(jsonCameraToProjector, this->cameraToProjector);
 
-					Utils::Serializable::deserialize(json, this->undistortFirst);
-					Utils::Serializable::deserialize(json, this->doubleExportSize);
+					Utils::deserialize(json, this->undistortFirst);
+					Utils::deserialize(json, this->doubleExportSize);
 				}
 
 				//----------
@@ -160,8 +150,8 @@ namespace ofxRulr {
 						throw(ofxRulr::Exception("No data loaded for [ofxGraycode::DataSet]"));
 					}
 
-					vector<ofVec2f> camera;
-					vector<ofVec2f> projector;
+					vector<glm::vec2> camera;
+					vector<glm::vec2> projector;
 
 					for (const auto & pixel : dataSet) {
 						if (pixel.active) {
@@ -176,9 +166,9 @@ namespace ofxRulr {
 						camera = toOf(ofxCv::undistortPixelCoordinates(toCv(camera), cameraNode->getCameraMatrix(), cameraNode->getDistortionCoefficients()));
 					}
 
-					auto result = cv::findHomography(ofxCv::toCv(camera), ofxCv::toCv(projector), CV_LMEDS, 5.0);
+					auto result = cv::findHomography(ofxCv::toCv(camera), ofxCv::toCv(projector), cv::LMEDS, 5.0);
 
-					this->cameraToProjector.set(
+					this->cameraToProjector = glm::mat4(
 						result.at<double>(0, 0), result.at<double>(1, 0), 0.0, result.at<double>(2, 0),
 						result.at<double>(0, 1), result.at<double>(1, 1), 0.0, result.at<double>(2, 1),
 						0.0, 0.0, 1.0, 0.0,
@@ -200,7 +190,7 @@ namespace ofxRulr {
 						throw(ofxRulr::Exception("No data loaded for [ofxGraycode::DataSet]"));
 					}
 
-					if (this->cameraToProjector.isIdentity()) {
+					if (this->cameraToProjector == glm::mat4(1.0f)) {
 						throw(ofxRulr::Exception("No mapping has been found yet, so can't save"));
 					}
 
@@ -221,7 +211,7 @@ namespace ofxRulr {
 					mappingGrid.clearColors();
 					for (auto vertex : mappingGrid.getVertices()) {
 						ofFloatColor color;
-						(ofVec3f&)color = vertex;
+						(glm::vec3&)color = vertex;
 						color.a = 1.0f;
 						mappingGrid.addColor(color);
 					}

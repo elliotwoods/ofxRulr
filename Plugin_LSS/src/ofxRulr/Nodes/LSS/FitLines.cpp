@@ -53,17 +53,17 @@ namespace ofxRulr {
 			}
 
 			//----------
-			class FitRayModel : public ofxNonLinearFit::Models::Base<ofVec3f, FitRayModel> {
+			class FitRayModel : public ofxNonLinearFit::Models::Base<glm::vec3, FitRayModel> {
 			public:
 				unsigned int getParameterCount() const override {
 					return 5;
 				}
 
-				void getResidual(ofVec3f dataPoint, double & residual, double * gradient = 0) const override {
+				void getResidual(glm::vec3 dataPoint, double & residual, double * gradient = 0) const override {
 					residual = this->ray.distanceTo(dataPoint);
 				}
 
-				void evaluate(ofVec3f & dataPoint) const override {
+				void evaluate(glm::vec3 & dataPoint) const override {
 					//we shouldn't be here
 				}
 
@@ -94,8 +94,8 @@ namespace ofxRulr {
 				}
 
 				void getResidual(FitPositionOnRayDataPoint dataPoint, double & residual, double * gradient = 0) const override {
-					auto projected = this->world * this->projectorViewProjection;
-					residual = ofVec2f(projected.x, projected.y).distance(targetPosition);
+					auto projected = Utils::applyTransform(this->projectorViewProjection, this->world);
+					residual = glm::distance(glm::vec2(projected.x, projected.y), targetPosition);
 				}
 
 				virtual void evaluate(FitPositionOnRayDataPoint &) const override {
@@ -103,14 +103,14 @@ namespace ofxRulr {
 				}
 
 				void cacheModel() override {
-					world = this->ray.s + this->ray.t.getNormalized() * this->parameters[0];
+					world = this->ray.s + glm::normalize(this->ray.t) * this->parameters[0];
 				}
 
-				ofVec2f targetPosition;
+				glm::vec2 targetPosition;
 				ofMatrix4x4 projectorViewProjection;
 				ofxRay::Ray ray;
 
-				ofVec3f world;
+				glm::vec3 world;
 			};
 
 			//----------
@@ -121,8 +121,8 @@ namespace ofxRulr {
 				for (const auto & vertex : line.vertices) {
 					auto projectorNormalizedXY = vertex.projectorNormalizedXY;
 					//projectorNormalizedXY.y *= -1;
-					auto distanceToStart = projectorNormalizedXY.squareDistance(line.startProjector);
-					auto distanceToEnd = projectorNormalizedXY.squareDistance(line.endProjector);
+					auto distanceToStart = glm::distance2(projectorNormalizedXY, line.startProjector);
+					auto distanceToEnd = glm::distance2(projectorNormalizedXY, line.endProjector);
 
 					if (distanceToStart < minDistanceToStart) {
 						minDistanceToStart = distanceToStart;
@@ -166,9 +166,9 @@ namespace ofxRulr {
 							if (line.vertices.size() < 2) {
 								continue;
 							}
-							vector<ofVec3f> dataPoints;
+							vector<glm::vec3> dataPoints;
 
-							ofVec3f mean;
+							glm::vec3 mean;
 							{
 								for (const auto & vertex : line.vertices) {
 									mean += vertex.world;

@@ -19,7 +19,7 @@ namespace ofxRulr {
 							bool enabled;
 							vector<cv::Point2f> imagePoints;
 							vector<cv::Point3f> worldPoints;
-							ofVec3f cameraPosition;
+							glm::vec3 cameraPosition;
 							ofParameter<float> reprojectionError{ "Reprojection error", 0 };
 						} cameraNavigation;
 
@@ -30,19 +30,19 @@ namespace ofxRulr {
 							ofxRay::Plane plane;
 							float reprojectionError;
 							float planeFitResidual;
-							ofMatrix4x4 boardTransform;
-							vector<ofVec3f> worldPoints;
-							ofVec3f worldPointCenter;
+							glm::mat4 boardTransform;
+							vector<glm::vec3> worldPoints;
+							glm::vec3 worldPointCenter;
 
-							ofVec3f meanObjectPoint;
-							ofVec3f testPointWorld;
+							glm::vec3 meanObjectPoint;
+							glm::vec3 testPointWorld;
 						};
 
 						Plane realPlane;
 						Plane virtualPlane;
 
-						ofVec3f testObjectPoint;
-						ofVec3f estimatedPointOnMirrorPlane;
+						glm::vec3 testObjectPoint;
+						glm::vec3 estimatedPointOnMirrorPlane;
 						ofxRay::Plane mirrorPlane;
 
 						string name;

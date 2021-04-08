@@ -103,13 +103,13 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void ProjectCircle::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->parameters);
+				void ProjectCircle::serialize(nlohmann::json & json) {
+					Utils::serialize(json, this->parameters);
 				}
 
 				//---------
-				void ProjectCircle::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->parameters);
+				void ProjectCircle::deserialize(const nlohmann::json & json) {
+					Utils::deserialize(json, this->parameters);
 				}
 
 				//---------
@@ -143,8 +143,8 @@ namespace ofxRulr {
 					};
 
 					auto imageLineToRay = [](const cv::Vec4f & imageLine) {
-						return ofxRay::Ray(ofVec2f(imageLine[2], imageLine[3])
-							, ofVec2f(imageLine[0], imageLine[1]));
+						return ofxRay::Ray(glm::vec3(imageLine[2], imageLine[3], 0.0f)
+							, glm::vec3(imageLine[0], imageLine[1], 0.0f));
 					};
 
 					auto performScan = [&](const vector<double> & laserAngles) {
@@ -158,7 +158,7 @@ namespace ofxRulr {
 							if (laserAngle < -1 || laserAngle > +1) {
 								throw(ofxRulr::Exception("Laser angle outside range (" + ofToString(laserAngle) + ")"));
 							}
-							circleLaser->drawPoint(ofVec2f(laserAngle, this->parameters.laserY));
+							circleLaser->drawPoint(glm::vec2(laserAngle, this->parameters.laserY));
 
 							auto cameraFrameForeground = camera->getFreshFrame();
 							if (!cameraFrameForeground) {
@@ -191,7 +191,7 @@ namespace ofxRulr {
 					this->calibration = make_unique<Calibration>();
 
 					auto calibrate = [&](const vector<DataPoint> & dataPoints) {
-						vector<ofVec2f> laserAnglesToResultAngles; //x
+						vector<glm::vec2> laserAnglesToResultAngles; //x
 
 						for (const auto & dataPoint : dataPoints) {
 							laserAnglesToResultAngles.emplace_back(atan2(dataPoint.imageLine[1], dataPoint.imageLine[0])
@@ -223,9 +223,9 @@ namespace ofxRulr {
 						//build preview lines
 						{
 							for (int i = 0; i < 3; i++) {
-								this->calibration->previewImageExtremities[i].first = ofVec2f(firstScan[i].imageLine[2]
+								this->calibration->previewImageExtremities[i].first = glm::vec2(firstScan[i].imageLine[2]
 									, firstScan[i].imageLine[3]);
-								this->calibration->previewImageExtremities[i].second = ofVec2f(firstScan[i].imageLine[0]
+								this->calibration->previewImageExtremities[i].second = glm::vec2(firstScan[i].imageLine[0]
 									, firstScan[i].imageLine[1]) * 1000.0f + this->calibration->previewImageExtremities[i].first;
 							}
 						}
@@ -241,7 +241,7 @@ namespace ofxRulr {
 					//calculate the intended angles (tangents)
 					vector<double> targetImageAngles;
 					{
-						auto circleCenter = ofVec2f(this->parameters.circle.position.x
+						auto circleCenter = glm::vec2(this->parameters.circle.position.x
 							, this->parameters.circle.position.y);
 						auto radius = this->parameters.circle.radius;
 
@@ -249,7 +249,7 @@ namespace ofxRulr {
 						auto delta = circleCenter - this->calibration->center;
 						this->calibration->angleCenter = atan2(delta.y, delta.x);
 
-						auto distance = delta.length();
+						auto distance = glm::length(delta);
 						this->calibration->tangentAngle = asin(radius / distance);
 
 						targetImageAngles = {
@@ -283,7 +283,7 @@ namespace ofxRulr {
 						auto angleLeft = ofxRulr::Utils::PolyFit::evaluate(calibration->polyFit, targetImageAngles[0]);
 						auto angleRight = ofxRulr::Utils::PolyFit::evaluate(calibration->polyFit, targetImageAngles[2]);
 
-						const auto center = ofVec2f((angleLeft + angleRight) / 2.0f, this->parameters.laserY);
+						const auto center = glm::vec2((angleLeft + angleRight) / 2.0f, this->parameters.laserY);
 						const auto radius = abs(angleRight - angleLeft) / 2.0f;
 
 						cout << "Drawing circle" << endl;

@@ -13,15 +13,15 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void update();
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				float getMaxTilt() const;
-				ofVec2f getPanTilt() const;
-				ofVec2f getPanTiltForTarget(const ofVec3f & worldSpacePoint, bool navigationEnabled) const; ///navigationEnabled uses closest path, also throws on impossible target
-				static ofVec2f getPanTiltForTargetInObjectSpace(const ofVec3f & objectSpacePoint, float tiltOffset = 0.0f);
-				void lookAt(const ofVec3f & worldSpacePoint); /// warning : throws exception if impossible
-				void setPanTilt(const ofVec2f & panTilt);
+				glm::vec2 getPanTilt() const;
+				glm::vec2 getPanTiltForTarget(const glm::vec3 & worldSpacePoint, bool navigationEnabled) const; ///navigationEnabled uses closest path, also throws on impossible target
+				static glm::vec2 getPanTiltForTargetInObjectSpace(const glm::vec3 & objectSpacePoint, float tiltOffset = 0.0f);
+				void lookAt(const glm::vec3 & worldSpacePoint); /// warning : throws exception if impossible
+				void setPanTilt(const glm::vec2 & panTilt);
 
 				void setBrightness(float);
 				void setIris(float);

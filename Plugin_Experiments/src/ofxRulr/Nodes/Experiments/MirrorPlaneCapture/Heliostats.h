@@ -15,14 +15,14 @@ namespace ofxRulr {
 						void drawWorld();
 
 						ofParameter<string> name{ "Name", "" };
-						ofParameter<ofVec3f> position{ "Position", ofVec3f() };
+						ofParameter<glm::vec3> position{ "Position", glm::vec3() };
 						ofParameter<float> rotationY { "Rotation Y", 0.0f, -90, 90 };
 
 						ofParameter<int> axis1Servo{ "Axis 1 Servo", 0 };
 						ofParameter<int> axis2Servo{ "Axis 2 Servo", 0 };
 
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 
 						Utils::CaptureSet<BoardOnMirror::Capture> captures;
 						void calcPosition(float axis2ToPlaneLength = 0.15f);
@@ -37,8 +37,8 @@ namespace ofxRulr {
 					void init();
 
 					void populateInspector(ofxCvGui::InspectArguments &);
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 
 					ofxCvGui::PanelPtr getPanel() override;
 					void drawWorldStage();

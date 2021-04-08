@@ -34,10 +34,10 @@ namespace ofxRulr {
 									//draw circle
 									ofNoFill();
 									ofSetColor(255, 0, 0);
-									ofDrawCircle(ofVec2f(), 5.0f);
+									ofDrawCircle(glm::vec2(), 5.0f);
 
 									//draw cross
-									ofRotate(45.0f);
+									ofRotateDeg(45.0f);
 									ofDrawLine(-5, 0, 5, 0);
 									ofDrawLine(0, -5, 0, 5);
 								}
@@ -50,7 +50,7 @@ namespace ofxRulr {
 					panel->onDraw += [this](ofxCvGui::DrawArguments & args) {
 						auto camera = this->getInput<Item::Camera>();
 						if (camera) {
-							if (!camera->getTransform().isIdentity()) {
+							if (camera->getTransform() != glm::mat4(1.0f)) {
 								ofxCvGui::Utils::drawText("Camera must have zero transform"
 									, args.localBounds
 									, true);
@@ -116,7 +116,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				const std::vector<ofVec2f> & ProjectPoints::getProjectedPoints() {
+				const std::vector<glm::vec2> & ProjectPoints::getProjectedPoints() {
 					return this->projectedPoints;
 				}
 			}

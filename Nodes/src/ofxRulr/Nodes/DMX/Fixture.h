@@ -22,8 +22,8 @@ namespace ofxRulr {
 				virtual string getTypeName() const override;
 				void update();
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				void setChannelIndex(DMX::ChannelIndex);
 				const vector<shared_ptr<Channel>> & getChannels() const;

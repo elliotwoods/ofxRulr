@@ -12,12 +12,12 @@ namespace ofxRulr {
 		AbstractCaptureSet::BaseCapture::BaseCapture() {
 			this->selected.addListener(this, &BaseCapture::callbackSelectedChanged);
 
-			this->onSerialize += [this](Json::Value & json) {
+			this->onSerialize += [this](nlohmann::json & json) {
 				json << this->selected;
 				json << this->color;
 				json["timestamp"] << chrono::system_clock::to_time_t(this->timestamp.get());
 			};
-			this->onDeserialize += [this](const Json::Value & json) {
+			this->onDeserialize += [this](const nlohmann::json & json) {
 				json >> this->selected;
 				json >> this->color;
 
@@ -359,7 +359,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void AbstractCaptureSet::serialize(Json::Value & json) {
+		void AbstractCaptureSet::serialize(nlohmann::json & json) {
 			auto & jsonCaptures = json["captures"];
 			int index = 0;
 			for (auto capture : this->captures) {
@@ -368,9 +368,9 @@ namespace ofxRulr {
 		}
 
 		//----------
-		void AbstractCaptureSet::deserialize(const Json::Value & json) {
+		void AbstractCaptureSet::deserialize(const nlohmann::json & json) {
 			this->captures.clear();
-			if (json.isMember("captures")) {
+			if (json.contains("captures")) {
 				auto & jsonCaptures = json["captures"];
 				for (const auto & jsonCapture : jsonCaptures) {
 					try {

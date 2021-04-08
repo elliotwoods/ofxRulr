@@ -12,11 +12,11 @@ namespace ofxRulr {
 				public:
 					Capture();
 					string getDisplayString() const override;
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 
-					void tagMarker(const ofVec2f & imageCoordinate);
-					void removeMarker(const ofVec2f & imageCoordinate);
+					void tagMarker(const glm::vec2 & imageCoordinate);
+					void removeMarker(const glm::vec2 & imageCoordinate);
 					void drawOnImage();
 
 					cv::Mat image;
@@ -35,8 +35,8 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 				void update();
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
 				ofxCvGui::PanelPtr getPanel() override;

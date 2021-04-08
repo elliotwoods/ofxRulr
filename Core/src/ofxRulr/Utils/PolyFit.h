@@ -12,7 +12,7 @@ namespace ofxRulr {
 				vector<float> parameters;
 			};
 
-			Model fit(const vector<ofVec2f> &, int order);
+			Model fit(const vector<glm::vec2> &, int order);
 			float evaluate(const Model &, float x);
 		}
 	}

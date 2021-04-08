@@ -14,6 +14,7 @@ A node based modular toolkit for calibration of spatial artworks featuring:
 ## Addons
 
 * https://github.com/elliotwoods/ofxClipboard.git
+* https://github.com/elliotwoods/ofxSplashScreen.git
 * https://github.com/arturoc/ofxHttpServer.git
 * https://github.com/elliotwoods/ofxCvGui.git
 * https://github.com/elliotwoods/ofxCvMin.git
@@ -28,6 +29,10 @@ A node based modular toolkit for calibration of spatial artworks featuring:
 * https://github.com/elliotwoods/ofxNonLinearFit.git
 * https://github.com/elliotwoods/ofxMessagePack.git
 * https://github.com/elliotwoods/ofxSpout.git
+* https://github.com/elliotwoods/ofxTriangulate.git
+* https://github.com/elliotwoods/ofxSpinCursor.git
+* https://github.com/elliotwoods/Triangle.git
+* ofxAssimpModelLoader (core)
 * ofxJSON (core)
 * ofxOSC (core)
 

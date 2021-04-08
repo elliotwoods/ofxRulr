@@ -82,9 +82,9 @@ namespace ofxRulr {
 
 							ofPushStyle();
 							{
-								const ofVec3f origin = this->parameters.calibrationPoints.originInCameraObjectSpace;
-								const ofVec3f positiveX = this->parameters.calibrationPoints.positiveXInCameraObjectSpace;
-								const ofVec3f pointInXZ = this->parameters.calibrationPoints.positionInXZPlaneInCameraObjectSpace;
+								const glm::vec3 origin = this->parameters.calibrationPoints.originInCameraObjectSpace;
+								const glm::vec3 positiveX = this->parameters.calibrationPoints.positiveXInCameraObjectSpace;
+								const glm::vec3 pointInXZ = this->parameters.calibrationPoints.positionInXZPlaneInCameraObjectSpace;
 
 								ofSetColor(255);
 								ofFill();
@@ -111,13 +111,13 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->parameters);
+				void CameraExtrinsicsFromBoard::serialize(nlohmann::json & json) {
+					Utils::serialize(json, this->parameters);
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->parameters);
+				void CameraExtrinsicsFromBoard::deserialize(const nlohmann::json & json) {
+					Utils::deserialize(json, this->parameters);
 				}
 
 				//----------
@@ -156,9 +156,9 @@ namespace ofxRulr {
 					this->throwIfMissingAConnection<Item::Camera>();
 					auto camera = this->getInput<Item::Camera>();
 
-					const ofVec3f origin = this->parameters.calibrationPoints.originInCameraObjectSpace;
-					const ofVec3f positiveX = this->parameters.calibrationPoints.positiveXInCameraObjectSpace;
-					const ofVec3f pointInXZ = this->parameters.calibrationPoints.positionInXZPlaneInCameraObjectSpace;
+					const glm::vec3 origin = this->parameters.calibrationPoints.originInCameraObjectSpace;
+					const glm::vec3 positiveX = this->parameters.calibrationPoints.positiveXInCameraObjectSpace;
+					const glm::vec3 pointInXZ = this->parameters.calibrationPoints.positionInXZPlaneInCameraObjectSpace;
 
 					ofMatrix4x4 transform;
 					
@@ -168,20 +168,20 @@ namespace ofxRulr {
 
 					{
 						ofQuaternion rotate;
-						rotate.makeRotate(positiveX - origin, ofVec3f(1, 0, 0));
+						rotate.makeRotate(positiveX - origin, glm::vec3(1, 0, 0));
 						transform.rotate(rotate);
 					}
 
 					{
-						auto pointInXZNow = pointInXZ * transform;
+						auto pointInXZNow = Utils::applyTransform(transform, pointInXZ);
 						pointInXZNow.x = 0.0f;
 						ofQuaternion rotate;
 						rotate.makeRotate(pointInXZNow
-							, pointInXZNow.z < 0 ? ofVec3f(0, 0, -1) : ofVec3f(0, 0, +1));
+							, pointInXZNow.z < 0 ? glm::vec3(0, 0, -1) : glm::vec3(0, 0, +1));
 						transform.rotate(rotate);
 					}
 					
-					camera->setTransform(transform);
+					camera->setTransform((glm::mat4) transform);
 				}
 
 				//----------
@@ -201,7 +201,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::captureTo(ofParameter<ofVec3f> & calibrationPoint) {
+				void CameraExtrinsicsFromBoard::captureTo(ofParameter<glm::vec3> & calibrationPoint) {
 					Utils::ScopedProcess scopedProcess("Capture board");
 
 					this->throwIfMissingAnyConnection();
@@ -225,7 +225,7 @@ namespace ofxRulr {
 							this->grayscalePreview.allocate(pixels.getWidth(), pixels.getHeight(), OF_IMAGE_GRAYSCALE);
 						}
 						if (pixels.getNumChannels() != 1) {
-							cv::cvtColor(toCv(pixels), toCv(this->grayscalePreview), CV_RGB2GRAY);
+							cv::cvtColor(toCv(pixels), toCv(this->grayscalePreview), cv::COLOR_RGB2GRAY);
 						}
 						else {
 							this->grayscalePreview = pixels;
@@ -256,7 +256,7 @@ namespace ofxRulr {
 					
 
 					//solve the transform
-					ofMatrix4x4 transform;
+					glm::mat4 transform;
 					{
 						Mat rotation, translation;
 						cv::solvePnP(ofxCv::toCv(this->currentObjectPoints)
@@ -270,7 +270,7 @@ namespace ofxRulr {
 
 					//apply the result
 					{
-						ofVec3f result = ofVec3f() * transform;
+						glm::vec3 result = Utils::applyTransform(transform, glm::vec3());
 						calibrationPoint = result;
 					}
 

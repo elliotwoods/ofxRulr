@@ -16,7 +16,7 @@ namespace ofxRulr {
 
 			//----------
 			void RecordMarkerImages::init() {
-				this->onDeserialize += [this](const Json::Value &) {
+				this->onDeserialize += [this](const nlohmann::json &) {
 					this->parameters.recording.enabled = false;
 				};
 
@@ -55,15 +55,15 @@ namespace ofxRulr {
 						, outgoingFrame->binary
 						, this->parameters.localDifference.threshold
 						, 255
-						, CV_THRESH_BINARY);
+						, cv::THRESH_BINARY);
 				}
 				
 				//contour and bounding boxes
 				{
 					cv::findContours(outgoingFrame->binary
 						, outgoingFrame->contours
-						, CV_RETR_EXTERNAL
-						, CV_CHAIN_APPROX_NONE);
+						, cv::RETR_EXTERNAL
+						, cv::CHAIN_APPROX_NONE);
 
 					auto minimumArea = this->parameters.contourFilter.minimumArea.get();
 					minimumArea *= minimumArea;

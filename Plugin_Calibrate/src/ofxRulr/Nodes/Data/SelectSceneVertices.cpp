@@ -27,12 +27,12 @@ namespace ofxRulr {
 								scissorManager.setScissorEnabled(false);
 							}
 
-							ofVec2f targetPosition;
+							glm::vec2 targetPosition;
 							if (this->selectedVertex.found) {
 								targetPosition = this->selectedVertex.screenPosition;
 							}
 							else {
-								targetPosition = ofVec2f(ofGetMouseX(), ofGetMouseY());
+								targetPosition = glm::vec2(ofGetMouseX(), ofGetMouseY());
 							}
 
 							auto sourcePosition = args.globalBounds.getCenter();
@@ -129,7 +129,7 @@ namespace ofxRulr {
 					this->drawWorldStage();
 				};
 
-				this->onDeserialize += [this](const Json::Value &) {
+				this->onDeserialize += [this](const nlohmann::json &) {
 					auto vertices = this->vertices.getAllCaptures();
 					for (auto vertex : vertices) {
 						vertex->setOwner(static_pointer_cast<IReferenceVertices>(this->shared_from_this()));
@@ -140,7 +140,7 @@ namespace ofxRulr {
 					{
 						this->selectNewVertex = make_shared<VertexPicker>(this);
 						this->selectNewVertex->setCaption("Drag to select vertex");
-						this->selectNewVertex->onVertexFound += [this](ofVec3f & vertexPosition) {
+						this->selectNewVertex->onVertexFound += [this](glm::vec3 & vertexPosition) {
 							this->setNewVertexPosition(vertexPosition);
 						};
 						this->panel->add(this->selectNewVertex);
@@ -193,7 +193,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void SelectSceneVertices::setNewVertexPosition(const ofVec3f & position) {
+			void SelectSceneVertices::setNewVertexPosition(const glm::vec3 & position) {
 				if (!this->newVertex) {
 					this->newVertex = make_shared<Vertex>();
 				}

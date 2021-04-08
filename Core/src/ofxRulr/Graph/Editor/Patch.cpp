@@ -152,7 +152,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			shared_ptr<NodeHost> Patch::View::getNodeHostUnderCursor(const ofVec2f & cursorInCanvas) {
+			shared_ptr<NodeHost> Patch::View::getNodeHostUnderCursor(const glm::vec2& cursorInCanvas) {
 				shared_ptr<NodeHost> nodeUnderCursor;
 				for (shared_ptr<Element> element : this->getCanvasElementGroup()->getElements()) {
 					auto asNodeHost = dynamic_pointer_cast<NodeHost>(element);
@@ -171,7 +171,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const ofxCvGui::PanelPtr Patch::View::findScreen(const ofVec2f & xy, ofRectangle & currentPanelBounds) {
+			const ofxCvGui::PanelPtr Patch::View::findScreen(const glm::vec2& xy, ofRectangle & currentPanelBounds) {
 				
 				auto nodeUnderCursor = this->getNodeHostUnderCursor();
 				if (nodeUnderCursor) {
@@ -208,7 +208,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Patch::serialize(Json::Value & json) {
+			void Patch::serialize(nlohmann::json & json) {
 				map<shared_ptr<Nodes::Base>, NodeHost::Index> reverseNodeMap;
 
 				//Serialize the nodes
@@ -229,8 +229,9 @@ namespace ofxRulr {
 				//Serialize the links
 				for (auto & nodeJson : nodesJson) {
 					auto & inputPinsJson = nodeJson["InputsPins"];
-
-					auto nodeHost = this->nodeHosts[nodeJson["ID"].asInt()];
+					NodeHost::Index nodeIndex;
+					nodeJson["ID"].get_to(nodeIndex);
+					auto nodeHost = this->nodeHosts[nodeIndex];
 					auto node = nodeHost->getNodeInstance();
 
 					for (auto & input : node->getInputPins()) {
@@ -248,20 +249,20 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Patch::deserialize(const Json::Value & json) {
+			void Patch::deserialize(const nlohmann::json & json) {
 				this->nodeHosts.clear();
 				
 				this->insertPatchlet(json, false);
 
 				const auto & canvasJson = json["Canvas"];
-				ofVec2f canvasScrollPosiition;
+				glm::vec2 canvasScrollPosiition;
 				canvasJson["Scroll"] >> canvasScrollPosiition;
 				this->view->setScrollPosition(canvasScrollPosiition);
 			}
 
 			//----------
-			void Patch::insertPatchlet(const Json::Value & json, bool useNewIDs, ofVec2f offset) {
-				bool hasOffset = offset != ofVec2f();
+			void Patch::insertPatchlet(const nlohmann::json & json, bool useNewIDs, const glm::vec2 & offset) {
+				bool hasOffset = offset != glm::vec2(0, 0);
 				map<int, int> reassignIDs;
 
 				const auto & nodesJson = json["Nodes"];
@@ -270,10 +271,12 @@ namespace ofxRulr {
 
 				//Deserialise nodes
 				for (const auto & nodeJson : nodesJson) {
-					auto name = nodeJson["Name"].asString();
+					std::string name;
+					nodeJson["Name"].get_to(name);
 					Utils::ScopedProcess scopedProcessNode(name, false);
 
-					auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
+					NodeHost::Index ID;
+					nodeJson["ID"].get_to(ID);
 					if (useNewIDs) {
 						//use a new ID instead, store a reference to what we changed
 						auto newID = this->getNextFreeNodeHostIndex();
@@ -298,7 +301,8 @@ namespace ofxRulr {
 
 				//Deserialise links into the nodes
 				for (const auto & nodeJson : nodesJson) {
-					auto ID = (NodeHost::Index) nodeJson["ID"].asInt();
+					NodeHost::Index ID;
+					nodeJson["ID"].get_to(ID);
 					if (useNewIDs) {
 						ID = reassignIDs.at(ID);
 					}
@@ -313,8 +317,10 @@ namespace ofxRulr {
 							//go through all the input pins
 							for (auto & inputPin : node->getInputPins()) {
 								const auto & inputPinJson = inputPinsJson[inputPin->getName()];
-								if (!inputPinJson.isNull()) { //check this pin has been serialised to a node ID
-									auto sourceNodeHostIndex = (NodeHost::Index) inputPinJson["SourceNode"].asInt();
+								if (!inputPinJson.is_null()) { //check this pin has been serialised to a node ID
+									NodeHost::Index sourceNodeHostIndex;
+									inputPinJson["SourceNode"].get_to(sourceNodeHostIndex);
+
 									if (useNewIDs) {
 										sourceNodeHostIndex = reassignIDs.at(sourceNodeHostIndex);
 									}
@@ -484,14 +490,11 @@ namespace ofxRulr {
 				auto selection = this->selection.lock();
 				if (selection) {
 					//get the json
-					Json::Value json;
+					nlohmann::json json;
 					selection->serialize(json);
 
 					//push to clipboard
-					stringstream jsonString;
-					Json::StyledStreamWriter styledWriter;
-					styledWriter.write(jsonString, json);
-					ofxClipboard::copy(jsonString.str());
+					ofxClipboard::copy(json.dump(4));
 				}
 			}
 
@@ -499,11 +502,10 @@ namespace ofxRulr {
 			void Patch::paste() {
 				//get the clipboard into json
 				const auto clipboardText = ofxClipboard::paste();
-				Json::Value json;
-				Json::Reader().parse(clipboardText, json);
+				auto json = nlohmann::json::parse(clipboardText);
 
 				//if we got something
-				if (json.isObject()) {
+				if (json.is_object()) {
 					//let's make it
 					auto nodeHost = FactoryRegister::X().make(json);
 
@@ -518,10 +520,7 @@ namespace ofxRulr {
 					json["Bounds"] << bounds;
 
 					//push the updated copy into the clipboard
-					stringstream jsonString;
-					Json::StyledStreamWriter styledWriter;
-					styledWriter.write(jsonString, json);
-					ofxClipboard::copy(jsonString.str());
+					ofxClipboard::copy(json.dump(4));
 				}
 			}
 
@@ -560,12 +559,12 @@ namespace ofxRulr {
 				});
 				
 				inspector->add(new Widgets::Button("Duplicate patch down", [this]() {
-					Json::Value json;
+					nlohmann::json json;
 					this->serialize(json);
 					this->insertPatchlet(json, true, this->view->getCanvasExtents().getBottomLeft());
 				}));
 				inspector->add(new Widgets::Button("Duplicate patch right", [this]() {
-					Json::Value json;
+					nlohmann::json json;
 					this->serialize(json);
 					this->insertPatchlet(json, true, this->view->getCanvasExtents().getTopRight());
 				}));

@@ -9,4 +9,9 @@
       <UniqueIdentifier>{1ed5763f-ffc3-4dac-a64a-4eb4c81ddca6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\exports.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

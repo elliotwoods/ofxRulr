@@ -10,16 +10,16 @@ namespace ofxRulr {
 				class MovingHeadToWorld : public Procedure::Base {
 				public:
 					struct DataPoint {
-						ofVec3f world;
-						ofVec2f panTilt;
+						glm::vec3 world;
+						glm::vec2 panTilt;
 						float residual;
-						ofVec2f panTiltEvaluated;
+						glm::vec2 panTiltEvaluated;
 					};
 
 					class Model : public ofxNonLinearFit::Models::Base<MovingHeadToWorld::DataPoint, Model> {
 					public:
 						Model(); //Fit needs to call this constructor at the start to get parameter count
-						Model(const ofVec3f & initialPosition, const ofVec3f & initialRotationEuler);
+						Model(const glm::vec3 & initialPosition, const glm::vec3 & initialRotationEuler);
 
 						unsigned int getParameterCount() const;
 						void resetParameters() override;
@@ -27,12 +27,12 @@ namespace ofxRulr {
 						void evaluate(DataPoint & point) const;
 						void cacheModel() override;
 
-						const ofMatrix4x4 & getTransform();
+						const glm::mat4 & getTransform();
 						float getTiltOffset() const;
 					protected:
-						ofVec3f initialPosition;
-						ofVec3f initialRotationEuler;
-						ofMatrix4x4 transform;
+						glm::vec3 initialPosition;
+						glm::vec3 initialRotationEuler;
+						glm::mat4 transform;
 						float tiltOffset;
 					};
 
@@ -41,8 +41,8 @@ namespace ofxRulr {
 					string getTypeName() const override;
 					void update();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 
 					void drawWorldStage();
@@ -52,7 +52,7 @@ namespace ofxRulr {
 					bool calibrate(int iterations = 3);
 					void performAim();
 				protected:
-					void setPanTiltOrAlert(const ofVec2f &);
+					void setPanTiltOrAlert(const glm::vec2 &);
 					vector<DataPoint> dataPoints;
 					float residual;
 

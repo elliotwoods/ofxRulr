@@ -9,8 +9,9 @@ namespace ofxRulr {
 	namespace Graph {
 #pragma mark FactoryRegister
 		//----------
-		shared_ptr<Editor::NodeHost> FactoryRegister::make(const Json::Value & json) {
-			const auto nodeTypeName = json["NodeTypeName"].asString();
+		shared_ptr<Editor::NodeHost> FactoryRegister::make(const nlohmann::json & json) {
+			std::string nodeTypeName;
+			json["NodeTypeName"].get_to(nodeTypeName);
 
 			auto factory = FactoryRegister::X().get(nodeTypeName);
 			if (!factory) {
@@ -20,7 +21,11 @@ namespace ofxRulr {
 			auto node = factory->makeUntyped();
 			node->init();
 
-			node->setName(json["Name"].asString());
+			{
+				std::string name;
+				json["Name"].get_to(name);
+				node->setName(name);
+			}
 			try {
 				node->deserialize(json["Content"]);
 			}

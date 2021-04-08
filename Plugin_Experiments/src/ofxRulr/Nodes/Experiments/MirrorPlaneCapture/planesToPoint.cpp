@@ -25,10 +25,10 @@ public:
 		this->point.z = this->parameters[2];
 	}
 
-	ofVec3f point;
+	glm::vec3 point;
 };
 
-ofVec3f planesToPoint(const vector<ofxRay::Plane> & planes) {
+glm::vec3 planesToPoint(const vector<ofxRay::Plane> & planes) {
 	ofxNonLinearFit::Fit<Model> fit;
 
 	Model model;

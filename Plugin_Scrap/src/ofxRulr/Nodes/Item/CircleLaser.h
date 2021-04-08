@@ -18,8 +18,8 @@ namespace ofxRulr {
 
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void drawLine(const ofPolyline & line);
-				void drawPoint(const ofVec2f & point);
-				void drawCircle(const ofVec2f & center, float radius);
+				void drawPoint(const glm::vec2 & point);
+				void drawCircle(const glm::vec2 & center, float radius);
 				void clearDrawing();
 
 			protected:

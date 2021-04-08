@@ -155,17 +155,17 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Mesh::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->meshFilename);
-				Utils::Serializable::serialize(json, this->textureFilename);
-				Utils::Serializable::serialize(json, this->parameters);
+			void Mesh::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->meshFilename);
+				Utils::serialize(json, this->textureFilename);
+				Utils::serialize(json, this->parameters);
 			}
 
 			//----------
-			void Mesh::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->textureFilename);
-				Utils::Serializable::deserialize(json, this->meshFilename);
-				Utils::Serializable::deserialize(json, this->parameters);
+			void Mesh::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->textureFilename);
+				Utils::deserialize(json, this->meshFilename);
+				Utils::deserialize(json, this->parameters);
 
 				this->meshDirty = true;
 				this->textureDirty = true;
@@ -204,20 +204,28 @@ namespace ofxRulr {
 				return transform;
 			}
 
+			glm::vec3 operator*(const glm::mat4& m, const glm::vec3& v)
+			{
+				glm::vec4 v4{ v.x, v.y, v.z, 1.0f };
+				v4 = m * v4;
+				v4 /= v4.w;
+				return { v4.x, v4.y, v4.z };
+			}
+
 			//----------
-			vector<ofVec3f> Mesh::getVertices() const {
-				vector<ofVec3f> vertices;
+			vector<glm::vec3> Mesh::getVertices() const {
+				vector<glm::vec3> vertices;
 
 				if (this->modelLoader) {
-					ofMatrix4x4 transform = this->getMeshTransform();
+					glm::mat4 transform = this->getMeshTransform();
 					const auto meshCount = this->modelLoader->getMeshCount();
 
 					for (size_t i = 0; i < meshCount; i++) {
 						const auto & meshHelper = this->modelLoader->getMeshHelper(i);
 						const auto & mesh = this->modelLoader->getMesh(i);
-						auto meshTransform = transform * meshHelper.matrix;
+						auto meshTransform = transform * (glm::mat4) meshHelper.matrix;
 						for (const auto & vertex : mesh.getVertices()) {
-							vertices.push_back(vertex * transform);
+							vertices.push_back(transform * vertex);
 						}
 					}
 				}
@@ -284,12 +292,12 @@ namespace ofxRulr {
 				}
 				
 
-				inspector->addLiveValue<size_t>("Mesh count", [this]() {
+				inspector->addLiveValue<uint32_t>("Mesh count", [this]() {
 					if (this->modelLoader) {
 						return this->modelLoader->getNumMeshes();
 					}
 					else {
-						return 0;
+						return 0U;
 					}
 				});
 				inspector->addLiveValue<string>("Vertex count", [this]() {

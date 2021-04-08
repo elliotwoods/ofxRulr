@@ -15,8 +15,8 @@ namespace ofxRulr {
 				void drawWorldStage();
 
 				void populateInspector(ofxCvGui::InspectArguments &);
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				shared_ptr<aruco::MarkerMap> getMarkerMap();
 

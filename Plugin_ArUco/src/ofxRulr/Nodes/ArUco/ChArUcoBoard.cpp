@@ -115,13 +115,13 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void ChArUcoBoard::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+			void ChArUcoBoard::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->parameters);
 			}
 
 			//----------
-			void ChArUcoBoard::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+			void ChArUcoBoard::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->parameters);
 			}
 
 			//----------

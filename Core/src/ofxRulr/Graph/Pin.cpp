@@ -58,8 +58,8 @@ namespace ofxRulr {
 
 			this->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
 				auto ourBounds = this->getLocalBounds();
-				this->pinHeadPosition = ourBounds.getTopLeft() + ofVec2f(0.0f, ourBounds.getHeight() / 2.0f);
-				this->pinView->setBounds(ofRectangle(this->getPinHeadPosition() + ofVec2f(32, -16), 32, 32));
+				this->pinHeadPosition = ourBounds.getTopLeft() + glm::vec2(0.0f, ourBounds.getHeight() / 2.0f);
+				this->pinView->setBounds(ofRectangle(this->getPinHeadPosition() + glm::vec2(32, -16), 32, 32));
 			};
 
 			this->setBounds(ofRectangle(0, 0, 100, 20));

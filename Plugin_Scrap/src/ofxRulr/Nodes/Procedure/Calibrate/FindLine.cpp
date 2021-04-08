@@ -36,8 +36,8 @@ namespace ofxRulr {
 							if (this->previewFrame) {
 								//draw first guess
 								{
-									auto lineStart = ofVec2f(this->previewFrame->lineFirstTry[2], this->previewFrame->lineFirstTry[3]);
-									auto lineTransmit = ofVec2f(this->previewFrame->lineFirstTry[0], this->previewFrame->lineFirstTry[1]);
+									auto lineStart = glm::vec2(this->previewFrame->lineFirstTry[2], this->previewFrame->lineFirstTry[3]);
+									auto lineTransmit = glm::vec2(this->previewFrame->lineFirstTry[0], this->previewFrame->lineFirstTry[1]);
 
 									ofPushStyle();
 									{
@@ -58,8 +58,8 @@ namespace ofxRulr {
 
 								//draw final line
 								{
-									auto lineStart = ofVec2f(this->previewFrame->line[2], this->previewFrame->line[3]);
-									auto lineTransmit = ofVec2f(this->previewFrame->line[0], this->previewFrame->line[1]);
+									auto lineStart = glm::vec2(this->previewFrame->line[2], this->previewFrame->line[3]);
+									auto lineTransmit = glm::vec2(this->previewFrame->line[0], this->previewFrame->line[1]);
 
 									ofPushStyle();
 									{
@@ -118,13 +118,19 @@ namespace ofxRulr {
 
 						this->previewPoints.clear();
 						for (const auto & vertex : this->previewFrame->points) {
-							this->previewPoints.addVertex(ofxCv::toOf(vertex));
+							this->previewPoints.addVertex({
+								vertex.x
+								, vertex.y
+								, 0.0f });
 						}
 						this->previewPoints.setMode(ofPrimitiveMode::OF_PRIMITIVE_POINTS);
 
 						this->previewFilteredPoints.clear();
 						for (const auto & vertex : this->previewFrame->filteredPoints) {
-							this->previewFilteredPoints.addVertex(ofxCv::toOf(vertex));
+							this->previewFilteredPoints.addVertex({
+								vertex.x
+								, vertex.y
+								, 0.0f}); 
 						}
 						this->previewFilteredPoints.setMode(ofPrimitiveMode::OF_PRIMITIVE_POINTS);
 
@@ -138,13 +144,13 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void FindLine::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->parameters);
+				void FindLine::serialize(nlohmann::json & json) {
+					Utils::serialize(json, this->parameters);
 				}
 
 				//---------
-				void FindLine::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->parameters);
+				void FindLine::deserialize(const nlohmann::json & json) {
+					Utils::deserialize(json, this->parameters);
 				}
 
 				//---------
@@ -186,11 +192,11 @@ namespace ofxRulr {
 							break;
 						case ofPixelFormat::OF_PIXELS_RGB:
 						case ofPixelFormat::OF_PIXELS_BGR:
-							cv::cvtColor(image, image, CV_RGB2GRAY);
+							cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
 							break;
 						case ofPixelFormat::OF_PIXELS_RGBA:
 						case ofPixelFormat::OF_PIXELS_BGRA:
-							cv::cvtColor(image, image, CV_RGBA2GRAY);
+							cv::cvtColor(image, image, cv::COLOR_RGBA2GRAY);
 							break;
 						default:
 							throw(ofxRulr::Exception("Image format not supported by FindContourMarkers"));
@@ -214,7 +220,7 @@ namespace ofxRulr {
 							, outputFrame->binary
 							, this->parameters.localDifference.threshold
 							, 255
-							, CV_THRESH_BINARY);
+							, cv::THRESH_BINARY);
 
 						auto element = cv::getStructuringElement(cv::MORPH_RECT,
 							cv::Size(2 * this->parameters.localDifference.erosionSize + 1, 2 * this->parameters.localDifference.erosionSize + 1),
@@ -292,7 +298,7 @@ namespace ofxRulr {
 						//first try (take all points)
 						cv::fitLine(outputFrame->points
 							, outputFrame->lineFirstTry
-							, CV_DIST_FAIR
+							, cv::DIST_FAIR
 							, 0
 							, 0.01
 							, 0.01);
@@ -325,7 +331,7 @@ namespace ofxRulr {
 						//refined fit
 						cv::fitLine(outputFrame->filteredPoints
 							, outputFrame->line
-							, CV_DIST_HUBER
+							, cv::DIST_HUBER
 							, 0
 							, 0.001
 							, 0.001);

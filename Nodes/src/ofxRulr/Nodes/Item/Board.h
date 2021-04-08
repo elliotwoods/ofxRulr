@@ -13,8 +13,8 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				ofxCvGui::PanelPtr getPanel() override;
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				ofxCv::BoardType getBoardType() const;
 				cv::Size getSize() const;

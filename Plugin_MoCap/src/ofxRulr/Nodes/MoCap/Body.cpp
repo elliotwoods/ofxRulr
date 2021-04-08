@@ -1,6 +1,5 @@
 #include "pch_Plugin_MoCap.h"
 #include "Body.h"
-#include "ofxGLM.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -20,15 +19,15 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Body::Marker::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->ID);
-				Utils::Serializable::serialize(json, this->position);
+			void Body::Marker::serialize(nlohmann::json& json) {
+				Utils::serialize(json, this->ID);
+				Utils::serialize(json, this->position);
 			}
 
 			//----------
-			void Body::Marker::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->ID);
-				Utils::Serializable::deserialize(json, this->position);
+			void Body::Marker::deserialize(const nlohmann::json& json) {
+				Utils::deserialize(json, this->ID);
+				Utils::deserialize(json, this->position);
 			}
 
 #pragma mark Body
@@ -66,8 +65,8 @@ namespace ofxRulr {
 						return;
 					}
 
-					ofVec3f boundsMin;
-					ofVec3f boundsMax;
+					glm::vec3 boundsMin;
+					glm::vec3 boundsMax;
 
 					float maxDistanceSquared = 0.0f;
 
@@ -88,7 +87,7 @@ namespace ofxRulr {
 								boundsMax.y = MAX(boundsMin.y, position.y);
 								boundsMax.z = MAX(boundsMin.z, position.z);
 
-								maxDistanceSquared = max(maxDistanceSquared, bodyDescription->markers.positions[i].lengthSquared());
+								maxDistanceSquared = max(maxDistanceSquared, glm::length2(bodyDescription->markers.positions[i]));
 							}
 						}
 						ofPopStyle();	
@@ -105,7 +104,7 @@ namespace ofxRulr {
 						ofPushMatrix();
 						{
 							ofDrawAxis(0.1f);
-							ofRotate(90, 0, 0, +1);
+							ofRotateDeg(90, 0, 0, +1);
 
 							ofPushStyle();
 							{
@@ -164,7 +163,7 @@ namespace ofxRulr {
 				{
 					auto selection = this->markers.getSelection();
 					for (auto marker : selection) {
-						marker->worldHistory.push_back(marker->position * this->getTransform());
+						marker->worldHistory.push_back(Utils::applyTransform(this->getTransform(), marker->position));
 						auto maxSize = ofGetFrameRate() * this->parameters.drawStyleWorld.historyTrailLength;
 						while (marker->worldHistory.size() > maxSize) {
 							marker->worldHistory.pop_front();
@@ -262,14 +261,14 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Body::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+			void Body::serialize(nlohmann::json& json) {
+				Utils::serialize(json, this->parameters);
 				this->markers.serialize(json["markers"]);
 			}
 
 			//----------
-			void Body::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+			void Body::deserialize(const nlohmann::json& json) {
+				Utils::deserialize(json, this->parameters);
 				this->markers.deserialize(json["markers"]);
 				this->invalidateBodyDescription();
 			}
@@ -323,7 +322,7 @@ namespace ofxRulr {
 						continue;
 					}
 
-					ofVec3f position(ofToFloat(csvRow[0])
+					glm::vec3 position(ofToFloat(csvRow[0])
 						, ofToFloat(csvRow[1])
 						, ofToFloat(csvRow[2]));
 
@@ -361,7 +360,7 @@ namespace ofxRulr {
 				auto inputText = ofSystemTextBoxDialog("Marker position [m] 'x, y, z'");
 				if (!inputText.empty()) {
 					stringstream inputTextStream(inputText);
-					ofVec3f position;
+					glm::vec3 position;
 					inputTextStream >> position;
 
 					{
@@ -376,7 +375,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Body::addMarker(const ofVec3f & position) {
+			void Body::addMarker(const glm::vec3 & position) {
 				auto marker = make_shared<Marker>();
 				marker->ID = this->getNextAvailableID();
 				marker->position = position;

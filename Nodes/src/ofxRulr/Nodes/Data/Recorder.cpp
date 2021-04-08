@@ -160,7 +160,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Recorder::serialize(Json::Value & json) {
+			void Recorder::serialize(nlohmann::json & json) {
 				auto & jsonFrames = json["frames"];
 				for (auto frame : this->frames) {
 					frame.second->serialize(jsonFrames[ofToString(frame.first.count())]);
@@ -168,15 +168,16 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Recorder::deserialize(const Json::Value & json) {
+			void Recorder::deserialize(const nlohmann::json & json) {
 				this->clear();
 				const auto & jsonFrames = json["frames"];
-				for (auto frameTimeString : jsonFrames.getMemberNames()) {
+				for (auto frameTimeIt = jsonFrames.begin(); frameTimeIt != jsonFrames.end(); frameTimeIt++) {
 					try {
-						auto frameTime = ofToInt64(frameTimeString);
-						auto frame = this->deserializeFrame(jsonFrames[frameTimeString]);
+						
+						auto frameTime = ofToInt64(frameTimeIt.key());
+						auto frame = this->deserializeFrame(frameTimeIt.value());
 						if (!frame) {
-							throw(ofxRulr::Exception("Couldn't load frame [" + frameTimeString + "]"));
+							throw(ofxRulr::Exception("Couldn't load frame [" + frameTimeIt.key() + "]"));
 						}
 						auto frameTimeMicroseconds = chrono::microseconds(frameTime);
 						auto frameInserter = FrameInserter(frameTimeMicroseconds, frame);
@@ -383,7 +384,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			shared_ptr<Recorder::AbstractFrame> Recorder::deserializeFrame(const Json::Value &) const {
+			shared_ptr<Recorder::AbstractFrame> Recorder::deserializeFrame(const nlohmann::json &) const {
 				ofLogError(this->getTypeName()) << "deserializeFrame is not implemented";
 				return shared_ptr<Recorder::AbstractFrame>();
 			}

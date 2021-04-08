@@ -22,7 +22,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MatchMarkers::Capture::serialize(Json::Value & json) {
+			void MatchMarkers::Capture::serialize(nlohmann::json & json) {
 				{
 					auto & jsonModelViewRotationVector = json["modelViewRotationVector"];
 					jsonModelViewRotationVector["x"] = this->modelViewRotationVector.x;
@@ -39,23 +39,23 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MatchMarkers::Capture::deserialize(const Json::Value & json) {
+			void MatchMarkers::Capture::deserialize(const nlohmann::json & json) {
 				{
 					const auto & jsonModelViewRotationVector = json["modelViewRotationVector"];
-					this->modelViewRotationVector.x = jsonModelViewRotationVector["x"].asDouble();
-					this->modelViewRotationVector.y = jsonModelViewRotationVector["y"].asDouble();
-					this->modelViewRotationVector.z = jsonModelViewRotationVector["z"].asDouble();
+					this->modelViewRotationVector.x = jsonModelViewRotationVector["x"].get<double>();
+					this->modelViewRotationVector.y = jsonModelViewRotationVector["y"].get<double>();
+					this->modelViewRotationVector.z = jsonModelViewRotationVector["z"].get<double>();
 				}
 
 				{
 					const auto & jsonModelViewTranslation = json["modelViewTranslation"];
-					this->modelViewTranslation.x = jsonModelViewTranslation["x"].asDouble();
-					this->modelViewTranslation.y = jsonModelViewTranslation["y"].asDouble();
-					this->modelViewTranslation.z = jsonModelViewTranslation["z"].asDouble();
+					this->modelViewTranslation.x = jsonModelViewTranslation["x"].get<double>();
+					this->modelViewTranslation.y = jsonModelViewTranslation["y"].get<double>();
+					this->modelViewTranslation.z = jsonModelViewTranslation["z"].get<double>();
 				}
 
-				this->previewTransform = ofxCv::makeMatrix(cv::Mat(this->modelViewRotationVector)
-					, cv::Mat(this->modelViewTranslation)).getInverse();
+				this->previewTransform = glm::inverse(ofxCv::makeMatrix(cv::Mat(this->modelViewRotationVector)
+					, cv::Mat(this->modelViewTranslation)));
 			}
 
 #pragma mark MatchMarkers
@@ -138,9 +138,9 @@ namespace ofxRulr {
 							{
 								//draw a little axis to represent recorded pose
 								ofSetColor(capture->color);
-								ofDrawLine(ofVec3f(), ofVec3f(0.1, 0.0, 0.0));
-								ofDrawLine(ofVec3f(), ofVec3f(0.0, 0.1, 0.0));
-								ofDrawLine(ofVec3f(), ofVec3f(0.0, 0.0, 0.1));
+								ofDrawLine(glm::vec3(), glm::vec3(0.1, 0.0, 0.0));
+								ofDrawLine(glm::vec3(), glm::vec3(0.0, 0.1, 0.0));
+								ofDrawLine(glm::vec3(), glm::vec3(0.0, 0.0, 0.1));
 							}
 							ofPopStyle();
 						}
@@ -162,12 +162,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MatchMarkers::serialize(Json::Value & json) {
+			void MatchMarkers::serialize(nlohmann::json & json) {
 				this->captures.serialize(json);
 			}
 
 			//----------
-			void MatchMarkers::deserialize(const Json::Value & json) {
+			void MatchMarkers::deserialize(const nlohmann::json & json) {
 				this->captures.deserialize(json);
 			}
 
@@ -229,8 +229,8 @@ namespace ofxRulr {
 
 					capture->modelViewRotationVector = (cv::Point3d)modelViewRotationVector;
 					capture->modelViewTranslation = (cv::Point3d)modelViewTranslation;
-					capture->previewTransform = ofxCv::makeMatrix(modelViewRotationVector
-						, modelViewTranslation).getInverse() * outputFrame->bodyDescription->modelTransform;
+					capture->previewTransform = glm::inverse(ofxCv::makeMatrix(modelViewRotationVector
+						, modelViewTranslation)) * outputFrame->bodyDescription->modelTransform;
 					
 					this->newCaptures.send(capture);
 					this->needsTakeCapture.store(false);
@@ -264,11 +264,11 @@ namespace ofxRulr {
 				//first check the markers are inside the camera image
 				//(cvProjectPoints will happily give us weird results for markers outside view, e.g. distortion loop back, behind cam)
 				{
-					vector<ofVec3f> matrixProjections;
+					vector<glm::vec3> matrixProjections;
 					for (int i = 0; i < bodyDescription->markerCount; i++) {
 						const auto & objectSpacePoint = bodyDescription->markers.positions[i];
-						const auto worldSpace = objectSpacePoint * bodyDescription->modelTransform;
-						const auto projectionSpace = worldSpace * cameraDescription->viewProjectionMatrix;
+						const auto worldSpace = Utils::applyTransform(bodyDescription->modelTransform, objectSpacePoint);
+						const auto projectionSpace = Utils::applyTransform(cameraDescription->viewProjectionMatrix, worldSpace);
 						if (projectionSpace.z < -1 || projectionSpace.z > 1) {
 							//outside of depth clipping range
 							continue;

@@ -58,13 +58,13 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Dictionary::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+			void Dictionary::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->parameters);
 			}
 
 			//----------
-			void Dictionary::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+			void Dictionary::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->parameters);
 			}
 
 			//----------

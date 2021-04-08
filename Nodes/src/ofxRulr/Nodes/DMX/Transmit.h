@@ -31,8 +31,8 @@ namespace ofxRulr {
 				virtual string getTypeName() const override;
 				ofxCvGui::PanelPtr getPanel() override;
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
 				UniverseIndex getUniverseCount() const;

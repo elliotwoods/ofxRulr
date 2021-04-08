@@ -20,8 +20,8 @@ namespace ofxRulr {
 
 			ofxCvGui::PanelPtr getPanel() override;
 
-			void serialize(Json::Value &);
-			void deserialize(const Json::Value &);
+			void serialize(nlohmann::json &);
+			void deserialize(const nlohmann::json &);
 			void populateInspector(ofxCvGui::InspectArguments &);
 		private:
 			// Called when Node is added to Patch

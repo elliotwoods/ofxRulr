@@ -11,12 +11,12 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 				void populateInspector(ofxCvGui::InspectArguments &);
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 				void scan();
 				void triangulate();
 			protected:
-				ofMatrix4x4 lastCameraTransform;
+				glm::mat4 lastCameraTransform;
 
 				struct : ofParameterGroup {
 					ofParameter<bool> useExistingData{ "Use existing data", false };

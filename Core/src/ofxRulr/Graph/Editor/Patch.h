@@ -22,10 +22,10 @@ namespace ofxRulr {
 					//const shared_ptr<ofxCvGui::Panels::Base> findScreen(const ofVec2f & xy, ofRectangle & currentPanelBounds) override;
 					void markDirty();
 
-					shared_ptr<NodeHost> getNodeHostUnderCursor(const ofVec2f & cursorInCanvas);
+					shared_ptr<NodeHost> getNodeHostUnderCursor(const glm::vec2 & cursorInCanvas);
 					shared_ptr<NodeHost> getNodeHostUnderCursor();
 
-					const ofxCvGui::PanelPtr findScreen(const ofVec2f & xy, ofRectangle & currentPanelBounds) override;
+					const ofxCvGui::PanelPtr findScreen(const glm::vec2 & xy, ofRectangle & currentPanelBounds) override;
 				protected:
 					void rebuild();
 
@@ -43,10 +43,10 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
-				void insertPatchlet(const Json::Value &, bool useNewIDs, ofVec2f offset = ofVec2f());
+				void insertPatchlet(const nlohmann::json &, bool useNewIDs, const glm::vec2 & offset = glm::vec2(0, 0));
 
 				ofxCvGui::PanelPtr getPanel() override;
 				void update();

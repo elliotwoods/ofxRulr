@@ -45,7 +45,7 @@ namespace ofxRulr {
 				this->light.setDiffuseColor(this->parameters.color.diffuse);
 				this->light.setSpecularColor(this->parameters.color.specular);
 
-				this->light.setTransformMatrix(this->getTransform());
+				this->applyTransformToNode(this->light);
 
 				this->light.enable();
 			}

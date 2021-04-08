@@ -18,13 +18,13 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Planes::Plane::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, parameters);
+			void Planes::Plane::serialize(nlohmann::json & json) {
+				Utils::serialize(json, parameters);
 			}
 
 			//----------
-			void Planes::Plane::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, parameters);
+			void Planes::Plane::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, parameters);
 			}
 
 			//----------
@@ -87,9 +87,9 @@ namespace ofxRulr {
 				{
 					auto panel = ofxCvGui::Panels::makeWidgets();
 					panel->addButton("Add...", [this]() {
-						auto position = askData<ofVec3f>("Position");
-						auto normal = askData<ofVec3f>("Normal");
-						auto up = askData<ofVec3f>("Up");
+						auto position = askData<glm::vec3>("Position");
+						auto normal = askData<glm::vec3>("Normal");
+						auto up = askData<glm::vec3>("Up");
 
 						auto plane = make_shared<Plane>();
 						plane->parameters.center = position;
@@ -124,12 +124,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Planes::serialize(Json::Value & json) {
+			void Planes::serialize(nlohmann::json & json) {
 				this->planes.serialize(json);
 			}
 
 			//----------
-			void Planes::deserialize(const Json::Value & json) {
+			void Planes::deserialize(const nlohmann::json & json) {
 				this->planes.deserialize(json);
 			}
 

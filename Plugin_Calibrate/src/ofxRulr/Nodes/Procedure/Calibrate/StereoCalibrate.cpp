@@ -40,7 +40,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void StereoCalibrate::Capture::serialize(Json::Value & json) {
+				void StereoCalibrate::Capture::serialize(nlohmann::json & json) {
 					json["pointsImageSpaceA"] << this->pointsImageSpaceA;
 					json["pointsImageSpaceB"] << this->pointsImageSpaceB;
 					json["pointsObjectSpace"] << this->pointsObjectSpace;
@@ -48,7 +48,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void StereoCalibrate::Capture::deserialize(const Json::Value & json) {
+				void StereoCalibrate::Capture::deserialize(const nlohmann::json & json) {
 					json["pointsImageSpaceA"] >> this->pointsImageSpaceA;
 					json["pointsImageSpaceB"] >> this->pointsImageSpaceB;
 					json["pointsObjectSpace"] >> this->pointsObjectSpace;
@@ -197,7 +197,7 @@ namespace ofxRulr {
 											continue;
 										}
 
-										distancesSquared.emplace(capture->pointsWorldSpace[i].squareDistance(capture->pointsWorldSpace[j])
+										distancesSquared.emplace(glm::distance2(capture->pointsWorldSpace[i], capture->pointsWorldSpace[j])
 											, j);
 									}
 
@@ -225,10 +225,10 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void StereoCalibrate::serialize(Json::Value & json) {
+				void StereoCalibrate::serialize(nlohmann::json & json) {
 					this->captures.serialize(json);
-					Utils::Serializable::serialize(json, this->parameters);
-					Utils::Serializable::serialize(json, this->reprojectionError);
+					Utils::serialize(json, this->parameters);
+					Utils::serialize(json, this->reprojectionError);
 
 					{
 						const auto filename = this->getDefaultFilename() + "-opencvmatrices.yml";
@@ -249,26 +249,29 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void StereoCalibrate::deserialize(const Json::Value & json) {
+				void StereoCalibrate::deserialize(const nlohmann::json & json) {
 					this->captures.deserialize(json);
-					Utils::Serializable::deserialize(json, this->parameters);
-					Utils::Serializable::deserialize(json, this->reprojectionError);
+					Utils::deserialize(json, this->parameters);
+					Utils::deserialize(json, this->reprojectionError);
 
-					if (json.isMember("opencvMatricesFile")) {
-						auto filename = json["opencvMatricesFile"].asString();
-
-						FileStorage file(filename, FileStorage::READ);
-						file["rotation3x3"] >> this->openCVCalibration.rotation3x3;
-						file["rotationVector"] >> this->openCVCalibration.rotationVector;
-						file["translation"] >> this->openCVCalibration.translation;
-						file["essential"] >> this->openCVCalibration.essential;
-						file["fundamental"] >> this->openCVCalibration.fundamental;
-						file["rectificationRotationA"] >> this->openCVCalibration.rectificationRotationA;
-						file["rectificationRotationB"] >> this->openCVCalibration.rectificationRotationB;
-						file["projectionA"] >> this->openCVCalibration.projectionA;
-						file["projectionB"] >> this->openCVCalibration.projectionB;
-						file["disparityToDepth"] >> this->openCVCalibration.disparityToDepth;
-						file.release();
+					if (json.contains("opencvMatricesFile")) {
+						std::string filename;
+						if (Utils::deserialize(json["opencvMatricesFile"], filename)) {
+							FileStorage file(filename, FileStorage::READ);
+							if (file.isOpened()) {
+								file["rotation3x3"] >> this->openCVCalibration.rotation3x3;
+								file["rotationVector"] >> this->openCVCalibration.rotationVector;
+								file["translation"] >> this->openCVCalibration.translation;
+								file["essential"] >> this->openCVCalibration.essential;
+								file["fundamental"] >> this->openCVCalibration.fundamental;
+								file["rectificationRotationA"] >> this->openCVCalibration.rectificationRotationA;
+								file["rectificationRotationB"] >> this->openCVCalibration.rectificationRotationB;
+								file["projectionA"] >> this->openCVCalibration.projectionA;
+								file["projectionB"] >> this->openCVCalibration.projectionB;
+								file["disparityToDepth"] >> this->openCVCalibration.disparityToDepth;
+							}
+							file.release();
+						}
 					}
 				}
 
@@ -278,7 +281,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				std::vector<ofVec3f> StereoCalibrate::triangulate(const vector<ofVec2f> & imagePointsA, const vector<ofVec2f> & imagePointsB, bool correctMatches) {
+				std::vector<glm::vec3> StereoCalibrate::triangulate(const vector<glm::vec2> & imagePointsA, const vector<glm::vec2> & imagePointsB, bool correctMatches) {
 					//check that image sizes match
 					if (imagePointsA.size() != imagePointsB.size()) {
 						throw(ofxRulr::Exception("Cannot triangulate. Length of image point vectors do not match."));
@@ -344,7 +347,7 @@ namespace ofxRulr {
 						undistortedImageSpacePointsB.push_back((cv::Point2f) projectedPointsB[i]);
 					}
 
-					vector<ofVec3f> worldSpacePoints;
+					vector<glm::vec3> worldSpacePoints;
 					ofxTriangulate::Triangulate(ofxCv::toOf(undistortedImageSpacePointsA)
 						, ofxCv::toOf(undistortedImageSpacePointsB)
 						, cameraNodeA->getViewInWorldSpace()
@@ -509,10 +512,10 @@ namespace ofxRulr {
 
 					int flags = 0;
 					if (!this->parameters.calibration.fixIntrinsics) {
-						flags |= CV_CALIB_USE_INTRINSIC_GUESS;
+						flags |= cv::CALIB_USE_INTRINSIC_GUESS;
 					}
 					else {
-						flags |= CV_CALIB_FIX_INTRINSIC;
+						flags |= cv::CALIB_FIX_INTRINSIC;
 					}
 
 					this->reprojectionError = cv::stereoCalibrate(objectPoints
@@ -535,7 +538,7 @@ namespace ofxRulr {
 					}
 
 					auto transformBToA = ofxCv::makeMatrix(rotation3x3, translation);
-					cameraNodeB->setTransform(transformBToA.getInverse() * cameraNodeA->getTransform());
+					cameraNodeB->setTransform(glm::inverse(transformBToA) * cameraNodeA->getTransform());
 
 					//create the rectified data
 					cv::Mat rectificationRotationA, rectificationRotationB;

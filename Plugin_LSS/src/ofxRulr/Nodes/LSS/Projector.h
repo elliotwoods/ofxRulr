@@ -10,8 +10,8 @@ namespace ofxRulr {
 			public:
 				struct ProjectorPixelFind {
 					ofxRay::Ray cameraPixelRay;
-					ofVec2f cameraPixelXY;
-					ofVec2f cameraPixelXYUndistorted;
+					glm::vec2 cameraPixelXY;
+					glm::vec2 cameraPixelXYUndistorted;
 					MSGPACK_DEFINE(cameraPixelRay.s.x, cameraPixelRay.s.y, cameraPixelRay.s.z, cameraPixelRay.t.x, cameraPixelRay.t.y, cameraPixelRay.t.z
 						, cameraPixelXY.x, cameraPixelXY.y
 						, cameraPixelXYUndistorted.x, cameraPixelXYUndistorted.y);
@@ -22,12 +22,12 @@ namespace ofxRulr {
 					Scan();
 					string getDisplayString() const override;
 					std::string getTypeName() const override;
-					void deserialize(const Json::Value &);
-					void serialize(Json::Value &);
+					void deserialize(const nlohmann::json &);
+					void serialize(nlohmann::json &);
 					string getFilename() const;
 					void drawWorld();
 
-					ofParameter<ofVec3f> cameraPosition{ "Camera position", ofVec3f() };
+					ofParameter<glm::vec3> cameraPosition{ "Camera position", glm::vec3() };
 					map<uint32_t, ProjectorPixelFind> projectorPixels;
 				protected:
 					ofMesh preview;
@@ -35,22 +35,22 @@ namespace ofxRulr {
 					bool previewDirty = true;
 				};
 
-				struct ofVec3fs : ofVec3f {
-					ofVec3fs operator=(const ofVec3f & vec) {
-						*(ofVec3f*) this = vec;
+				struct vec3s : glm::vec3 {
+					vec3s operator=(const glm::vec3 & vec) {
+						*(glm::vec3*) this = vec;
 						return *this;
 					}
 					MSGPACK_DEFINE(x, y, z);
 				};
 
-				struct ofVec2fs : ofVec2f {
+				struct vec2s : glm::vec2 {
 					MSGPACK_DEFINE(x, y);
 				};
 
 				struct Vertex {
-					ofVec3f world;
+					glm::vec3 world;
 					size_t projector; // pixel coordinate
-					ofVec2f projectorNormalizedXY;
+					glm::vec2 projectorNormalizedXY;
 					MSGPACK_DEFINE(world.x
 						, world.y
 						, world.z
@@ -74,11 +74,11 @@ namespace ofxRulr {
 
 					int lineIndex;
 					int projectorIndex;
-					ofVec2fs startProjector;
-					ofVec2fs endProjector;
+					vec2s startProjector;
+					vec2s endProjector;
 
-					ofVec3fs startWorld;
-					ofVec3fs endWorld;
+					vec3s startWorld;
+					vec3s endWorld;
 
 					string lastUpdate;
 					string lastEditBy;
@@ -108,8 +108,8 @@ namespace ofxRulr {
 				void update();
 				void drawWorldStage();
 
-				void deserialize(const Json::Value &);
-				void serialize(Json::Value &);
+				void deserialize(const nlohmann::json &);
+				void serialize(nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
 				void addScan(shared_ptr<Scan>);

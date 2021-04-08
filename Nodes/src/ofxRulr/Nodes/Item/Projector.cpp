@@ -25,12 +25,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Projector::serialize(Json::Value & json) {
+			void Projector::serialize(nlohmann::json & json) {
 
 			}
 
 			//----------
-			void Projector::deserialize(const Json::Value & json) {
+			void Projector::deserialize(const nlohmann::json & json) {
 
 			}
 

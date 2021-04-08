@@ -13,10 +13,8 @@
 #include "ofxCvGui/Widgets/Title.h"
 #include "ofxCvGui/Widgets/Toggle.h"
 
-#include "ofxGLM.h"
 
 using namespace ofxCvGui;
-using namespace ofxGLM;
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -29,7 +27,7 @@ namespace ofxRulr {
 				}
 
 				//---------
-				MovingHeadToWorld::Model::Model(const ofVec3f & initialPosition, const ofVec3f & initialRotationEuler) {
+				MovingHeadToWorld::Model::Model(const glm::vec3 & initialPosition, const glm::vec3 & initialRotationEuler) {
 					this->initialPosition = initialPosition;
 					this->initialRotationEuler = initialRotationEuler;
 				}
@@ -91,12 +89,12 @@ namespace ofxRulr {
 					while (difference.x < -180.0f) {
 						difference.x += 360.0f;
 					}
-					residual = difference.lengthSquared();
+					residual = glm::length2(difference);
 				}
 
 				//---------
 				void MovingHeadToWorld::Model::evaluate(DataPoint & point) const {
-					auto pointInObjectSpace = point.world * this->transform.getInverse();
+					auto pointInObjectSpace = Utils::applyTransform(glm::inverse(this->transform), point.world);
 					point.panTilt = DMX::MovingHead::getPanTiltForTargetInObjectSpace(pointInObjectSpace, this->tiltOffset);
 				}
 
@@ -105,17 +103,18 @@ namespace ofxRulr {
 					if (this->isReady()) {
 						auto parameters = this->getParameters();
 
-						auto position = ofVec3f(parameters[0], parameters[1], parameters[2]);
-						auto rotationEuler = ofVec3f(parameters[3], parameters[4], parameters[5]);
-						auto rotationQuat = toOf(glm::quat(toGLM(rotationEuler)));
-						this->transform = ofMatrix4x4::newRotationMatrix(rotationQuat) * ofMatrix4x4::newTranslationMatrix(position);
+						// WARNING : TODO : are these angles in degrees?
+						auto position = glm::vec3(parameters[0], parameters[1], parameters[2]);
+						auto rotationEuler = glm::vec3(parameters[3], parameters[4], parameters[5]);
+						auto rotationQuat = glm::quat(rotationEuler);
+						this->transform = (glm::mat4) (ofMatrix4x4::newRotationMatrix(rotationQuat) * ofMatrix4x4::newTranslationMatrix(position));
 
 						this->tiltOffset = parameters[6];
 					}
 				}
 
 				//---------
-				const ofMatrix4x4 & MovingHeadToWorld::Model::getTransform() {
+				const glm::mat4 & MovingHeadToWorld::Model::getTransform() {
 					return this->transform;
 				}
 
@@ -157,10 +156,10 @@ namespace ofxRulr {
 								ofDrawLine(0.0f, horizonHeight, viewWidth, horizonHeight);
 
 
-								auto panTiltToView = [movingHead, viewWidth, viewHeight](const ofVec2f & panTilt) {
+								auto panTiltToView = [movingHead, viewWidth, viewHeight](const glm::vec2 & panTilt) {
 									auto drawX = ofMap(panTilt.x, +180.0f, -180.0f, 0.0f, viewWidth);
 									auto drawY = ofMap(panTilt.y, 0.0f, movingHead->getMaxTilt(), 0.0f, viewHeight);
-									return ofVec2f(drawX, drawY);
+									return glm::vec2(drawX, drawY);
 								};
 
 								ofFill();
@@ -262,9 +261,9 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void MovingHeadToWorld::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->beamBrightness);
-					Utils::Serializable::serialize(json, this->calibrateOnAdd);
+				void MovingHeadToWorld::serialize(nlohmann::json & json) {
+					Utils::serialize(json, this->beamBrightness);
+					Utils::serialize(json, this->calibrateOnAdd);
 
 					auto & jsonDataPoints = json["dataPoints"];
 					for (int i = 0; i < this->dataPoints.size(); i++) {
@@ -277,9 +276,9 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void MovingHeadToWorld::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->beamBrightness);
-					Utils::Serializable::deserialize(json, this->calibrateOnAdd);
+				void MovingHeadToWorld::deserialize(const nlohmann::json & json) {
+					Utils::deserialize(json, this->beamBrightness);
+					Utils::deserialize(json, this->calibrateOnAdd);
 					
 					this->dataPoints.clear();
 					const auto & jsonDataPoints = json["dataPoints"];
@@ -350,13 +349,13 @@ namespace ofxRulr {
 					inspector->add(new Widgets::Title("Aim beam", Widgets::Title::Level::H2));
 					{
 						inspector->add(new Widgets::Button("Forwards", [this]() {
-							this->setPanTiltOrAlert(ofVec2f(0, 90));
+							this->setPanTiltOrAlert(glm::vec2(0, 90));
 						}));
 						inspector->add(new Widgets::Button("20 degree incline", [this]() {
-							this->setPanTiltOrAlert(ofVec2f(0, 70));
+							this->setPanTiltOrAlert(glm::vec2(0, 70));
 						}));
 						inspector->add(new Widgets::Button("Upwards", [this]() {
-							this->setPanTiltOrAlert(ofVec2f(0, 0));
+							this->setPanTiltOrAlert(glm::vec2(0, 0));
 						}));
 					}
 				}
@@ -370,8 +369,9 @@ namespace ofxRulr {
 					for (const auto & dataPoint : this->dataPoints) {
 						lines.addVertex(dataPoint.world);
 						lines.addColor(ofColor(255, 100, 100, 255));
-						auto vector = ofVec3f(0, 0.1f, 0.0f);
-						auto rotation = movingHeadRotation * ofQuaternion(dataPoint.panTilt.x, ofVec3f(0, -1, 0)) * ofQuaternion(dataPoint.panTilt.y, ofVec3f(1,0,0));
+						auto vector = glm::vec3(0, 0.1f, 0.0f);
+						auto rotationoF = (ofMatrix4x4)movingHeadRotation * ofQuaternion(dataPoint.panTilt.x, glm::vec3(0, -1, 0)) * ofQuaternion(dataPoint.panTilt.y, glm::vec3(1,0,0));
+						auto rotation = (glm::quat)rotationoF;
 						lines.addVertex(vector * rotation + dataPoint.world);
 						lines.addColor(ofColor(255, 0));
 					}
@@ -397,7 +397,7 @@ namespace ofxRulr {
 					auto movingHead = this->getInput<DMX::MovingHead>();
 					auto target = this->getInput<Item::RigidBody>();
 
-					if (target->getTransform().isIdentity()) {
+					if (target->getTransform() == glm::mat4(1.0f)) {
 						//presume we didn't get any tracking if it's 0,0
 						throw(Exception("Target has no transform, presuming bad tracking."));
 					}
@@ -438,7 +438,12 @@ namespace ofxRulr {
 						const auto resultTiltOffset = model.getTiltOffset();
 
 						//check if result is valid
-						auto valid = !resultTransform.isNaN() && !isnan(resultTiltOffset);
+						auto valid = !glm::any(
+							glm::isnan(resultTransform[0])
+							|| glm::isnan(resultTransform[1]) 
+							|| glm::isnan(resultTransform[2]) 
+							|| glm::isnan(resultTransform[3]))
+							&& !isnan(resultTiltOffset);
 
 						if (valid) {
 							movingHead->setTransform(resultTransform);
@@ -473,7 +478,7 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void MovingHeadToWorld::setPanTiltOrAlert(const ofVec2f & panTilt) {
+				void MovingHeadToWorld::setPanTiltOrAlert(const glm::vec2 & panTilt) {
 					try {
 						this->throwIfMissingAConnection<DMX::MovingHead>();
 						auto movingHead = this->getInput<DMX::MovingHead>();

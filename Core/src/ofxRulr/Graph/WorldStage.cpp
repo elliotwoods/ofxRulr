@@ -115,34 +115,39 @@ namespace ofxRulr {
 #endif
 
 		//----------
-		void WorldStage::serialize(Json::Value & json) {
-			Utils::Serializable::serialize(json, this->parameters);
+		void WorldStage::serialize(nlohmann::json & json) {
+			Utils::serialize(json, this->parameters);
 
 			auto & camera = this->view->getCamera();
 			auto & cameraJson = json["Camera"];
 			cameraJson["position"] << camera.getPosition();
-			cameraJson["orientation"] << camera.getOrientationQuat().asVec4(); //cast as ofVec4f since ofQuaternion doesn't have serialisation
+			cameraJson["orientation"] << camera.getOrientationQuat();
 		}
 
 		//----------
-		void WorldStage::deserialize(const Json::Value & json) {
-			Utils::Serializable::deserialize(json, this->parameters);
+		void WorldStage::deserialize(const nlohmann::json & json) {
+			Utils::deserialize(json, this->parameters);
 
 			auto & camera = this->view->getCamera();
-			if (json.isMember("Camera")) {
+			if (json.contains("Camera")) {
 				auto & cameraJson = json["Camera"];
-				ofVec3f position;
-				cameraJson["position"] >> position;
-				camera.setPosition(position);
 
-				ofQuaternion orientation;
-				cameraJson["orientation"] >> (ofVec4f&) orientation;
-				camera.setOrientation(orientation);
+				{
+					glm::quat orientation;
+					cameraJson["orientation"] >> orientation;
+					camera.setOrientation(orientation);
+				}
+				
+				{
+					glm::vec3 position;
+					cameraJson["position"] >> position;
+					camera.setPosition(position);
+				}
 			}
 			else {
-				camera.setPosition(this->parameters.grid.roomMinimum.get() * ofVec3f(0.0f, 1.0f, 1.0f));
-				camera.lookAt(this->parameters.grid.roomMaximum.get() * ofVec3f(0.0f, 1.0f, 1.0f), ofVec3f(0, -1, 0));
-				camera.move(ofVec3f()); // nudge camera to update
+				camera.setPosition(this->parameters.grid.roomMinimum.get() * glm::vec3(0.0f, 1.0f, 1.0f));
+				camera.lookAt(this->parameters.grid.roomMaximum.get() * glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(0, -1, 0));
+				camera.move(glm::vec3(0, 0, 0)); // nudge camera to update
 			}
 		}
 
@@ -327,7 +332,7 @@ namespace ofxRulr {
 					planeXZ.mapTexCoords(roomMinimum.x, roomSpan.z, roomMaximum.x, 0);
 
 					ofTranslate(roomMinimum.x + roomSpan.x * 0.5, roomMaximum.y, 0);
-					ofRotate(90, -1, 0, 0);
+					ofRotateDeg(90, -1, 0, 0);
 
 					//floor
 					glCullFace(GL_BACK);
@@ -348,7 +353,7 @@ namespace ofxRulr {
 					planeYZ.mapTexCoords(roomMinimum.z, roomSpan.y, roomMaximum.z, 0);
 
 					ofTranslate(0, roomMaximum.y - roomSpan.y * 0.5, roomMaximum.z - roomSpan.z * 0.5);
-					ofRotate(-90, 0, 1, 0);
+					ofRotateDeg(-90, 0, 1, 0);
 
 					//left wall
 					glCullFace(GL_BACK);

@@ -91,7 +91,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Fixture::serialize(Json::Value & json) {
+			void Fixture::serialize(nlohmann::json & json) {
 				json << this->channelIndex;
 				json << this->universeIndex;
 				
@@ -102,7 +102,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Fixture::deserialize(const Json::Value & json) {
+			void Fixture::deserialize(const nlohmann::json & json) {
 				json >> this->channelIndex;
 				json >> this->universeIndex;
 

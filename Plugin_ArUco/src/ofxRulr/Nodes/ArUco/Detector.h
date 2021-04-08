@@ -18,8 +18,8 @@ namespace ofxRulr {
 				void update();
 
 				void populateInspector(ofxCvGui::InspectArguments &);
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				aruco::MarkerDetector & getMarkerDetector();
 				aruco::Dictionary & getDictionary();

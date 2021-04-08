@@ -25,12 +25,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Mesh::serialize(Json::Value & json) {
+			void Mesh::serialize(nlohmann::json & json) {
 				this->save(this->getDefaultFilename() + ".obj");
 			}
 
 			//----------
-			void Mesh::deserialize(const Json::Value & json) {
+			void Mesh::deserialize(const nlohmann::json & json) {
 				auto objFileName = this->getDefaultFilename() + ".obj";
 				if (ofFile(this->getDefaultFilename() + ".obj").exists()) {
 					this->load(objFileName);

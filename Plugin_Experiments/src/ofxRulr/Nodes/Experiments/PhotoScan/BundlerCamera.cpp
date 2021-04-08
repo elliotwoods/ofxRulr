@@ -129,7 +129,7 @@ namespace ofxRulr {
 						, distortionCoefficients
 						, rotationVectors
 						, translations
-						, CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6);
+						, cv::CALIB_USE_INTRINSIC_GUESS | cv::CALIB_FIX_K5 | cv::CALIB_FIX_K6);
 
 					camera->setIntrinsics(cameraMatrix, distortionCoefficients);
 					camera->setExtrinsics(rotationVectors[0]
@@ -196,25 +196,24 @@ namespace ofxRulr {
 					auto cameraHeight = cameraNode->getHeight();
 
 					auto fileContents = ofFile(filePath).readToBuffer();
-					Json::Value json;
-					Json::Reader().parse((const string &)fileContents, json);
+					auto json = nlohmann::json::parse(fileContents);
 
 					for (const auto & jsonView : json) {
 						auto capture = make_shared<Capture>();
-						capture->f = jsonView["f"].asFloat();
-						capture->k1 = jsonView["k1"].asFloat();
-						capture->k2 = jsonView["k2"].asFloat();
+						capture->f = jsonView["f"].get<float>();
+						capture->k1 = jsonView["k1"].get<float>();
+						capture->k2 = jsonView["k2"].get<float>();
 
 						const auto & jsonTiePoints = jsonView["tiePoints"];
 						for (const auto & jsonTiePoint : jsonTiePoints) {
-							ofVec3f worldPoint;
+							glm::vec3 worldPoint;
 							for (int i = 0; i < 3; i++) {
-								worldPoint[i] = jsonTiePoint["worldSpace"][i].asFloat();
+								worldPoint[i] = jsonTiePoint["worldSpace"][i].get<float>();
 							}
 
-							ofVec2f imagePoint;
+							glm::vec2 imagePoint;
 							for (int i = 0; i < 2; i++) {
-								imagePoint[i] = jsonTiePoint["imageSpace"][i].asFloat();
+								imagePoint[i] = jsonTiePoint["imageSpace"][i].get<float>();
 							}
 
 							imagePoint.x = cameraWidth / 2.0f + imagePoint.x;
@@ -228,7 +227,7 @@ namespace ofxRulr {
 
 							ofFloatColor color(255, 255, 255, 255);
 							for (int i = 0; i < 3; i++) {
-								color[i] = jsonTiePoint["color"][i].asFloat();
+								color[i] = jsonTiePoint["color"][i].get<float>();
 							}
 							color /= 255;
 

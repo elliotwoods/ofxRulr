@@ -99,7 +99,7 @@ namespace ofxRulr {
 
 				//----------
 				void ProjectorFromKinectV2::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->parameters);
+					Utils::serialize(json, this->parameters);
 
 					this->captures.serialize(json);
 					json["error"] = this->error;
@@ -107,7 +107,7 @@ namespace ofxRulr {
 
 				//----------
 				void ProjectorFromKinectV2::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->parameters);
+					Utils::deserialize(json, this->parameters);
 
 					this->captures.deserialize(json);
 					this->error = json["error"].asFloat();

@@ -56,12 +56,12 @@ namespace ofxRulr {
 			}
 			
 			//----------
-			void Assets::serialize(Json::Value & json) {
+			void Assets::serialize(nlohmann::json & json) {
 				json << this->filter;
 			}
 			
 			//----------
-			void Assets::deserialize(const Json::Value & json) {
+			void Assets::deserialize(const nlohmann::json & json) {
 				json >> this->filter;
 			}
 			

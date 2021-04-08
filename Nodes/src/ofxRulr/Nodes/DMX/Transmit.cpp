@@ -106,20 +106,20 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Transmit::serialize(Json::Value & json) {
+			void Transmit::serialize(nlohmann::json & json) {
 				auto & jsonUniverses = json["universes"];
 				for (int i = 0; i < this->universes.size(); i++) {
 					auto & jsonUniverse = jsonUniverses[ofToString(i)];
-					Utils::Serializable::serialize(jsonUniverse, this->universes[i]->blackoutEnabled);
+					Utils::serialize(jsonUniverse, this->universes[i]->blackoutEnabled);
 				}
 			}
 
 			//----------
-			void Transmit::deserialize(const Json::Value & json) {
+			void Transmit::deserialize(const nlohmann::json & json) {
 				const auto & jsonUniverses = json["universes"];
 				for (int i = 0; i < this->universes.size(); i++) {
 					const auto & jsonUniverse = jsonUniverses[ofToString(i)];
-					Utils::Serializable::deserialize(jsonUniverse, this->universes[i]->blackoutEnabled);
+					Utils::deserialize(jsonUniverse, this->universes[i]->blackoutEnabled);
 				}
 			}
 

@@ -52,7 +52,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraIntrinsics::Capture::serialize(Json::Value & json) {
+				void CameraIntrinsics::Capture::serialize(nlohmann::json & json) {
 					json << this->imageWidth;
 					json << this->imageHeight;
 					json << this->extrsinsics;
@@ -63,7 +63,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraIntrinsics::Capture::deserialize(const Json::Value & json) {
+				void CameraIntrinsics::Capture::deserialize(const nlohmann::json & json) {
 					json >> this->imageWidth;
 					json >> this->imageHeight;
 					json >> this->extrsinsics;
@@ -198,19 +198,19 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraIntrinsics::serialize(Json::Value & json) {
+				void CameraIntrinsics::serialize(nlohmann::json & json) {
 					this->captures.serialize(json["captureSet"]);
 
-					Utils::Serializable::serialize(json, this->error);
-					Utils::Serializable::serialize(json, this->parameters);
+					Utils::serialize(json, this->error);
+					Utils::serialize(json, this->parameters);
 				}
 
 				//----------
-				void CameraIntrinsics::deserialize(const Json::Value & json) {
+				void CameraIntrinsics::deserialize(const nlohmann::json & json) {
 					this->captures.deserialize(json["captureSet"]);
 					
-					Utils::Serializable::deserialize(json, this->error);
-					Utils::Serializable::deserialize(json, this->parameters);
+					Utils::deserialize(json, this->error);
+					Utils::deserialize(json, this->parameters);
 				}
 
 				//----------
@@ -250,8 +250,8 @@ namespace ofxRulr {
 					auto board = this->getInput<Item::AbstractBoard>();
 					auto camera = this->getInput<Item::Camera>();
 
-					vector<ofVec2f> imagePoints;
-					vector<ofVec3f> objectPoints;
+					vector<glm::vec2> imagePoints;
+					vector<glm::vec3> objectPoints;
 
 					board->findBoard(image
 						, toCv(imagePoints)
@@ -447,7 +447,7 @@ namespace ofxRulr {
 					Mat distortionCoefficients = Mat::zeros(8, 1, CV_64F);
 
 					vector<Mat> Rotations, Translations;
-					auto flags = CV_CALIB_FIX_K6 | CV_CALIB_FIX_K5;
+					auto flags = cv::CALIB_FIX_K6 | cv::CALIB_FIX_K5;
 					this->error = cv::calibrateCamera(objectPoints, imagePoints, cameraResolution, cameraMatrix, distortionCoefficients, Rotations, Translations, flags);
 					camera->setIntrinsics(cameraMatrix, distortionCoefficients);
 
@@ -460,7 +460,7 @@ namespace ofxRulr {
 						float reprojectionErrorSquaredSum = 0.0f;
 
 						for (int j = 0; j < reprojectedImageCoordinates.size(); j++) {
-							reprojectionErrorSquaredSum += (toOf(reprojectedImageCoordinates[j]) - capture->pointsImageSpace[j]).lengthSquared();
+							reprojectionErrorSquaredSum += glm::distance2(toOf(reprojectedImageCoordinates[j]), capture->pointsImageSpace[j]);
 						}
 						capture->reprojectionError = sqrt(reprojectionErrorSquaredSum / (float)reprojectedImageCoordinates.size());
 					}

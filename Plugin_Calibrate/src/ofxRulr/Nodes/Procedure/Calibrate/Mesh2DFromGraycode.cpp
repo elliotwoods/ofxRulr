@@ -62,16 +62,16 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Mesh2DFromGraycode::serialize(Json::Value & json) {
+				void Mesh2DFromGraycode::serialize(nlohmann::json & json) {
 				}
 
 				//----------
-				void Mesh2DFromGraycode::deserialize(const Json::Value & json) {
+				void Mesh2DFromGraycode::deserialize(const nlohmann::json & json) {
 				}
 
 				//----------
 				//from http://flassari.is/2008/11/line-line-intersection-in-cplusplus/
-				ofVec2f * line_line_intersection(ofVec2f p1, ofVec2f p2, ofVec2f p3, ofVec2f p4) {
+				glm::vec2 * line_line_intersection(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4) {
 
 					// Store the values for fast access and easy
 					// equations-to-code conversion
@@ -94,7 +94,7 @@ namespace ofxRulr {
 						y < min(y3, y4) || y > max(y3, y4)) return NULL;
 
 					// Return the point of intersection
-					ofVec2f * ret = new ofVec2f();
+					glm::vec2 * ret = new glm::vec2();
 					ret->x = x;
 					ret->y = y;
 					return ret;
@@ -120,7 +120,7 @@ namespace ofxRulr {
 
 					auto getCameraPixelPosition = [&cameraInProjector, projectorWidth, cameraWidth](int i, int j) {
 						const auto cameraPixelIndex = cameraInProjector.getData()[i + j * projectorWidth];
-						return ofVec2f(cameraPixelIndex % cameraWidth, cameraPixelIndex / cameraWidth);
+						return glm::vec2(cameraPixelIndex % cameraWidth, cameraPixelIndex / cameraWidth);
 					};
 					auto isActive = [& cameraInProjector, &active, projectorWidth](int i, int j) {
 						const auto cameraPixelIndex = cameraInProjector.getData()[i + j * projectorWidth];
@@ -134,7 +134,7 @@ namespace ofxRulr {
 					for (int j = 0; j < projectorHeight; j++) {
 						for (int i = 0; i < projectorWidth; i++) {
 							if (isActive(i, j)) {
-								projectorSpaceActivePoints.emplace_back(ofVec2f(i, j));
+								projectorSpaceActivePoints.emplace_back(i, j);
 							}
 						}
 					}

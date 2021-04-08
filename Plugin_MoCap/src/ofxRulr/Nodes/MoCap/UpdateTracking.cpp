@@ -108,7 +108,7 @@ namespace ofxRulr {
 
 					cv::Mat cameraRotationInverse;
 					cv::Mat cameraTranslationInverse;
-					ofxCv::decomposeMatrix(cameraTransform.getInverse()
+					ofxCv::decomposeMatrix(glm::inverse(cameraTransform)
 						, cameraRotationInverse
 						, cameraTranslationInverse);
 
@@ -131,8 +131,8 @@ namespace ofxRulr {
 					case UpdateTarget::Camera:
 					{
 						//special case, only the transform is in camera coords
-						outgoingFrame->transform = ofxCv::makeMatrix(outgoingFrame->bodyModelViewRotationVector
-							, outgoingFrame->bodyModelViewTranslation).getInverse() * incomingFrame->bodyDescription->modelTransform;
+						outgoingFrame->transform = glm::inverse(ofxCv::makeMatrix(outgoingFrame->bodyModelViewRotationVector
+							, outgoingFrame->bodyModelViewTranslation)) * incomingFrame->bodyDescription->modelTransform;
 						break;
 					}
 					default:

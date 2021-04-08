@@ -13,27 +13,6 @@
     <Filter Include="addons">
       <UniqueIdentifier>{7cfba1ea-d11f-4ef4-8926-c7e28ba7f0c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxJson">
-      <UniqueIdentifier>{8c21fc0c-fafb-4f80-a6a6-eed5e4fa917c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\src">
-      <UniqueIdentifier>{167a7f7c-1794-4d7d-bac5-7597db1343f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs">
-      <UniqueIdentifier>{01ce3573-77fe-4a03-abc7-00514d41595e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp">
-      <UniqueIdentifier>{09adac28-243d-4c77-afab-5f6d58547cbe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\include">
-      <UniqueIdentifier>{4a20149c-4e72-428b-b9e7-4b466736d711}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\include\json">
-      <UniqueIdentifier>{c3dea055-97a3-4b31-bedc-b81aa430f8ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxJson\libs\jsoncpp\src">
-      <UniqueIdentifier>{bd5f6534-79ed-4305-af5c-9faec1039953}</UniqueIdentifier>
-    </Filter>
     <Filter Include="addons\ofxClipboard">
       <UniqueIdentifier>{2e07442a-7b34-45d3-9ffd-dbd2f13430b1}</UniqueIdentifier>
     </Filter>
@@ -76,6 +55,9 @@
     <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\win32">
       <UniqueIdentifier>{f33d6ad8-5ecb-42e3-a7af-f7cc31159585}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Utils\Serialization">
+      <UniqueIdentifier>{856fc72b-7aa2-42f2-be50-0144b90cde57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Graph\Pin.cpp">
@@ -107,18 +89,6 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxJSON\src\ofxJSONElement.cpp">
-      <Filter>addons\ofxJson\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_writer.cpp">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_reader.cpp">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxJSON\libs\jsoncpp\src\json_value.cpp">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ofxClipboard\src\ofxClipboard.cpp">
       <Filter>addons\ofxClipboard\src</Filter>
@@ -198,6 +168,15 @@
     <ClCompile Include="src\ofxRulr\Graph\WorldStage.cpp">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Serialization\Native.cpp">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Serialization\oF.cpp">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Serialization\Parameters.cpp">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -235,39 +214,6 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\Initialiser.h">
       <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\src\ofxJSONElement.h">
-      <Filter>addons\ofxJson\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\json.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\reader.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\value.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\writer.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\autolink.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\config.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\features.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\include\json\forwards.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\include\json</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_batchallocator.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxJSON\libs\jsoncpp\src\json_tool.h">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ofxClipboard\src\ofxClipboard.h">
       <Filter>addons\ofxClipboard\src</Filter>
@@ -377,19 +323,14 @@
     <ClInclude Include="src\ofxRulr\Graph\WorldStage.h">
       <Filter>src\ofxRulr\Graph</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_valueiterator.inl">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
-    </None>
-    <None Include="..\..\ofxJSON\libs\jsoncpp\src\sconscript">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
-    </None>
-    <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalarray.inl">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
-    </None>
-    <None Include="..\..\ofxJSON\libs\jsoncpp\src\json_internalmap.inl">
-      <Filter>addons\ofxJson\libs\jsoncpp\src</Filter>
-    </None>
+    <ClInclude Include="src\ofxRulr\Utils\Serialization\Native.h">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Serialization\oF.h">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Serialization\Parameters.h">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

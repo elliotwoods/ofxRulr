@@ -45,12 +45,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Triangulate::serialize(Json::Value & json) {
+			void Triangulate::serialize(nlohmann::json & json) {
 
 			}
 
 			//----------
-			void Triangulate::deserialize(const Json::Value & json) {
+			void Triangulate::deserialize(const nlohmann::json & json) {
 
 			}
 

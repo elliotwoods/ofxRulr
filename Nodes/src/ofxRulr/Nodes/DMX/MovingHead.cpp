@@ -74,18 +74,18 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MovingHead::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+			void MovingHead::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->parameters);
 			}
 
 			//----------
-			void MovingHead::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+			void MovingHead::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->parameters);
 			}
 
 			//----------
-			ofVec2f MovingHead::getPanTilt() const {
-				return ofVec2f(this->parameters.pan, this->parameters.tilt);
+			glm::vec2 MovingHead::getPanTilt() const {
+				return glm::vec2(this->parameters.pan, this->parameters.tilt);
 			}
 
 			//----------
@@ -94,9 +94,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofVec2f MovingHead::getPanTiltForTarget(const ofVec3f & worldSpacePoint, bool navigationEnabled) const {
-				auto worldToObject = this->getTransform().getInverse();
-				auto objectSpacePoint = worldSpacePoint * worldToObject;
+			glm::vec2 MovingHead::getPanTiltForTarget(const glm::vec3 & worldSpacePoint, bool navigationEnabled) const {
+				auto worldToObject = glm::inverse(this->getTransform());
+				auto objectSpacePoint = Utils::applyTransform(worldToObject, worldSpacePoint);
 				
 				auto panTilt = MovingHead::getPanTiltForTargetInObjectSpace(objectSpacePoint, this->parameters.tiltOffset);
 
@@ -104,7 +104,7 @@ namespace ofxRulr {
 					//we want to find the fastest route to it, for every 180 degrees of pan there is a valid solution, let's choose the one with the smallest pan always
 					auto halfRotationsMin = ceil(this->parameters.pan.getMin() / 180.0f);
 					auto halfRotationsMax = ceil(this->parameters.pan.getMax() / 180.0f) + 1;
-					map<float, ofVec2f> solutions; // panDistance, (pan,tilt)
+					map<float, glm::vec2> solutions; // panDistance, (pan,tilt)
 					for (int halfRotation = halfRotationsMin; halfRotation < halfRotationsMax; halfRotation++) {
 						//for each hemisphere, find the solution, check if it's in valid range
 						float searchPan = (halfRotation * 180) + panTilt.x;
@@ -120,7 +120,7 @@ namespace ofxRulr {
 						if (searchPan >= this->parameters.pan.getMin() && searchPan <= this->parameters.pan.getMax() && searchTilt >= this->parameters.tilt.getMin() && searchTilt <= this->parameters.tilt.getMax()) {
 							//it's a valid solution
 							auto panDistance = abs(searchPan - this->parameters.pan);
-							pair<float, ofVec2f> solution(panDistance, ofVec2f(searchPan, searchTilt));
+							pair<float, glm::vec2> solution(panDistance, glm::vec2(searchPan, searchTilt));
 							solutions.insert(solution);
 						}
 					}
@@ -138,24 +138,24 @@ namespace ofxRulr {
 			}
 
 			//----------
-			ofVec2f MovingHead::getPanTiltForTargetInObjectSpace(const ofVec3f & objectSpacePoint, float tiltOffset) {
+			glm::vec2 MovingHead::getPanTiltForTargetInObjectSpace(const glm::vec3 & objectSpacePoint, float tiltOffset) {
 				auto pan = atan2(objectSpacePoint.z, objectSpacePoint.x) * RAD_TO_DEG - 90.0f;
 				if (pan < -180.0f) {
 					pan += 360.0f;
 				}
 
-				auto tilt = acos(-objectSpacePoint.y / objectSpacePoint.length()) * RAD_TO_DEG; // will always produce positive tilt
-				return ofVec2f(pan, tilt + tiltOffset);
+				auto tilt = acos(-objectSpacePoint.y / glm::length(objectSpacePoint)) * RAD_TO_DEG; // will always produce positive tilt
+				return glm::vec2(pan, tilt + tiltOffset);
 			}
 
 			//----------
-			void MovingHead::lookAt(const ofVec3f & worldSpacePoint) {
+			void MovingHead::lookAt(const glm::vec3& worldSpacePoint) {
 				const auto panTilt = this->getPanTiltForTarget(worldSpacePoint, false);
 				this->setPanTilt(panTilt);
 			}
 		
 			//----------
-			void MovingHead::setPanTilt(const ofVec2f & panTilt) {
+			void MovingHead::setPanTilt(const glm::vec2 & panTilt) {
 				this->parameters.pan = panTilt.x;
 				this->parameters.tilt = panTilt.y;
 			}

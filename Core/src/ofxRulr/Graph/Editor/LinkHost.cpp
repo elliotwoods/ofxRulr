@@ -43,18 +43,22 @@ namespace ofxRulr {
 				}
 			}
 
+			glm::vec3 v3(const glm::vec2& v2) {
+				return { v2.x, v2.y, 0.0f };
+			}
+
 			//---------
 			void LinkHost::callbackDraw(ofxCvGui::DrawArguments & args) {
 				try {
-					const ofVec2f sourcePinPosition = this->getSourcePinPosition();
-					const ofVec2f targetPinPosition = this->getTargetPinPosition();
+					const auto sourcePinPosition = v3(this->getSourcePinPosition());
+					const auto targetPinPosition = v3(this->getTargetPinPosition());
 
 					//move from local to patch space
 					ofPushMatrix();
 					{
 						ofTranslate(-this->getBoundsInParent().getTopLeft());
 
-						const auto wireRigidity = ofVec2f(100, 0);
+						const auto wireRigidity = v3(glm::vec2(100, 0));
 						ofPolyline wire;
 						wire.addVertex(sourcePinPosition);
 						wire.bezierTo(sourcePinPosition + wireRigidity, targetPinPosition - wireRigidity, targetPinPosition, 40);
@@ -92,7 +96,7 @@ namespace ofxRulr {
 			}
 
 			//---------
-			ofVec2f LinkHost::getSourcePinPosition() const {
+			glm::vec2 LinkHost::getSourcePinPosition() const {
 				auto sourceNode = this->sourceNode.lock();
 				if (!sourceNode) {
 					throw(ofxRulr::Exception("LinkHost has no valid source node"));;
@@ -101,7 +105,7 @@ namespace ofxRulr {
 			}
 
 			//---------
-			ofVec2f LinkHost::getTargetPinPosition() const {
+			glm::vec2 LinkHost::getTargetPinPosition() const {
 				auto targetNode = this->targetNode.lock();
 				auto targetPin = this->targetPin.lock();
 				if (!targetNode || !targetPin) {
@@ -118,7 +122,7 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void TemporaryLinkHost::setCursorPosition(const ofVec2f & cursorPosition) {
+			void TemporaryLinkHost::setCursorPosition(const glm::vec2 & cursorPosition) {
 				this->cursorPosition = cursorPosition;
 				auto targetNode = this->targetNode.lock();
 				if (targetNode) {
@@ -151,7 +155,7 @@ namespace ofxRulr {
 			}
 
 			//---------
-			ofVec2f TemporaryLinkHost::getSourcePinPosition() const {
+			glm::vec2 TemporaryLinkHost::getSourcePinPosition() const {
 				if (!this->sourceNode.expired()) {
 					auto sourceNode = this->sourceNode.lock();
 					return sourceNode->getOutputPinPositionGlobal();

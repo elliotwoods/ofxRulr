@@ -52,13 +52,13 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Board::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+			void Board::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->parameters);
 			}
 
 			//----------
-			void Board::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+			void Board::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->parameters);
 
 				this->updatePreviewMesh();
 			}

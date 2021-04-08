@@ -226,7 +226,7 @@ namespace ofxRulr {
 			float maxDistance(const vector<T> & list, const T & position) {
 				float maxDistance2 = 0;
 				for (const auto & element : list) {
-					auto distance2 = element.squareDistance(position);
+					auto distance2 = glm::distance2(element, position);
 					if (distance2 > maxDistance2) {
 						distance2 = maxDistance2;
 					}
@@ -243,7 +243,7 @@ namespace ofxRulr {
 
 				for (auto it = list.begin(); it != list.end(); it++) {
 					const auto & element = *it;
-					auto distance2 = element.squareDistance(position);
+					auto distance2 = glm::distance2(element, position);
 					if (distance2 > maxDistance2) {
 						distance2 = maxDistance2;
 						farthestPositionIt = it;
@@ -314,7 +314,7 @@ namespace ofxRulr {
 						projectorPixel.triangulationFailed = true;
 					}
 					auto cameraReprojection = cameraView.getScreenCoordinateOfWorldPosition(projectorPixel.world);
-					auto cameraReprojectionError = cameraReprojection.distance(projectorPixel.cameraUndistorted);
+					auto cameraReprojectionError = glm::distance((glm::vec2) cameraReprojection, projectorPixel.cameraUndistorted);
 					if (cameraReprojectionError > this->parameters.triangulate.maxCameraDeviation) {
 						projectorPixel.triangulationFailed = true;
 					}
@@ -326,7 +326,7 @@ namespace ofxRulr {
 
 			//----------
 			ofxRay::Ray FitPointsToLines::fitRayToProjectorPixels(vector<shared_ptr<ProjectorPixel>> projectorPixels) {
-				vector<ofVec3f> dataPoints;
+				vector<glm::vec3> dataPoints;
 				for (auto projectorPixel : projectorPixels) {
 					dataPoints.push_back(projectorPixel->world);
 				}
@@ -335,7 +335,7 @@ namespace ofxRulr {
 				cv::Vec6f line;
 				cv::fitLine(ofxCv::toCv(dataPoints)
 					, line
-					, CV_DIST_HUBER
+					, cv::DIST_HUBER
 					, 0
 					, this->parameters.search.head.deviationThreshold
 					, 0.01);
@@ -384,8 +384,8 @@ namespace ofxRulr {
 						if (projectorPixel2->unavailable) {
 							continue;
 						}
-						if (projectorPixel2->world.distance(projectorPixel.world) < this->parameters.search.head.sizeM
-							&& projectorPixel2->projector.distance(projectorPixel.projector) < this->parameters.search.head.sizePx) {
+						if (glm::distance(projectorPixel2->world, projectorPixel.world) < this->parameters.search.head.sizeM
+							&& glm::distance(projectorPixel2->projector, projectorPixel.projector) < this->parameters.search.head.sizePx) {
 							newLine->projectorPixels.push_back(projectorPixel2);
 						}
 					}
@@ -424,9 +424,9 @@ namespace ofxRulr {
 
 					auto walkDistance = this->parameters.search.walk.length;
 					vector<float> directions{ -1, +1 };
-					vector<ofVec3f> lineEnds;
+					vector<glm::vec3> lineEnds;
 					for (auto direction : directions) {
-						ofVec3f walkPosition = ray.s;
+						glm::vec3 walkPosition = ray.s;
 						while (true) {
 							//find pixels in this region
 							vector<shared_ptr<ProjectorPixel>> addProjectorPixels;
@@ -440,14 +440,14 @@ namespace ofxRulr {
 								auto rayToProjectorPixelDeviation = projectorPixel2->world - ray.closestPointOnRayTo(projectorPixel2->world);
 
 								auto viewDirection = projectorPixel2->world - cameraPosition;
-								viewDirection = viewDirection.getNormalized();
+								viewDirection = glm::normalize(viewDirection);
 
-								auto deviationInViewDirection = abs(viewDirection.dot(rayToProjectorPixelDeviation));
-								auto deviationOrthogonalToViewDirection = abs(viewDirection.cross(rayToProjectorPixelDeviation).length());
+								auto deviationInViewDirection = abs(glm::dot(viewDirection, rayToProjectorPixelDeviation));
+								auto deviationOrthogonalToViewDirection = abs(glm::length(glm::cross(viewDirection, rayToProjectorPixelDeviation)));
 
 								if (deviationOrthogonalToViewDirection < this->parameters.search.walk.width / 2.0f
 									&& deviationInViewDirection < this->parameters.search.walk.depth / 2.0f
-									&& pointProjectedOnLine.distance(walkPosition) < this->parameters.search.walk.length / 2.0f) {
+									&& glm::distance(pointProjectedOnLine, walkPosition) < this->parameters.search.walk.length / 2.0f) {
 									addProjectorPixels.push_back(projectorPixel2);
 								}
 							}
@@ -467,7 +467,7 @@ namespace ofxRulr {
 							ray = this->fitRayToProjectorPixels(newLine->projectorPixels);
 
 							//walk forwards
-							walkPosition += ray.t * walkDistance * direction;
+							walkPosition += ray.t * walkDistance.get() * direction;
 						}
 						lineEnds.push_back(walkPosition);
 					}
@@ -485,7 +485,7 @@ namespace ofxRulr {
 
 					//check the tests
 					{
-						if (newLine->startWorld.distance(newLine->endWorld) < this->parameters.search.test.minimumLength) {
+						if (glm::distance(newLine->startWorld, newLine->endWorld) < this->parameters.search.test.minimumLength) {
 							continue;
 						}
 
@@ -545,28 +545,37 @@ namespace ofxRulr {
 				scopedProcess.end();
 			}
 
+			glm::vec3 to3(const glm::vec2& vec2)
+			{
+				return {
+					vec2.x
+					, vec2.y
+					, 0.0f
+				};
+			}
+
 			//----------
 			void FitPointsToLines::projectTo2D() {
 				Utils::ScopedProcess scopedProcess("Project to 2D");
-				auto fitRayTo2DPoints = [this](const vector<ofVec2f> & points) {
+				auto fitRayTo2DPoints = [this](const vector<glm::vec2> & points) {
 					cv::Vec4f line;
 					cv::fitLine(ofxCv::toCv(points)
 						, line
-						, CV_DIST_HUBER
+						, cv::DIST_HUBER
 						, 0
 						, this->parameters.projectTo2D.deviationThreshold
 						, 0.01);
 
 					ofxRay::Ray ray;
-					ray.s = ofVec3f(line(2), line(3), 0.0f);
-					ray.t = ofVec3f(line(0), line(1), 0.0f);
+					ray.s = glm::vec3(line(2), line(3), 0.0f);
+					ray.t = glm::vec3(line(0), line(1), 0.0f);
 
 					return ray;
 				};
 
 				for (auto line : this->lines) {
 					//create a 2D ray
-					vector<ofVec2f> projectorPixelPositions;
+					vector<glm::vec2> projectorPixelPositions;
 					for (auto projectorPixel : line->projectorPixels) {
 						projectorPixelPositions.push_back(projectorPixel->projector);
 					}
@@ -577,11 +586,11 @@ namespace ofxRulr {
 					auto meanProjectorPixelEnd = this->findMeanClosestProjected(line->projectorPixels, line->endWorld);
 
 					//project onto ray
-					auto projectedPixelStart = rayInProjectionImage.closestPointOnRayTo(meanProjectorPixelStart);
-					auto projectedPixelEnd = rayInProjectionImage.closestPointOnRayTo(meanProjectorPixelEnd);
+					auto projectedPixelStart = rayInProjectionImage.closestPointOnRayTo(to3(meanProjectorPixelStart));
+					auto projectedPixelEnd = rayInProjectionImage.closestPointOnRayTo(to3(meanProjectorPixelEnd));
 
-					line->startProjector = (ofVec2f)projectedPixelStart;
-					line->endProjector = (ofVec2f)projectedPixelEnd;
+					line->startProjector = (glm::vec2)projectedPixelStart;
+					line->endProjector = (glm::vec2)projectedPixelEnd;
 				}
 
 				this->previewDirty = true;
@@ -590,7 +599,7 @@ namespace ofxRulr {
 
 			//----------
 			template<typename T>
-			void serializeVector(Json::Value & json, const T & vector) {
+			void serializeVector(nlohmann::json & json, const T & vector) {
 				for (int i = 0; i < sizeof(vector) / sizeof(float); i++) {
 					json[i] = vector[i];
 				}
@@ -599,12 +608,12 @@ namespace ofxRulr {
 			void FitPointsToLines::exportData() {
 				Utils::ScopedProcess scopedProcess("Export data");
 
-				Json::Value jsonOuter;
+				nlohmann::json jsonOuter;
 				auto & json = jsonOuter["lines"];
 
 				int lineIndex = 0;
 				for (auto line : this->lines) {
-					Json::Value jsonLine;
+					nlohmann::json jsonLine;
 					
 					serializeVector(jsonLine["startWorld"], line->startWorld);
 					serializeVector(jsonLine["endWorld"], line->endWorld);
@@ -612,7 +621,7 @@ namespace ofxRulr {
 					serializeVector(jsonLine["startProjector"], line->startProjector);
 					serializeVector(jsonLine["endProjector"], line->endProjector);
 
-					json.append(jsonLine);
+					json.push_back(jsonLine);
 				}
 
 
@@ -624,11 +633,11 @@ namespace ofxRulr {
 			}
 
 			//----------
-			vector<shared_ptr<FitPointsToLines::ProjectorPixel>> FitPointsToLines::findNClosestPixels(const vector<shared_ptr<ProjectorPixel>> projectorPixels, const ofVec3f & position, int count) {
+			vector<shared_ptr<FitPointsToLines::ProjectorPixel>> FitPointsToLines::findNClosestPixels(const vector<shared_ptr<ProjectorPixel>> projectorPixels, const glm::vec3 & position, int count) {
 				// put all pixels into a map
 				map<float, shared_ptr<ProjectorPixel>> projectorPixelsByDistance;
 				for (auto projectorPixel : projectorPixels) {
-					auto distance = position.squareDistance(projectorPixel->world);
+					auto distance = glm::distance2(position, projectorPixel->world);
 					projectorPixelsByDistance.emplace(distance, projectorPixel);
 				}
 
@@ -649,11 +658,11 @@ namespace ofxRulr {
 			};
 
 			//----------
-			ofVec2f FitPointsToLines::findMeanClosestProjected(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const ofVec3f & worldPosition) {
+			glm::vec2 FitPointsToLines::findMeanClosestProjected(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const glm::vec3 & worldPosition) {
 				auto closestPixels = this->findNClosestPixels(projectorPixels
 					, worldPosition
 					, this->parameters.projectTo2D.closePixelCount);
-				vector<ofVec2f> projectorPixelPositions;
+				vector<glm::vec2> projectorPixelPositions;
 				for (auto closePixel : closestPixels) {
 					projectorPixelPositions.push_back(closePixel->projector);
 				}
@@ -662,11 +671,11 @@ namespace ofxRulr {
 			};
 
 			//----------
-			ofVec3f FitPointsToLines::findMeanClosestWorld(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const ofVec3f & worldPosition) {
+			glm::vec3 FitPointsToLines::findMeanClosestWorld(const vector<shared_ptr<ProjectorPixel>> & projectorPixels, const glm::vec3 & worldPosition) {
 				auto closestPixels = this->findNClosestPixels(projectorPixels
 					, worldPosition
 					, this->parameters.projectTo2D.closePixelCount);
-				vector<ofVec3f> worldPositions;
+				vector<glm::vec3> worldPositions;
 				for (auto closePixel : closestPixels) {
 					worldPositions.push_back(closePixel->world);
 				}

@@ -58,8 +58,8 @@ namespace ofxRulr {
 				public:
 					Capture();
 					string getDisplayString() const override;
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 
 					cv::Point3d modelViewRotationVector;
 					cv::Point3d modelViewTranslation;
@@ -74,8 +74,8 @@ namespace ofxRulr {
 				void drawWorldStage();
 
 				void populateInspector(ofxCvGui::InspectArguments &);
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 			protected:
 				MAKE_ENUM(WhenDrawWorld

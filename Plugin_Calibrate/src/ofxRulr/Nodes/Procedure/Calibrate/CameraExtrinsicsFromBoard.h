@@ -18,8 +18,8 @@ namespace ofxRulr {
 					void update();
 					void drawWorldStage();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 
 					void captureOriginBoard();
@@ -27,14 +27,14 @@ namespace ofxRulr {
 					void captureXZPlaneBoard();
 
 				protected:
-					void captureTo(ofParameter<ofVec3f> &);
+					void captureTo(ofParameter<glm::vec3> &);
 					void calibrate();
 
 					ofxCvGui::PanelPtr view;
 					ofImage grayscalePreview;
 
-					vector<ofVec2f> currentCorners;
-					vector<ofVec3f> currentObjectPoints;
+					vector<glm::vec2> currentCorners;
+					vector<glm::vec3> currentObjectPoints;
 
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
@@ -45,9 +45,9 @@ namespace ofxRulr {
 						} capture;
 
 						struct : ofParameterGroup {
-							ofParameter<ofVec3f> originInCameraObjectSpace{ "Origin", {0, 0, 0} };
-							ofParameter<ofVec3f> positiveXInCameraObjectSpace{ "+X", {1, 0, 0 } };
-							ofParameter<ofVec3f> positionInXZPlaneInCameraObjectSpace{ "Point in XZ plane", {1, 0, 1} };
+							ofParameter<glm::vec3> originInCameraObjectSpace{ "Origin", {0, 0, 0} };
+							ofParameter<glm::vec3> positiveXInCameraObjectSpace{ "+X", {1, 0, 0 } };
+							ofParameter<glm::vec3> positionInXZPlaneInCameraObjectSpace{ "Point in XZ plane", {1, 0, 1} };
 							PARAM_DECLARE("Calibration points"
 								, originInCameraObjectSpace
 								, positiveXInCameraObjectSpace

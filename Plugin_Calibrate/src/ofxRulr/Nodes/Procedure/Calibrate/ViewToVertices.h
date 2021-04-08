@@ -26,8 +26,8 @@ namespace ofxRulr {
 					void update();
 					void drawWorldStage();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 
 					void calibrate(); // will throw on fail

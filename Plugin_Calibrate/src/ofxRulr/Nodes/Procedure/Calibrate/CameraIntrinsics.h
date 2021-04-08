@@ -19,17 +19,17 @@ namespace ofxRulr {
 						void drawWorldStage();
 						void drawOnImage() const;
 
-						vector<ofVec2f> pointsImageSpace;
-						vector<ofVec3f> pointsObjectSpace;
+						vector<glm::vec2> pointsImageSpace;
+						vector<glm::vec3> pointsObjectSpace;
 
 						ofParameter<float> imageWidth{ "Image width", 0.0f };
 						ofParameter<float> imageHeight{ "Image height", 0.0f };
 
-						ofParameter<ofMatrix4x4> extrsinsics{ "Extrinsics", ofMatrix4x4() };
+						ofParameter<glm::mat4> extrsinsics{ "Extrinsics", glm::mat4(1.0f) };
 						ofParameter<float> reprojectionError{ "Reprojection error", 0.0f };
 					protected:
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 					};
 
 					CameraIntrinsics();
@@ -40,8 +40,8 @@ namespace ofxRulr {
 					void update();
 					void drawWorldStage();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 
 					bool getRunFinderEnabled() const;
 
@@ -61,8 +61,8 @@ namespace ofxRulr {
 
 					Utils::CaptureSet<Capture> captures;
 
-					vector<ofVec2f> currentImagePoints;
-					vector<ofVec3f> currentObjectPoints;
+					vector<glm::vec2> currentImagePoints;
+					vector<glm::vec3> currentObjectPoints;
 
 					ofParameter<float> error{ "Reprojection error [px]", 0.0f };
 

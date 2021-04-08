@@ -125,8 +125,8 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Graycode::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->parameters);
+				void Graycode::serialize(nlohmann::json & json) {
+					Utils::serialize(json, this->parameters);
 					
 					if (this->suite) {
 						json["hasData"] = true;
@@ -145,15 +145,19 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Graycode::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->parameters);
+				void Graycode::deserialize(const nlohmann::json & json) {
+					Utils::deserialize(json, this->parameters);
 
 					//load dataset
 					{
-						auto hasData = json["hasData"].asBool();
+						auto hasData = json["hasData"].get<bool>();
 						if (hasData) {
-							auto filename = json["filename"].asString();
-							this->importDataSet(filename);
+							{
+								std::string filename;
+								if (Utils::deserialize(json["filename"], filename)) {
+									this->importDataSet(filename);
+								}
+							}
 						}
 					}
 

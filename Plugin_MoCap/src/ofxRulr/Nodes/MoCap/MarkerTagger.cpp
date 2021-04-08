@@ -20,15 +20,15 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MarkerTagger::Capture::serialize(Json::Value & json) {
+			void MarkerTagger::Capture::serialize(nlohmann::json & json) {
 				{
 					auto & jsonMarkers = json["markers"];
 					for (const auto & marker : this->markers) {
-						Json::Value jsonMarker;
+						nlohmann::json jsonMarker;
 						jsonMarker["ID"] = marker.first;
 						jsonMarker["x"] = marker.second.x;
 						jsonMarker["y"] = marker.second.y;
-						jsonMarkers.append(jsonMarker);
+						jsonMarkers.push_back(jsonMarker);
 					}
 				}
 
@@ -42,31 +42,32 @@ namespace ofxRulr {
 				{
 					auto & jsonBoundingBoxes = json["boundingBoxes"];
 					for (const auto & boundingBox : this->boundingBoxes) {
-						Json::Value jsonBoundingBox;
+						nlohmann::json jsonBoundingBox;
 						jsonBoundingBox["x"] = boundingBox.x;
 						jsonBoundingBox["y"] = boundingBox.y;
 						jsonBoundingBox["width"] = boundingBox.width;
 						jsonBoundingBox["height"] = boundingBox.height;
-						jsonBoundingBox.append(jsonBoundingBox);
+						jsonBoundingBox.push_back(jsonBoundingBox);
 					}
 				}
 			}
 
 			//----------
-			void MarkerTagger::Capture::deserialize(const Json::Value & json) {
+			void MarkerTagger::Capture::deserialize(const nlohmann::json & json) {
 				{
 					const auto & jsonMarkers = json["markers"];
 					this->markers.clear();
 					for (const auto & jsonMarker : jsonMarkers) {
-						auto ID = jsonMarker["ID"].asInt();
-						auto x = jsonMarker["x"].asFloat();
-						auto y = jsonMarker["y"].asFloat();
+						auto ID = jsonMarker["ID"].get<int>();
+						auto x = jsonMarker["x"].get<float>();
+						auto y = jsonMarker["y"].get<float>();
 						this->markers.emplace(ID, cv::Point2f(x, y));
 					}
 				}
 				
 				{
-					auto filename = json["imageFilename"].asString();
+					std::string filename;
+					Utils::deserialize(json["imageFilename"], filename);
 					if (!filename.empty()) {
 						this->image = cv::imread(filename);
 					}
@@ -76,17 +77,17 @@ namespace ofxRulr {
 					this->boundingBoxes.clear();
 					const auto & jsonBoundingBoxes = json["boundingBoxes"];
 					for (auto jsonBoundingBox : jsonBoundingBoxes) {
-						auto x = jsonBoundingBox["x"].asInt();
-						auto y = jsonBoundingBox["y"].asInt();
-						auto width = jsonBoundingBox["width"].asInt();
-						auto height = jsonBoundingBox["height"].asInt();
+						auto x = jsonBoundingBox["x"].get<int>();
+						auto y = jsonBoundingBox["y"].get<int>();
+						auto width = jsonBoundingBox["width"].get<int>();
+						auto height = jsonBoundingBox["height"].get<int>();
 						this->boundingBoxes.emplace_back(x, y, width, height);
 					}
 				}
 			}
 
 			//----------
-			void MarkerTagger::Capture::tagMarker(const ofVec2f & imageCoordinate) {
+			void MarkerTagger::Capture::tagMarker(const glm::vec2 & imageCoordinate) {
 				//remove any existing markers
 				this->removeMarker(imageCoordinate);
 
@@ -110,7 +111,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MarkerTagger::Capture::removeMarker(const ofVec2f & imageCoordinate) {
+			void MarkerTagger::Capture::removeMarker(const glm::vec2 & imageCoordinate) {
 				for (const auto boundingBox : this->boundingBoxes) {
 					if (boundingBox.contains(ofxCv::toCv(imageCoordinate))) {
 						for (auto markerIt = this->markers.begin(); markerIt != this->markers.end(); ) {
@@ -139,7 +140,7 @@ namespace ofxRulr {
 							ofMesh line;
 							line.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINE_STRIP);
 							for (auto vertex : contour) {
-								line.addVertex(ofVec3f(vertex.x, vertex.y, 0.0f));
+								line.addVertex(glm::vec3(vertex.x, vertex.y, 0.0f));
 							}
 							line.draw();
 						}
@@ -161,7 +162,7 @@ namespace ofxRulr {
 							ofPushMatrix();
 							{
 								ofTranslate(ofxCv::toOf(marker.second));
-								ofxCvGui::Utils::drawToolTip(ofToString(marker.first), ofVec2f(0, 0));
+								ofxCvGui::Utils::drawToolTip(ofToString(marker.first), glm::vec2(0, 0));
 							}
 							ofPopMatrix();
 						}
@@ -214,7 +215,7 @@ namespace ofxRulr {
 						auto panel = panelWeak.lock();
 						auto capture = this->getSelection();
 						if (capture) {
-							auto panelCoordinate = ofVec3f(args.local) * panel->getPanelToImageTransform().getInverse();
+							auto panelCoordinate = Utils::applyTransform(glm::inverse(panel->getPanelToImageTransform()), args.local);
 
 							if (args.button == 0) {
 								capture->tagMarker(panelCoordinate);
@@ -235,14 +236,14 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MarkerTagger::serialize(Json::Value & json) {
-				Utils::Serializable::serialize(json, this->parameters);
+			void MarkerTagger::serialize(nlohmann::json & json) {
+				Utils::serialize(json, this->parameters);
 				this->captures.serialize(json);
 			}
 
 			//----------
-			void MarkerTagger::deserialize(const Json::Value & json) {
-				Utils::Serializable::deserialize(json, this->parameters);
+			void MarkerTagger::deserialize(const nlohmann::json & json) {
+				Utils::deserialize(json, this->parameters);
 				this->captures.deserialize(json);
 			}
 
@@ -304,15 +305,15 @@ namespace ofxRulr {
 						, capture->binary
 						, this->parameters.localDifference.threshold
 						, 255
-						, CV_THRESH_BINARY);
+						, cv::THRESH_BINARY);
 				}
 
 				//contour and bounding boxes
 				{
 					cv::findContours(capture->binary
 						, capture->contours
-						, CV_RETR_EXTERNAL
-						, CV_CHAIN_APPROX_NONE);
+						, cv::RETR_EXTERNAL
+						, cv::CHAIN_APPROX_NONE);
 
 					auto minimumArea = this->parameters.contourFilter.minimumArea.get();
 					minimumArea *= minimumArea;

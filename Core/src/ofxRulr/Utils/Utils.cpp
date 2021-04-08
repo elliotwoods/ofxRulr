@@ -45,5 +45,30 @@ namespace ofxRulr {
 
 			return output.str();
 		}
+
+		//----------
+		glm::vec3 applyTransform(const glm::mat4& matrix, const glm::vec3& vec3)
+		{
+			glm::vec4 vec4{ vec3.x, vec3.y, vec3.z, 1.0f };
+			auto result = matrix * vec4;
+			result /= result.w;
+			return {
+				result.x
+				, result.y
+				, result.z
+			};
+		}
+
+		//----------
+		glm::vec2 applyTransform(const glm::mat4& matrix, const glm::vec2& vec2)
+		{
+			glm::vec4 vec4{ vec2.x, vec2.y, 0.0f, 1.0f };
+			auto result = matrix * vec4;
+			result /= result.w;
+			return {
+				result.x
+				, result.y
+			};
+		}
 	}
 }

@@ -25,32 +25,34 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Projector::Scan::deserialize(const Json::Value & json) {
-				if (json.isMember("filename")) {
-					auto filename = json["filename"].asString();
-					ofxMessagePack::Unpacker unpacker;
-					unpacker.load(filename);
-					if (!unpacker) {
-						throw(ofxRulr::Exception("Couldn't load scan "  + filename));
+			void Projector::Scan::deserialize(const nlohmann::json & json) {
+				{
+					std::string filename;
+					if (Utils::deserialize(json["filename"], filename)) {
+						ofxMessagePack::Unpacker unpacker;
+							unpacker.load(filename);
+							if (!unpacker) {
+								throw(ofxRulr::Exception("Couldn't load scan " + filename));
+							}
+						this->projectorPixels.clear();
+							unpacker >> this->projectorPixels;
 					}
-					this->projectorPixels.clear();
-					unpacker >> this->projectorPixels;
 				}
 
-				Utils::Serializable::deserialize(json, this->cameraPosition);
+				Utils::deserialize(json, this->cameraPosition);
 
 				this->previewDirty = true;
 			}
 
 			//----------
-			void Projector::Scan::serialize(Json::Value & json) {
+			void Projector::Scan::serialize(nlohmann::json & json) {
 				ofxMessagePack::Packer packer;
 				packer << this->projectorPixels;
 				auto filename = this->getFilename();
 				packer.save(filename);
 				json["filename"] = filename;
 
-				Utils::Serializable::serialize(json, this->cameraPosition);
+				Utils::serialize(json, this->cameraPosition);
 			}
 
 			//----------
@@ -213,32 +215,35 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Projector::deserialize(const Json::Value & json) {
+			void Projector::deserialize(const nlohmann::json & json) {
 				this->scans.deserialize(json);
 
 				//unclassifiedVertices
-				if (json.isMember("unclassifiedVertices")) {
+				if (json.contains("unclassifiedVertices")) {
 					const auto & jsonUnclassifiedVertices = json["unclassifiedVertices"];
-					string filename = jsonUnclassifiedVertices["filename"].asString();
-
-					ofxMessagePack::Unpacker unpacker;
-					unpacker.load(filename);
-					unpacker >> this->unclassifiedVertices;
+					std::string filename;
+					if (Utils::deserialize(jsonUnclassifiedVertices["filename"], filename)) {
+						ofxMessagePack::Unpacker unpacker;
+						unpacker.load(filename);
+						unpacker >> this->unclassifiedVertices;
+					}
 				}
 
 				//lines
-				if (json.isMember("lines")) {
+				if (json.contains("lines")) {
 					const auto & jsonLines = json["lines"];
-					string filename = jsonLines["filename"].asString();
-
-					ofxMessagePack::Unpacker unpacker;
-					unpacker.load(filename);
-					unpacker >> this->lines;
+					std::string filename;
+					if (Utils::deserialize(jsonLines["filename"], filename)) {
+						ofxMessagePack::Unpacker unpacker;
+						unpacker.load(filename);
+						unpacker >> this->lines;
+					}
+					
 				}
 			}
 
 			//----------
-			void Projector::serialize(Json::Value & json) {
+			void Projector::serialize(nlohmann::json & json) {
 				this->scans.serialize(json);
 
 				//unclassifiedVertices
@@ -342,10 +347,10 @@ namespace ofxRulr {
 				}
 
 				virtual void cacheModel() override {
-					this->point = ofVec3f(this->parameters[0], this->parameters[1], this->parameters[2]);
+					this->point = glm::vec3(this->parameters[0], this->parameters[1], this->parameters[2]);
 				}
 
-				ofVec3f point;
+				glm::vec3 point;
 			};
 
 			//----------
@@ -464,12 +469,12 @@ namespace ofxRulr {
 				const auto initialInclusionThreshold = params.trunkThickness.get();
 				const auto minimumCount = params.minimumCount.get();
 
-				auto getNeighborhoodIndices = [&](const ofVec3f & position) {
+				auto getNeighborhoodIndices = [&](const glm::vec3 & position) {
 					//find local vertices
 					set<size_t> neighborhoodVertexIndices;
 					for (size_t iVertexOther = 0; iVertexOther < size; iVertexOther++) {
 						if (!vertexStatuses[iVertexOther].classified) {
-							if (availableVertices[iVertexOther].world.squareDistance(position) <= headSize2) {
+							if (glm::distance2(availableVertices[iVertexOther].world, position) <= headSize2) {
 								neighborhoodVertexIndices.insert(iVertexOther);
 							}
 						}
@@ -622,18 +627,18 @@ namespace ofxRulr {
 			//----------
 			//from http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 			//v=start, w=end, p=point
-			float minimum_distance(ofVec2f start, ofVec2f end, ofVec2f point) {
+			float minimum_distance(glm::vec2 start, glm::vec2 end, glm::vec2 point) {
 				// Return minimum distance between line segment vw and point p
-				const float l2 = (start - end).lengthSquared();  // i.e. |w-v|^2 -  avoid a sqrt
-				if (l2 == 0.0) return (point - start).lengthSquared();   // v == w case
+				const float l2 = glm::distance2(start, end);  // i.e. |w-v|^2 -  avoid a sqrt
+				if (l2 == 0.0) return glm::distance2(point, start);   // v == w case
 
 																		 // Consider the line extending the segment, parameterized as v + t (w - v).
 																		 // We find projection of point p onto the line.
 																		 // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-				const float t = (point - start).dot(end - start) / l2;
+				const float t = glm::dot(point - start, end - start) / l2;
 				if (t < 0.0) return (point - start).length();       // Beyond the 'v' end of the segment
 				else if (t > 1.0) return (point - end).length();  // Beyond the 'w' end of the segment
-				const ofVec2f projection = start + t * (end - start);  // Projection falls on the segment
+				const glm::vec2 projection = start + t * (end - start);  // Projection falls on the segment
 				return (point - projection).length();
 			}
 
@@ -679,7 +684,7 @@ namespace ofxRulr {
 							const auto & vertex = *it;
 
 							//transform to pixel coordinates
-							ofVec2f start, end;
+							glm::vec2 start, end;
 							{
 								start.x = ofMap(line.startProjector.x, -1, +1, 0, projectorWidth - 1);
 								start.y = ofMap(line.startProjector.y, +1, -1, 0, projectorHeight - 1);
@@ -693,7 +698,7 @@ namespace ofxRulr {
 							}
 
 							//get pixel coords of projector pixel
-							ofVec2f projector;
+							glm::vec2 projector;
 							{
 								projector.x = vertex.projector % (int)projectorWidth;
 								projector.y = vertex.projector / (int)projectorWidth;
@@ -723,8 +728,8 @@ namespace ofxRulr {
 				Utils::ScopedProcess scopedProcess("Calibrate projector");
 
 				this->throwIfMissingAConnection<Item::Projector>();
-				vector<ofVec2f> imagePoints;
-				vector<ofVec3f> worldPoints;
+				vector<glm::vec2> imagePoints;
+				vector<glm::vec3> worldPoints;
 				auto projector = this->getInput<Item::Projector>();
 				int projectorWidth = projector->getWidth();
 				int projectorHeight = projector->getHeight();
@@ -750,7 +755,7 @@ namespace ofxRulr {
 				cout << "Calibrate projector with " << imagePoints.size() << " points. Residual = " << residual << endl;
 				
 				auto view = ofxCv::makeMatrix(rotationMatrix, translation);
-				projector->setTransform(view.getInverse());
+				projector->setTransform(glm::inverse(view));
 				projector->setIntrinsics(cameraMatrix);
 
 				scopedProcess.end();
@@ -787,7 +792,7 @@ namespace ofxRulr {
 			void Projector::rebuildPreviews() {
 				{
 					ofVbo unclassifiedVerticesPreview;
-					vector<ofVec3f> vertices;
+					vector<glm::vec3> vertices;
 					for (const auto & vertex : this->unclassifiedVertices) {
 						vertices.push_back(vertex.world);
 					}
@@ -798,7 +803,7 @@ namespace ofxRulr {
 				{
 					for (auto & line : this->lines) {
 						ofVbo vbo;
-						vector<ofVec3f> vertices;
+						vector<glm::vec3> vertices;
 						for (const auto & vertex : line.vertices) {
 							vertices.push_back(vertex.world);
 						}

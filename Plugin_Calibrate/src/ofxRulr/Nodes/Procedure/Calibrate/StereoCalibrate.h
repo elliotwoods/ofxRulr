@@ -25,14 +25,14 @@ namespace ofxRulr {
 						void drawOnImageA() const;
 						void drawOnImageB() const;
 
-						vector<ofVec3f> pointsObjectSpace;
-						vector<ofVec2f> pointsImageSpaceA;
-						vector<ofVec2f> pointsImageSpaceB;
+						vector<glm::vec3> pointsObjectSpace;
+						vector<glm::vec2> pointsImageSpaceA;
+						vector<glm::vec2> pointsImageSpaceB;
 
-						vector<ofVec3f> pointsWorldSpace;
+						vector<glm::vec3> pointsWorldSpace;
 					protected:
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 					};
 
 					struct OpenCVCalibration {
@@ -57,11 +57,11 @@ namespace ofxRulr {
 					void update();
 					void drawWorldStage();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 
 					const OpenCVCalibration & getOpenCVCalibration() const;
-					vector<ofVec3f> triangulate(const vector<ofVec2f> & imagePointsA, const vector<ofVec2f> & imagePointsB, bool correctMatches);
+					vector<glm::vec3> triangulate(const vector<glm::vec2> & imagePointsA, const vector<glm::vec2> & imagePointsB, bool correctMatches);
 
 					void throwIfACameraIsDisconnected();
 					void updateTransform();

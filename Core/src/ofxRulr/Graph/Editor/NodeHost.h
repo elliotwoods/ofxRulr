@@ -28,7 +28,7 @@ namespace ofxRulr {
 				ofxLiquidEvent<ofxCvGui::MouseArguments> onReleaseMakeConnection;
 				ofxLiquidEvent<const shared_ptr<AbstractPin>> onDropInputConnection;
 
-				void serialize(Json::Value &);
+				void serialize(nlohmann::json &);
 
 			protected:
 				ofVec2f getOutputPinPosition() const;

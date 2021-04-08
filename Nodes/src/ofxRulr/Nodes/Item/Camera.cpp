@@ -82,7 +82,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Camera::serialize(Json::Value & json) {
+			void Camera::serialize(nlohmann::json & json) {
 				auto & jsonDevice = json["device"];
 				{
 					jsonDevice["width"] = this->getWidth();
@@ -95,26 +95,44 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Camera::deserialize(const Json::Value & json) {
+			void Camera::deserialize(const nlohmann::json & json) {
 				const auto & jsonDevice = json["device"];
 				{
 					//take in the saved resolution, this will be overwritten when the device is open and running
-					this->setWidth(jsonDevice["width"].asFloat());
-					this->setHeight(jsonDevice["height"].asFloat());
+					{
+						float value;
+						if (Utils::deserialize(jsonDevice["width"], value)) {
+							this->setWidth(value);
+						}
+					}
+					{
+						float value;
+							if (Utils::deserialize(jsonDevice["height"], value)) {
+								this->setHeight(value);
+							}
+					}
 				}
 
 				this->cachedInitialisationSettings = json["cachedInitialisationSettings"];
 				if (!this->grabber->getDevice()) {
-					if (this->cachedInitialisationSettings.isMember("deviceType")) {
-						this->setDevice(this->cachedInitialisationSettings["deviceType"].asString());
+					{
+						std::string value;
+						if (Utils::deserialize(this->cachedInitialisationSettings["deviceType"], value)) {
+							this->setDevice(value);
+						}
 					}
 				}
 				if (this->grabber->getDevice()) {
-					if (this->cachedInitialisationSettings["isOpen"].asBool()) {
-						try {
-							this->openDevice();
+					{
+						bool value;
+						if (Utils::deserialize(this->cachedInitialisationSettings["isOpen"], value)) {
+							if (value) {
+								try {
+									this->openDevice();
+								}
+								RULR_CATCH_ALL_TO_ALERT;
+							}
 						}
-						RULR_CATCH_ALL_TO_ALERT;
 					}
 				}
 			}
@@ -446,22 +464,21 @@ namespace ofxRulr {
 				if (this->initialisationSettings) {
 					this->cachedInitialisationSettings["deviceType"] = this->grabber->getDeviceTypeName();
 					this->cachedInitialisationSettings["isOpen"] = this->grabber->getIsDeviceOpen();
-					Utils::Serializable::serialize(this->cachedInitialisationSettings["content"], *this->initialisationSettings);
+					Utils::serialize(this->cachedInitialisationSettings["content"], *this->initialisationSettings);
 				}
 			}
 
 			//----------
 			void Camera::applyAnyCachedInitialisationSettings(shared_ptr<ofxMachineVision::Device::Base::InitialisationSettings> initialisationSettings) {
-				auto cachedDeviceType = this->cachedInitialisationSettings["deviceType"].asString();
-				if (initialisationSettings
-					&& this->grabber->getDeviceTypeName() == cachedDeviceType) {
-					try {
-						Utils::Serializable::deserialize(this->cachedInitialisationSettings["content"], *initialisationSettings);
-					}
-					catch (...) {
-
+				std::string cachedDeviceType;
+				if (Utils::deserialize(this->cachedInitialisationSettings["deviceType"], cachedDeviceType)) {
+					// If we have initialisation settings and they're the right type, deserialise them
+					if (initialisationSettings
+						&& this->grabber->getDeviceTypeName() == cachedDeviceType) {
+						Utils::deserialize(this->cachedInitialisationSettings["content"], *initialisationSettings);
 					}
 				}
+				
 			}
 		}
 	}

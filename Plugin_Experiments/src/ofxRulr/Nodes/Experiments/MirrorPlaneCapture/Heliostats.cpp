@@ -42,12 +42,12 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Heliostats::serialize(Json::Value & json) {
+				void Heliostats::serialize(nlohmann::json & json) {
 					this->heliostats.serialize(json["heliostats"]);
 				}
 
 				//----------
-				void Heliostats::deserialize(const Json::Value & json) {
+				void Heliostats::deserialize(const nlohmann::json & json) {
 					this->heliostats.deserialize(json["heliostats"]);
 				}
 
@@ -98,9 +98,9 @@ namespace ofxRulr {
 					ofPushMatrix();
 					{
 						ofTranslate(this->position);
-						ofRotate(this->rotationY.get(), 0, 1, 0);
+						ofRotateDeg(this->rotationY.get(), 0, 1, 0);
 						ofDrawAxis(0.1f);
-						ofDrawBitmapString(this->name, ofVec3f());
+						ofDrawBitmapString(this->name, glm::vec3());
 
 						ofTranslate(0.0f, -0.095f, 0.0f);
 						ofPushStyle();
@@ -130,22 +130,22 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Heliostats::Heliostat::serialize(Json::Value & json) {
-					Utils::Serializable::serialize(json, this->name);
-					Utils::Serializable::serialize(json, this->position);
-					Utils::Serializable::serialize(json, this->rotationY);
-					Utils::Serializable::serialize(json, this->axis1Servo);
-					Utils::Serializable::serialize(json, this->axis2Servo);
+				void Heliostats::Heliostat::serialize(nlohmann::json & json) {
+					Utils::serialize(json, this->name);
+					Utils::serialize(json, this->position);
+					Utils::serialize(json, this->rotationY);
+					Utils::serialize(json, this->axis1Servo);
+					Utils::serialize(json, this->axis2Servo);
 					this->captures.serialize(json["captures"]);
 				}
 
 				//----------
-				void Heliostats::Heliostat::deserialize(const Json::Value & json) {
-					Utils::Serializable::deserialize(json, this->name);
-					Utils::Serializable::deserialize(json, this->position);
-					Utils::Serializable::deserialize(json, this->rotationY);
-					Utils::Serializable::deserialize(json, this->axis1Servo);
-					Utils::Serializable::deserialize(json, this->axis2Servo);
+				void Heliostats::Heliostat::deserialize(const nlohmann::json & json) {
+					Utils::deserialize(json, this->name);
+					Utils::deserialize(json, this->position);
+					Utils::deserialize(json, this->rotationY);
+					Utils::deserialize(json, this->axis1Servo);
+					Utils::deserialize(json, this->axis2Servo);
 					this->captures.deserialize(json["captures"]);
 				}
 
@@ -153,7 +153,7 @@ namespace ofxRulr {
 				void Heliostats::Heliostat::calcPosition(float axis2ToPlaneLength /*= 0.15f*/) {
 					auto captures = this->captures.getSelection();
 					if (!captures.empty()) {
-						ofVec3f accumulator;
+						glm::vec3 accumulator;
 						for (auto capture : captures) {
 							auto backPosition = capture->mirrorPlane.meanWorldPoint
 								- capture->mirrorPlane.plane.getNormal()
@@ -174,7 +174,7 @@ namespace ofxRulr {
 						element->addChild(widget0);
 					}
 
-					auto widget1 = make_shared<ofxCvGui::Widgets::EditableValue<ofVec3f>>(this->position);
+					auto widget1 = make_shared<ofxCvGui::Widgets::EditableValue<glm::vec3>>(this->position);
 					{
 						element->addChild(widget1);
 					}

@@ -22,8 +22,8 @@ namespace ofxRulr {
 				void update();
 				ofxCvGui::PanelPtr getPanel() override;
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				void setDevice(const string & deviceTypeName);
 				void setDevice(ofxMachineVision::DevicePtr, shared_ptr<ofxMachineVision::Device::Base::InitialisationSettings> = nullptr);
@@ -55,7 +55,7 @@ namespace ofxRulr {
 				shared_ptr<ofxMachineVision::Grabber::Simple> grabber; // this object should never be deallocated (otherwise other nodes will break)
 				shared_ptr<ofxMachineVision::Device::Base::InitialisationSettings> initialisationSettings;
 				
-				Json::Value cachedInitialisationSettings;
+				nlohmann::json cachedInitialisationSettings;
 
 				ofParameter<bool> showSpecification;
 				ofParameter<bool> showFocusLine;

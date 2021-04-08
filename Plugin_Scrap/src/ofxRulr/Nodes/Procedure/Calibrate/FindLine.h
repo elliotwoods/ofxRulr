@@ -34,8 +34,8 @@ namespace ofxRulr {
 
 					ofxCvGui::PanelPtr getPanel() override;
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 
 					shared_ptr<OutputFrame> findLine(ofPixels foreground, ofPixels background);

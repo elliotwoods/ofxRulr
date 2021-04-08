@@ -126,46 +126,52 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void MarkerMap::serialize(Json::Value & json) {
+			void MarkerMap::serialize(nlohmann::json & json) {
 				if (this->markerMap) {
 					auto & jsonMarkerMap = json["markerMap"];
 					jsonMarkerMap["mInfoType"] = this->markerMap->mInfoType;
 					jsonMarkerMap["dictionary"] = this->markerMap->getDictionary();
 					auto & jsonMarkers = jsonMarkerMap["markers"];
 					for (const auto & marker : *this->markerMap) {
-						Json::Value jsonMarker;
+						nlohmann::json jsonMarker;
 						jsonMarker["id"] = marker.id;
 						auto & jsonPoints = jsonMarker["points"];
 						for (const auto & point : marker.points) {
-							Json::Value jsonPoint;
-							jsonPoint.append(point.x);
-							jsonPoint.append(point.y);
-							jsonPoint.append(point.z);
-							jsonPoints.append(jsonPoint);
+							nlohmann::json jsonPoint;
+							Utils::serialize(jsonPoint, ofxCv::toOf(point));
+							jsonPoints.push_back(jsonPoint);
 						}
-						jsonMarkers.append(jsonMarker);
+						jsonMarkers.push_back(jsonMarker);
 					}
 				}
 			}
 
 			//----------
-			void MarkerMap::deserialize(const Json::Value & json) {
-				if (json.isMember("markerMap")) {
+			void MarkerMap::deserialize(const nlohmann::json & json) {
+				if (json.contains("markerMap")) {
 					auto markerMap = make_shared<aruco::MarkerMap>();
 					const auto & jsonMarkerMap = json["markerMap"];
-					markerMap->mInfoType = jsonMarkerMap["mInfoType"].asInt();
-					markerMap->setDictionary(jsonMarkerMap["dictionary"].asString());
+					{
+						int value;
+						if (Utils::deserialize(jsonMarkerMap["mInfoType"], value)) {
+							markerMap->mInfoType = value;
+						}
+					}
+					{
+						std::string value;
+						if (Utils::deserialize(jsonMarkerMap["dictionary"], value)) {
+							markerMap->setDictionary(value);
+						}
+					}
 					const auto & jsonMarkers = jsonMarkerMap["markers"];
 					for (const auto & jsonMarker : jsonMarkers) {
 						aruco::Marker3DInfo marker;
-						marker.id = jsonMarker["id"].asInt();
+						marker.id = jsonMarker["id"].get<int>();
 						const auto & jsonPoints = jsonMarker["points"];
 						for (const auto & jsonPoint : jsonPoints) {
-							cv::Point3f point;
-							point.x = jsonPoint[0].asFloat();
-							point.y = jsonPoint[1].asFloat();
-							point.z = jsonPoint[2].asFloat();
-							marker.push_back(point);
+							glm::vec3 point;
+							Utils::deserialize(jsonPoint, point);
+							marker.push_back(ofxCv::toCv(point));
 						}
 						markerMap->push_back(marker);
 					}
@@ -189,7 +195,7 @@ namespace ofxRulr {
 					auto transform = ofMatrix4x4::newRotationMatrix(angle, axis);
 					for (auto & marker : *this->markerMap) {
 						for (auto & point : marker.points) {
-							point = ofxCv::toCv(ofxCv::toOf(point) * transform);
+							point = ofxCv::toCv(Utils::applyTransform(transform, ofxCv::toOf(point)));
 						}
 					}
 				}

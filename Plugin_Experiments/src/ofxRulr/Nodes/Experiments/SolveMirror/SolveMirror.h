@@ -32,8 +32,8 @@ namespace ofxRulr {
 					};
 
 					struct PlaneDataPoint {
-						ofVec3f realPosition;
-						ofVec3f virtualPosition;
+						glm::vec3 realPosition;
+						glm::vec3 virtualPosition;
 					};
 
 					class PlaneModel : public ofxNonLinearFit::Models::Base<PlaneDataPoint, PlaneModel> {

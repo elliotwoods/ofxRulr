@@ -309,7 +309,7 @@ namespace ofxRulr {
 						plane.boardTransform = ofxCv::makeMatrix(rotation, translation) * cameraTransform;
 
 						for (const auto & objectPoint : plane.objectPoints) {
-							plane.worldPoints.push_back(ofxCv::toOf(objectPoint) * plane.boardTransform);
+							plane.worldPoints.push_back(Utils::applyTransform(plane.boardTransform, ofxCv::toOf(objectPoint)));
 						}
 
 						if (!plane.plane.fitToPoints(plane.worldPoints, plane.planeFitResidual)) {
@@ -333,16 +333,16 @@ namespace ofxRulr {
 					//solve mirror plane
 					{
 						//choose an object point to use
-						capture->testObjectPoint = (capture->realPlane.meanObjectPoint + capture->virtualPlane.meanObjectPoint * ofVec3f(1, -1, 1)) / 2.0f;
+						capture->testObjectPoint = (capture->realPlane.meanObjectPoint + capture->virtualPlane.meanObjectPoint * glm::vec3(1, -1, 1)) / 2.0f;
 
 						//get the test points in real and virtual planes
-						capture->realPlane.testPointWorld = capture->testObjectPoint * capture->realPlane.boardTransform;
-						capture->virtualPlane.testPointWorld = (capture->testObjectPoint * ofVec3f(1, -1, 1)) * capture->virtualPlane.boardTransform;
+						capture->realPlane.testPointWorld = Utils::applyTransform(capture->realPlane.boardTransform, capture->testObjectPoint);
+						capture->virtualPlane.testPointWorld = Utils::applyTransform(capture->virtualPlane.boardTransform, capture->testObjectPoint * glm::vec3(1, -1, 1));
 
 						capture->mirrorPlane = ofxRay::Plane();
 						capture->mirrorPlane.setInfinite(true);
 						capture->mirrorPlane.setCenter((capture->realPlane.testPointWorld + capture->virtualPlane.testPointWorld) / 2.0f);
-						capture->mirrorPlane.setNormal((capture->realPlane.testPointWorld - capture->virtualPlane.testPointWorld).getNormalized());
+						capture->mirrorPlane.setNormal(glm::normalize(capture->realPlane.testPointWorld - capture->virtualPlane.testPointWorld));
 
 
 						//where is the test point reflected?
@@ -351,7 +351,7 @@ namespace ofxRulr {
 
 							//ray to test point in reflection
 							auto rayToReflectionPoint = ofxRay::Ray(camera->getPosition()
-								, ofVec3f()
+								, glm::vec3()
 								, capture->color
 								, false);
 
@@ -375,7 +375,7 @@ namespace ofxRulr {
 					if (this->parameters.logToServer.enabled) {
 						try {
 							Utils::ScopedProcess scopedProcessLogToServer("Log to server");
-							Json::Value requestJson;
+							nlohmann::json requestJson;
 
 							{
 								auto & data = requestJson["data"];
@@ -389,7 +389,7 @@ namespace ofxRulr {
 
 							ofHttpRequest request(this->parameters.logToServer.address.get(), "log");
 							request.method = ofHttpRequest::Method::POST;
-							request.body = requestJson.toStyledString();
+							request.body = requestJson.dump(4);
 							request.contentType = "application/json";
 
 							ofURLFileLoader urlLoader;
@@ -460,16 +460,16 @@ namespace ofxRulr {
 					ofPushMatrix();
 					{
 						ofQuaternion rotation;
-						rotation.makeRotate(ofVec3f(0, 0, 1), this->mirrorPlane.getNormal());
+						rotation.makeRotate(glm::vec3(0, 0, 1), this->mirrorPlane.getNormal());
 
 						ofTranslate(this->mirrorPlane.getCenter());
-						ofMultMatrix(ofMatrix4x4(rotation));
+						ofMultMatrix(glm::mat4((glm::quat)rotation));
 
 						ofPushStyle();
 						{
 							ofSetColor(this->color);
 							ofNoFill();
-							ofDrawCircle(ofVec3f(), 0.35f / 2.0f);
+							ofDrawCircle(glm::vec3(), 0.35f / 2.0f);
 						}
 						ofPopStyle();
 					}

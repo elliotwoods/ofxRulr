@@ -40,12 +40,13 @@ namespace ofxRulr {
 			this->onPopulateInspector.addListener([this](ofxCvGui::InspectArguments & args) {
 				this->populateInspector(args);
 			}, this, 99999); // populate the inspector with this at the top. We call notify in reverse for inheritance
-			this->onSerialize.addListener([this](Json::Value & json) {
+			this->onSerialize.addListener([this](nlohmann::json & json) {
 				json["whenDrawOnWorldStage"] = (int) this->whenDrawOnWorldStage;
 			}, this);
-			this->onDeserialize.addListener([this](const Json::Value & json) {
-				if (json.isMember("whenDrawOnWorldStage")) {
-					this->whenDrawOnWorldStage = (WhenDrawOnWorldStage::Options) json["whenDrawOnWorldStage"].asInt();
+			this->onDeserialize.addListener([this](const nlohmann::json & json) {
+				int whenDrawOnWorldStageInt;
+				if (Utils::deserialize(json["whenDrawOnWorldStage"], whenDrawOnWorldStageInt)) {
+					this->whenDrawOnWorldStage = (WhenDrawOnWorldStage::Options) whenDrawOnWorldStageInt;
 				}
 			}, this);
 
@@ -249,11 +250,11 @@ namespace ofxRulr {
 
 		//----------
 		void Base::manageParameters(ofParameterGroup & parameters, bool addToInspector) {
-			this->onSerialize += [&parameters](Json::Value & json) {
-				Utils::Serializable::serialize(json, parameters);
+			this->onSerialize += [&parameters](nlohmann::json & json) {
+				Utils::serialize(json, parameters);
 			};
-			this->onDeserialize += [&parameters](const Json::Value & json) {
-				Utils::Serializable::deserialize(json, parameters);
+			this->onDeserialize += [&parameters](const nlohmann::json & json) {
+				Utils::deserialize(json, parameters);
 			};
 			if (addToInspector) {
 				this->onPopulateInspector += [&parameters](ofxCvGui::InspectArguments & args) {
