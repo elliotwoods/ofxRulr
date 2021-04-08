@@ -69,15 +69,15 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraFromKinectV2::serialize(Json::Value & json) {
+				void CameraFromKinectV2::serialize(nlohmann::json & json) {
 					this->captures.serialize(json);
-					json["error"] = this->error;
+					Utils::serialize(json["error"], this->error);
 				}
 
 				//----------
-				void CameraFromKinectV2::deserialize(const Json::Value & json) {
+				void CameraFromKinectV2::deserialize(const nlohmann::json & json) {
 					this->captures.deserialize(json);
-					this->error = json["error"].asFloat();
+					Utils::deserialize(json, "error", this->error);
 				}
 
 				//----------
@@ -157,7 +157,7 @@ namespace ofxRulr {
 					ofFloatPixels kinectCameraToWorldMap;
 					kinectDevice->getDepthSource()->getWorldInColorFrame(kinectCameraToWorldMap);
 
-					auto kinectCameraToWorldPointer = (ofVec3f*)kinectCameraToWorldMap.getData();
+					auto kinectCameraToWorldPointer = (glm::vec3*)kinectCameraToWorldMap.getData();
 					auto kinectCameraWidth = kinectCameraToWorldMap.getWidth();
 					int pointIndex = 0;
 
@@ -202,13 +202,13 @@ namespace ofxRulr {
 					auto kinect = this->getInput<Item::KinectV2>();
 					auto kinectTransform = kinect->getTransform();
 
-					vector<ofVec3f> worldPoints;
-					vector<ofVec2f> cameraPoints;
+					vector<glm::vec3> worldPoints;
+					vector<glm::vec2> cameraPoints;
 
 					auto captures = this->captures.getSelection();
 					for (auto capture : captures) {
 						for (auto objectPoint : capture->kinectObjectSpace) {
-							worldPoints.push_back(ofxCv::toOf(objectPoint) * kinectTransform);
+							worldPoints.push_back(Utils::applyTransform(kinectTransform, ofxCv::toOf(objectPoint)));
 						}
 						for (auto cameraImageSpacePoint : capture->cameraImageSpace) {
 							cameraPoints.push_back(ofxCv::toOf(cameraImageSpacePoint));
@@ -224,8 +224,8 @@ namespace ofxRulr {
 					vector<cv::Mat> rotations, translations;
 
 					//fix intrinsics
-					int flags = CV_CALIB_FIX_K1 | CV_CALIB_FIX_K2 | CV_CALIB_FIX_K3 | CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5 | CV_CALIB_FIX_K6 | CV_CALIB_ZERO_TANGENT_DIST | CV_CALIB_USE_INTRINSIC_GUESS;
-					flags |= CV_CALIB_FIX_PRINCIPAL_POINT | CV_CALIB_FIX_ASPECT_RATIO | CV_CALIB_FIX_FOCAL_LENGTH;
+					int flags = cv::CALIB_FIX_K1 | cv::CALIB_FIX_K2 | cv::CALIB_FIX_K3 | cv::CALIB_FIX_K4 | cv::CALIB_FIX_K5 | cv::CALIB_FIX_K6 | cv::CALIB_ZERO_TANGENT_DIST | cv::CALIB_USE_INTRINSIC_GUESS;
+					flags |= cv::CALIB_FIX_PRINCIPAL_POINT | cv::CALIB_FIX_ASPECT_RATIO | cv::CALIB_FIX_FOCAL_LENGTH;
 
 					auto width = this->getInput<Item::Camera>()->getWidth();
 					auto height = this->getInput<Item::Camera>()->getHeight();
@@ -344,7 +344,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraFromKinectV2::Capture::serialize(Json::Value & json) {
+				void CameraFromKinectV2::Capture::serialize(nlohmann::json & json) {
 					json["kinectObjectSpace"] << ofxCv::toOf(this->kinectImageSpace);
 					json["kinectObjectSpace"] << ofxCv::toOf(this->kinectObjectSpace);
 					json["cameraImageSpace"] << ofxCv::toOf(this->cameraImageSpace);
@@ -352,7 +352,7 @@ namespace ofxRulr {
 				}
 
 				//----------
- 				void CameraFromKinectV2::Capture::deserialize(const Json::Value & json) {
+ 				void CameraFromKinectV2::Capture::deserialize(const nlohmann::json & json) {
 					json["kinectObjectSpace"] >> ofxCv::toOf(this->kinectImageSpace);
 					json["kinectObjectSpace"] >> ofxCv::toOf(this->kinectObjectSpace);
  					json["cameraImageSpace"] >> ofxCv::toOf(this->cameraImageSpace);

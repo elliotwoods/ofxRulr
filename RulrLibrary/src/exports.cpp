@@ -4,4 +4,3 @@
 #include "ofMain.h"
 #include "ofxRulr.h"
 
-__declspec(dllexport) ofPixels;

@@ -37,12 +37,12 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void EnttecUsbPro::serialize(Json::Value & json) {
+			void EnttecUsbPro::serialize(nlohmann::json & json) {
 				Utils::serialize(json, this->portName);
 			}
 
 			//----------
-			void EnttecUsbPro::deserialize(const Json::Value & json) {
+			void EnttecUsbPro::deserialize(const nlohmann::json & json) {
 				Utils::deserialize(json, this->portName);
 				this->connect();
 			}

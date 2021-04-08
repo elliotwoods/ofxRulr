@@ -67,7 +67,7 @@ namespace ofxRulr {
 				
 				{
 					std::string filename;
-					Utils::deserialize(json["imageFilename"], filename);
+					Utils::deserialize(json, "imageFilename", filename);
 					if (!filename.empty()) {
 						this->image = cv::imread(filename);
 					}

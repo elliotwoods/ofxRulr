@@ -154,7 +154,7 @@ namespace ofxRulr {
 						if (hasData) {
 							{
 								std::string filename;
-								if (Utils::deserialize(json["filename"], filename)) {
+								if (Utils::deserialize(json, "filename", filename)) {
 									this->importDataSet(filename);
 								}
 							}
@@ -495,9 +495,9 @@ namespace ofxRulr {
 						auto value = static_cast<unsigned char>(this->parameters.scan.brightness.get());
 						
 						testPatternPixels.allocate(width, height, 1);
-						for(int j=0; j<height; j++) {
+						for(uint32_t j=0; j<height; j++) {
 							auto pixel = &testPatternPixels[j * width];
-							for(int i=0; i<width; i++) {
+							for(uint32_t i=0; i<width; i++) {
 								*pixel++ = i % 2 == j % 2 ? value : 0; //checkerboard per pixel
 							}
 						}

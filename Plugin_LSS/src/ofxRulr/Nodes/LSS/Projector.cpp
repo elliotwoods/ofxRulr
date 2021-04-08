@@ -28,7 +28,7 @@ namespace ofxRulr {
 			void Projector::Scan::deserialize(const nlohmann::json & json) {
 				{
 					std::string filename;
-					if (Utils::deserialize(json["filename"], filename)) {
+					if (Utils::deserialize(json, "filename", filename)) {
 						ofxMessagePack::Unpacker unpacker;
 							unpacker.load(filename);
 							if (!unpacker) {

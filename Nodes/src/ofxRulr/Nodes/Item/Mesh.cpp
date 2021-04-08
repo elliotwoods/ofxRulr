@@ -304,7 +304,7 @@ namespace ofxRulr {
 					if (this->modelLoader) {
 						auto meshCount = this->modelLoader->getNumMeshes();
 						vector<size_t> vertexCounts;
-						for (int i = 0; i < meshCount; i++) {
+						for (uint32_t i = 0; i < meshCount; i++) {
 							vertexCounts.push_back(this->modelLoader->getMesh(i).getNumVertices());
 						}
 						size_t totalCount = 0;

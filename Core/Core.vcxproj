@@ -159,6 +159,9 @@
     <ProjectReference Include="..\..\..\addons\ofxSingleton\ofxSingletonLib\ofxSingleton.vcxproj">
       <Project>{4d3bcfdd-e65d-4247-b303-e0839caec6a6}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\ofxCanon\ofxCanonLib\ofxCanonLib.vcxproj">
+      <Project>{b6ef2661-4d10-4dae-b4cf-bd0a92ea864c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\ofxSpout\ofxSpoutLib\ofxSpout.vcxproj">
       <Project>{3985ee69-9945-40c4-839b-c21a17d5f151}</Project>
     </ProjectReference>

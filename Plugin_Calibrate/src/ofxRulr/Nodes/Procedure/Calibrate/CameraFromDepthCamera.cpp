@@ -83,7 +83,7 @@ namespace ofxRulr {
 						jsonCorrespondence["cameraNormalized"] << correspondence.cameraNormalized;
 					}
 					
-					Utils::serialize(json["error"], this->error);
+					Utils::serialize(json, "error", this->error);
 				}
 				
 				//----------
@@ -98,7 +98,7 @@ namespace ofxRulr {
 						this->correspondences.push_back(correspondence);
 					}
 					
-					Utils::deserialize(json["error"], this->error);
+					Utils::deserialize(json, "error", this->error);
 				}
 				
 				//----------

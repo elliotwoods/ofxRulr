@@ -5,8 +5,7 @@
 int main() {
 	ofGLFWWindowSettings windowSettings;
 	windowSettings.setGLVersion(RULR_GL_VERSION_MAJOR, RULR_GL_VERSION_MINOR);
-	windowSettings.width = 1920;
-	windowSettings.height = 1080;
+	windowSettings.setSize(1920, 1080);
 	windowSettings.depthBits = 32;
 	auto window = ofCreateWindow(windowSettings);
 

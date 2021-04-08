@@ -44,6 +44,7 @@ namespace ofxRulr {
 	catch (ofxRulr::Exception e) { X; } \
 	catch (cv::Exception e) { X; } \
 	catch (ofxMachineVision::Exception e) { X; } \
+	catch (nlohmann::json::exception e) { X; } \
 	catch (std::exception e) { X; }
 
 #define RULR_CATCH_ALL_TO_ALERT \

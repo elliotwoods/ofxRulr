@@ -5,19 +5,19 @@ namespace ofxRulr {
 #pragma mark ofxRay
 		//----------
 		void serialize(nlohmann::json& json, const ofxRay::Ray & value) {
-			Utils::serialize(json["s"], value.s);
-			Utils::serialize(json["t"], value.t);
-			Utils::serialize(json["color"], value.color);
-			Utils::serialize(json["define"], value.defined);
+			Utils::serialize(json, "s", value.s);
+			Utils::serialize(json, "t", value.t);
+			Utils::serialize(json, "color", value.color);
+			Utils::serialize(json, "define", value.defined);
 		}
 
 		//----------
-		bool deserialize(nlohmann::json& json, ofxRay::Ray& value) {
+		bool deserialize(const nlohmann::json& json, ofxRay::Ray& value) {
 			if (json.is_object()) {
-				Utils::serialize(json["s"], value.s);
-				Utils::serialize(json["t"], value.t);
-				Utils::serialize(json["color"], value.color);
-				Utils::serialize(json["define"], value.defined);
+				Utils::deserialize(json, "s", value.s);
+				Utils::deserialize(json, "t", value.t);
+				Utils::deserialize(json, "color", value.color);
+				Utils::deserialize(json, "define", value.defined);
 				return true;
 			}
 			else {
@@ -33,7 +33,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		bool deserialize(nlohmann::json& json, ofxRay::Plane& value) {
+		bool deserialize(const nlohmann::json& json, ofxRay::Plane& value) {
 			std::string text;
 			if (Utils::deserialize(json, text)) {
 				stringstream ss(text);

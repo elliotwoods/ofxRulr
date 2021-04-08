@@ -7,11 +7,16 @@
 
 #pragma once
 
+
 namespace ofxRulr {
 	namespace Utils {
 #define DECLARE_SERIALIZE_VAR(TYPE) \
-	OFXRULR_API_ENTRY void serialize(nlohmann::json&, const TYPE &); \
-	OFXRULR_API_ENTRY bool deserialize(const nlohmann::json&, TYPE &);
+		OFXRULR_API_ENTRY void serialize(nlohmann::json&, const TYPE &); \
+		OFXRULR_API_ENTRY bool deserialize(const nlohmann::json&, TYPE &);
+
+#define DEFINE_SERIALIZE_VAR(TYPE) \
+		void serialize(nlohmann::json& json, const TYPE& value) { _serialize(json, value); } \
+		bool deserialize(const nlohmann::json& json, TYPE& value) { return _deserialize(json, value); }
 
 		// json >> value; //deserialize
 		// json << value; //serialize
@@ -66,6 +71,19 @@ namespace ofxRulr {
 			else {
 				return false;
 			}
+		}
+
+		template<class Type>
+		void serialize(nlohmann::json& json, const std::string& address, const Type& value) {
+			serialize(json[address], value);
+		}
+
+		template<class Type>
+		bool deserialize(const nlohmann::json& json, const std::string& address, Type& value) {
+			if (!json.contains(address)) {
+				return false;
+			}
+			return deserialize(json[address], value);
 		}
 		//
 		//--

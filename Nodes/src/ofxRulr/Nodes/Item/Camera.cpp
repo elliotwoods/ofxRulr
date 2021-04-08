@@ -96,8 +96,8 @@ namespace ofxRulr {
 
 			//----------
 			void Camera::deserialize(const nlohmann::json & json) {
-				const auto & jsonDevice = json["device"];
-				{
+				if (json.contains("device")) {
+					const auto& jsonDevice = json["device"];
 					//take in the saved resolution, this will be overwritten when the device is open and running
 					{
 						float value;
@@ -107,30 +107,32 @@ namespace ofxRulr {
 					}
 					{
 						float value;
-							if (Utils::deserialize(jsonDevice["height"], value)) {
-								this->setHeight(value);
-							}
-					}
-				}
-
-				this->cachedInitialisationSettings = json["cachedInitialisationSettings"];
-				if (!this->grabber->getDevice()) {
-					{
-						std::string value;
-						if (Utils::deserialize(this->cachedInitialisationSettings["deviceType"], value)) {
-							this->setDevice(value);
+						if (Utils::deserialize(jsonDevice["height"], value)) {
+							this->setHeight(value);
 						}
 					}
 				}
-				if (this->grabber->getDevice()) {
-					{
-						bool value;
-						if (Utils::deserialize(this->cachedInitialisationSettings["isOpen"], value)) {
-							if (value) {
-								try {
-									this->openDevice();
+				
+				if (json.contains("cachedInitialisationSettings")) {
+					this->cachedInitialisationSettings = json["cachedInitialisationSettings"];
+					if (!this->grabber->getDevice()) {
+						{
+							std::string value;
+							if (Utils::deserialize(this->cachedInitialisationSettings["deviceType"], value)) {
+								this->setDevice(value);
+							}
+						}
+					}
+					if (this->grabber->getDevice()) {
+						{
+							bool value;
+							if (Utils::deserialize(this->cachedInitialisationSettings["isOpen"], value)) {
+								if (value) {
+									try {
+										this->openDevice();
+									}
+									RULR_CATCH_ALL_TO_ALERT;
 								}
-								RULR_CATCH_ALL_TO_ALERT;
 							}
 						}
 					}

@@ -98,19 +98,19 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void ProjectorFromKinectV2::serialize(Json::Value & json) {
+				void ProjectorFromKinectV2::serialize(nlohmann::json & json) {
 					Utils::serialize(json, this->parameters);
 
 					this->captures.serialize(json);
-					json["error"] = this->error;
+					Utils::serialize(json, "error", this->error);
 				}
 
 				//----------
-				void ProjectorFromKinectV2::deserialize(const Json::Value & json) {
+				void ProjectorFromKinectV2::deserialize(const nlohmann::json & json) {
 					Utils::deserialize(json, this->parameters);
 
 					this->captures.deserialize(json);
-					this->error = json["error"].asFloat();
+					Utils::deserialize(json, "error", this->error);
 				}
 
 				//----------
@@ -125,10 +125,10 @@ namespace ofxRulr {
 					//flip the camera image
 					cv::flip(colorImage, colorImage, 1);
 
-					vector<ofVec2f> cameraPoints;
+					vector<glm::vec2> cameraPoints;
 					{
 						cv::Mat colorAsGrayscale;
-						cv::cvtColor(colorImage, colorAsGrayscale, CV_RGBA2GRAY);
+						cv::cvtColor(colorImage, colorAsGrayscale, cv::COLOR_RGBA2GRAY);
 						if (!ofxCv::findChessboardCornersPreTest(colorAsGrayscale, cv::Size(this->parameters.checkerboardCornersX, this->parameters.checkerboardCornersY), toCv(cameraPoints))) {
 							throw(ofxRulr::Exception("Checkerboard not found in color image"));
 						}
@@ -142,7 +142,7 @@ namespace ofxRulr {
 
 					ofFloatPixels cameraToWorldMap;
 					kinectDevice->getDepthSource()->getWorldInColorFrame(cameraToWorldMap);
-					auto cameraToWorldPointer = (ofVec3f*)cameraToWorldMap.getData();
+					auto cameraToWorldPointer = (glm::vec3*)cameraToWorldMap.getData();
 					auto cameraWidth = cameraToWorldMap.getWidth();
 					auto checkerboardCorners = toOf(ofxCv::makeCheckerboardPoints(cv::Size(this->parameters.checkerboardCornersX, this->parameters.checkerboardCornersY), this->parameters.checkerboardScale, true));
 					int pointIndex = 0;
@@ -157,7 +157,7 @@ namespace ofxRulr {
 
 						capture->cameraImagePoints.push_back(cameraPoint);
 						capture->worldSpace.push_back(worldSpace);
-						capture->projectorImageSpace.push_back((ofVec2f)checkerboardCorners[pointIndex] + ofVec2f(this->parameters.checkerboardPositionX, this->parameters.checkerboardPositionY));
+						capture->projectorImageSpace.push_back((glm::vec2)checkerboardCorners[pointIndex] + glm::vec2(this->parameters.checkerboardPositionX, this->parameters.checkerboardPositionY));
 						pointIndex++;
 					}
 					this->captures.add(capture);
@@ -174,8 +174,8 @@ namespace ofxRulr {
 					projector->setWidth(videoOutput->getWidth());
 					projector->setHeight(videoOutput->getHeight());
 
-					vector<ofVec3f> worldPoints;
-					vector<ofVec2f> projectorPoints;
+					vector<glm::vec3> worldPoints;
+					vector<glm::vec2> projectorPoints;
 
 					auto captures = this->captures.getSelection();
 					for (auto capture : captures) {
@@ -187,14 +187,18 @@ namespace ofxRulr {
 						}
 					}
 					cv::Mat cameraMatrix, rotation, translation;
-					this->error = ofxCv::calibrateProjector(cameraMatrix, rotation, translation,
-						worldPoints, projectorPoints,
-						this->getInput<Item::Projector>()->getWidth(), this->getInput<Item::Projector>()->getHeight(),
-						true,
-						this->parameters.initialLensOffset, 1.4f, this->parameters.trimOutliers);
+					this->error = ofxCv::calibrateProjector(cameraMatrix
+						, rotation
+						, translation
+						, worldPoints
+						, projectorPoints
+						, this->getInput<Item::Projector>()->getWidth()
+						, this->getInput<Item::Projector>()->getHeight()
+						, true
+						, this->parameters.initialLensOffset, 1.4f, this->parameters.trimOutliers);
 
 					auto view = ofxCv::makeMatrix(rotation, translation);
-					projector->setTransform(view.getInverse());
+					projector->setTransform(glm::inverse(view));
 					projector->setIntrinsics(cameraMatrix);
 				}
 
@@ -281,13 +285,13 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void ProjectorFromKinectV2::Capture::serialize(Json::Value & json) {
+				void ProjectorFromKinectV2::Capture::serialize(nlohmann::json & json) {
 					json["worldSpace"] >> this->worldSpace;
 					json["projectorImageSpace"] >> this->projectorImageSpace;
 				}
 
 				//----------
-				void ProjectorFromKinectV2::Capture::deserialize(const Json::Value & json) {
+				void ProjectorFromKinectV2::Capture::deserialize(const nlohmann::json & json) {
 					json["worldSpace"] >> this->worldSpace;
 					json["projectorImageSpace"] >> this->projectorImageSpace;
 				}

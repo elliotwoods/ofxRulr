@@ -12,7 +12,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
-			class RULR_EXPORTS Camera : public View {
+			class OFXRULR_API_ENTRY Camera : public View {
 			public:
 				Camera();
 				virtual ~Camera();

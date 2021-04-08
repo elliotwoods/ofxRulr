@@ -71,6 +71,10 @@
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\assimp\lib\vs\x64</AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>robocopy "$(OF_ROOT)/addons/\ofxAssimpModelLoader/libs/assimp/assimp/lib/vs$(Platform_Actual)/" "$(TargetDir)/" "*.dll" /njs /njh /np /fp /bytes
+if errorlevel 1 exit 0</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -95,6 +99,10 @@
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\assimp\lib\vs\x64</AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>robocopy "$(OF_ROOT)/addons/\ofxAssimpModelLoader/libs/assimp/assimp/lib/vs$(Platform_Actual)/" "$(TargetDir)/" "*.dll" /njs /njh /np /fp /bytes
+if errorlevel 1 exit 0</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxAssimpModelLoader\src\ofxAssimpAnimation.h" />

@@ -20,3 +20,7 @@
 #include "ofxRulr/Utils/SoundEngine.h"
 #include "ofxRulr/Utils/Utils.h"
 #include "ofxRulr/Nodes/GraphicsManager.h"
+
+#include "ofxRulr/Utils/Serialization/Native.h"
+#include "ofxRulr/Utils/Serialization/oF.h"
+#include "ofxRulr/Utils/Serialization/Parameters.h"

@@ -82,7 +82,9 @@ namespace ofxRulr {
 				if (transmit) {
 					auto universe = transmit->getUniverse(this->universeIndex.get());
 					if (universe) {
-						universe->setChannels(this->channelIndex.get(), &output[0], output.size());
+						universe->setChannels((DMX::ChannelIndex) this->channelIndex.get()
+							, &output[0]
+							, (DMX::ChannelIndex) output.size());
 					}
 					else {
 						RULR_ERROR << "Universe index " << this->universeIndex << " is out of bounds for this sender";

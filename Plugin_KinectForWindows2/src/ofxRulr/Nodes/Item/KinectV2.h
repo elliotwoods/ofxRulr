@@ -17,8 +17,8 @@ namespace ofxRulr {
 				void update();
 				ofxCvGui::PanelPtr getPanel() override;
 
-				void serialize(Json::Value &);
-				void deserialize(const Json::Value &);
+				void serialize(nlohmann::json &);
+				void deserialize(const nlohmann::json &);
 
 				void drawObject();
 				shared_ptr<ofxKinectForWindows2::Device> getDevice();

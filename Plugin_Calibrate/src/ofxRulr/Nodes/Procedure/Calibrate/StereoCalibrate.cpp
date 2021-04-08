@@ -256,7 +256,7 @@ namespace ofxRulr {
 
 					if (json.contains("opencvMatricesFile")) {
 						std::string filename;
-						if (Utils::deserialize(json["opencvMatricesFile"], filename)) {
+						if (Utils::deserialize(json, "opencvMatricesFile", filename)) {
 							FileStorage file(filename, FileStorage::READ);
 							if (file.isOpened()) {
 								file["rotation3x3"] >> this->openCVCalibration.rotation3x3;

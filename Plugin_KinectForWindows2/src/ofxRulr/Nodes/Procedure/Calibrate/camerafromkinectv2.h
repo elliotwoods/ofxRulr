@@ -16,8 +16,8 @@ namespace ofxRulr {
 					public:
 						Capture();
 						string getDisplayString() const override;
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 						void drawObjectSpace();
 						void drawKinectImageSpace();
 
@@ -33,8 +33,8 @@ namespace ofxRulr {
 					ofxCvGui::PanelPtr getPanel() override;
 					void update();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 
 					void addCapture();
 					void calibrate();

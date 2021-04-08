@@ -15,7 +15,7 @@ namespace ofxRulr {
 			} \
 		} \
 		bool deserialize(const nlohmann::json& json, TYPE& var) { \
-			if(json.is_array()) { \
+			if(json.is_array() && json.size() == var.length()) { \
 				for (int i = 0; i < var.length(); i++) { \
 					deserialize(json[i], var[i]); \
 				} \
@@ -35,7 +35,7 @@ namespace ofxRulr {
 			} \
 		} \
 		bool deserialize(const nlohmann::json& json, TYPE& var) { \
-			if(json.is_array()) { \
+			if(json.is_array() && json.size() == 4) { \
 				for (int i = 0; i < var.length(); i++) { \
 					for (int j = 0; j < var[i].length(); j++) {	\
 						deserialize(json[i][j], var[i][j]); \
@@ -92,10 +92,10 @@ namespace ofxRulr {
 		void
 		serialize(nlohmann::json& json, const ofRectangle& rectangle)
 		{
-			serialize(json["x"], rectangle.x);
-			serialize(json["y"], rectangle.y);
-			serialize(json["width"], rectangle.width);
-			serialize(json["height"], rectangle.height);
+			serialize(json, "x", rectangle.x);
+			serialize(json, "y", rectangle.y);
+			serialize(json, "width", rectangle.width);
+			serialize(json, "height", rectangle.height);
 		}
 		
 		//----------
@@ -103,16 +103,16 @@ namespace ofxRulr {
 		deserialize(const nlohmann::json& json, ofRectangle& rectangle)
 		{
 			bool success = false;
-			success |= deserialize(json["x"], rectangle.x);
-			success |= deserialize(json["y"], rectangle.y);
-			success |= deserialize(json["width"], rectangle.width);
-			success |= deserialize(json["height"], rectangle.height);
+			success |= deserialize(json, "x", rectangle.x);
+			success |= deserialize(json, "y", rectangle.y);
+			success |= deserialize(json, "width", rectangle.width);
+			success |= deserialize(json, "height", rectangle.height);
 			return success;
 		}
 
 		//----------
 		template<typename Type>
-		void serialize(nlohmann::json& json, const ofColor_<Type>& value)
+		void _serialize(nlohmann::json& json, const ofColor_<Type>& value)
 		{
 			for (int i = 0; i < 4; i++) {
 				serialize(json[i], value.v[i]);
@@ -121,7 +121,7 @@ namespace ofxRulr {
 
 		//----------
 		template<typename Type>
-		bool deserialize(const nlohmann::json& json, ofColor_<Type>& value)
+		bool _deserialize(const nlohmann::json& json, ofColor_<Type>& value)
 		{
 			if (json.is_array()) {
 				for (int i = 0; i < 4; i++) {
@@ -134,12 +134,9 @@ namespace ofxRulr {
 			}
 		}
 
-		template void serialize(nlohmann::json& json, const ofColor_<uint8_t>& value);
-		template void serialize(nlohmann::json& json, const ofColor_<uint16_t>& value);
-		template void serialize(nlohmann::json& json, const ofColor_<float>& value);
-		template bool deserialize(const nlohmann::json& json, ofColor_<uint8_t>& value);
-		template bool deserialize(const nlohmann::json& json, ofColor_<uint16_t>& value);
-		template bool deserialize(const nlohmann::json& json, ofColor_<float>& value);
+		DEFINE_SERIALIZE_VAR(ofColor_<uint8_t>);
+		DEFINE_SERIALIZE_VAR(ofColor_<uint16_t>);
+		DEFINE_SERIALIZE_VAR(ofColor_<float>);
 
 	}
 }

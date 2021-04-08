@@ -13,13 +13,13 @@ namespace ofxRulr {
 					class Capture : public Utils::AbstractCaptureSet::BaseCapture {
 					public:
 						Capture();
-						void serialize(Json::Value &);
-						void deserialize(const Json::Value &);
+						void serialize(nlohmann::json &);
+						void deserialize(const nlohmann::json &);
 						string getDisplayString() const override;
 
-						vector<ofVec2f> cameraImagePoints;
-						vector<ofVec3f> worldSpace;
-						vector<ofVec2f> projectorImageSpace;
+						vector<glm::vec2> cameraImagePoints;
+						vector<glm::vec3> worldSpace;
+						vector<glm::vec2> projectorImageSpace;
 					};
 
 					ProjectorFromKinectV2();
@@ -28,8 +28,8 @@ namespace ofxRulr {
 					ofxCvGui::PanelPtr getPanel() override;
 					void update();
 
-					void serialize(Json::Value &);
-					void deserialize(const Json::Value &);
+					void serialize(nlohmann::json &);
+					void deserialize(const nlohmann::json &);
 
 					void addCapture();
 					void calibrate();

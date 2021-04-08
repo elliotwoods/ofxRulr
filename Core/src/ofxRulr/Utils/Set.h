@@ -1,15 +1,16 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include "ofLog.h"
 
 namespace ofxRulr {
 	namespace Utils {
 		template<typename BaseType>
-		class Set : public vector<shared_ptr<BaseType> > {
+		class Set : public std::vector<std::shared_ptr<BaseType> > {
 		public:
 			template<typename T>
-			shared_ptr<T> get()  const {
+			std::shared_ptr<T> get()  const {
 				for(auto item : * this) {
 					auto castItem = dynamic_pointer_cast<T>(item);
 					if (castItem != NULL) {
@@ -26,11 +27,11 @@ namespace ofxRulr {
 				}
 			}
 
-			void add(shared_ptr<BaseType> item) {
+			void add(std::shared_ptr<BaseType> item) {
 				this->push_back(item);
 			}
 
-			void remove(shared_ptr<BaseType> item) {
+			void remove(std::shared_ptr<BaseType> item) {
 				auto it = find(this->begin(), this->end(), item);
 				if (it != this->end()) {
 					this->erase(it);

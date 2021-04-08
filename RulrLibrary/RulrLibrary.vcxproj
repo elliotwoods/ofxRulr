@@ -103,7 +103,10 @@
       <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.vcxproj">
-      <Project>{9201d4e8-8b5a-44d4-baa6-23229a1871a7}</Project>
+      <Project>{3e918808-adee-4b04-9042-25f795280bad}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Nodes\Nodes.vcxproj">
+      <Project>{5b11c632-4e4e-4f86-914d-61f2f1fa6c0b}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

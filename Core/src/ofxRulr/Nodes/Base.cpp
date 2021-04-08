@@ -45,7 +45,7 @@ namespace ofxRulr {
 			}, this);
 			this->onDeserialize.addListener([this](const nlohmann::json & json) {
 				int whenDrawOnWorldStageInt;
-				if (Utils::deserialize(json["whenDrawOnWorldStage"], whenDrawOnWorldStageInt)) {
+				if (Utils::deserialize(json, "whenDrawOnWorldStage", whenDrawOnWorldStageInt)) {
 					this->whenDrawOnWorldStage = (WhenDrawOnWorldStage::Options) whenDrawOnWorldStageInt;
 				}
 			}, this);

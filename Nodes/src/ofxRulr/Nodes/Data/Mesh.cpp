@@ -1,8 +1,6 @@
 #include "pch_RulrNodes.h"
 #include "Mesh.h"
 
-#include "ofxObjLoader.h"
-
 using namespace ofxCvGui;
 
 namespace ofxRulr {
@@ -26,14 +24,14 @@ namespace ofxRulr {
 
 			//----------
 			void Mesh::serialize(nlohmann::json & json) {
-				this->save(this->getDefaultFilename() + ".obj");
+				this->save(this->getDefaultFilename() + ".ply");
 			}
 
 			//----------
 			void Mesh::deserialize(const nlohmann::json & json) {
-				auto objFileName = this->getDefaultFilename() + ".obj";
-				if (ofFile(this->getDefaultFilename() + ".obj").exists()) {
-					this->load(objFileName);
+				auto filename = this->getDefaultFilename() + ".ply";
+				if (ofFile(this->getDefaultFilename() + ".ply").exists()) {
+					this->load(filename);
 				}
 			}
 
@@ -65,10 +63,10 @@ namespace ofxRulr {
 					});
 				}
 
-				inspector->addButton("Save OBJ...", [this]() {
+				inspector->addButton("Save PLY...", [this]() {
 					this->save();
 				});
-				inspector->addButton("Load OBJ...", [this]() {
+				inspector->addButton("Load PLY...", [this]() {
 					this->load();
 				});
 			}
@@ -86,7 +84,7 @@ namespace ofxRulr {
 			//----------
 			void Mesh::save(string filePath) const {
 				if (filePath == "") {
-					auto result = ofSystemSaveDialog("mesh.obj", "Save Mesh as OBJ");
+					auto result = ofSystemSaveDialog("mesh.ply", "Save Mesh as PLY");
 					if (result.bSuccess) {
 						filePath = result.filePath;
 					}
@@ -94,7 +92,7 @@ namespace ofxRulr {
 						return;
 					}
 				}
-				ofxObjLoader::save(filePath, this->mesh);
+				this->mesh.save(filePath);
 			}
 
 			//----------
@@ -108,7 +106,7 @@ namespace ofxRulr {
 						return;
 					}
 				}
-				ofxObjLoader::load(filePath, this->mesh);
+				this->mesh.load(filePath);
 			}
 		}
 	}

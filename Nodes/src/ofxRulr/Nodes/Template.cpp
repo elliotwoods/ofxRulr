@@ -93,9 +93,9 @@ namespace ofxRulr {
 			// We can use a utility function to do the reading for us
 			Utils::deserialize(json, this->parameters);
 
-			// Or we can read manually
+			// Or we can read manually (note the pattern when deserialising - in case the value doesn't exist
 			int something;
-			ofxRulr::Utils::deserialize(json["something"], something);
+			ofxRulr::Utils::deserialize(json, "something", something);
 		}
 
 		//----------

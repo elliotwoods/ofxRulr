@@ -60,13 +60,13 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void KinectV2::serialize(Json::Value & json) {
+			void KinectV2::serialize(nlohmann::json & json) {
 				ofxRulr::Utils::serialize(json, this->viewType);
 				ofxRulr::Utils::serialize(json, this->enabledViews);
 			}
 
 			//----------
-			void KinectV2::deserialize(const Json::Value & json) {
+			void KinectV2::deserialize(const nlohmann::json & json) {
 				ofxRulr::Utils::deserialize(json, this->viewType);
 				ofxRulr::Utils::deserialize(json, this->enabledViews);
 

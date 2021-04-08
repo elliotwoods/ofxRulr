@@ -108,23 +108,29 @@ namespace ofxRulr {
 
 			//---------
 			void View::deserialize(const nlohmann::json & json) {
-				const auto & jsonCalibration = json["calibration"];
-				Utils::deserialize(jsonCalibration, this->focalLengthX);
-				Utils::deserialize(jsonCalibration, this->focalLengthY);
-				Utils::deserialize(jsonCalibration, this->principalPointX);
-				Utils::deserialize(jsonCalibration, this->principalPointY);
+				if (json.contains("calibration")) {
+					const auto& jsonCalibration = json["calibration"];
+					Utils::deserialize(jsonCalibration, this->focalLengthX);
+					Utils::deserialize(jsonCalibration, this->focalLengthY);
+					Utils::deserialize(jsonCalibration, this->principalPointX);
+					Utils::deserialize(jsonCalibration, this->principalPointY);
 
-				const auto & jsonResolution = json["resolution"];
-				if (!jsonResolution.is_array()) {
-					this->setWidth(jsonResolution["width"].get<float>());
-					this->setHeight(jsonResolution["height"].get<float>());
+					if (jsonCalibration.contains("distortion")) {
+						auto& jsonDistortion = jsonCalibration["distortion"];
+						for (int i = 0; i < RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
+							Utils::deserialize(jsonDistortion, this->distortion[i]);
+						}
+					}
 				}
-
-				auto & jsonDistortion = jsonCalibration["distortion"];
-				for (int i = 0; i<RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
-					Utils::deserialize(jsonDistortion, this->distortion[i]);
+				
+				if (json.contains("resolution")) {
+					const auto& jsonResolution = json["resolution"];
+					if (!jsonResolution.is_array()) {
+						this->setWidth(jsonResolution["width"].get<float>());
+						this->setHeight(jsonResolution["height"].get<float>());
+					}
 				}
-
+				
 				this->markViewDirty();
 			}
 

@@ -107,21 +107,23 @@ namespace ofxRulr {
 
 			//---------
 			void RigidBody::deserialize(const nlohmann::json & json) {
-				auto & jsonTransform = json["transform"];
+				if (json.contains("transform")) {
+					auto& jsonTransform = json["transform"];
 
-				{
-					glm::vec3 value;
-					if (Utils::deserialize(jsonTransform["translation"], value)) {
-						for (int i = 0; i < 3; i++) {
-							this->translation[i].set(value[i]);
+					{
+						glm::vec3 value;
+						if (Utils::deserialize(jsonTransform["translation"], value)) {
+							for (int i = 0; i < 3; i++) {
+								this->translation[i].set(value[i]);
+							}
 						}
 					}
-				}
-				{
-					glm::vec3 value;
-					if (Utils::deserialize(jsonTransform["rotationEuler"], value)) {
-						for (int i = 0; i < 3; i++) {
-							this->rotationEuler[i].set(value[i]);
+					{
+						glm::vec3 value;
+						if (Utils::deserialize(jsonTransform["rotationEuler"], value)) {
+							for (int i = 0; i < 3; i++) {
+								this->rotationEuler[i].set(value[i]);
+							}
 						}
 					}
 				}

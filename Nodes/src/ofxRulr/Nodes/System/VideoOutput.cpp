@@ -180,31 +180,31 @@ namespace ofxRulr {
 			//----------
 			void VideoOutput::serialize(nlohmann::json & json) {
 				//we cache the width and height in case anybody wants to know what it is
-				json["width"] = this->width;
-				json["height"] = this->height;
-				json["monitorSelection"] = this->videoOutputSelection;
-				ofxRulr::Utils::serialize(json, this->splitHorizontal);
-				ofxRulr::Utils::serialize(json, this->splitVertical);
-				ofxRulr::Utils::serialize(json, this->splitUseIndex);
-				ofxRulr::Utils::serialize(json, this->testPattern);
-				ofxRulr::Utils::serialize(json, this->mute);
+				Utils::serialize(json, "width", this->width);
+				Utils::serialize(json, "height", this->height);
+				Utils::serialize(json, "monitorSelection", this->videoOutputSelection);
+				Utils::serialize(json, this->splitHorizontal);
+				Utils::serialize(json, this->splitVertical);
+				Utils::serialize(json, this->splitUseIndex);
+				Utils::serialize(json, this->testPattern);
+				Utils::serialize(json, this->mute);
 			}
 
 			//----------
 			void VideoOutput::deserialize(const nlohmann::json & json) {
-				Utils::deserialize(json["width"], this->width);
-				Utils::deserialize(json["height"], this->height);
+				Utils::deserialize(json, "width", this->width);
+				Utils::deserialize(json, "height", this->height);
 				{
 					int value;
-					if (Utils::deserialize(json["monitorSelection"], value)) {
+					if (Utils::deserialize(json, "monitorSelection", value)) {
 						this->setVideoOutputSelection(value);
 					}
 				}
-				ofxRulr::Utils::deserialize(json, this->splitHorizontal);
-				ofxRulr::Utils::deserialize(json, this->splitVertical);
-				ofxRulr::Utils::deserialize(json, this->splitUseIndex);
-				ofxRulr::Utils::deserialize(json, this->testPattern);
-				ofxRulr::Utils::deserialize(json, this->mute);
+				Utils::deserialize(json, this->splitHorizontal);
+				Utils::deserialize(json, this->splitVertical);
+				Utils::deserialize(json, this->splitUseIndex);
+				Utils::deserialize(json, this->testPattern);
+				Utils::deserialize(json, this->mute);
 			}
 
 			//----------
