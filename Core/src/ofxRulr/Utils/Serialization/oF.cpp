@@ -65,28 +65,6 @@ namespace ofxRulr {
 		//
 
 		//----------
-		void serialize(nlohmann::json& json, const ofColor& value)
-		{
-			for (int i = 0; i < 4; i++) {
-				serialize(json[i], value.v[i]);
-			}
-		}
-
-		//----------
-		bool deserialize(const nlohmann::json& json, ofColor& value)
-		{
-			if (json.is_array()) {
-				for (int i = 0; i < 4; i++) {
-					deserialize(json[i], value.v[i]);
-				}
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-
-		//----------
 		void 
 		serialize(nlohmann::json& json, const ofMesh& mesh)
 		{
@@ -99,7 +77,7 @@ namespace ofxRulr {
 		
 		//----------
 		bool
-		deserialize(nlohmann::json& json, ofMesh& mesh)
+		deserialize(const nlohmann::json& json, ofMesh& mesh)
 		{
 			bool success = false;
 			success |= deserialize(json["vertices"], mesh.getVertices());
@@ -122,7 +100,7 @@ namespace ofxRulr {
 		
 		//----------
 		bool
-		deserialize(nlohmann::json& json, ofRectangle& rectangle)
+		deserialize(const nlohmann::json& json, ofRectangle& rectangle)
 		{
 			bool success = false;
 			success |= deserialize(json["x"], rectangle.x);
@@ -131,5 +109,37 @@ namespace ofxRulr {
 			success |= deserialize(json["height"], rectangle.height);
 			return success;
 		}
+
+		//----------
+		template<typename Type>
+		void serialize(nlohmann::json& json, const ofColor_<Type>& value)
+		{
+			for (int i = 0; i < 4; i++) {
+				serialize(json[i], value.v[i]);
+			}
+		}
+
+		//----------
+		template<typename Type>
+		bool deserialize(const nlohmann::json& json, ofColor_<Type>& value)
+		{
+			if (json.is_array()) {
+				for (int i = 0; i < 4; i++) {
+					deserialize(json[i], value.v[i]);
+				}
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+		template void serialize(nlohmann::json& json, const ofColor_<uint8_t>& value);
+		template void serialize(nlohmann::json& json, const ofColor_<uint16_t>& value);
+		template void serialize(nlohmann::json& json, const ofColor_<float>& value);
+		template bool deserialize(const nlohmann::json& json, ofColor_<uint8_t>& value);
+		template bool deserialize(const nlohmann::json& json, ofColor_<uint16_t>& value);
+		template bool deserialize(const nlohmann::json& json, ofColor_<float>& value);
+
 	}
 }

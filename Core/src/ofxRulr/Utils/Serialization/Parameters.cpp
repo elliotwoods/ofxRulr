@@ -6,7 +6,7 @@ namespace ofxRulr {
 #pragma mark ofParameter<Type>
 		//----------
 		template<typename Type>
-		void serialize(nlohmann::json& json, ofParameter<Type> & parameter) {
+		void serialize(nlohmann::json& json, const ofParameter<Type> & parameter) {
 			serialize(json, parameter.get());
 		}
 
@@ -22,7 +22,7 @@ namespace ofxRulr {
 		}
 		//----------
 		template<>
-		void serialize(nlohmann::json& json, ofParameter<filesystem::path>& parameter) {
+		void serialize(nlohmann::json& json, const ofParameter<filesystem::path>& parameter) {
 			serialize(json, parameter.get());
 		}
 
@@ -36,6 +36,54 @@ namespace ofxRulr {
 			}
 			return false;
 		}
+
+		template void serialize(nlohmann::json& json, const ofParameter<bool>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<uint8_t>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<uint16_t>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<uint32_t>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<uint64_t>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<int8_t>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<int16_t>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<int32_t>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<int64_t>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<float>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<double>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<glm::vec2>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<glm::vec3>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<glm::vec4>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<glm::mat3>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<glm::mat4>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<glm::quat>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<ofColor>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<ofShortColor>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<ofFloatColor>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<ofRectangle>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<std::string>& parameter);
+		template void serialize(nlohmann::json& json, const ofParameter<filesystem::path>& parameter);
+
+		template bool deserialize(const nlohmann::json& json, ofParameter<bool>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<uint8_t>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<uint16_t>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<uint32_t>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<uint64_t>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<int8_t>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<int16_t>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<int32_t>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<int64_t>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<float>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<double>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<glm::vec2>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<glm::vec3>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<glm::vec4>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<glm::mat3>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<glm::mat4>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<glm::quat>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<ofColor>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<ofShortColor>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<ofFloatColor>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<ofRectangle>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<std::string>& parameter);
+		template bool deserialize(const nlohmann::json& json, ofParameter<filesystem::path>& parameter);
 
 #pragma mark ofParameterGroup
 		//----------

@@ -19,12 +19,9 @@ deserialize(const nlohmann::json& json, T& value)
 	return false;
 }
 
-template void serialize<bool>(nlohmann::json& json, bool);
-template void serialize<uint8_t>(nlohmann::json& json, uint8_t);
-
 #define DEFINE_SERIALIZE_VAR_BASIC(TYPE) \
-template void serialize<TYPE>(nlohmann::json& json, const TYPE &); \
-template bool deserialize<TYPE>(const nlohmann::json& json, TYPE &);
+template void serialize(nlohmann::json& json, const TYPE &); \
+template bool deserialize(const nlohmann::json& json, TYPE &);
 
 
 DEFINE_SERIALIZE_VAR_BASIC(bool);

@@ -34,8 +34,13 @@ namespace ofxRulr {
 
 		//----------
 		bool deserialize(nlohmann::json& json, ofxRay::Plane& value) {
-			stringstream ss(json.get<std::string>());
-			ss >> value;
+			std::string text;
+			if (Utils::deserialize(json, text)) {
+				stringstream ss(text);
+				ss >> value;
+				return true;
+			}
+			return false;
 		}
 	}
 }
