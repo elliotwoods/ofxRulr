@@ -17,11 +17,16 @@
 #define RULR_ERROR ofLogError(string(__func__))
 #define RULR_FATAL ofLogFatalError(string(__func__))
 
-#ifdef RULR_EXPORT_LIBRARY
-	#define RULR_EXPORTS __declspec(dllexport)
-	#define OF_EXPORTS_ENABLED
+#ifdef TARGET_WIN32
+#	if defined(OFXOFXRULR_API_ENTRY_ENABLE)
+#		define OFXRULR_API_ENTRY __declspec(dllexport)
+#	elif defined(OFXRULR_IMPORTS_ENABLE)
+#		define OFXRULR_API_ENTRY __declspec(dllimport)
+#	else
+#		define OFXRULR_API_ENTRY
+#	endif
 #else
-	#define RULR_EXPORTS
+#	define OFXRULR_API_ENTRY
 #endif
 
 namespace ofxRulr {

@@ -8,7 +8,7 @@
 
 namespace ofxRulr {
 	namespace Utils {
-		class RULR_EXPORTS AbstractCaptureSet : public Serializable {
+		class OFXRULR_API_ENTRY AbstractCaptureSet : public Serializable {
 		public:
 			class BaseCapture : public Serializable {
 			public:

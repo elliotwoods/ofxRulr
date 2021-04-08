@@ -10,8 +10,8 @@
 namespace ofxRulr {
 	namespace Utils {
 #define DECLARE_SERIALIZE_VAR(TYPE) \
-	void serialize(nlohmann::json&, const TYPE &); \
-	bool deserialize(const nlohmann::json&, TYPE &);
+	OFXRULR_API_ENTRY void serialize(nlohmann::json&, const TYPE &); \
+	OFXRULR_API_ENTRY bool deserialize(const nlohmann::json&, TYPE &);
 
 		// json >> value; //deserialize
 		// json << value; //serialize

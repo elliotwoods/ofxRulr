@@ -8,7 +8,7 @@
 
 namespace ofxRulr {
 	namespace Graph {
-		class RULR_EXPORTS WorldStage : public Nodes::Base {
+		class OFXRULR_API_ENTRY WorldStage : public Nodes::Base {
 		public:
 			WorldStage();
 			string getTypeName() const override;

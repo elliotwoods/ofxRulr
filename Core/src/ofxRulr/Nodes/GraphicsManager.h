@@ -10,7 +10,7 @@
 
 namespace ofxRulr {
 	namespace Nodes {
-		class RULR_EXPORTS GraphicsManager : public ofxSingleton::Singleton<GraphicsManager> {
+		class OFXRULR_API_ENTRY GraphicsManager : public ofxSingleton::Singleton<GraphicsManager> {
 		public:
 			GraphicsManager();
 

@@ -4,7 +4,7 @@
 
 namespace ofxRulr {
 	namespace Utils {
-		class RULR_EXPORTS Initialiser {
+		class OFXRULR_API_ENTRY Initialiser {
 		public:
 			Initialiser();
 			void checkInitialised();

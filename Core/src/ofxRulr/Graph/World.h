@@ -12,7 +12,7 @@
 
 namespace ofxRulr {
 	namespace Graph {
-		class RULR_EXPORTS World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
+		class OFXRULR_API_ENTRY World : public Utils::Set<Nodes::Base>, public ofxSingleton::Singleton<World> {
 		public:
 			World();
 			virtual ~World();

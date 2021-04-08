@@ -6,7 +6,7 @@
 namespace ofxRulr {
 	namespace Utils {
 		namespace Gui {
-			RULR_EXPORTS shared_ptr<ofxCvGui::Widgets::Slider> addIntSlider(ofParameter<float> & parameter, ofxCvGui::ElementGroupPtr inspector);
+			OFXRULR_API_ENTRY shared_ptr<ofxCvGui::Widgets::Slider> addIntSlider(ofParameter<float> & parameter, ofxCvGui::ElementGroupPtr inspector);
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace ofxRulr {
 	namespace Graph {
 		namespace Editor {
 			/// A class to draw a preview icon for a Node type
-			class RULR_EXPORTS PinView : public ofxCvGui::Element {
+			class OFXRULR_API_ENTRY PinView : public ofxCvGui::Element {
 			public:
 				PinView();
 

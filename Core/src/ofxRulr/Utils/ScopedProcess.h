@@ -6,7 +6,7 @@
 
 namespace ofxRulr {
 	namespace Utils {
-		class RULR_EXPORTS ScopedProcess {
+		class OFXRULR_API_ENTRY ScopedProcess {
 		public:
 			class ActiveProcesses : public ofxSingleton::Singleton<ActiveProcesses> {
 			public:

@@ -53,7 +53,7 @@ namespace ofxRulr {
 		}
 	}
 	namespace Nodes {
-		class RULR_EXPORTS Base : public ofxCvGui::IInspectable, public Utils::Serializable, protected enable_shared_from_this<Base> {
+		class OFXRULR_API_ENTRY Base : public ofxCvGui::IInspectable, public Utils::Serializable, protected enable_shared_from_this<Base> {
 		public:
 			Base();
 			~Base();

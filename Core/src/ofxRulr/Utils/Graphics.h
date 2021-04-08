@@ -4,7 +4,7 @@
 
 namespace ofxRulr {
 	namespace Utils {
-		class RULR_EXPORTS Graphics {
+		class OFXRULR_API_ENTRY Graphics {
 		public:
 			static void pushPointSize(float pointSize, bool smoothed = true);
 			static void popPointSize();

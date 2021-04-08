@@ -24,7 +24,7 @@
 
 namespace ofxRulr {
 	namespace Utils {
-		class RULR_EXPORTS Serializable {
+		class OFXRULR_API_ENTRY Serializable {
 		public:
 			virtual std::string getTypeName() const = 0;
 			virtual std::string getName() const;

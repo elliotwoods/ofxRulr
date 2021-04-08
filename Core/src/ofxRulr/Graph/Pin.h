@@ -16,7 +16,7 @@ using namespace std;
 
 namespace ofxRulr {
 	namespace Graph {
-		class RULR_EXPORTS AbstractPin : public ofxCvGui::Element {
+		class OFXRULR_API_ENTRY AbstractPin : public ofxCvGui::Element {
 		public:
 			AbstractPin(string name);
 			virtual string getTypeName() = 0;

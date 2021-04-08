@@ -9,7 +9,7 @@
 
 namespace ofxRulr {
 	namespace Utils {
-		class RULR_EXPORTS SoundEngine : public ofxSingleton::Singleton<SoundEngine>, public ofBaseSoundOutput {
+		class OFXRULR_API_ENTRY SoundEngine : public ofxSingleton::Singleton<SoundEngine>, public ofBaseSoundOutput {
 		public:
 			struct ActiveSound {
 				//since we use shared_ptr, we keep the sound even if it is unloaded elsewhere

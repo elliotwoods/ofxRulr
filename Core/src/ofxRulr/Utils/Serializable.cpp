@@ -67,6 +67,7 @@ namespace ofxRulr {
 			auto name = this->getName();
 			std::replace(name.begin(), name.end(), ':', '_');
 			return name;
+			cairo_append_path
 		}
 	}
 }

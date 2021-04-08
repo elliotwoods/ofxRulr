@@ -12,7 +12,7 @@
 #endif
 
 namespace ofxRulr {
-	class RULR_EXPORTS Exception : public std::exception {
+	class OFXRULR_API_ENTRY Exception : public std::exception {
 	public:
 		Exception(const std::string & errorMessage);
 		const char * what() const throw() override;
