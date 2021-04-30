@@ -399,10 +399,13 @@ namespace ofxRulr {
 					//Find the markers
 					vector<aruco::Marker> foundMarkers;
 					{
+						aruco::CameraParameters cameraParameters(cameraMatrix
+							, distortionCoefficients
+							, cv::Size(imageGrey.cols, imageGrey.rows));
+
 						this->detector->detect(imageGrey
 							, foundMarkers
-							, cameraMatrix
-							, distortionCoefficients
+							, cameraParameters
 							, this->parameters.length.square);
 
 						if (foundMarkers.empty()) {

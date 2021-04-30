@@ -155,7 +155,9 @@ namespace ofxRulr {
 					aruco::CameraParameters cameraParameters(cameraMatrix
 						, distortionCoefficients
 						, cv::Size(image.cols, image.rows));
-					this->foundMarkers = this->markerDetector.detect(this->lastDetection.image, cameraParameters, this->parameters.markerLength);
+					this->foundMarkers = this->markerDetector.detect(this->lastDetection.image
+						, cameraParameters
+						, this->parameters.markerLength);
 				}
 				auto thresholdedImage = this->markerDetector.getThresholdedImage();
 				if (!thresholdedImage.empty()) {
