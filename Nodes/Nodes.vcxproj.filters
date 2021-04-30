@@ -282,6 +282,9 @@
     <ClInclude Include="src\ofxRulr\Utils\Serialization\Nodes.h">
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\BoardInWorld.h">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp">
@@ -433,6 +436,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\Serialization\Nodes.cpp">
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\BoardInWorld.cpp">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

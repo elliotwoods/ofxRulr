@@ -21,6 +21,7 @@
 #include "ofxRulr/Nodes/Item/Projector.h"
 #include "ofxRulr/Nodes/Item/RigidBody.h"
 #include "ofxRulr/Nodes/Item/View.h"
+#include "ofxRulr/Nodes/Item/BoardInWorld.h"
 
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Procedure/Triangulate.h"
@@ -62,6 +63,7 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Item::Projector);
 			RULR_DECLARE_NODE(Item::RigidBody);
 			RULR_DECLARE_NODE(Item::View);
+			RULR_DECLARE_NODE(Item::BoardInWorld);
 
 			RULR_DECLARE_NODE(Procedure::Scan::Graycode);
 

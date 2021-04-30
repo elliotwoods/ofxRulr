@@ -292,7 +292,12 @@ namespace ofxRulr {
 				auto node = this->getNodeInstance();
 				json["NodeTypeName"] = node->getTypeName();
 				json["Name"] = node->getName();
-				node->serialize(json["Content"]);
+
+				{
+					auto & jsonContent = json["Content"];
+					jsonContent = nlohmann::json::object();
+					node->serialize(jsonContent);
+				}
 			}
 		}
 	}

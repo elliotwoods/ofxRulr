@@ -51,12 +51,14 @@ namespace ofxRulr {
 
 			if (filename != "") {
 				try {
-					ofFile input;
-					input.open(ofToDataPath(filename, true), ofFile::ReadOnly, false);
-					string jsonRaw = input.readToBuffer().getText();
+					if (ofFile::doesFileExist(filename)) {
+						ofFile input;
+						input.open(ofToDataPath(filename, true), ofFile::ReadOnly, false);
+						string jsonRaw = input.readToBuffer().getText();
 
-					auto json = nlohmann::json::parse(jsonRaw);
-					this->deserialize(json);
+						auto json = nlohmann::json::parse(jsonRaw);
+						this->deserialize(json);
+					}
 				}
 				RULR_CATCH_ALL_TO_ALERT
 			}

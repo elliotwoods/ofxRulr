@@ -7,16 +7,19 @@ namespace ofxRulr {
 		//----------
 		template<typename Type>
 		void _serialize(nlohmann::json& json, const ofParameter<Type> & parameter) {
-			serialize(json, parameter.get());
+			serialize(json[parameter.getName()], parameter.get());
 		}
 
 		//----------
 		template<typename Type>
 		bool _deserialize(const nlohmann::json& json, ofParameter<Type>& parameter) {
 			Type value;
-			if (deserialize(json, value)) {
-				parameter.set(value);
-				return true;
+			const auto& name = parameter.getName();
+			if (json.contains(name)) {
+				if (deserialize(json[name], value)) {
+					parameter.set(value);
+					return true;
+				}
 			}
 			return false;
 		}
@@ -79,6 +82,7 @@ namespace ofxRulr {
 		void serialize(nlohmann::json& json, const ofParameterGroup& group) {
 			const auto name = group.getName();
 			auto& jsonGroup = name.empty() ? json : json[name];
+
 			for (const auto& parameter : group) {
 				if (trySerialize<bool>(jsonGroup, parameter)) continue;
 				if (trySerialize<uint8_t>(jsonGroup, parameter)) continue;

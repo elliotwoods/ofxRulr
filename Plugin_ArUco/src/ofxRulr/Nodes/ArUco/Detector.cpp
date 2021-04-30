@@ -107,7 +107,7 @@ namespace ofxRulr {
 			const ofImage & Detector::getMarkerImage(int markerIndex) {
 				auto findImage = this->cachedMarkerImages.find(markerIndex);
 				if (findImage == this->cachedMarkerImages.end()) {
-					auto image = make_unique<ofImage>();
+					auto image = make_shared<ofImage>();
 					auto mat = this->dictionary.getMarkerImage_id(markerIndex, 8, false);
 					ofxCv::copy(mat, image->getPixels());
 					image->getPixels().resize(ARUCO_PREVIEW_RESOLUTION, ARUCO_PREVIEW_RESOLUTION, OF_INTERPOLATE_NEAREST_NEIGHBOR);

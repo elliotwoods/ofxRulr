@@ -77,7 +77,7 @@ namespace ofxRulr {
 				if (pin->isConnected() && !pin->getLoopbackEnabled()) {
 					//check if it's a loopback
 					const auto connection = pin->getConnectionUntyped();
-					if (connection == this->shared_from_this()) {
+					if (connection.get() == this) {
 						//it's a loopback, reset it
 						pin->resetConnection();
 					}

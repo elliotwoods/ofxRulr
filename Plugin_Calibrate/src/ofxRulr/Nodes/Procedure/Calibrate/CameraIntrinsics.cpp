@@ -207,7 +207,9 @@ namespace ofxRulr {
 
 				//----------
 				void CameraIntrinsics::deserialize(const nlohmann::json & json) {
-					this->captures.deserialize(json["captureSet"]);
+					if (json.contains("captureSet")) {
+						this->captures.deserialize(json["captureSet"]);
+					}
 					
 					Utils::deserialize(json, this->error);
 					Utils::deserialize(json, this->parameters);

@@ -41,11 +41,11 @@ namespace ofxRulr {
 		, __LINE__)
 
 #define RULR_CATCH_ALL_TO(X) \
-	catch (ofxRulr::Exception e) { X; } \
-	catch (cv::Exception e) { X; } \
-	catch (ofxMachineVision::Exception e) { X; } \
-	catch (nlohmann::json::exception e) { X; } \
-	catch (std::exception e) { X; }
+	catch (const ofxRulr::Exception & e) { X; } \
+	catch (const cv::Exception & e) { X; } \
+	catch (const ofxMachineVision::Exception & e) { X; } \
+	catch (const nlohmann::json::exception & e) { X; } \
+	catch (const std::exception & e) { X; }
 
 #define RULR_CATCH_ALL_TO_ALERT \
 	RULR_CATCH_ALL_TO(ofSystemAlertDialog(e.what()))

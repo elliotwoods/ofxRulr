@@ -139,6 +139,7 @@ if errorlevel 1 exit 0</Command>
     <ClInclude Include="src\ofxRulr\Nodes\Item\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\AbstractBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Board.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\BoardInWorld.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Mesh.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Projector.h" />
@@ -223,6 +224,7 @@ if errorlevel 1 exit 0</Command>
     <ClCompile Include="src\ofxRulr\Nodes\Item\Mesh.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Projector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\RigidBody.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\BoardInWorld.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\View.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Scan\Graycode.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Triangulate.cpp" />

@@ -61,7 +61,7 @@ namespace ofxRulr {
 				aruco::Dictionary::DICT_TYPES dictionaryType;
 				aruco::MarkerDetector markerDetector;
 
-				map<int, unique_ptr<ofImage>> cachedMarkerImages;
+				map<int, shared_ptr<ofImage>> cachedMarkerImages;
 
 				//useful when debugging to research quickly
 				struct {
