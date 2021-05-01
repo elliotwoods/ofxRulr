@@ -457,6 +457,7 @@ EXPORTS
 	?makeCheckerboardMesh@ofxCv@@YA?AV?$ofMesh_@U?$vec@$02M$0A@@glm@@U12@V?$ofColor_@M@@U?$vec@$01M$0A@@2@@@V?$Size_@H@cv@@M_N@Z
 	?makeCheckerboardPoints@ofxCv@@YA?AV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@V?$Size_@H@cv@@M_N@Z
 	?makeMatrix@ofxCv@@YA?AU?$mat@$03$03M$0A@@glm@@VMat@cv@@0@Z
+	?selectROI@ofxCv@@YA_NVMat@cv@@AEAV?$Rect_@H@3@@Z
 	?toCv@ofxCv@@YA?AVMat@cv@@AEAV23@@Z
 	?toCv@ofxCv@@YAAEAV?$Point_@M@cv@@AEAU?$vec@$01M$0A@@glm@@@Z
 	?toCv@ofxCv@@YAAEAV?$Point3_@M@cv@@AEAU?$vec@$02M$0A@@glm@@@Z
@@ -730,6 +731,7 @@ EXPORTS
 	?getVertices@IHasVertices@Nodes@ofxRulr@@UEBA?AV?$vector@U?$vec@$02M$0A@@glm@@V?$allocator@U?$vec@$02M$0A@@glm@@@std@@@std@@XZ
 	??0AbstractBoard@Item@Nodes@ofxRulr@@QEAA@XZ
 	??0Board@Item@Nodes@ofxRulr@@QEAA@XZ
+	??0BoardInWorld@Item@Nodes@ofxRulr@@QEAA@XZ
 	??0Camera@Item@Nodes@ofxRulr@@QEAA@XZ
 	??0Projector@Item@Nodes@ofxRulr@@QEAA@XZ
 	??0RigidBody@Item@Nodes@ofxRulr@@QEAA@XZ
