@@ -18,35 +18,15 @@ namespace ofxRulr {
 
 			void update();
 			ofxCvGui::PanelPtr getPanel() override;
-#ifdef OFXCVGUI_USE_OFXGRABCAM
 			ofVec3f getCursorWorld(bool forceUpdate = false) const;
 			ofxGrabCam & getCamera();
-#endif
+
 		protected:
 			void serialize(nlohmann::json &);
 			void deserialize(const nlohmann::json &);
 			void populateInspector(ofxCvGui::InspectArguments &);
-#ifdef OFXCVGUI_USE_OFXGRABCAM
-			void callbackShowCursor(bool &);
-#endif
-			void callbackGridDark(bool &);
 
-			void drawGrid();
-
-			shared_ptr<ofxCvGui::Panels::World> view;
-
-			struct : ofParameterGroup {
-				ofParameter<bool> showCursor{ "Show cursor",false };
-				struct : ofParameterGroup {
-					ofParameter<bool> enabled{ "Enabled", true };
-					ofParameter<ofVec3f> roomMinimum{ "Room minimum", ofVec3f(-5, -4, 0) };
-					ofParameter<ofVec3f> roomMaximum{ "Room maximum", ofVec3f(+5, 0, 6) };
-					ofParameter<bool> dark{ "Dark", true };
-					PARAM_DECLARE("Grid", enabled, roomMinimum, roomMaximum, dark);
-				} grid;
-				
-				PARAM_DECLARE("WorldStage", showCursor, grid);
-			} parameters;
+			shared_ptr<ofxCvGui::Panels::WorldManaged> view;
 
 			const Utils::Set<Nodes::Base> * world;
 
