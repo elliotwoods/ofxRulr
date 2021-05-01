@@ -88,7 +88,9 @@ namespace ofxRulr {
 
 			{
 				auto deleteButton = make_shared<Widgets::Button>("", [this]() {
-					this->onDeletePressed.notifyListeners();
+					// take a copy because this will be deleted
+					auto actions = this->onDeletePressed;
+					actions.notifyListeners();
 				});
 
 				deleteButton->setBounds(ofRectangle(2, thirdHeight * 2.0f + 3, 25.0f, thirdHeight - 3 - 2));
