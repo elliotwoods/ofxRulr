@@ -75,7 +75,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Nodes\Data\SelectSceneVertices.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoardInWorld.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoardPlanes.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.cpp" />
@@ -97,7 +98,8 @@
   <ItemGroup>
     <ClInclude Include="src\Constants_Plugin_Calibration.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\SelectSceneVertices.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoardInWorld.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoardPlanes.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraIntrinsics.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\HomographyFromGraycode.h" />

@@ -9,9 +9,9 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
 			namespace Calibrate {
-				class CameraExtrinsicsFromBoard : public Base {
+				class CameraExtrinsicsFromBoardPlanes : public Base {
 				public:
-					CameraExtrinsicsFromBoard();
+					CameraExtrinsicsFromBoardPlanes();
 					void init();
 					string getTypeName() const override;
 					ofxCvGui::PanelPtr getPanel() override;
@@ -54,7 +54,7 @@ namespace ofxRulr {
 								, positionInXZPlaneInCameraObjectSpace);
 						} calibrationPoints;
 
-						PARAM_DECLARE("CameraExtrinsicsFromBoard", capture, calibrationPoints);
+						PARAM_DECLARE("CameraExtrinsicsFromBoardPlanes", capture, calibrationPoints);
 					} parameters;
 				};
 			}

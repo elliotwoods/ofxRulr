@@ -5,7 +5,8 @@
 
 #include "ofxRulr/Nodes/Data/SelectSceneVertices.h"
 
-#include "ofxRulr/Nodes/Procedure/Calibrate/CameraExtrinsicsFromBoard.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/CameraExtrinsicsFromBoardInWorld.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/CameraExtrinsicsFromBoardPlanes.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/CameraFromDepthCamera.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/CameraIntrinsics.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/HomographyFromGraycode.h"

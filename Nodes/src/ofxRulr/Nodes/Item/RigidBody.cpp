@@ -50,17 +50,11 @@ namespace ofxRulr {
 				{
 					ofMultMatrix(this->getTransform());
 					ofDrawAxis(0.3f);
-					if (this->isBeingInspected()) {
-						ofPushStyle();
-						{
-							ofSetColor(ofxCvGui::Utils::getBeatingSelectionColor());
-							ofDrawBitmapString(this->getName(), ofVec3f());
-						}
-						ofPopStyle();
-					}
-					else {
-						ofDrawBitmapString(this->getName(), ofVec3f());
-					}
+					auto color = this->isBeingInspected()
+						? ofxCvGui::Utils::getBeatingSelectionColor()
+						: this->getColor();
+
+					ofxCvGui::Utils::drawTextAnnotation(this->getName(), ofVec3f(), color);
 
 					this->onDrawObject.notifyListeners();
 				}
@@ -80,7 +74,7 @@ namespace ofxRulr {
 						ofMultMatrix(this->getTransform());
 						if (args.enableGui) {
 							ofDrawAxis(0.3f);
-							ofDrawBitmapString(this->getName(), ofVec3f());
+							ofxCvGui::Utils::drawTextAnnotation(this->getName(), ofVec3f(), this->getColor());
 						}
 						this->onDrawObjectAdvanced.notifyListeners(args);
 					}

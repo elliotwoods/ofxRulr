@@ -27,7 +27,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Data\SelectSceneVertices.cpp">
       <Filter>src\ofxRulr\Nodes\Data</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoardPlanes.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.cpp">
@@ -69,12 +69,15 @@
     <ClCompile Include="src\pch_Plugin_Calibrate.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoardInWorld.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Nodes\Data\SelectSceneVertices.h">
       <Filter>src\ofxRulr\Nodes\Data</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoard.h">
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoardPlanes.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraFromDepthCamera.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="src\pch_Plugin_Calibrate.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\CameraExtrinsicsFromBoardInWorld.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

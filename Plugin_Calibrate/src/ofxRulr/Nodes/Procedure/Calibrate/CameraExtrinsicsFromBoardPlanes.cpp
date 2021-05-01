@@ -1,5 +1,5 @@
 #include "pch_Plugin_Calibrate.h"
-#include "CameraExtrinsicsFromBoard.h"
+#include "CameraExtrinsicsFromBoardPlanes.h"
 
 #include "ofxRulr/Nodes/Item/AbstractBoard.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
@@ -22,12 +22,12 @@ namespace ofxRulr {
 		namespace Procedure {
 			namespace Calibrate {
 				//----------
-				CameraExtrinsicsFromBoard::CameraExtrinsicsFromBoard() {
+				CameraExtrinsicsFromBoardPlanes::CameraExtrinsicsFromBoardPlanes() {
 					RULR_NODE_INIT_LISTENER;
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::init() {
+				void CameraExtrinsicsFromBoardPlanes::init() {
 					RULR_NODE_UPDATE_LISTENER;
 					RULR_NODE_SERIALIZATION_LISTENERS;
 					RULR_NODE_INSPECTOR_LISTENER;
@@ -58,22 +58,22 @@ namespace ofxRulr {
 				}
 
 				//----------
-				string CameraExtrinsicsFromBoard::getTypeName() const {
-					return "Procedure::Calibrate::CameraExtrinsicsFromBoard";
+				string CameraExtrinsicsFromBoardPlanes::getTypeName() const {
+					return "Procedure::Calibrate::CameraExtrinsicsFromBoardPlanes";
 				}
 
 				//----------
-				ofxCvGui::PanelPtr CameraExtrinsicsFromBoard::getPanel() {
+				ofxCvGui::PanelPtr CameraExtrinsicsFromBoardPlanes::getPanel() {
 					return this->view;
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::update() {
+				void CameraExtrinsicsFromBoardPlanes::update() {
 
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::drawWorldStage() {
+				void CameraExtrinsicsFromBoardPlanes::drawWorldStage() {
 					auto camera = this->getInput<Item::Camera>();
 					if (camera) {
 						ofPushMatrix();
@@ -111,17 +111,17 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::serialize(nlohmann::json & json) {
+				void CameraExtrinsicsFromBoardPlanes::serialize(nlohmann::json & json) {
 					Utils::serialize(json, this->parameters);
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::deserialize(const nlohmann::json & json) {
+				void CameraExtrinsicsFromBoardPlanes::deserialize(const nlohmann::json & json) {
 					Utils::deserialize(json, this->parameters);
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				void CameraExtrinsicsFromBoardPlanes::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
 					auto inspector = inspectArguments.inspector;
 
 					inspector->addButton("Capture origin", [this]() {
@@ -152,7 +152,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::calibrate() {
+				void CameraExtrinsicsFromBoardPlanes::calibrate() {
 					this->throwIfMissingAConnection<Item::Camera>();
 					auto camera = this->getInput<Item::Camera>();
 
@@ -185,23 +185,23 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::captureOriginBoard() {
+				void CameraExtrinsicsFromBoardPlanes::captureOriginBoard() {
 					this->captureTo(this->parameters.calibrationPoints.originInCameraObjectSpace);
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::capturePositiveXBoard() {
+				void CameraExtrinsicsFromBoardPlanes::capturePositiveXBoard() {
 					this->captureTo(this->parameters.calibrationPoints.positiveXInCameraObjectSpace);
 
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::captureXZPlaneBoard() {
+				void CameraExtrinsicsFromBoardPlanes::captureXZPlaneBoard() {
 					this->captureTo(this->parameters.calibrationPoints.positionInXZPlaneInCameraObjectSpace);
 				}
 
 				//----------
-				void CameraExtrinsicsFromBoard::captureTo(ofParameter<glm::vec3> & calibrationPoint) {
+				void CameraExtrinsicsFromBoardPlanes::captureTo(ofParameter<glm::vec3> & calibrationPoint) {
 					Utils::ScopedProcess scopedProcess("Capture board");
 
 					this->throwIfMissingAnyConnection();
