@@ -23,48 +23,9 @@ namespace ofxRulr {
 					RULR_NODE_UPDATE_LISTENER;
 
 					auto panel = ofxCvGui::Panels::makeImage(this->preview);
-					panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
-						//paper sizes
-						ofPushMatrix();
-						{
-							float mmToPixels = 1 / 1000.0f * INCHES_PER_METER * this->parameters.preview.DPI;
-							ofScale(mmToPixels, mmToPixels);
-
-							ofColor baseColor(200, 100, 100);
-							int index = 0;
-							for (auto paperSize : this->paperSizes) {
-								auto paperColor = baseColor;
-								paperColor.setHue(index * 40);
-
-								ofPushStyle();
-								{
-									ofSetColor(paperColor);
-
-									//outline
-									ofNoFill();
-									ofDrawRectangle(0, 0, 297, 210);
-
-									//text
-									ofDrawBitmapString(paperSize->name, paperSize->width, paperSize->height);
-								}
-								ofPopStyle();
-
-								index++;
-							}
-						}
-						ofPopMatrix();
-					};
 					this->panel = panel;
 
 					this->manageParameters(this->parameters);
-
-					{
-						this->paperSizes.emplace(new PaperSize{ "A0", 1189, 841 });
-						this->paperSizes.emplace(new PaperSize{ "A1", 841, 594 });
-						this->paperSizes.emplace(new PaperSize{ "A2", 594, 420 });
-						this->paperSizes.emplace(new PaperSize{ "A3", 420, 297 });
-						this->paperSizes.emplace(new PaperSize{ "A4", 297, 210 });
-					}
 
 					this->dictionary = aruco::Dictionary::load("ARUCO_MIP_16h3");
 
@@ -360,149 +321,23 @@ namespace ofxRulr {
 				}
 
 				//----------
-				//https://github.com/opencv/opencv_contrib/blob/master/modules/aruco/samples/detect_board_charuco.cpp
-				bool HaloBoard::findBoard(cv::Mat image, vector<cv::Point2f> & imagePoints, vector<cv::Point3f> & objectPoints, FindBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const {
-					if (!this->board) {
-						throw(Exception("Board is not setup"));
-					}
-
-					cv::Mat imageGrey;
-					if (image.channels() == 1) {
-						imageGrey = image;
-					}
-					else {
-						cv::cvtColor(image, imageGrey, cv::COLOR_RGB2GRAY);
-					}
-
-					if (this->parameters.detection.openCorners > 0) {
-						//get the corners in the image
-						vector<cv::Point2f> corners;
-						cv::goodFeaturesToTrack(imageGrey
-							, corners
-							, 2000
-							, 0.01
-							, 10);
-
-						//draw circles over the corners
-						for (auto & corner : corners) {
-							cv::circle(imageGrey
-								, corner
-								, this->parameters.detection.openCorners
-								, cv::Scalar(255)
-								, -1);
-						}
-					}
-
-					imagePoints.clear();
-					objectPoints.clear();
-
-					//Find the markers
-					vector<aruco::Marker> foundMarkers;
-					{
-						aruco::CameraParameters cameraParameters(cameraMatrix
-							, distortionCoefficients
-							, cv::Size(imageGrey.cols, imageGrey.rows));
-
-						this->detector->detect(imageGrey
-							, foundMarkers
-							, cameraParameters
-							, this->parameters.length.square);
-
-						if (foundMarkers.empty()) {
+				bool HaloBoard::findBoard(cv::Mat image, vector<cv::Point2f> & imagePoints, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const {
+					if (findBoardMode == FindBoardMode::Assistant) {
+						cv::Rect roi;
+						if (!ofxCv::selectROI(image, roi)) {
 							return false;
 						}
-					}
-
-					//Corner finds
-					map<int, vector<cv::Point2f>> markerCornerFinds;
-					vector<float> markerCornerScale; // scale in pixels for a square meeting at this corner (for subpix)
-
-					for (const auto & marker : foundMarkers) {
-
-						//for each corner of a found marker
-						for (int i = 0; i < 4; i++) {
-							Board::MarkerCorner markerCorner{
-								marker.id,
-								i
-							};
-
-							//for each corner on the board
-							for (int boardCornerIndex = 0; boardCornerIndex < this->board->corners.size(); boardCornerIndex++) {
-								const auto & boardCorner = this->board->corners[boardCornerIndex];
-
-								//check if that corner matches this MarkerCorner
-								for (const auto & boardMarkerCorner : boardCorner.markerCorners) {
-									if (boardMarkerCorner == markerCorner) {
-										//store it into there
-										markerCornerFinds[boardCornerIndex].push_back(marker[i]);
-
-										//get the length of a square side meeting this corner
-										markerCornerScale.push_back(glm::length(ofxCv::toOf(marker[(i + 1) % 4]) - ofxCv::toOf(marker[i])));
-
-										//save some time, nothing else should match in this loop
-										break;
-									}
-								}
-							}
-						}
-					}
-
-					{
-						const auto square = this->parameters.length.square.get();
-						for (const auto & it : markerCornerFinds) {
-							const auto & boardCorner = this->board->corners[it.first];
-
-							//take the mean
-							glm::vec2 mean;
-							{
-								glm::vec2 accumulate;
-								for (const auto & find : it.second) {
-									accumulate += ofxCv::toOf(find);
-								}
-								mean = accumulate / it.second.size();
-							}
-
-							const auto & position = this->board->corners[it.first].position;
-							
-							imagePoints.push_back(ofxCv::toCv(mean));
-							objectPoints.push_back(ofxCv::toCv(glm::vec3(position.x, position.y, 0.0f) * square));
-						}
-					}
-
-					if (imagePoints.empty()) {
-						return false;
-					}
-
-					//perform sub-pixel refinement
-					if(this->parameters.refinement.enabled) {
-						float mean = 0.0f;
-						{
-							float accumulate = 0.0f;
-							for (const auto & find : markerCornerScale) {
-								accumulate += find;
-							}
-							mean = accumulate / markerCornerScale.size();
-						}
-
-						int subPixSearch = mean / 8.0f; //markers are 6x6 pixels (4x4 data)
-
-						subPixSearch = (subPixSearch / 2) * 2 + 1; // ensure odd
-						if (subPixSearch < 1) {
-							subPixSearch = 1; // ensure non zero
-						}
-
-						int zeroZone = mean * 0.01f;
-
-						cv::cornerSubPix(imageGrey
+						this->findBoard(image(roi)
 							, imagePoints
-							, cv::Size(subPixSearch
-								, subPixSearch)
-							, cv::Size(zeroZone
-								, zeroZone)
-							, cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50, 1e-6));
+							, objectPoints);
+						for (auto& imagePoint : imagePoints) {
+							imagePoint.x += roi.x;
+							imagePoint.y += roi.y;
+						}
 					}
-
-					return true;
+					else {
+						this->findBoard(image, imagePoints, objectPoints);
+					}
 				}
 
 				//----------
@@ -546,6 +381,154 @@ namespace ofxRulr {
 				//----------
 				std::vector<int> HaloBoard::getNonMirroringIDs() const {
 					return vector<int> ARUCO_MIP_16h3_NonMirroring;
+				}
+
+				//----------
+				//https://github.com/opencv/opencv_contrib/blob/master/modules/aruco/samples/detect_board_charuco.cpp (but we don't really use that)
+				bool HaloBoard::findBoard(cv::Mat image
+					, vector<cv::Point2f>& imagePoints
+					, vector<cv::Point3f>& objectPoints) const {
+					if (!this->board) {
+						throw(Exception("Board is not setup"));
+					}
+
+					cv::Mat imageGrey;
+					if (image.channels() == 1) {
+						imageGrey = image;
+					}
+					else {
+						cv::cvtColor(image, imageGrey, cv::COLOR_RGB2GRAY);
+					}
+
+					cv::Mat imageForDetection;
+
+					if (this->parameters.detection.openCorners > 0) {
+						imageForDetection = imageGrey.clone();
+
+						cv::dilate(imageForDetection
+							, imageForDetection
+							, cv::Mat()
+							, cv::Point(-1, -1)
+							, this->parameters.detection.openCorners.get());
+					}
+					else {
+						imageForDetection = imageGrey;
+					}
+
+					imagePoints.clear();
+					objectPoints.clear();
+
+					// Find the markers
+					vector<aruco::Marker> foundMarkers;
+					{
+						aruco::MarkerDetector::Params params;
+						{
+							params.setDetectionMode(aruco::DetectionMode::DM_NORMAL, 0.0f);
+							params.detectEnclosedMarkers(this->parameters.detection.params.enclosedMarkers.get());
+							params.borderDistThres = this->parameters.detection.params.borderDistanceThreshold.get();
+							params.maxThreads = -1;
+						}
+
+						//this->detector->setParameters(params);
+
+						foundMarkers = this->detector->detect(imageForDetection);
+
+						if (foundMarkers.empty()) {
+							return false;
+						}
+					}
+
+					// Match marker corners with corners on the board (and store as finds per board marker)
+					map<int, vector<cv::Point2f>> boardMarkerCornerFinds;
+					vector<float> markerCornerScale; // scale in pixels of a square meeting at this corner (for subpix)
+					for (const auto& marker : foundMarkers) {
+						//for each corner of a found marker
+						for (int i = 0; i < 4; i++) {
+							Board::MarkerCorner markerCorner{
+								marker.id,
+								i
+							};
+
+							//for each corner on the board
+							for (int boardCornerIndex = 0; boardCornerIndex < this->board->corners.size(); boardCornerIndex++) {
+								const auto& boardCorner = this->board->corners[boardCornerIndex];
+
+								//check if that corner matches this MarkerCorner
+								for (const auto& boardMarkerCorner : boardCorner.markerCorners) {
+									if (boardMarkerCorner == markerCorner) {
+										//store it into there
+										boardMarkerCornerFinds[boardCornerIndex].push_back(marker[i]);
+
+										//get the length of a square side meeting this corner
+										markerCornerScale.push_back(glm::distance(ofxCv::toOf(marker[(i + 1) % 4]), ofxCv::toOf(marker[i])));
+
+										//save some time, nothing else should match in this loop
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					// Take mean of finds per board corner and store means + corresponding object points
+					{
+						const auto square = this->parameters.length.square.get();
+						for (const auto& it : boardMarkerCornerFinds) {
+							const auto& boardCorner = this->board->corners[it.first];
+
+							//take the mean
+							glm::vec2 mean;
+							{
+								glm::vec2 accumulate;
+								for (const auto& find : it.second) {
+									accumulate += ofxCv::toOf(find);
+								}
+								mean = accumulate / it.second.size();
+							}
+
+							const auto& position = this->board->corners[it.first].position;
+
+							imagePoints.push_back(ofxCv::toCv(mean));
+							objectPoints.push_back(ofxCv::toCv(glm::vec3(position.x, position.y, 0.0f) * square));
+						}
+					}
+
+					// Quit if no image points were gathered
+					if (imagePoints.empty()) {
+						return false;
+					}
+
+					// Sub-pixel refinement
+					if (this->parameters.refinement.enabled) {
+						// Get the mean length of a square in image space
+						float mean = 0.0f;
+						{
+							float accumulate = 0.0f;
+							for (const auto& find : markerCornerScale) {
+								accumulate += find;
+							}
+							mean = accumulate / markerCornerScale.size();
+						}
+
+						int subPixSearch = mean / 8.0f; //markers are 6x6 pixels (4x4 data)
+
+						subPixSearch = (subPixSearch / 2) * 2 + 1; // ensure odd
+						if (subPixSearch < 1) {
+							subPixSearch = 1; // ensure non zero
+						}
+
+						int zeroZone = mean * 0.01f;
+
+						cv::cornerSubPix(imageGrey
+							, imagePoints
+							, cv::Size(subPixSearch
+								, subPixSearch)
+							, cv::Size(zeroZone
+								, zeroZone)
+							, cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50, 1e-6));
+					}
+
+					return true;
 				}
 
 				//----------

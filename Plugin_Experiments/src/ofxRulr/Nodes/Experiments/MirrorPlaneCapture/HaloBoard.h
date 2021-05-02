@@ -10,12 +10,6 @@ namespace ofxRulr {
 			namespace MirrorPlaneCapture {
 				class HaloBoard : public Nodes::Item::AbstractBoard {
 				public:
-					struct PaperSize {
-						string name;
-						float width;
-						float height;
-					};
-
 					HaloBoard();
 					string getTypeName() const override;
 					void init();
@@ -24,7 +18,13 @@ namespace ofxRulr {
 					void deserialize(const nlohmann::json &);
 					void populateInspector(ofxCvGui::InspectArguments &);
 
-					bool findBoard(cv::Mat, vector<cv::Point2f> & imagePoints, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const override;
+					bool findBoard(cv::Mat
+						, vector<cv::Point2f> & imagePoints
+						, vector<cv::Point3f> & objectPoints
+						, FindBoardMode findBoardMode
+						, cv::Mat cameraMatrix
+						, cv::Mat distortionCoefficients) const override;
+
 					void drawObject() const override;
 					float getSpacing() const override;
 					glm::vec3 getCenter() const;
@@ -36,6 +36,10 @@ namespace ofxRulr {
 					vector<int> getNonMirroringIDs() const;
 
 				protected:
+					bool findBoard(cv::Mat
+						, vector<cv::Point2f>& imagePoints
+						, vector<cv::Point3f>& objectPoints) const;
+
 					float getPreviewPixelsPerMeter() const;
 
 					struct Parameters : ofParameterGroup {
@@ -53,15 +57,18 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<int> DPI{ "Preview DPI", 75 };
-							ofParameter<bool> showPaperSizes{ "Show paper sizes", false };
-							PARAM_DECLARE("Preview", DPI, showPaperSizes);
+							PARAM_DECLARE("Preview", DPI);
 						} preview;
 
 						struct : ofParameterGroup {
-							ofParameter<bool> refineStrategy{ "Refine strategy", true };
-							ofParameter<float> errorCorrectionRate{ "Error correction rate", 0.6 };
 							ofParameter<int> openCorners{ "Open corners [px]", 0 };
-							PARAM_DECLARE("Detection", refineStrategy, errorCorrectionRate, openCorners);
+
+							struct : ofParameterGroup {
+								ofParameter<bool> enclosedMarkers{ "Enclosed markers", true };
+								ofParameter<float> borderDistanceThreshold{ "Border distance threshold", 0.015f };
+								PARAM_DECLARE("Params", enclosedMarkers, borderDistanceThreshold);
+							} params;
+							PARAM_DECLARE("Detection", openCorners, params);
 						} detection;
 
 						struct : ofParameterGroup {
@@ -116,8 +123,6 @@ namespace ofxRulr {
 					ofImage preview;
 
 					ofxCvGui::PanelPtr panel;
-
-					set<shared_ptr<PaperSize>> paperSizes;
 				};
 			}
 		}

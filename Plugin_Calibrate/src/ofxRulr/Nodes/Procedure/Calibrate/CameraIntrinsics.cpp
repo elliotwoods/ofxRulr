@@ -154,13 +154,27 @@ namespace ofxRulr {
 										if (this->currentImagePoints.size() >= 4) {
 											this->isFrameNew = true;
 										}
-										if (this->isFrameNew
-											&& this->parameters.capture.tetheredShootEnabled
-											&& !grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)
-											&& grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::OneShot)) {
-											Utils::ScopedProcess scopedProcessTethered("Tethered shoot find board");
-											this->addCapture(true);
-											scopedProcessTethered.end();
+
+										// tethered shooting
+										{
+											bool tetheredEnabled = false;
+											switch (this->parameters.capture.tetheredShootEnabled.get()) {
+											case WhenDrawOnWorldStage::Selected:
+												tetheredEnabled = this->isBeingInspected();
+												break;
+											case WhenDrawOnWorldStage::Always:
+												tetheredEnabled = true;
+											default:
+												break;
+											}
+											if (this->isFrameNew
+												&& tetheredEnabled
+												&& !grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::Continuous)
+												&& grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::OneShot)) {
+												Utils::ScopedProcess scopedProcessTethered("Tethered shoot find board");
+												this->addCapture(true);
+												scopedProcessTethered.end();
+											}
 										}
 									}
 									RULR_CATCH_ALL_TO_ERROR;

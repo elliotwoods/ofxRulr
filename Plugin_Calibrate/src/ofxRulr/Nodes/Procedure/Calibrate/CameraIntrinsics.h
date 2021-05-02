@@ -69,7 +69,7 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<bool> checkAllIncomingFrames{ "Check all incoming frames", true };
-							ofParameter<bool> tetheredShootEnabled{ "Tethered shoot enabled", true };
+							ofParameter<WhenDrawOnWorldStage> tetheredShootEnabled{ "Tethered shoot enabled", WhenDrawOnWorldStage::Selected };
 							ofParameter<FindBoardMode> findBoardMode{ "Mode", FindBoardMode::Optimized };
 
 							PARAM_DECLARE("Capture", checkAllIncomingFrames, tetheredShootEnabled, findBoardMode);

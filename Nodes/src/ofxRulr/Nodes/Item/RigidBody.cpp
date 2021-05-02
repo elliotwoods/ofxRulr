@@ -282,10 +282,10 @@ namespace ofxRulr {
 			glm::mat4 RigidBody::getTransform() const {
 				//rotation
 				auto quat = glm::quat(glm::vec3(this->rotationEuler[0] * DEG_TO_RAD, this->rotationEuler[1] * DEG_TO_RAD, this->rotationEuler[2] * DEG_TO_RAD));
-				auto transform = toOf(glm::toMat4(quat));
+				auto transform = glm::mat4(quat);
 
 				//translation
-				((ofVec4f*)&transform)[3] = ofVec4f(this->translation[0], this->translation[1], this->translation[2], 1.0f);
+				((glm::vec4*)&transform)[3] = glm::vec4(this->translation[0], this->translation[1], this->translation[2], 1.0f);
 
 				return transform;
 			}
@@ -315,7 +315,7 @@ namespace ofxRulr {
 
 			//---------
 			void RigidBody::setTransform(const glm::mat4 & transform) {
-				auto translation4 = transform[3]; //last row is translation. rip it out;
+				auto & translationRow = transform[3]; //last row is translation. rip it out;
 
 				//first 3x3 is rotation, rip it out and convert it
 				glm::mat3 rotationMatrix;
@@ -326,10 +326,10 @@ namespace ofxRulr {
 						// Careful that i and j might need to be switched
 					}
 				}
-				auto rotationEuler = glm::eulerAngles(glm::toQuat(rotationMatrix));
+				auto rotationEuler = glm::eulerAngles(glm::toQuat(rotationMatrix)) * RAD_TO_DEG;
 
 				for (int i = 0; i < 3; i++) {
-					this->translation[i] = translation[i];
+					this->translation[i] = translationRow[i];
 					this->rotationEuler[i] = rotationEuler[i];
 				}
 

@@ -104,7 +104,8 @@ namespace ofxRulr {
 
 				//apply the inverse of the camera transform
 				{
-					auto cameraTransform = ofxCv::makeMatrix(incomingFrame->cameraDescription->inverseRotationVector, incomingFrame->cameraDescription->inverseTranslation);
+					auto cameraTransform = ofxCv::makeMatrix(incomingFrame->cameraDescription->inverseRotationVector
+						, incomingFrame->cameraDescription->inverseTranslation);
 
 					cv::Mat cameraRotationInverse;
 					cv::Mat cameraTranslationInverse;

@@ -22,8 +22,10 @@ namespace ofxRulr {
 					void deserialize(const nlohmann::json&);
 					void populateInspector(ofxCvGui::InspectArguments&);
 
-					void captureAndCalibrate();
+					void capture();
+					void calibrate();
 				protected:
+					void receiveFrame(shared_ptr<ofxMachineVision::Frame>);
 					ofxCvGui::PanelPtr view;
 
 					ofImage image;
@@ -33,10 +35,22 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
-							PARAM_DECLARE("Capture", findBoardMode);
+							ofParameter<WhenDrawOnWorldStage> tetheredShootEnabled{ "Tethered shoot enabled", WhenDrawOnWorldStage::Selected };
+							PARAM_DECLARE("Capture", findBoardMode, tetheredShootEnabled);
 						} capture;
 
-						PARAM_DECLARE("CameraExtrinsicsFromBoardInWorld", capture);
+						struct : ofParameterGroup {
+							ofParameter<bool> useExtrinsicGuess{ "Use extrinsic guess", false };
+							ofParameter<bool> calibrateOnCapture{ "Calibrate on capture", false };
+							PARAM_DECLARE("Calibrate", useExtrinsicGuess, calibrateOnCapture);
+						} calibrate;
+
+						struct : ofParameterGroup {
+							ofParameter<bool> rays{ "Rays", true };
+							PARAM_DECLARE("Draw", rays);
+						} draw;
+
+						PARAM_DECLARE("CameraExtrinsicsFromBoardInWorld", capture, calibrate, draw);
 					} parameters;
 				};
 			}
