@@ -1,5 +1,6 @@
 #include "pch_RulrCore.h"
 #include "Parameters.h"
+#include "ofxRulr/Exception.h"
 
 namespace ofxRulr {
 	namespace Utils {
@@ -26,16 +27,19 @@ namespace ofxRulr {
 		//----------
 		template<>
 		void _serialize(nlohmann::json& json, const ofParameter<filesystem::path>& parameter) {
-			serialize(json, parameter.get());
+			serialize(json[parameter.getName()], parameter.get());
 		}
 
 		//----------
 		template<>
 		bool _deserialize(const nlohmann::json& json, ofParameter<filesystem::path>& parameter) {
 			std::string value;
-			if (deserialize(json, value)) {
-				parameter.set(value);
-				return true;
+			const auto& name = parameter.getName();
+			if (json.contains(name)) {
+				if (deserialize(json, value)) {
+					parameter.set(value);
+					return true;
+				}
 			}
 			return false;
 		}
@@ -84,49 +88,58 @@ namespace ofxRulr {
 			auto& jsonGroup = name.empty() ? json : json[name];
 
 			for (const auto& parameter : group) {
-				if (trySerialize<bool>(jsonGroup, parameter)) continue;
-				if (trySerialize<uint8_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<uint16_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<uint32_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<uint64_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<int8_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<int16_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<int32_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<int64_t>(jsonGroup, parameter)) continue;
-				if (trySerialize<float>(jsonGroup, parameter)) continue;
-				if (trySerialize<double>(jsonGroup, parameter)) continue;
+				try {
+					if (trySerialize<bool>(jsonGroup, parameter)) continue;
+					if (trySerialize<uint8_t>(jsonGroup, parameter)) continue;
+					if (trySerialize<uint16_t>(jsonGroup, parameter)) continue;
+					if (trySerialize<uint32_t>(jsonGroup, parameter)) continue;
+					if (trySerialize<uint64_t>(jsonGroup, parameter)) continue;
+					if (trySerialize<int8_t>(jsonGroup, parameter)) continue;
+					if (trySerialize<int16_t>(jsonGroup, parameter)) continue;
+					if (trySerialize<int32_t>(jsonGroup, parameter)) continue;
+					if (trySerialize<int64_t>(jsonGroup, parameter)) continue;
+					if (trySerialize<float>(jsonGroup, parameter)) continue;
+					if (trySerialize<double>(jsonGroup, parameter)) continue;
 
-				if (trySerialize<glm::vec2>(jsonGroup, parameter)) continue;
-				if (trySerialize<glm::vec3>(jsonGroup, parameter)) continue;
-				if (trySerialize<glm::vec4>(jsonGroup, parameter)) continue;
-				if (trySerialize<glm::mat3>(jsonGroup, parameter)) continue;
-				if (trySerialize<glm::mat4>(jsonGroup, parameter)) continue;
+					if (trySerialize<glm::vec2>(jsonGroup, parameter)) continue;
+					if (trySerialize<glm::vec3>(jsonGroup, parameter)) continue;
+					if (trySerialize<glm::vec4>(jsonGroup, parameter)) continue;
+					if (trySerialize<glm::mat3>(jsonGroup, parameter)) continue;
+					if (trySerialize<glm::mat4>(jsonGroup, parameter)) continue;
 
-				if (trySerialize<ofColor>(jsonGroup, parameter)) continue;
-				if (trySerialize<ofShortColor>(jsonGroup, parameter)) continue;
-				if (trySerialize<ofFloatColor>(jsonGroup, parameter)) continue;
-				if (trySerialize<ofRectangle>(jsonGroup, parameter)) continue;
+					if (trySerialize<ofColor>(jsonGroup, parameter)) continue;
+					if (trySerialize<ofShortColor>(jsonGroup, parameter)) continue;
+					if (trySerialize<ofFloatColor>(jsonGroup, parameter)) continue;
+					if (trySerialize<ofRectangle>(jsonGroup, parameter)) continue;
 
-				if (trySerialize<std::string>(jsonGroup, parameter)) continue;
-				if (trySerialize<filesystem::path>(jsonGroup, parameter)) continue;
+					if (trySerialize<std::string>(jsonGroup, parameter)) continue;
+					if (trySerialize<filesystem::path>(jsonGroup, parameter)) continue;
 
-				//group
-				{
-					auto typedParameter = dynamic_pointer_cast<ofParameterGroup>(parameter);
-					if (typedParameter) {
-						serialize(jsonGroup, *typedParameter);
-						continue;
+					//group
+					{
+						auto typedParameter = dynamic_pointer_cast<ofParameterGroup>(parameter);
+						if (typedParameter) {
+							serialize(jsonGroup, *typedParameter);
+							continue;
+						}
+					}
+
+					//widget builder registered types (e.g. enums)
+					{
+						std::string valueString;
+						if (ofxCvGui::Panels::WidgetsBuilder::X().trySerialize(parameter, valueString)) {
+							jsonGroup[parameter->getName()] = valueString;
+							continue;
+						}
+					}
+
+					//anything else try the oF serializers
+					{
+						// Can throw if serialization is not supported by parameter type
+						jsonGroup[parameter->getName()] = parameter->toString();
 					}
 				}
-
-				//anything else
-				{
-					jsonGroup[name] = parameter->toString();
-					RULR_ERROR << "Can't serialize contents of " << name;
-					continue;
-				}
-
-				ofLogWarning("ofxRulr::Utils::serialize") << "Couldn't serialize" << parameter->getName();
+				RULR_CATCH_ALL_TO_ALERT
 			}
 		}
 
@@ -153,59 +166,75 @@ namespace ofxRulr {
 
 			auto& jsonGroup = name.empty() ? json : json[name];
 			for (const auto& parameter : group) {
-				if (!parameter) {
-					continue;
-				}
+				try {
+					const auto parameterName = parameter->getName();
 
-				if (tryDeserialize<int>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<float>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<bool>(jsonGroup, parameter)) continue;
-
-				if (tryDeserialize<uint8_t>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<uint16_t>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<uint32_t>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<uint64_t>(jsonGroup, parameter)) continue;
-
-				if (tryDeserialize<int8_t>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<int16_t>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<int32_t>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<int64_t>(jsonGroup, parameter)) continue;
-
-				if (tryDeserialize<glm::vec2>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<glm::vec3>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<glm::vec4>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<glm::mat3>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<glm::mat4>(jsonGroup, parameter)) continue;
-
-				if (tryDeserialize<ofColor>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<ofShortColor>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<ofFloatColor>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<ofRectangle>(jsonGroup, parameter)) continue;
-
-				if (tryDeserialize<string>(jsonGroup, parameter)) continue;
-				if (tryDeserialize<filesystem::path>(jsonGroup, parameter)) continue;
-
-				//group
-				{
-					auto typedParameter = dynamic_pointer_cast<ofParameterGroup>(parameter);
-					if (typedParameter) {
-						deserialize(jsonGroup, *typedParameter);
+					if (!parameter) {
 						continue;
 					}
-				}
+					if (!jsonGroup.contains(parameterName)) {
+						continue;
+					}
 
-				//anything else
-				{
-					const auto name = parameter->getName();
-					if (jsonGroup.contains(name)) {
+					if (tryDeserialize<int>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<float>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<bool>(jsonGroup, parameter)) continue;
+
+					if (tryDeserialize<uint8_t>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<uint16_t>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<uint32_t>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<uint64_t>(jsonGroup, parameter)) continue;
+
+					if (tryDeserialize<int8_t>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<int16_t>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<int32_t>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<int64_t>(jsonGroup, parameter)) continue;
+
+					if (tryDeserialize<glm::vec2>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<glm::vec3>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<glm::vec4>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<glm::mat3>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<glm::mat4>(jsonGroup, parameter)) continue;
+
+					if (tryDeserialize<ofColor>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<ofShortColor>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<ofFloatColor>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<ofRectangle>(jsonGroup, parameter)) continue;
+
+					if (tryDeserialize<string>(jsonGroup, parameter)) continue;
+					if (tryDeserialize<filesystem::path>(jsonGroup, parameter)) continue;
+
+					//group
+					{
+						auto typedParameter = dynamic_pointer_cast<ofParameterGroup>(parameter);
+						if (typedParameter) {
+							deserialize(jsonGroup, *typedParameter);
+							continue;
+						}
+					}
+
+					//widget builder registered types (e.g. enums)
+					{
+
+						std::string valueString;
+						jsonGroup[parameterName].get_to(valueString);
+						if (ofxCvGui::Panels::WidgetsBuilder::X().tryDeserialize(parameter, valueString)) {
+							continue;
+						}
+					}
+
+					//anything else
+					{
 						string valueString;
-						jsonGroup[name].get_to(valueString);
+						jsonGroup[parameterName].get_to(valueString);
 						parameter->fromString(valueString);
 						continue;
 					}
-				}
 
-				ofLogWarning("ofxRulr::Utils::serialize") << "Couldn't deserialize" << parameter->getName();
+					//couldn't deserialize
+					throw(ofxRulr::Exception("Couldn't deserialize paramaeter " + parameter->getName()));
+				}
+				RULR_CATCH_ALL_TO_WARNING
 			}
 
 			return true;

@@ -52,3 +52,6 @@ namespace ofxRulr {
 
 #define RULR_CATCH_ALL_TO_ERROR \
 	RULR_CATCH_ALL_TO(ofLogError("ofxRulr") << e.what())
+
+#define RULR_CATCH_ALL_TO_WARNING \
+	RULR_CATCH_ALL_TO(ofLogWarning("ofxRulr") << e.what())
