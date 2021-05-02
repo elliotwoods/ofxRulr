@@ -169,38 +169,40 @@ namespace ofxRulr {
 					}
 
 					{
+						// We are quite confident that we're naming all the rotations/translation correctly here
+						// Note that when we set extrinsics, we inverse because Extrinsics = from the objects reference plane to the world reference frame
 						Utils::ScopedProcess solvePnPScope("solvePnP");
-						cv::Mat cameraToBodyRotationVector, cameraToBodyTranslation;
+						cv::Mat bodyToCameraRotationVector, bodyToCameraTranslation;
 						const auto & useExtrinsicGuess = this->parameters.calibrate.useExtrinsicGuess.get();
 						if (useExtrinsicGuess) {
-							camera->getExtrinsics(cameraToBodyRotationVector
-								, cameraToBodyTranslation
+							camera->getExtrinsics(bodyToCameraRotationVector
+								, bodyToCameraTranslation
 								, true);
 						}
 						cv::solvePnP(this->objectPoints
 							, this->imagePoints
 							, camera->getCameraMatrix()
 							, camera->getDistortionCoefficients()
-							, cameraToBodyRotationVector
-							, cameraToBodyTranslation
+							, bodyToCameraRotationVector
+							, bodyToCameraTranslation
 							, useExtrinsicGuess);
 
-						cv::Mat bodyToWorldRotationVector, bodyToWorldTranslation;
-						boardInWorld->getExtrinsics(bodyToWorldRotationVector
-							, bodyToWorldTranslation
+						cv::Mat worldToBodyRotationVector, worldToBodyTranslation;
+						boardInWorld->getExtrinsics(worldToBodyRotationVector
+							, worldToBodyTranslation
 							, true);
 
-						cv::Mat cameraToWorldRotationVector, cameraToWorldTranslation;
+						cv::Mat worldToCameraRotationVector, worldToCameraTranslation;
 						cv::composeRT(
-							bodyToWorldRotationVector
-							, bodyToWorldTranslation
-							, cameraToBodyRotationVector
-							, cameraToBodyTranslation
-							, cameraToWorldRotationVector
-							, cameraToWorldTranslation);
+							worldToBodyRotationVector
+							, worldToBodyTranslation
+							, bodyToCameraRotationVector
+							, bodyToCameraTranslation
+							, worldToCameraRotationVector
+							, worldToCameraTranslation);
 
-						camera->setExtrinsics(cameraToWorldRotationVector
-							, cameraToWorldTranslation
+						camera->setExtrinsics(worldToCameraRotationVector
+							, worldToCameraTranslation
 							, true);
 						solvePnPScope.end();
 					}
