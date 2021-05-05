@@ -131,6 +131,7 @@ EXPORTS
 	?ofLerp@@YAMMMM@Z
 	?ofLoadIdentityMatrix@@YAXXZ
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@E@@AEBVofBuffer@@AEBUofImageLoadSettings@@@Z
+	?ofLoadImage@@YA_NAEAV?$ofPixels_@G@@AEBVofBuffer@@AEBUofImageLoadSettings@@@Z
 	?ofMap@@YAMMMMMM_N@Z
 	?ofMultMatrix@@YAXAEBU?$mat@$03$03M$0A@@glm@@@Z
 	?ofNoFill@@YAXXZ
@@ -189,6 +190,7 @@ EXPORTS
 	?setFromPixels@?$ofImage_@E@@QEAAXAEBV?$ofPixels_@E@@@Z
 	?unbind@?$ofImage_@E@@QEBAXH@Z
 	?update@?$ofImage_@E@@QEAAXXZ
+	?allocate@?$ofPixels_@E@@QEAAX_K00@Z
 	?allocate@?$ofPixels_@E@@QEAAX_K0W4ofImageType@@@Z
 	?allocate@?$ofPixels_@E@@QEAAX_K0W4ofPixelFormat@@@Z
 	?getBytesPerChannel@?$ofPixels_@E@@QEBA_KXZ
@@ -224,14 +226,17 @@ EXPORTS
 	??A?$ofColor_@E@@QEBAAEBE_K@Z
 	?allocate@?$ofPixels_@G@@QEAAX_K00@Z
 	?allocate@?$ofPixels_@G@@QEAAX_K0W4ofImageType@@@Z
+	?getBytesPerChannel@?$ofPixels_@G@@QEBA_KXZ
 	?getData@?$ofPixels_@G@@QEAAPEAGXZ
 	?getData@?$ofPixels_@G@@QEBAPEBGXZ
 	?getHeight@?$ofPixels_@G@@QEBA_KXZ
 	?getNumChannels@?$ofPixels_@G@@QEBA_KXZ
 	?getWidth@?$ofPixels_@G@@QEBA_KXZ
+	?isAllocated@?$ofPixels_@G@@QEBA_NXZ
 	?size@?$ofPixels_@G@@QEBA_KXZ
 	??0?$ofPixels_@G@@QEAA@XZ
 	??1?$ofPixels_@G@@QEAA@XZ
+	??A?$ofPixels_@G@@QEBAAEBG_K@Z
 	?getData@?$ofPixels_@I@@QEBAPEBIXZ
 	?getHeight@?$ofPixels_@I@@QEBA_KXZ
 	?getPixelIndex@?$ofPixels_@I@@QEBA_K_K0@Z
@@ -512,7 +517,7 @@ EXPORTS
 	??0Texture@Panels@ofxCvGui@@QEAA@AEBVofTexture@@@Z
 	?makeBaseDraws@Panels@ofxCvGui@@YA?AV?$shared_ptr@VDraws@Panels@ofxCvGui@@@std@@AEAVofBaseDraws@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeBlank@Panels@ofxCvGui@@YA?AV?$shared_ptr@VBase@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
-	?makeImage@Panels@ofxCvGui@@YA?AV?$shared_ptr@VImage@Panels@ofxCvGui@@@std@@AEAV?$ofImage_@E@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
+	?makeImage@Panels@ofxCvGui@@YA?AV?$shared_ptr@VImage@Panels@ofxCvGui@@@std@@AEAVofAbstractImage@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeTexture@Panels@ofxCvGui@@YA?AV?$shared_ptr@VTexture@Panels@ofxCvGui@@@std@@AEBVofTexture@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeWidgets@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWidgets@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeWorld@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWorld@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z

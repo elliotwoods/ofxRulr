@@ -463,8 +463,17 @@ namespace ofxRulr {
 					Mat distortionCoefficients = Mat::zeros(8, 1, CV_64F);
 
 					vector<Mat> Rotations, Translations;
-					auto flags = cv::CALIB_FIX_K6 | cv::CALIB_FIX_K5;
-					this->error = cv::calibrateCamera(objectPoints, imagePoints, cameraResolution, cameraMatrix, distortionCoefficients, Rotations, Translations, flags);
+					auto flags = RULR_VIEW_CALIBRATION_FLAGS;
+					
+					this->error = cv::calibrateCamera(objectPoints
+						, imagePoints
+						, cameraResolution
+						, cameraMatrix
+						, distortionCoefficients
+						, Rotations
+						, Translations
+						, flags);
+
 					camera->setIntrinsics(cameraMatrix, distortionCoefficients);
 
 					for (int i = 0; i < captures.size(); i++) {

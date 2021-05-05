@@ -5,8 +5,8 @@
 #include "ofxRay.h"
 #include <opencv2/calib3d/calib3d.hpp>
 
-#define RULR_VIEW_DISTORTION_COEFFICIENT_COUNT 4
-#define RULR_VIEW_CALIBRATION_FLAGS cv::CALIB_FIX_K5 | cv::CALIB_FIX_K6 | cv::CALIB_ZERO_TANGENT_DIST
+#define RULR_VIEW_DISTORTION_COEFFICIENT_COUNT 12
+#define RULR_VIEW_CALIBRATION_FLAGS cv::CALIB_RATIONAL_MODEL | cv::CALIB_THIN_PRISM_MODEL
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {

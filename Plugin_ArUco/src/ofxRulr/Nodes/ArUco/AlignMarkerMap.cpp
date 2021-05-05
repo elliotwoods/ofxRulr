@@ -283,7 +283,9 @@ namespace ofxRulr {
 
 			//----------
 			void AlignMarkerMap::deserialize(const nlohmann::json & json) {
-				this->constraints.deserialize(json["captureSet"]);
+				if (json.contains("captureSet")) {
+					this->constraints.deserialize(json["captureSet"]);
+				}
 			}
 
 			//----------
