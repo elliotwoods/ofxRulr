@@ -35,15 +35,16 @@ namespace ofxRulr {
 			size_t getRemainingNumFrames(shared_ptr<ofxAssets::Sound>);
 		protected:
 			ofSoundStream soundStream;
-			
+			bool isClosing = false;
+
 			vector<weak_ptr<ofBaseSoundOutput>> sources;
 			mutex sourcesMutex;
 			
 			vector<ActiveSound> activeSounds;
 			mutex activeSoundsMutex;
-			
-			vector<ActiveSound> soundsToAdd;
-			mutex soundsToAddMutex;
+
+			ofThreadChannel<ActiveSound> soundsToAdd;
+			ofThreadChannel<ActiveSound> soundsToRemove;
 		};
 	}
 }

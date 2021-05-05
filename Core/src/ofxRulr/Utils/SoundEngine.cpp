@@ -10,7 +10,7 @@ namespace ofxRulr {
 			//try default output device
 			bool success = false;
 #ifdef TARGET_WIN32
-			auto device = ofSoundDevice::MS_WASAPI;
+			auto device = ofSoundDevice::MS_DS;
 #else
 			auto device = ofSoundDevice::DEFAULT;
 #endif
@@ -57,54 +57,68 @@ namespace ofxRulr {
 
 		//----------
 		SoundEngine::~SoundEngine() {
+			this->isClosing = true;
+
+			this->activeSoundsMutex.lock();
+			this->sourcesMutex.lock();
+
+			this->soundStream.stop();
 			this->soundStream.close();
+
+			this->activeSoundsMutex.unlock();
+			this->sourcesMutex.unlock();
 		}
 		
 		//----------
 		void SoundEngine::audioOut(ofSoundBuffer & out) {
+			if (this->isClosing) {
+				return;
+			}
+
 			auto numFrames = out.getNumFrames();
 
-			//add all sounds in queue to activeSounds list and clear the list
-			this->soundsToAddMutex.lock();
-			for(const auto & soundToAdd : this->soundsToAdd) {
-				this->activeSounds.push_back(soundToAdd);
-			}
-			this->soundsToAdd.clear();
-			this->soundsToAddMutex.unlock();
-			
 			this->activeSoundsMutex.lock();
 			{
+				//add all sounds in queue to activeSounds list and clear the list
+				{
+					ActiveSound activeSound;
+					while (this->soundsToAdd.tryReceive(activeSound)) {
+						this->activeSounds.push_back(activeSound);
+					}
+				}
+
 				//render all the frames of sound and delete if completed
-				for(size_t i=0; i<numFrames; i++) {
-					auto & left = out[i * 2 + 0];
-					auto & right = out[i * 2 + 1];
-					
+				for (size_t i = 0; i < numFrames; i++) {
+					auto& left = out[i * 2 + 0];
+					auto& right = out[i * 2 + 1];
+
 					//initialise each channel
 					left = 0.0f;
 					right = 0.0f;
-					
+
 					//delete all dead sounds and play active ones
-					for(auto it = this->activeSounds.begin(); it != this->activeSounds.end(); ) {
-						auto & activeSound = *it;
-						
+					for (auto it = this->activeSounds.begin(); it != this->activeSounds.end(); ) {
+						auto& activeSound = *it;
+
 						//check if needs deleting
-						if(activeSound.frameIndex >= activeSound.sound->getSoundBuffer().getNumFrames()) {
+						if (activeSound.frameIndex >= activeSound.sound->getSoundBuffer().getNumFrames()) {
 							it = this->activeSounds.erase(it);
 							continue; // skip to next sound
-						} else {
+						}
+						else {
 							it++;
 						}
-						
+
 						//check if it's delayed
-						if(activeSound.delay > 0) {
+						if (activeSound.delay > 0) {
 							activeSound.delay--;
 							continue; //skip to next sound
 						}
-						
+
 						//play it otherwise
 						left += activeSound.sound->getSoundBuffer().getSample(activeSound.frameIndex, 0);
 						right += activeSound.sound->getSoundBuffer().getSample(activeSound.frameIndex, 1);
-						
+
 						//progress the playhead
 						activeSound.frameIndex++;
 					}
@@ -155,10 +169,7 @@ namespace ofxRulr {
 		
 		//----------
 		void SoundEngine::play(ActiveSound activeSound) {
-			if (this->soundsToAddMutex.try_lock()) {
-				this->soundsToAdd.push_back(activeSound);
-				this->soundsToAddMutex.unlock();
-			}
+			this->soundsToAdd.send(activeSound);
 		}
 
 		//----------
@@ -170,20 +181,8 @@ namespace ofxRulr {
 		//----------
 		void SoundEngine::stopAll(shared_ptr<ofxAssets::Sound> sound) {
 			if (sound) {
-				if (this->soundsToAddMutex.try_lock()) {
-					for (auto it = this->soundsToAdd.begin(); it != this->soundsToAdd.end(); ) {
-						if (it->sound == sound) {
-							it = this->soundsToAdd.erase(it);
-						}
-						else {
-							it++;
-						}
-					}
-
-					this->soundsToAddMutex.unlock();
-				}
-				
-				if (this->activeSoundsMutex.try_lock()) {
+				this->activeSoundsMutex.lock();
+				{
 					for(auto it = this->activeSounds.begin(); it != this->activeSounds.end(); ) {
 						if(it->sound == sound) {
 							it = this->activeSounds.erase(it);
@@ -191,8 +190,8 @@ namespace ofxRulr {
 							it++;
 						}
 					}
-					this->activeSoundsMutex.unlock();
 				}
+				this->activeSoundsMutex.unlock();
 			}
 		}
 		
@@ -200,12 +199,15 @@ namespace ofxRulr {
 		bool SoundEngine::isSoundActive(shared_ptr<ofxAssets::Sound> sound) {
 			lock_guard<mutex> lock(this->activeSoundsMutex);
 			
+			this->activeSoundsMutex.lock();
 			for(const auto & activeSound : this->activeSounds) {
 				if(activeSound.sound == sound) {
+					this->activeSoundsMutex.unlock();
 					return true;
 				}
 			}
-			
+			this->activeSoundsMutex.unlock();
+
 			return false;
 		}
 
@@ -214,20 +216,16 @@ namespace ofxRulr {
 			auto numFrames = sound->getSoundBuffer().getNumFrames();
 
 			size_t result = 0;
-			
-			this->soundsToAddMutex.lock();
-			{
-				for(const auto & activeSound : this->soundsToAdd) {
-					if(activeSound.sound == sound) {
-						result = max(result, numFrames - activeSound.frameIndex);
-					}
-				}
-				
-			}
-			this->soundsToAddMutex.unlock();
-			
+
 			this->activeSoundsMutex.lock();
 			{
+				{
+					ActiveSound activeSound;
+					while (this->soundsToAdd.tryReceive(activeSound)) {
+						this->activeSounds.push_back(activeSound);
+					}
+				}
+
 				for(const auto & activeSound : this->activeSounds) {
 					if(activeSound.sound == sound) {
 						result = max(result, numFrames - activeSound.frameIndex);
