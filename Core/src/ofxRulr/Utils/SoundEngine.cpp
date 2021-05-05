@@ -10,7 +10,7 @@ namespace ofxRulr {
 			//try default output device
 			bool success = false;
 #ifdef TARGET_WIN32
-			auto device = ofSoundDevice::MS_DS;
+			auto device = ofSoundDevice::MS_WASAPI;
 #else
 			auto device = ofSoundDevice::DEFAULT;
 #endif
@@ -155,9 +155,6 @@ namespace ofxRulr {
 		
 		//----------
 		void SoundEngine::play(ActiveSound activeSound) {
-			//HACK
-			return;
-
 			if (this->soundsToAddMutex.try_lock()) {
 				this->soundsToAdd.push_back(activeSound);
 				this->soundsToAddMutex.unlock();
