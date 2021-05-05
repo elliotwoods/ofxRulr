@@ -18,9 +18,6 @@ namespace ofxRulr {
 		void serialize(nlohmann::json& json, const TYPE& value) { _serialize(json, value); } \
 		bool deserialize(const nlohmann::json& json, TYPE& value) { return _deserialize(json, value); }
 
-		// json >> value; //deserialize
-		// json << value; //serialize
-
 		//--
 		// Raw values
 		//--

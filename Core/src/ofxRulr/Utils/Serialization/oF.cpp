@@ -60,6 +60,24 @@ namespace ofxRulr {
 
 
 		//--
+		// OpenCV
+		//--
+		//
+		#define DECLARE_SERIALIZE_OPENCV_VEC(TYPE) \
+		void serialize(nlohmann::json & json, const TYPE& var) { \
+			serialize(json, ofxCv::toOf(var)); \
+		} \
+		bool deserialize(const nlohmann::json& json, TYPE& var) { \
+			return deserialize(json, ofxCv::toOf(var)); \
+		}
+		DECLARE_SERIALIZE_OPENCV_VEC(cv::Point2f);
+		DECLARE_SERIALIZE_OPENCV_VEC(cv::Point3f);
+		//--
+
+
+
+
+		//--
 		// openFrameworks
 		//--
 		//

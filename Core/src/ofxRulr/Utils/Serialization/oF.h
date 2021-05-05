@@ -21,6 +21,16 @@ namespace ofxRulr {
 		//
 		//--
 
+
+		//--
+		// OpenCV
+		//--
+		//
+		DECLARE_SERIALIZE_VAR(cv::Point2f)
+		DECLARE_SERIALIZE_VAR(cv::Point3f)
+		//
+		//--
+
 		
 		//--
 		// openFrameworks
