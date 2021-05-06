@@ -525,6 +525,7 @@ EXPORTS
 	?getPanelToImageTransform@BaseImage@Panels@ofxCvGui@@QEBA?AU?$mat@$03$03M$0A@@glm@@XZ
 	?getZoomFactor@BaseImage@Panels@ofxCvGui@@QEBAMXZ
 	?clearDrawObject@Draws@Panels@ofxCvGui@@QEAAXXZ
+	?getDrawObject@Draws@Panels@ofxCvGui@@QEBAPEAVofBaseDraws@@XZ
 	?setDrawObject@Draws@Panels@ofxCvGui@@QEAAXAEAVofBaseDraws@@@Z
 	??0Grid@Groups@Panels@ofxCvGui@@QEAA@XZ
 	??0Strip@Groups@Panels@ofxCvGui@@QEAA@W4Direction@0123@@Z

@@ -111,6 +111,7 @@
     <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.cpp" />
     <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonLiveView.cpp" />
     <ClCompile Include="..\..\ofxCanon\pairs\ofxRulr\Nodes\Canon\Control.cpp" />
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxRulr\Nodes\Canon\LiveView.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
   </ItemGroup>
@@ -119,6 +120,7 @@
     <ClInclude Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\Canon.h" />
     <ClInclude Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonLiveView.h" />
     <ClInclude Include="..\..\ofxCanon\pairs\ofxRulr\Nodes\Canon\Control.h" />
+    <ClInclude Include="..\..\ofxCanon\pairs\ofxRulr\Nodes\Canon\LiveView.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\ofApp.h" />
   </ItemGroup>

@@ -4,6 +4,7 @@
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/Canon.h"
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/CanonLiveView.h"
 #include "../../../ofxCanon/pairs/ofxRulr/Nodes/Canon/Control.h"
+#include "../../../ofxCanon/pairs/ofxRulr/Nodes/Canon/LiveView.h"
 
 #ifdef TARGET_OSX
 #include "../Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h"
@@ -40,12 +41,13 @@ void ofApp::setup2(){
 #endif
 
 	//--
-	//Setup EDSDK nodes
+	//Setup EDSDK nodes and ofxMachineVision devices
 	//--
 	//
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::Canon>();
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonLiveView>();
 	RULR_DECLARE_NODE(ofxRulr::Nodes::Canon::Control);
+	RULR_DECLARE_NODE(ofxRulr::Nodes::Canon::LiveView);
 	//
 	//--
     
