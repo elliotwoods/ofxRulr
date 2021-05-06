@@ -9,7 +9,10 @@ namespace ofxRulr {
 			public:
 				BoardInWorld();
 				string getTypeName() const override;
-				vector<cv::Point3f> getWorldPoints() const;
+				bool findBoard(cv::Mat, vector<cv::Point2f>& imagePoints
+					, vector<cv::Point3f>& objectPoints
+					, vector<cv::Point3f>& worldPoints
+					, FindBoardMode findBoardMode, cv::Mat cameraMatrix = cv::Mat(), cv::Mat distortionCoefficients = cv::Mat()) const;
 			protected:
 				void init();
 				void update();

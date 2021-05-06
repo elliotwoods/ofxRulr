@@ -53,10 +53,24 @@ namespace ofxRulr {
 					ofParameter<FillMode> fillMode{ "Fill mode", FillMode::Fill };
 					ofParameter<float> alpha{ "Alpha", 0.5f, 0.0f, 1.0f };
 					ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
-					PARAM_DECLARE("ARCube", activewhen, drawStyle, fillMode, alpha, findBoardMode);
+					
+					struct : ofParameterGroup {
+						ofParameter<bool> drawImagePoints{ "Draw image points", false };
+						ofParameter<bool> drawObjectPoints{ "Draw object points", false };
+						ofParameter<bool> drawProjectedPoints{ "Draw projected points", false };
+						ofParameter<bool> drawUndistortedPoints{ "Draw undistorted", false };
+						PARAM_DECLARE("Debug", drawImagePoints, drawObjectPoints, drawProjectedPoints, drawUndistortedPoints);
+					} debug;
+
+					PARAM_DECLARE("ARCube", activewhen, drawStyle, fillMode, alpha, findBoardMode, debug);
 				} parameters;
 
 				ofBoxPrimitive cube;
+				float reprojectionError = 0.0f;
+				vector<cv::Point3f> objectPoints;
+				vector<cv::Point2f> imagePoints;
+				vector<cv::Point2f> projectedPoints;
+				vector<cv::Point2f> projectedUndistortedPoints;
 			};
 		}
 	}

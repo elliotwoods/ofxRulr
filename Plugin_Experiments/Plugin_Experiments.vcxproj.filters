@@ -42,6 +42,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\ProCamSolve\SolveProjector.cpp">
       <Filter>src\ofxRulr\Experiments\ProCamSolve</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -83,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\ProCamSolve\SolveProjector.h">
       <Filter>src\ofxRulr\Experiments\ProCamSolve</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

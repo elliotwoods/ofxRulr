@@ -24,7 +24,8 @@ namespace ofxRulr {
 				void deserialize(const nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
-				bool findBoard(cv::Mat, vector<cv::Point2f> & imagePoints, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const override;
+				bool findBoard(cv::Mat, vector<cv::Point2f>& imagePoints, vector<cv::Point3f>& objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const override;
+				bool findBoard(cv::Mat, vector<cv::Point2f>& imagePoints, vector<cv::Point3f>& objectPoints, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const;
 				void drawObject() const override;
 				float getSpacing() const override; 
 

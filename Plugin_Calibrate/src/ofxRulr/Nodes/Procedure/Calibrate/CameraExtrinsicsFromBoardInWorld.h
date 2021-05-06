@@ -31,6 +31,7 @@ namespace ofxRulr {
 					ofImage image;
 					vector<cv::Point2f> imagePoints;
 					vector<cv::Point3f> objectPoints;
+					vector<cv::Point3f> worldPoints;
 
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
@@ -41,7 +42,7 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<bool> useExtrinsicGuess{ "Use extrinsic guess", false };
-							ofParameter<bool> calibrateOnCapture{ "Calibrate on capture", false };
+							ofParameter<bool> calibrateOnCapture{ "Calibrate on capture", true };
 							PARAM_DECLARE("Calibrate", useExtrinsicGuess, calibrateOnCapture);
 						} calibrate;
 

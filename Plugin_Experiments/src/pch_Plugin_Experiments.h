@@ -9,6 +9,7 @@
 #include "ofxRulr/Utils/CaptureSet.h"
 #include "ofxRulr/Nodes/Item/Camera.h"
 #include "ofxRulr/Nodes/Item/Projector.h"
+#include "ofxRulr/Nodes/Item/BoardInWorld.h"
 
 #include "ofxRulr/Nodes/Experiments/SolvePnP/TestObject.h"
 #include "ofxRulr/Nodes/Experiments/SolvePnP/ProjectPoints.h"
@@ -18,6 +19,7 @@
 
 #include "pch_Plugin_ArUco.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/BoardInMirror.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/BoardInMirror2.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/BoardOnMirror.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/HaloBoard.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Heliostats.h"

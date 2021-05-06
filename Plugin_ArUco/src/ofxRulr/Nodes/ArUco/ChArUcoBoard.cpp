@@ -131,8 +131,44 @@ namespace ofxRulr {
 			}
 
 			//----------
+			bool ChArUcoBoard::findBoard(cv::Mat image
+				, vector<cv::Point2f>& imagePoints
+				, vector<cv::Point3f>& objectPoints
+				, FindBoardMode findBoardMode
+				, cv::Mat cameraMatrix
+				, cv::Mat distortionCoefficients) const {
+
+				if (findBoardMode == FindBoardMode::Assistant) {
+					cv::Rect roi;
+					if (!ofxCv::selectROI(image, roi)) {
+						return false;
+					}
+					this->findBoard(image(roi)
+						, imagePoints
+						, objectPoints
+						, cameraMatrix
+						, distortionCoefficients);
+					for (auto& imagePoint : imagePoints) {
+						imagePoint.x += roi.x;
+						imagePoint.y += roi.y;
+					}
+				}
+				else {
+					this->findBoard(image
+						, imagePoints
+						, objectPoints
+						, cameraMatrix
+						, distortionCoefficients);
+				}
+			}
+
+			//----------
 			//https://github.com/opencv/opencv_contrib/blob/master/modules/aruco/samples/detect_board_charuco.cpp
-			bool ChArUcoBoard::findBoard(cv::Mat image, vector<cv::Point2f> & imagePoints, vector<cv::Point3f> & objectPoints, FindBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const {
+			bool ChArUcoBoard::findBoard(cv::Mat image
+				, vector<cv::Point2f> & imagePoints
+				, vector<cv::Point3f> & objectPoints
+				, cv::Mat cameraMatrix
+				, cv::Mat distortionCoefficients) const {
 				if (!this->board) {
 					return false;
 				}

@@ -83,6 +83,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.cpp" />
@@ -103,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.h" />

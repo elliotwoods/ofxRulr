@@ -19,7 +19,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void 
+			void
 				BoardInWorld::init()
 			{
 				RULR_NODE_UPDATE_LISTENER;
@@ -38,6 +38,33 @@ namespace ofxRulr {
 			void
 				BoardInWorld::update()
 			{
+			}
+
+			//----------
+			bool BoardInWorld::findBoard(cv::Mat image
+				, vector<cv::Point2f>& imagePoints
+				, vector<cv::Point3f>& objectPoints
+				, vector<cv::Point3f>& worldPoints
+				, FindBoardMode findBoardMode
+				, cv::Mat cameraMatrix
+				, cv::Mat distortionCoefficients) const {
+				this->throwIfMissingAConnection<Item::AbstractBoard>();
+				auto board = this->getInput<Item::AbstractBoard>();
+				if (!board->findBoard(image
+					, imagePoints
+					, objectPoints
+					, findBoardMode
+					, cameraMatrix
+					, distortionCoefficients)) {
+					return false;
+				}
+				
+				auto transform = this->getTransform();
+
+				worldPoints.resize(objectPoints.size());
+				for (size_t i = 0; i < objectPoints.size(); i++) {
+					ofxCv::toOf(worldPoints[i]) = Utils::applyTransform(transform, ofxCv::toOf(objectPoints[i]));
+				}
 			}
 		}
 	}

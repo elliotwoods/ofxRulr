@@ -44,6 +44,22 @@ namespace ofxRulr {
 						ofxCvGui::Utils::drawText("Select this node and connect active camera.", args.localBounds);
 					}
 				};
+				this->view->onDrawImage += [this](DrawImageArguments&) {
+					ofPushStyle();
+					if (this->parameters.debug.drawImagePoints) {
+						ofSetColor(255, 100, 100);
+						ofxCv::drawCorners(this->imagePoints);
+					}
+					if (this->parameters.debug.drawProjectedPoints) {
+						ofSetColor(100, 255, 100);
+						ofxCv::drawCorners(this->projectedPoints);
+					}
+					if (this->parameters.debug.drawUndistortedPoints) {
+						ofSetColor(100, 100, 255);
+						ofxCv::drawCorners(this->projectedUndistortedPoints);
+					}
+					ofPopStyle();
+				};
 
 				//remove complaints from log about not allocated
 				this->fbo.allocate(1, 1, OF_IMAGE_COLOR_ALPHA);
@@ -79,13 +95,25 @@ namespace ofxRulr {
 
 			//----------
 			void ARCube::update() {
-				auto camera = this->getInput<Item::Camera>();
-				if (camera) {
-					auto grabber = camera->getGrabber();
-					if (grabber->isFrameNew()) {
-						//if we're not using freerun, then we presume we're using single shot (since there's a frame available)
-						if (this->getRunFinderEnabled()) {
-							this->updateTracking();
+				bool active = false;
+				switch (this->parameters.activewhen.get()) {
+				case ActiveWhen::Selected:
+					active = this->isBeingInspected();
+					break;
+				case ActiveWhen::Always:
+					active = true;
+				default:
+					break;
+				}
+				if (active) {
+					auto camera = this->getInput<Item::Camera>();
+					if (camera) {
+						auto grabber = camera->getGrabber();
+						if (grabber->isFrameNew()) {
+							//if we're not using freerun, then we presume we're using single shot (since there's a frame available)
+							if (this->getRunFinderEnabled()) {
+								this->updateTracking();
+							}
 						}
 					}
 				}
@@ -127,23 +155,47 @@ namespace ofxRulr {
 						auto board = this->getInput<Item::AbstractBoard>();
 						if (board) {
 							//find board in distorted image
-							vector<cv::Point2f> imagePoints;
-							vector<cv::Point3f> objectPoints;
 							auto success = board->findBoard(toCv(distorted)
-								, imagePoints
-								, objectPoints
+								, this->imagePoints
+								, this->objectPoints
 								, this->parameters.findBoardMode
 								, camera->getCameraMatrix()
 								, camera->getDistortionCoefficients());
 							if (success && imagePoints.size() >= 4) {
 								//use solvePnP to resolve transform
 								Mat rotation, translation;
-								cv::solvePnP(objectPoints
-									, imagePoints
+								cv::solvePnP(this->objectPoints
+									, this->imagePoints
 									, cameraMatrix
 									, distortionCoefficients
 									, rotation
 									, translation);
+
+								// get reprojection error
+								{
+									cv::projectPoints(this->objectPoints
+										, rotation
+										, translation
+										, cameraMatrix
+										, distortionCoefficients
+										, this->projectedPoints);
+
+									float accumulator = 0.0f;
+									for (int i = 0; i < imagePoints.size(); i++) {
+										accumulator += glm::distance2(ofxCv::toOf(this->imagePoints[i]), ofxCv::toOf(this->projectedPoints[i]));
+									}
+									this->reprojectionError = sqrt(accumulator / (float) imagePoints.size());
+								}
+
+								// project without distortion applied
+								{
+									cv::projectPoints(this->objectPoints
+										, rotation
+										, translation
+										, cameraMatrix
+										, cv::Mat()
+										, this->projectedUndistortedPoints);
+								}
 
 								this->boardTransform = makeMatrix(rotation, translation);
 								this->foundBoard = true;
@@ -217,6 +269,10 @@ namespace ofxRulr {
 						return string("");
 					}
 				}));
+				inspector->addLiveValue<float>("Reprojection error [px]", [this]() {
+					return this->reprojectionError;
+					});
+
 				inspector->addButton("Force update", [this]() {
 					this->updateTracking();
 				}, ' ');
@@ -293,6 +349,13 @@ namespace ofxRulr {
 							default:
 								break;
 							}
+
+							if (this->parameters.debug.drawObjectPoints) {
+								for (const auto& objectPoint : this->objectPoints) {
+									ofDrawSphere(toOf(objectPoint), 0.01);
+								}
+							}
+							
 						}
 						ofPopMatrix();
 					}

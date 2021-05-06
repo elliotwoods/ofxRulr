@@ -212,6 +212,9 @@ namespace ofxRulr {
 
 				//----------
 				void CameraExtrinsicsFromBoardInWorld::receiveFrame(shared_ptr<ofxMachineVision::Frame> frame) {
+					this->throwIfMissingAConnection<Item::Camera>();
+					this->throwIfMissingAConnection<Item::BoardInWorld>();
+
 					if (!frame) {
 						throw(Exception("Frame is not valid"));
 					}
@@ -232,6 +235,19 @@ namespace ofxRulr {
 							, cv::COLOR_RGB2GRAY);
 					}
 					this->image.update();
+
+					auto boardInWorld = this->getInput<Item::BoardInWorld>();
+					auto camera = this->getInput<Item::Camera>();
+
+					if (!boardInWorld->findBoard(ofxCv::toCv(this->image)
+						, this->imagePoints
+						, this->objectPoints
+						, this->worldPoints
+						, this->parameters.capture.findBoardMode
+						, camera->getCameraMatrix()
+						, camera->getDistortionCoefficients())) {
+						throw(ofxRulr::Exception("Board not found in image"));
+					}
 				}
 			}
 		}

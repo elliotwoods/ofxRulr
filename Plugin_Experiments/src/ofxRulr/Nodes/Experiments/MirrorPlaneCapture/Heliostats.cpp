@@ -48,7 +48,9 @@ namespace ofxRulr {
 
 				//----------
 				void Heliostats::deserialize(const nlohmann::json & json) {
-					this->heliostats.deserialize(json["heliostats"]);
+					if (json.contains("heliostats")) {
+						this->heliostats.deserialize(json["heliostats"]);
+					}
 				}
 
 				//----------
