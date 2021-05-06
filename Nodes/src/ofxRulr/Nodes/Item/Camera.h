@@ -32,6 +32,8 @@ namespace ofxRulr {
 				void openDevice();
 				void closeDevice();
 
+				bool isNewSingleShotFrame() const;
+
 				shared_ptr<ofxMachineVision::Grabber::Simple> getGrabber();
 
 				shared_ptr<ofxMachineVision::Frame> getFrame();

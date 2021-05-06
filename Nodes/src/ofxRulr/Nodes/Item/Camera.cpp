@@ -74,6 +74,15 @@ namespace ofxRulr {
 						}
 					}
 				}
+
+				if ((this->grabber->getWidth() != this->getWidth()
+					|| this->grabber->getHeight() != this->getHeight())
+					&& (this->grabber->getWidth() != 0
+						&& this->grabber->getHeight() != 0)) {
+					this->setWidth(this->grabber->getWidth());
+					this->setHeight(this->grabber->getHeight());
+					this->markViewDirty(); // size will have changed
+				}
 			}
 
 			//----------
@@ -224,6 +233,16 @@ namespace ofxRulr {
 					ofxCvGui::Utils::drawProcessingNotice("Closing grabber device...");
 					grabber->close();
 					this->rebuildPanel();
+				}
+			}
+
+			//----------
+			bool Camera::isNewSingleShotFrame() const {
+				if (this->grabber) {
+					return this->grabber->isSingleShot() && this->grabber->isFrameNew();
+				}
+				else {
+					return false;
 				}
 			}
 
