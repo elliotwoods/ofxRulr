@@ -42,9 +42,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="..\..\ofxArUco\ofxArUcoLib\ofxArUco.props" />
+    <Import Project="..\..\ofxCeres\ofxCeresLib\ofxCeres.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="..\..\ofxArUco\ofxArUcoLib\ofxArUco.props" />
+    <Import Project="..\..\ofxCeres\ofxCeresLib\ofxCeres.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -96,6 +98,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\TestObject.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.cpp" />
     <ClCompile Include="src\pch_Plugin_Experiments.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -117,11 +120,15 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\TestObject.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.h" />
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ofxArUco\ofxArUcoLib\ofxArUcoLib.vcxproj">
       <Project>{fc33c381-dc7a-45ad-8ef0-647e3b03db69}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxCeres\ofxCeresLib\ofxCeresLib.vcxproj">
+      <Project>{c42c2af8-bb13-4fe4-81a5-41cd314f4fde}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Plugin_ArUco\Plugin_ArUco.vcxproj">
       <Project>{45ce5aa6-9dfd-497a-8caf-1743a8075f5a}</Project>

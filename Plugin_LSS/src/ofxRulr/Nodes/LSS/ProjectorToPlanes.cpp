@@ -202,10 +202,6 @@ namespace ofxRulr {
 				auto cameraMatrix = cameraNode->getCameraMatrix();
 				auto distortionCoefficients = cameraNode->getDistortionCoefficients();
 
-				if (this->parameters.projectPixels.customUndistort) {
-					cameraView.distortion.clear();
-				}
-
 				auto & pixelsOnPlane = this->data.pixelsOnPlane.data;
 
 				auto graycodeNode = this->getInput<Procedure::Scan::Graycode>();
@@ -235,11 +231,11 @@ namespace ofxRulr {
 					// get its ray
 					glm::vec2 cameraXY = pixel.getCameraXY();
 					if (this->parameters.projectPixels.customUndistort) {
-						cameraXY = ofxCv::toOf(ofxCv::undistortPixelCoordinates(vector<cv::Point2f>(1, ofxCv::toCv(cameraXY))
+						cameraXY = ofxCv::toOf(ofxCv::undistortImagePoints(vector<cv::Point2f>(1, ofxCv::toCv(cameraXY))
 							, cameraMatrix
 							, distortionCoefficients).front());
 					}
-					auto pixelRay = cameraView.castPixel(cameraXY);
+					auto pixelRay = cameraView.castPixel(cameraXY, !this->parameters.projectPixels.customUndistort);
 
 					// find the closest plane intersection to the camera
 					auto closestDistance = std::numeric_limits<float>::max();

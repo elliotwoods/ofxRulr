@@ -66,35 +66,13 @@ namespace ofxRulr {
 
 				Utils::ScopedProcess scopedProcess("Triangulating");
 
-				if (this->manualUndistort) {
-					auto cameraMatrix = camera->getCameraMatrix();
-					auto distortionCoefficients = camera->getDistortionCoefficients();
-
-					auto cameraViewNoDistortion = camera->getViewInWorldSpace();
-					cameraViewNoDistortion.distortion.clear();
-
-					ofxTriangulate::Triangulate(dataSet
-						, cameraViewNoDistortion
-						, projector->getViewInWorldSpace()
-						, this->mesh
-						, this->maxLength
-						, this->giveColor
-						, this->giveTexCoords
-						, [&](const ofVec2f & distortedPixel) {
-						return ofxCv::toOf(ofxCv::undistortPixelCoordinates(vector<cv::Point2f>(1, ofxCv::toCv(distortedPixel))
-							, cameraMatrix
-							, distortionCoefficients).front());
-					});
-				}
-				else {
-					ofxTriangulate::Triangulate(dataSet
-						, camera->getViewInWorldSpace()
-						, projector->getViewInWorldSpace()
-						, this->mesh
-						, this->maxLength
-						, this->giveColor
-						, this->giveTexCoords);
-				}
+				ofxTriangulate::Triangulate(dataSet
+					, camera->getViewInWorldSpace()
+					, projector->getViewInWorldSpace()
+					, this->mesh
+					, this->maxLength
+					, this->giveColor
+					, this->giveTexCoords);
 
 				if (this->mesh.getNumVertices() > 0) {
 					scopedProcess.end();

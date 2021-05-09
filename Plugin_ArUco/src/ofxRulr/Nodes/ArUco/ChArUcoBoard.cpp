@@ -143,18 +143,28 @@ namespace ofxRulr {
 					if (!ofxCv::selectROI(image, roi)) {
 						return false;
 					}
-					this->findBoard(image(roi)
+					cv::Mat croppedImage;
+					cv::normalize(image(roi)
+						, croppedImage
+						, 255
+						, 0.0
+						, cv::NormTypes::NORM_INF);
+
+					if (!this->findBoard(croppedImage
 						, imagePoints
 						, objectPoints
 						, cameraMatrix
-						, distortionCoefficients);
+						, distortionCoefficients)) {
+						return false;
+					}
 					for (auto& imagePoint : imagePoints) {
 						imagePoint.x += roi.x;
 						imagePoint.y += roi.y;
 					}
+					return true;
 				}
 				else {
-					this->findBoard(image
+					return this->findBoard(image
 						, imagePoints
 						, objectPoints
 						, cameraMatrix
@@ -180,7 +190,7 @@ namespace ofxRulr {
 
 					cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
 					detectorParams->adaptiveThreshWinSizeMin = 3;
-					detectorParams->adaptiveThreshWinSizeMax = 33;
+					detectorParams->adaptiveThreshWinSizeMax = 101;
 					detectorParams->adaptiveThreshWinSizeStep = 5;
 					detectorParams->errorCorrectionRate = this->parameters.detection.errorCorrectionRate;
 

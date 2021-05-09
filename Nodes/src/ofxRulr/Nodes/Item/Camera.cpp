@@ -470,9 +470,12 @@ namespace ofxRulr {
 
 					if (grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::OneShot)) {
 						inspector->add(MAKE(Widgets::Button, "Take Photo", [this]() {
-							Utils::ScopedProcess scopedProcess("Take Photo");
-							this->getGrabber()->singleShot();
-							scopedProcess.end();
+							try {
+								Utils::ScopedProcess scopedProcess("Take Photo");
+								this->getGrabber()->singleShot();
+								scopedProcess.end();
+							}
+							RULR_CATCH_ALL_TO_ERROR
 						}, ' '));
 					}
 				}

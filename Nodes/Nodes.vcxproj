@@ -143,6 +143,7 @@ if errorlevel 1 exit 0</Command>
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Mesh.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Projector.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\RandomPatternBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\RigidBody.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\View.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Base.h" />
@@ -223,6 +224,7 @@ if errorlevel 1 exit 0</Command>
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Mesh.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Projector.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\RandomPatternBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\RigidBody.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\BoardInWorld.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\View.cpp" />

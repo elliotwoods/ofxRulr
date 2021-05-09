@@ -24,25 +24,6 @@ namespace ofxRulr {
 			}
 			return false;
 		}
-		//----------
-		template<>
-		void _serialize(nlohmann::json& json, const ofParameter<filesystem::path>& parameter) {
-			serialize(json[parameter.getName()], parameter.get());
-		}
-
-		//----------
-		template<>
-		bool _deserialize(const nlohmann::json& json, ofParameter<filesystem::path>& parameter) {
-			std::string value;
-			const auto& name = parameter.getName();
-			if (json.contains(name)) {
-				if (deserialize(json, value)) {
-					parameter.set(value);
-					return true;
-				}
-			}
-			return false;
-		}
 
 		DEFINE_SERIALIZE_VAR(ofParameter<bool>);
 		DEFINE_SERIALIZE_VAR(ofParameter<uint8_t>);

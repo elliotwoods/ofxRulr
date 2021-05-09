@@ -27,7 +27,6 @@ namespace ofxRulr {
 
 				ofMesh mesh;
 
-				ofParameter<bool> manualUndistort{ "Manual undistort", true };
 				ofParameter<float> maxLength;
 				ofParameter<bool> giveColor;
 				ofParameter<bool> giveTexCoords;

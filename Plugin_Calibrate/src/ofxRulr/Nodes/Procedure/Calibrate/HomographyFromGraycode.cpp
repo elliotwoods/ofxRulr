@@ -163,7 +163,9 @@ namespace ofxRulr {
 					if (this->undistortFirst) {
 						this->throwIfMissingAConnection<Item::Camera>();
 						auto cameraNode = this->getInput<Item::Camera>();
-						camera = toOf(ofxCv::undistortPixelCoordinates(toCv(camera), cameraNode->getCameraMatrix(), cameraNode->getDistortionCoefficients()));
+						camera = toOf(ofxCv::undistortImagePoints(toCv(camera)
+							, cameraNode->getCameraMatrix()
+							, cameraNode->getDistortionCoefficients()));
 					}
 
 					auto result = cv::findHomography(ofxCv::toCv(camera), ofxCv::toCv(projector), cv::LMEDS, 5.0);

@@ -84,6 +84,7 @@ namespace ofxRulr {
 					RULR_NODE_UPDATE_LISTENER;
 					RULR_NODE_SERIALIZATION_LISTENERS;
 					RULR_NODE_INSPECTOR_LISTENER;
+					RULR_NODE_DRAW_WORLD_LISTENER;
 
 					this->manageParameters(this->parameters);
 
@@ -137,7 +138,63 @@ namespace ofxRulr {
 
 				//--------
 				void BoardInMirror2::calibrate() {
+					// Garther data
+					vector<ofxRay::Ray> cameraRays;
+					vector<glm::vec3> worldPoints;
+					{
+						auto captures = this->captures.getSelection();
+						for (const auto& capture : captures) {
+							cameraRays.insert(cameraRays.end(), capture->cameraRays.begin(), capture->cameraRays.end());
 
+							const auto& worldPointsToAdd = ofxCv::toOf(capture->worldPoints);
+							worldPoints.insert(worldPoints.end(), worldPointsToAdd.begin(), worldPointsToAdd.end());
+						}
+					}
+
+					// Normalise rays
+					{
+						for (auto& cameraRay : cameraRays) {
+							cameraRay.t = glm::normalize(cameraRay.t);
+						}
+					}
+
+
+					// Run solve
+					{
+						auto solverSettings = ofxRulr::Solvers::MirrorPlaneFromRays::defaultSolverSettings();
+						solverSettings.options.max_num_iterations = this->parameters.solve.maxIterations.get();
+						solverSettings.printReport = this->parameters.solve.printReport.get();
+						solverSettings.options.minimizer_progress_to_stdout = this->parameters.solve.printReport.get();
+
+						auto result = ofxRulr::Solvers::MirrorPlaneFromRays::solve(cameraRays
+							, worldPoints
+							, solverSettings);
+
+						this->result = make_shared<ofxRulr::Solvers::MirrorPlaneFromRays::Result>(result);
+					}
+
+					// Make the debug draw objects
+					{
+						auto abcd = this->result->solution.plane.getABCD();
+						glm::vec3 planeNormal{ abcd.x, abcd.y, abcd.z };
+						float planeD = abcd.w;
+
+						this->debug.reflectedRays.clear();
+						for (const auto& cameraRay : cameraRays) {
+							// intersect the ray and the plane
+							const auto u = -(planeD + glm::dot(cameraRay.s, planeNormal))
+								/ glm::dot(cameraRay.t, planeNormal);
+							auto intersection = cameraRay.s + u * cameraRay.t;
+
+							// reflected ray starts with intersection between cameraRay and mirror plane
+							const auto& reflectedRayS = intersection;
+
+							// reflected ray transmission is defined by reflect(cameraRayT + reflectedRayS, mirrorPlane)
+							auto reflectedRayT = ofxCeres::VectorMath::reflect(cameraRay.t + reflectedRayS, planeNormal, planeD) - reflectedRayS;
+
+							this->debug.reflectedRays.push_back({ reflectedRayS, reflectedRayT });
+						}
+					}
 				}
 
 				//--------
@@ -161,6 +218,23 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ERROR
 						}, OF_KEY_RETURN)->setHeight(100.0f);
+
+						inspector->addIndicatorBool("Converged", [this]() {
+							if (this->result) {
+								return this->result->isConverged();
+							}
+							else {
+								return false;
+							}
+							});
+						inspector->addLiveValue<double>("Residual [m]", [this]() {
+							if (this->result) {
+								return this->result->residual;
+							}
+							else {
+								return 0.0;
+							}
+							});
 				}
 
 				//--------
@@ -177,9 +251,24 @@ namespace ofxRulr {
 
 				//--------
 				void BoardInMirror2::drawWorldStage() {
-					auto captures = this->captures.getSelection();
-					for (const auto& capture : captures) {
-						capture->drawWorld();
+					// Draw data
+					{
+						auto captures = this->captures.getSelection();
+						for (const auto& capture : captures) {
+							capture->drawWorld();
+						}
+					}
+
+					// Draw result
+					if (this->result) {
+						this->result->solution.plane.draw();
+					}
+
+					// Draw debug info
+					if (this->parameters.debug.draw.reflectedRays) {
+						for (const auto& ray : this->debug.reflectedRays) {
+							ray.draw();
+						}
 					}
 				}
 
@@ -223,7 +312,6 @@ namespace ofxRulr {
 						// Flip the image
 						cv::Mat mirroredImage;
 						if (flipImageMode != FlipImage::None) {
-							cv::Mat mirroredImage;
 							cv::flip(image
 								, mirroredImage
 								, flipImageMode == FlipImage::X ? 1 : 0);
@@ -268,7 +356,8 @@ namespace ofxRulr {
 						// unproject rays
 						const auto cameraView = camera->getViewInWorldSpace();
 						cameraView.castPixels(ofxCv::toOf(capture->imagePoints)
-							, capture->cameraRays);
+							, capture->cameraRays
+							, true);
 
 						// set the colors
 						for (auto& ray : capture->cameraRays) {

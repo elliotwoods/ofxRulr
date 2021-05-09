@@ -99,7 +99,7 @@ namespace ofxRulr {
 							points.addColor(color);
 
 							auto distance = glm::distance(worldPoint, projectorPosition);
-							auto projectorRay = projectorView.castPixel(this->projectorImagePoints[i]);
+							auto projectorRay = projectorView.castPixel(this->projectorImagePoints[i], false);
 							projectorRays.addVertex(projectorRay.s);
 							projectorRays.addVertex(projectorRay.s + projectorRay.t * distance / glm::length(projectorRay.t));
 							projectorRays.addVertex(worldPoint);

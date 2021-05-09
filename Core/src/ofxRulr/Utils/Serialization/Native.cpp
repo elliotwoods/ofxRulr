@@ -15,8 +15,11 @@ namespace ofxRulr {
 			_deserialize(const nlohmann::json& json, T& value)
 		{
 			if (!json.is_null()) {
-				json.get_to(value);
-				return true;
+				try {
+					json.get_to(value);
+					return true;
+				}
+				RULR_CATCH_ALL_TO_ERROR;
 			}
 			return false;
 		}
@@ -41,11 +44,11 @@ namespace ofxRulr {
 		}
 
 		bool
-			deserialize(const nlohmann::json& json, filesystem::path& path)
+			deserialize(const nlohmann::json& json, filesystem::path& value)
 		{
-			std::string value;
-			if (deserialize(json, value)) {
-				path = filesystem::path(value);
+			std::string valueString;
+			if (deserialize(json, valueString)) {
+				value = filesystem::path(value);
 				return true;
 			}
 			else {

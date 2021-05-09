@@ -19,8 +19,8 @@ namespace ofxRulr {
 					if (gradient) {
 						ofLogError("SolveProjector") << "This model does not support distortion";
 					}
-					auto cameraRay = this->cameraView.castPixel(dataPoint.cameraUndistorted);
-					auto projectorRay = this->projectorView.castPixel(dataPoint.projector);
+					auto cameraRay = this->cameraView.castPixel(dataPoint.cameraUndistorted, false);
+					auto projectorRay = this->projectorView.castPixel(dataPoint.projector, false);
 					auto intersection = cameraRay.intersect(projectorRay);
 					residual = (double)intersection.getLengthSquared();
 				}
@@ -71,7 +71,6 @@ namespace ofxRulr {
 					this->parameters[9] = startingParameters.cameraMatrix.at<double>(1, 2);
 
 					this->cameraView = this->camera->getViewInWorldSpace();
-					this->cameraView.distortion.clear(); // we work in undistorted coords
 				}
 #pragma mark SolveProjector
 				//----------
@@ -148,7 +147,7 @@ namespace ofxRulr {
 							auto cameraXY = pixel.getCameraXY();
 
 							DataPoint dataPoint;
-							dataPoint.cameraUndistorted = ofxCv::toOf(ofxCv::undistortPixelCoordinates(vector<cv::Point2f>(1, ofxCv::toCv(cameraXY))
+							dataPoint.cameraUndistorted = ofxCv::toOf(ofxCv::undistortImagePoints(vector<cv::Point2f>(1, ofxCv::toCv(cameraXY))
 								, cameraMatrix
 								, distortionCoefficients).front());
 							dataPoint.projector = pixel.getProjectorXY();

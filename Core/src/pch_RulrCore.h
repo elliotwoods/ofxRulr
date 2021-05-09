@@ -22,3 +22,6 @@
 #include "ofxCvMin.h"
 #include "ofxPlugin.h"
 #include "ofxSingleton.h"
+
+//ofxRulr
+#include "ofxRulr/Exception.h"

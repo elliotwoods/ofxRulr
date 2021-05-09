@@ -3,6 +3,7 @@
 #include "ofxRulr.h"
 #include "ofxNonLinearFit.h"
 #include "ofxRulr/Utils/CaptureSet.h"
+#include "ofxRulr/Solvers/MirrorPlaneFromRays.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -71,17 +72,39 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<FindBoardMode> mode{ "Mode", FindBoardMode::Assistant };
 							ofParameter<FlipImage> flipImage{ "Flip image", FlipImage::X };
-							PARAM_DECLARE("Find board", mode);
+							PARAM_DECLARE("Find board", mode, flipImage);
 						} findBoard;
+
+						struct : ofParameterGroup {
+							ofParameter<int> maxIterations{ "Max iterations", 1000 };
+							ofParameter<bool> printReport{ "Print report", true };
+							PARAM_DECLARE("Solve", maxIterations, printReport);
+						} solve;
+
+						struct : ofParameterGroup {
+							struct : ofParameterGroup {
+								ofParameter<bool> reflectedRays{ "Reflected rays", true};
+								PARAM_DECLARE("Draw", reflectedRays);
+							} draw;
+							PARAM_DECLARE("Debug", draw);
+						} debug;
 
 						PARAM_DECLARE("BoardInMirror2"
 							, tetheredShootEnabled
 							, cameraNavigation
-							, findBoard);
+							, findBoard
+							, solve
+							, debug);
 					} parameters;
 					shared_ptr<ofxCvGui::Panels::Widgets> panel;
 
 					Utils::CaptureSet<PhotoCapture> captures;
+
+					shared_ptr<ofxRulr::Solvers::MirrorPlaneFromRays::Result> result;
+					
+					struct {
+						vector<ofxRay::Ray> reflectedRays;
+					} debug;
 				};
 			}
 		}

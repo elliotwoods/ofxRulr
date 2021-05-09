@@ -223,7 +223,7 @@ namespace ofxRulr {
 									//now we have centroid, let's store the ray
 									{
 										LSS::Projector::ProjectorPixelFind projectorPixel;
-										projectorPixel.cameraPixelRay = cameraViewWorld.castPixel(centroid);
+										projectorPixel.cameraPixelRay = cameraViewWorld.castPixel(centroid, true);
 										projectorPixel.cameraPixelXY = centroid;
 										projectorScan->projectorPixels.emplace(projectorPixelIt.first, projectorPixel);
 									}

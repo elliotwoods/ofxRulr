@@ -405,7 +405,11 @@ namespace ofxRulr {
 					for (int i = 0; i < RULR_VIEW_DISTORTION_COEFFICIENT_COUNT; i++) {
 						distortionVector[i] = this->distortion[i].get();
 					}
-					this->viewInObjectSpaceCached.distortion = distortionVector;
+					this->viewInObjectSpaceCached.setUndistortFunction([this](const vector<glm::vec2>& imagePoints) {
+						return ofxCv::toOf(ofxCv::undistortImagePoints(ofxCv::toCv(imagePoints)
+							, this->getCameraMatrix()
+							, this->getDistortionCoefficients()));
+						});
 				}
 
 				this->viewIsDirty = false;

@@ -275,9 +275,6 @@ namespace ofxRulr {
 				auto cameraView = cameraNode->getViewInWorldSpace();
 				auto projectorView = projectorNode->getViewInWorldSpace();
 
-				//we will perform this undistortion ourselves
-				cameraView.distortion.clear();
-
 				for (auto & projectorPixelIt : this->unclassifiedPixels) {
 					auto & projectorPixel = * projectorPixelIt.second;
 
@@ -296,12 +293,13 @@ namespace ofxRulr {
 						projectorPixel.camera = meanCameraPosition;
 					}
 					
-					projectorPixel.cameraUndistorted = ofxCv::toOf(ofxCv::undistortPixelCoordinates(vector<cv::Point2f>(1, ofxCv::toCv(projectorPixel.camera))
+					projectorPixel.cameraUndistorted = ofxCv::toOf(ofxCv::undistortImagePoints(vector<cv::Point2f>(1, ofxCv::toCv(projectorPixel.camera))
 						, cameraMatrix
 						, distortionCoefficients).front());
 
-					auto cameraPixelRay = cameraView.castPixel(projectorPixel.cameraUndistorted);
-					auto projectorPixelRay = projectorView.castPixel(projectorPixel.projector);
+					// Note that we can now instead use the 'true' argument, and have the ofxRay::Camera perform the undistortion
+					auto cameraPixelRay = cameraView.castPixel(projectorPixel.cameraUndistorted, false);
+					auto projectorPixelRay = projectorView.castPixel(projectorPixel.projector, false);
 
 					auto intersection = cameraPixelRay.intersect(projectorPixelRay);
 

@@ -300,7 +300,7 @@ namespace ofxRulr {
 
 						auto cameraView = camera->getViewInWorldSpace();
 
-						capture->ray = cameraView.castPixel(capture->centroid);
+						capture->ray = cameraView.castPixel(capture->centroid, true);
 
 						cv::Mat preview;
 						image.copyTo(preview, binary);

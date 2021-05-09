@@ -45,6 +45,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.cpp">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -90,6 +93,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.h">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -115,6 +121,9 @@
     </Filter>
     <Filter Include="src\ofxRulr\Experiments\ProCamSolve">
       <UniqueIdentifier>{ef206311-6525-4115-bbee-d0a98bcfa1ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Solvers">
+      <UniqueIdentifier>{6128fe68-40b0-4f4d-82ab-1500ea95b3b8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
