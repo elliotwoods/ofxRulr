@@ -70,7 +70,7 @@ namespace ofxRulr {
 		}
 
 		//----------
-		ofVec3f WorldStage::getCursorWorld(bool forceUpdate) const {
+		glm::vec3 WorldStage::getCursorWorld(bool forceUpdate) const {
 			auto camera = static_cast<ofxGrabCam *>(this->camera);
 			if (forceUpdate) {
 				ofMouseEventArgs mouseArgs(ofMouseEventArgs::Type::Moved, ofGetMouseX(), ofGetMouseY());

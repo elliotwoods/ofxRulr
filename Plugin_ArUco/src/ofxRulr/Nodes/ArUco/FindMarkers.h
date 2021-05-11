@@ -7,6 +7,10 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace ArUco {
+			MAKE_ENUM(WhenToSave
+				, (Never, Success, Always)
+				, ("Never", "Success", "Always"));
+
 			class FindMarkers : public Nodes::Base {
 			public:
 				struct TrackedMarker {
@@ -23,7 +27,11 @@ namespace ofxRulr {
 				void init();
 				void update();
 				void drawWorldStage();
+				void populateInspector(ofxCvGui::InspectArguments&);
+
 				ofxCvGui::PanelPtr getPanel() override;
+
+				void detect();
 
 				const multimap<int, unique_ptr<TrackedMarker>> & getTrackedMarkers() const;
 				const vector<aruco::Marker> getRawMarkers() const;
@@ -39,16 +47,20 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
-						struct : ofParameterGroup {
-							ofParameter<bool> enabled{ "Enabled", false };
-							ofParameter<bool> onlySaveOnFind{ "Only save on find", false };
-							ofParameter<filesystem::path> folder{ "Save folder", "" };
-							PARAM_DECLARE("Save", enabled, onlySaveOnFind, folder);
-						} save;
+						ofParameter<WhenDrawOnWorldStage> processWhen{ "Process when", WhenDrawOnWorldStage::Always };
 						ofParameter<bool> speakCount{ "Speak count", true };
-						PARAM_DECLARE("Tethered options", save, speakCount);
-					} tetheredOptions;
-					PARAM_DECLARE("FindMarkers", tetheredOptions);
+
+						PARAM_DECLARE("Detection", processWhen, speakCount)
+					} detection;
+					
+					struct : ofParameterGroup {
+						ofParameter<WhenToSave> whenToSave{ "When to save", WhenToSave::Never };
+						ofParameter<filesystem::path> folder{ "Save folder", "" };
+						PARAM_DECLARE("Save", whenToSave, folder);
+					} save;
+
+					ofParameter<WhenDrawOnWorldStage> drawLabels{ "Draw labels", WhenDrawOnWorldStage::Selected };
+					PARAM_DECLARE("FindMarkers", detection, save, drawLabels);
 				} parameters;
 			};
 		}

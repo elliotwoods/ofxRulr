@@ -24,7 +24,8 @@ namespace ofxRulr {
 					ofParameter<bool> onNewFrame{ "On new frame", true };
 					ofParameter<int> minMarkerCount{ "Minimum marker count", 3 };
 					ofParameter<Method> method{ "Method", Method::solvePnP };
-					PARAM_DECLARE("MarkerMapPoseTracker", onNewFrame, minMarkerCount, method);
+					ofParameter<bool> useExtrinsicGuess{ "Use extrinsic guess", false  };
+					PARAM_DECLARE("MarkerMapPoseTracker", onNewFrame, minMarkerCount, method, useExtrinsicGuess);
 				} parameters;
 				aruco::MarkerMapPoseTracker markerMapPoseTracker;
 			};

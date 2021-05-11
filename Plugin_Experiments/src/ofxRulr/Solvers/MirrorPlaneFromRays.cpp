@@ -128,6 +128,13 @@ namespace ofxRulr {
 			plane.setScale({ 0.2, 0.2 });
 			plane.setInfinite(false);
 
+			//flip the plane if it points away from the worldPoints
+			{
+				if (glm::dot(plane.getNormal(), worldPoints.front() - plane.getCenter()) < 0.0f) {
+					plane.setNormal(-plane.getNormal());
+				}
+			}
+
 			//move the plane to be centered on the reflections
 			{
 				glm::vec3 accumulator;

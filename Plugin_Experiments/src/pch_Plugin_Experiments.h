@@ -18,12 +18,15 @@
 #include "ofxRulr/Nodes/Experiments/SolveMirror/SolveMirror.h"
 
 #include "pch_Plugin_ArUco.h"
+
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/BoardInMirror.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/BoardInMirror2.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/BoardOnMirror.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/HaloBoard.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Heliostats.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Heliostats2.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/SolarAlignment.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Dispatcher.h"
 
 #include "ofxRulr/Nodes/Experiments/PhotoScan/BundlerCamera.h"
 #include "ofxRulr/Nodes/Experiments/PhotoScan/CalibrateProjector.h"

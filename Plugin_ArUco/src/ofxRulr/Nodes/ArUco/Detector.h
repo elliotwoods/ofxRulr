@@ -29,9 +29,7 @@ namespace ofxRulr {
 
 				ofxCvGui::PanelPtr getPanel() override;
 				
-				const vector<aruco::Marker> & findMarkers(const cv::Mat & image
-					, const cv::Mat & cameraMatrix = cv::Mat()
-					, const cv::Mat & distortionCoefficients = cv::Mat());
+				const vector<aruco::Marker> & findMarkers(const cv::Mat & image);
 			protected:
 				MAKE_ENUM(DetectorType
 					, (Original, MIP_3612h, ARTKP, ARTAG)
@@ -54,7 +52,8 @@ namespace ofxRulr {
 					ofParameter<bool> normalizeImage{ "Normalize image", false };
 					ofParameter<bool> enclosedMarkers{ "Enclosed markers", false };
 					ofParameter<int> thresholdAttempts{ "Threshold attempts", 3, 1, 10 };
-					PARAM_DECLARE("Detector", dictionary, markerLength, normalizeImage, enclosedMarkers, thresholdAttempts);
+					ofParameter<float> cornerRefineZone{ "Corner refine zone %", 0.05 ,0, 1 }; // This value works well with our halo markers
+					PARAM_DECLARE("Detector", dictionary, markerLength, normalizeImage, enclosedMarkers, thresholdAttempts, cornerRefineZone);
 				} parameters;
 
 				aruco::Dictionary dictionary;
@@ -66,8 +65,6 @@ namespace ofxRulr {
 				//useful when debugging to research quickly
 				struct {
 					cv::Mat image;
-					cv::Mat cameraMatrix;
-					cv::Mat distortionCoefficients;
 				} lastDetection;
 
 				ofImage preview;

@@ -327,16 +327,22 @@ namespace ofxRulr {
 						if (!ofxCv::selectROI(image, roi)) {
 							return false;
 						}
-						this->findBoard(image(roi)
+						auto result = this->findBoard(image(roi)
 							, imagePoints
 							, objectPoints);
-						for (auto& imagePoint : imagePoints) {
-							imagePoint.x += roi.x;
-							imagePoint.y += roi.y;
+						if (result) {
+							for (auto& imagePoint : imagePoints) {
+								imagePoint.x += roi.x;
+								imagePoint.y += roi.y;
+							}
+							return true;
+						}
+						else {
+							return false;
 						}
 					}
 					else {
-						this->findBoard(image, imagePoints, objectPoints);
+						return this->findBoard(image, imagePoints, objectPoints);
 					}
 				}
 

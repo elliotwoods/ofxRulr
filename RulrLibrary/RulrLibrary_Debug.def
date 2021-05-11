@@ -62,6 +62,7 @@ EXPORTS
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
 	??4ofVbo@@QEAAAEAV0@AEBV0@@Z
 	??9tpp@@YA_NAEBVfIterator@Delaunay@0@0@Z
+	??BofBuffer@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	??BofQuaternion@@QEBA?AU?$qua@M$0A@@glm@@XZ
 	?ofClamp@@YAMMMM@Z
 	?ofClear@@YAXMM@Z
@@ -69,10 +70,13 @@ EXPORTS
 	?ofCreateWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@AEBVofWindowSettings@@@Z
 	?ofDisableAlphaBlending@@YAXXZ
 	?ofDisableBlendMode@@YAXXZ
+	?ofDrawArrow@@YAXAEBU?$vec@$02M$0A@@glm@@0M@Z
 	?ofDrawAxis@@YAXM@Z
+	?ofDrawBox@@YAXAEBU?$vec@$02M$0A@@glm@@MMM@Z
 	?ofDrawCircle@@YAXAEBU?$vec@$01M$0A@@glm@@M@Z
 	?ofDrawCircle@@YAXAEBU?$vec@$02M$0A@@glm@@M@Z
 	?ofDrawCircle@@YAXMMM@Z
+	?ofDrawCylinder@@YAXMM@Z
 	?ofDrawGridPlane@@YAXM_K_N@Z
 	?ofDrawLine@@YAXAEBU?$vec@$01M$0A@@glm@@0@Z
 	?ofDrawLine@@YAXAEBU?$vec@$02M$0A@@glm@@0@Z
@@ -236,7 +240,10 @@ EXPORTS
 	??A?$ofColor_@M@@QEAAAEAM_K@Z
 	??A?$ofColor_@M@@QEBAAEBM_K@Z
 	??X?$ofColor_@M@@QEAAAEAV0@M@Z
+	??1AbstractEventToken@priv@of@@UEAA@XZ
 	??1BaseFunctionId@priv@of@@UEAA@XZ
+	??1StdFunctionId@priv@of@@UEAA@XZ
+	?nextId@StdFunctionId@priv@of@@0U?$atomic@_K@std@@A
 	?draw@of3dPrimitive@@UEBAXXZ
 	?drawWireframe@of3dPrimitive@@QEBAXXZ
 	?mapTexCoordsFromTexture@of3dPrimitive@@QEAAXAEBVofTexture@@@Z
@@ -442,6 +449,7 @@ EXPORTS
 	?undistortImagePoints@ofxCv@@YA?AV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@AEBV23@VMat@cv@@1@Z
 	??0Controller@ofxCvGui@@QEAA@XZ
 	??0Element@ofxCvGui@@QEAA@XZ
+	??0InspectController@ofxCvGui@@QEAA@XZ
 	?getDefaultTypeface@ofxCvGui@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?makeElement@ofxCvGui@@YA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
 	?init@Builder@ofxCvGui@@QEAAXXZ
@@ -461,6 +469,8 @@ EXPORTS
 	?setEnabled@Element@ofxCvGui@@QEAAX_N@Z
 	?setHeight@Element@ofxCvGui@@QEAAXM@Z
 	?isBeingInspected@IInspectable@ofxCvGui@@QEBA_NXZ
+	?clear@InspectController@ofxCvGui@@QEAAXXZ
+	?inspect@InspectController@ofxCvGui@@QEAAXV?$shared_ptr@VIInspectable@ofxCvGui@@@std@@@Z
 	?isDragging@MouseArguments@ofxCvGui@@QEBA_NPEAX@Z
 	?isDragging@MouseArguments@ofxCvGui@@QEBA_NV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?takeMousePress@MouseArguments@ofxCvGui@@QEAA_NPEAX@Z
@@ -507,12 +517,14 @@ EXPORTS
 	??0ScissorManager@Utils@ofxCvGui@@QEAA@XZ
 	?drawText@Utils@ofxCvGui@@YA?AVofRectangle@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV3@_N2@Z
 	?drawText@Utils@ofxCvGui@@YA?AVofRectangle@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MM_NMM1AEBV?$ofColor_@E@@@Z
+	?drawTextAnnotation@Utils@ofxCvGui@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBU?$vec@$02M$0A@@glm@@AEBV?$ofColor_@E@@@Z
 	?drawToolTip@Utils@ofxCvGui@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBU?$vec@$01M$0A@@glm@@@Z
 	?getBeatingSelectionColor@Utils@ofxCvGui@@YA?AV?$ofColor_@E@@XZ
 	?getScissorEnabled@ScissorManager@Utils@ofxCvGui@@QEBA_NXZ
 	?setScissorEnabled@ScissorManager@Utils@ofxCvGui@@QEAAX_N@Z
 	?getSingletonStore@?$Singleton@VScissorManager@Utils@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	?getSingletonStore@?$Singleton@VController@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
+	?getSingletonStore@?$Singleton@VInspectController@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	??0Button@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXXZ@4@D@Z
 	??0Indicator@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6A?AW4Status@Indicator@Widgets@ofxCvGui@@XZ@4@@Z
 	??0MultipleChoice@Widgets@ofxCvGui@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -521,6 +533,7 @@ EXPORTS
 	??0Spacer@Widgets@ofxCvGui@@QEAA@XZ
 	??0Title@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4Level@012@@Z
 	??0Toggle@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@_N@@D@Z
+	??0Toggle@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6A_NXZ@4@V?$function@$$A6AX_N@Z@4@D@Z
 	?addOption@MultipleChoice@Widgets@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?addOptions@MultipleChoice@Widgets@ofxCvGui@@QEAAXV?$initializer_list@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@std@@@Z
 	?getSelection@MultipleChoice@Widgets@ofxCvGui@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -659,6 +672,7 @@ EXPORTS
 	?init@World@Graph@ofxRulr@@QEAAXAEAVController@ofxCvGui@@_N@Z
 	?loadAll@World@Graph@ofxRulr@@QEAAX_N@Z
 	?getCamera@WorldStage@Graph@ofxRulr@@QEAAAEAVofxGrabCam@@XZ
+	?getCursorWorld@WorldStage@Graph@ofxRulr@@QEBA?AU?$vec@$02M$0A@@glm@@_N@Z
 	??0Base@Nodes@ofxRulr@@QEAA@XZ
 	??0GraphicsManager@Nodes@ofxRulr@@QEAA@XZ
 	??1Base@Nodes@ofxRulr@@QEAA@XZ

@@ -48,6 +48,15 @@
     <ClCompile Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats2.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_Normal.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Dispatcher.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -95,6 +104,15 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.h">
       <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats2.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\HeliostatActionModel.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Dispatcher.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

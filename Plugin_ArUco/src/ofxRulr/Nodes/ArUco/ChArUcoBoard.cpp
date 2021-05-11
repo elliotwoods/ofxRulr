@@ -24,35 +24,38 @@ namespace ofxRulr {
 
 				auto panel = ofxCvGui::Panels::makeImage(this->preview);
 				panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
-					//paper sizes
-					ofPushMatrix();
-					{
-						float mmToPixels = 1/1000.0f * INCHES_PER_METER * this->parameters.preview.DPI;
-						ofScale(mmToPixels, mmToPixels);
 
-						ofColor baseColor(200, 100, 100);
-						int index = 0;
-						for (auto paperSize : this->paperSizes) {
-							auto paperColor = baseColor;
-							paperColor.setHue(index * 40);
+					if (this->parameters.preview.showPaperSizes.get()) {
+						//paper sizes
+						ofPushMatrix();
+						{
+							float mmToPixels = 1 / 1000.0f * INCHES_PER_METER * this->parameters.preview.DPI;
+							ofScale(mmToPixels, mmToPixels);
 
-							ofPushStyle();
-							{
-								ofSetColor(paperColor);
+							ofColor baseColor(200, 100, 100);
+							int index = 0;
+							for (auto paperSize : this->paperSizes) {
+								auto paperColor = baseColor;
+								paperColor.setHue(index * 40);
 
-								//outline
-								ofNoFill();
-								ofDrawRectangle(0, 0, 297, 210);
+								ofPushStyle();
+								{
+									ofSetColor(paperColor);
 
-								//text
-								ofDrawBitmapString(paperSize->name, paperSize->width, paperSize->height);
+									//outline
+									ofNoFill();
+									ofDrawRectangle(0, 0, 297, 210);
+
+									//text
+									ofDrawBitmapString(paperSize->name, paperSize->width, paperSize->height);
+								}
+								ofPopStyle();
+
+								index++;
 							}
-							ofPopStyle();
-
-							index++;
 						}
+						ofPopMatrix();
 					}
-					ofPopMatrix();
 				};
 				this->panel = panel;
 

@@ -130,7 +130,7 @@ namespace ofxRulr {
 								, cameraNode->getDistortionCoefficients()
 								, rotation
 								, translation
-								, true
+								, this->parameters.useExtrinsicGuess.get()
 								, cv::SOLVEPNP_ITERATIVE);
 						}
 						else {
@@ -140,7 +140,7 @@ namespace ofxRulr {
 								, cameraNode->getDistortionCoefficients()
 								, rotation
 								, translation
-								, true
+								, this->parameters.useExtrinsicGuess.get()
 								, cv::SOLVEPNP_ITERATIVE);
 						}
 						break;

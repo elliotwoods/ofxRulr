@@ -59,7 +59,6 @@ namespace ofxRulr {
 
 				//add listeners
 				this->parameters.dictionary.addListener(this, &Detector::changeDetectorCallback);
-				this->parameters.markerLength.addListener(this, &Detector::changeFloatCallback);
 			}
 
 			//----------
@@ -77,9 +76,7 @@ namespace ofxRulr {
 					return aruco::Dictionary::getTypeString(this->dictionaryType);
 				});
 				inspector->addButton("Retry detect", [this]() {
-					this->findMarkers(this->lastDetection.image
-						, this->lastDetection.cameraMatrix
-						, this->lastDetection.distortionCoefficients);
+					this->findMarkers(this->lastDetection.image);
 				});
 			}
 
@@ -130,14 +127,9 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const std::vector<aruco::Marker> & Detector::findMarkers(const cv::Mat & image
-				, const cv::Mat & cameraMatrix
-				, const cv::Mat & distortionCoefficients) {
-
+			const std::vector<aruco::Marker> & Detector::findMarkers(const cv::Mat & image) {
 				this->lastDetection = {
 					image.clone()
-					, cameraMatrix
-					, distortionCoefficients
 				};
 
 				if (this->parameters.normalizeImage) {
@@ -148,17 +140,33 @@ namespace ofxRulr {
 						, cv::NormTypes::NORM_MINMAX);
 				}
 
-				if (cameraMatrix.empty()) {
-					this->foundMarkers = this->markerDetector.detect(this->lastDetection.image);
+				this->foundMarkers = this->markerDetector.detect(this->lastDetection.image);
+
+				// refine corners
+				{
+					auto findRatio = this->parameters.cornerRefineZone.get();
+					if (findRatio > 0.0f) {
+						for (auto& marker : this->foundMarkers) {
+							auto length2 = 0.0f;
+							length2 += glm::length2(ofxCv::toOf(marker[1] - marker[0]));
+							length2 += glm::length2(ofxCv::toOf(marker[2] - marker[1]));
+							length2 += glm::length2(ofxCv::toOf(marker[3] - marker[2]));
+							length2 += glm::length2(ofxCv::toOf(marker[0] - marker[3]));
+							length2 /= 4.0f;
+							auto searchLength = sqrt(length2) * findRatio;
+							
+							auto windowSize = (int)searchLength;
+							windowSize = ((windowSize / 2) * 2) + 1;
+
+							cv::cornerSubPix(this->lastDetection.image
+								, (vector<cv::Point2f>&) marker
+								, cv::Size(windowSize, windowSize)
+								, cv::Size(1, 1)
+								, cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 100, 1e-6));
+						}
+					}
 				}
-				else {
-					aruco::CameraParameters cameraParameters(cameraMatrix
-						, distortionCoefficients
-						, cv::Size(image.cols, image.rows));
-					this->foundMarkers = this->markerDetector.detect(this->lastDetection.image
-						, cameraParameters
-						, this->parameters.markerLength);
-				}
+
 				auto thresholdedImage = this->markerDetector.getThresholdedImage();
 				if (!thresholdedImage.empty()) {
 					ofxCv::copy(thresholdedImage, this->preview);

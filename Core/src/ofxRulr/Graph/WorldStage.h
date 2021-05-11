@@ -18,7 +18,7 @@ namespace ofxRulr {
 
 			void update();
 			ofxCvGui::PanelPtr getPanel() override;
-			ofVec3f getCursorWorld(bool forceUpdate = false) const;
+			glm::vec3 getCursorWorld(bool forceUpdate = false) const;
 			ofxGrabCam & getCamera();
 
 		protected:

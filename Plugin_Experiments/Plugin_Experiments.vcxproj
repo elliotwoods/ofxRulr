@@ -87,8 +87,10 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Dispatcher.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats2.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.cpp" />
@@ -98,6 +100,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\TestObject.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_Normal.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.cpp" />
     <ClCompile Include="src\pch_Plugin_Experiments.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -109,8 +112,10 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Dispatcher.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats2.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.h" />
@@ -120,6 +125,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\SolvePnP\TestObject.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\HeliostatActionModel.h" />
     <ClInclude Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.h" />
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
   </ItemGroup>

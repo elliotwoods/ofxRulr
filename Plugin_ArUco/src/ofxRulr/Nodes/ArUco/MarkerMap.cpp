@@ -65,15 +65,15 @@ namespace ofxRulr {
 							markerPreview.draw();
 						}
 
-						ofDrawBitmapString(ofToString(marker3D.id), ofxCv::toOf(marker3D.points[0]));
-
 						switch (this->parameters.drawLabels.get().get()) {
 						case WhenDrawOnWorldStage::Selected:
 							if (!this->isBeingInspected()) {
 								break;
 							}
 						case WhenDrawOnWorldStage::Always:
-							ofDrawBitmapString(ofToString(marker3D.id), ofxCv::toOf(marker3D[0]));
+							ofxCvGui::Utils::drawTextAnnotation(ofToString(marker3D.id)
+								, ofxCv::toOf(marker3D[0])
+								, this->getColor());
 							break;
 						case WhenDrawOnWorldStage::Never:
 						default:

@@ -316,23 +316,28 @@ namespace ofxRulr {
 
 							//go through all the input pins
 							for (auto & inputPin : node->getInputPins()) {
-								const auto & inputPinJson = inputPinsJson[inputPin->getName()];
-								if (!inputPinJson.is_null()) { //check this pin has been serialised to a node ID
-									NodeHost::Index sourceNodeHostIndex;
-									inputPinJson["SourceNode"].get_to(sourceNodeHostIndex);
+								if (inputPinsJson.contains(inputPin->getName())) {
+									try {
+										const auto& inputPinJson = inputPinsJson[inputPin->getName()];
+										if (inputPinJson.contains("SourceNode")) {
+											NodeHost::Index sourceNodeHostIndex;
+											inputPinJson["SourceNode"].get_to(sourceNodeHostIndex);
 
-									if (useNewIDs) {
-										sourceNodeHostIndex = reassignIDs.at(sourceNodeHostIndex);
+											if (useNewIDs) {
+												sourceNodeHostIndex = reassignIDs.at(sourceNodeHostIndex);
+											}
+											auto sourceNodeHost = this->getNodeHost(sourceNodeHostIndex);
+
+											//check the node index we want to connect to exists in the patch
+											if (sourceNodeHost) {
+												auto sourceNode = sourceNodeHost->getNodeInstance();
+
+												//make the connection
+												inputPin->connect(sourceNode);
+											}
+										}
 									}
-									auto sourceNodeHost = this->getNodeHost(sourceNodeHostIndex);
-
-									//check the node index we want to connect to exists in the patch
-									if (sourceNodeHost) {
-										auto sourceNode = sourceNodeHost->getNodeInstance();
-
-										//make the connection
-										inputPin->connect(sourceNode);
-									}
+									RULR_CATCH_ALL_TO_ERROR;
 								}
 							}
 						}
