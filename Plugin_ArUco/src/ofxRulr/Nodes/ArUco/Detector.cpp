@@ -218,12 +218,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Detector::changeIntCallback(int &) {
-				this->detectorDirty = true;
-			}
-
-			//----------
-			void Detector::changeRefinementTypeCallback(RefinementType &){
+			void Detector::changeIntCallback(int&) {
 				this->detectorDirty = true;
 			}
 		}

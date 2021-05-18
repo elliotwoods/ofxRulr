@@ -35,16 +35,11 @@ namespace ofxRulr {
 					, (Original, MIP_3612h, ARTKP, ARTAG)
 					, ("Original", "MIP_3612h", "ARTK+", "ARTAG"));
 
-				MAKE_ENUM(RefinementType
-					, (None, SubPix, Lines)
-					, ("None", "SubPix", "Lines"));
-
 				void rebuildDetector();
 
 				void changeDetectorCallback(DetectorType &);
 				void changeFloatCallback(float &);
 				void changeIntCallback(int &);
-				void changeRefinementTypeCallback(RefinementType &);
 
 				struct : ofParameterGroup {
 					ofParameter<DetectorType> dictionary{ "Detector type", DetectorType::Original };
