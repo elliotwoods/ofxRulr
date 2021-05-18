@@ -85,6 +85,20 @@ namespace ofxRulr {
 
 				shared_ptr<TemporaryLinkHost> newLink;
 				weak_ptr<NodeHost> selection;
+
+				struct Parameters : ofParameterGroup {
+					struct : ofParameterGroup {
+						ofParameter<bool> enabled{ "Enabled", true };
+						ofParameter<bool> nodes{ "Nodes", true };
+						ofParameter<bool> links{ "Links", true };
+						ofParameter<bool> grid{ "Grid", true };
+						PARAM_DECLARE("Draw", enabled, nodes, links, grid);
+					} draw;
+					
+					PARAM_DECLARE("Patch", draw);
+				} parameters;
+
+				Parameters cachedParameters;
 			};
 		}
 	}

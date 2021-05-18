@@ -44,7 +44,9 @@ namespace ofxRulr {
 				};
 
 				this->getCanvasElementGroup()->onDraw.addListener([this](ofxCvGui::DrawArguments & args) {
-					this->drawGridLines();
+					if (this->patchInstance.parameters.draw.grid) {
+						this->drawGridLines();
+					}
 				}, this, -1);
 
 				this->onUpdate += [this](ofxCvGui::UpdateArguments &) {
@@ -205,6 +207,11 @@ namespace ofxRulr {
 				RULR_NODE_DRAW_WORLD_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
+
+				this->manageParameters(this->parameters);
+				this->onDeserialize += [this](const nlohmann::json&) {
+					this->parameters.draw.enabled.set(true); // always set patch visible (ignore if not saved)
+				};
 			}
 
 			//----------
@@ -364,6 +371,24 @@ namespace ofxRulr {
 					}
 					nodeHost.second->getNodeInstance()->update();
 				}
+
+				//update parameters
+				{
+					if (this->cachedParameters.draw.enabled.get() != this->parameters.draw.enabled.get()) {
+						this->view->getCanvasElementGroup()->setEnabled(this->parameters.draw.enabled.get());
+					}
+					if (this->cachedParameters.draw.nodes.get() != this->parameters.draw.nodes.get()) {
+						for (auto nodeHost : this->nodeHosts) {
+							nodeHost.second->setEnabled(this->parameters.draw.nodes.get());
+						}
+					}
+					if (this->cachedParameters.draw.links.get() != this->parameters.draw.links.get()) {
+						for (auto linkHost : this->linkHosts) {
+							linkHost.second->setEnabled(this->parameters.draw.links.get());
+						}
+					}
+				}
+				this->cachedParameters = this->parameters;
 			}
 
 			//----------

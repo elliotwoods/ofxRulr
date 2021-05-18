@@ -121,6 +121,7 @@ if errorlevel 1 exit 0</Command>
     <ClInclude Include="src\ofxRulr\Data\Channels\Address.h" />
     <ClInclude Include="src\ofxRulr\Data\Channels\Channel.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Application\Assets.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Application\Debugger.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Application\HTTPServerControl.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Application\openFrameworks.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Data\Channels\Database.h" />
@@ -204,6 +205,7 @@ if errorlevel 1 exit 0</Command>
     <ClCompile Include="src\ofxRulr\Data\Channels\Address.cpp" />
     <ClCompile Include="src\ofxRulr\Data\Channels\Channel.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Application\Assets.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Application\Debugger.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Application\HTTPServerControl.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Application\openFrameworks.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Data\Channels\Database.cpp" />

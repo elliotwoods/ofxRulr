@@ -288,6 +288,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\Item\RandomPatternBoard.h">
       <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Application\Debugger.h">
+      <Filter>src\ofxRulr\Nodes\Application</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp">
@@ -445,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Item\RandomPatternBoard.cpp">
       <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Application\Debugger.cpp">
+      <Filter>src\ofxRulr\Nodes\Application</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
