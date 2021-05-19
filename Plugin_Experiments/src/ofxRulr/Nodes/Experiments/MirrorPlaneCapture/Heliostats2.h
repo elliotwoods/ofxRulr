@@ -89,6 +89,8 @@ namespace ofxRulr {
 						void populateInspector(ofxCvGui::InspectArguments&);
 						Solvers::HeliostatActionModel::Parameters<float> getHeliostatActionModelParameters() const;
 
+						void flip();
+
 						void navigateToNormal(const glm::vec3&, const ofxCeres::SolverSettings&);
 						void navigateToReflectPointToPoint(const glm::vec3&, const glm::vec3&, const ofxCeres::SolverSettings&);
 

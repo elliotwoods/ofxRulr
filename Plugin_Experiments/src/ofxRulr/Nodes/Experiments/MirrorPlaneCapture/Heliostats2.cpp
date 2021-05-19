@@ -245,6 +245,12 @@ namespace ofxRulr {
 				Heliostats2::Heliostat::Heliostat() {
 					RULR_SERIALIZE_LISTENERS;
 					RULR_NODE_INSPECTOR_LISTENER;
+
+					// Taken from servos 181, 182 after hand calibration
+					this->parameters.servo1.angle.setMin(ofMap(389, 0, 4096, -180, 180));
+					this->parameters.servo1.angle.setMax(ofMap(3670, 0, 4096, -180, 180));
+					this->parameters.servo2.angle.setMin(ofMap(1016, 0, 4096, -180, 180));
+					this->parameters.servo2.angle.setMax(ofMap(3059, 0, 4096, -180, 180));
 				}
 
 				//----------
@@ -337,32 +343,73 @@ namespace ofxRulr {
 				void Heliostats2::Heliostat::populateInspector(ofxCvGui::InspectArguments& inspectArgs) {
 					auto inspector = inspectArgs.inspector;
 					inspector->addParameterGroup(this->parameters);
+					inspector->addButton("Flip 180", [this]() {
+						try {
+							this->flip();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
 				}
 
 				//----------
 				Solvers::HeliostatActionModel::Parameters<float> Heliostats2::Heliostat::getHeliostatActionModelParameters() const {
 					Solvers::HeliostatActionModel::Parameters<float> parameters;
 					parameters.position = this->parameters.hamParameters.position.get();
+
+					parameters.axis1.polynomial = this->parameters.hamParameters.axis1.polynomial.get();
 					parameters.axis1.rotationAxis = this->parameters.hamParameters.axis1.rotationAxis.get();
+					parameters.axis1.angleRange.minimum = this->parameters.servo1.angle.getMin();
+					parameters.axis1.angleRange.maximum = this->parameters.servo1.angle.getMax();
+
+					parameters.axis2.polynomial = this->parameters.hamParameters.axis2.polynomial.get();
 					parameters.axis2.rotationAxis = this->parameters.hamParameters.axis2.rotationAxis.get();
+					parameters.axis2.angleRange.minimum = this->parameters.servo2.angle.getMin();
+					parameters.axis2.angleRange.maximum = this->parameters.servo2.angle.getMax();
+
 					parameters.mirrorOffset = this->parameters.hamParameters.mirrorOffset.get();
 					return parameters;
 				}
 
 				//----------
+				void Heliostats2::Heliostat::flip() {
+					Solvers::HeliostatActionModel::AxisAngles<float> axisAngles;
+					axisAngles.axis1 = this->parameters.servo1.angle.get();
+					axisAngles.axis2 = this->parameters.servo2.angle.get();
+
+					axisAngles.axis1 += axisAngles.axis1 > 0.0f
+						? -180.0f
+						: 180.0f;
+					axisAngles.axis2 *= -1.0f;
+
+					if (Solvers::HeliostatActionModel::Navigator::validate(this->getHeliostatActionModelParameters()
+						, axisAngles)) {
+						this->parameters.servo1.angle.set(axisAngles.axis1);
+						this->parameters.servo2.angle.set(axisAngles.axis2);
+					}
+					else {
+						throw(ofxRulr::Exception("Cannot flip axis"));
+					}
+				}
+
+				//----------
 				void Heliostats2::Heliostat::navigateToNormal(const glm::vec3& normal, const ofxCeres::SolverSettings& solverSettings) {
-					Solvers::HeliostatActionModel::AxisAngles<float> axisAngles{
-							this->parameters.servo1.angle
-							, this->parameters.servo2.angle
+					Solvers::HeliostatActionModel::AxisAngles<float> priorAngles{
+						this->parameters.servo1.angle
+						, this->parameters.servo2.angle
 					};
 					auto hamParameters = this->getHeliostatActionModelParameters();
 
-					auto result = Solvers::HeliostatActionModel::Navigator::solveNormal(hamParameters
-						, normal
-						, axisAngles
-						, solverSettings);
+					auto result = Solvers::HeliostatActionModel::Navigator::solveConstrained(hamParameters
+						, [&](const Solvers::HeliostatActionModel::AxisAngles<float>& initialAngles) {
+							return Solvers::HeliostatActionModel::Navigator::solveNormal(hamParameters
+								, normal
+								, initialAngles
+								, solverSettings);
+						}, priorAngles);
+
 					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
 					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+
 					if (!result.isConverged()) {
 						throw(ofxRulr::Exception("Couldn't navigate heliostat to normal : " + result.errorMessage));
 					}
@@ -370,19 +417,24 @@ namespace ofxRulr {
 
 				//----------
 				void Heliostats2::Heliostat::navigateToReflectPointToPoint(const glm::vec3& pointA, const glm::vec3& pointB, const ofxCeres::SolverSettings& solverSettings) {
-					Solvers::HeliostatActionModel::AxisAngles<float> axisAngles{
+					Solvers::HeliostatActionModel::AxisAngles<float> priorAngles{
 							this->parameters.servo1.angle
 							, this->parameters.servo2.angle
 					};
 					auto hamParameters = this->getHeliostatActionModelParameters();
 
-					auto result = Solvers::HeliostatActionModel::Navigator::solvePointToPoint(hamParameters
-						, pointA
-						, pointB
-						, axisAngles
-						, solverSettings);
+					auto result = Solvers::HeliostatActionModel::Navigator::solveConstrained(hamParameters
+						, [&](const Solvers::HeliostatActionModel::AxisAngles<float>& initialAngles) {
+							return Solvers::HeliostatActionModel::Navigator::solvePointToPoint(hamParameters
+								, pointA
+								, pointB
+								, initialAngles
+								, solverSettings);
+						}, priorAngles);
+
 					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
 					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+
 					if (!result.isConverged()) {
 						throw(ofxRulr::Exception("Couldn't navigate heliostat to normal : " + result.errorMessage));
 					}

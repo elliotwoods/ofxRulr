@@ -20,7 +20,8 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<int> maxIterations{ "Max iterations", 1000 };
 						ofParameter<bool> printReport{ "Print report", true };
-						PARAM_DECLARE("NavigateBodyToBody", maxIterations, printReport);
+						ofParameter<bool> pushValues{ "Push values", true };
+						PARAM_DECLARE("NavigateBodyToBody", maxIterations, printReport, pushValues);
 					} parameters;
 				};
 			}

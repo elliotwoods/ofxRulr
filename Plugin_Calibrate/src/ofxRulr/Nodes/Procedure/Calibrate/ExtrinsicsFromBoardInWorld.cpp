@@ -222,32 +222,13 @@ namespace ofxRulr {
 						else {
 							Utils::ScopedProcess updateTargetScope("Update board");
 
-							cv::Mat worldToCameraRotationVector, worldToCameraTranslation;
-							camera->getExtrinsics(worldToCameraRotationVector
-								, worldToCameraTranslation
-								, true);
+							// For this side (board update) we just the the transforms.
+							// We tried with composeRT but failed
 
-							// invert the extrinsics
-							cv::Mat cameraToBoardRotationVector, cameraToBoardTranslation;
-							{
-								auto matrix = ofxCv::makeMatrix(boardToCameraRotationVector
-									, boardToCameraTranslation);
-								auto inverseMatrix = glm::inverse(matrix);
-								ofxCv::decomposeMatrix(matrix, cameraToBoardRotationVector, cameraToBoardTranslation);
-							}
-
-							cv::Mat worldToBoardRotationVector, worldToBoardTranslation;
-							cv::composeRT(
-								worldToCameraRotationVector
-								, worldToCameraTranslation
-								, cameraToBoardRotationVector
-								, cameraToBoardTranslation
-								, worldToBoardRotationVector
-								, worldToBoardTranslation);
-
-							boardInWorld->setExtrinsics(worldToBoardRotationVector
-								, worldToBoardTranslation
-								, true);
+							auto boardInCameraTransform = ofxCv::makeMatrix(boardToCameraRotationVector
+								, boardToCameraTranslation);
+							auto boardInWorldTransform = camera->getTransform() * boardInCameraTransform;
+							boardInWorld->setTransform(boardInWorldTransform);
 
 							updateTargetScope.end();
 						}

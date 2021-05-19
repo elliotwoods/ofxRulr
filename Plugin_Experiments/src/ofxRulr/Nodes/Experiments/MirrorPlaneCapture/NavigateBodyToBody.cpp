@@ -60,7 +60,9 @@ namespace ofxRulr {
 							, solverSettings);
 					}
 
-					heliostatsNode->pushStale(true);
+					if (this->parameters.pushValues) {
+						heliostatsNode->pushStale(true);
+					}
 				}
 			}
 		}

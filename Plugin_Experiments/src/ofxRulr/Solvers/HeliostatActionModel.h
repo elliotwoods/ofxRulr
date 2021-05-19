@@ -11,6 +11,11 @@ namespace ofxRulr {
 				struct Axis {
 					glm::tvec3<T> polynomial;
 					glm::tvec3<T> rotationAxis;
+
+					struct {
+						T minimum;
+						T maximum;
+					} angleRange;
 				};
 
 				glm::tvec3<T> position;
@@ -26,8 +31,12 @@ namespace ofxRulr {
 					newParameters.position = glm::tvec3<T2>(this->position);
 					newParameters.axis1.polynomial = glm::tvec3<T2>(this->axis1.polynomial);
 					newParameters.axis1.rotationAxis = glm::tvec3<T2>(this->axis1.rotationAxis);
+					newParameters.axis1.angleRange.minimum = (T2)this->axis1.angleRange.minimum;
+					newParameters.axis1.angleRange.maximum= (T2) this->axis1.angleRange.maximum;
 					newParameters.axis2.polynomial = glm::tvec3<T2>(this->axis2.polynomial);
 					newParameters.axis2.rotationAxis = glm::tvec3<T2>(this->axis2.rotationAxis);
+					newParameters.axis2.angleRange.minimum = (T2)this->axis2.angleRange.minimum;
+					newParameters.axis2.angleRange.maximum = (T2)this->axis2.angleRange.maximum;
 					newParameters.mirrorOffset = (T2)this->mirrorOffset;
 					return newParameters;
 				}
@@ -76,6 +85,18 @@ namespace ofxRulr {
 					, const glm::vec3& pointB
 					, const AxisAngles<float>& initialAngles
 					, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
+
+				static bool validate(const Parameters<float>&
+					, const AxisAngles<float>& axisAngles);
+
+				// returns true if angles were altered
+				static bool constrainAngles(const Parameters<float>&
+					, AxisAngles<float>& axisAngles
+					, const AxisAngles<float>& initialAngles);
+
+				static Result solveConstrained(const Parameters<float>&
+					, std::function<Result(const AxisAngles<float>&)>
+					, const AxisAngles<float>& initialAngles);
 			};
 		};
 	}
