@@ -281,6 +281,15 @@ namespace ofxRulr {
 			}
 
 			//----------
+			vector<glm::vec3> ChArUcoBoard::getAllObjectPoints() const {
+				if (!this->board) {
+					throw(ofxRulr::Exception("No board allocated"));
+				}
+				return ofxCv::toOf(this->board->chessboardCorners);
+			}
+
+
+			//----------
 			ofxCvGui::PanelPtr ChArUcoBoard::getPanel() {
 				return this->panel;
 			}

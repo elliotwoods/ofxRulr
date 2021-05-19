@@ -123,7 +123,7 @@ namespace ofxRulr {
 					
 					auto checkerboardNode = this->getInput<Item::Board>();
 					auto checkerboardSize = checkerboardNode->getSize();
-					auto checkerboardObjectPoints = checkerboardNode->getObjectPoints();
+					auto checkerboardObjectPoints = ofxCv::toCv(checkerboardNode->getAllObjectPoints());
 					
 					//convert to grayscale
 					if (cameraColorImage.channels() == 3) {

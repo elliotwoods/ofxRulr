@@ -15,7 +15,7 @@ namespace ofxRulr {
 
 				//----------
 				std::string HaloBoard::getTypeName() const {
-					return "ArUco::HaloBoard";
+					return "Halo::HaloBoard";
 				}
 
 				//----------

@@ -264,7 +264,7 @@ namespace ofxRulr {
 			//----------
 			shared_ptr<ofxMachineVision::Frame> Camera::getFreshFrame() {
 				if (!this->grabber) {
-					return nullptr;
+					throw(ofxRulr::Exception("No grabber"));
 				}
 				else {
 					return this->grabber->getFreshFrame();

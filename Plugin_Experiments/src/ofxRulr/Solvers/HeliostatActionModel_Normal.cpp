@@ -52,15 +52,6 @@ struct HeliostatActionModel_NormalCost
 namespace ofxRulr {
 	namespace Solvers {
 		//----------
-		ofxCeres::SolverSettings
-			HeliostatActionModel::Navigator::defaultSolverSettings()
-		{
-			ofxCeres::SolverSettings solverSettings;
-			solverSettings.options.max_num_iterations = 1000;
-			return solverSettings;
-		}
-
-		//----------
 		HeliostatActionModel::Navigator::Result
 			HeliostatActionModel::Navigator::solveNormal(const HeliostatActionModel::Parameters<float>& hamParameters
 				, const glm::vec3& normal

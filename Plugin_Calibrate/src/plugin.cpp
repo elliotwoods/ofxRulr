@@ -4,7 +4,7 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 {
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Data::SelectSceneVertices);
 
-	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Procedure::Calibrate::CameraExtrinsicsFromBoardInWorld);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Procedure::Calibrate::ExtrinsicsFromBoardInWorld);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Procedure::Calibrate::CameraExtrinsicsFromBoardPlanes);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Procedure::Calibrate::CameraFromDepthCamera);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Procedure::Calibrate::CameraIntrinsics);

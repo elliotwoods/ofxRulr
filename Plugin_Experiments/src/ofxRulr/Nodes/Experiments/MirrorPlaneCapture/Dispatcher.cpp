@@ -11,7 +11,7 @@ namespace ofxRulr {
 
 				//----------
 				string Dispatcher::getTypeName() const {
-					return "Experiments::MirrorPlaneCapture::Dispatcher";
+					return "Halo::Dispatcher";
 				}
 
 				//----------
@@ -44,6 +44,10 @@ namespace ofxRulr {
 				nlohmann::json Dispatcher::request(const ofHttpRequest & request) {
 					ofURLFileLoader urlLoader;
 					auto response = urlLoader.handleRequest(request);
+
+					if (response.status != 200) {
+						throw(ofxRulr::Exception(response.error));
+					}
 
 					auto responseJson = nlohmann::json::parse((string)response.data);
 					if (!responseJson.contains("success")) {

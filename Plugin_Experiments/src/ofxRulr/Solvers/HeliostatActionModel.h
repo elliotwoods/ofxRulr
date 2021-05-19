@@ -70,6 +70,12 @@ namespace ofxRulr {
 					, const glm::vec3 & normal
 					, const AxisAngles<float> & initialAngles
 					, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
+
+				static Result solvePointToPoint(const Parameters<float>&
+					, const glm::vec3& pointA
+					, const glm::vec3& pointB
+					, const AxisAngles<float>& initialAngles
+					, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
 			};
 		};
 	}

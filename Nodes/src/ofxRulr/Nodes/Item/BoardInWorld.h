@@ -13,6 +13,8 @@ namespace ofxRulr {
 					, vector<cv::Point3f>& objectPoints
 					, vector<cv::Point3f>& worldPoints
 					, FindBoardMode findBoardMode, cv::Mat cameraMatrix = cv::Mat(), cv::Mat distortionCoefficients = cv::Mat()) const;
+
+				vector<glm::vec3> getAllWorldPoints() const;
 			protected:
 				void init();
 				void update();

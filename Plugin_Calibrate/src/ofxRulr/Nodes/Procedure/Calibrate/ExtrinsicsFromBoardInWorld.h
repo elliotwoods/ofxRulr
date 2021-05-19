@@ -9,9 +9,13 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace Procedure {
 			namespace Calibrate {
-				class CameraExtrinsicsFromBoardInWorld : public Base {
+				class PLUGIN_CALIBRATE_EXPORTS ExtrinsicsFromBoardInWorld : public Base {
 				public:
-					CameraExtrinsicsFromBoardInWorld();
+					MAKE_ENUM(UpdateTarget
+						, (Camera, Board)
+						, ("Camera", "Board"));
+
+					ExtrinsicsFromBoardInWorld();
 					void init();
 					string getTypeName() const override;
 					ofxCvGui::PanelPtr getPanel() override;
@@ -22,8 +26,7 @@ namespace ofxRulr {
 					void deserialize(const nlohmann::json&);
 					void populateInspector(ofxCvGui::InspectArguments&);
 
-					void capture();
-					void calibrate();
+					void track(const UpdateTarget &, bool getFreshFrame);
 				protected:
 					void receiveFrame(shared_ptr<ofxMachineVision::Frame>);
 					ofxCvGui::PanelPtr view;
@@ -42,16 +45,17 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<bool> useExtrinsicGuess{ "Use extrinsic guess", false };
-							ofParameter<bool> calibrateOnCapture{ "Calibrate on capture", true };
-							PARAM_DECLARE("Calibrate", useExtrinsicGuess, calibrateOnCapture);
-						} calibrate;
+							ofParameter<bool> trackOnFreshFrame{ "Track on fresh frame", true };
+							ofParameter<UpdateTarget> updateTarget{ "Update target", UpdateTarget::Camera };
+							PARAM_DECLARE("Track", useExtrinsicGuess, trackOnFreshFrame, updateTarget);
+						} track;
 
 						struct : ofParameterGroup {
 							ofParameter<bool> rays{ "Rays", true };
 							PARAM_DECLARE("Draw", rays);
 						} draw;
 
-						PARAM_DECLARE("CameraExtrinsicsFromBoardInWorld", capture, calibrate, draw);
+						PARAM_DECLARE("ExtrinsicsFromBoardInWorld", capture, track, draw);
 					} parameters;
 				};
 			}

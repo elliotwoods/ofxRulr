@@ -107,6 +107,7 @@ EXPORTS
 	?ofLoadIdentityMatrix@@YAXXZ
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@E@@AEBVofBuffer@@AEBUofImageLoadSettings@@@Z
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@G@@AEBVofBuffer@@AEBUofImageLoadSettings@@@Z
+	?ofLogToConsole@@YAXXZ
 	?ofMap@@YAMMMMMM_N@Z
 	?ofMultMatrix@@YAXAEBU?$mat@$03$03M$0A@@glm@@@Z
 	?ofNoFill@@YAXXZ
@@ -713,10 +714,11 @@ EXPORTS
 	??0View@Item@Nodes@ofxRulr@@QEAA@_N@Z
 	??1Camera@Item@Nodes@ofxRulr@@UEAA@XZ
 	?findBoard@AbstractBoard@Item@Nodes@ofxRulr@@UEBA_NVMat@cv@@AEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@AEAV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@8@VFindBoardMode@4@00@Z
+	?getAllObjectPoints@AbstractBoard@Item@Nodes@ofxRulr@@UEBA?AV?$vector@U?$vec@$02M$0A@@glm@@V?$allocator@U?$vec@$02M$0A@@glm@@@std@@@std@@XZ
 	?getTypeName@AbstractBoard@Item@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
-	?getObjectPoints@Board@Item@Nodes@ofxRulr@@QEBA?AV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@XZ
 	?getSize@Board@Item@Nodes@ofxRulr@@QEBA?AV?$Size_@H@cv@@XZ
 	?findBoard@BoardInWorld@Item@Nodes@ofxRulr@@QEBA_NVMat@cv@@AEAV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@AEAV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@8@2VFindBoardMode@4@00@Z
+	?getAllWorldPoints@BoardInWorld@Item@Nodes@ofxRulr@@QEBA?AV?$vector@U?$vec@$02M$0A@@glm@@V?$allocator@U?$vec@$02M$0A@@glm@@@std@@@std@@XZ
 	?getFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getFreshFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getGrabber@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VSimple@Grabber@ofxMachineVision@@@std@@XZ

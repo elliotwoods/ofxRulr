@@ -16,7 +16,12 @@ namespace ofxRulr {
 
 			//----------
 			bool AbstractBoard::findBoard(cv::Mat, vector<cv::Point2f> & result, vector<cv::Point3f> & objectPoints, FindBoardMode findBoardMode, cv::Mat cameraMatrix, cv::Mat distortionCoefficients) const {
-				throw(ofxRulr::Exception("Board not implemented"));
+				throw(ofxRulr::NotImplementedException());
+			}
+
+			//----------
+			vector<glm::vec3> AbstractBoard::getAllObjectPoints() const {
+				throw(ofxRulr::NotImplementedException());
 			}
 		}
 	}

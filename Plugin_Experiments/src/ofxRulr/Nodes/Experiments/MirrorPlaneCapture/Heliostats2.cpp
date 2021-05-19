@@ -158,21 +158,7 @@ namespace ofxRulr {
 
 					for (auto heliostat : heliostats) {
 						auto normal = glm::normalize(cursorInWorld - heliostat->parameters.hamParameters.position.get());
-						Solvers::HeliostatActionModel::AxisAngles<float> axisAngles{
-							heliostat->parameters.servo1.angle
-							, heliostat->parameters.servo2.angle
-						};
-						auto hamParameters = heliostat->getHeliostatActionModelParameters();
-						
-						auto result = Solvers::HeliostatActionModel::Navigator::solveNormal(hamParameters
-							, normal
-							, axisAngles
-							, solverSettings);
-						heliostat->parameters.servo1.angle = result.solution.axisAngles.axis1;
-						heliostat->parameters.servo2.angle = result.solution.axisAngles.axis2;
-						if (!result.isConverged()) {
-							throw(ofxRulr::Exception("Couldn't navigate heliostat to normal : " + result.errorMessage));
-						}
+						heliostat->navigateToNormal(normal, solverSettings);
 					}
 				}
 
@@ -183,6 +169,7 @@ namespace ofxRulr {
 
 					Dispatcher::MultiMoveRequest moveRequest;
 					moveRequest.waitUntilComplete = waitUntilComplete;
+					moveRequest.timeout = this->parameters.dispatcher.timeout.get();
 
 					// Gather movements
 					auto heliostats = this->heliostats.getSelection();
@@ -360,6 +347,45 @@ namespace ofxRulr {
 					parameters.axis2.rotationAxis = this->parameters.hamParameters.axis2.rotationAxis.get();
 					parameters.mirrorOffset = this->parameters.hamParameters.mirrorOffset.get();
 					return parameters;
+				}
+
+				//----------
+				void Heliostats2::Heliostat::navigateToNormal(const glm::vec3& normal, const ofxCeres::SolverSettings& solverSettings) {
+					Solvers::HeliostatActionModel::AxisAngles<float> axisAngles{
+							this->parameters.servo1.angle
+							, this->parameters.servo2.angle
+					};
+					auto hamParameters = this->getHeliostatActionModelParameters();
+
+					auto result = Solvers::HeliostatActionModel::Navigator::solveNormal(hamParameters
+						, normal
+						, axisAngles
+						, solverSettings);
+					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
+					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+					if (!result.isConverged()) {
+						throw(ofxRulr::Exception("Couldn't navigate heliostat to normal : " + result.errorMessage));
+					}
+				}
+
+				//----------
+				void Heliostats2::Heliostat::navigateToReflectPointToPoint(const glm::vec3& pointA, const glm::vec3& pointB, const ofxCeres::SolverSettings& solverSettings) {
+					Solvers::HeliostatActionModel::AxisAngles<float> axisAngles{
+							this->parameters.servo1.angle
+							, this->parameters.servo2.angle
+					};
+					auto hamParameters = this->getHeliostatActionModelParameters();
+
+					auto result = Solvers::HeliostatActionModel::Navigator::solvePointToPoint(hamParameters
+						, pointA
+						, pointB
+						, axisAngles
+						, solverSettings);
+					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
+					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+					if (!result.isConverged()) {
+						throw(ofxRulr::Exception("Couldn't navigate heliostat to normal : " + result.errorMessage));
+					}
 				}
 
 				//----------

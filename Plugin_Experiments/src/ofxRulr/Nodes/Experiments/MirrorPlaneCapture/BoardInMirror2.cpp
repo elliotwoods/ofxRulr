@@ -1,4 +1,5 @@
 #include "pch_Plugin_Experiments.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/ExtrinsicsFromBoardInWorld.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -76,7 +77,7 @@ namespace ofxRulr {
 
 				//--------
 				string BoardInMirror2::getTypeName() const {
-					return "Experiments::MirrorPlaneCapture::BoardInMirror2";
+					return "Halo::BoardInMirror2";
 				}
 
 				//--------
@@ -88,11 +89,10 @@ namespace ofxRulr {
 
 					this->manageParameters(this->parameters);
 
-					this->addInput<Heliostats>();
+					this->addInput<Heliostats2>();
 					this->addInput<Item::Camera>();
-					this->addInput<Item::BoardInWorld>();
-					this->addInput<ArUco::MarkerMap>();
-					this->addInput<ArUco::Detector>();
+					this->addInput<ArUco::MarkerMapPoseTracker>();
+					this->addInput<Procedure::Calibrate::ExtrinsicsFromBoardInWorld>();
 				}
 
 				//--------
@@ -122,8 +122,6 @@ namespace ofxRulr {
 							}
 						}
 					}
-
-
 				}
 
 				//--------
@@ -132,151 +130,102 @@ namespace ofxRulr {
 					this->throwIfMissingAConnection<Item::Camera>();
 					auto camera = this->getInput<Item::Camera>();
 					auto frame = camera->getFreshFrame();
-					this->addCapture(frame);
 					scopedProcess.end();
+
+					this->addCapture(frame);
 				}
 
-				//--------
-				void BoardInMirror2::calibrate() {
-					// Garther data
-					vector<ofxRay::Ray> cameraRays;
-					vector<glm::vec3> worldPoints;
-					{
-						auto captures = this->captures.getSelection();
-						for (const auto& capture : captures) {
-							cameraRays.insert(cameraRays.end(), capture->cameraRays.begin(), capture->cameraRays.end());
-
-							const auto& worldPointsToAdd = ofxCv::toOf(capture->worldPoints);
-							worldPoints.insert(worldPoints.end(), worldPointsToAdd.begin(), worldPointsToAdd.end());
-						}
-					}
-
-					// Normalise rays
-					{
-						for (auto& cameraRay : cameraRays) {
-							cameraRay.t = glm::normalize(cameraRay.t);
-						}
-					}
-
-
-					// Run solve
-					{
-						auto solverSettings = ofxRulr::Solvers::MirrorPlaneFromRays::defaultSolverSettings();
-						solverSettings.options.max_num_iterations = this->parameters.solve.maxIterations.get();
-						solverSettings.printReport = this->parameters.solve.printReport.get();
-						solverSettings.options.minimizer_progress_to_stdout = this->parameters.solve.printReport.get();
-
-						auto result = ofxRulr::Solvers::MirrorPlaneFromRays::solve(cameraRays
-							, worldPoints
-							, solverSettings);
-
-						this->result = make_shared<ofxRulr::Solvers::MirrorPlaneFromRays::Result>(result);
-					}
-
-					// Make the debug draw objects
-					{
-						auto abcd = this->result->solution.plane.getABCD();
-						glm::vec3 planeNormal{ abcd.x, abcd.y, abcd.z };
-						float planeD = abcd.w;
-
-						this->debug.reflectedRays.clear();
-						for (const auto& cameraRay : cameraRays) {
-							// intersect the ray and the plane
-							const auto u = -(planeD + glm::dot(cameraRay.s, planeNormal))
-								/ glm::dot(cameraRay.t, planeNormal);
-							auto intersection = cameraRay.s + u * cameraRay.t;
-
-							// reflected ray starts with intersection between cameraRay and mirror plane
-							const auto& reflectedRayS = intersection;
-
-							// reflected ray transmission is defined by reflect(cameraRayT + reflectedRayS, mirrorPlane)
-							auto reflectedRayT = ofxCeres::VectorMath::reflect(cameraRay.t + reflectedRayS, planeNormal, planeD) - reflectedRayS;
-
-							this->debug.reflectedRays.push_back({ reflectedRayS, reflectedRayT });
-						}
-					}
-				}
-
-				//--------
-				ofxCvGui::PanelPtr BoardInMirror2::getPanel() {
-					return this->panel;
-				}
-
-				//--------
-				void BoardInMirror2::populateInspector(ofxCvGui::InspectArguments& inspectArgs) {
-					auto inspector = inspectArgs.inspector;
-					this->captures.populateWidgets(inspector);
-					inspector->addButton("Capture", [this]() {
-						try {
-							this->capture();
-						}
-						RULR_CATCH_ALL_TO_ERROR
-						}, ' ');
-					inspector->addButton("Calibrate", [this]() {
-						try {
-							this->calibrate();
-						}
-						RULR_CATCH_ALL_TO_ERROR
-						}, OF_KEY_RETURN)->setHeight(100.0f);
-
-						inspector->addIndicatorBool("Converged", [this]() {
-							if (this->result) {
-								return this->result->isConverged();
-							}
-							else {
-								return false;
-							}
-							});
-						inspector->addLiveValue<double>("Residual [m]", [this]() {
-							if (this->result) {
-								return this->result->residual;
-							}
-							else {
-								return 0.0;
-							}
-							});
-				}
-
-				//--------
-				void BoardInMirror2::serialize(nlohmann::json& json) {
-					this->captures.serialize(json["captures"]);
-				}
-
-				//--------
-				void BoardInMirror2::deserialize(const nlohmann::json& json) {
-					if (json.contains("captures")) {
-						this->captures.deserialize(json["captures"]);
-					}
-				}
-
-				//--------
-				void BoardInMirror2::drawWorldStage() {
-					// Draw data
-					{
-						auto captures = this->captures.getSelection();
-						for (const auto& capture : captures) {
-							capture->drawWorld();
-						}
-					}
-
-					// Draw result
-					if (this->result) {
-						this->result->solution.plane.draw();
-					}
-
-					// Draw debug info
-					if (this->parameters.debug.draw.reflectedRays) {
-						for (const auto& ray : this->debug.reflectedRays) {
-							ray.draw();
-						}
-					}
-				}
 
 				//--------
 				void BoardInMirror2::addCapture(shared_ptr<ofxMachineVision::Frame> frame) {
 					if (!frame) {
 						throw(Exception("Frame is empty"));
 					}
+
+					// Get inputs
+					this->throwIfMissingAnyConnection();
+					auto camera = this->getInput<Item::Camera>();
+					auto heliostats = this->getInput<Heliostats2>();
+					auto extrinsicsFromBoardInWorld = this->getInput<Procedure::Calibrate::ExtrinsicsFromBoardInWorld>();
+					extrinsicsFromBoardInWorld->throwIfMissingAnyConnection();
+					auto boardInWorld = extrinsicsFromBoardInWorld->getInput<Item::BoardInWorld>();
+
+					// Build solver settings
+					auto solverSettings = this->getSolverSettings();
+
+					// 1. Update the camera pose
+					{
+						Utils::ScopedProcess scopedProcess("Update marker map tracking");
+						auto markerMapPoseTracker = this->getInput<ArUco::MarkerMapPoseTracker>();
+						markerMapPoseTracker->track();
+						scopedProcess.end();
+					}
+
+					// 2. Update the BoardInWorld extrinsics
+					{
+						Utils::ScopedProcess scopedProcess("Update board extrinsics");
+						extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board, false);
+						scopedProcess.end();
+					}
+
+					// 3. Gather heliostats in view. 
+					//		Point ones outside 'backwards'
+					vector<shared_ptr<Heliostats2::Heliostat>> activeHeliostats;
+					{
+						Utils::ScopedProcess scopedProcess("Gather heliostats in view");
+
+						auto selectedHeliostats = heliostats->getHeliostats();
+						auto cameraWorldView = camera->getViewInWorldSpace();
+						for (auto heliostat : selectedHeliostats) {
+							// project heliostat into camera
+							auto heliostatInCamera = cameraWorldView.getNormalizedSCoordinateOfWorldPosition(heliostat->parameters.hamParameters.position.get());
+							if (heliostatInCamera.x < -1.0f
+								|| heliostatInCamera.x > 1.0f
+								|| heliostatInCamera.y < -1.0f
+								|| heliostatInCamera.y > 1.0f
+								|| heliostatInCamera.z < 0.0f) {
+
+								// outside view - point backwards
+								heliostat->parameters.servo1.angle.set(0.0f);
+								heliostat->parameters.servo2.angle.set(90.0f);
+							}
+							else {
+								// inside view - collect it
+								activeHeliostats.push_back(heliostat);
+							}
+						}
+
+						scopedProcess.end();
+					}
+
+					// 4. Point the active heliostats towards the board
+					{
+						Utils::ScopedProcess scopedProcess("Point active heliostats towards board");
+
+						// Get the center of the board in world space
+						glm::vec3 boardCenter(0.0f, 0.0f, 0.0f);
+						{
+							auto worldPoints = boardInWorld->getAllWorldPoints();
+							for (const auto& worldPoint : worldPoints) {
+								boardCenter += worldPoint;
+							}
+							boardCenter /= (float)worldPoints.size();
+						}
+
+						for (auto heliostat : activeHeliostats) {
+							heliostat->navigateToReflectPointToPoint(camera->getPosition()
+								, boardCenter
+								, solverSettings);
+						}
+
+						heliostats->pushStale(true);
+						ofSleepMillis(this->parameters.servoControl.waitTime * 1000.0f);
+
+						scopedProcess.end();
+					}
+
+					return;
+
 
 					// Make a blank capture
 					auto capture = make_shared<PhotoCapture>();
@@ -298,12 +247,6 @@ namespace ofxRulr {
 								, (double)std::numeric_limits<uint8_t>::max() / (double)std::numeric_limits<uint16_t>::max());
 						}
 					}
-
-					// Get inputs
-					this->throwIfMissingAConnection<Item::Camera>();
-					this->throwIfMissingAConnection<Item::BoardInWorld>();
-					auto camera = this->getInput<Item::Camera>();
-					auto boardInWorld = this->getInput<Item::BoardInWorld>();
 
 					auto flipImageMode = this->parameters.findBoard.flipImage.get();
 
@@ -366,6 +309,150 @@ namespace ofxRulr {
 					}
 
 					this->captures.add(capture);
+				}
+
+				//--------
+				void BoardInMirror2::calibrate() {
+					// Gather data
+					vector<ofxRay::Ray> cameraRays;
+					vector<glm::vec3> worldPoints;
+					{
+						auto captures = this->captures.getSelection();
+						for (const auto& capture : captures) {
+							cameraRays.insert(cameraRays.end(), capture->cameraRays.begin(), capture->cameraRays.end());
+
+							const auto& worldPointsToAdd = ofxCv::toOf(capture->worldPoints);
+							worldPoints.insert(worldPoints.end(), worldPointsToAdd.begin(), worldPointsToAdd.end());
+						}
+					}
+
+					// Normalise rays
+					{
+						for (auto& cameraRay : cameraRays) {
+							cameraRay.t = glm::normalize(cameraRay.t);
+						}
+					}
+
+
+					// Run solve
+					{
+						
+
+						auto result = ofxRulr::Solvers::MirrorPlaneFromRays::solve(cameraRays
+							, worldPoints
+							, this->getSolverSettings());
+
+						this->result = make_shared<ofxRulr::Solvers::MirrorPlaneFromRays::Result>(result);
+					}
+
+					// Make the debug draw objects
+					{
+						auto abcd = this->result->solution.plane.getABCD();
+						glm::vec3 planeNormal{ abcd.x, abcd.y, abcd.z };
+						float planeD = abcd.w;
+
+						this->debug.reflectedRays.clear();
+						for (const auto& cameraRay : cameraRays) {
+							// intersect the ray and the plane
+							const auto u = -(planeD + glm::dot(cameraRay.s, planeNormal))
+								/ glm::dot(cameraRay.t, planeNormal);
+							auto intersection = cameraRay.s + u * cameraRay.t;
+
+							// reflected ray starts with intersection between cameraRay and mirror plane
+							const auto& reflectedRayS = intersection;
+
+							// reflected ray transmission is defined by reflect(cameraRayT + reflectedRayS, mirrorPlane)
+							auto reflectedRayT = ofxCeres::VectorMath::reflect(cameraRay.t + reflectedRayS, planeNormal, planeD) - reflectedRayS;
+
+							this->debug.reflectedRays.push_back({ reflectedRayS, reflectedRayT });
+						}
+					}
+				}
+
+				//--------
+				ofxCvGui::PanelPtr BoardInMirror2::getPanel() {
+					return this->panel;
+				}
+
+				//--------
+				void BoardInMirror2::populateInspector(ofxCvGui::InspectArguments& inspectArgs) {
+					auto inspector = inspectArgs.inspector;
+					this->captures.populateWidgets(inspector);
+					inspector->addButton("Capture", [this]() {
+						try {
+							this->capture();
+						}
+						RULR_CATCH_ALL_TO_ALERT
+						}, ' ');
+					inspector->addButton("Calibrate", [this]() {
+						try {
+							this->calibrate();
+						}
+						RULR_CATCH_ALL_TO_ALERT
+						}, OF_KEY_RETURN)->setHeight(100.0f);
+
+						inspector->addIndicatorBool("Converged", [this]() {
+							if (this->result) {
+								return this->result->isConverged();
+							}
+							else {
+								return false;
+							}
+							});
+						inspector->addLiveValue<double>("Residual [m]", [this]() {
+							if (this->result) {
+								return this->result->residual;
+							}
+							else {
+								return 0.0;
+							}
+							});
+				}
+
+				//--------
+				void BoardInMirror2::serialize(nlohmann::json& json) {
+					this->captures.serialize(json["captures"]);
+				}
+
+				//--------
+				void BoardInMirror2::deserialize(const nlohmann::json& json) {
+					if (json.contains("captures")) {
+						this->captures.deserialize(json["captures"]);
+					}
+				}
+
+				//--------
+				void BoardInMirror2::drawWorldStage() {
+					// Draw data
+					{
+						auto captures = this->captures.getSelection();
+						for (const auto& capture : captures) {
+							capture->drawWorld();
+						}
+					}
+
+					// Draw result
+					if (this->result) {
+						this->result->solution.plane.draw();
+					}
+
+					// Draw debug info
+					if (this->parameters.debug.draw.reflectedRays) {
+						for (const auto& ray : this->debug.reflectedRays) {
+							ray.draw();
+						}
+					}
+				}
+
+				//----------
+				ofxCeres::SolverSettings BoardInMirror2::getSolverSettings() const {
+					auto solverSettings = ofxRulr::Solvers::HeliostatActionModel::Navigator::defaultSolverSettings();
+					
+					solverSettings.options.max_num_iterations = this->parameters.solve.maxIterations.get();
+					solverSettings.printReport = this->parameters.solve.printReport.get();
+					solverSettings.options.minimizer_progress_to_stdout = this->parameters.solve.printReport.get();
+
+					return solverSettings;
 				}
 			}
 		}

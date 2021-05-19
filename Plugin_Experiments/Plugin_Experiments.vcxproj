@@ -58,7 +58,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch_Plugin_Experiments.h</PrecompiledHeaderFile>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>../../../addons/ofxRulr/Plugin_ArUco/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../addons/ofxRulr/Plugin_Calibrate/src;../../../addons/ofxRulr/Plugin_ArUco/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -74,7 +74,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch_Plugin_Experiments.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../../addons/ofxRulr/Plugin_ArUco/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../addons/ofxRulr/Plugin_Calibrate/src;../../../addons/ofxRulr/Plugin_ArUco/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -91,6 +91,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats2.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateBodyToBody.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.cpp" />
@@ -100,7 +101,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\ProjectPoints.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\SolvePnP.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\SolvePnP\TestObject.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_Normal.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_PointToPoint.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.cpp" />
     <ClCompile Include="src\pch_Plugin_Experiments.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -116,6 +119,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats2.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateBodyToBody.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.h" />
@@ -138,6 +142,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Plugin_ArUco\Plugin_ArUco.vcxproj">
       <Project>{45ce5aa6-9dfd-497a-8caf-1743a8075f5a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugin_Calibrate\Plugin_Calibrate.vcxproj">
+      <Project>{c135c231-f751-482d-9e4c-c29473e3dd98}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

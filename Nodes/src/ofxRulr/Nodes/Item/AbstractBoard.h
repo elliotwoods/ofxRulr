@@ -16,6 +16,8 @@ namespace ofxRulr{
 					return 0;
 				}
 
+				virtual vector<glm::vec3> getAllObjectPoints() const;
+
 				template<typename FilteredPointTypeA, typename FilteredPointTypeB>
 				static void filterCommonPoints(vector<FilteredPointTypeA> & imagePointsA
 					, vector<FilteredPointTypeB> & imagePointsB

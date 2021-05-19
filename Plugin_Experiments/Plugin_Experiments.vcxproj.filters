@@ -57,6 +57,15 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Dispatcher.cpp">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_PointToPoint.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateBodyToBody.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -112,6 +121,9 @@
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Dispatcher.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateBodyToBody.h">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
   </ItemGroup>

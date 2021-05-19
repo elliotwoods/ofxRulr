@@ -49,8 +49,11 @@ namespace ofxRulr {
 					string getTypeName() const override;
 					void init();
 					void update();
+
 					void capture();
+					void addCapture(shared_ptr<ofxMachineVision::Frame>);
 					void calibrate();
+
 					ofxCvGui::PanelPtr getPanel() override;
 					void populateInspector(ofxCvGui::InspectArguments&);
 					void serialize(nlohmann::json&);
@@ -59,7 +62,7 @@ namespace ofxRulr {
 					void drawWorldStage();
 
 				protected:
-					void addCapture(shared_ptr<ofxMachineVision::Frame>);
+					ofxCeres::SolverSettings getSolverSettings() const;
 
 					struct : ofParameterGroup {
 						ofParameter<WhenDrawOnWorldStage> tetheredShootEnabled{ "Tethered shoot enabled", WhenDrawOnWorldStage::Selected };
@@ -74,6 +77,11 @@ namespace ofxRulr {
 							ofParameter<FlipImage> flipImage{ "Flip image", FlipImage::X };
 							PARAM_DECLARE("Find board", mode, flipImage);
 						} findBoard;
+
+						struct : ofParameterGroup {
+							ofParameter<float> waitTime{ "Wait time", 1.0f, 0.0f, 10.0f };
+							PARAM_DECLARE("Servo control", waitTime);
+						} servoControl;
 
 						struct : ofParameterGroup {
 							ofParameter<int> maxIterations{ "Max iterations", 1000 };
@@ -93,6 +101,7 @@ namespace ofxRulr {
 							, tetheredShootEnabled
 							, cameraNavigation
 							, findBoard
+							, servoControl
 							, solve
 							, debug);
 					} parameters;

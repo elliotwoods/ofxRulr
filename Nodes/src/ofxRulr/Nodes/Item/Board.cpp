@@ -86,16 +86,17 @@ namespace ofxRulr {
 			}
 
 			//----------
-			vector<cv::Point3f> Board::getObjectPoints() const {
+			vector<glm::vec3> Board::getAllObjectPoints() const {
 				if (this->parameters.offset.x == 0.0f && this->parameters.offset.y == 0.0f) {
-					return ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing(), this->parameters.offset.centered);
+					auto objectPoints = ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing(), this->parameters.offset.centered);
+					return ofxCv::toOf(objectPoints);
 				}
 				else {
 					auto objectPoints = ofxCv::makeBoardPoints(this->getBoardType(), this->getSize(), this->getSpacing(), this->parameters.offset.centered);
 					for (auto & objectPoint : objectPoints) {
 						objectPoint += cv::Point3f(this->parameters.offset.x, this->parameters.offset.y, this->parameters.offset.z);
 					}
-					return objectPoints;
+					return ofxCv::toOf(objectPoints);
 				}
 			}
 
@@ -127,7 +128,7 @@ namespace ofxRulr {
 					return false;
 				}
 				if (success) {
-					objectPoints = this->getObjectPoints();
+					objectPoints = ofxCv::toCv(this->getAllObjectPoints());
 				}
 				return success;
 			}

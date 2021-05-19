@@ -5,7 +5,7 @@
 
 #include "ofxRulr/Nodes/Data/SelectSceneVertices.h"
 
-#include "ofxRulr/Nodes/Procedure/Calibrate/CameraExtrinsicsFromBoardInWorld.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/ExtrinsicsFromBoardInWorld.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/CameraExtrinsicsFromBoardPlanes.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/CameraFromDepthCamera.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/CameraIntrinsics.h"
@@ -19,4 +19,4 @@
 #include "ofxRulr/Nodes/Procedure/Calibrate/StereoCalibrate.h"
 #include "ofxRulr/Nodes/Procedure/Calibrate/ViewToVertices.h"
 
-#include "ofxCvMin.h"
+#include "Constants_Plugin_Calibration.h"

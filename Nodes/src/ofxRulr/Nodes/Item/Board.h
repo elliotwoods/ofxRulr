@@ -18,7 +18,7 @@ namespace ofxRulr {
 
 				ofxCv::BoardType getBoardType() const;
 				cv::Size getSize() const;
-				vector<cv::Point3f> getObjectPoints() const;
+				vector<glm::vec3> getAllObjectPoints() const override;
 				void drawObject() const override;
 				float getSpacing() const override;
 

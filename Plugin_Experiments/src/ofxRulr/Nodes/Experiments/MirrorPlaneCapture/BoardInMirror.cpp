@@ -21,7 +21,7 @@ namespace ofxRulr {
 
 				//----------
 				string BoardInMirror::getTypeName() const {
-					return "Experiments::MirrorPlaneCapture::BoardInMirror";
+					return "Halo::BoardInMirror";
 				}
 
 				//----------

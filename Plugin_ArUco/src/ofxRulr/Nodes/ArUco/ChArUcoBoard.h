@@ -29,6 +29,8 @@ namespace ofxRulr {
 				void drawObject() const override;
 				float getSpacing() const override; 
 
+				vector<glm::vec3> getAllObjectPoints() const override;
+
 				ofxCvGui::PanelPtr getPanel() override;
 
 			protected:

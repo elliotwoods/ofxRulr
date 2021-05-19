@@ -29,10 +29,10 @@ namespace ofxRulr {
 						PARAM_DECLARE("HAM", position, axis1, axis2, mirrorOffset);
 
 						HAMParameters() {
-							// the axis points into the motor face
+							// the axis points out of the motor face
 							axis1.setName("Axis 1");
 							axis2.setName("Axis 2");
-							axis2.rotationAxis.set({ -1.0f, 0, 0 });
+							axis2.rotationAxis.set({ 1.0f, 0, 0 });
 						}
 					};
 
@@ -88,6 +88,10 @@ namespace ofxRulr {
 						void deserialize(const nlohmann::json&);
 						void populateInspector(ofxCvGui::InspectArguments&);
 						Solvers::HeliostatActionModel::Parameters<float> getHeliostatActionModelParameters() const;
+
+						void navigateToNormal(const glm::vec3&, const ofxCeres::SolverSettings&);
+						void navigateToReflectPointToPoint(const glm::vec3&, const glm::vec3&, const ofxCeres::SolverSettings&);
+
 					protected:
 						ofxCvGui::ElementPtr getDataDisplay() override;
 					};
@@ -123,7 +127,8 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<bool> pushStaleValues{ "Push stale every frame", true };
-							PARAM_DECLARE("Dispatcher", pushStaleValues);
+							ofParameter<float> timeout{ "Timeout", 10.0f };
+							PARAM_DECLARE("Dispatcher", pushStaleValues, timeout);
 						} dispatcher;
 
 						PARAM_DECLARE("Heliostats2", navigator, dispatcher);
