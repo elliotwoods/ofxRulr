@@ -33,7 +33,7 @@ namespace ofxRulr {
 						waitForStartSound = false;
 					}
 					else {
-						soundEngine.play(idleSound);
+						soundEngine.play(idleSound, true);
 						ofSleepMillis(2000);
 					}
 				}
@@ -53,7 +53,7 @@ namespace ofxRulr {
 
 			//start sounding
 			if (!isSounding && process->getHasSuccessOrFail()) {
-				SoundEngine::X().play("ofxRulr::start");
+				SoundEngine::X().play("ofxRulr::start", true);
 				this->waitForStartSound = true;
 				this->isSounding = true;
 				this->waitVariable.notify_one();
@@ -120,19 +120,20 @@ namespace ofxRulr {
 
 					//play sound
 					{
-						shared_ptr<ofxAssets::Sound> sound;
-						if (process->wasSuccess()) {
-							sound = assetRegister.getSoundPointer("ofxRulr::success");
-						}
-						else {
-							sound = assetRegister.getSoundPointer("ofxRulr::failure");
-						}
-						auto delay = soundEngine.getRemainingNumFrames(assetRegister.getSoundPointer("ofxRulr::start"));
+						auto soundName = process->wasSuccess()
+							? "ofxRulr::success"
+							: "ofxRulr::failure";
 
-						SoundEngine::ActiveSound activeSound;
-						activeSound.sound = sound;
-						activeSound.delay = delay;
-						soundEngine.play(activeSound);
+						auto soundAsset = ofxAssets::AssetRegister().getSoundPointer(soundName);
+						if (!soundEngine.isSoundActive(soundAsset)) {
+							auto delay = soundEngine.getRemainingNumFrames(assetRegister.getSoundPointer("ofxRulr::start"));
+
+							SoundEngine::ActiveSound activeSound;
+							activeSound.sound = soundAsset;
+							activeSound.delay = delay;
+							soundEngine.play(activeSound);
+						}
+						
 					}
 
 					//stop active sound

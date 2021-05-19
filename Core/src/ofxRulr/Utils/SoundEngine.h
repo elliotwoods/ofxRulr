@@ -24,8 +24,8 @@ namespace ofxRulr {
 			
 			void addSource(weak_ptr<ofBaseSoundOutput>);
 			
-			void play(const string & soundAssetName);
-			void play(shared_ptr<ofxAssets::Sound>);
+			void play(const string & soundAssetName, bool onlyAllowOneAtOnce);
+			void play(shared_ptr<ofxAssets::Sound>, bool onlyAllowOneAtOnce);
 			void play(ActiveSound);
 			
 			void stopAll(const string & soundAssetName);

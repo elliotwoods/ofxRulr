@@ -152,14 +152,18 @@ namespace ofxRulr {
 		}
 		
 		//----------
-		void SoundEngine::play(const string & soundAssetName) {
+		void SoundEngine::play(const string & soundAssetName, bool onlyAllowOneAtOnce) {
 			auto sound = ofxAssets::Register::X().getSoundPointer(soundAssetName);
-			this->play(sound);
+			this->play(sound, onlyAllowOneAtOnce);
 		}
 		
 		//----------
-		void SoundEngine::play(shared_ptr<ofxAssets::Sound> sound) {
+		void SoundEngine::play(shared_ptr<ofxAssets::Sound> sound, bool onlyAllowOneAtOnce) {
 			if(sound) {
+				if (onlyAllowOneAtOnce && this->isSoundActive(sound)) {
+					return;
+				}
+
 				ActiveSound activeSound;
 				activeSound.sound = sound;
 				
@@ -199,14 +203,11 @@ namespace ofxRulr {
 		bool SoundEngine::isSoundActive(shared_ptr<ofxAssets::Sound> sound) {
 			lock_guard<mutex> lock(this->activeSoundsMutex);
 			
-			this->activeSoundsMutex.lock();
 			for(const auto & activeSound : this->activeSounds) {
 				if(activeSound.sound == sound) {
-					this->activeSoundsMutex.unlock();
 					return true;
 				}
 			}
-			this->activeSoundsMutex.unlock();
 
 			return false;
 		}
