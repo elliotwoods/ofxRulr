@@ -49,11 +49,16 @@ namespace ofxRulr {
 					this->whenDrawOnWorldStage = (WhenDrawOnWorldStage::Options) whenDrawOnWorldStageInt;
 				}
 			}, this);
-
 			
 			//notify the subclasses to init
 			this->onInit.notifyListeners();
 			this->initialized = true;
+
+			// Set the default name to our type name (but without the namespace)
+			{
+				auto namePath = ofSplitString(this->getTypeName(), "::");
+				this->setName(namePath.back());
+			}
 		}
 
 		//----------
@@ -87,15 +92,11 @@ namespace ofxRulr {
 
 		//----------
 		string Base::getName() const {
-			if (this->name.empty()) {
-				return this->getTypeName();
-			} else {
-				return this->name;
-			}
+			return this->name;
 		}
 
 		//----------
-		void Base::setName(const string name) {
+		void Base::setName(const string & name) {
 			this->name = name;
 		}
 

@@ -91,6 +91,8 @@ void ofApp::setup2(){
 	//this->splashScreen.end();
 	//
 	//--
+
+	ofLogToConsole();
 }
 
 //--------------------------------------------------------------

@@ -54,6 +54,7 @@ namespace ofxRulr {
 						this->rebuild();
 					}
 				};
+
 				this->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
 					if (args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
 						if (args.key == OF_KEY_BACKSPACE || args.key == OF_KEY_DEL) {
@@ -76,26 +77,31 @@ namespace ofxRulr {
 				};
 
 				// NODE BROWSER
-				this->nodeBrowser = make_shared<NodeBrowser>();
-				this->nodeBrowser->onNewNode += [this](shared_ptr<Nodes::Base> & node) {
-					this->patchInstance.addNode(node, ofRectangle(this->birthLocation, this->birthLocation + ofVec2f(200, 100)));
-				};
-				this->canvasElements->onMouse += [this](ofxCvGui::MouseArguments & args) {
-					if (args.isDoubleClicked(this)) {
-						this->birthLocation = args.local;
-						ofxCvGui::Controller::X().setActiveDialog(this->nodeBrowser);
-						this->nodeBrowser->reset();
-					}
-				};
+				{
+					this->nodeBrowser = make_shared<NodeBrowser>();
+					this->nodeBrowser->onNewNode += [this](shared_ptr<Nodes::Base>& node) {
+						this->patchInstance.addNode(node, ofRectangle(this->birthLocation, this->birthLocation + ofVec2f(200, 100)));
+					};
+					this->canvasElements->onMouse += [this](ofxCvGui::MouseArguments& args) {
+						if (args.isDoubleClicked(this)) {
+							this->birthLocation = args.local;
+							ofxCvGui::Controller::X().setActiveDialog(this->nodeBrowser);
+							this->nodeBrowser->reset();
+						}
+					};
+				}
 
-				auto wasArbTex = ofGetUsingArbTex();
-				ofDisableArbTex();
-				this->cell = make_shared<ofTexture>();
-				this->cell->enableMipmap();
-				this->cell->loadData(ofxAssets::image("ofxRulr::cell-100").getPixels());
-				this->cell->setTextureWrap(GL_REPEAT, GL_REPEAT);
-				this->cell->setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST);
-				if (wasArbTex) ofEnableArbTex();
+				// Load the background 
+				{
+					auto wasArbTex = ofGetUsingArbTex();
+					ofDisableArbTex();
+					this->cell = make_shared<ofTexture>();
+					this->cell->enableMipmap();
+					this->cell->loadData(ofxAssets::image("ofxRulr::cell-100").getPixels());
+					this->cell->setTextureWrap(GL_REPEAT, GL_REPEAT);
+					this->cell->setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST);
+					if (wasArbTex) ofEnableArbTex();
+				}
 			}
 			
 			//----------
@@ -120,6 +126,8 @@ namespace ofxRulr {
 				if (newLink) {
 					this->canvasElements->add(newLink);
 				}
+
+				this->dirty = false;
 			}
 
 			//----------

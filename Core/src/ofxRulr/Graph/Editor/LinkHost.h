@@ -10,15 +10,22 @@ namespace ofxRulr {
 				typedef unsigned int Index;
 				LinkHost();
 				bool isValid() const;
-				void updateBounds(); //ideally can be called from listener instead of every frame
+				void draw(ofxCvGui::DrawArguments&);
+				void update();
 				ofColor getColor() const;
 			protected:
-				void callbackDraw(ofxCvGui::DrawArguments &);
+				void rebuild();
 				virtual glm::vec2 getSourcePinPosition() const;
 				virtual glm::vec2 getTargetPinPosition() const;
 				weak_ptr<NodeHost> sourceNode;
 				weak_ptr<NodeHost> targetNode;
 				weak_ptr<AbstractPin> targetPin;
+
+				bool needsRebuild = true;
+				glm::vec2 cachedStart;
+				glm::vec2 cachedEnd;
+				ofPolyline polyline;
+				ofVbo vbo;
 			};
 
 			class TemporaryLinkHost : public LinkHost {

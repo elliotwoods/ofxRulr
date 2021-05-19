@@ -10,10 +10,10 @@ namespace ofxRulr {
 			//---------
 			LinkHost::LinkHost() {
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
-					this->callbackDraw(args);
+					this->draw(args);
 				};
 				this->onUpdate += [this](ofxCvGui::UpdateArguments & args) {
-					this->updateBounds();
+					this->update();
 				};
 			}
 
@@ -23,13 +23,14 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void LinkHost::updateBounds() {
-				ofRectangle bounds(this->getSourcePinPosition(), this->getTargetPinPosition());
-				bounds.x -= 10;
-				bounds.y -= 10;
-				bounds.width += 20;
-				bounds.height += 20;
-				this->setBounds(bounds);
+			void LinkHost::update() {
+				if (this->getSourcePinPosition() != this->cachedStart
+					|| this->getTargetPinPosition() != this->cachedEnd) {
+					this->needsRebuild = true;
+				}
+				if (this->needsRebuild) {
+					this->rebuild();
+				}
 			}
 			
 			//---------
@@ -48,20 +49,46 @@ namespace ofxRulr {
 			}
 
 			//---------
-			void LinkHost::callbackDraw(ofxCvGui::DrawArguments & args) {
-				try {
-					const auto sourcePinPosition = v3(this->getSourcePinPosition());
-					const auto targetPinPosition = v3(this->getTargetPinPosition());
+			void LinkHost::rebuild() {
+				auto start = this->getSourcePinPosition();
+				auto end = this->getTargetPinPosition();
 
+				// Update bounds
+				{
+					ofRectangle bounds(this->getSourcePinPosition(), this->getTargetPinPosition());
+					bounds.x -= 10;
+					bounds.y -= 10;
+					bounds.width += 20;
+					bounds.height += 20;
+					this->setBounds(bounds);
+				}
+
+				// Create the polyline
+				{
+					const auto wireRigidity = v3(glm::vec2(100, 0));
+					this->polyline.clear();
+					this->polyline.addVertex(v3(start));
+					this->polyline.bezierTo(v3(start + wireRigidity), v3(end - wireRigidity), v3(end), 30);
+				}
+
+				// Upload to vbo mesh
+				{
+					this->vbo.clear();
+					this->vbo.setVertexData(this->polyline.getVertices().data(), this->polyline.size(), GL_DYNAMIC_DRAW);
+				}
+
+				this->cachedStart = start;
+				this->cachedEnd = end;
+				this->needsRebuild = false;
+			}
+
+			//---------
+			void LinkHost::draw(ofxCvGui::DrawArguments & args) {
+				try {
 					//move from local to patch space
 					ofPushMatrix();
 					{
 						ofTranslate(-this->getBoundsInParent().getTopLeft());
-
-						const auto wireRigidity = v3(glm::vec2(100, 0));
-						ofPolyline wire;
-						wire.addVertex(sourcePinPosition);
-						wire.bezierTo(sourcePinPosition + wireRigidity, targetPinPosition - wireRigidity, targetPinPosition, 40);
 
 						ofPushStyle();
 						{
@@ -72,19 +99,19 @@ namespace ofxRulr {
 								ofTranslate(5.0f, 5.0f);
 								ofSetLineWidth(2.0f);
 								ofSetColor(0, 100);
-								wire.draw();
+								this->vbo.draw(GL_LINE_STRIP, 0, this->polyline.size());
 							}
 							ofPopMatrix();
 
 							//outline
 							ofSetLineWidth(3.0f);
 							ofSetColor(0);
-							wire.draw();
+							this->polyline.draw();
 
 							//line
 							ofSetLineWidth(2.0f);
 							ofSetColor(this->getColor());
-							wire.draw();
+							this->vbo.draw(GL_LINE_STRIP, 0, this->polyline.size());
 						}
 						ofPopStyle();
 					}

@@ -64,7 +64,7 @@ namespace ofxRulr {
 			void update();
 
 			string getName() const override;
-			void setName(const string);
+			void setName(const string &);
 
 			void setNodeHost(Graph::Editor::NodeHost *);
 			Graph::Editor::NodeHost * getNodeHost() const;

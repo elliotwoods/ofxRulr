@@ -20,7 +20,13 @@ namespace ofxRulr {
 		const std::string errorMessage;
 	};
 
-	class TracebackException : public Exception {
+	class OFXRULR_API_ENTRY NotImplementedException : Exception
+	{
+	public:
+		NotImplementedException();
+	};
+
+	class OFXRULR_API_ENTRY TracebackException : public Exception {
 	public:
 		TracebackException(const std::string & errorMessage
 			, const std::string & fileName

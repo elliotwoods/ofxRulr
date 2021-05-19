@@ -32,4 +32,9 @@ namespace ofxRulr {
 		ss << this->fileName << ":" << this->lineNumber << " - " << this->functionName;
 		return ss.str();
 	}
+
+	NotImplementedException::NotImplementedException()
+		: Exception("Not implemented") {
+
+	}
 }
