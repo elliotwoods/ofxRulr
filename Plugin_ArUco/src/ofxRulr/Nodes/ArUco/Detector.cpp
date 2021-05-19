@@ -59,6 +59,12 @@ namespace ofxRulr {
 
 				//add listeners
 				this->parameters.dictionary.addListener(this, &Detector::changeDetectorCallback);
+				this->parameters.arucoDetector.threads.addListener(this, &Detector::changeIntCallback);
+				this->parameters.arucoDetector.enclosedMarkers.addListener(this, &Detector::changeBoolCallback);
+				this->parameters.arucoDetector.thresholdAttempts.addListener(this, &Detector::changeIntCallback);
+				this->parameters.arucoDetector.adaptiveThreshold.windowSize.addListener(this, &Detector::changeIntCallback);
+				this->parameters.arucoDetector.adaptiveThreshold.windowSizeRange.addListener(this, &Detector::changeIntCallback);
+				this->parameters.arucoDetector.threshold.addListener(this, &Detector::changeIntCallback);
 			}
 
 			//----------
@@ -77,7 +83,7 @@ namespace ofxRulr {
 				});
 				inspector->addButton("Retry detect", [this]() {
 					this->findMarkers(this->lastDetection.image);
-				});
+				}, ' ');
 			}
 
 			//----------
@@ -142,9 +148,9 @@ namespace ofxRulr {
 
 				this->foundMarkers = this->markerDetector.detect(this->lastDetection.image);
 
-				// refine corners
+				// refine corners 1
 				{
-					auto findRatio = this->parameters.cornerRefineZone.get();
+					auto findRatio = this->parameters.cornerRefineZone1.get();
 					if (findRatio > 0.0f) {
 						for (auto& marker : this->foundMarkers) {
 							auto length2 = 0.0f;
@@ -155,6 +161,31 @@ namespace ofxRulr {
 							length2 /= 4.0f;
 							auto searchLength = sqrt(length2) * findRatio;
 							
+							auto windowSize = (int)searchLength;
+							windowSize = ((windowSize / 2) * 2) + 1;
+
+							cv::cornerSubPix(this->lastDetection.image
+								, (vector<cv::Point2f>&) marker
+								, cv::Size(windowSize, windowSize)
+								, cv::Size(1, 1)
+								, cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 100, 1e-6));
+						}
+					}
+				}
+
+				// refine corners 2 (sane code, different variable)
+				{
+					auto findRatio = this->parameters.cornerRefineZone2.get();
+					if (findRatio > 0.0f) {
+						for (auto& marker : this->foundMarkers) {
+							auto length2 = 0.0f;
+							length2 += glm::length2(ofxCv::toOf(marker[1] - marker[0]));
+							length2 += glm::length2(ofxCv::toOf(marker[2] - marker[1]));
+							length2 += glm::length2(ofxCv::toOf(marker[3] - marker[2]));
+							length2 += glm::length2(ofxCv::toOf(marker[0] - marker[3]));
+							length2 /= 4.0f;
+							auto searchLength = sqrt(length2) * findRatio;
+
 							auto windowSize = (int)searchLength;
 							windowSize = ((windowSize / 2) * 2) + 1;
 
@@ -200,8 +231,12 @@ namespace ofxRulr {
 				this->markerDetector.setDictionary(this->dictionaryType);
 
 				auto & parameters = this->markerDetector.getParameters();
-				parameters.enclosedMarker = this->parameters.enclosedMarkers.get();
-				parameters.NAttemptsAutoThresFix = this->parameters.thresholdAttempts.get();
+				parameters.maxThreads = this->parameters.arucoDetector.threads.get();
+				parameters.enclosedMarker = this->parameters.arucoDetector.enclosedMarkers.get();
+				parameters.NAttemptsAutoThresFix = this->parameters.arucoDetector.thresholdAttempts.get();
+				parameters.AdaptiveThresWindowSize = this->parameters.arucoDetector.adaptiveThreshold.windowSize.get();
+				parameters.AdaptiveThresWindowSize_range = this->parameters.arucoDetector.adaptiveThreshold.windowSizeRange.get();
+				parameters.ThresHold = this->parameters.arucoDetector.threshold.get();
 
 				this->cachedMarkerImages.clear();
 				this->detectorDirty = false;
@@ -219,6 +254,11 @@ namespace ofxRulr {
 
 			//----------
 			void Detector::changeIntCallback(int&) {
+				this->detectorDirty = true;
+			}
+
+			//----------
+			void Detector::changeBoolCallback(bool&) {
 				this->detectorDirty = true;
 			}
 		}

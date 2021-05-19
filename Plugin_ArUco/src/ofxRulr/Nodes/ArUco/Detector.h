@@ -39,16 +39,36 @@ namespace ofxRulr {
 
 				void changeDetectorCallback(DetectorType &);
 				void changeFloatCallback(float &);
-				void changeIntCallback(int &);
+				void changeIntCallback(int&);
+				void changeBoolCallback(bool &);
 
 				struct : ofParameterGroup {
 					ofParameter<DetectorType> dictionary{ "Detector type", DetectorType::Original };
 					ofParameter<float> markerLength{ "Marker length [m]", 0.05, 0.001, 10 };
 					ofParameter<bool> normalizeImage{ "Normalize image", false };
-					ofParameter<bool> enclosedMarkers{ "Enclosed markers", false };
-					ofParameter<int> thresholdAttempts{ "Threshold attempts", 3, 1, 10 };
-					ofParameter<float> cornerRefineZone{ "Corner refine zone %", 0.05 ,0, 1 }; // This value works well with our halo markers
-					PARAM_DECLARE("Detector", dictionary, markerLength, normalizeImage, enclosedMarkers, thresholdAttempts, cornerRefineZone);
+					
+					struct : ofParameterGroup {
+						ofParameter<int> threads{ "Threads", 8};
+						ofParameter<bool> enclosedMarkers{ "Enclosed markers", false };
+						ofParameter<int> thresholdAttempts{ "Threshold attempts", 3, 1, 10 };
+						struct : ofParameterGroup {
+							ofParameter<int> windowSize{ "Window Size", -1 };
+							ofParameter<int> windowSizeRange{ "Window Size Range", 0 };
+							PARAM_DECLARE("Adaptive threshold", windowSize, windowSizeRange);
+						} adaptiveThreshold;
+						ofParameter<int> threshold{ "Threshold", 7 };
+						PARAM_DECLARE("ArUco Detector"
+							, threads
+							, enclosedMarkers
+							, thresholdAttempts
+							, adaptiveThreshold
+							, threshold
+						);
+					} arucoDetector;
+					
+					ofParameter<float> cornerRefineZone1{ "Corner refine zone 1 %", 0.11, 0, 1 }; // This value works well with our halo markers
+					ofParameter<float> cornerRefineZone2{ "Corner refine zone 2 %", 0.025, 0, 1 }; // This value works well with our halo markers
+					PARAM_DECLARE("Detector", dictionary, markerLength, normalizeImage, arucoDetector, cornerRefineZone1, cornerRefineZone2);
 				} parameters;
 
 				aruco::Dictionary dictionary;
