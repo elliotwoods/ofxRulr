@@ -8,12 +8,12 @@ namespace ofxRulr {
 #pragma mark PhotoCapture
 
 				//--------
-				BoardInMirror2::PhotoCapture::PhotoCapture() {
+				BoardInMirror2::Capture::Capture() {
 					RULR_SERIALIZE_LISTENERS;
 				}
 
 				//--------
-				void BoardInMirror2::PhotoCapture::drawWorld() {
+				void BoardInMirror2::Capture::drawWorld() {
 					ofPushStyle();
 					{
 						ofSetColor(this->color);
@@ -30,42 +30,26 @@ namespace ofxRulr {
 				}
 
 				//--------
-				string BoardInMirror2::PhotoCapture::getDisplayString() const {
+				string BoardInMirror2::Capture::getDisplayString() const {
 					stringstream ss;
-					ss << this->objectPoints.size() << " points found.";
+					ss << this->worldPoints.size() << " points found.";
 					return ss.str();
 				}
 
 				//--------
-				void BoardInMirror2::PhotoCapture::serialize(nlohmann::json& json) {
+				void BoardInMirror2::Capture::serialize(nlohmann::json& json) {
 					Utils::serialize(json["imagePoints"], this->imagePoints);
-					Utils::serialize(json["objectPoints"], this->objectPoints);
 					Utils::serialize(json["worldPoints"], this->worldPoints);
 					Utils::serialize(json["cameraRays"], this->cameraRays);
-
-					{
-						auto& jsonCameraNavigation = json["cameraNavigation"];
-						Utils::serialize(jsonCameraNavigation["imagePoints"], this->cameraNavigation.imagePoints);
-						Utils::serialize(jsonCameraNavigation["worldPoints"], this->cameraNavigation.worldPoints);
-						Utils::serialize(jsonCameraNavigation["reprojectionError"], this->cameraNavigation.reprojectionError);
-						Utils::serialize(jsonCameraNavigation["cameraPosition"], this->cameraNavigation.cameraPosition);
-					}
+					Utils::serialize(json["cameraPosition"], this->cameraPosition);
 				}
 
 				//--------
-				void BoardInMirror2::PhotoCapture::deserialize(const nlohmann::json& json) {
+				void BoardInMirror2::Capture::deserialize(const nlohmann::json& json) {
 					Utils::deserialize(json, "imagePoints", this->imagePoints);
-					Utils::deserialize(json, "objectPoints", this->objectPoints);
 					Utils::deserialize(json, "worldPoints", this->worldPoints);
 					Utils::deserialize(json, "cameraRays", this->cameraRays);
-
-					{
-						auto& jsonCameraNavigation = json["cameraNavigation"];
-						Utils::deserialize(jsonCameraNavigation, "imagePoints", this->cameraNavigation.imagePoints);
-						Utils::deserialize(jsonCameraNavigation, "worldPoints", this->cameraNavigation.worldPoints);
-						Utils::deserialize(jsonCameraNavigation, "reprojectionError", this->cameraNavigation.reprojectionError);
-						Utils::deserialize(jsonCameraNavigation, "cameraPosition", this->cameraNavigation.cameraPosition);
-					}
+					Utils::deserialize(json, "cameraPosition", this->cameraPosition);
 				}
 
 #pragma mark BoardInMirror2
@@ -149,30 +133,48 @@ namespace ofxRulr {
 					auto extrinsicsFromBoardInWorld = this->getInput<Procedure::Calibrate::ExtrinsicsFromBoardInWorld>();
 					extrinsicsFromBoardInWorld->throwIfMissingAnyConnection();
 					auto boardInWorld = extrinsicsFromBoardInWorld->getInput<Item::BoardInWorld>();
+					heliostats->throwIfMissingAConnection<Dispatcher>();
+					auto dispatcher = heliostats->getInput<Dispatcher>();
 
 					// Build solver settings
 					auto solverSettings = this->getSolverSettings();
 
-					// 1. Update the camera pose
+					// Face all the modules away (async)
 					{
-						Utils::ScopedProcess scopedProcess("Update marker map tracking");
+						heliostats->faceAllAway();
+					}
+					auto waitForTurnAway = std::async(std::launch::async, [&]() {
+						heliostats->update();
+						heliostats->pushStale(true);
+						});
+
+					// Note that this image is not used here. MarkerMapPoseTracker gets the image direct from its own input
+					auto navigationImage = ofxCv::toCv(frame->getPixels());
+
+					// Update the camera pose
+					{
+
+						Utils::ScopedProcess scopedProcess("Update marker map tracking", false);
 						auto markerMapPoseTracker = this->getInput<ArUco::MarkerMapPoseTracker>();
 						markerMapPoseTracker->track();
 						scopedProcess.end();
 					}
 
-					// 2. Update the BoardInWorld extrinsics
+					// Update the BoardInWorld extrinsics (take a fresh frame for this)
 					{
-						Utils::ScopedProcess scopedProcess("Update board extrinsics");
-						extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board, false);
-						scopedProcess.end();
+						Utils::ScopedProcess scopedProcess("Wait for motion + Capture board extrinsics", false);
+
+						// this needs to be done after the mirror points away from the board
+						waitForTurnAway.wait();
+
+						// This takes a fresh photo from the camera again
+						extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board, true);
 					}
 
-					// 3. Gather heliostats in view. 
-					//		Point ones outside 'backwards'
+					// Gather heliostats in view. 
 					vector<shared_ptr<Heliostats2::Heliostat>> activeHeliostats;
 					{
-						Utils::ScopedProcess scopedProcess("Gather heliostats in view");
+						Utils::ScopedProcess scopedProcess("Gather heliostats in view", false);
 
 						auto selectedHeliostats = heliostats->getHeliostats();
 						auto cameraWorldView = camera->getViewInWorldSpace();
@@ -184,23 +186,18 @@ namespace ofxRulr {
 								|| heliostatInCamera.y < -1.0f
 								|| heliostatInCamera.y > 1.0f
 								|| heliostatInCamera.z < 0.0f) {
-
-								// outside view - point backwards
-								heliostat->parameters.servo1.angle.set(0.0f);
-								heliostat->parameters.servo2.angle.set(90.0f);
+								// ignore
 							}
 							else {
 								// inside view - collect it
 								activeHeliostats.push_back(heliostat);
 							}
 						}
-
-						scopedProcess.end();
 					}
 
-					// 4. Point the active heliostats towards the board
+					// Point the active heliostats towards the board
 					{
-						Utils::ScopedProcess scopedProcess("Point active heliostats towards board");
+						Utils::ScopedProcess scopedProcess("Point active heliostats towards board", false);
 
 						// Get the center of the board in world space
 						glm::vec3 boardCenter(0.0f, 0.0f, 0.0f);
@@ -218,97 +215,114 @@ namespace ofxRulr {
 								, solverSettings);
 						}
 
+						heliostats->update();
 						heliostats->pushStale(true);
+					}
+
+					// Take a fresh photo (now the photo contains the reflected boards and the original board)
+					cv::Mat imageWithReflections;
+					{
+						Utils::ScopedProcess scopedProcess("Take a photo of board reflections", false);
+
 						ofSleepMillis(this->parameters.servoControl.waitTime * 1000.0f);
+						auto frame = camera->getFreshFrame();
 
-						scopedProcess.end();
-					}
-
-					return;
-
-
-					// Make a blank capture
-					auto capture = make_shared<PhotoCapture>();
-
-					// Extract the image
-					auto image = ofxCv::toCv(frame->getPixels()).clone();
-					{
-						if (image.empty()) {
-							throw("No image in capture");
+						if (!frame) {
+							throw(ofxRulr::Exception("Failed to get capture"));
 						}
 
-						// Convert the image if required
-						if (image.channels() == 3) {
-							cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
-						}
-						if (image.type() != CV_8U) {
-							image.convertTo(image
-								, CV_8U
-								, (double)std::numeric_limits<uint8_t>::max() / (double)std::numeric_limits<uint16_t>::max());
-						}
-					}
-
-					auto flipImageMode = this->parameters.findBoard.flipImage.get();
-
-					// Find the board in the reflection
-					{
-						// Flip the image
-						cv::Mat mirroredImage;
-						if (flipImageMode != FlipImage::None) {
-							cv::flip(image
-								, mirroredImage
-								, flipImageMode == FlipImage::X ? 1 : 0);
-						}
-						else {
-							mirroredImage = image;
-						}
-
-						if (!boardInWorld->findBoard(mirroredImage
-							, capture->imagePoints
-							, capture->objectPoints
-							, capture->worldPoints
-							, this->parameters.findBoard.mode.get())) {
-							throw(Exception("Failed to find board in reflection"));
-						}
-					}
-
-					// Flip the image points back
-					{
-						switch (flipImageMode) {
-						case FlipImage::X:
+						// Extract the image
+						imageWithReflections = ofxCv::toCv(frame->getPixels()).clone();
 						{
-							for (auto& imagePoint : capture->imagePoints) {
-								imagePoint.x = image.cols - 1 - imagePoint.x;
+							if (imageWithReflections.empty()) {
+								throw(ofxRulr::Exception("No image in capture"));
 							}
-							break;
-						}
-						case FlipImage::Y:
-						{
-							for (auto& imagePoint : capture->imagePoints) {
-								imagePoint.y = image.rows - 1 - imagePoint.y;
-							}
-							break;
-						}
-						default:
-							break;
 						}
 					}
-
-					// Calculate camera rays associated with these image points / world points
+					// Record all servo Present Position values at this time
+					map<Dispatcher::ServoID, Dispatcher::RegisterValue> servoValues;
 					{
-						// unproject rays
-						const auto cameraView = camera->getViewInWorldSpace();
-						cameraView.castPixels(ofxCv::toOf(capture->imagePoints)
-							, capture->cameraRays
-							, true);
+						auto servoIDs = dispatcher->getServoIDs();
 
-						// set the colors
-						for (auto& ray : capture->cameraRays) {
-							ray.color = capture->color;
+						Dispatcher::MultiGetRequest multiGetRequest;
+						{
+							multiGetRequest.servoIDs = servoIDs;
+							multiGetRequest.registerName = "Present Position";
+						}
+						auto servoValueVector = dispatcher->multiGetRequest(multiGetRequest);
+						for (int i = 0; i < servoIDs.size(); i++) {
+							servoValues[servoIDs[i]] = servoValueVector[i];
 						}
 					}
 
-					this->captures.add(capture);
+					// Mask out the direct view of the board
+					cv::Mat imageWithReflectionsWithoutRealBoard = imageWithReflections.clone();
+					auto cameraView = camera->getViewInWorldSpace();
+					{
+						Utils::ScopedProcess scopedProcess("Mask out the real board", false);
+
+						// Allocate an fbo
+						ofFbo fbo;
+						{
+							ofFbo::Settings fboSettings;
+							{
+								fboSettings.width = cameraView.getWidth();
+								fboSettings.height = cameraView.getHeight();
+								fboSettings.internalformat = GL_RGBA;
+								fboSettings.useDepth = true;
+								fboSettings.depthStencilInternalFormat = GL_DEPTH_COMPONENT24;
+								fboSettings.minFilter = GL_NEAREST;
+								fboSettings.maxFilter = GL_NEAREST;
+								fboSettings.numSamples = 0;
+							}
+							fbo.allocate(fboSettings);
+						}
+
+						fbo.begin();
+						{
+							ofClear(0, 0);
+							cameraView.beginAsCamera();
+							{
+								ofEnableDepthTest();
+								boardInWorld->drawWorldStage();
+								ofDisableDepthTest();
+							}
+							cameraView.endAsCamera();
+						}
+						fbo.end();
+
+						// read back the fbo
+						ofPixels pixels;
+						fbo.readToPixels(pixels);
+						
+						// make a mask from the alpha channel
+						cv::Mat rgbaImage = ofxCv::toCv(pixels);
+						cv::Mat alphaMask;
+						cv::extractChannel(rgbaImage, alphaMask, 3);
+						cv::flip(alphaMask
+							, alphaMask
+							, 0);
+						imageWithReflectionsWithoutRealBoard.setTo(cv::Scalar(0), alphaMask);
+					}
+
+					// Find boards in each heliostat mirror face
+					{
+						Utils::ScopedProcess scopedProcess("Find reflected boards in mirrors", false, activeHeliostats.size());
+
+						for (auto heliostat : activeHeliostats) {
+							try {
+								Utils::ScopedProcess heliostatScopedProcess("Heliostat : " + heliostat->getName());
+								this->processHeliostat(heliostats
+									, heliostat
+									, cameraView
+									, imageWithReflectionsWithoutRealBoard
+									, boardInWorld
+									, servoValues);
+								heliostatScopedProcess.end();
+							}
+							RULR_CATCH_ALL_TO_ERROR;
+						}
+					}
 				}
 
 				//--------
@@ -336,8 +350,6 @@ namespace ofxRulr {
 
 					// Run solve
 					{
-						
-
 						auto result = ofxRulr::Solvers::MirrorPlaneFromRays::solve(cameraRays
 							, worldPoints
 							, this->getSolverSettings());
@@ -453,6 +465,130 @@ namespace ofxRulr {
 					solverSettings.options.minimizer_progress_to_stdout = this->parameters.solve.printReport.get();
 
 					return solverSettings;
+				}
+
+				//----------
+				void BoardInMirror2::processHeliostat(shared_ptr<Heliostats2> heliostats
+					, shared_ptr<Heliostats2::Heliostat> heliostat
+					, const ofxRay::Camera& cameraView
+					, const cv::Mat& imageWithReflectionsWithoutRealBoard
+					, shared_ptr<Item::BoardInWorld> boardInWorld
+					, const map<Dispatcher::ServoID, Dispatcher::RegisterValue>& servoValues)
+				{
+					auto dispatcher = heliostats->getInput<Dispatcher>();
+
+					// Get the mask for this mirror
+					auto mask = heliostats->drawMirrorFaceMask(heliostat, cameraView);
+
+					// Get the bounding box of the mask
+					cv::Rect boundingBox;
+					{
+						cv::Mat activePixels;
+						cv::findNonZero(mask, activePixels);
+						boundingBox = cv::boundingRect(activePixels);
+					}
+
+					// Mask the image
+					cv::Mat maskedImage = imageWithReflectionsWithoutRealBoard.clone();
+					{
+						cv::Mat invertedMask;
+						cv::bitwise_not(mask, invertedMask);
+						maskedImage.setTo(cv::Scalar(0), invertedMask);
+					}
+
+					// Find the board in the masked image
+					auto capture = make_shared<Capture>();
+					{
+						vector<cv::Point2f> imagePointsCropped;
+						vector<cv::Point3f> objectPoints;
+
+						auto croppedRegion = maskedImage(boundingBox);
+
+						cv::normalize(croppedRegion
+							, croppedRegion
+							, 255
+							, 0
+							, cv::NORM_INF);
+
+						// Find the board in the cropped image
+						{
+							bool foundBoard = boardInWorld->findBoard(croppedRegion
+								, imagePointsCropped
+								, objectPoints
+								, capture->worldPoints
+								, this->parameters.findBoard.mode.get());
+
+							if (!foundBoard && this->parameters.findBoard.useAssistantIfFail.get()) {
+								foundBoard = boardInWorld->findBoard(croppedRegion
+									, imagePointsCropped
+									, objectPoints
+									, capture->worldPoints
+									, FindBoardMode::Assistant);
+							}
+							if (!foundBoard) {
+								throw(Exception("Failed to find board in reflection"));
+							}
+						}
+
+						// Move the image points back into uncropped space
+						capture->imagePoints.reserve(imagePointsCropped.size());
+						cv::Point2f offset(boundingBox.x, boundingBox.y);
+						for (const auto& imagePointCropped : imagePointsCropped) {
+							capture->imagePoints.push_back(imagePointCropped + offset);
+						}
+					}
+
+					// Calculate camera rays associated with these image points / world points
+					{
+						// unproject rays
+						cameraView.castPixels(ofxCv::toOf(capture->imagePoints)
+							, capture->cameraRays
+							, true);
+
+						// set the colors
+						for (auto& ray : capture->cameraRays) {
+							ray.color = capture->color;
+						}
+					}
+
+					capture->cameraPosition = cameraView.getPosition();
+					capture->heliostatName = heliostat->getName();
+
+					// Find axis servo values
+					auto findServoValue = [&](const int& servoID) {
+						auto findServoValue = servoValues.find(servoID);
+						if (findServoValue == servoValues.end()) {
+							throw(ofxRulr::Exception("Failed to get a Present Position for Servo [" + ofToString(servoID) + "]"));
+						}
+						return findServoValue->second;
+					};
+					capture->axis1ServoPosition = findServoValue(heliostat->parameters.servo1.ID.get());
+					capture->axis2ServoPosition = findServoValue(heliostat->parameters.servo2.ID.get());
+
+
+					// crop the camera rays to intersect the current mirror
+					{
+						// Get the plane for the mirror
+						glm::vec3 mirrorCenter, mirrorNormal;
+						Solvers::HeliostatActionModel::getMirrorCenterAndNormal<float>({
+							heliostat->parameters.servo1.angle.get()
+							, heliostat->parameters.servo2.angle.get()
+							}, heliostat->getHeliostatActionModelParameters()
+							, mirrorCenter
+							, mirrorNormal);
+						ofxRay::Plane plane(mirrorCenter, mirrorNormal);
+
+						// Individually crop the rays
+						for (auto& cameraRay : capture->cameraRays) {
+							glm::vec3 position;
+							if (plane.intersect(cameraRay, position)) {
+								cameraRay.setEnd(position);
+							}
+							cameraRay.infinite = false;
+						}
+					}
+
+					this->captures.add(capture);
 				}
 			}
 		}
