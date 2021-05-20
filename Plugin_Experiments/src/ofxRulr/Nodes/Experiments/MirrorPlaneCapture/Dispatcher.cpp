@@ -25,16 +25,31 @@ namespace ofxRulr {
 				void Dispatcher::populateInspector(ofxCvGui::InspectArguments& args) {
 					auto inspector = args.inspector;
 
-					inspector->addButton("Nudge all servos", [this]() {
+					inspector->addTitle("Do for all servos", ofxCvGui::Widgets::Title::H2);
+
+					inspector->addButton("Nudge", [this]() {
 						try {
-							this->nudgeAllServos();
+							this->nudge();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});
 
-					inspector->addButton("Zero all servos", [this]() {
+					inspector->addButton("Zero", [this]() {
 						try {
-							this->zeroAllServos();
+							this->zero();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+
+					inspector->addButton("Torque on", [this]() {
+						try {
+							this->setTorqueEnabled(true);
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+					inspector->addButton("Torque off", [this]() {
+						try {
+							this->setTorqueEnabled(false);
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});
@@ -93,14 +108,36 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Dispatcher::nudgeAllServos() {
+				void Dispatcher::nudge() {
 					this->requestGET("/Test/NudgeAllServos");
 				}
 
 				//----------
-				void Dispatcher::zeroAllServos() {
+				void Dispatcher::zero() {
 					this->requestGET("/Test/ZeroAllServos");
 				}
+
+				//----------
+				void Dispatcher::setTorqueEnabled(bool torqueEnabled) {
+					// get the list of servos first
+					auto servoIDs = this->getServoIDs();
+
+					MultiSetRequest request;
+					request.registerName = "Torque Enable";
+					for (const auto servoID : servoIDs) {
+						request.servoValues[servoID] = torqueEnabled ? 1 : 0;
+					}
+					this->multiSetRequest(request);
+				}
+
+				//----------
+				vector<Dispatcher::ServoID> Dispatcher::getServoIDs() {
+					auto response = this->requestGET("/System/GetServoIDs");
+					vector<ServoID> servoIDs;
+					response.get_to(servoIDs);
+					return servoIDs;
+				}
+
 
 				//----------
 				void Dispatcher::multiMoveRequest(const MultiMoveRequest& multiMoveRequest) {
@@ -119,6 +156,32 @@ namespace ofxRulr {
 					requestJson["timeout"] = multiMoveRequest.timeout;
 
 					this->requestPOST("/Servo/MultiMove", requestJson);
+				}
+
+				//----------
+				vector<Dispatcher::RegisterValue>
+					Dispatcher::multiGetRequest(const MultiGetRequest& multiGetRequest) {
+					nlohmann::json requestJson;
+
+					requestJson["servoIDs"] = multiGetRequest.servoIDs;
+					requestJson["registerType"] = multiGetRequest.registerName;
+
+					auto result = this->requestPOST("/Servo/MultiGet", requestJson);
+					auto values = result.get<vector<Dispatcher::RegisterValue>>();
+					return values;
+				}
+
+				//----------
+				void
+					Dispatcher::multiSetRequest(const MultiSetRequest& multiSetRequest) {
+					nlohmann::json requestJson;
+
+					requestJson["registerType"] = multiSetRequest.registerName;
+
+					for (const auto& servoValue : multiSetRequest.servoValues) {
+						requestJson["servoValues"][ofToString(servoValue.first)] = servoValue.second;
+					}
+					auto result = this->requestPOST("/Servo/MultiSet", requestJson);
 				}
 			}
 		}

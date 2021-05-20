@@ -192,9 +192,9 @@ namespace ofxRulr {
 					cv::Ptr<cv::aruco::Board> untypedBoard = this->board.staticCast<cv::aruco::Board>();
 
 					cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
-					detectorParams->adaptiveThreshWinSizeMin = 3;
-					detectorParams->adaptiveThreshWinSizeMax = 101;
-					detectorParams->adaptiveThreshWinSizeStep = 5;
+					detectorParams->adaptiveThreshWinSizeMin = this->parameters.detection.adaptiveThreshold.windowSizeMin.get();
+					detectorParams->adaptiveThreshWinSizeMax = this->parameters.detection.adaptiveThreshold.windowSizeMax.get();
+					detectorParams->adaptiveThreshWinSizeStep = this->parameters.detection.adaptiveThreshold.windowSizeStep.get();
 					detectorParams->errorCorrectionRate = this->parameters.detection.errorCorrectionRate;
 
 					if (image.cols > 5000) {

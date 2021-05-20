@@ -2,6 +2,8 @@
 #include "ofxCeres.h"
 #include <glm/glm.hpp>
 
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Dispatcher.h"
+
 namespace ofxRulr {
 	namespace Solvers {
 		class HeliostatActionModel {
@@ -66,6 +68,17 @@ namespace ofxRulr {
 				normal = ofxCeres::VectorMath::normalize(centerPlusNormal - center);
 			}
 
+			template<typename T>
+			static T angleToPosition(const T& angle, const glm::tvec3<T>& polynomial)
+			{
+				auto correctedAngle =
+					angle * polynomial[0]
+					+ angle * angle * polynomial[1]
+					+ angle * angle * angle * polynomial[2];
+				auto goalPosition = (correctedAngle + (T)180.0) / (T)360.0 * (T)4096.0;
+				return goalPosition;
+			}
+
 			class Navigator {
 			public:
 				struct Solution {
@@ -97,6 +110,18 @@ namespace ofxRulr {
 				static Result solveConstrained(const Parameters<float>&
 					, std::function<Result(const AxisAngles<float>&)>
 					, const AxisAngles<float>& initialAngles);
+			};
+
+			class SolveAngle {
+			public:
+				typedef float Solution;
+				typedef ofxCeres::Result<Solution> Result;
+				static ofxCeres::SolverSettings defaultSolverSettings();
+
+				static Result solveAngle(const Nodes::Experiments::MirrorPlaneCapture::Dispatcher::RegisterValue&
+					, const glm::vec3& polynomial
+					, const float& priorAngle
+					, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
 			};
 		};
 	}

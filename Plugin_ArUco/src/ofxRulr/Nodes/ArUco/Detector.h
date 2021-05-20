@@ -66,8 +66,8 @@ namespace ofxRulr {
 						);
 					} arucoDetector;
 					
-					ofParameter<float> cornerRefineZone1{ "Corner refine zone 1 %", 0.11, 0, 1 }; // This value works well with our halo markers
-					ofParameter<float> cornerRefineZone2{ "Corner refine zone 2 %", 0.025, 0, 1 }; // This value works well with our halo markers
+					ofParameter<float> cornerRefineZone1{ "Corner refine zone 1 %", 0.075, 0, 1 }; // This value works well with our halo markers
+					ofParameter<float> cornerRefineZone2{ "Corner refine zone 2 %", 0.02, 0, 1 }; // This value works well with our halo markers
 					PARAM_DECLARE("Detector", dictionary, markerLength, normalizeImage, arucoDetector, cornerRefineZone1, cornerRefineZone2);
 				} parameters;
 

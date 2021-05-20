@@ -157,10 +157,11 @@ namespace ofxRulr {
 					{
 						Utils::ScopedProcess scopedProcess("Track");
 
+						auto image = ofxCv::toCv(this->image.getPixels());
 						{
 							Utils::ScopedProcess findBoardScope("findBoard");
 							auto board = boardInWorld->getInput<Item::AbstractBoard>();
-							auto foundBoard = board->findBoard(ofxCv::toCv(this->image.getPixels())
+							auto foundBoard = board->findBoard(image
 								, this->imagePoints
 								, this->objectPoints
 								, this->parameters.capture.findBoardMode.get()

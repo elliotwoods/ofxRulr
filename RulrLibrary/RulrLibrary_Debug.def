@@ -1,5 +1,6 @@
 Library RulrLibrary_Debug
 EXPORTS
+	__imp_glDisable
 	__imp_glEnable
 	__imp_glFlush
 	__imp_glPointSize
@@ -70,6 +71,7 @@ EXPORTS
 	?ofCreateWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@AEBVofWindowSettings@@@Z
 	?ofDisableAlphaBlending@@YAXXZ
 	?ofDisableBlendMode@@YAXXZ
+	?ofDisableDepthTest@@YAXXZ
 	?ofDrawArrow@@YAXAEBU?$vec@$02M$0A@@glm@@0M@Z
 	?ofDrawAxis@@YAXM@Z
 	?ofDrawBox@@YAXAEBU?$vec@$02M$0A@@glm@@MMM@Z
@@ -87,6 +89,7 @@ EXPORTS
 	?ofDrawSphere@@YAXAEBU?$vec@$02M$0A@@glm@@M@Z
 	?ofEnableAlphaBlending@@YAXXZ
 	?ofEnableBlendMode@@YAXW4ofBlendMode@@@Z
+	?ofEnableDepthTest@@YAXXZ
 	?ofEnableSmoothing@@YAXXZ
 	?ofFill@@YAXXZ
 	?ofGetCurrentRenderer@@YAAEAV?$shared_ptr@VofBaseRenderer@@@std@@XZ
@@ -121,6 +124,7 @@ EXPORTS
 	?ofRandomf@@YAMXZ
 	?ofRotateDeg@@YAXM@Z
 	?ofRotateDeg@@YAXMMMM@Z
+	?ofRotateXDeg@@YAXM@Z
 	?ofRunApp@@YAHPEAVofBaseApp@@@Z
 	?ofSaveImage@@YA_NAEBV?$ofPixels_@E@@AEBVpath@filesystem@boost@@W4ofImageQualityType@@@Z
 	?ofSaveImage@@YA_NAEBV?$ofPixels_@M@@AEBVpath@filesystem@boost@@W4ofImageQualityType@@@Z
@@ -661,6 +665,7 @@ EXPORTS
 	?randomiseVectors@Ray@ofxRay@@UEAAXM@Z
 	?setEnd@Ray@ofxRay@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	??0Exception@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??0NotImplementedException@ofxRulr@@QEAA@XZ
 	?what@Exception@ofxRulr@@UEBAPEBDXZ
 	??0AbstractPin@Graph@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0World@Graph@ofxRulr@@QEAA@XZ

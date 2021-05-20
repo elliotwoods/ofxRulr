@@ -104,6 +104,7 @@
     <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_Normal.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_PointToPoint.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_SolveAngle.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\MirrorPlaneFromRays.cpp" />
     <ClCompile Include="src\pch_Plugin_Experiments.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

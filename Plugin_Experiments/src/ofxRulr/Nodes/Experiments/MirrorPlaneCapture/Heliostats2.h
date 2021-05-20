@@ -48,6 +48,7 @@ namespace ofxRulr {
 						void markGoalPositionPushed();
 
 						void calculateGoalPosition();
+						void setPresentPosition(const Dispatcher::RegisterValue&);
 
 					protected:
 						HAMParameters::AxisParameters& axisParameters;
@@ -62,6 +63,7 @@ namespace ofxRulr {
 						Heliostat();
 						string getDisplayString() const override;
 						void drawWorld();
+						void drawMirrorFace();
 
 						struct Parameters : ofParameterGroup {
 							ofParameter<string> name{ "Name", "" };
@@ -70,6 +72,8 @@ namespace ofxRulr {
 							ServoParameters servo2;
 
 							HAMParameters hamParameters;
+
+							ofParameter<float> diameter{ "Diameter", 0.35f, 0.0f, 1.0f };
 
 							Parameters()
 							: servo1("Servo 1", this->hamParameters.axis1)
@@ -80,9 +84,11 @@ namespace ofxRulr {
 								, name
 								, servo1
 								, servo2
-								, hamParameters);
+								, hamParameters
+								, diameter);
 						} parameters;
 						
+						string getName() const override;
 						void update();
 						void serialize(nlohmann::json&);
 						void deserialize(const nlohmann::json&);
@@ -93,7 +99,6 @@ namespace ofxRulr {
 
 						void navigateToNormal(const glm::vec3&, const ofxCeres::SolverSettings&);
 						void navigateToReflectPointToPoint(const glm::vec3&, const glm::vec3&, const ofxCeres::SolverSettings&);
-
 					protected:
 						ofxCvGui::ElementPtr getDataDisplay() override;
 					};
@@ -116,10 +121,13 @@ namespace ofxRulr {
 					void removeHeliostat(shared_ptr<Heliostat> heliostat);
 
 					void faceAllTowardsCursor();
+					void faceAllAway();
 
 					void pushStale(bool waitUntilComplete);
 					void pushAll();
 					void pullAll();
+
+					cv::Mat drawMirrorFaceMask(shared_ptr<Heliostat>, const ofxRay::Camera&);
 				protected:
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
@@ -133,7 +141,12 @@ namespace ofxRulr {
 							PARAM_DECLARE("Dispatcher", pushStaleValues, timeout);
 						} dispatcher;
 
-						PARAM_DECLARE("Heliostats2", navigator, dispatcher);
+						struct : ofParameterGroup {
+							ofParameter<float> servo1{ "Servo 1", 0, -180, 180 };
+							ofParameter<float> servo2{ "Servo 2", 90, -100, 100 };
+							PARAM_DECLARE("Away pose", servo1, servo2);
+						} awayPose;
+						PARAM_DECLARE("Heliostats2", navigator, dispatcher, awayPose);
 					} parameters;
 
 					Utils::CaptureSet<Heliostat> heliostats;
