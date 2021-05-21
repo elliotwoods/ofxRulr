@@ -728,6 +728,7 @@ EXPORTS
 	?getFreshFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getGrabber@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VSimple@Grabber@ofxMachineVision@@@std@@XZ
 	?isNewSingleShotFrame@Camera@Item@Nodes@ofxRulr@@QEBA_NXZ
+	?update@Camera@Item@Nodes@ofxRulr@@QEAAXXZ
 	?drawWorldStage@RigidBody@Item@Nodes@ofxRulr@@QEAAXXZ
 	?getExtrinsics@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEAVMat@cv@@0_N@Z
 	?getPosition@RigidBody@Item@Nodes@ofxRulr@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
@@ -793,6 +794,7 @@ EXPORTS
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVPlane@ofxRay@@@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVRay@ofxRay@@@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEB_N@Z
+	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBH@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBM@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBU?$mat@$03$03M$0A@@glm@@@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBU?$vec@$01M$0A@@glm@@@Z

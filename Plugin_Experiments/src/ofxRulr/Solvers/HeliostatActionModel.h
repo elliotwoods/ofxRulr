@@ -11,9 +11,11 @@ namespace ofxRulr {
 			template<typename T>
 			struct Parameters {
 				struct Axis {
-					glm::tvec3<T> polynomial;
 					glm::tvec3<T> rotationAxis;
+					glm::tvec3<T> polynomial;
 
+					// Not that this is not used during calibration
+					// It should be ignored when returned from calibration also
 					struct {
 						T minimum;
 						T maximum;
@@ -34,13 +36,84 @@ namespace ofxRulr {
 					newParameters.axis1.polynomial = glm::tvec3<T2>(this->axis1.polynomial);
 					newParameters.axis1.rotationAxis = glm::tvec3<T2>(this->axis1.rotationAxis);
 					newParameters.axis1.angleRange.minimum = (T2)this->axis1.angleRange.minimum;
-					newParameters.axis1.angleRange.maximum= (T2) this->axis1.angleRange.maximum;
+					newParameters.axis1.angleRange.maximum = (T2)this->axis1.angleRange.maximum;
 					newParameters.axis2.polynomial = glm::tvec3<T2>(this->axis2.polynomial);
 					newParameters.axis2.rotationAxis = glm::tvec3<T2>(this->axis2.rotationAxis);
 					newParameters.axis2.angleRange.minimum = (T2)this->axis2.angleRange.minimum;
 					newParameters.axis2.angleRange.maximum = (T2)this->axis2.angleRange.maximum;
 					newParameters.mirrorOffset = (T2)this->mirrorOffset;
 					return newParameters;
+				}
+
+				void toParameterStrings(T* positionParameters
+					, T* rotationAxisParameters
+					, T* polynomialParameters
+					, T* mirrorOffsetParameters) const {
+					// positionParameters
+					positionParameters[0] = this->position[0];
+					positionParameters[1] = this->position[1];
+					positionParameters[2] = this->position[2];
+
+					// rotationAxisParameters
+					{
+						{
+							auto polar = ofxCeres::VectorMath::cartesianToPolar(this->axis1.rotationAxis);
+							rotationAxisParameters[0] = polar[1];
+							rotationAxisParameters[1] = polar[2];
+						}
+						{
+							auto polar = ofxCeres::VectorMath::cartesianToPolar(this->axis2.rotationAxis);
+							rotationAxisParameters[2] = polar[1];
+							rotationAxisParameters[3] = polar[2];
+						}
+					}
+
+					// polynomialParameters
+					polynomialParameters[0] = this->axis1.polynomial[0];
+					polynomialParameters[1] = this->axis1.polynomial[1];
+					polynomialParameters[2] = this->axis1.polynomial[2];
+					polynomialParameters[3] = this->axis2.polynomial[0];
+					polynomialParameters[4] = this->axis2.polynomial[1];
+					polynomialParameters[5] = this->axis2.polynomial[2];
+
+					// mirrorOffsetParameters
+					mirrorOffsetParameters[0] = this->mirrorOffset;
+				}
+
+				void fromParameterStrings(const T* const positionParameters
+						, const T* const rotationAxisParameters
+						, const T* const polynomialParameters
+						, const T* const mirrorOffsetParameters) {
+					// positionParameters
+					this->position[0] = positionParameters[0];
+					this->position[1] = positionParameters[1];
+					this->position[2] = positionParameters[2];
+
+					// rotationAxisParameters
+					{
+						this->axis1.rotationAxis = ofxCeres::VectorMath::polarToCartesian(glm::tvec3<T>(
+								1
+								, rotationAxisParameters[0]
+								, rotationAxisParameters[1]
+							));
+
+						this->axis2.rotationAxis = ofxCeres::VectorMath::polarToCartesian(glm::tvec3<T>(
+								1
+								, rotationAxisParameters[2]
+								, rotationAxisParameters[3]
+							));
+					}
+
+					// polynomialParameters
+					this->axis1.polynomial[0] = polynomialParameters[0];
+					this->axis1.polynomial[1] = polynomialParameters[1];
+					this->axis1.polynomial[2] = polynomialParameters[2];
+					this->axis2.polynomial[0] = polynomialParameters[3];
+					this->axis2.polynomial[1] = polynomialParameters[4];
+					this->axis2.polynomial[2] = polynomialParameters[5];
+
+					// mirrorOffsetParameters
+					this->mirrorOffset = mirrorOffsetParameters[0];
 				}
 			};
 
@@ -58,9 +131,9 @@ namespace ofxRulr {
 
 				auto mirrorTransform = glm::translate<T>(parameters.position)
 					* glm::rotate<T>(axisAngles.axis1 * DEG_TO_RAD
-						, parameters.axis1.rotationAxis)
+						, glm::normalize(parameters.axis1.rotationAxis))
 					* glm::rotate<T>(axisAngles.axis2 * DEG_TO_RAD
-						, parameters.axis2.rotationAxis)
+						, glm::normalize(parameters.axis2.rotationAxis))
 					* glm::translate<T>(glm::tvec3<T>(0, -parameters.mirrorOffset, 0));
 
 				center = ofxCeres::VectorMath::applyTransform<T>(mirrorTransform, { 0, 0, 0 });
@@ -69,15 +142,19 @@ namespace ofxRulr {
 			}
 
 			template<typename T>
-			static T angleToPosition(const T& angle, const glm::tvec3<T>& polynomial)
+			static T positionToAngle(const T& position, const glm::tvec3<T>& polynomial)
 			{
-				auto correctedAngle =
-					angle * polynomial[0]
-					+ angle * angle * polynomial[1]
-					+ angle * angle * angle * polynomial[2];
-				auto goalPosition = (correctedAngle + (T)180.0) / (T)360.0 * (T)4096.0;
-				return goalPosition;
+				auto correctedPosition =
+					polynomial[0]
+					+ position * polynomial[1]
+					+ position * position * polynomial[2];
+				auto angle = (correctedPosition - (T)2048.0) / (T)4096.0 * (T)360.0;
+				return angle;
 			}
+
+			static void drawMirror(const glm::vec3& mirrorCenter
+				, const glm::vec3& mirrorNormal
+				, float diameter);
 
 			class Navigator {
 			public:
@@ -88,9 +165,9 @@ namespace ofxRulr {
 
 				static ofxCeres::SolverSettings defaultSolverSettings();
 
-				static Result solveNormal(const Parameters<float> &
-					, const glm::vec3 & normal
-					, const AxisAngles<float> & initialAngles
+				static Result solveNormal(const Parameters<float>&
+					, const glm::vec3& normal
+					, const AxisAngles<float>& initialAngles
 					, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
 
 				static Result solvePointToPoint(const Parameters<float>&
@@ -112,16 +189,45 @@ namespace ofxRulr {
 					, const AxisAngles<float>& initialAngles);
 			};
 
-			class SolveAngle {
+			class SolvePosition {
 			public:
-				typedef float Solution;
+				typedef Nodes::Experiments::MirrorPlaneCapture::Dispatcher::RegisterValue Solution;
 				typedef ofxCeres::Result<Solution> Result;
 				static ofxCeres::SolverSettings defaultSolverSettings();
 
-				static Result solveAngle(const Nodes::Experiments::MirrorPlaneCapture::Dispatcher::RegisterValue&
+				static Result solvePosition(const float& angle
 					, const glm::vec3& polynomial
-					, const float& priorAngle
+					, const Nodes::Experiments::MirrorPlaneCapture::Dispatcher::RegisterValue& priorPosition
 					, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
+			};
+
+			class Calibrator {
+			public:
+				typedef Parameters<float> Solution;
+				typedef ofxCeres::Result<Solution> Result;
+				static ofxCeres::SolverSettings defaultSolverSettings();
+
+				struct Options {
+					float mirrorDiameter = 0.35f;
+					bool fixPolynomial = true;
+					bool fixRotationAxis = true;
+					bool fixMirrorOffset = true;
+				};
+
+				static Result solveCalibration(const vector<ofxRay::Ray>& cameraRays
+					, const vector<glm::vec3>& worldPoints
+					, const vector<int>& axis1ServoPosition
+					, const vector<int>& axis2ServoPosition
+					, const Parameters<float>& priorParameters
+					, const Options &
+					, const ofxCeres::SolverSettings & = Calibrator::defaultSolverSettings());
+
+				static float getResidual(const ofxRay::Ray & cameraRay
+					, const glm::vec3 & worldPoint
+					, int axis1ServoPosition
+					, int axis2ServoPosition
+					, const Parameters<float>& hamParameters
+					, float mirrorDiameter);
 			};
 		};
 	}

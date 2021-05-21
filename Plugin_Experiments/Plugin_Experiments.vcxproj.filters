@@ -66,7 +66,10 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateBodyToBody.cpp">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_SolveAngle.cpp">
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_SolvePosition.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_Calibrator.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
   </ItemGroup>

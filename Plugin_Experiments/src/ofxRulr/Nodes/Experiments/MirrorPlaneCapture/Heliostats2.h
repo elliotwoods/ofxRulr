@@ -94,6 +94,7 @@ namespace ofxRulr {
 						void deserialize(const nlohmann::json&);
 						void populateInspector(ofxCvGui::InspectArguments&);
 						Solvers::HeliostatActionModel::Parameters<float> getHeliostatActionModelParameters() const;
+						void setHeliostatActionModelParameters(const Solvers::HeliostatActionModel::Parameters<float> &);
 
 						void flip();
 

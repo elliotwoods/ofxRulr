@@ -3,11 +3,11 @@
 
 using namespace ofxCeres::VectorMath;
 
-struct HeliostatActionModel_AngleCost
+struct HeliostatActionModel_PositionCost
 {
-	HeliostatActionModel_AngleCost(const int & registerValue
+	HeliostatActionModel_PositionCost(const float& angle
 		, const glm::vec3& polynomial)
-		: registerValue(registerValue)
+		: angle(angle)
 		, polynomial(polynomial)
 	{
 
@@ -18,26 +18,26 @@ struct HeliostatActionModel_AngleCost
 		operator()(const T* const parameters
 			, T* residuals) const
 	{
-		const auto & value = parameters[0];
+		const auto & position = parameters[0];
 		const auto polynomial = (glm::tvec3<T>) this->polynomial;
-		auto position = ofxRulr::Solvers::HeliostatActionModel::angleToPosition<T>(value, polynomial);
+		auto angle = ofxRulr::Solvers::HeliostatActionModel::positionToAngle<T>(position, polynomial);
 
-		auto delta = position - (T)this->registerValue;
+		auto delta = angle - (T)this->angle;
 		residuals[0] = delta * delta;
 
 		return true;
 	}
 
 	static ceres::CostFunction*
-		Create(const int& registerValue
+		Create(const float& angle
 			, const glm::vec3& polynomial)
 	{
-		return new ceres::AutoDiffCostFunction<HeliostatActionModel_AngleCost, 1, 1>(
-			new HeliostatActionModel_AngleCost(registerValue, polynomial)
+		return new ceres::AutoDiffCostFunction<HeliostatActionModel_PositionCost, 1, 1>(
+			new HeliostatActionModel_PositionCost(angle, polynomial)
 			);
 	}
 
-	const int& registerValue;
+	const float& angle;
 	const glm::vec3& polynomial;
 };
 
@@ -45,7 +45,7 @@ namespace ofxRulr {
 	namespace Solvers {
 		//----------
 		ofxCeres::SolverSettings 
-			HeliostatActionModel::SolveAngle::defaultSolverSettings()
+			HeliostatActionModel::SolvePosition::defaultSolverSettings()
 		{
 			ofxCeres::SolverSettings solverSettings;
 			solverSettings.options.max_num_iterations = 100;
@@ -56,22 +56,22 @@ namespace ofxRulr {
 		}
 
 		//----------
-		HeliostatActionModel::SolveAngle::Result
-			HeliostatActionModel::SolveAngle::solveAngle(const Nodes::Experiments::MirrorPlaneCapture::Dispatcher::RegisterValue& registerValue
+		HeliostatActionModel::SolvePosition::Result
+			HeliostatActionModel::SolvePosition::solvePosition(const float& angle
 				, const glm::vec3& polynomial
-				, const float& priorAngle
+				, const Nodes::Experiments::MirrorPlaneCapture::Dispatcher::RegisterValue& priorPosition
 				, const ofxCeres::SolverSettings& solverSettings)
 		{
 			// Initialise parameters
 			double parameters[1];
 			{
-				parameters[0] = (double)priorAngle;
+				parameters[0] = (double)priorPosition;
 			}
 
 			// Construct the problem
 			ceres::Problem problem;
 			{
-				auto costFunction = HeliostatActionModel_AngleCost::Create(registerValue, polynomial);
+				auto costFunction = HeliostatActionModel_PositionCost::Create(angle, polynomial);
 				problem.AddResidualBlock(costFunction
 					, NULL
 					, parameters);
@@ -88,7 +88,7 @@ namespace ofxRulr {
 			}
 
 			// Build the result
-			HeliostatActionModel::SolveAngle::Result result(summary);
+			HeliostatActionModel::SolvePosition::Result result(summary);
 			{
 				result.solution = (int)parameters[0];
 			}

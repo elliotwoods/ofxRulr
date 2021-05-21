@@ -26,20 +26,38 @@ namespace ofxRulr {
 					*/
 					class Capture : public Utils::AbstractCaptureSet::BaseCapture {
 					public:
+						struct DrawOptions {
+							bool cameraRays;
+							bool worldPoints;
+							bool reflectedRays;
+							bool mirrorFace;
+						};
+
 						Capture();
 
-						void drawWorld();
+						void drawWorld(const DrawOptions&);
 						string getDisplayString() const override;
 						void serialize(nlohmann::json&);
 						void deserialize(const nlohmann::json&);
+						
+						string heliostatName;
+						string comments;
+						glm::vec3 cameraPosition;
 
 						vector<cv::Point2f> imagePoints;
 						vector<cv::Point3f> worldPoints;
 						vector<ofxRay::Ray> cameraRays;
-						glm::vec3 cameraPosition;
-						string heliostatName;
 						int axis1ServoPosition;
 						int axis2ServoPosition;
+
+						vector<float> residuals;
+						float meanResidual = 0.0f;
+
+						vector<ofxRay::Ray> reflectedRays;
+						glm::vec3 mirrorCenter;
+						glm::vec3 mirrorNormal;
+
+						const float mirrorDiameter = 0.35f;
 					};
 
 					BoardInMirror2();
@@ -48,6 +66,24 @@ namespace ofxRulr {
 					void update();
 
 					void capture();
+					void navigateToSeeBoardAndCapture(vector<shared_ptr<Heliostats2::Heliostat>> activeHeliostats
+						, shared_ptr<Heliostats2> heliostats
+						, const ofxCeres::SolverSettings& navigateSolverSettings
+						, shared_ptr<Item::BoardInWorld> boardInWorld
+						, shared_ptr<Item::Camera> camera
+						, const ofxRay::Camera& cameraView
+						, shared_ptr<Dispatcher> dispatcher
+						, const string& comments);
+
+					void processReflectionInHeliostat(shared_ptr<Heliostats2>
+						, shared_ptr<Heliostats2::Heliostat>
+						, const ofxRay::Camera& cameraView
+						, const cv::Mat& imageWithReflectionsWithoutRealBoard
+						, shared_ptr<Item::BoardInWorld>
+						, const map<Dispatcher::ServoID, Dispatcher::RegisterValue>&
+						, const string & comments);
+
+
 					void addCapture(shared_ptr<ofxMachineVision::Frame>);
 					void calibrate();
 
@@ -59,7 +95,8 @@ namespace ofxRulr {
 					void drawWorldStage();
 
 				protected:
-					ofxCeres::SolverSettings getSolverSettings() const;
+					ofxCeres::SolverSettings getNavigateSolverSettings() const;
+					ofxCeres::SolverSettings getCalibrateSolverSettings() const;
 
 					struct : ofParameterGroup {
 						ofParameter<WhenDrawOnWorldStage> tetheredShootEnabled{ "Tethered shoot enabled", WhenDrawOnWorldStage::Selected };
@@ -76,20 +113,42 @@ namespace ofxRulr {
 						} findBoard;
 
 						struct : ofParameterGroup {
-							ofParameter<float> waitTime{ "Wait time", 1.0f, 0.0f, 10.0f };
+							ofParameter<float> waitTime{ "Wait time", 10.0f, 0.0f, 30.0f };
 							PARAM_DECLARE("Servo control", waitTime);
 						} servoControl;
+
+						ofParameter<bool> captureFlip{ "Capture flip", true };
 
 						struct : ofParameterGroup {
 							ofParameter<int> maxIterations{ "Max iterations", 1000 };
 							ofParameter<bool> printReport{ "Print report", true };
-							PARAM_DECLARE("Solve", maxIterations, printReport);
-						} solve;
+							PARAM_DECLARE("Navigate", maxIterations, printReport);
+						} navigate;
+
+						struct : ofParameterGroup {
+							ofParameter<int> minimumDataPoints{ "Minimum data points", 100 };
+							ofParameter<bool> fixPolynomial{ "Fix polynomial", true };
+							ofParameter<bool> fixRotationAxis{ "Fix rotation axis", true };
+							ofParameter<bool> fixMirrorOffset{ "Fix mirror offset", true };
+							ofParameter<int> maxIterations{ "Max iterations", 1000 };
+							ofParameter<bool> printReport{ "Print report", true };
+							PARAM_DECLARE("Calibrate"
+								, minimumDataPoints
+								, fixPolynomial
+								, fixRotationAxis
+								, fixMirrorOffset
+								, maxIterations
+								, printReport);
+						} calibrate;
+
 
 						struct : ofParameterGroup {
 							struct : ofParameterGroup {
+								ofParameter<bool> cameraRays{ "Camera rays", true };
+								ofParameter<bool> worldPoints{ "World points", true };
 								ofParameter<bool> reflectedRays{ "Reflected rays", true };
-								PARAM_DECLARE("Draw", reflectedRays);
+								ofParameter<bool> mirrorFace{ "Mirror face", true };
+								PARAM_DECLARE("Draw", cameraRays, worldPoints, reflectedRays, mirrorFace);
 							} draw;
 							PARAM_DECLARE("Debug", draw);
 						} debug;
@@ -99,25 +158,18 @@ namespace ofxRulr {
 							, cameraNavigation
 							, findBoard
 							, servoControl
-							, solve
+							, captureFlip
+							, navigate
+							, calibrate
 							, debug);
 					} parameters;
 					shared_ptr<ofxCvGui::Panels::Widgets> panel;
 
 					Utils::CaptureSet<Capture> captures;
 
-					shared_ptr<ofxRulr::Solvers::MirrorPlaneFromRays::Result> result;
-
 					struct {
 						vector<ofxRay::Ray> reflectedRays;
 					} debug;
-
-					void processHeliostat(shared_ptr<Heliostats2>
-						, shared_ptr<Heliostats2::Heliostat>
-						, const ofxRay::Camera& cameraView
-						, const cv::Mat& imageWithReflectionsWithoutRealBoard
-						, shared_ptr<Item::BoardInWorld>
-						, const map<Dispatcher::ServoID, Dispatcher::RegisterValue>&);
 				};
 			}
 		}

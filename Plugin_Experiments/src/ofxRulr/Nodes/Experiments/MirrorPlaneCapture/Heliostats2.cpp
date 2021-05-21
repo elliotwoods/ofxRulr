@@ -424,7 +424,7 @@ namespace ofxRulr {
 					}
 					ofPopStyle();
 
-					// Test arrow
+					// Mirror face
 					if (isBeingInspected) {
 						glm::vec3 mirrorCenter, mirrorNormal;
 						Solvers::HeliostatActionModel::getMirrorCenterAndNormal({
@@ -457,14 +457,9 @@ namespace ofxRulr {
 						, mirrorCenter
 						, mirrorNormal);
 
-					auto lookAt = glm::lookAt(mirrorCenter, mirrorCenter + mirrorNormal, glm::vec3(0, 1, 0));
-
-					ofPushMatrix();
-					{
-						ofMultMatrix(glm::inverse(lookAt));
-						ofDrawCircle(glm::vec2(0, 0), this->parameters.diameter.get() / 2.0f);
-					}
-					ofPopMatrix();
+					Solvers::HeliostatActionModel::drawMirror(mirrorCenter
+						, mirrorNormal
+						, this->parameters.diameter.get());
 				}
 
 				//----------
@@ -517,6 +512,19 @@ namespace ofxRulr {
 
 					parameters.mirrorOffset = this->parameters.hamParameters.mirrorOffset.get();
 					return parameters;
+				}
+
+				//----------
+				void Heliostats2::Heliostat::setHeliostatActionModelParameters(const Solvers::HeliostatActionModel::Parameters<float> & parameters) {
+					this->parameters.hamParameters.position.set(parameters.position);
+
+					this->parameters.hamParameters.axis1.polynomial.set(parameters.axis1.polynomial);
+					this->parameters.hamParameters.axis1.rotationAxis.set(parameters.axis1.rotationAxis);
+
+					this->parameters.hamParameters.axis2.polynomial.set(parameters.axis2.polynomial);
+					this->parameters.hamParameters.axis2.rotationAxis.set(parameters.axis2.rotationAxis);
+
+					this->parameters.hamParameters.mirrorOffset.set(parameters.mirrorOffset);
 				}
 
 				//----------
@@ -585,7 +593,7 @@ namespace ofxRulr {
 					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
 
 					if (!result.isConverged()) {
-						throw(ofxRulr::Exception("Couldn't navigate heliostat to normal : " + result.errorMessage));
+						throw(ofxRulr::Exception("Couldn't navigate heliostat point to point: " + result.errorMessage));
 					}
 				}
 
@@ -667,8 +675,14 @@ namespace ofxRulr {
 					auto angle = this->angle;
 					const auto& polynomial = this->axisParameters.polynomial.get();
 
-					auto goalPosition = (int) Solvers::HeliostatActionModel::angleToPosition<float>(angle
-						, polynomial);
+					auto result = Solvers::HeliostatActionModel::SolvePosition::solvePosition(angle
+						, polynomial
+						, this->goalPosition.get());
+					if (!result.isConverged()) {
+						throw(ofxRulr::Exception("Failed to invert polynomial"));
+					}
+
+					auto goalPosition = (int)result.solution;
 
 					goalPosition = goalPosition > 4095
 						? 4095
@@ -680,12 +694,8 @@ namespace ofxRulr {
 
 				//----------
 				void Heliostats2::ServoParameters::setPresentPosition(const Dispatcher::RegisterValue& registerValue) {
-					auto result = Solvers::HeliostatActionModel::SolveAngle::solveAngle(registerValue
-						, this->axisParameters.polynomial.get()
-						, this->angle.get());
-					if (result.isConverged()) {
-						this->angle.set(result.solution);
-					}
+					auto result = Solvers::HeliostatActionModel::positionToAngle<float>((float) registerValue
+						, this->axisParameters.polynomial.get());
 				}
 			}
 		}

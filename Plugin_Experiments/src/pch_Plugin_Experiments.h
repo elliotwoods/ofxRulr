@@ -31,5 +31,8 @@
 
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 
+#include "ofxRulr/Solvers/HeliostatActionModel.h"
+#include "ofxRulr/Solvers/MirrorPlaneFromRays.h"
+
 #include "pch_Plugin_Calibrate.h"
 #include "pch_Plugin_ArUco.h"

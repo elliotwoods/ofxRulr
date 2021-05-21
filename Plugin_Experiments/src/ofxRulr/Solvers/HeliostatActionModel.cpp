@@ -4,13 +4,14 @@
 
 namespace ofxRulr {
 	namespace Solvers {
+#pragma mark Navigator
 		//----------
 		ofxCeres::SolverSettings
 			HeliostatActionModel::Navigator::defaultSolverSettings()
 		{
 			ofxCeres::SolverSettings solverSettings;
-			solverSettings.options.max_num_iterations = 1000;
-			solverSettings.options.parameter_tolerance = 1e-5 * 360.0f / 4096.0f;
+			solverSettings.options.max_num_iterations = 5000;
+			solverSettings.options.parameter_tolerance = 1e-4 * 360.0f / 4096.0f;
 			return solverSettings;
 		}
 
@@ -122,6 +123,21 @@ namespace ofxRulr {
 			}
 
 			return result;
+		}
+
+		void
+			HeliostatActionModel::drawMirror(const glm::vec3& mirrorCenter
+				, const glm::vec3& mirrorNormal
+				, float diameter)
+		{
+			auto lookAt = glm::lookAt(mirrorCenter, mirrorCenter + mirrorNormal, glm::vec3(0, 1, 0));
+
+			ofPushMatrix();
+			{
+				ofMultMatrix(glm::inverse(lookAt));
+				ofDrawCircle(glm::vec2(0, 0), diameter / 2.0f);
+			}
+			ofPopMatrix();
 		}
 	}
 }

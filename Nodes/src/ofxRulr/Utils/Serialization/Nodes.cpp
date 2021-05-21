@@ -9,6 +9,7 @@ namespace ofxRulr {
 			Utils::serialize(json, "t", value.t);
 			Utils::serialize(json, "color", value.color);
 			Utils::serialize(json, "define", value.defined);
+			Utils::serialize(json, "infinite", value.infinite);
 		}
 
 		//----------
@@ -18,6 +19,7 @@ namespace ofxRulr {
 				Utils::deserialize(json, "t", value.t);
 				Utils::deserialize(json, "color", value.color);
 				Utils::deserialize(json, "define", value.defined);
+				Utils::deserialize(json, "infinite", value.infinite);
 				return true;
 			}
 			else {

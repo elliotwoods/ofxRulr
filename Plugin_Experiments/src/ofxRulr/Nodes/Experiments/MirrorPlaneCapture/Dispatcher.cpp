@@ -109,12 +109,12 @@ namespace ofxRulr {
 
 				//----------
 				void Dispatcher::nudge() {
-					this->requestGET("/Test/NudgeAllServos");
+					this->requestGET("/DoForAll/Nudge");
 				}
 
 				//----------
 				void Dispatcher::zero() {
-					this->requestGET("/Test/ZeroAllServos");
+					this->requestGET("/DoForAll/Zero");
 				}
 
 				//----------
