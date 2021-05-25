@@ -65,7 +65,9 @@ namespace ofxRulr {
 				for (size_t i = 0; i < objectPoints.size(); i++) {
 					ofxCv::toOf(worldPoints[i]) = Utils::applyTransform(transform, ofxCv::toOf(objectPoints[i]));
 				}
+				return true;
 			}
+
 			//----------
 			vector<glm::vec3> BoardInWorld::getAllWorldPoints() const {
 				this->throwIfMissingAConnection<Item::AbstractBoard>();
