@@ -54,15 +54,20 @@ struct MarkerProjection_Cost
 
 		for (int i = 0; i < this->objectPoints.size(); i++) {
 			auto objectPoint = (glm::tvec3<T>) this->objectPoints[i];
-			auto worldPoint = ofxCeres::VectorMath::applyTransform(objectTransform.getTransform(), objectPoint);
-			auto viewPoint = ofxCeres::VectorMath::applyTransform(viewTransform.getTransform(), worldPoint);
+
+			auto world = objectTransform.getTransform();
+			auto worldPoint = ofxCeres::VectorMath::applyTransform(world, objectPoint);
+
+			auto view = viewTransform.getTransform();
+			auto viewPoint = ofxCeres::VectorMath::applyTransform(view, worldPoint);
+
 			auto projectedPoint = ofxCeres::VectorMath::applyTransform(cameraProjectionMatrix, viewPoint);
 			glm::tvec2<T> projectedImagePoint{
 				(T)this->cameraWidth * (projectedPoint.x + (T)1.0) / (T)2.0
 				, (T)this->cameraHeight * ((T)1.0 - projectedPoint.y) / (T)2.0
 			};
 			auto actualImagePoint = (glm::tvec2<T>) this->imagePoints[i];
-			residuals[i] = glm::distance2(projectedImagePoint, actualImagePoint);
+			residuals[i] = ofxCeres::VectorMath::distance2(projectedImagePoint, actualImagePoint);
 		}
 
 		return true;
@@ -97,6 +102,9 @@ namespace ofxRulr {
 			MarkerProjections::defaultSolverSettings()
 		{
 			ofxCeres::SolverSettings solverSettings;
+			solverSettings.printReport = true;
+			solverSettings.options.max_num_iterations = 10000;
+			solverSettings.options.function_tolerance = 1e-8;
 			return solverSettings;
 		}
 
@@ -107,6 +115,7 @@ namespace ofxRulr {
 				, const glm::mat4& cameraProjectionMatrix
 				, const std::vector<vector<glm::vec3>>& objectPoints
 				, const vector<Image>& images
+				, const vector<int>& fixedObjectIndices
 				, const Solution& initialSolution
 				, const ofxCeres::SolverSettings& solverSettings)
 		{
@@ -222,6 +231,13 @@ namespace ofxRulr {
 				}
 			}
 
+			// Fix any fixed objects
+			{
+				for (auto& fixedObjectIndex : fixedObjectIndices) {
+					problem.SetParameterBlockConstant(allObjectParameters[fixedObjectIndex]);
+				}
+			}
+
 			// Solve the fit
 			ceres::Solver::Summary summary;
 			ceres::Solve(solverSettings.options
@@ -236,7 +252,7 @@ namespace ofxRulr {
 			MarkerProjections::Result result(summary);
 			{
 				// Views
-				for (int i = 0; allViewParameters.size(); i++) {
+				for (int i = 0; i < allViewParameters.size(); i++) {
 					auto transformParameters = allViewParameters[i];
 					Solution::Transform transform;
 					transform.rotation[0] = transformParameters[0];
@@ -249,7 +265,7 @@ namespace ofxRulr {
 				}
 
 				// Objects
-				for (int i = 0; allObjectParameters.size(); i++) {
+				for (int i = 0; i < allObjectParameters.size(); i++) {
 					auto transformParameters = allObjectParameters[i];
 					Solution::Transform transform;
 					transform.rotation[0] = transformParameters[0];

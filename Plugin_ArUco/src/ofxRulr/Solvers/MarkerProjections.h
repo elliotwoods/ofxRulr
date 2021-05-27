@@ -33,6 +33,7 @@ namespace ofxRulr {
 				, const glm::mat4 & cameraProjectionMatrix
 				, const std::vector<vector<glm::vec3>> & objectPoints
 				, const vector<Image>& images
+				, const vector<int>& fixedObjectIndices
 				, const Solution& initialSolution
 				, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
 

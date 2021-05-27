@@ -54,7 +54,10 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true };
-							PARAM_DECLARE("Bundle Adjustment", enabled);
+							ofParameter<int> maxIterations{ "Max iterations", 1000 };
+							ofParameter<float> functionTolerance{ "Function tolerance", 1e-8 };
+							ofParameter<bool> useIncompleteSolution{ "Use imcomplete solution",false };
+							PARAM_DECLARE("Bundle Adjustment", enabled, maxIterations, functionTolerance, useIncompleteSolution);
 						} bundleAdjustment;
 						PARAM_DECLARE("Calibration", bundleAdjustment);
 					} calibration;

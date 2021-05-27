@@ -448,6 +448,7 @@ namespace ofxRulr {
 					std::vector<vector<glm::vec3>> objectPoints;
 					vector<Solvers::MarkerProjections::Image> images;
 					Solvers::MarkerProjections::Solution initialSolution;
+					vector<int> fixedObjectIndices;
 
 					// Gather data
 					{
@@ -489,22 +490,37 @@ namespace ofxRulr {
 								images.push_back(image);
 							}
 
-							initialSolution.views.push_back(Solvers::MarkerProjections::getTransform(capture->cameraView.getGlobalTransformMatrix()));
+							auto transform = capture->cameraView.getGlobalTransformMatrix();
+							auto viewTransform = glm::inverse(transform);
+							auto transform2 = Solvers::MarkerProjections::getTransform(viewTransform);
+							auto transform3 = Solvers::MarkerProjections::getTransform(transform2);
+							auto transform4 = Solvers::MarkerProjections::getTransform(transform3);
+							initialSolution.views.push_back(transform2);
 							viewIndex++;
+						}
+
+						// gather fixed object indices
+						for (size_t i = 0; i < markerIDs.size(); i++) {
+							auto marker = getMarker(markerIDs[i], false);
+							if (marker->parameters.fixed.get()) {
+								fixedObjectIndices.push_back(i);
+							}
 						}
 					}
 
 					// Perform solve
 					{
-						auto solverSettings = Solvers::MarkerProjections::defaultSolverSettings();
-						auto cameraView = camera->getViewInObjectSpace();						
-
 						// Unpack result
 						auto unpackSolution = [&](Solvers::MarkerProjections::Solution& solution) {
 							for (size_t i = 0; i < activeCaptures.size(); i++) {
-								activeCaptures[i]->cameraView.setPosition(solution.views[i].translation);
+								auto viewTransform = Solvers::MarkerProjections::getTransform(solution.views[i]);
+								auto rigidBodyTransform = glm::inverse(viewTransform);
 
-								auto orientation = ofxCeres::VectorMath::eulerToQuat(solution.views[i].rotation);
+								auto rigidBodyTransform2 = Solvers::MarkerProjections::getTransform(rigidBodyTransform);
+								
+								activeCaptures[i]->cameraView.setPosition(rigidBodyTransform2.translation);
+
+								auto orientation = ofxCeres::VectorMath::eulerToQuat(rigidBodyTransform2.rotation);
 								activeCaptures[i]->cameraView.setOrientation(orientation);
 							}
 
@@ -529,18 +545,30 @@ namespace ofxRulr {
 							}
 						};
 
+						// Perform solve
 						if (this->parameters.calibration.bundleAdjustment.enabled.get()) {
+							auto solverSettings = Solvers::MarkerProjections::defaultSolverSettings();
+							solverSettings.options.max_num_iterations = this->parameters.calibration.bundleAdjustment.maxIterations.get();
+							solverSettings.options.function_tolerance = this->parameters.calibration.bundleAdjustment.functionTolerance.get();
+
+							auto cameraView = camera->getViewInObjectSpace();
+
 							auto result = Solvers::MarkerProjections::solve(camera->getWidth()
 								, camera->getHeight()
 								, cameraView.getClippedProjectionMatrix()
 								, objectPoints
 								, images
+								, fixedObjectIndices
 								, initialSolution
 								, solverSettings);
 
 							if (!result.isConverged()) {
+								if (this->parameters.calibration.bundleAdjustment.useIncompleteSolution.get()) {
+									unpackSolution(result.solution);
+								}
 								throw(ofxRulr::Exception("Failed to converge"));
 							}
+
 							unpackSolution(result.solution);
 						}
 						else {
