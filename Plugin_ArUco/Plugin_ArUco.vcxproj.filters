@@ -13,6 +13,9 @@
     <Filter Include="src\ofxRulr\Nodes\ArUco">
       <UniqueIdentifier>{750b2512-0b15-435f-b812-c19cebfc2e7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\MarkerMap">
+      <UniqueIdentifier>{0833918b-ad1f-4143-9c9c-dc7577559e84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -45,6 +48,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\AlignMarkerMap.cpp">
       <Filter>src\ofxRulr\Nodes\ArUco</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Markers.cpp">
+      <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\Dictionary.h">
@@ -76,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="src\Constants_Plugin_ArUco.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Markers.h">
+      <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

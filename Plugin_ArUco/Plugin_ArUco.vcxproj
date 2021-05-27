@@ -83,6 +83,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\MarkerMapPoseTracker.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\OSCRelay.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\ArUco\FindMarkers.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Markers.cpp" />
     <ClCompile Include="src\pch_Plugin_ArUco.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -99,6 +100,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\MarkerMapPoseTracker.h" />
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\OSCRelay.h" />
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\FindMarkers.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Markers.h" />
     <ClInclude Include="src\pch_Plugin_ArUco.h" />
   </ItemGroup>
   <ItemGroup>

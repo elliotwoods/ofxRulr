@@ -20,8 +20,11 @@ namespace ofxRulr {
 			
 			SoundEngine();
 			~SoundEngine();
+			void init();
+			void close();
+
 			void audioOut(ofSoundBuffer &) override;
-			
+
 			void addSource(weak_ptr<ofBaseSoundOutput>);
 			
 			void play(const string & soundAssetName, bool onlyAllowOneAtOnce);
@@ -35,6 +38,7 @@ namespace ofxRulr {
 			size_t getRemainingNumFrames(shared_ptr<ofxAssets::Sound>);
 		protected:
 			ofSoundStream soundStream;
+			bool isOpen = false;
 			bool isClosing = false;
 
 			vector<weak_ptr<ofBaseSoundOutput>> sources;

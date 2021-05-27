@@ -163,6 +163,7 @@ EXPORTS
 	?allocate@?$ofImage_@E@@QEAAXHHW4ofImageType@@@Z
 	?bind@?$ofImage_@E@@QEBAXH@Z
 	?clear@?$ofImage_@E@@QEAAXXZ
+	?draw@?$ofImage_@E@@QEBAXAEBU?$vec@$02M$0A@@glm@@MM@Z
 	?draw@?$ofImage_@E@@UEBAXMM@Z
 	?draw@?$ofImage_@E@@UEBAXMMMM@Z
 	?getTexture@?$ofImage_@E@@UEAAAEAVofTexture@@XZ
@@ -457,6 +458,7 @@ EXPORTS
 	??0InspectController@ofxCvGui@@QEAA@XZ
 	?getDefaultTypeface@ofxCvGui@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?makeElement@ofxCvGui@@YA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
+	?makeElementGroup@ofxCvGui@@YA?AV?$shared_ptr@VElementGroup@ofxCvGui@@@std@@XZ
 	?init@Builder@ofxCvGui@@QEAAXXZ
 	?drawDelayed@Controller@ofxCvGui@@QEAAX$$QEAV?$function@$$A6AXXZ@std@@@Z
 	?addChild@Element@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
@@ -473,6 +475,8 @@ EXPORTS
 	?setCaption@Element@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?setEnabled@Element@ofxCvGui@@QEAAX_N@Z
 	?setHeight@Element@ofxCvGui@@QEAAXM@Z
+	?setPosition@Element@ofxCvGui@@QEAAXAEBU?$vec@$01M$0A@@glm@@@Z
+	?setWidth@Element@ofxCvGui@@QEAAXM@Z
 	?isBeingInspected@IInspectable@ofxCvGui@@QEBA_NXZ
 	?clear@InspectController@ofxCvGui@@QEAAXXZ
 	?inspect@InspectController@ofxCvGui@@QEAAXV?$shared_ptr@VIInspectable@ofxCvGui@@@std@@@Z
@@ -529,6 +533,7 @@ EXPORTS
 	?setScissorEnabled@ScissorManager@Utils@ofxCvGui@@QEAAX_N@Z
 	?getSingletonStore@?$Singleton@VScissorManager@Utils@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	?getSingletonStore@?$Singleton@VController@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
+	?add@?$ElementGroup_@VElement@ofxCvGui@@@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?getSingletonStore@?$Singleton@VInspectController@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	??0Button@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXXZ@4@D@Z
 	??0Indicator@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6A?AW4Status@Indicator@Widgets@ofxCvGui@@XZ@4@@Z
@@ -687,6 +692,7 @@ EXPORTS
 	?addInput@Base@Nodes@ofxRulr@@IEAAXV?$shared_ptr@VAbstractPin@Graph@ofxRulr@@@std@@@Z
 	?checkDrawOnWorldStage@Base@Nodes@ofxRulr@@QEAA_NAEBVWhenDrawOnWorldStage@3@@Z
 	?drawWorldAdvanced@Base@Nodes@ofxRulr@@QEAAXAEAUDrawWorldAdvancedArgs@3@@Z
+	?drawWorldStage@Base@Nodes@ofxRulr@@QEAAXXZ
 	?getColor@Base@Nodes@ofxRulr@@QEAAAEBV?$ofColor_@E@@XZ
 	?getIcon@Base@Nodes@ofxRulr@@QEAAAEBVofBaseDraws@@XZ
 	?getInputPins@Base@Nodes@ofxRulr@@QEBAAEBV?$Set@VAbstractPin@Graph@ofxRulr@@@Utils@3@XZ
@@ -694,6 +700,7 @@ EXPORTS
 	?getTypeName@Base@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?manageParameters@Base@Nodes@ofxRulr@@QEAAXAEAVofParameterGroup@@_N@Z
 	?setIcon@Base@Nodes@ofxRulr@@QEAAXV?$shared_ptr@VImage@ofxAssets@@@std@@@Z
+	?setName@Base@Nodes@ofxRulr@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?throwIfMissingAnyConnection@Base@Nodes@ofxRulr@@QEBAXXZ
 	?update@Base@Nodes@ofxRulr@@QEAAXXZ
 	??0Mesh@Data@Nodes@ofxRulr@@QEAA@XZ
@@ -729,12 +736,15 @@ EXPORTS
 	?getGrabber@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VSimple@Grabber@ofxMachineVision@@@std@@XZ
 	?isNewSingleShotFrame@Camera@Item@Nodes@ofxRulr@@QEBA_NXZ
 	?update@Camera@Item@Nodes@ofxRulr@@QEAAXXZ
+	?deserialize@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@@Z
 	?drawWorldStage@RigidBody@Item@Nodes@ofxRulr@@QEAAXXZ
 	?getExtrinsics@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEAVMat@cv@@0_N@Z
 	?getPosition@RigidBody@Item@Nodes@ofxRulr@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?getRotationEuler@RigidBody@Item@Nodes@ofxRulr@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?getRotationQuat@RigidBody@Item@Nodes@ofxRulr@@QEBA?AU?$qua@M$0A@@glm@@XZ
 	?getTransform@RigidBody@Item@Nodes@ofxRulr@@QEBA?AU?$mat@$03$03M$0A@@glm@@XZ
+	?init@RigidBody@Item@Nodes@ofxRulr@@QEAAXXZ
+	?serialize@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@@Z
 	?setExtrinsics@RigidBody@Item@Nodes@ofxRulr@@QEAAXVMat@cv@@0_N@Z
 	?setPosition@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	?setTransform@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBU?$mat@$03$03M$0A@@glm@@@Z

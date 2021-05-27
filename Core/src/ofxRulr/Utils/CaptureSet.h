@@ -93,13 +93,15 @@ namespace ofxRulr {
 			}
 
 			shared_ptr<BaseCapture> makeEmpty() const override {
-				return make_shared<CaptureType>();
+				auto newEntry = make_shared<CaptureType>();
+				return newEntry;
 			}
 
 			virtual std::string getTypeName() const override
 			{
 				return "CaptureSet";
 			}
+
 		protected:
 			bool getIsMultipleSelectionAllowed() override {
 				return AllowMultipleSelection;

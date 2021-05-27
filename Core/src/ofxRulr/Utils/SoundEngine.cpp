@@ -7,6 +7,16 @@ namespace ofxRulr {
 	namespace Utils {
 		//----------
 		SoundEngine::SoundEngine() {
+			this->init();
+		}
+
+		//----------
+		SoundEngine::~SoundEngine() {
+			this->close();
+		}
+
+		//----------
+		void SoundEngine::init() {
 			//try default output device
 			bool success = false;
 #ifdef TARGET_WIN32
@@ -14,8 +24,11 @@ namespace ofxRulr {
 #else
 			auto device = ofSoundDevice::DEFAULT;
 #endif
+			const int bufferSize = 512;
+			const int numBuffers = 4;
+
 			auto devices = this->soundStream.getDeviceList(device);
-			for (auto & device : devices) {
+			for (auto& device : devices) {
 				if (device.isDefaultOutput) {
 					ofSoundStreamSettings settings;
 					settings.setOutDevice(device);
@@ -23,8 +36,8 @@ namespace ofxRulr {
 					settings.numOutputChannels = 2;
 					settings.numInputChannels = 0;
 					settings.sampleRate = 44100;
-					settings.bufferSize = 1024;
-					settings.numBuffers = 1;
+					settings.bufferSize = bufferSize;
+					settings.numBuffers = numBuffers;
 					this->soundStream.setup(settings);
 				}
 			}
@@ -32,7 +45,7 @@ namespace ofxRulr {
 			success = this->soundStream.getNumOutputChannels() > 0;
 			//try again. just look for any that works
 			if (!success) {
-				for (auto & device : devices) {
+				for (auto& device : devices) {
 					if (device.outputChannels >= 2) {
 						ofSoundStreamSettings settings;
 						settings.setOutDevice(device);
@@ -40,8 +53,8 @@ namespace ofxRulr {
 						settings.numOutputChannels = 2;
 						settings.numInputChannels = 0;
 						settings.sampleRate = 44100;
-						settings.bufferSize = 1024;
-						settings.numBuffers = 1;
+						settings.bufferSize = bufferSize;
+						settings.numBuffers = numBuffers;
 						this->soundStream.setup(settings);
 						success = true;
 						break;
@@ -53,10 +66,15 @@ namespace ofxRulr {
 			}
 
 			this->soundStream.setOutput(this);
+			this->isOpen = true;
 		}
 
 		//----------
-		SoundEngine::~SoundEngine() {
+		void SoundEngine::close() {
+			if (!this->isOpen) {
+				return;
+			}
+
 			this->isClosing = true;
 
 			this->activeSoundsMutex.lock();

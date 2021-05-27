@@ -1,0 +1,72 @@
+#pragma once
+
+#include "Constants_Plugin_ArUco.h"
+#include "ofxRulr/Nodes/Base.h"
+#include "ofxRulr/Nodes/Item/Camera.h"
+#include <aruco/aruco.h>
+#include "ofxRulr/Utils/CaptureSet.h"
+
+namespace ofxRulr {
+	namespace Nodes {
+		namespace MarkerMap {
+			class PLUGIN_ARUCO_EXPORTS Markers : public Nodes::Base {
+			public:
+				class Marker : public Utils::AbstractCaptureSet::BaseCapture {
+				public:
+					Marker();
+					string getDisplayString() const override;
+					string getTypeName() const override;
+
+					void setParent(Markers*);
+					void drawWorld();
+
+					void serialize(nlohmann::json&);
+					void deserialize(const nlohmann::json&);
+
+					vector<glm::vec3> getObjectVertices() const;
+					vector<glm::vec3> getWorldVertices() const;
+
+					struct : ofParameterGroup {
+						ofParameter<int> ID{ "ID", 1 };
+						ofParameter<bool> locked{ "Locked", false };
+						ofParameter<float> length{ "Length [m]", 0.16 };
+						PARAM_DECLARE("Marker", ID, locked, length);
+					} parameters;
+				protected:
+					ofxCvGui::ElementPtr getDataDisplay() override;
+					Markers* markers = nullptr;
+					shared_ptr<Nodes::Item::RigidBody> rigidBody;
+				};
+
+				Markers();
+				string getTypeName() const override;
+				void init();
+				void update();
+				void drawWorldStage();
+
+				void populateInspector(ofxCvGui::InspectArguments&);
+				void serialize(nlohmann::json&);
+				void deserialize(const nlohmann::json&);
+
+				ofxCvGui::PanelPtr getPanel() override;
+
+				const ofImage & getMarkerImage(int ID) const;
+
+				void add();
+			protected:
+				shared_ptr<ofxCvGui::Panels::Widgets> panel;
+				Utils::CaptureSet<Marker> markers;
+
+				struct : ofParameterGroup {
+					struct : ofParameterGroup {
+						ofParameter<WhenDrawOnWorldStage> labels{ "Labels", WhenDrawOnWorldStage::Selected };
+						ofParameter<WhenDrawOnWorldStage> outlines{ "Outlines", WhenDrawOnWorldStage::Always };
+						PARAM_DECLARE("Draw", labels, outlines);
+					} draw;
+
+					PARAM_DECLARE("Markers", draw);
+				} parameters;
+			};
+		}
+	}
+}
