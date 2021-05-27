@@ -28,14 +28,15 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<int> ID{ "ID", 1 };
-						ofParameter<bool> locked{ "Locked", false };
+						ofParameter<bool> fixed{ "Fixed", false };
 						ofParameter<float> length{ "Length [m]", 0.16 };
-						PARAM_DECLARE("Marker", ID, locked, length);
+						PARAM_DECLARE("Marker", ID, fixed, length);
 					} parameters;
+
+					shared_ptr<Nodes::Item::RigidBody> rigidBody;
 				protected:
 					ofxCvGui::ElementPtr getDataDisplay() override;
 					Markers* markers = nullptr;
-					shared_ptr<Nodes::Item::RigidBody> rigidBody;
 				};
 
 				Markers();
@@ -52,7 +53,9 @@ namespace ofxRulr {
 
 				const ofImage & getMarkerImage(int ID) const;
 
+				vector<shared_ptr<Marker>> getMarkers() const;
 				void add();
+				void add(shared_ptr<Marker>);
 			protected:
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
 				Utils::CaptureSet<Marker> markers;

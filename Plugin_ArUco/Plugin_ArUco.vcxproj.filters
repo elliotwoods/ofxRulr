@@ -16,6 +16,9 @@
     <Filter Include="src\ofxRulr\Nodes\MarkerMap">
       <UniqueIdentifier>{0833918b-ad1f-4143-9c9c-dc7577559e84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Solvers">
+      <UniqueIdentifier>{8cb021d2-9c5e-4eef-83b8-01f02157a3ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -51,6 +54,12 @@
     <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Markers.cpp">
       <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Calibrate.cpp">
+      <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\MarkerProjections.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\Dictionary.h">
@@ -85,6 +94,12 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Markers.h">
       <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Calibrate.h">
+      <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\MarkerProjections.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

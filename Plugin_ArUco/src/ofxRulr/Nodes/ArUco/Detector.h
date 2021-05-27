@@ -65,10 +65,24 @@ namespace ofxRulr {
 							, threshold
 						);
 					} arucoDetector;
-					
+
+					struct : ofParameterGroup {
+						ofParameter<bool> enabled{ "Enabled", true };
+						ofParameter<int> iterations{ "Iterations", 4, 1, 10 };
+						ofParameter<float> overlap{ "Overlap", 0.5, 0.1, 1.0 };
+						PARAM_DECLARE("Multi crop", enabled, iterations, overlap);
+					} multiCrop;
+
 					ofParameter<float> cornerRefineZone1{ "Corner refine zone 1 %", 0.075, 0, 1 }; // This value works well with our halo markers
 					ofParameter<float> cornerRefineZone2{ "Corner refine zone 2 %", 0.02, 0, 1 }; // This value works well with our halo markers
-					PARAM_DECLARE("Detector", dictionary, markerLength, normalizeImage, arucoDetector, cornerRefineZone1, cornerRefineZone2);
+					PARAM_DECLARE("Detector"
+						, dictionary
+						, markerLength
+						, normalizeImage
+						, arucoDetector
+						, multiCrop
+						, cornerRefineZone1
+						, cornerRefineZone2);
 				} parameters;
 
 				aruco::Dictionary dictionary;

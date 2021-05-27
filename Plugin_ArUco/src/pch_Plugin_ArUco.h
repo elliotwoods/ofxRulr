@@ -18,4 +18,5 @@
 #include "ofxRulr/Nodes/ArUco/OSCRelay.h"
 
 #include "ofxRulr/Nodes/MarkerMap/Markers.h"
+#include "ofxRulr/Nodes/MarkerMap/Calibrate.h"
 

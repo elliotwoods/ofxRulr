@@ -111,12 +111,12 @@ namespace ofxRulr {
 
 					// Locked
 					{
-						auto widget = make_shared<ofxCvGui::Widgets::Toggle>(this->parameters.locked);
+						auto widget = make_shared<ofxCvGui::Widgets::Toggle>(this->parameters.fixed);
 						widget->setCaption("");
 						widget->onDraw += [this](ofxCvGui::DrawArguments& args) {
-							const auto& locked = this->parameters.locked.get();
+							const auto& fixed = this->parameters.fixed.get();
 							auto size = min(args.localBounds.getHeight(), args.localBounds.getWidth()) * 0.9;
-							const auto& image = locked
+							const auto& image = fixed
 								? ofxAssets::image("ofxRulr::lock")
 								: ofxAssets::image("ofxRulr::unlock");
 							image.draw(args.localBounds.getCenter() - glm::vec2(size, size) / 2.0f
@@ -345,6 +345,11 @@ namespace ofxRulr {
 			}
 
 			//---------
+			vector<shared_ptr<Markers::Marker>> Markers::getMarkers() const {
+				return this->markers.getSelection();
+			}
+
+			//---------
 			void Markers::add() {
 				this->throwIfMissingAConnection<ArUco::Detector>();
 				auto detector = this->getInput<ArUco::Detector>();
@@ -357,9 +362,17 @@ namespace ofxRulr {
 				auto index = ofToInt(newIDString);
 				auto marker = make_shared<Marker>();
 				marker->parameters.ID.set(index);
-				marker->parameters.length.set(detector->getMarkerLength());
-				marker->setParent(this);
 
+				this->add(marker);
+			}
+
+			//---------
+			void Markers::add(shared_ptr<Markers::Marker> marker) {
+				this->throwIfMissingAConnection<ArUco::Detector>();
+				auto detector = this->getInput<ArUco::Detector>();
+
+				marker->setParent(this);
+				marker->parameters.length.set(detector->getMarkerLength());
 				this->markers.add(marker);
 			}
 		}

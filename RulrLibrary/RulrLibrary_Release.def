@@ -22,6 +22,7 @@ EXPORTS
 	??0ofBuffer@@QEAA@AEAV?$basic_istream@DU?$char_traits@D@std@@@std@@_K@Z
 	??0ofBuffer@@QEAA@PEBD_K@Z
 	??0ofBuffer@@QEAA@XZ
+	??0ofDirectory@@QEAA@AEBVpath@filesystem@boost@@@Z
 	??0ofFbo@@QEAA@XZ
 	??0ofFboSettings@@QEAA@V?$shared_ptr@VofBaseGLRenderer@@@std@@@Z
 	??0ofFile@@QEAA@AEBVpath@filesystem@boost@@W4Mode@0@_N@Z
@@ -152,6 +153,7 @@ EXPORTS
 	?ofToDataPath@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVpath@filesystem@boost@@_N@Z
 	?ofToFloat@@YAMAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?ofToInt@@YAHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?ofToLower@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@0@Z
 	?ofTranslate@@YAXAEBU?$vec@$01M$0A@@glm@@@Z
 	?ofTranslate@@YAXAEBU?$vec@$02M$0A@@glm@@@Z
 	?ofTranslate@@YAXMMM@Z
@@ -309,7 +311,9 @@ EXPORTS
 	?set@ofBuffer@@QEAAXPEBD_K@Z
 	?size@ofBuffer@@QEBA_KXZ
 	?worldToScreen@ofCamera@@QEBA?AU?$vec@$02M$0A@@glm@@U23@AEBVofRectangle@@@Z
+	?begin@ofDirectory@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@VofFile@@@std@@@std@@@std@@XZ
 	?createDirectory@ofDirectory@@SA_NAEBVpath@filesystem@boost@@_N1@Z
+	?end@ofDirectory@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@VofFile@@@std@@@std@@@std@@XZ
 	?allocate@ofFbo@@QEAAXHHHH@Z
 	?allocate@ofFbo@@QEAAXUofFboSettings@@@Z
 	?begin@ofFbo@@QEBAXW4ofFboMode@@@Z
@@ -321,6 +325,8 @@ EXPORTS
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@E@@H@Z
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@M@@H@Z
 	?unbind@ofFbo@@QEBAXXZ
+	?getAbsolutePath@ofFile@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?getExtension@ofFile@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?open@ofFile@@QEAA_NAEBVpath@filesystem@boost@@W4Mode@1@_N@Z
 	?readToBuffer@ofFile@@QEAA?AVofBuffer@@XZ
 	?getPath@ofFileDialogResult@@QEAA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -345,6 +351,7 @@ EXPORTS
 	?getGlobalTransformMatrix@ofNode@@QEBA?AU?$mat@$03$03M$0A@@glm@@XZ
 	?getPosition@ofNode@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?lookAt@ofNode@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
+	?setOrientation@ofNode@@QEAAXAEBU?$qua@M$0A@@glm@@@Z
 	?setPosition@ofNode@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	?add@ofParameterGroup@@QEAAXAEAVofAbstractParameter@@@Z
 	?fromString@ofParameterGroup@@UEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -658,6 +665,7 @@ EXPORTS
 	?getViewMatrix@Projector@ofxRay@@QEBA?AU?$mat@$03$03M$0A@@glm@@XZ
 	?getWidth@Projector@ofxRay@@QEBAHXZ
 	?randomiseVectors@Projector@ofxRay@@UEAAXM@Z
+	?setFarClip@Projector@ofxRay@@QEAAXM@Z
 	?closestPointOnRayTo@Ray@ofxRay@@QEBA?AU?$vec@$02M$0A@@glm@@AEBU34@@Z
 	?distanceTo@Ray@ofxRay@@QEBAMAEBU?$vec@$02M$0A@@glm@@@Z
 	?draw@Ray@ofxRay@@UEBAXXZ
@@ -752,6 +760,7 @@ EXPORTS
 	?getDistortionCoefficients@View@Item@Nodes@ofxRulr@@QEBA?AVMat@cv@@XZ
 	?getHeight@View@Item@Nodes@ofxRulr@@QEBAMXZ
 	?getSize@View@Item@Nodes@ofxRulr@@QEBA?AV?$Size_@H@cv@@XZ
+	?getViewInObjectSpace@View@Item@Nodes@ofxRulr@@QEBAAEBVCamera@ofxRay@@XZ
 	?getViewInWorldSpace@View@Item@Nodes@ofxRulr@@QEBA?AVCamera@ofxRay@@XZ
 	?getWidth@View@Item@Nodes@ofxRulr@@QEBAMXZ
 	?setHeight@View@Item@Nodes@ofxRulr@@QEAAXM@Z
