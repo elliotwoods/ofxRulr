@@ -105,6 +105,11 @@ namespace ofxRulr {
 			solverSettings.printReport = true;
 			solverSettings.options.max_num_iterations = 10000;
 			solverSettings.options.function_tolerance = 1e-8;
+			//solverSettings.options.num_threads = std::thread::hardware_concurrency() - 2;
+
+			// according to http://ceres-solver.org/solving_faqs.html
+			solverSettings.options.linear_solver_type = ceres::LinearSolverType::DENSE_SCHUR;
+
 			return solverSettings;
 		}
 
@@ -278,10 +283,34 @@ namespace ofxRulr {
 				}
 			}
 
+			// Calculate reprojection error per image
+			{
+				for (const auto& image : images) {
+					MarkerProjection_Cost costFunction(cameraWidth
+						, cameraHeight
+						, cameraProjectionMatrix
+						, image.imagePoints
+						, objectPoints[image.objectIndex]);
+
+					vector<double> residuals(image.imagePoints.size());
+					costFunction(allViewParameters[image.viewIndex]
+						, allObjectParameters[image.objectIndex]
+						, residuals.data());
+
+					float residual = 0.0f;
+					for (const auto r : residuals) {
+						residual += r;
+					}
+					residual /= (float) residuals.size();
+					result.solution.reprojectionErrorPerImage.push_back(residual);
+				}
+			}
+
 			// Delete the parameters
 			for (auto parameters : allParameters) {
 				delete[] parameters;
 			}
+
 
 			return result;
 		}

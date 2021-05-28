@@ -14,7 +14,13 @@ namespace ofxRulr {
 			string Calibrate::Capture::getDisplayString() const {
 				stringstream ss;
 				for (const auto& ID : this->IDs) {
-					ss << ID << " ";
+					ss << ID << ", ";
+				}
+				if (!this->residuals.empty()) {
+					ss << std::endl;
+					for (const auto& residual : this->residuals) {
+						ss << ofToString(residual, 2) << ", ";
+					}
 				}
 				return ss.str();
 			}
@@ -25,15 +31,21 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Calibrate::Capture::serialize(nlohmann::json& json) {
+			void Calibrate::Capture::serialize(nlohmann::json& json) const {
 				Utils::serialize(json, "IDs", this->IDs);
 				Utils::serialize(json, "imagePoints", this->imagePoints);
+				Utils::serialize(json, "residuals", this->residuals);
+				Utils::serialize(json, "cameraView", this->cameraView);
+				Utils::serialize(json, "cameraRays", this->cameraRays);
 			}
 
 			//----------
 			void Calibrate::Capture::deserialize(const nlohmann::json& json) {
 				Utils::deserialize(json, "IDs", this->IDs);
 				Utils::deserialize(json, "imagePoints", this->imagePoints);
+				Utils::deserialize(json, "residuals", this->residuals);
+				Utils::deserialize(json, "cameraView", this->cameraView);
+				Utils::deserialize(json, "cameraRays", this->cameraRays);
 			}
 
 #pragma mark Calibrate
@@ -438,6 +450,7 @@ namespace ofxRulr {
 								, true);
 							capture->cameraView = camera->getViewInWorldSpace();
 							capture->cameraView.setFarClip(this->parameters.debug.cameraFarPlane.get());
+							capture->cameraView.color = capture->color;
 						}
 					}
 				}
@@ -541,7 +554,17 @@ namespace ofxRulr {
 										capture->cameraRays.push_back(ray);
 									}
 								}
+							}
 
+							// Get residuals per image
+							if (solution.reprojectionErrorPerImage.size() == images.size()) {
+								for (auto capture : activeCaptures) {
+									capture->residuals.clear();
+								}
+								for (size_t i = 0; i < images.size(); i++) {
+									auto& image = images[i];
+									activeCaptures[image.viewIndex]->residuals.push_back(solution.reprojectionErrorPerImage[i]);
+								}
 							}
 						};
 

@@ -16,6 +16,8 @@ namespace ofxRulr {
 
 				// Note that view transforms are inverted
 				vector<Transform> views;
+
+				vector<float> reprojectionErrorPerImage;
 			};
 
 			struct Image {

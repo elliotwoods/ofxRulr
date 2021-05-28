@@ -19,12 +19,13 @@ namespace ofxRulr {
 
 					void drawWorld();
 
-					void serialize(nlohmann::json&);
+					void serialize(nlohmann::json&) const;
 					void deserialize(const nlohmann::json&);
 
 					vector<int> IDs;
 					vector<vector<glm::vec2>> imagePoints;
-					
+					vector<float> residuals;
+
 					ofxRay::Camera cameraView;
 					vector<ofxRay::Ray> cameraRays;
 				};
@@ -54,9 +55,9 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true };
-							ofParameter<int> maxIterations{ "Max iterations", 1000 };
-							ofParameter<float> functionTolerance{ "Function tolerance", 1e-8 };
-							ofParameter<bool> useIncompleteSolution{ "Use imcomplete solution",false };
+							ofParameter<int> maxIterations{ "Max iterations", 10000 };
+							ofParameter<float> functionTolerance{ "Function tolerance", 1e-9 };
+							ofParameter<bool> useIncompleteSolution{ "Use imcomplete solution",true };
 							PARAM_DECLARE("Bundle Adjustment", enabled, maxIterations, functionTolerance, useIncompleteSolution);
 						} bundleAdjustment;
 						PARAM_DECLARE("Calibration", bundleAdjustment);
