@@ -19,4 +19,5 @@
 
 #include "ofxRulr/Nodes/MarkerMap/Markers.h"
 #include "ofxRulr/Nodes/MarkerMap/Calibrate.h"
+#include "ofxRulr/Nodes/MarkerMap/NavigateCamera.h"
 

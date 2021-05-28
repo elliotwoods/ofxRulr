@@ -7,11 +7,12 @@
 namespace ofxRulr {
 	namespace Utils {
 		//--
-		// GLM
+		// ofxRay
 		//--
 		//
 		DECLARE_SERIALIZE_VAR(ofxRay::Ray);
 		DECLARE_SERIALIZE_VAR(ofxRay::Plane);
+		DECLARE_SERIALIZE_VAR(ofxRay::Camera)
 		//
 		//--
 	}

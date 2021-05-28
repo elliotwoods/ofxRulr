@@ -130,7 +130,12 @@ namespace ofxRulr {
 				, const glm::vec3& mirrorNormal
 				, float diameter)
 		{
-			auto lookAt = glm::lookAt(mirrorCenter, mirrorCenter + mirrorNormal, glm::vec3(0, 1, 0));
+			auto up = (mirrorNormal == glm::vec3(0, -1, 0)
+				|| mirrorNormal == glm::vec3(0, 1, 0))
+				? glm::vec3(0, 0, 1)
+				: glm::vec3(0, -1, 0);
+
+			auto lookAt = glm::lookAt(mirrorCenter, mirrorCenter + mirrorNormal, up);
 
 			ofPushMatrix();
 			{

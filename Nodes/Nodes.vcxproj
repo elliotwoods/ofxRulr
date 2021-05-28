@@ -161,7 +161,6 @@ if errorlevel 1 exit 0</Command>
     <ClInclude Include="src\ofxRulr\Nodes\Test\Latency.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Camera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Watchdog\Startup.h" />
-    <ClInclude Include="src\ofxRulr\Utils\Serialization\Nodes.h" />
     <ClInclude Include="src\ofxRulr\Utils\VideoOutputListener.h" />
     <ClInclude Include="src\pch_RulrNodes.h" />
   </ItemGroup>
@@ -243,7 +242,6 @@ if errorlevel 1 exit 0</Command>
     <ClCompile Include="src\ofxRulr\Nodes\Test\Latency.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Camera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Watchdog\Startup.cpp" />
-    <ClCompile Include="src\ofxRulr\Utils\Serialization\Nodes.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\VideoOutputListener.cpp" />
     <ClCompile Include="src\pch_RulrNodes.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -23,16 +23,22 @@ namespace ofxRulr {
 						// Pivot point
 						ofParameter<glm::vec3> position{ "Position", {0, 0, 0} };
 
+						// Rotation
+						ofParameter<float> rotationY{ "Rotation Y", 0, -180, 180 };
+
 						AxisParameters axis1;
 						AxisParameters axis2;
 						ofParameter<float> mirrorOffset{ "Mirror offset", 0.14, 0.1, 0.2 };
-						PARAM_DECLARE("HAM", position, axis1, axis2, mirrorOffset);
+
+						PARAM_DECLARE("HAM", position, rotationY, mirrorOffset);
 
 						HAMParameters() {
 							// the axis points out of the motor face
 							axis1.setName("Axis 1");
 							axis2.setName("Axis 2");
 							axis2.rotationAxis.set({ 1.0f, 0, 0 });
+							this->add(axis1);
+							this->add(axis2);
 						}
 					};
 
@@ -77,7 +83,7 @@ namespace ofxRulr {
 
 							Parameters()
 							: servo1("Servo 1", this->hamParameters.axis1)
-							, servo2("Servo 2", this->hamParameters.axis1) {
+							, servo2("Servo 2", this->hamParameters.axis2) {
 							}
 
 							PARAM_DECLARE("Heliostat"
@@ -118,8 +124,10 @@ namespace ofxRulr {
 					void drawWorldStage();
 
 					vector<shared_ptr<Heliostat>> getHeliostats();
+
 					void add(shared_ptr<Heliostat>);
 					void removeHeliostat(shared_ptr<Heliostat> heliostat);
+					void importCSV();
 
 					void faceAllTowardsCursor();
 					void faceAllAway();
@@ -129,6 +137,7 @@ namespace ofxRulr {
 					void pullAll();
 
 					cv::Mat drawMirrorFaceMask(shared_ptr<Heliostat>, const ofxRay::Camera&);
+
 				protected:
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {

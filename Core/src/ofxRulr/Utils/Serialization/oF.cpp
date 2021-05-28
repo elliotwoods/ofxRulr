@@ -155,6 +155,5 @@ namespace ofxRulr {
 		DEFINE_SERIALIZE_VAR(ofColor_<uint8_t>);
 		DEFINE_SERIALIZE_VAR(ofColor_<uint16_t>);
 		DEFINE_SERIALIZE_VAR(ofColor_<float>);
-
 	}
 }

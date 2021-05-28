@@ -21,6 +21,7 @@
 #include "ofxRulr/Utils/Utils.h"
 #include "ofxRulr/Nodes/GraphicsManager.h"
 
-#include "ofxRulr/Utils/Serialization/Native.h"
 #include "ofxRulr/Utils/Serialization/oF.h"
 #include "ofxRulr/Utils/Serialization/Parameters.h"
+#include "ofxRulr/Utils/Serialization/Addons.h"
+#include "ofxRulr/Utils/Serialization/Native.h"

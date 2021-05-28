@@ -23,6 +23,7 @@ namespace ofxRulr {
 				};
 
 				glm::tvec3<T> position;
+				T rotationY;
 
 				Axis axis1;
 				Axis axis2;
@@ -33,6 +34,7 @@ namespace ofxRulr {
 				Parameters<T2> castTo() const {
 					Parameters<T2> newParameters;
 					newParameters.position = glm::tvec3<T2>(this->position);
+					newParameters.rotationY = (T2) this->rotationY;
 					newParameters.axis1.polynomial = glm::tvec3<T2>(this->axis1.polynomial);
 					newParameters.axis1.rotationAxis = glm::tvec3<T2>(this->axis1.rotationAxis);
 					newParameters.axis1.angleRange.minimum = (T2)this->axis1.angleRange.minimum;
@@ -46,6 +48,7 @@ namespace ofxRulr {
 				}
 
 				void toParameterStrings(T* positionParameters
+					, T* rotationYParameters
 					, T* rotationAxisParameters
 					, T* polynomialParameters
 					, T* mirrorOffsetParameters) const {
@@ -53,6 +56,9 @@ namespace ofxRulr {
 					positionParameters[0] = this->position[0];
 					positionParameters[1] = this->position[1];
 					positionParameters[2] = this->position[2];
+
+					// rotation Y
+					rotationYParameters[0] = this->rotationY;
 
 					// rotationAxisParameters
 					{
@@ -81,6 +87,7 @@ namespace ofxRulr {
 				}
 
 				void fromParameterStrings(const T* const positionParameters
+						, const T* const yRotationParameters
 						, const T* const rotationAxisParameters
 						, const T* const polynomialParameters
 						, const T* const mirrorOffsetParameters) {
@@ -88,6 +95,9 @@ namespace ofxRulr {
 					this->position[0] = positionParameters[0];
 					this->position[1] = positionParameters[1];
 					this->position[2] = positionParameters[2];
+
+					// y rotation
+					this->rotationY = yRotationParameters[0];
 
 					// rotationAxisParameters
 					{
@@ -130,6 +140,8 @@ namespace ofxRulr {
 				, glm::tvec3<T>& normal) {
 
 				auto mirrorTransform = glm::translate<T>(parameters.position)
+					* glm::rotate<T>(parameters.rotationY * DEG_TO_RAD
+						, glm::tvec3<T>(0, 1, 0))
 					* glm::rotate<T>(axisAngles.axis1 * DEG_TO_RAD
 						, glm::normalize(parameters.axis1.rotationAxis))
 					* glm::rotate<T>(axisAngles.axis2 * DEG_TO_RAD
@@ -209,9 +221,11 @@ namespace ofxRulr {
 
 				struct Options {
 					float mirrorDiameter = 0.35f;
-					bool fixPolynomial = true;
+					bool fixPosition = false;
+					bool fixRotationY = true;
 					bool fixRotationAxis = true;
 					bool fixMirrorOffset = true;
+					bool fixPolynomial = true;
 				};
 
 				static Result solveCalibration(const vector<ofxRay::Ray>& cameraRays

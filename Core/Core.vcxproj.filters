@@ -177,6 +177,9 @@
     <ClCompile Include="src\ofxRulr\Utils\Serialization\Parameters.cpp">
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Serialization\Addons.cpp">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">
@@ -330,6 +333,9 @@
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\Serialization\Parameters.h">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Serialization\Addons.h">
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClInclude>
   </ItemGroup>

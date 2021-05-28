@@ -6,6 +6,8 @@
 #include "ofRectangle.h"
 #include "ofColor.h"
 
+#include "ofxRay.h"
+
 namespace ofxRulr {
 	namespace Utils {
 		//--
@@ -43,6 +45,5 @@ namespace ofxRulr {
 		DECLARE_SERIALIZE_VAR(ofFloatColor)
 		//
 		//--
-
 	}
 }

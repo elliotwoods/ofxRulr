@@ -58,6 +58,12 @@ namespace ofxRulr {
 						auto heliostat = make_shared<Heliostat>();
 						this->heliostats.add(heliostat);
 						});
+					inspector->addButton("Import CSV", [this]() {
+						try {
+							this->importCSV();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
 					inspector->addButton("Face towards cursor", [this]() {
 						try {
 							this->faceAllTowardsCursor();
@@ -158,6 +164,63 @@ namespace ofxRulr {
 				//----------
 				void Heliostats2::removeHeliostat(shared_ptr<Heliostat> heliostat) {
 					this->heliostats.remove(heliostat);
+				}
+
+				//----------
+				void Heliostats2::importCSV() {
+					auto result = ofSystemLoadDialog("Load CSV file", false);
+					if (!result.bSuccess) {
+						return;
+					}
+					auto fileContents = (string) ofFile(result.filePath, ofFile::ReadOnly).readToBuffer();
+					auto fileLines = ofSplitString(fileContents, "\n");
+
+					// Ignore first line (headers)
+					for (size_t i = 1; i < fileLines.size(); i++) {
+						auto cols = ofSplitString(fileLines[i], ",");
+						if (cols.size() < 7) {
+							continue;
+						}
+
+						shared_ptr<Heliostats2::Heliostat> heliostat;
+						
+						auto name = cols[0];
+						bool isNew = false;
+
+						// check if heliostat already exists
+						{
+							auto heliostats = this->heliostats.getAllCaptures();
+							for (auto existingHeliostat : heliostats) {
+								if (existingHeliostat->parameters.name.get() == name) {
+									heliostat = existingHeliostat;
+								}
+							}
+
+							if (!heliostat) {
+								heliostat = make_shared<Heliostats2::Heliostat>();
+								heliostat->parameters.name.set(cols[0]);
+								isNew = true;
+							}
+						}
+
+						{
+							glm::vec3 value{
+								ofToFloat(cols[1])
+								, ofToFloat(cols[2])
+								, ofToFloat(cols[3])
+							};
+							heliostat->parameters.hamParameters.position.set(value);
+						}
+
+						heliostat->parameters.hamParameters.rotationY.set(ofToFloat(cols[4]));
+
+						heliostat->parameters.servo1.ID.set(ofToInt(cols[5]));
+						heliostat->parameters.servo2.ID.set(ofToInt(cols[6]));
+
+						if (isNew) {
+							this->add(heliostat);
+						}
+					}
 				}
 
 				//----------

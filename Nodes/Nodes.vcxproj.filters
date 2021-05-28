@@ -109,9 +109,6 @@
     <Filter Include="src\ofxRulr\Nodes\Watchdog">
       <UniqueIdentifier>{234df221-fa97-4ae6-9da2-86b30767da39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ofxRulr\Utils\Serialization">
-      <UniqueIdentifier>{d24170b4-fb06-41c2-ac36-86af5e3be2b5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ofxSpinCursor\src\ofxSpinCursor.h">
@@ -279,9 +276,6 @@
     <ClInclude Include="src\ofxRulr\Nodes\IHasVertices.h">
       <Filter>src\ofxRulr\Nodes</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Serialization\Nodes.h">
-      <Filter>src\ofxRulr\Utils\Serialization</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Item\BoardInWorld.h">
       <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClInclude>
@@ -439,9 +433,6 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\IHasVertices.cpp">
       <Filter>src\ofxRulr\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Serialization\Nodes.cpp">
-      <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Item\BoardInWorld.cpp">
       <Filter>src\ofxRulr\Nodes\Item</Filter>

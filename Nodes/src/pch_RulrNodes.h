@@ -14,5 +14,3 @@
 #include "ofxSpinCursor.h"
 #include "ofxTriangulate.h"
 
-//Serializers
-#include "ofxRulr/Utils/Serialization/Nodes.h"

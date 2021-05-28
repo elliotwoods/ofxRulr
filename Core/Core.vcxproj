@@ -82,6 +82,7 @@
     <ClCompile Include="src\ofxRulr\Utils\PolyFit.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\ScopedProcess.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\Serialization\Addons.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Serialization\Native.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Serialization\oF.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Serialization\Parameters.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="src\ofxRulr\Utils\PolyFit.h" />
     <ClInclude Include="src\ofxRulr\Utils\ScopedProcess.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serializable.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Serialization\Addons.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serialization\Native.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serialization\oF.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serialization\Parameters.h" />
@@ -161,6 +163,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\ofxCanon\ofxCanonLib\ofxCanonLib.vcxproj">
       <Project>{b6ef2661-4d10-4dae-b4cf-bd0a92ea864c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ofxRay\ofxRayLib\ofxRayLib.vcxproj">
+      <Project>{048e1ec4-64fe-4aac-b524-1bd56a1fc726}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\ofxSpout\ofxSpoutLib\ofxSpout.vcxproj">
       <Project>{3985ee69-9945-40c4-839b-c21a17d5f151}</Project>

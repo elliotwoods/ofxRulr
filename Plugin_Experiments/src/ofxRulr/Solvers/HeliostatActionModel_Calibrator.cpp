@@ -23,6 +23,7 @@ struct HeliostatActionModel_CalibratorRayCost
 	template<typename T>
 	bool
 		operator()(const T* const positionParameters
+			, const T* const rotationYParameters
 			, const T* const rotationAxisParameters
 			, const T* const polynomialParameters
 			, const T* const mirrorOffsetParameters
@@ -31,6 +32,7 @@ struct HeliostatActionModel_CalibratorRayCost
 		// Construct the HAM::Parameters
 		HeliostatActionModel::Parameters<T> hamParameters;
 		hamParameters.fromParameterStrings(positionParameters
+			, rotationYParameters
 			, rotationAxisParameters
 			, polynomialParameters
 			, mirrorOffsetParameters);
@@ -100,7 +102,7 @@ struct HeliostatActionModel_CalibratorRayCost
 			, const float axis2ServoPosition
 			, const float mirrorDiameter)
 	{
-		return new ceres::AutoDiffCostFunction<HeliostatActionModel_CalibratorRayCost, 2, 3, 4, 6, 1>(
+		return new ceres::AutoDiffCostFunction<HeliostatActionModel_CalibratorRayCost, 2, 3, 1, 4, 6, 1>(
 			new HeliostatActionModel_CalibratorRayCost(cameraRay, worldPoint, axis1ServoPosition, axis2ServoPosition, mirrorDiameter)
 			);
 	}
@@ -149,10 +151,12 @@ namespace ofxRulr {
 
 			// Initialise parameters
 			double positionParameters[3];
+			double rotationYParameters[1];
 			double rotationAxisParameters[4];
 			double polynomialParameters[6];
 			double mirrorOffsetParameters[1];
 			priorParameters.castTo<double>().toParameterStrings(positionParameters
+				, rotationYParameters
 				, rotationAxisParameters
 				, polynomialParameters
 				, mirrorOffsetParameters);
@@ -170,6 +174,7 @@ namespace ofxRulr {
 						problem.AddResidualBlock(costFunction
 							, NULL
 							, positionParameters
+							, rotationYParameters
 							, rotationAxisParameters
 							, polynomialParameters
 							, mirrorOffsetParameters
@@ -180,14 +185,20 @@ namespace ofxRulr {
 
 			// Apply the options
 			{
-				if (options.fixPolynomial) {
-					problem.SetParameterBlockConstant(polynomialParameters);
+				if (options.fixPosition) {
+					problem.SetParameterBlockConstant(positionParameters);
+				}
+				if (options.fixRotationY) {
+					problem.SetParameterBlockConstant(rotationYParameters);
 				}
 				if (options.fixRotationAxis) {
 					problem.SetParameterBlockConstant(rotationAxisParameters);
 				}
 				if (options.fixMirrorOffset) {
 					problem.SetParameterBlockConstant(mirrorOffsetParameters);
+				}
+				if (options.fixPolynomial) {
+					problem.SetParameterBlockConstant(polynomialParameters);
 				}
 			}
 
@@ -206,6 +217,7 @@ namespace ofxRulr {
 			{
 				Parameters<double> resultDouble;
 				resultDouble.fromParameterStrings(positionParameters
+					, rotationYParameters
 					, rotationAxisParameters
 					, polynomialParameters
 					, mirrorOffsetParameters);
@@ -232,10 +244,12 @@ namespace ofxRulr {
 
 			// Initialise parameters
 			double positionParameters[3];
+			double rotationYParameters[1];
 			double rotationAxisParameters[4];
 			double polynomialParameters[6];
 			double mirrorOffsetParameters[1];
 			hamParameters.castTo<double>().toParameterStrings(positionParameters
+				, rotationYParameters
 				, rotationAxisParameters
 				, polynomialParameters
 				, mirrorOffsetParameters);
@@ -243,6 +257,7 @@ namespace ofxRulr {
 			double residual;
 
 			costFunction(positionParameters
+				, rotationYParameters
 				, rotationAxisParameters
 				, polynomialParameters
 				, mirrorOffsetParameters

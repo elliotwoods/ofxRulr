@@ -15,6 +15,7 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MarkerMap::Markers);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MarkerMap::Calibrate);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::MarkerMap::NavigateCamera);
 
 }
 OFXPLUGIN_PLUGIN_MODULES_END
