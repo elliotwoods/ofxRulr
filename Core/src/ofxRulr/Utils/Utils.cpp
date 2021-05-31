@@ -70,5 +70,20 @@ namespace ofxRulr {
 				, result.y
 			};
 		}
+
+		//----------
+		void speakCount(size_t count)
+		{
+			if (count == 0) {
+				ofxAssets::sound("ofxRulr::failure").play();
+			}
+			else if (count <= 20) {
+				auto& sound = ofxAssets::sound("ofxRulr::" + ofToString(count));
+				sound.play();
+			}
+			else {
+				ofxAssets::sound("ofxRulr::success").play();
+			}
+		}
 	}
 }

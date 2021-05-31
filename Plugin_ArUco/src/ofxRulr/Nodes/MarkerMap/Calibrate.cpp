@@ -409,6 +409,8 @@ namespace ofxRulr {
 
 				// Get all view transforms into captures
 				{
+					Utils::ScopedProcess scopedProcessGetViews("Gather all view transforms", false);
+
 					for (auto capture : activeCaptures) {
 						auto size = capture->IDs.size();
 
@@ -458,6 +460,8 @@ namespace ofxRulr {
 				// Perform the bundle adjustment solve
 				vector<int> markerIDs;
 				{
+					Utils::ScopedProcess scopedProcessBundleAdjustment("Bundle adjustment", false);
+
 					std::vector<vector<glm::vec3>> objectPoints;
 					vector<Solvers::MarkerProjections::Image> images;
 					Solvers::MarkerProjections::Solution initialSolution;

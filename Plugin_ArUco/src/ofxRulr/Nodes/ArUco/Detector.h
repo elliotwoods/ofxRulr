@@ -35,6 +35,10 @@ namespace ofxRulr {
 					, (Original, MIP_3612h, ARTKP, ARTAG)
 					, ("Original", "MIP_3612h", "ARTK+", "ARTAG"));
 
+				MAKE_ENUM(Preview
+					, (Raw, Normalised, Thresholded, None)
+					, ("Raw", "Normalised", "Thresholded", "None"));
+
 				void rebuildDetector();
 
 				void changeDetectorCallback(DetectorType &);
@@ -45,8 +49,7 @@ namespace ofxRulr {
 				struct : ofParameterGroup {
 					ofParameter<DetectorType> dictionary{ "Detector type", DetectorType::Original };
 					ofParameter<float> markerLength{ "Marker length [m]", 0.05, 0.001, 10 };
-					ofParameter<bool> normalizeImage{ "Normalize image", false };
-					
+
 					struct : ofParameterGroup {
 						ofParameter<int> threads{ "Threads", 8};
 						ofParameter<bool> enclosedMarkers{ "Enclosed markers", false };
@@ -67,22 +70,47 @@ namespace ofxRulr {
 					} arucoDetector;
 
 					struct : ofParameterGroup {
-						ofParameter<bool> enabled{ "Enabled", true };
-						ofParameter<int> iterations{ "Iterations", 4, 1, 10 };
-						ofParameter<float> overlap{ "Overlap", 0.5, 0.1, 1.0 };
-						PARAM_DECLARE("Multi crop", enabled, iterations, overlap);
-					} multiCrop;
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", true };
+							PARAM_DECLARE("Normalize", enabled);
+						} normalize;
 
-					ofParameter<float> cornerRefineZone1{ "Corner refine zone 1 %", 0.075, 0, 1 }; // This value works well with our halo markers
-					ofParameter<float> cornerRefineZone2{ "Corner refine zone 2 %", 0.02, 0, 1 }; // This value works well with our halo markers
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", true };
+							ofParameter<int> iterations{ "Iterations", 4, 1, 10 };
+							ofParameter<float> overlap{ "Overlap", 0.5, 0.1, 1.0 };
+							PARAM_DECLARE("Multi crop", enabled, iterations, overlap);
+						} multiCrop;
+
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", true };
+							ofParameter<int> maxBrightess{ "Max brightness [x]", 4};
+							PARAM_DECLARE("Multi brightness", enabled, maxBrightess);
+						} multiBrightness;
+
+						PARAM_DECLARE("Strategies", normalize, multiCrop, multiBrightness)
+					} strategies;
+					
+
+					struct : ofParameterGroup {
+						ofParameter<float> zone1{ "Zone 1 %", 0.075, 0, 1 }; // This value works well with our halo markers
+						ofParameter<float> zone2{ "Zone 2 %", 0.02, 0, 1 }; // This value works well with our halo markers
+						PARAM_DECLARE("Corner refinement", zone1, zone2);
+					} cornerRefinement;
+					
+					struct : ofParameterGroup {
+						ofParameter<bool> speakCount{ "Speak count", true };
+						ofParameter<Preview> preview{ "Preview", Preview::Raw };
+						PARAM_DECLARE("Debug", speakCount)
+					} debug;
+
 					PARAM_DECLARE("Detector"
 						, dictionary
 						, markerLength
-						, normalizeImage
 						, arucoDetector
-						, multiCrop
-						, cornerRefineZone1
-						, cornerRefineZone2);
+						, strategies
+						, cornerRefinement
+						, debug);
 				} parameters;
 
 				aruco::Dictionary dictionary;
@@ -93,10 +121,14 @@ namespace ofxRulr {
 
 				//useful when debugging to research quickly
 				struct {
-					cv::Mat image;
+					cv::Mat thresholded;
+					cv::Mat normalisedImage;
+					cv::Mat rawImage;
 				} lastDetection;
 
 				ofImage preview;
+				Preview cachedPreviewType = Preview::Raw;
+
 				vector<aruco::Marker> foundMarkers;
 				ofxCvGui::PanelPtr panel;
 

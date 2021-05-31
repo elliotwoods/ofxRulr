@@ -13,12 +13,19 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 				void update();
+				void drawWorldStage();
 				void track(const cv::Mat& image);
 				void populateInspector(ofxCvGui::InspectArguments&);
 			protected:
 				struct : ofParameterGroup {
 					ofParameter<bool> onNewFrame{ "On new frame", true };
 					ofParameter<int> minMarkerCount{ "Minimum marker count", 3 };
+					
+					struct : ofParameterGroup {
+						ofParameter<bool> enabled{ "Enabled", true };
+						ofParameter<float> searchRange{ "Search range", 2.0f, 1.0f, 10.0f };
+						PARAM_DECLARE("Enabled", enabled, searchRange);
+					} findMissingMarkers;
 
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", true };
@@ -27,9 +34,22 @@ namespace ofxRulr {
 						PARAM_DECLARE("RANSAC", enabled, maxIterations, reprojectionError);
 					} ransac;
 
+					struct : ofParameterGroup {
+						ofParameter<bool> speakCount{ "Speak count", true };
+						PARAM_DECLARE("Debug", speakCount)
+					} debug;
+
 					ofParameter<bool> useExtrinsicGuess{ "Use extrinsic guess", false };
-					PARAM_DECLARE("MarkerMapPoseTracker", onNewFrame, minMarkerCount, ransac, useExtrinsicGuess);
+					PARAM_DECLARE("MarkerMapPoseTracker"
+						, onNewFrame
+						, minMarkerCount
+						, findMissingMarkers
+						, ransac
+						, useExtrinsicGuess
+					, debug);
 				} parameters;
+
+				vector<ofxRay::Ray> cameraRays;
 			};
 		}
 	}

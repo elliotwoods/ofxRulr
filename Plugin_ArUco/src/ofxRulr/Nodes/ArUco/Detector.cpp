@@ -148,28 +148,32 @@ namespace ofxRulr {
 				{
 					auto panel = ofxCvGui::Panels::makeImage(this->preview);
 					panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
-						ofPushStyle();
-						{
-							ofNoFill();
-							ofSetColor(255, 100, 100);
-							ofSetLineWidth(2.0f);
+						auto previewType = this->parameters.debug.preview.get();
+						if (previewType == Preview::Raw
+							|| previewType == Preview::Normalised) {
+							ofPushStyle();
+							{
+								ofNoFill();
+								ofSetColor(255, 100, 100);
+								ofSetLineWidth(2.0f);
 
-							for (const auto & marker : this->foundMarkers) {
-								ofPolyline line;
-								for (const cv::Point2f & point : marker) {
-									line.addVertex({
-										point.x
-										, point.y
-										, 0.0f
-										});
+								for (const auto & marker : this->foundMarkers) {
+									ofPolyline line;
+									for (const cv::Point2f & point : marker) {
+										line.addVertex({
+											point.x
+											, point.y
+											, 0.0f
+											});
+									}
+									line.close();
+									line.draw();
+
+									ofDrawBitmapString(ofToString(marker.id), ofxCv::toOf(marker.getCenter()));
 								}
-								line.close();
-								line.draw();
-
-								ofDrawBitmapString(ofToString(marker.id), ofxCv::toOf(marker.getCenter()));
 							}
+							ofPopStyle();
 						}
-						ofPopStyle();
 					};
 					this->panel = panel;
 				}
@@ -189,6 +193,29 @@ namespace ofxRulr {
 				if(this->detectorDirty) {
 					this->rebuildDetector();
 				}
+				if (this->cachedPreviewType != this->parameters.debug.preview.get()) {
+					switch (this->parameters.debug.preview.get()) {
+					case Preview::Raw:
+						ofxCv::copy(lastDetection.rawImage, this->preview);
+						break;
+					case Preview::Normalised:
+						ofxCv::copy(lastDetection.normalisedImage, this->preview);
+						break;
+					case Preview::Thresholded:
+					{
+						auto& thresholdedImage = this->markerDetector.getThresholdedImage();
+						if (!thresholdedImage.empty()) {
+							ofxCv::copy(lastDetection.thresholded, this->preview);
+						}
+					}
+					break;
+					case Preview::None:
+						this->preview.clear();
+					default:
+						break;
+					}
+					this->preview.update();
+				}
 			}
 
 			//----------
@@ -199,7 +226,7 @@ namespace ofxRulr {
 					return aruco::Dictionary::getTypeString(this->dictionaryType);
 				});
 				inspector->addButton("Retry detect", [this]() {
-					this->findMarkers(this->lastDetection.image);
+					this->findMarkers(this->lastDetection.rawImage);
 				}, ' ');
 			}
 
@@ -251,37 +278,91 @@ namespace ofxRulr {
 
 			//----------
 			const std::vector<aruco::Marker> & Detector::findMarkers(const cv::Mat & image) {
-				this->lastDetection = {
-					image.clone()
-				};
+				this->lastDetection.rawImage = image.clone();
 
-				if (this->lastDetection.image.channels() == 3) {
-					cv::cvtColor(this->lastDetection.image
-						, this->lastDetection.image
+				if (this->lastDetection.rawImage.channels() == 3) {
+					cv::cvtColor(this->lastDetection.rawImage
+						, this->lastDetection.rawImage
 						, cv::COLOR_RGB2GRAY);
 				}
 
-				if (this->parameters.normalizeImage) {
-					cv::normalize(this->lastDetection.image
-						, this->lastDetection.image
-						, 255
-						, 0
-						, cv::NormTypes::NORM_MINMAX);
-				}
+				auto mergeResults = [&](const vector<aruco::Marker>& newMarkers) {
+					// Add data to result
+					for (const auto& newMarker : newMarkers) {
+						bool foundInPriorData = false;
+						for (const auto& priorMarker : this->foundMarkers) {
+							if (priorMarker.id == newMarker.id) {
+								foundInPriorData = true;
+								break;
+							}
+						}
+						if (!foundInPriorData) {
+							this->foundMarkers.push_back(newMarker);
+						}
+					}
+				};
 
-				if (this->parameters.multiCrop.enabled.get()) {
-					this->foundMarkers = multiCropDetect(this->markerDetector
-						, this->lastDetection.image
-						, this->parameters.multiCrop.iterations.get()
-						, this->parameters.multiCrop.overlap.get());
-				}
-				else {
-					this->foundMarkers = this->markerDetector.detect(this->lastDetection.image);
+				// Direct find
+				this->foundMarkers = this->markerDetector.detect(this->lastDetection.rawImage);
+
+				// Strategies
+				{
+					// Normalize
+					if (this->parameters.strategies.normalize.enabled.get()) {
+						this->lastDetection.rawImage.convertTo(this->lastDetection.normalisedImage, CV_32F);
+
+						// Push values up so that mid value is middle of range 0-255
+						auto midValue = cv::mean(this->lastDetection.normalisedImage)[0];
+						if (midValue < 127) {
+							this->lastDetection.normalisedImage *= 127.0f / midValue;
+						}
+
+						// Copy back to 8 bit
+						this->lastDetection.normalisedImage.convertTo(this->lastDetection.normalisedImage
+							, CV_8U);
+
+						// Normalise
+						cv::normalize(this->lastDetection.normalisedImage
+							, this->lastDetection.normalisedImage
+							, 255
+							, 0
+							, cv::NormTypes::NORM_MINMAX);
+
+						auto newMarkersFound = this->markerDetector.detect(this->lastDetection.normalisedImage);
+						mergeResults(newMarkersFound);
+					}
+					else {
+						this->lastDetection.normalisedImage = this->lastDetection.rawImage;
+					}
+
+					// Multi-crop
+					if (this->parameters.strategies.multiCrop.enabled.get()) {
+						// Find markers in crop (note that if marker is too big for crop strategy then above method works better)
+						auto foundMarkersInCrops = multiCropDetect(this->markerDetector
+							, this->lastDetection.normalisedImage
+							, this->parameters.strategies.multiCrop.iterations.get()
+							, this->parameters.strategies.multiCrop.overlap.get());
+
+						mergeResults(foundMarkersInCrops);
+					}
+
+					// Multi-brightess
+					if (this->parameters.strategies.multiBrightness.enabled.get()) {
+						for (int i = 2; i < this->parameters.strategies.multiBrightness.maxBrightess.get(); i++) {
+							cv::Mat brighterImage;
+							this->lastDetection.rawImage.convertTo(brighterImage
+								, CV_8U
+								, i
+								, 0);
+							auto markersFoundInBrightenedImage = this->markerDetector.detect(brighterImage);
+							mergeResults(markersFoundInBrightenedImage);
+						}
+					}
 				}
 
 				// refine corners 1
 				{
-					auto findRatio = this->parameters.cornerRefineZone1.get();
+					auto findRatio = this->parameters.cornerRefinement.zone1.get();
 					if (findRatio > 0.0f) {
 						for (auto& marker : this->foundMarkers) {
 							auto length2 = 0.0f;
@@ -295,7 +376,7 @@ namespace ofxRulr {
 							auto windowSize = (int)searchLength;
 							windowSize = ((windowSize / 2) * 2) + 1;
 
-							cv::cornerSubPix(this->lastDetection.image
+							cv::cornerSubPix(this->lastDetection.rawImage
 								, (vector<cv::Point2f>&) marker
 								, cv::Size(windowSize, windowSize)
 								, cv::Size(1, 1)
@@ -306,7 +387,7 @@ namespace ofxRulr {
 
 				// refine corners 2 (sane code, different variable)
 				{
-					auto findRatio = this->parameters.cornerRefineZone2.get();
+					auto findRatio = this->parameters.cornerRefinement.zone2.get();
 					if (findRatio > 0.0f) {
 						for (auto& marker : this->foundMarkers) {
 							auto length2 = 0.0f;
@@ -320,7 +401,7 @@ namespace ofxRulr {
 							auto windowSize = (int)searchLength;
 							windowSize = ((windowSize / 2) * 2) + 1;
 
-							cv::cornerSubPix(this->lastDetection.image
+							cv::cornerSubPix(this->lastDetection.rawImage
 								, (vector<cv::Point2f>&) marker
 								, cv::Size(windowSize, windowSize)
 								, cv::Size(1, 1)
@@ -329,11 +410,17 @@ namespace ofxRulr {
 					}
 				}
 
-				auto thresholdedImage = this->markerDetector.getThresholdedImage();
-				if (!thresholdedImage.empty()) {
-					ofxCv::copy(thresholdedImage, this->preview);
-					this->preview.update();
+				//speak the count
+				if (this->parameters.debug.speakCount) {
+					ofxRulr::Utils::speakCount(this->foundMarkers.size());
 				}
+
+				// build preview
+				{
+					this->cachedPreviewType = Preview::None;
+					this->preview.clear();
+				}
+				
 				return this->foundMarkers;
 			}
 

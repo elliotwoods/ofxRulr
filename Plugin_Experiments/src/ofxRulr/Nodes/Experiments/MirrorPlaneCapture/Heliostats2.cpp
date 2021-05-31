@@ -562,6 +562,7 @@ namespace ofxRulr {
 				Solvers::HeliostatActionModel::Parameters<float> Heliostats2::Heliostat::getHeliostatActionModelParameters() const {
 					Solvers::HeliostatActionModel::Parameters<float> parameters;
 					parameters.position = this->parameters.hamParameters.position.get();
+					parameters.rotationY = this->parameters.hamParameters.rotationY.get();
 
 					parameters.axis1.polynomial = this->parameters.hamParameters.axis1.polynomial.get();
 					parameters.axis1.rotationAxis = this->parameters.hamParameters.axis1.rotationAxis.get();

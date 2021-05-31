@@ -88,6 +88,7 @@ namespace ofxRulr {
 								image.bind();
 								{
 									this->previewPlane.draw();
+									this->previewPlane.draw();
 								}
 								image.unbind();
 
@@ -304,17 +305,7 @@ namespace ofxRulr {
 
 				//speak the count
 				if (this->parameters.detection.speakCount) {
-					auto count = this->trackedMarkers.size();
-					if (count == 0) {
-						ofxAssets::sound("ofxRulr::failure").play();
-					}
-					else if (count <= 20) {
-						auto& sound = ofxAssets::sound("ofxRulr::" + ofToString(count));
-						sound.play();
-					}
-					else {
-						ofxAssets::sound("ofxRulr::success").play();
-					}
+					Utils::speakCount(this->trackedMarkers.size());
 				}
 			}
 

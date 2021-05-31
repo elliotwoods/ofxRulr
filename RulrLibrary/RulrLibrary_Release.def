@@ -60,6 +60,7 @@ EXPORTS
 	??1ofxOscMessage@@QEAA@XZ
 	??1ofxOscSender@@QEAA@XZ
 	??4ofNode@@QEAAAEAV0@$$QEAV0@@Z
+	??4ofRectangle@@QEAAAEAV0@AEBV0@@Z
 	??4ofTexture@@QEAAAEAV0@$$QEAV0@@Z
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
 	??4ofVbo@@QEAAAEAV0@AEBV0@@Z
@@ -384,7 +385,10 @@ EXPORTS
 	?getBottomRight@ofRectangle@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?getCenter@ofRectangle@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?getHeight@ofRectangle@@QEBAMXZ
+	?getIntersection@ofRectangle@@QEBA?AV1@AEBV1@@Z
+	?getTopLeft@ofRectangle@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?getWidth@ofRectangle@@QEBAMXZ
+	?inside@ofRectangle@@QEBA_NAEBU?$vec@$01M$0A@@glm@@@Z
 	?begin@ofShader@@QEBAXXZ
 	?end@ofShader@@QEBAXXZ
 	?setUniform1f@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@M@Z
@@ -439,6 +443,7 @@ EXPORTS
 	?makeCheckerboardPoints@ofxCv@@YA?AV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@V?$Size_@H@cv@@M_N@Z
 	?makeMatrix@ofxCv@@YA?AU?$mat@$03$03M$0A@@glm@@VMat@cv@@0@Z
 	?selectROI@ofxCv@@YA_NVMat@cv@@AEAV?$Rect_@H@3@@Z
+	?toCv@ofxCv@@YA?AV?$Rect_@H@cv@@VofRectangle@@@Z
 	?toCv@ofxCv@@YA?AVMat@cv@@AEAV23@@Z
 	?toCv@ofxCv@@YAAEAV?$Point_@M@cv@@AEAU?$vec@$01M$0A@@glm@@@Z
 	?toCv@ofxCv@@YAAEAV?$Point3_@M@cv@@AEAU?$vec@$02M$0A@@glm@@@Z
@@ -836,6 +841,7 @@ EXPORTS
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBVofParameterGroup@@@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBVPlane@ofxRay@@@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBVRay@ofxRay@@@Z
+	?speakCount@Utils@ofxRulr@@YAX_K@Z
 	??0BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@QEAA@XZ
 	?add@AbstractCaptureSet@Utils@ofxRulr@@QEAAXV?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@@Z
 	?clear@AbstractCaptureSet@Utils@ofxRulr@@QEAAXXZ

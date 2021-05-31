@@ -117,7 +117,7 @@ namespace ofxRulr {
 
 					this->addInput<Heliostats2>();
 					this->addInput<Item::Camera>();
-					this->addInput<ArUco::MarkerMapPoseTracker>();
+					this->addInput<MarkerMap::NavigateCamera>();
 					this->addInput<Procedure::Calibrate::ExtrinsicsFromBoardInWorld>();
 
 					{
@@ -188,29 +188,29 @@ namespace ofxRulr {
 					// Build solver settings
 					auto navigateSolverSettings = this->getNavigateSolverSettings();
 
-					// Face all the modules away (async)
-					{
+					// Turn modules away ready for board capture
+					std::future<void> waitForTurnAway;
+					if (this->parameters.faceAway.beforeFindBoardDirect.get()) {
 						heliostats->faceAllAway();
-					}
-					auto waitForTurnAway = std::async(std::launch::async, [&]() {
-						heliostats->update();
-						heliostats->pushStale(true);
-						});
 
-					// Note that this image is not used here. MarkerMapPoseTracker gets the image direct from its own input
+						waitForTurnAway = std::async(std::launch::async, [&]() {
+							heliostats->update();
+							heliostats->pushStale(true);
+							});
+					}
+
 					auto navigationImage = ofxCv::toCv(frame->getPixels());
 
 					// Update the camera pose
 					{
 
-						Utils::ScopedProcess scopedProcess("Update marker map tracking", false);
-						auto markerMapPoseTracker = this->getInput<ArUco::MarkerMapPoseTracker>();
-						markerMapPoseTracker->track();
-						scopedProcess.end();
+						Utils::ScopedProcess scopedProcess("MarkerMap::NavigateCamera track", false);
+						auto markerMapPoseTracker = this->getInput<MarkerMap::NavigateCamera>();
+						markerMapPoseTracker->track(navigationImage);
 					}
 
 					// Update the BoardInWorld extrinsics (take a fresh frame for this)
-					{
+					if(waitForTurnAway.valid()) {
 						Utils::ScopedProcess scopedProcess("Wait for motion + Capture board extrinsics", false);
 
 						// this needs to be done after the mirror points away from the board
@@ -218,6 +218,12 @@ namespace ofxRulr {
 
 						// This takes a fresh photo from the camera again
 						extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board, true);
+					}
+					else {
+						Utils::ScopedProcess scopedProcess("Find board extrinsics", false);
+
+						// Use existing photo to find board extrinsics
+						extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board, false);
 					}
 
 					// Gather heliostats in view. 
@@ -285,6 +291,13 @@ namespace ofxRulr {
 								, "flip");
 						}
 					}
+
+					// Turn everything away at end
+					if (this->parameters.faceAway.atEnd.get()) {
+						heliostats->faceAllAway();
+						heliostats->update(); // Mark as stale
+						heliostats->pushStale(false);
+					}
 				}
 
 
@@ -318,6 +331,7 @@ namespace ofxRulr {
 								, navigateSolverSettings);
 						}
 
+						// Mark stale
 						heliostats->update();
 						heliostats->pushStale(true);
 					}
@@ -613,6 +627,8 @@ namespace ofxRulr {
 						// Collate options
 						Solvers::HeliostatActionModel::Calibrator::Options options;
 						{
+							options.fixPosition = this->parameters.calibrate.fixPosition.get();
+							options.fixRotationY = this->parameters.calibrate.fixRotationY.get();
 							options.fixMirrorOffset = this->parameters.calibrate.fixMirrorOffset.get();
 							options.fixPolynomial = this->parameters.calibrate.fixPolynomial.get();
 							options.fixRotationAxis = this->parameters.calibrate.fixRotationAxis.get();

@@ -15,7 +15,7 @@ namespace ofxRulr {
 							ofParameter<glm::vec3> rotationAxis{ "Rotation axis", {0.0f, -1.0f, 0.0f} };
 
 							// X, X*X, X*X*X
-							ofParameter<glm::vec3> polynomial{ "Polynomial", {1, 0, 0} };
+							ofParameter<glm::vec3> polynomial{ "Polynomial", {0, 1, 0} };
 
 							PARAM_DECLARE("AxisParameters", rotationAxis, polynomial);
 						};
@@ -153,7 +153,7 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<float> servo1{ "Servo 1", 0, -180, 180 };
-							ofParameter<float> servo2{ "Servo 2", 90, -100, 100 };
+							ofParameter<float> servo2{ "Servo 2", 0, -100, 100 };
 							PARAM_DECLARE("Away pose", servo1, servo2);
 						} awayPose;
 						PARAM_DECLARE("Heliostats2", navigator, dispatcher, awayPose);

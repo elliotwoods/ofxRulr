@@ -100,6 +100,12 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<WhenDrawOnWorldStage> tetheredShootEnabled{ "Tethered shoot enabled", WhenDrawOnWorldStage::Selected };
+						
+						struct : ofParameterGroup {
+							ofParameter<bool> beforeFindBoardDirect{ "Before find board direct", true };
+							ofParameter<bool> atEnd{ "At end", true };
+							PARAM_DECLARE("Face away", beforeFindBoardDirect, atEnd);
+						} faceAway;
 
 						struct : ofParameterGroup {
 							ofParameter<int> minimumMarkers{ "Minimum markers", 1 };
@@ -120,13 +126,15 @@ namespace ofxRulr {
 						ofParameter<bool> captureFlip{ "Capture flip", true };
 
 						struct : ofParameterGroup {
-							ofParameter<int> maxIterations{ "Max iterations", 1000 };
+							ofParameter<int> maxIterations{ "Max iterations", 5000 };
 							ofParameter<bool> printReport{ "Print report", true };
 							PARAM_DECLARE("Navigate", maxIterations, printReport);
 						} navigate;
 
 						struct : ofParameterGroup {
 							ofParameter<int> minimumDataPoints{ "Minimum data points", 100 };
+							ofParameter<bool> fixPosition{ "Fix position", false };
+							ofParameter<bool> fixRotationY{ "Fix rotation Y", true};
 							ofParameter<bool> fixPolynomial{ "Fix polynomial", true };
 							ofParameter<bool> fixRotationAxis{ "Fix rotation axis", true };
 							ofParameter<bool> fixMirrorOffset{ "Fix mirror offset", true };
@@ -134,6 +142,8 @@ namespace ofxRulr {
 							ofParameter<bool> printReport{ "Print report", true };
 							PARAM_DECLARE("Calibrate"
 								, minimumDataPoints
+								, fixPosition
+								, fixRotationY
 								, fixPolynomial
 								, fixRotationAxis
 								, fixMirrorOffset
