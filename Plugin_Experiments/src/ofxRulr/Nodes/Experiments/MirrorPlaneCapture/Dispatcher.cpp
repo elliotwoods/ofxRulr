@@ -61,12 +61,12 @@ namespace ofxRulr {
 					auto response = urlLoader.handleRequest(request);
 
 					if (response.status != 200) {
-						throw(ofxRulr::Exception(response.error));
+						throw(ofxRulr::Exception("Dispatcher : " + response.error));
 					}
 
 					auto responseJson = nlohmann::json::parse((string)response.data);
 					if (!responseJson.contains("success")) {
-						throw(ofxRulr::Exception("Malformed response from server : " + (string)response.data));
+						throw(ofxRulr::Exception("Dispatcher : Malformed response from server : " + (string)response.data));
 					}
 
 					auto success = responseJson["success"];
@@ -80,10 +80,10 @@ namespace ofxRulr {
 					}
 					else {
 						if (responseJson.contains("exception")) {
-							throw(ofxRulr::Exception(responseJson["exception"].dump(4)));
+							throw(ofxRulr::Exception("Dispatcher : " + responseJson["exception"].dump(4)));
 						}
 						else {
-							throw(ofxRulr::Exception("Unknown error in server request"));
+							throw(ofxRulr::Exception("Dispatcher : Unknown error in server request"));
 						}
 					}
 				}

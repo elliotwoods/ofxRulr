@@ -22,6 +22,7 @@ namespace ofxRulr {
 			~SoundEngine();
 			void init();
 			void close();
+			bool isInitialised() const;
 
 			void audioOut(ofSoundBuffer &) override;
 

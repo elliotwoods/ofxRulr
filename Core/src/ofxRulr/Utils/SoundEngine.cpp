@@ -7,7 +7,7 @@ namespace ofxRulr {
 	namespace Utils {
 		//----------
 		SoundEngine::SoundEngine() {
-			this->init();
+			//this->init();
 		}
 
 		//----------
@@ -85,6 +85,11 @@ namespace ofxRulr {
 
 			this->activeSoundsMutex.unlock();
 			this->sourcesMutex.unlock();
+		}
+
+		//----------
+		bool SoundEngine::isInitialised() const {
+			return this->isOpen;
 		}
 		
 		//----------

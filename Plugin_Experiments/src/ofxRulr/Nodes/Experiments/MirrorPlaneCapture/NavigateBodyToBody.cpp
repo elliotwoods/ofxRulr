@@ -61,7 +61,7 @@ namespace ofxRulr {
 					}
 
 					if (this->parameters.pushValues) {
-						heliostatsNode->pushStale(true);
+						heliostatsNode->pushStale(true, true);
 					}
 				}
 			}

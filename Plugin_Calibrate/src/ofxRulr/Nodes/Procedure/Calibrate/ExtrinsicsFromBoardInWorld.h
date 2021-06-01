@@ -4,6 +4,7 @@
 #include "ofxCvMin.h"
 
 #include "ofxRulr/Nodes/Item/AbstractBoard.h"
+#include "Constants_Plugin_Calibration.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -26,9 +27,9 @@ namespace ofxRulr {
 					void deserialize(const nlohmann::json&);
 					void populateInspector(ofxCvGui::InspectArguments&);
 
-					void track(const UpdateTarget &, bool getFreshFrame);
+					void track(const UpdateTarget&, bool getFreshFrame);
+					void track(const UpdateTarget&, const cv::Mat &);
 				protected:
-					void receiveFrame(shared_ptr<ofxMachineVision::Frame>);
 					ofxCvGui::PanelPtr view;
 
 					ofImage image;

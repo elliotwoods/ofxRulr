@@ -92,6 +92,17 @@ struct HeliostatActionModel_CalibratorRayCost
 			}
 		}
 
+		// Add a residual if reflected ray is facing away from the mirror normal
+		{
+			auto alignment = dot(normalize(reflectedRayT), mirrorNormal);
+			if (alignment < (T) 0) {
+				residuals[2] = -alignment * (T) 1000.0;
+			}
+			else {
+				residuals[2] = (T)0.0;
+			}
+		}
+
 		return true;
 	}
 
@@ -102,7 +113,7 @@ struct HeliostatActionModel_CalibratorRayCost
 			, const float axis2ServoPosition
 			, const float mirrorDiameter)
 	{
-		return new ceres::AutoDiffCostFunction<HeliostatActionModel_CalibratorRayCost, 2, 3, 1, 4, 6, 1>(
+		return new ceres::AutoDiffCostFunction<HeliostatActionModel_CalibratorRayCost, 3, 3, 1, 4, 6, 1>(
 			new HeliostatActionModel_CalibratorRayCost(cameraRay, worldPoint, axis1ServoPosition, axis2ServoPosition, mirrorDiameter)
 			);
 	}
@@ -188,17 +199,40 @@ namespace ofxRulr {
 				if (options.fixPosition) {
 					problem.SetParameterBlockConstant(positionParameters);
 				}
+				
 				if (options.fixRotationY) {
 					problem.SetParameterBlockConstant(rotationYParameters);
 				}
+				
 				if (options.fixRotationAxis) {
 					problem.SetParameterBlockConstant(rotationAxisParameters);
 				}
+				
 				if (options.fixMirrorOffset) {
 					problem.SetParameterBlockConstant(mirrorOffsetParameters);
 				}
+				else {
+					problem.SetParameterLowerBound(mirrorOffsetParameters, 0, 0.13);
+					problem.SetParameterUpperBound(mirrorOffsetParameters, 0, 0.15);
+				}
+
 				if (options.fixPolynomial) {
 					problem.SetParameterBlockConstant(polynomialParameters);
+				}
+				else {
+					problem.SetParameterLowerBound(polynomialParameters, 0, -128);
+					problem.SetParameterUpperBound(polynomialParameters, 0, 128);
+					problem.SetParameterLowerBound(polynomialParameters, 1, 0.9);
+					problem.SetParameterUpperBound(polynomialParameters, 1, 1.1);
+					problem.SetParameterLowerBound(polynomialParameters, 2, -1e-5);
+					problem.SetParameterUpperBound(polynomialParameters, 2, 1e-5);
+
+					problem.SetParameterLowerBound(polynomialParameters, 3, -512);
+					problem.SetParameterUpperBound(polynomialParameters, 3, 512);
+					problem.SetParameterLowerBound(polynomialParameters, 4, 0.9);
+					problem.SetParameterUpperBound(polynomialParameters, 4, 1.1);
+					problem.SetParameterLowerBound(polynomialParameters, 5, -1e-5);
+					problem.SetParameterUpperBound(polynomialParameters, 5, 1e-5);
 				}
 			}
 

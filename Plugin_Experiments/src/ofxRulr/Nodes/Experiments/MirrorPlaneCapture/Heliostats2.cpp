@@ -11,6 +11,15 @@ namespace ofxRulr {
 				}
 
 				//----------
+				Heliostats2::~Heliostats2() {
+					if (this->dispatcherThread.isRunning) {
+						this->dispatcherThread.isClosing = true;
+						this->dispatcherThread.actionsCV.notify_one();
+						this->dispatcherThread.thread.join();
+					}
+				}
+
+				//----------
 				string Heliostats2::getTypeName() const {
 					return "Halo::Heliostats2";
 				}
@@ -31,15 +40,48 @@ namespace ofxRulr {
 					}
 
 					this->addInput<Dispatcher>();
+
+					this->dispatcherThread.thread = std::thread([this]() {
+						while (!this->dispatcherThread.isClosing) {
+							std::unique_lock<std::mutex> lock(this->dispatcherThread.actionsLock);
+							this->dispatcherThread.actionsCV.wait_for(lock, std::chrono::seconds(1));
+							if (!this->dispatcherThread.isClosing) {
+								if (!this->dispatcherThread.actions.empty()) {
+									auto action = this->dispatcherThread.actions.front();
+									this->dispatcherThread.actions.pop_front();
+									lock.unlock();
+
+									try {
+										action->action();
+										action->promise.set_value();
+									}
+									RULR_CATCH_ALL_TO_ERROR;
+								}
+							}
+						}
+						});
+					this->dispatcherThread.isRunning = true;
 				}
 
 				//----------
 				void Heliostats2::update() {
 					if (this->parameters.dispatcher.pushStaleValues) {
-						try {
-							this->pushStale(false);
+						// Check if we already have a pushStale in the queue
+						bool havePushStale = false;
+						this->dispatcherThread.actionsLock.lock();
+						{
+							for (const auto& action : this->dispatcherThread.actions) {
+								if (action->containsPushStale) {
+									havePushStale = true;
+									break;
+								}
+							}
 						}
-						RULR_CATCH_ALL_TO_ERROR;
+						this->dispatcherThread.actionsLock.unlock();
+
+						if (!havePushStale) {
+							this->pushStale(false, false);
+						}
 					}
 
 					// call update on all heliostats
@@ -81,7 +123,7 @@ namespace ofxRulr {
 					inspector->addButton("Push stale", [this]() {
 						try {
 							Utils::ScopedProcess scopedProcess("Push stale values");
-							this->pushStale(true);
+							this->pushStale(true, true);
 							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
@@ -111,15 +153,23 @@ namespace ofxRulr {
 					inspector->addButton("Push all", [this]() {
 						try {
 							Utils::ScopedProcess scopedProcess("Push all values");
-							this->pushAll();
+							this->pushAll(true);
 							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});
-					inspector->addButton("Pull all", [this]() {
+					inspector->addButton("Pull all positions", [this]() {
 						try {
-							Utils::ScopedProcess scopedProcess("Pull all values");
-							this->pullAll();
+							Utils::ScopedProcess scopedProcess("Pull all positions");
+							this->pullAllPositions();
+							scopedProcess.end();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+					inspector->addButton("Pull all limits", [this]() {
+						try {
+							Utils::ScopedProcess scopedProcess("Pull all limits");
+							this->pullAllLimits();
 							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
@@ -247,7 +297,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Heliostats2::pushStale(bool waitUntilComplete) {
+				void Heliostats2::pushStale(bool blocking, bool waitUntilComplete) {
 					this->throwIfMissingAConnection<Dispatcher>();
 					auto dispatcher = this->getInput<Dispatcher>();
 
@@ -279,17 +329,33 @@ namespace ofxRulr {
 						return;
 					}
 
-					dispatcher->multiMoveRequest(moveRequest);
+					auto perform = [=]() {
+						dispatcher->multiMoveRequest(moveRequest);
 
-					// Mark them as pushed after the request completes succesfully
-					for (auto heliostat : heliostats) {
-						heliostat->parameters.servo1.markGoalPositionPushed();
-						heliostat->parameters.servo2.markGoalPositionPushed();
+						// Mark them as pushed after the request completes succesfully
+						for (auto heliostat : heliostats) {
+							heliostat->parameters.servo1.markGoalPositionPushed();
+							heliostat->parameters.servo2.markGoalPositionPushed();
+						}
+					};
+
+					if (blocking) {
+						perform();
+					}
+					else {
+						this->dispatcherThread.actionsLock.lock();
+						{
+							auto action = make_shared<DispatcherThread::Action>(perform, true);
+							this->dispatcherThread.actions.push_back(action);
+						}
+						this->dispatcherThread.actionsLock.unlock();
+
+						this->dispatcherThread.actionsCV.notify_all();
 					}
 				}
 
 				//----------
-				void Heliostats2::pushAll() {
+				void Heliostats2::pushAll(bool blocking) {
 					this->throwIfMissingAConnection<Dispatcher>();
 					auto dispatcher = this->getInput<Dispatcher>();
 					
@@ -315,11 +381,27 @@ namespace ofxRulr {
 						}
 					}
 
-					dispatcher->multiMoveRequest(moveRequest);
+					auto perform = [=]() {
+						dispatcher->multiMoveRequest(moveRequest);
+					};
+
+					if (blocking) {
+						perform();
+					}
+					else {
+						this->dispatcherThread.actionsLock.lock();
+						{
+							auto action = make_shared<DispatcherThread::Action>(perform, true);
+							this->dispatcherThread.actions.push_back(action);
+						}
+						this->dispatcherThread.actionsLock.unlock();
+
+						this->dispatcherThread.actionsCV.notify_all();
+					}
 				}
 
 				//----------
-				void Heliostats2::pullAll() {
+				void Heliostats2::pullAllPositions() {
 					this->throwIfMissingAConnection<Dispatcher>();
 					auto heliostats = this->heliostats.getSelection();
 					auto dispatcher = this->getInput<Dispatcher>();
@@ -348,6 +430,52 @@ namespace ofxRulr {
 						}
 						for (int i = 0; i < servos.size(); i++) {
 							servos[multiGetRequest.servoIDs[i]]->setPresentPosition(response[i]);
+						}
+					}
+				}
+
+				//----------
+				void Heliostats2::pullAllLimits() {
+					this->throwIfMissingAConnection<Dispatcher>();
+					auto heliostats = this->heliostats.getSelection();
+					auto dispatcher = this->getInput<Dispatcher>();
+
+					// gather servo mappings
+					map<Dispatcher::ServoID, ServoParameters*> servos;
+					for (auto heliostat : heliostats) {
+						servos.emplace(heliostat->parameters.servo1.ID.get()
+							, &heliostat->parameters.servo1);
+						servos.emplace(heliostat->parameters.servo2.ID.get()
+							, &heliostat->parameters.servo2);
+					}
+
+					// convert into vector for request
+					Dispatcher::MultiGetRequest multiGetRequest;
+					for (const auto& it : servos) {
+						multiGetRequest.servoIDs.push_back(it.first);
+					}
+
+					// get the maximum
+					{
+						multiGetRequest.registerName = "Max Position Limit";
+						auto response = dispatcher->multiGetRequest(multiGetRequest);
+						if (servos.size() != response.size()) {
+							throw(ofxRulr::Exception("Size mismatch"));
+						}
+						for (int i = 0; i < servos.size(); i++) {
+							servos[multiGetRequest.servoIDs[i]]->setMaxPosition(response[i]);
+						}
+					}
+
+					// get the maximum
+					{
+						multiGetRequest.registerName = "Min Position Limit";
+						auto response = dispatcher->multiGetRequest(multiGetRequest);
+						if (servos.size() != response.size()) {
+							throw(ofxRulr::Exception("Size mismatch"));
+						}
+						for (int i = 0; i < servos.size(); i++) {
+							servos[multiGetRequest.servoIDs[i]]->setMinPosition(response[i]);
 						}
 					}
 				}
@@ -426,10 +554,10 @@ namespace ofxRulr {
 					RULR_NODE_INSPECTOR_LISTENER;
 
 					// Taken from servos 181, 182 after hand calibration
-					this->parameters.servo1.angle.setMin(ofMap(389, 0, 4096, -180, 180));
-					this->parameters.servo1.angle.setMax(ofMap(3670, 0, 4096, -180, 180));
-					this->parameters.servo2.angle.setMin(ofMap(1016, 0, 4096, -180, 180));
-					this->parameters.servo2.angle.setMax(ofMap(3059, 0, 4096, -180, 180));
+					this->parameters.servo1.angle.setMin(-140);
+					this->parameters.servo1.angle.setMax(140);
+					this->parameters.servo2.angle.setMin(-90);
+					this->parameters.servo2.angle.setMax(90);
 				}
 
 				//----------
@@ -455,7 +583,10 @@ namespace ofxRulr {
 
 						ofPushMatrix();
 						{
-							ofTranslate(this->parameters.hamParameters.position);
+							ofTranslate(this->parameters.hamParameters.position.get());
+
+							ofRotateDeg(this->parameters.hamParameters.rotationY.get(), 0, 1, 0);
+
 							// Base
 							ofDrawBox({ 0, 0.21, 0 }, 0.22, 0.05, 0.13);
 
@@ -539,11 +670,36 @@ namespace ofxRulr {
 				//----------
 				void Heliostats2::Heliostat::serialize(nlohmann::json& json) {
 					Utils::serialize(json, "parameters", this->parameters);
+
+					{
+						auto& jsonLimits = json["limits"];
+						Utils::serialize(jsonLimits, "servo1MinAngle", this->parameters.servo1.angle.getMin());
+						Utils::serialize(jsonLimits, "servo1MaxAngle", this->parameters.servo1.angle.getMax());
+						Utils::serialize(jsonLimits, "servo2MinAngle", this->parameters.servo2.angle.getMin());
+						Utils::serialize(jsonLimits, "servo2MaxAngle", this->parameters.servo2.angle.getMax());
+					}
 				}
 
 				//----------
 				void Heliostats2::Heliostat::deserialize(const nlohmann::json& json) {
 					Utils::deserialize(json, "parameters", this->parameters);
+
+					if (json.contains("limits")) {
+						const auto& jsonLimits = json["limits"];
+						float value;
+						if (Utils::deserialize(jsonLimits, "servo1MinAngle", value)) {
+							this->parameters.servo1.angle.setMin(value);
+						}
+						if (Utils::deserialize(jsonLimits, "servo1MaxAngle", value)) {
+							this->parameters.servo1.angle.setMax(value);
+						}
+						if (Utils::deserialize(jsonLimits, "servo2MinAngle", value)) {
+							this->parameters.servo2.angle.setMin(value);
+						}
+						if (Utils::deserialize(jsonLimits, "servo2MaxAngle", value)) {
+							this->parameters.servo2.angle.setMax(value);
+						}
+					}
 				}
 
 				//----------
@@ -760,7 +916,23 @@ namespace ofxRulr {
 				void Heliostats2::ServoParameters::setPresentPosition(const Dispatcher::RegisterValue& registerValue) {
 					auto result = Solvers::HeliostatActionModel::positionToAngle<float>((float) registerValue
 						, this->axisParameters.polynomial.get());
+					this->angle.set(result);
 				}
+
+				//----------
+				void Heliostats2::ServoParameters::setMinPosition(const Dispatcher::RegisterValue& registerValue) {
+					auto result = Solvers::HeliostatActionModel::positionToAngle<float>((float)registerValue
+						, this->axisParameters.polynomial.get());
+					this->angle.setMin(result);
+				}
+
+				//----------
+				void Heliostats2::ServoParameters::setMaxPosition(const Dispatcher::RegisterValue& registerValue) {
+					auto result = Solvers::HeliostatActionModel::positionToAngle<float>((float)registerValue
+						, this->axisParameters.polynomial.get());
+					this->angle.setMax(result);
+				}
+
 			}
 		}
 	}

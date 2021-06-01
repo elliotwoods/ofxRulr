@@ -28,7 +28,7 @@ namespace ofxRulr {
 					} findMissingMarkers;
 
 					struct : ofParameterGroup {
-						ofParameter<bool> enabled{ "Enabled", true };
+						ofParameter<bool> enabled{ "Enabled", false };
 						ofParameter<int> maxIterations{ "Max iterations", 100 };
 						ofParameter<float> reprojectionError{ "Reprojection Error", 2.0, 0.0, 100.0};
 						PARAM_DECLARE("RANSAC", enabled, maxIterations, reprojectionError);

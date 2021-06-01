@@ -642,8 +642,14 @@ namespace ofxRulr {
 					return;
 				}
 
+
 				ofDirectory directory(result.filePath);
+
+				Utils::ScopedProcess outerScopedProcess(result.filePath, false, directory.size());
+
 				for (const auto& file : directory) {
+					Utils::ScopedProcess(file.getFileName(), false);
+
 					auto extension = ofToLower(file.getExtension());
 					bool validExtension = extension == "png"
 						|| extension == "bmp"

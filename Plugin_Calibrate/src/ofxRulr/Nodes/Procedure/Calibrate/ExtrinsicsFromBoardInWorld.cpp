@@ -66,7 +66,7 @@ namespace ofxRulr {
 										&& grabber->getDeviceSpecification().supports(ofxMachineVision::CaptureSequenceType::OneShot)) {
 										try {
 											Utils::ScopedProcess scopedProcess("Tethered capture");
-											this->receiveFrame(grabber->getFrame());
+											this->track(this->parameters.track.updateTarget.get(), false);
 											scopedProcess.end();
 										}
 										RULR_CATCH_ALL_TO_ALERT
@@ -134,6 +134,7 @@ namespace ofxRulr {
 					auto boardInWorld = this->getInput<Item::BoardInWorld>();
 					boardInWorld->throwIfMissingAnyConnection();
 
+					shared_ptr<ofxMachineVision::Frame> frame;
 					{
 						auto grabber = camera->getGrabber();
 						if (!grabber) {
@@ -141,107 +142,13 @@ namespace ofxRulr {
 						}
 						if (getFreshFrame) {
 							Utils::ScopedProcess scopedProcess("Get fresh frame");
-							auto frame = grabber->getFreshFrame();
-							this->receiveFrame(frame);
+							frame = grabber->getFreshFrame();
 							scopedProcess.end();
 						}
 						else {
-							auto frame = grabber->getFrame();
-							if (!frame) {
-								throw(ofxRulr::Exception("No prior frame available"));
-							}
-							this->receiveFrame(frame);
+							frame = grabber->getFrame();
 						}
 					}
-
-					{
-						Utils::ScopedProcess scopedProcess("Track");
-
-						auto image = ofxCv::toCv(this->image.getPixels());
-						{
-							Utils::ScopedProcess findBoardScope("findBoard");
-							auto board = boardInWorld->getInput<Item::AbstractBoard>();
-							auto foundBoard = board->findBoard(image
-								, this->imagePoints
-								, this->objectPoints
-								, this->parameters.capture.findBoardMode.get()
-								, camera->getCameraMatrix()
-								, camera->getDistortionCoefficients());
-							if (!foundBoard) {
-								throw(Exception("Board not found"));
-							}
-							findBoardScope.end();
-						}
-
-						// Solve PnP
-						cv::Mat boardToCameraRotationVector, boardToCameraTranslation;
-						{
-							// We are quite confident that we're naming all the rotations/translation correctly here
-							// Note that when we set extrinsics, we inverse because Extrinsics = from the objects reference plane to the world reference frame
-							Utils::ScopedProcess solvePnPScope("solvePnP");
-							const auto& useExtrinsicGuess = this->parameters.track.useExtrinsicGuess.get();
-							if (useExtrinsicGuess) {
-								camera->getExtrinsics(boardToCameraRotationVector
-									, boardToCameraTranslation
-									, true);
-							}
-							cv::solvePnP(this->objectPoints
-								, this->imagePoints
-								, camera->getCameraMatrix()
-								, camera->getDistortionCoefficients()
-								, boardToCameraRotationVector
-								, boardToCameraTranslation
-								, useExtrinsicGuess);
-
-							solvePnPScope.end();
-						}
-
-						// Apply transform to appropriate target
-						if (updateTarget == UpdateTarget::Camera) {
-							Utils::ScopedProcess updateTargetScope("Update camera");
-
-							cv::Mat worldToBodyRotationVector, worldToBodyTranslation;
-							boardInWorld->getExtrinsics(worldToBodyRotationVector
-								, worldToBodyTranslation
-								, true);
-
-							cv::Mat worldToCameraRotationVector, worldToCameraTranslation;
-							cv::composeRT(
-								worldToBodyRotationVector
-								, worldToBodyTranslation
-								, boardToCameraRotationVector
-								, boardToCameraTranslation
-								, worldToCameraRotationVector
-								, worldToCameraTranslation);
-
-							camera->setExtrinsics(worldToCameraRotationVector
-								, worldToCameraTranslation
-								, true);
-
-							updateTargetScope.end();
-						}
-						else {
-							Utils::ScopedProcess updateTargetScope("Update board");
-
-							// For this side (board update) we just the the transforms.
-							// We tried with composeRT but failed
-
-							auto boardInCameraTransform = ofxCv::makeMatrix(boardToCameraRotationVector
-								, boardToCameraTranslation);
-							auto boardInWorldTransform = camera->getTransform() * boardInCameraTransform;
-							boardInWorld->setTransform(boardInWorldTransform);
-
-							updateTargetScope.end();
-						}
-
-						scopedProcess.end();
-					}
-				}
-
-				//----------
-				void ExtrinsicsFromBoardInWorld::receiveFrame(shared_ptr<ofxMachineVision::Frame> frame) {
-					this->throwIfMissingAConnection<Item::Camera>();
-					this->throwIfMissingAConnection<Item::BoardInWorld>();
 
 					if (!frame) {
 						throw(Exception("Frame is not valid"));
@@ -251,14 +158,26 @@ namespace ofxRulr {
 						throw(Exception("Pixels are empty"));
 					}
 
-					if (pixels.getNumChannels() == 1) {
-						this->image.getPixels() = pixels;
+					auto image = ofxCv::toCv(frame->getPixels());
+					this->track(updateTarget, image);
+				}
+
+				//----------
+				void ExtrinsicsFromBoardInWorld::track(const UpdateTarget& updateTarget, const cv::Mat& image) {
+					this->throwIfMissingAConnection<Item::Camera>();
+					this->throwIfMissingAConnection<Item::BoardInWorld>();
+
+					this->image.allocate(image.cols
+						, image.rows
+						, ofImageType::OF_IMAGE_GRAYSCALE);
+
+					if (image.channels() == 1) {
+						memcpy(this->image.getPixels().getData()
+							, image.data
+							, this->image.getPixels().size());
 					}
 					else {
-						this->image.allocate(pixels.getWidth()
-							, pixels.getHeight()
-							, ofImageType::OF_IMAGE_GRAYSCALE);
-						cv::cvtColor(ofxCv::toCv(pixels)
+						cv::cvtColor(image
 							, ofxCv::toCv(this->image)
 							, cv::COLOR_RGB2GRAY);
 					}
@@ -267,14 +186,81 @@ namespace ofxRulr {
 					auto boardInWorld = this->getInput<Item::BoardInWorld>();
 					auto camera = this->getInput<Item::Camera>();
 
-					if (!boardInWorld->findBoard(ofxCv::toCv(this->image)
-						, this->imagePoints
-						, this->objectPoints
-						, this->worldPoints
-						, this->parameters.capture.findBoardMode
-						, camera->getCameraMatrix()
-						, camera->getDistortionCoefficients())) {
-						throw(ofxRulr::Exception("Board not found in image"));
+					// find the board
+					{
+						Utils::ScopedProcess scopedProcess("Find board in image");
+						if (!boardInWorld->findBoard(ofxCv::toCv(this->image)
+							, this->imagePoints
+							, this->objectPoints
+							, this->worldPoints
+							, this->parameters.capture.findBoardMode
+							, camera->getCameraMatrix()
+							, camera->getDistortionCoefficients())) {
+							throw(ofxRulr::Exception("Board not found in image"));
+						}
+						scopedProcess.end();
+					}
+					
+
+					// Solve PnP
+					cv::Mat boardToCameraRotationVector, boardToCameraTranslation;
+					{
+						// We are quite confident that we're naming all the rotations/translation correctly here
+						// Note that when we set extrinsics, we inverse because Extrinsics = from the objects reference plane to the world reference frame
+						Utils::ScopedProcess solvePnPScope("solvePnP");
+						const auto& useExtrinsicGuess = this->parameters.track.useExtrinsicGuess.get();
+						if (useExtrinsicGuess) {
+							camera->getExtrinsics(boardToCameraRotationVector
+								, boardToCameraTranslation
+								, true);
+						}
+						cv::solvePnP(this->objectPoints
+							, this->imagePoints
+							, camera->getCameraMatrix()
+							, camera->getDistortionCoefficients()
+							, boardToCameraRotationVector
+							, boardToCameraTranslation
+							, useExtrinsicGuess);
+
+						solvePnPScope.end();
+					}
+
+					// Apply transform to appropriate target
+					if (updateTarget == UpdateTarget::Camera) {
+						Utils::ScopedProcess updateTargetScope("Update camera");
+
+						cv::Mat worldToBodyRotationVector, worldToBodyTranslation;
+						boardInWorld->getExtrinsics(worldToBodyRotationVector
+							, worldToBodyTranslation
+							, true);
+
+						cv::Mat worldToCameraRotationVector, worldToCameraTranslation;
+						cv::composeRT(
+							worldToBodyRotationVector
+							, worldToBodyTranslation
+							, boardToCameraRotationVector
+							, boardToCameraTranslation
+							, worldToCameraRotationVector
+							, worldToCameraTranslation);
+
+						camera->setExtrinsics(worldToCameraRotationVector
+							, worldToCameraTranslation
+							, true);
+
+						updateTargetScope.end();
+					}
+					else {
+						Utils::ScopedProcess updateTargetScope("Update board");
+
+						// For this side (board update) we just the the transforms.
+						// We tried with composeRT but failed
+
+						auto boardInCameraTransform = ofxCv::makeMatrix(boardToCameraRotationVector
+							, boardToCameraTranslation);
+						auto boardInWorldTransform = camera->getTransform() * boardInCameraTransform;
+						boardInWorld->setTransform(boardInWorldTransform);
+
+						updateTargetScope.end();
 					}
 				}
 			}

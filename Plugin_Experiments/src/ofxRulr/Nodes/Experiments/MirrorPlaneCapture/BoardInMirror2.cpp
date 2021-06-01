@@ -14,6 +14,10 @@ namespace ofxRulr {
 
 				//--------
 				void BoardInMirror2::Capture::drawWorld(const DrawOptions& drawOptions) {
+					if (drawOptions.camera) {
+						this->camera.draw();
+					}
+
 					if (drawOptions.cameraRays) {
 						for (const auto& ray : this->cameraRays) {
 							ray.draw();
@@ -26,7 +30,7 @@ namespace ofxRulr {
 							ofSetColor(this->color);
 							ofSetSphereResolution(6);
 							for (const auto& worldPoint : this->worldPoints) {
-								ofDrawSphere(ofxCv::toOf(worldPoint), 0.0025);
+								ofDrawSphere(ofxCv::toOf(worldPoint), 0.001);
 							}
 						}
 						ofPopStyle();
@@ -54,7 +58,8 @@ namespace ofxRulr {
 				//--------
 				string BoardInMirror2::Capture::getDisplayString() const {
 					stringstream ss;
-					ss << "Size : " << this->worldPoints.size() << ". Residual : " << this->meanResidual << std::endl
+					ss << "[" << this->heliostatName << "] ";
+					ss << "Size : " << this->worldPoints.size() << ". r=" << this->meanResidual << std::endl
 						<< this->comments;
 
 					return ss.str();
@@ -64,6 +69,7 @@ namespace ofxRulr {
 				void BoardInMirror2::Capture::serialize(nlohmann::json& json) {
 					Utils::serialize(json, "imagePoints", this->imagePoints);
 					Utils::serialize(json, "worldPoints", this->worldPoints);
+					Utils::serialize(json, "camera", this->camera);
 					Utils::serialize(json, "cameraRays", this->cameraRays);
 					Utils::serialize(json, "cameraPosition", this->cameraPosition);
 					Utils::serialize(json, "heliostatName", this->heliostatName);
@@ -81,6 +87,7 @@ namespace ofxRulr {
 				void BoardInMirror2::Capture::deserialize(const nlohmann::json& json) {
 					Utils::deserialize(json, "imagePoints", this->imagePoints);
 					Utils::deserialize(json, "worldPoints", this->worldPoints);
+					Utils::deserialize(json, "camera", this->camera);
 					Utils::deserialize(json, "cameraRays", this->cameraRays);
 					Utils::deserialize(json, "cameraPosition", this->cameraPosition);
 					Utils::deserialize(json, "heliostatName", this->heliostatName);
@@ -123,6 +130,12 @@ namespace ofxRulr {
 					{
 						this->panel = ofxCvGui::Panels::makeWidgets();
 						this->captures.populateWidgets(this->panel);
+						this->panel->addButton("Filter to heliostat selection", [this]() {
+							try {
+								this->filterCapturesToHeliostatSelection();
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+							});
 					}
 				}
 
@@ -185,7 +198,7 @@ namespace ofxRulr {
 					heliostats->throwIfMissingAConnection<Dispatcher>();
 					auto dispatcher = heliostats->getInput<Dispatcher>();
 
-					// Build solver settings
+					// Build navigate solver settings
 					auto navigateSolverSettings = this->getNavigateSolverSettings();
 
 					// Turn modules away ready for board capture
@@ -193,11 +206,16 @@ namespace ofxRulr {
 					if (this->parameters.faceAway.beforeFindBoardDirect.get()) {
 						heliostats->faceAllAway();
 
-						waitForTurnAway = std::async(std::launch::async, [&]() {
-							heliostats->update();
-							heliostats->pushStale(true);
-							});
+						if (this->parameters.faceAway.waitAtStart.get()) {
+							waitForTurnAway = std::async(std::launch::async, [&]() {
+								heliostats->update();
+								heliostats->pushStale(true, true);
+								});
+						}
 					}
+
+					// Pull the axis limits every time just in case
+					heliostats->pullAllLimits();
 
 					auto navigationImage = ofxCv::toCv(frame->getPixels());
 
@@ -256,6 +274,7 @@ namespace ofxRulr {
 					// Perform captures
 					this->navigateToSeeBoardAndCapture(activeHeliostats
 						, heliostats
+						, extrinsicsFromBoardInWorld
 						, navigateSolverSettings
 						, boardInWorld
 						, camera
@@ -264,7 +283,7 @@ namespace ofxRulr {
 						, "");
 
 					// Perform flipped captures
-					if (this->parameters.captureFlip.get()) {
+					if (this->parameters.capture.flip.get()) {
 						Utils::ScopedProcess scopedProcessFlip("Capture flipped heliostats", false);
 
 						// Flip all the active ones
@@ -283,6 +302,7 @@ namespace ofxRulr {
 						if (!flippedHeliostats.empty()) {
 							this->navigateToSeeBoardAndCapture(flippedHeliostats
 								, heliostats
+								, extrinsicsFromBoardInWorld
 								, navigateSolverSettings
 								, boardInWorld
 								, camera
@@ -296,7 +316,7 @@ namespace ofxRulr {
 					if (this->parameters.faceAway.atEnd.get()) {
 						heliostats->faceAllAway();
 						heliostats->update(); // Mark as stale
-						heliostats->pushStale(false);
+						heliostats->pushStale(false, false);
 					}
 				}
 
@@ -304,6 +324,7 @@ namespace ofxRulr {
 				//----------
 				void BoardInMirror2::navigateToSeeBoardAndCapture(vector<shared_ptr<Heliostats2::Heliostat>> activeHeliostats
 					, shared_ptr<Heliostats2> heliostats
+					, shared_ptr<Procedure::Calibrate::ExtrinsicsFromBoardInWorld> extrinsicsFromBoardInWorld
 					, const ofxCeres::SolverSettings& navigateSolverSettings
 					, shared_ptr<Item::BoardInWorld> boardInWorld
 					, shared_ptr<Item::Camera> camera
@@ -315,14 +336,30 @@ namespace ofxRulr {
 					{
 						Utils::ScopedProcess scopedProcess("Point active heliostats towards board", false);
 
-						// Get the center of the board in world space
+						// Get the center of the board in world space (or only 
 						glm::vec3 boardCenter(0.0f, 0.0f, 0.0f);
 						{
+							// We can select to only look to points that were seen directly in the camera
+							// This is to avoid deviations on the estimated world positions of the world points
+							// (e.g. small rotations = big deviations for other points)
+							auto onlyIncludePointsInCameraView = this->parameters.capture.aimToSeenBoardPoints.get();
+							auto cameraImageBounds = ofRectangle(0, 0, camera->getWidth(), camera->getHeight());
+
 							auto worldPoints = boardInWorld->getAllWorldPoints();
+							size_t count = 0;
 							for (const auto& worldPoint : worldPoints) {
+								if (onlyIncludePointsInCameraView) {
+									// check inside camera view
+									auto imagePoint = cameraView.getScreenCoordinateOfWorldPosition(worldPoint);
+									if (!cameraImageBounds.inside(imagePoint)) {
+										continue;
+									}
+								}
+
 								boardCenter += worldPoint;
+								count++;
 							}
-							boardCenter /= (float)worldPoints.size();
+							boardCenter /= (float)count;
 						}
 
 						for (auto heliostat : activeHeliostats) {
@@ -333,7 +370,7 @@ namespace ofxRulr {
 
 						// Mark stale
 						heliostats->update();
-						heliostats->pushStale(true);
+						heliostats->pushStale(true, true);
 					}
 
 					// Record all servo Present Position values at this time
@@ -378,6 +415,7 @@ namespace ofxRulr {
 
 					// Mask out the direct view of the board
 					cv::Mat imageWithReflectionsWithoutRealBoard = imageWithReflections.clone();
+					cv::Mat imageWithRealBoardOnly = imageWithReflections.clone();
 					{
 						Utils::ScopedProcess scopedProcess("Mask out the real board", false);
 
@@ -423,7 +461,22 @@ namespace ofxRulr {
 							, alphaMask
 							, 0);
 						imageWithReflectionsWithoutRealBoard.setTo(cv::Scalar(0), alphaMask);
+
+						// Mask including board only
+						{
+							cv::bitwise_not(alphaMask, alphaMask);
+							auto meanValue = cv::mean(imageWithRealBoardOnly, alphaMask);
+							imageWithRealBoardOnly.setTo(meanValue, alphaMask);
+						}
 					}
+
+					// Update real board tracking (e.g. if was blown by wind)
+					if(this->parameters.findBoard.updateBoardInFinalImage.get()) {
+						extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board
+							, imageWithRealBoardOnly);
+					}
+
+
 
 					// Find boards in each heliostat mirror face
 					{
@@ -476,6 +529,21 @@ namespace ofxRulr {
 						maskedImage.setTo(cv::Scalar(0), invertedMask);
 					}
 
+					// Calculate if looking at front or back of board
+					bool reflectionShowsFront;
+					{
+						const auto boardPosition = boardInWorld->getPosition();
+						auto boardTransform = boardInWorld->getTransform();
+						auto mirrorToBoard = boardPosition - heliostat->parameters.hamParameters.position.get();
+						auto boardNormal = Utils::applyTransform(boardTransform, glm::vec3(0, 0, 1)) - boardPosition;
+						if (glm::dot(boardNormal, mirrorToBoard) < 0.0) {
+							reflectionShowsFront = true;
+						}
+						else {
+							reflectionShowsFront = false;
+						}
+					}
+
 					// Find the board in the masked image
 					auto capture = make_shared<Capture>();
 					{
@@ -492,11 +560,29 @@ namespace ofxRulr {
 
 						// Find the board in the cropped image
 						{
-							bool foundBoard = boardInWorld->findBoard(croppedRegion
-								, imagePointsCropped
-								, objectPoints
-								, capture->worldPoints
-								, this->parameters.findBoard.mode.get());
+							bool foundBoard;
+							
+							if (reflectionShowsFront) {
+								cv::Mat mirrored;
+								cv::flip(croppedRegion
+									, mirrored
+									, 0);
+								foundBoard = boardInWorld->findBoard(mirrored
+									, imagePointsCropped
+									, objectPoints
+									, capture->worldPoints
+									, this->parameters.findBoard.mode.get());
+								for (auto& imagePoint : imagePointsCropped) {
+									imagePoint.x = croppedRegion.cols - imagePoint.x - 1;
+								}
+							}
+							else {
+								foundBoard = boardInWorld->findBoard(croppedRegion
+									, imagePointsCropped
+									, objectPoints
+									, capture->worldPoints
+									, this->parameters.findBoard.mode.get());
+							}
 
 							if (!foundBoard && this->parameters.findBoard.useAssistantIfFail.get()) {
 								foundBoard = boardInWorld->findBoard(croppedRegion
@@ -508,6 +594,10 @@ namespace ofxRulr {
 							if (!foundBoard) {
 								throw(Exception("Failed to find board in reflection"));
 							}
+						}
+
+						if (imagePointsCropped.size() == 0) {
+							throw(Exception("Failed to find board in reflection"));
 						}
 
 						// Move the image points back into uncropped space
@@ -534,6 +624,14 @@ namespace ofxRulr {
 					capture->heliostatName = heliostat->getName();
 					capture->cameraPosition = cameraView.getPosition();
 					capture->comments = comments;
+					capture->color = heliostat->color;
+
+					// Store the camera view
+					{
+						capture->camera = cameraView;
+						capture->camera.color = capture->color;
+						capture->camera.setFarClip(0.2f);
+					}
 
 					// Find axis servo values
 					auto findServoValue = [&](const int& servoID) {
@@ -586,9 +684,13 @@ namespace ofxRulr {
 						vector<glm::vec3> worldPoints;
 						vector<int> axis1ServoPosition;
 						vector<int> axis2ServoPosition;
-						auto captures = this->captures.getSelection();
-						for (const auto& capture : captures) {
+						auto allCaptures = this->captures.getSelection();
+						vector<shared_ptr<Capture>> capturesForThisHeliostat;
+
+						for (const auto& capture : allCaptures) {
 							if (capture->heliostatName == heliostat->getName()) {
+								capturesForThisHeliostat.push_back(capture);
+
 								//Check sizes
 								auto size = capture->cameraRays.size();
 								if (size != capture->worldPoints.size()) {
@@ -637,50 +739,33 @@ namespace ofxRulr {
 
 						// Run solve
 						{
+							auto solverSettings = this->getCalibrateSolverSettings();
+							{
+								solverSettings.options.max_num_iterations = this->parameters.calibrate.maxIterations.get();
+								solverSettings.options.function_tolerance = this->parameters.calibrate.functionTolerance.get();
+								solverSettings.options.parameter_tolerance = this->parameters.calibrate.parameterTolerance.get();
+							}
+
 							auto result = Solvers::HeliostatActionModel::Calibrator::solveCalibration(cameraRays
 								, worldPoints
 								, axis1ServoPosition
 								, axis2ServoPosition
 								, heliostat->getHeliostatActionModelParameters()
 								, options
-								, this->getCalibrateSolverSettings());
+								, solverSettings);
 
 							if (result.isConverged()) {
 								// Update the 
 								heliostat->setHeliostatActionModelParameters(result.solution);
 
 								// Update the residuals
-								for (auto& capture : captures) {
-									float totalResidual = 0.0f;
-									for (size_t i = 0; i < capture->cameraRays.size(); i++) {
-										auto rayResidual = Solvers::HeliostatActionModel::Calibrator::getResidual(capture->cameraRays[i]
-											, ofxCv::toOf(capture->worldPoints[i])
-											, capture->axis1ServoPosition
-											, capture->axis2ServoPosition
-											, result.solution
-											, heliostat->parameters.diameter.get());
-										totalResidual += rayResidual;
-										capture->residuals.push_back(rayResidual);
-									}
-									capture->meanResidual = totalResidual / (float)capture->cameraRays.size();
-								}
+								this->calculateResiduals();
 
 								// Calculate the reflections
-								for (auto& capture : captures) {
+								for (auto& capture : capturesForThisHeliostat) {
 									// Clear prior reflections
 									capture->reflectedRays.clear();
-									 
-									// Get the heliostat
-									shared_ptr<Heliostats2::Heliostat> heliostat;
-									for (auto heliostatFind : heliostats) {
-										if (heliostatFind->getName() == capture->heliostatName) {
-											heliostat = heliostatFind;
-										}
-									}
-									if (!heliostat) {
-										continue;
-									}
-
+									
 									// Create the board plane
 									Solvers::HeliostatActionModel::AxisAngles<float> axisAngles{
 										Solvers::HeliostatActionModel::positionToAngle<float>(capture->axis1ServoPosition
@@ -733,12 +818,20 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ALERT
 						}, ' ');
+
 					inspector->addButton("Calibrate", [this]() {
 						try {
 							this->calibrate();
 						}
 						RULR_CATCH_ALL_TO_ALERT
 						}, OF_KEY_RETURN)->setHeight(100.0f);
+
+					inspector->addButton("Calculate residuals", [this]() {
+						try {
+							this->calculateResiduals();
+						}
+						RULR_CATCH_ALL_TO_ALERT
+						});
 				}
 
 				//--------
@@ -758,6 +851,7 @@ namespace ofxRulr {
 					// Draw capture data
 					{
 						Capture::DrawOptions drawOptions;
+						drawOptions.camera = this->parameters.debug.draw.cameras.get();
 						drawOptions.cameraRays = this->parameters.debug.draw.cameraRays.get();
 						drawOptions.worldPoints = this->parameters.debug.draw.worldPoints.get();
 						drawOptions.reflectedRays = this->parameters.debug.draw.reflectedRays.get();
@@ -767,6 +861,62 @@ namespace ofxRulr {
 						for (const auto& capture : captures) {
 							capture->drawWorld(drawOptions);
 						}
+					}
+				}
+
+				//--------
+				void BoardInMirror2::filterCapturesToHeliostatSelection() {
+					this->throwIfMissingAConnection<Heliostats2>();
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					auto activeHeliostats = heliostatsNode->getHeliostats();
+
+					auto captures = this->captures.getSelection();
+					for (auto capture : captures) {
+						bool isForSelectedHeliostat = false;
+						for (auto heliostat : activeHeliostats) {
+							if (heliostat->parameters.name.get() == capture->heliostatName) {
+								isForSelectedHeliostat = true;
+								break;
+							}
+							if (!isForSelectedHeliostat) {
+								capture->setSelected(false);
+							}
+						}
+					}
+				}
+
+				//--------
+				void BoardInMirror2::calculateResiduals() {
+					this->throwIfMissingAConnection<Heliostats2>();
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					auto activeHeliostats = heliostatsNode->getHeliostats();
+
+					auto captures = this->captures.getSelection();
+
+					for (auto& capture : captures) {
+						shared_ptr<Heliostats2::Heliostat> heliostat;
+						for (auto activeHeliostat : activeHeliostats) {
+							if (activeHeliostat->parameters.name.get() == capture->heliostatName) {
+								heliostat = activeHeliostat;
+								break;
+							}
+						}
+						if (!heliostat) {
+							continue;
+						}
+
+						float totalResidual = 0.0f;
+						for (size_t i = 0; i < capture->cameraRays.size(); i++) {
+							auto rayResidual = Solvers::HeliostatActionModel::Calibrator::getResidual(capture->cameraRays[i]
+								, ofxCv::toOf(capture->worldPoints[i])
+								, capture->axis1ServoPosition
+								, capture->axis2ServoPosition
+								, heliostat->getHeliostatActionModelParameters()
+								, heliostat->parameters.diameter.get());
+							totalResidual += rayResidual;
+							capture->residuals.push_back(rayResidual);
+						}
+						capture->meanResidual = totalResidual / (float)capture->cameraRays.size();
 					}
 				}
 

@@ -1,5 +1,6 @@
 #include "pch_RulrCore.h"
 #include "Utils.h"
+#include "SoundEngine.h"
 
 namespace ofxRulr {
 	namespace Utils {
@@ -74,15 +75,19 @@ namespace ofxRulr {
 		//----------
 		void speakCount(size_t count)
 		{
+			if (!SoundEngine::X().isInitialised()) {
+				return;
+			}
+
 			if (count == 0) {
-				ofxAssets::sound("ofxRulr::failure").play();
+				SoundEngine::X().play("ofxRulr::failure", true);
 			}
 			else if (count <= 20) {
-				auto& sound = ofxAssets::sound("ofxRulr::" + ofToString(count));
-				sound.play();
+				auto& soundName = "ofxRulr::" + ofToString(count);
+				SoundEngine::X().play(soundName, true);
 			}
 			else {
-				ofxAssets::sound("ofxRulr::success").play();
+				SoundEngine::X().play("ofxRulr::success", true);
 			}
 		}
 	}

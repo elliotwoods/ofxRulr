@@ -5,6 +5,7 @@
 #include "ofxRulr/Utils/CaptureSet.h"
 #include "ofxRulr/Solvers/MirrorPlaneFromRays.h"
 #include "Heliostats2.h"
+#include "ofxRulr/Nodes/Procedure/Calibrate/ExtrinsicsFromBoardInWorld.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -27,6 +28,7 @@ namespace ofxRulr {
 					class Capture : public Utils::AbstractCaptureSet::BaseCapture {
 					public:
 						struct DrawOptions {
+							bool camera;
 							bool cameraRays;
 							bool worldPoints;
 							bool reflectedRays;
@@ -46,6 +48,7 @@ namespace ofxRulr {
 
 						vector<cv::Point2f> imagePoints;
 						vector<cv::Point3f> worldPoints;
+						ofxRay::Camera camera;
 						vector<ofxRay::Ray> cameraRays;
 						int axis1ServoPosition;
 						int axis2ServoPosition;
@@ -68,6 +71,7 @@ namespace ofxRulr {
 					void capture();
 					void navigateToSeeBoardAndCapture(vector<shared_ptr<Heliostats2::Heliostat>> activeHeliostats
 						, shared_ptr<Heliostats2> heliostats
+						, shared_ptr<Procedure::Calibrate::ExtrinsicsFromBoardInWorld>
 						, const ofxCeres::SolverSettings& navigateSolverSettings
 						, shared_ptr<Item::BoardInWorld> boardInWorld
 						, shared_ptr<Item::Camera> camera
@@ -94,6 +98,8 @@ namespace ofxRulr {
 
 					void drawWorldStage();
 
+					void filterCapturesToHeliostatSelection();
+					void calculateResiduals();
 				protected:
 					ofxCeres::SolverSettings getNavigateSolverSettings() const;
 					ofxCeres::SolverSettings getCalibrateSolverSettings() const;
@@ -103,8 +109,9 @@ namespace ofxRulr {
 						
 						struct : ofParameterGroup {
 							ofParameter<bool> beforeFindBoardDirect{ "Before find board direct", true };
+							ofParameter<bool> waitAtStart{ "Wait at start", false };
 							ofParameter<bool> atEnd{ "At end", true };
-							PARAM_DECLARE("Face away", beforeFindBoardDirect, atEnd);
+							PARAM_DECLARE("Face away", beforeFindBoardDirect, waitAtStart, atEnd);
 						} faceAway;
 
 						struct : ofParameterGroup {
@@ -115,7 +122,8 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<FindBoardMode> mode{ "Mode", FindBoardMode::Optimized };
 							ofParameter<bool> useAssistantIfFail{ "Use assistant if fail", true };
-							PARAM_DECLARE("Find board", mode, useAssistantIfFail);
+							ofParameter<bool> updateBoardInFinalImage{ "Update board in final image", false };
+							PARAM_DECLARE("Find board", mode, useAssistantIfFail, updateBoardInFinalImage);
 						} findBoard;
 
 						struct : ofParameterGroup {
@@ -123,7 +131,13 @@ namespace ofxRulr {
 							PARAM_DECLARE("Servo control", waitTime);
 						} servoControl;
 
-						ofParameter<bool> captureFlip{ "Capture flip", true };
+						struct : ofParameterGroup {
+							ofParameter<bool> flip{ "Flip", true };
+
+							// Alternatively aim to board center
+							ofParameter<bool> aimToSeenBoardPoints{ "Aim to seen board points", true };
+							PARAM_DECLARE("Capture", flip, aimToSeenBoardPoints);
+						} capture;
 
 						struct : ofParameterGroup {
 							ofParameter<int> maxIterations{ "Max iterations", 5000 };
@@ -139,6 +153,8 @@ namespace ofxRulr {
 							ofParameter<bool> fixRotationAxis{ "Fix rotation axis", true };
 							ofParameter<bool> fixMirrorOffset{ "Fix mirror offset", true };
 							ofParameter<int> maxIterations{ "Max iterations", 1000 };
+							ofParameter<float> functionTolerance{ "Function tolerance", 1e-8 };
+							ofParameter<float> parameterTolerance{ "Parameter tolerance", 1e-7 };
 							ofParameter<bool> printReport{ "Print report", true };
 							PARAM_DECLARE("Calibrate"
 								, minimumDataPoints
@@ -148,12 +164,15 @@ namespace ofxRulr {
 								, fixRotationAxis
 								, fixMirrorOffset
 								, maxIterations
+								, functionTolerance
+								, parameterTolerance
 								, printReport);
 						} calibrate;
 
 
 						struct : ofParameterGroup {
 							struct : ofParameterGroup {
+								ofParameter<bool> cameras{ "Cameras", true };
 								ofParameter<bool> cameraRays{ "Camera rays", true };
 								ofParameter<bool> worldPoints{ "World points", true };
 								ofParameter<bool> reflectedRays{ "Reflected rays", true };
@@ -165,10 +184,11 @@ namespace ofxRulr {
 
 						PARAM_DECLARE("BoardInMirror2"
 							, tetheredShootEnabled
+							, faceAway
 							, cameraNavigation
 							, findBoard
 							, servoControl
-							, captureFlip
+							, capture
 							, navigate
 							, calibrate
 							, debug);
@@ -176,10 +196,6 @@ namespace ofxRulr {
 					shared_ptr<ofxCvGui::Panels::Widgets> panel;
 
 					Utils::CaptureSet<Capture> captures;
-
-					struct {
-						vector<ofxRay::Ray> reflectedRays;
-					} debug;
 				};
 			}
 		}

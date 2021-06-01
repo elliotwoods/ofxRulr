@@ -42,6 +42,20 @@ struct HeliostatActionModel_PointToPointCost
 			, reflectedTransmission
 			, (glm::tvec3<T>) this->pointB);
 
+
+		// Residual for pointing wrong direction
+		{
+			auto intendedDirection = (glm::tvec3<T>) this->pointB - mirrorCenter;
+			
+			auto angleBetween = dot(normalize(intendedDirection), mirrorNormal);
+			if (angleBetween < (T) 0) {
+				residuals[1] = -angleBetween * (T) 1000.0;
+			}
+			else {
+				residuals[1] = (T)0.0;
+			}
+		}
+
 		return true;
 	}
 
@@ -50,7 +64,7 @@ struct HeliostatActionModel_PointToPointCost
 			, const glm::vec3& pointA
 			, const glm::vec3& pointB)
 	{
-		return new ceres::AutoDiffCostFunction<HeliostatActionModel_PointToPointCost, 1, 2>(
+		return new ceres::AutoDiffCostFunction<HeliostatActionModel_PointToPointCost, 2, 2>(
 			new HeliostatActionModel_PointToPointCost(parameters, pointA, pointB)
 			);
 	}

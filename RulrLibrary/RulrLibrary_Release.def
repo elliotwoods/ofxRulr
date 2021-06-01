@@ -60,6 +60,7 @@ EXPORTS
 	??1ofxOscMessage@@QEAA@XZ
 	??1ofxOscSender@@QEAA@XZ
 	??4ofNode@@QEAAAEAV0@$$QEAV0@@Z
+	??4ofNode@@QEAAAEAV0@AEBV0@@Z
 	??4ofRectangle@@QEAAAEAV0@AEBV0@@Z
 	??4ofTexture@@QEAAAEAV0@$$QEAV0@@Z
 	??4ofTexture@@QEAAAEAV0@AEBV0@@Z
@@ -315,6 +316,7 @@ EXPORTS
 	?begin@ofDirectory@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@VofFile@@@std@@@std@@@std@@XZ
 	?createDirectory@ofDirectory@@SA_NAEBVpath@filesystem@boost@@_N1@Z
 	?end@ofDirectory@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@VofFile@@@std@@@std@@@std@@XZ
+	?size@ofDirectory@@QEBA_KXZ
 	?allocate@ofFbo@@QEAAXHHHH@Z
 	?allocate@ofFbo@@QEAAXUofFboSettings@@@Z
 	?begin@ofFbo@@QEBAXW4ofFboMode@@@Z
@@ -328,6 +330,7 @@ EXPORTS
 	?unbind@ofFbo@@QEBAXXZ
 	?getAbsolutePath@ofFile@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getExtension@ofFile@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?getFileName@ofFile@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?open@ofFile@@QEAA_NAEBVpath@filesystem@boost@@W4Mode@1@_N@Z
 	?readToBuffer@ofFile@@QEAA?AVofBuffer@@XZ
 	?getPath@ofFileDialogResult@@QEAA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -389,6 +392,7 @@ EXPORTS
 	?getTopLeft@ofRectangle@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?getWidth@ofRectangle@@QEBAMXZ
 	?inside@ofRectangle@@QEBA_NAEBU?$vec@$01M$0A@@glm@@@Z
+	?inside@ofRectangle@@QEBA_NAEBU?$vec@$02M$0A@@glm@@@Z
 	?begin@ofShader@@QEBAXXZ
 	?end@ofShader@@QEBAXXZ
 	?setUniform1f@ofShader@@QEBAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@M@Z
@@ -857,6 +861,7 @@ EXPORTS
 	?getTypeName@BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?isSelected@BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@QEBA_NXZ
 	?rebuildDateStrings@BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@QEAAXXZ
+	?setSelected@BaseCapture@AbstractCaptureSet@Utils@ofxRulr@@QEAAX_N@Z
 	?glDisable@Graphics@Utils@ofxRulr@@SAXI@Z
 	?glEnable@Graphics@Utils@ofxRulr@@SAXI@Z
 	?popPointSize@Graphics@Utils@ofxRulr@@SAXXZ

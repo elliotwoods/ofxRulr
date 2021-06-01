@@ -28,7 +28,7 @@ namespace ofxRulr {
 
 						AxisParameters axis1;
 						AxisParameters axis2;
-						ofParameter<float> mirrorOffset{ "Mirror offset", 0.14, 0.1, 0.2 };
+						ofParameter<float> mirrorOffset{ "Mirror offset", 0.136, 0.1, 0.2 };
 
 						PARAM_DECLARE("HAM", position, rotationY, mirrorOffset);
 
@@ -55,6 +55,8 @@ namespace ofxRulr {
 
 						void calculateGoalPosition();
 						void setPresentPosition(const Dispatcher::RegisterValue&);
+						void setMinPosition(const Dispatcher::RegisterValue&);
+						void setMaxPosition(const Dispatcher::RegisterValue&);
 
 					protected:
 						HAMParameters::AxisParameters& axisParameters;
@@ -111,6 +113,7 @@ namespace ofxRulr {
 					};
 
 					Heliostats2();
+					~Heliostats2();
 					string getTypeName() const override;
 
 					void init();
@@ -132,9 +135,10 @@ namespace ofxRulr {
 					void faceAllTowardsCursor();
 					void faceAllAway();
 
-					void pushStale(bool waitUntilComplete);
-					void pushAll();
-					void pullAll();
+					void pushStale(bool blocking, bool waitUntilComplete);
+					void pushAll(bool blocking);
+					void pullAllPositions();
+					void pullAllLimits();
 
 					cv::Mat drawMirrorFaceMask(shared_ptr<Heliostat>, const ofxRay::Camera&);
 
@@ -161,6 +165,29 @@ namespace ofxRulr {
 
 					Utils::CaptureSet<Heliostat> heliostats;
 					shared_ptr<ofxCvGui::Panels::Widgets> panel;
+
+					struct DispatcherThread {
+						struct Action {
+							Action(const function<void()>& action, bool isPushStale)
+								: action(action)
+								, containsPushStale(containsPushStale)
+								, future(promise.get_future())
+							{
+
+							}
+
+							function<void()> action;
+							bool containsPushStale;
+							promise<void> promise;
+							future<void> future;
+						};
+						std::deque<shared_ptr<Action>> actions;
+						std::mutex actionsLock;
+						condition_variable actionsCV;
+						std::thread thread;
+						bool isRunning = false;
+						bool isClosing = false;
+					} dispatcherThread;
 				};
 			}
 		}
