@@ -29,14 +29,18 @@ namespace ofxRulr {
 
 					inspector->addButton("Nudge", [this]() {
 						try {
+							Utils::ScopedProcess scopedProcess("Nudge");
 							this->nudge();
+							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});
 
 					inspector->addButton("Zero", [this]() {
 						try {
+							Utils::ScopedProcess scopedProcess("Zero");
 							this->zero();
+							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});

@@ -122,6 +122,10 @@ namespace ofxRulr {
 				result.errorMessage = "Could not solve within constraints";
 			}
 
+			if (result.isError) {
+				throw(ofxRulr::Exception("Could not navigate mirror within bounds : " + result.errorMessage));
+			}
+
 			return result;
 		}
 

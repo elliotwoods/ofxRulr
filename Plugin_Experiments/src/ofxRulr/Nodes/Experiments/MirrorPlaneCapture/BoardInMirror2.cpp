@@ -136,6 +136,22 @@ namespace ofxRulr {
 							}
 							RULR_CATCH_ALL_TO_ALERT;
 							});
+
+						this->panel->addButton("Sort by Heliostat", [this]() {
+							try {
+								this->captures.sortBy([](shared_ptr<Capture> capture) {
+									return ofToFloat(capture->heliostatName);
+									});
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+							});
+
+						this->panel->addButton("Sort by date", [this]() {
+							try {
+								this->captures.sortByDate();
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+							});
 					}
 				}
 
@@ -188,128 +204,141 @@ namespace ofxRulr {
 						throw(Exception("Frame is empty"));
 					}
 
-					// Get inputs
-					this->throwIfMissingAnyConnection();
-					auto camera = this->getInput<Item::Camera>();
 					auto heliostats = this->getInput<Heliostats2>();
-					auto extrinsicsFromBoardInWorld = this->getInput<Procedure::Calibrate::ExtrinsicsFromBoardInWorld>();
-					extrinsicsFromBoardInWorld->throwIfMissingAnyConnection();
-					auto boardInWorld = extrinsicsFromBoardInWorld->getInput<Item::BoardInWorld>();
-					heliostats->throwIfMissingAConnection<Dispatcher>();
-					auto dispatcher = heliostats->getInput<Dispatcher>();
 
-					// Build navigate solver settings
-					auto navigateSolverSettings = this->getNavigateSolverSettings();
+					try {
 
-					// Turn modules away ready for board capture
-					std::future<void> waitForTurnAway;
-					if (this->parameters.faceAway.beforeFindBoardDirect.get()) {
-						heliostats->faceAllAway();
+						// Get inputs
+						this->throwIfMissingAnyConnection();
+						auto camera = this->getInput<Item::Camera>();
+						auto extrinsicsFromBoardInWorld = this->getInput<Procedure::Calibrate::ExtrinsicsFromBoardInWorld>();
+						extrinsicsFromBoardInWorld->throwIfMissingAnyConnection();
+						auto boardInWorld = extrinsicsFromBoardInWorld->getInput<Item::BoardInWorld>();
+						heliostats->throwIfMissingAConnection<Dispatcher>();
+						auto dispatcher = heliostats->getInput<Dispatcher>();
 
-						if (this->parameters.faceAway.waitAtStart.get()) {
-							waitForTurnAway = std::async(std::launch::async, [&]() {
-								heliostats->update();
-								heliostats->pushStale(true, true);
-								});
-						}
-					}
+						// Build navigate solver settings
+						auto navigateSolverSettings = this->getNavigateSolverSettings();
 
-					// Pull the axis limits every time just in case
-					heliostats->pullAllLimits();
+						// Turn modules away ready for board capture
+						std::future<void> waitForTurnAway;
+						if (this->parameters.faceAway.beforeFindBoardDirect.get()) {
+							heliostats->faceAllAway();
 
-					auto navigationImage = ofxCv::toCv(frame->getPixels());
-
-					// Update the camera pose
-					{
-
-						Utils::ScopedProcess scopedProcess("MarkerMap::NavigateCamera track", false);
-						auto markerMapPoseTracker = this->getInput<MarkerMap::NavigateCamera>();
-						markerMapPoseTracker->track(navigationImage);
-					}
-
-					// Update the BoardInWorld extrinsics (take a fresh frame for this)
-					if(waitForTurnAway.valid()) {
-						Utils::ScopedProcess scopedProcess("Wait for motion + Capture board extrinsics", false);
-
-						// this needs to be done after the mirror points away from the board
-						waitForTurnAway.wait();
-
-						// This takes a fresh photo from the camera again
-						extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board, true);
-					}
-					else {
-						Utils::ScopedProcess scopedProcess("Find board extrinsics", false);
-
-						// Use existing photo to find board extrinsics
-						extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board, false);
-					}
-
-					// Gather heliostats in view. 
-					vector<shared_ptr<Heliostats2::Heliostat>> activeHeliostats;
-					{
-						Utils::ScopedProcess scopedProcess("Gather heliostats in view", false);
-
-						auto selectedHeliostats = heliostats->getHeliostats();
-						auto cameraWorldView = camera->getViewInWorldSpace();
-						for (auto heliostat : selectedHeliostats) {
-							// project heliostat into camera
-							auto heliostatInCamera = cameraWorldView.getNormalizedSCoordinateOfWorldPosition(heliostat->parameters.hamParameters.position.get());
-							if (heliostatInCamera.x < -1.0f
-								|| heliostatInCamera.x > 1.0f
-								|| heliostatInCamera.y < -1.0f
-								|| heliostatInCamera.y > 1.0f
-								|| heliostatInCamera.z < 0.0f) {
-								// ignore
-							}
-							else {
-								// inside view - collect it
-								activeHeliostats.push_back(heliostat);
-							}
-						}
-					}
-
-					// Get the camera view
-					auto cameraView = camera->getViewInWorldSpace();
-
-					// Perform captures
-					this->navigateToSeeBoardAndCapture(activeHeliostats
-						, heliostats
-						, extrinsicsFromBoardInWorld
-						, navigateSolverSettings
-						, boardInWorld
-						, camera
-						, cameraView
-						, dispatcher
-						, "");
-
-					// Perform flipped captures
-					if (this->parameters.capture.flip.get()) {
-						Utils::ScopedProcess scopedProcessFlip("Capture flipped heliostats", false);
-
-						// Flip all the active ones
-						vector<shared_ptr<Heliostats2::Heliostat>> flippedHeliostats;
-						for (auto heliostat : activeHeliostats) {
-							try {
-								heliostat->flip();
-								flippedHeliostats.push_back(heliostat);
-							}
-							catch(...) {
-								// this heliostat can't be flipped
+							if (this->parameters.faceAway.waitAtStart.get()) {
+								waitForTurnAway = std::async(std::launch::async, [&]() {
+									heliostats->update();
+									heliostats->pushStale(true, true);
+									});
 							}
 						}
 
-						// Re-solve and perform capture
-						if (!flippedHeliostats.empty()) {
-							this->navigateToSeeBoardAndCapture(flippedHeliostats
-								, heliostats
-								, extrinsicsFromBoardInWorld
-								, navigateSolverSettings
-								, boardInWorld
-								, camera
-								, cameraView
-								, dispatcher
-								, "flip");
+						// Pull the axis limits every time just in case
+						heliostats->pullAllLimits();
+
+						auto navigationImage = ofxCv::toCv(frame->getPixels());
+
+						// Update the camera pose
+						{
+
+							Utils::ScopedProcess scopedProcess("MarkerMap::NavigateCamera track", false);
+							auto markerMapPoseTracker = this->getInput<MarkerMap::NavigateCamera>();
+							markerMapPoseTracker->track(navigationImage);
 						}
+
+						// Update the BoardInWorld extrinsics (take a fresh frame for this)
+						if (waitForTurnAway.valid()) {
+							Utils::ScopedProcess scopedProcess("Wait for motion + Capture board extrinsics", false);
+
+							// this needs to be done after the mirror points away from the board
+							waitForTurnAway.wait();
+
+							// This takes a fresh photo from the camera again
+							extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board, true);
+						}
+						else {
+							Utils::ScopedProcess scopedProcess("Find board extrinsics", false);
+
+							// Use existing photo to find board extrinsics
+							extrinsicsFromBoardInWorld->track(Procedure::Calibrate::ExtrinsicsFromBoardInWorld::UpdateTarget::Board, false);
+						}
+
+						// Gather heliostats in view. 
+						vector<shared_ptr<Heliostats2::Heliostat>> activeHeliostats;
+						{
+							Utils::ScopedProcess scopedProcess("Gather heliostats in view", false);
+
+							auto selectedHeliostats = heliostats->getHeliostats();
+							auto cameraWorldView = camera->getViewInWorldSpace();
+							for (auto heliostat : selectedHeliostats) {
+								// project heliostat into camera
+								auto heliostatInCamera = cameraWorldView.getNormalizedSCoordinateOfWorldPosition(heliostat->parameters.hamParameters.position.get());
+								if (heliostatInCamera.x < -1.0f
+									|| heliostatInCamera.x > 1.0f
+									|| heliostatInCamera.y < -1.0f
+									|| heliostatInCamera.y > 1.0f
+									|| heliostatInCamera.z < 0.0f) {
+									// ignore
+								}
+								else {
+									// inside view - collect it
+									activeHeliostats.push_back(heliostat);
+								}
+							}
+						}
+
+						// Get the camera view
+						auto cameraView = camera->getViewInWorldSpace();
+
+						// Perform captures
+						this->navigateToSeeBoardAndCapture(activeHeliostats
+							, heliostats
+							, extrinsicsFromBoardInWorld
+							, navigateSolverSettings
+							, boardInWorld
+							, camera
+							, cameraView
+							, dispatcher
+							, "");
+
+						// Perform flipped captures
+						if (this->parameters.capture.flip.get()) {
+							Utils::ScopedProcess scopedProcessFlip("Capture flipped heliostats", false);
+
+							// Flip all the active ones
+							vector<shared_ptr<Heliostats2::Heliostat>> flippedHeliostats;
+							for (auto heliostat : activeHeliostats) {
+								try {
+									heliostat->flip();
+									flippedHeliostats.push_back(heliostat);
+								}
+								catch (...) {
+									// this heliostat can't be flipped
+								}
+							}
+
+							// Re-solve and perform capture
+							if (!flippedHeliostats.empty()) {
+								this->navigateToSeeBoardAndCapture(flippedHeliostats
+									, heliostats
+									, extrinsicsFromBoardInWorld
+									, navigateSolverSettings
+									, boardInWorld
+									, camera
+									, cameraView
+									, dispatcher
+									, "flip");
+							}
+						}
+					}
+					catch (const ofxRulr::Exception& exception) {
+						// Turn everything away if we got an exception
+						if (this->parameters.faceAway.atEnd.get()) {
+							heliostats->faceAllAway();
+							heliostats->update(); // Mark as stale
+							heliostats->pushStale(false, false);
+						}
+						throw exception;
 					}
 
 					// Turn everything away at end
@@ -785,7 +814,7 @@ namespace ofxRulr {
 									for (const auto& cameraRay : capture->cameraRays) {
 										glm::vec3 intersection;
 										auto transmission = glm::normalize(cameraRay.t);
-										if (mirrorPlane.intersect(cameraRay, intersection)) {
+										if (mirrorPlane.intersect(cameraRay, intersection) || true) {
 											auto transmissionReflected = mirrorPlane.reflect(intersection + transmission) - intersection;
 
 											// Start with a copy of the cameraRay and edit
@@ -856,10 +885,44 @@ namespace ofxRulr {
 						drawOptions.worldPoints = this->parameters.debug.draw.worldPoints.get();
 						drawOptions.reflectedRays = this->parameters.debug.draw.reflectedRays.get();
 						drawOptions.mirrorFace = this->parameters.debug.draw.mirrorFace.get();
-
 						auto captures = this->captures.getSelection();
 						for (const auto& capture : captures) {
 							capture->drawWorld(drawOptions);
+						}
+					}
+
+					// Draw reports
+					if (this->parameters.debug.draw.report.get()) {
+						auto heliostatsNode = this->getInput<Heliostats2>();
+						if (heliostatsNode) {
+							auto heliostats = heliostatsNode->getHeliostats();
+							auto captures = this->captures.getSelection();
+							for (auto heliostat : heliostats) {
+								vector<shared_ptr<Capture>> gatheredCaptures;
+								size_t totalCount = 0;
+								size_t captureCount = 0;
+								size_t flipCount = 0;
+								for (auto capture : captures) {
+									if (capture->heliostatName == heliostat->parameters.name.get()) {
+										gatheredCaptures.push_back(capture);
+										totalCount += capture->imagePoints.size();
+										captureCount++;
+										if (capture->comments == "flip") {
+											flipCount++;
+										}
+									}
+								}
+								stringstream report;
+								report << "T" << totalCount << " ";
+								report << "C" << captureCount << " ";
+								if (flipCount > 0) {
+									report << "F" << flipCount;
+								}
+
+								ofxCvGui::Utils::drawTextAnnotation(report.str()
+									, heliostat->parameters.hamParameters.position.get()
+									, heliostat->color);
+							}
 						}
 					}
 				}

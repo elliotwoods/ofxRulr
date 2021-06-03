@@ -140,6 +140,10 @@ namespace ofxRulr {
 					void pullAllPositions();
 					void pullAllLimits();
 
+					void resetDetailParameters();
+
+					void selectRangeByString(const string&);
+
 					cv::Mat drawMirrorFaceMask(shared_ptr<Heliostat>, const ofxRay::Camera&);
 
 				protected:

@@ -102,6 +102,31 @@ namespace ofxRulr {
 				return "CaptureSet";
 			}
 
+			void sortByDate()
+			{
+				this->sortBy([](shared_ptr<CaptureType> capture) {
+					auto millis = std::chrono::time_point_cast<std::chrono::milliseconds>(capture->timestamp.get());
+					return (float)millis.time_since_epoch().count();
+				});
+			}
+
+			void sortBy(function<float(shared_ptr<CaptureType>)> sortFunction) {
+				sort(this->captures.begin(), this->captures.end()
+					, [&](const shared_ptr<BaseCapture>& a, const shared_ptr<BaseCapture>& b) {
+						auto aTyped = dynamic_pointer_cast<CaptureType>(a);
+						auto bTyped = dynamic_pointer_cast<CaptureType>(b);
+
+						if (aTyped && bTyped) {
+							return sortFunction(aTyped) < sortFunction(bTyped);
+						}
+						else {
+							return false;
+						}
+					});
+				this->onChange.notifyListeners();
+				this->viewDirty = true;
+			}
+
 		protected:
 			bool getIsMultipleSelectionAllowed() override {
 				return AllowMultipleSelection;

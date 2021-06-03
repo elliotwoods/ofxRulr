@@ -37,6 +37,12 @@ namespace ofxRulr {
 					{
 						this->panel = ofxCvGui::Panels::makeWidgets();
 						this->heliostats.populateWidgets(this->panel);
+						this->panel->addButton("Select range...", [this]() {
+							auto result = ofSystemTextBoxDialog("Select range, e.g. '3-4, 10'");
+							if (!result.empty()) {
+								this->selectRangeByString(result);
+							}
+							});
 					}
 
 					this->addInput<Dispatcher>();
@@ -171,6 +177,12 @@ namespace ofxRulr {
 							Utils::ScopedProcess scopedProcess("Pull all limits");
 							this->pullAllLimits();
 							scopedProcess.end();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+					inspector->addButton("Reset detail parameters", [this]() {
+						try {
+							this->resetDetailParameters();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});
@@ -481,6 +493,51 @@ namespace ofxRulr {
 				}
 
 				//----------
+				void Heliostats2::resetDetailParameters() {
+					auto heliostats = this->heliostats.getSelection();
+					for (auto heliostat : heliostats) {
+						heliostat->parameters.hamParameters.axis1.rotationAxis.set({ 0, -1, 0 });
+						heliostat->parameters.hamParameters.axis2.rotationAxis.set({ 1, 0, 0 });
+						heliostat->parameters.hamParameters.axis1.polynomial.set({ 0, 1, 0 });
+						heliostat->parameters.hamParameters.axis2.polynomial.set({ 0, 1, 0 });
+					}
+				}
+
+				//----------
+				void Heliostats2::selectRangeByString(const string& text) {
+					this->heliostats.selectNone();
+					auto allHeliostats = this->heliostats.getAllCaptures();
+
+					auto terms = ofSplitString(text, ",");
+					for (const auto& term : terms) {
+						auto splitAsRange = ofSplitString(term, "-");
+						if (splitAsRange.size() >= 2) {
+							// range
+							auto startRange = ofToInt(splitAsRange[0]);
+							auto endRange = ofToInt(splitAsRange[1]);
+							if (endRange > startRange) {
+								for (auto heliostat : allHeliostats) {
+									auto heliostatIndex = ofToInt(heliostat->parameters.name.get());
+									if (heliostatIndex >= startRange
+										&& heliostatIndex <= endRange) {
+										heliostat->setSelected(true);
+									}
+								}
+							}
+						}
+						else {
+							auto index = ofToInt(term);
+							for (auto heliostat : allHeliostats) {
+								auto heliostatIndex = ofToInt(heliostat->parameters.name.get());
+								if (heliostatIndex == index) {
+									heliostat->setSelected(true);
+								}
+							}
+						}
+					}
+				}
+
+				//----------
 				cv::Mat Heliostats2::drawMirrorFaceMask(shared_ptr<Heliostat> heliostat, const ofxRay::Camera& cameraView) {
 					ofFbo fbo;
 					{
@@ -589,6 +646,10 @@ namespace ofxRulr {
 
 							// Base
 							ofDrawBox({ 0, 0.21, 0 }, 0.22, 0.05, 0.13);
+
+							// Arrow
+							ofDrawLine({ -0.11, 0.21f + 0.025f, 0 }, { 0.0f, 0.21f + 0.025f, -0.13f / 2.0f });
+							ofDrawLine({ +0.11, 0.21f + 0.025f, 0 }, { 0.0f, 0.21f + 0.025f, -0.13f / 2.0f });
 
 							// Axis
 							if (isBeingInspected) {
@@ -784,6 +845,13 @@ namespace ofxRulr {
 								, solverSettings);
 						}, priorAngles);
 
+					if (result.solution.axisAngles.axis1 < this->parameters.servo1.angle.getMin()
+						|| result.solution.axisAngles.axis1 > this->parameters.servo1.angle.getMax()
+						|| result.solution.axisAngles.axis2 < this->parameters.servo2.angle.getMin()
+						|| result.solution.axisAngles.axis2 > this->parameters.servo2.angle.getMax()) {
+						throw(ofxRulr::Exception("Cannot navigate - outside of range of motion"));
+					}
+
 					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
 					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
 
@@ -808,6 +876,13 @@ namespace ofxRulr {
 								, initialAngles
 								, solverSettings);
 						}, priorAngles);
+
+					if (result.solution.axisAngles.axis1 < this->parameters.servo1.angle.getMin()
+						|| result.solution.axisAngles.axis1 > this->parameters.servo1.angle.getMax()
+						|| result.solution.axisAngles.axis2 < this->parameters.servo2.angle.getMin()
+						|| result.solution.axisAngles.axis2 > this->parameters.servo2.angle.getMax()) {
+						throw(ofxRulr::Exception("Cannot navigate - outside of range of motion"));
+					}
 
 					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
 					this->parameters.servo2.angle = result.solution.axisAngles.axis2;

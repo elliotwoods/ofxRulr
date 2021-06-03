@@ -177,7 +177,8 @@ namespace ofxRulr {
 								ofParameter<bool> worldPoints{ "World points", true };
 								ofParameter<bool> reflectedRays{ "Reflected rays", true };
 								ofParameter<bool> mirrorFace{ "Mirror face", true };
-								PARAM_DECLARE("Draw", cameraRays, worldPoints, reflectedRays, mirrorFace);
+								ofParameter<bool> report{ "Report", true };
+								PARAM_DECLARE("Draw", cameraRays, worldPoints, reflectedRays, mirrorFace, report);
 							} draw;
 							PARAM_DECLARE("Debug", draw);
 						} debug;

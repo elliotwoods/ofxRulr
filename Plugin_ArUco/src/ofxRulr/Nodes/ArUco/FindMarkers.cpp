@@ -129,6 +129,7 @@ namespace ofxRulr {
 
 				inspector->addButton("Get fresh frame", [this]() {
 					try {
+						Utils::ScopedProcess scopedProcess("Detect fresh frame");
 						this->throwIfMissingAConnection<Item::Camera>();
 						auto camera = this->getInput<Item::Camera>();
 						if (camera) {
@@ -139,16 +140,19 @@ namespace ofxRulr {
 							grabber->getFreshFrame();
 							this->detect();
 						}
+						scopedProcess.end();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
-					});
+					}, ' ');
 
 				inspector->addButton("Detect", [this]() {
 					try {
+						Utils::ScopedProcess scopedProcess("Detect");
 						this->detect();
+						scopedProcess.end();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
-					});
+					}, OF_KEY_RETURN)->setHeight(100.0f);
 
 			}
 
