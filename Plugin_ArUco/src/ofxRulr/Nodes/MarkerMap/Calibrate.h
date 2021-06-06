@@ -19,9 +19,11 @@ namespace ofxRulr {
 
 					void drawWorld();
 
+					virtual string getName() const override;
 					void serialize(nlohmann::json&) const;
 					void deserialize(const nlohmann::json&);
 
+					ofParameter<string> name{ "Name", "" };
 					vector<int> IDs;
 					vector<vector<glm::vec2>> imagePoints;
 					vector<float> residuals;
@@ -44,9 +46,15 @@ namespace ofxRulr {
 
 				void capture();
 				void calibrate();
+				void calibrateProgressiveMarkers();
+				void calibrateProgressiveMarkersContinuously();
+
 			protected:
-				void add(const cv::Mat& image);
+				void add(const cv::Mat& image, const string& name);
 				void addFolderOfImages();
+
+				void initialiseCaptureViewWithSeenMarkers(shared_ptr<Capture>);
+				void initialiseUnseenMarkersInView(shared_ptr<Capture>);
 
 				Utils::CaptureSet<Capture> captures;
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
@@ -58,10 +66,22 @@ namespace ofxRulr {
 							ofParameter<int> maxIterations{ "Max iterations", 10000 };
 							ofParameter<float> functionTolerance{ "Function tolerance", 1e-9 };
 							ofParameter<bool> useIncompleteSolution{ "Use imcomplete solution",true };
-							PARAM_DECLARE("Bundle Adjustment", enabled, maxIterations, functionTolerance, useIncompleteSolution);
+							ofParameter<int> numThreads{ "Number of threads",4 };
+							PARAM_DECLARE("Bundle Adjustment", enabled, maxIterations, functionTolerance, useIncompleteSolution, numThreads);
 						} bundleAdjustment;
 						PARAM_DECLARE("Calibration", bundleAdjustment);
 					} calibration;
+
+					struct : ofParameterGroup {
+						ofParameter<float> maximumResidual{ "Maximum residual", 1e3 };
+						struct : ofParameterGroup {
+							ofParameter<int> minSeenMarkers{ "Minimum seen markers", 3 };
+							ofParameter<int> maxCapturesToAdd{ "Maximum captures to add", 2 };
+							ofParameter<int> maxTriesContinuous{ "Max tries continuous", 500 };
+							PARAM_DECLARE("Progressive Markers", minSeenMarkers, maxCapturesToAdd, maxTriesContinuous);
+						} progressiveMarkers;
+						PARAM_DECLARE("Progressive calibration", maximumResidual, progressiveMarkers);
+					} progressiveCalibration;
 
 					struct : ofParameterGroup {
 						ofParameter<float> cameraFarPlane{ "Camera far plane", 0.2f, 0.01f, 10.0f };
@@ -73,10 +93,11 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<bool> cameraRays{ "Camera rays", true };
 						ofParameter<bool> cameraViews{ "Camera views", true };
-						PARAM_DECLARE("Draw", cameraRays, cameraViews);
+						ofParameter<bool> labels{ "Labels", true };
+						PARAM_DECLARE("Draw", cameraRays, cameraViews, labels);
 					} draw;
 
-					PARAM_DECLARE("Calibrate", calibration, debug, draw);
+					PARAM_DECLARE("Calibrate", calibration, progressiveCalibration, debug, draw);
 				} parameters;
 			};
 		}

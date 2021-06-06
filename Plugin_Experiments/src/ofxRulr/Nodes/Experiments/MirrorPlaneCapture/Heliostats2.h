@@ -9,6 +9,11 @@ namespace ofxRulr {
 			namespace MirrorPlaneCapture {
 				class Heliostats2 : public Nodes::Base {
 				public:
+					struct DrawParameters : ofParameterGroup {
+						ofParameter<WhenDrawOnWorldStage> labels{ "Labels", WhenDrawOnWorldStage::Selected };
+						PARAM_DECLARE("Draw", labels);
+					};
+
 					struct HAMParameters : ofParameterGroup {
 						struct AxisParameters : ofParameterGroup {
 							// Rotation away from -y axis
@@ -70,7 +75,7 @@ namespace ofxRulr {
 					public:
 						Heliostat();
 						string getDisplayString() const override;
-						void drawWorld();
+						void drawWorld(const DrawParameters&, bool nodeIsSelected);
 						void drawMirrorFace();
 
 						struct Parameters : ofParameterGroup {
@@ -164,7 +169,10 @@ namespace ofxRulr {
 							ofParameter<float> servo2{ "Servo 2", 0, -100, 100 };
 							PARAM_DECLARE("Away pose", servo1, servo2);
 						} awayPose;
-						PARAM_DECLARE("Heliostats2", navigator, dispatcher, awayPose);
+
+						DrawParameters draw;
+
+						PARAM_DECLARE("Heliostats2", navigator, dispatcher, awayPose, draw);
 					} parameters;
 
 					Utils::CaptureSet<Heliostat> heliostats;

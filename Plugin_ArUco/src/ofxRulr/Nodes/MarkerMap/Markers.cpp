@@ -149,6 +149,22 @@ namespace ofxRulr {
 						groupWidgets.push_back(widget);
 					}
 
+					// Ignore
+					{
+						auto widget = make_shared<ofxCvGui::Widgets::Toggle>(this->parameters.ignore);
+						widget->setCaption("");
+						widget->onDraw += [this](ofxCvGui::DrawArguments& args) {
+							const auto& fixed = this->parameters.ignore.get();
+							auto size = min(args.localBounds.getHeight(), args.localBounds.getWidth()) * 0.9;
+							const auto& image = ofxAssets::image("ofxRulr::cross");
+							image.draw(args.localBounds.getCenter() - glm::vec2(size, size) / 2.0f
+								, size
+								, size);
+						};
+						group->add(widget);
+						groupWidgets.push_back(widget);
+					}
+
 					group->setHeight(50);
 					group->onBoundsChange += [groupWidgets](ofxCvGui::BoundsChangeArguments& args) {
 						auto itemWidth = args.localBounds.width / groupWidgets.size();
@@ -226,6 +242,9 @@ namespace ofxRulr {
 				{
 					this->panel = ofxCvGui::Panels::makeWidgets();
 					this->markers.populateWidgets(this->panel);
+					this->panel->addButton("Sort", [this]() {
+						this->sort();
+						});
 				}
 			}
 
@@ -315,6 +334,12 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 					});
+				inspector->addButton("Delete unfixed markers", [this]() {
+					try {
+						this->deleteUnfixedMarkers();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					});
 			}
 
 			//---------
@@ -350,6 +375,18 @@ namespace ofxRulr {
 			}
 
 			//---------
+			shared_ptr<Markers::Marker> Markers::getMarkerByID(int ID) const {
+				auto markers = this->markers.getSelection();
+				for(auto marker : markers) {
+					if (marker->parameters.ID.get() == ID) {
+						return marker;
+					}
+				}
+
+				throw(ofxRulr::Exception("Marker (" + ofToString(ID) + ") not found"));
+			}
+
+			//---------
 			void Markers::add() {
 				this->throwIfMissingAConnection<ArUco::Detector>();
 				auto detector = this->getInput<ArUco::Detector>();
@@ -374,6 +411,29 @@ namespace ofxRulr {
 				marker->setParent(this);
 				marker->parameters.length.set(detector->getMarkerLength());
 				this->markers.add(marker);
+			}
+
+			//---------
+			void Markers::sort() {
+				this->markers.sortBy([](shared_ptr<Marker> marker) {
+					return (float)marker->parameters.ID.get();
+					});
+			}
+
+			//---------
+			void Markers::deleteUnfixedMarkers() {
+				vector<shared_ptr<Marker>> markersToDelete;
+				auto allMarkers = this->markers.getAllCaptures();
+				for (auto marker : allMarkers)
+				{
+					if (!marker->parameters.fixed.get()) {
+						markersToDelete.push_back(marker);
+					}
+				}
+
+				for (auto markerToDelete : markersToDelete) {
+					this->markers.remove(markerToDelete);
+				}
 			}
 		}
 	}

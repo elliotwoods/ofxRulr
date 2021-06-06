@@ -312,6 +312,10 @@ namespace ofxRulr {
 				this->clear();
 			});
 
+			widgetsPanel->addLiveValue<int>("Select size", [this]() {
+				return this->getSelectionUntyped().size();
+				});
+
 			{
 				auto selectionSelector = widgetsPanel->addMultipleChoice("Selection", { "All", "None" });
 				selectionSelector->setAllowNullSelection(true);

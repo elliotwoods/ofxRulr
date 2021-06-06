@@ -51,6 +51,7 @@ namespace ofxRulr {
 					
 
 					struct : ofParameterGroup {
+						ofParameter<bool> mirrored{ "Mirrored", false };
 						ofParameter<bool> refineStrategy{ "Refine strategy", true };
 						ofParameter<float> errorCorrectionRate{ "Error correction rate", 0.6 };
 						struct : ofParameterGroup {
@@ -59,7 +60,7 @@ namespace ofxRulr {
 							ofParameter<int> windowSizeStep{ "Window size step", 10 };
 							PARAM_DECLARE("Adaptive threshold", windowSizeMin, windowSizeMax, windowSizeStep);
 						} adaptiveThreshold;
-						PARAM_DECLARE("Detection", refineStrategy, errorCorrectionRate, adaptiveThreshold);
+						PARAM_DECLARE("Detection", mirrored, refineStrategy, errorCorrectionRate, adaptiveThreshold);
 					} detection;
 
 					struct : ofParameterGroup {

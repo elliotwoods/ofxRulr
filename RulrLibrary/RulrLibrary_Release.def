@@ -316,6 +316,7 @@ EXPORTS
 	?begin@ofDirectory@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@VofFile@@@std@@@std@@@std@@XZ
 	?createDirectory@ofDirectory@@SA_NAEBVpath@filesystem@boost@@_N1@Z
 	?end@ofDirectory@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@VofFile@@@std@@@std@@@std@@XZ
+	?listDir@ofDirectory@@QEAA_KXZ
 	?size@ofDirectory@@QEBA_KXZ
 	?allocate@ofFbo@@QEAAXHHHH@Z
 	?allocate@ofFbo@@QEAAXUofFboSettings@@@Z
@@ -353,6 +354,7 @@ EXPORTS
 	?customDraw@ofNode@@UEAAXXZ
 	?customDraw@ofNode@@UEBAXPEBVofBaseRenderer@@@Z
 	?getGlobalTransformMatrix@ofNode@@QEBA?AU?$mat@$03$03M$0A@@glm@@XZ
+	?getLocalTransformMatrix@ofNode@@QEBAAEBU?$mat@$03$03M$0A@@glm@@XZ
 	?getPosition@ofNode@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?lookAt@ofNode@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	?setOrientation@ofNode@@QEAAXAEBU?$qua@M$0A@@glm@@@Z
@@ -801,6 +803,7 @@ EXPORTS
 	??1VideoOutputListener@Utils@ofxRulr@@QEAA@XZ
 	?applyTransform@Utils@ofxRulr@@YA?AU?$vec@$01M$0A@@glm@@AEBU?$mat@$03$03M$0A@@4@AEBU34@@Z
 	?applyTransform@Utils@ofxRulr@@YA?AU?$vec@$02M$0A@@glm@@AEBU?$mat@$03$03M$0A@@4@AEBU34@@Z
+	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEA_N@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAH@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAM@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAU?$mat@$03$03M$0A@@glm@@@Z

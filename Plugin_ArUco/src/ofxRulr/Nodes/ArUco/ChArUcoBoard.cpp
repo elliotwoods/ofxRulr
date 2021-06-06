@@ -204,6 +204,12 @@ namespace ofxRulr {
 						detectorParams->minMarkerPerimeterRate = 0.01;
 					}
 
+					// Flip the image before detection if mirrored
+					if (this->parameters.detection.mirrored.get()) {
+						image = image.clone();
+						cv::flip(image, image, 0);
+					}
+
 					//Use OpenCV wrapped version
 					cv::aruco::detectMarkers(image
 						, this->dictionary
@@ -253,6 +259,16 @@ namespace ofxRulr {
 					objectPoints.resize(interpolatedCorners);
 					for (int i = 0; i < interpolatedCorners; i++) {
 						objectPoints[i] = this->board->chessboardCorners[charucoIds[i]];
+					}
+
+					// Flip the image and results backif mirrored
+					if (this->parameters.detection.mirrored.get()) {
+						cv::flip(image, image, 0);
+
+						// flip the imagePoints results
+						for (auto& imagePoint : imagePoints) {
+							imagePoint.x = image.cols - 1 - imagePoint.x;
+						}
 					}
 
 					return true;

@@ -67,7 +67,10 @@ struct MarkerProjection_Cost
 				, (T)this->cameraHeight * ((T)1.0 - projectedPoint.y) / (T)2.0
 			};
 			auto actualImagePoint = (glm::tvec2<T>) this->imagePoints[i];
-			residuals[i] = ofxCeres::VectorMath::distance2(projectedImagePoint, actualImagePoint);
+			auto delta = projectedImagePoint - actualImagePoint;
+			residuals[i * 2 + 0] = delta.x;
+			residuals[i * 2 + 1] = delta.y;
+
 		}
 
 		return true;
@@ -83,7 +86,7 @@ struct MarkerProjection_Cost
 		if (imagePoints.size() != objectPoints.size()) {
 			throw(ofxRulr::Exception("imagePoints.size() != objectPoints.size()"));
 		}
-		return new ceres::AutoDiffCostFunction<MarkerProjection_Cost, 4, 6, 6>(
+		return new ceres::AutoDiffCostFunction<MarkerProjection_Cost, 4*2, 6, 6>(
 			new MarkerProjection_Cost(cameraWidth, cameraHeight, cameraProjectionMatrix, imagePoints, objectPoints)
 			);
 	}
@@ -292,16 +295,17 @@ namespace ofxRulr {
 						, image.imagePoints
 						, objectPoints[image.objectIndex]);
 
-					vector<double> residuals(image.imagePoints.size());
+					vector<double> residuals(4 * 2);
 					costFunction(allViewParameters[image.viewIndex]
 						, allObjectParameters[image.objectIndex]
 						, residuals.data());
 
 					float residual = 0.0f;
-					for (const auto r : residuals) {
-						residual += r;
+					for (int i = 0; i < 4; i++) {
+						residual += sqrt(residuals[i * 2 + 0] * residuals[i * 2 + 0])
+							+ sqrt(residuals[i * 2 + 1] * residuals[i * 2 + 1]);
 					}
-					residual /= (float) residuals.size();
+					residual /= 4.0f;
 					result.solution.reprojectionErrorPerImage.push_back(residual);
 				}
 			}

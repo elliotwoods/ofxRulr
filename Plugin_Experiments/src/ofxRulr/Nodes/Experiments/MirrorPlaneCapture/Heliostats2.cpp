@@ -159,7 +159,7 @@ namespace ofxRulr {
 					inspector->addButton("Push all", [this]() {
 						try {
 							Utils::ScopedProcess scopedProcess("Push all values");
-							this->pushAll(true);
+							this->pushAll(false);
 							scopedProcess.end();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
@@ -209,7 +209,7 @@ namespace ofxRulr {
 				void Heliostats2::drawWorldStage() {
 					auto selection = this->heliostats.getSelection();
 					for (auto heliostat : selection) {
-						heliostat->drawWorld();
+						heliostat->drawWorld(this->parameters.draw, this->isBeingInspected());
 					}
 				}
 
@@ -623,10 +623,26 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Heliostats2::Heliostat::drawWorld() {
-					ofxCvGui::Utils::drawTextAnnotation(this->parameters.name
-						, this->parameters.hamParameters.position
-						, this->color);
+				void Heliostats2::Heliostat::drawWorld(const DrawParameters& drawParameters, bool nodeIsSelected) {
+					if (drawParameters.labels.get()) {
+						bool shouldDraw = false;
+						switch (drawParameters.labels.get().get()) {
+						case WhenDrawOnWorldStage::Selected:
+							if (!nodeIsSelected) {
+								break;
+							}
+						case WhenDrawOnWorldStage::Always:
+							shouldDraw = true;
+						case WhenDrawOnWorldStage::Never:
+						default:
+							shouldDraw = false;
+						}
+						if (shouldDraw) {
+							ofxCvGui::Utils::drawTextAnnotation(this->parameters.name
+								, this->parameters.hamParameters.position
+								, this->color);
+						}
+					}
 
 					auto isBeingInspected = this->isBeingInspected();
 					auto color = isBeingInspected

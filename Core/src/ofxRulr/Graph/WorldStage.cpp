@@ -127,6 +127,9 @@ namespace ofxRulr {
 			auto inspector = inspectArguments.inspector;
 
 			inspector->addParameterGroup(this->view->parameters);
+			inspector->addLiveValue<glm::vec3>("Cursor position", [this]() {
+				return this->getCamera().getCursorWorld();
+				});
 		}
 	}
 }
