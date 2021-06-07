@@ -207,7 +207,7 @@ namespace ofxRulr {
 					// Flip the image before detection if mirrored
 					if (this->parameters.detection.mirrored.get()) {
 						image = image.clone();
-						cv::flip(image, image, 0);
+						cv::flip(image, image, 1);
 					}
 
 					//Use OpenCV wrapped version
@@ -263,7 +263,7 @@ namespace ofxRulr {
 
 					// Flip the image and results backif mirrored
 					if (this->parameters.detection.mirrored.get()) {
-						cv::flip(image, image, 0);
+						cv::flip(image, image, 1);
 
 						// flip the imagePoints results
 						for (auto& imagePoint : imagePoints) {

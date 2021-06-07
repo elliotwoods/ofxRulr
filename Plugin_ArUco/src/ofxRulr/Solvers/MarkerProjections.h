@@ -23,7 +23,7 @@ namespace ofxRulr {
 			struct Image {
 				int viewIndex;
 				int objectIndex;
-				vector<glm::vec2> imagePoints;
+				vector<glm::vec2> imagePointsUndistorted;
 			};
 
 			typedef ofxCeres::Result<Solution> Result;

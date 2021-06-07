@@ -49,10 +49,10 @@ struct HeliostatActionModel_PointToPointCost
 			
 			auto angleBetween = dot(normalize(intendedDirection), mirrorNormal);
 			if (angleBetween < (T) 0) {
-				residuals[1] = -angleBetween * (T) 1000.0;
+				//residuals[1] = -angleBetween * (T) 1000.0;
 			}
 			else {
-				residuals[1] = (T)0.0;
+				//residuals[1] = (T)0.0;
 			}
 		}
 
@@ -64,7 +64,7 @@ struct HeliostatActionModel_PointToPointCost
 			, const glm::vec3& pointA
 			, const glm::vec3& pointB)
 	{
-		return new ceres::AutoDiffCostFunction<HeliostatActionModel_PointToPointCost, 2, 2>(
+		return new ceres::AutoDiffCostFunction<HeliostatActionModel_PointToPointCost, 1, 2>(
 			new HeliostatActionModel_PointToPointCost(parameters, pointA, pointB)
 			);
 	}

@@ -40,12 +40,7 @@ namespace ofxRulr {
 				this->rebuildPanel();
 
 				this->onDrawObject += [this]() {
-					if (this->grabber->getIsDeviceOpen()) {
-						auto & grabberTexture = this->getGrabber()->getTexture();
-						if (grabberTexture.isAllocated()) {
-							this->getViewInObjectSpace().drawOnNearPlane(*this->getGrabber());
-						}
-					}
+					this->getViewInObjectSpace().drawOnNearPlane(this->preview);
 				};
 			}
 
@@ -73,6 +68,18 @@ namespace ofxRulr {
 							}
 						}
 					}
+				}
+
+				if (this->grabber && this->grabber->isFrameNew()) {
+					auto pixels = this->grabber->getPixels();
+					this->preview.allocate(pixels.getWidth()
+						, pixels.getHeight()
+						, pixels.getImageType());
+					cv::undistort(ofxCv::toCv(pixels)
+						, ofxCv::toCv(this->preview.getPixels())
+						, this->getCameraMatrix()
+						, this->getDistortionCoefficients());
+					this->preview.update();
 				}
 
 				if ((this->grabber->getWidth() != this->getWidth()

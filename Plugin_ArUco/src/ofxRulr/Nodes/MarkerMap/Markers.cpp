@@ -274,7 +274,7 @@ namespace ofxRulr {
 					markerPreview.clearVertices();
 					markerPreview.addVertices(marker->getWorldVertices());
 
-					if (detector) {
+					if (detector && !marker->parameters.ignore.get()) {
 						auto& image = detector->getMarkerImage(marker->parameters.ID.get());
 
 						image.bind();
@@ -312,7 +312,12 @@ namespace ofxRulr {
 						ofPolyline line;
 						line.addVertices(markerPreview.getVertices());
 						line.close();
-						line.draw();
+						ofPushStyle();
+						{
+							ofSetColor(this->getColor());
+							line.draw();
+						}
+						ofPopStyle();
 					}
 						break;
 					case WhenDrawOnWorldStage::Never:

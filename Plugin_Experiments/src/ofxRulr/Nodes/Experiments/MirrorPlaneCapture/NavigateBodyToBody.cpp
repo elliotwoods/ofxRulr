@@ -57,7 +57,8 @@ namespace ofxRulr {
 					for (auto heliostat : heliostats) {
 						heliostat->navigateToReflectPointToPoint(positionA
 							, positionB
-							, solverSettings);
+							, solverSettings
+						, this->parameters.throwIfOutsideRange.get());
 					}
 
 					if (this->parameters.pushValues) {

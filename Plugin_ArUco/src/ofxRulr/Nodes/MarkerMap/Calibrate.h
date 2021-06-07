@@ -26,7 +26,9 @@ namespace ofxRulr {
 					ofParameter<string> name{ "Name", "" };
 					vector<int> IDs;
 					vector<vector<glm::vec2>> imagePoints;
+					vector<vector<glm::vec2>> imagePointsUndistorted;
 					vector<float> residuals;
+					bool initialised = false;
 
 					ofxRay::Camera cameraView;
 					vector<ofxRay::Ray> cameraRays;
@@ -46,12 +48,18 @@ namespace ofxRulr {
 
 				void capture();
 				void calibrate();
+				void calibrateSelected();
 				void calibrateProgressiveMarkers();
 				void calibrateProgressiveMarkersContinuously();
 
 			protected:
 				void add(const cv::Mat& image, const string& name);
 				void addFolderOfImages();
+
+				void unpackSolution(vector<shared_ptr<Capture>> captures
+					, Solvers::MarkerProjections::Solution& solution
+					, vector<shared_ptr<Markers::Marker>>& markers
+					, const vector<Solvers::MarkerProjections::Image>& images);
 
 				void initialiseCaptureViewWithSeenMarkers(shared_ptr<Capture>);
 				void initialiseUnseenMarkersInView(shared_ptr<Capture>);

@@ -97,7 +97,8 @@ namespace ofxRulr {
 		HeliostatActionModel::Navigator::Result
 			HeliostatActionModel::Navigator::solveConstrained(const Parameters<float>& hamParameters
 				, std::function<Result(const AxisAngles<float>&)> solveFunction
-				, const AxisAngles<float>& initialAngles)
+				, const AxisAngles<float>& initialAngles
+				, bool throwIfOutsideConstraints)
 		{
 			// Perform first solve
 			auto result = solveFunction(initialAngles);
@@ -122,7 +123,7 @@ namespace ofxRulr {
 				result.errorMessage = "Could not solve within constraints";
 			}
 
-			if (result.isError) {
+			if (result.isError && throwIfOutsideConstraints) {
 				throw(ofxRulr::Exception("Could not navigate mirror within bounds : " + result.errorMessage));
 			}
 

@@ -21,7 +21,8 @@ namespace ofxRulr {
 						ofParameter<int> maxIterations{ "Max iterations", 1000 };
 						ofParameter<bool> printReport{ "Print report", true };
 						ofParameter<bool> pushValues{ "Push values", true };
-						PARAM_DECLARE("NavigateBodyToBody", maxIterations, printReport, pushValues);
+						ofParameter<bool> throwIfOutsideRange{ "Throw if outside range", false };
+						PARAM_DECLARE("NavigateBodyToBody", maxIterations, printReport, pushValues, throwIfOutsideRange);
 					} parameters;
 				};
 			}

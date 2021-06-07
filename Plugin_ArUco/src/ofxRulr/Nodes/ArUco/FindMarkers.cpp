@@ -92,9 +92,11 @@ namespace ofxRulr {
 								}
 								image.unbind();
 
+								// Draw outline
 								ofPushStyle();
 								{
 									ofNoFill();
+									ofSetColor(this->getColor());
 									ofDrawRectangle(ofRectangle(-0.5, -0.5, 1, 1));
 								}
 								ofPopStyle();

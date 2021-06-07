@@ -198,7 +198,8 @@ namespace ofxRulr {
 
 				static Result solveConstrained(const Parameters<float>&
 					, std::function<Result(const AxisAngles<float>&)>
-					, const AxisAngles<float>& initialAngles);
+					, const AxisAngles<float>& initialAngles
+					, bool throwIfOutsideConstraints);
 			};
 
 			class SolvePosition {

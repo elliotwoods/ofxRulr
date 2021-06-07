@@ -97,6 +97,21 @@ namespace ofxRulr {
 							heliostat->update();
 						}
 					}
+
+					// face cursor
+					{
+						switch (this->parameters.trackCursor.get().get()) {
+						case WhenDrawOnWorldStage::Selected:
+							if (!this->isBeingInspected()) {
+								break;
+							}
+						case WhenDrawOnWorldStage::Always:
+							this->faceAllTowardsCursor();
+						case WhenDrawOnWorldStage::Never:
+						default:
+							break;
+						}
+					}
 				}
 
 				//----------
@@ -208,8 +223,34 @@ namespace ofxRulr {
 				//----------
 				void Heliostats2::drawWorldStage() {
 					auto selection = this->heliostats.getSelection();
+					Heliostat::DrawParameters drawParameters;
+					{
+						drawParameters.nodeIsSelected = this->isBeingInspected();
+
+						// should draw labels
+						{
+							bool shouldDraw = false;
+							switch (this->parameters.draw.labels.get().get()) {
+							case WhenDrawOnWorldStage::Selected:
+								if (!drawParameters.nodeIsSelected) {
+									break;
+								}
+							case WhenDrawOnWorldStage::Always:
+								shouldDraw = true;
+								break;
+							case WhenDrawOnWorldStage::Never:
+							default:
+								shouldDraw = false;
+								break;
+							}
+							drawParameters.labels = shouldDraw;
+						}
+
+						drawParameters.servoIndices = this->parameters.draw.servoIndices.get();
+					}
+
 					for (auto heliostat : selection) {
-						heliostat->drawWorld(this->parameters.draw, this->isBeingInspected());
+						heliostat->drawWorld(drawParameters);
 					}
 				}
 
@@ -291,11 +332,14 @@ namespace ofxRulr {
 					auto cursorInWorld = Graph::World::X().getWorldStage()->getCursorWorld();
 					
 					auto solverSettings = Solvers::HeliostatActionModel::Navigator::defaultSolverSettings();
+					solverSettings.printReport = this->parameters.navigator.printReport.get();
+					solverSettings.options.minimizer_progress_to_stdout = this->parameters.navigator.printReport.get();
 
 					for (auto heliostat : heliostats) {
 						heliostat->navigateToReflectPointToPoint(cursorInWorld
 							, cursorInWorld
-							, solverSettings);
+							, solverSettings
+							, false);
 					}
 				}
 
@@ -623,31 +667,22 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Heliostats2::Heliostat::drawWorld(const DrawParameters& drawParameters, bool nodeIsSelected) {
-					if (drawParameters.labels.get()) {
-						bool shouldDraw = false;
-						switch (drawParameters.labels.get().get()) {
-						case WhenDrawOnWorldStage::Selected:
-							if (!nodeIsSelected) {
-								break;
-							}
-						case WhenDrawOnWorldStage::Always:
-							shouldDraw = true;
-						case WhenDrawOnWorldStage::Never:
-						default:
-							shouldDraw = false;
-						}
-						if (shouldDraw) {
-							ofxCvGui::Utils::drawTextAnnotation(this->parameters.name
-								, this->parameters.hamParameters.position
-								, this->color);
-						}
-					}
-
+				void Heliostats2::Heliostat::drawWorld(const DrawParameters& drawParameters) {
 					auto isBeingInspected = this->isBeingInspected();
 					auto color = isBeingInspected
 						? ofColor(255, 255, 255)
 						: ofColor(100, 100, 100);
+
+					if(drawParameters.labels) {
+						stringstream ss;
+						ss << this->parameters.name;
+						if (drawParameters.servoIndices) {
+							ss << " : " << this->parameters.servo1.ID.get() << "," << this->parameters.servo2.ID.get();
+						}
+						ofxCvGui::Utils::drawTextAnnotation(ss.str()
+							, this->parameters.hamParameters.position
+							, this->color);
+					}
 
 					ofPushStyle();
 					{
@@ -846,7 +881,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Heliostats2::Heliostat::navigateToNormal(const glm::vec3& normal, const ofxCeres::SolverSettings& solverSettings) {
+				void Heliostats2::Heliostat::navigateToNormal(const glm::vec3& normal, const ofxCeres::SolverSettings& solverSettings, bool throwIfOutsideRange) {
 					Solvers::HeliostatActionModel::AxisAngles<float> priorAngles{
 						this->parameters.servo1.angle
 						, this->parameters.servo2.angle
@@ -859,25 +894,15 @@ namespace ofxRulr {
 								, normal
 								, initialAngles
 								, solverSettings);
-						}, priorAngles);
-
-					if (result.solution.axisAngles.axis1 < this->parameters.servo1.angle.getMin()
-						|| result.solution.axisAngles.axis1 > this->parameters.servo1.angle.getMax()
-						|| result.solution.axisAngles.axis2 < this->parameters.servo2.angle.getMin()
-						|| result.solution.axisAngles.axis2 > this->parameters.servo2.angle.getMax()) {
-						throw(ofxRulr::Exception("Cannot navigate - outside of range of motion"));
-					}
+						}, priorAngles
+						, throwIfOutsideRange);
 
 					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
 					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
-
-					if (!result.isConverged()) {
-						throw(ofxRulr::Exception("Couldn't navigate heliostat to normal : " + result.errorMessage));
-					}
 				}
 
 				//----------
-				void Heliostats2::Heliostat::navigateToReflectPointToPoint(const glm::vec3& pointA, const glm::vec3& pointB, const ofxCeres::SolverSettings& solverSettings) {
+				void Heliostats2::Heliostat::navigateToReflectPointToPoint(const glm::vec3& pointA, const glm::vec3& pointB, const ofxCeres::SolverSettings& solverSettings, bool throwIfOutsideRange) {
 					Solvers::HeliostatActionModel::AxisAngles<float> priorAngles{
 							this->parameters.servo1.angle
 							, this->parameters.servo2.angle
@@ -891,21 +916,11 @@ namespace ofxRulr {
 								, pointB
 								, initialAngles
 								, solverSettings);
-						}, priorAngles);
-
-					if (result.solution.axisAngles.axis1 < this->parameters.servo1.angle.getMin()
-						|| result.solution.axisAngles.axis1 > this->parameters.servo1.angle.getMax()
-						|| result.solution.axisAngles.axis2 < this->parameters.servo2.angle.getMin()
-						|| result.solution.axisAngles.axis2 > this->parameters.servo2.angle.getMax()) {
-						throw(ofxRulr::Exception("Cannot navigate - outside of range of motion"));
-					}
+						}, priorAngles
+						, throwIfOutsideRange);
 
 					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
 					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
-
-					if (!result.isConverged()) {
-						throw(ofxRulr::Exception("Couldn't navigate heliostat point to point: " + result.errorMessage));
-					}
 				}
 
 				//----------

@@ -9,11 +9,6 @@ namespace ofxRulr {
 			namespace MirrorPlaneCapture {
 				class Heliostats2 : public Nodes::Base {
 				public:
-					struct DrawParameters : ofParameterGroup {
-						ofParameter<WhenDrawOnWorldStage> labels{ "Labels", WhenDrawOnWorldStage::Selected };
-						PARAM_DECLARE("Draw", labels);
-					};
-
 					struct HAMParameters : ofParameterGroup {
 						struct AxisParameters : ofParameterGroup {
 							// Rotation away from -y axis
@@ -73,9 +68,15 @@ namespace ofxRulr {
 
 					class Heliostat : public Utils::AbstractCaptureSet::BaseCapture, public ofxCvGui::IInspectable, public enable_shared_from_this<Heliostat> {
 					public:
+						struct DrawParameters {
+							bool nodeIsSelected;
+							bool labels;
+							bool servoIndices;
+						};
+
 						Heliostat();
 						string getDisplayString() const override;
-						void drawWorld(const DrawParameters&, bool nodeIsSelected);
+						void drawWorld(const DrawParameters&);
 						void drawMirrorFace();
 
 						struct Parameters : ofParameterGroup {
@@ -111,8 +112,8 @@ namespace ofxRulr {
 
 						void flip();
 
-						void navigateToNormal(const glm::vec3&, const ofxCeres::SolverSettings&);
-						void navigateToReflectPointToPoint(const glm::vec3&, const glm::vec3&, const ofxCeres::SolverSettings&);
+						void navigateToNormal(const glm::vec3&, const ofxCeres::SolverSettings&, bool throwIfOutsideRange);
+						void navigateToReflectPointToPoint(const glm::vec3&, const glm::vec3&, const ofxCeres::SolverSettings&, bool throwIfOutsideRange);
 					protected:
 						ofxCvGui::ElementPtr getDataDisplay() override;
 					};
@@ -170,9 +171,15 @@ namespace ofxRulr {
 							PARAM_DECLARE("Away pose", servo1, servo2);
 						} awayPose;
 
-						DrawParameters draw;
+						ofParameter<WhenDrawOnWorldStage> trackCursor{ "Track cursor", WhenDrawOnWorldStage::Never };
 
-						PARAM_DECLARE("Heliostats2", navigator, dispatcher, awayPose, draw);
+						struct : ofParameterGroup {
+							ofParameter<WhenDrawOnWorldStage> labels{ "Labels", WhenDrawOnWorldStage::Selected };
+							ofParameter<bool> servoIndices{ "Servo indices", false };
+							PARAM_DECLARE("Draw", labels, servoIndices);
+						} draw;
+
+						PARAM_DECLARE("Heliostats2", navigator, dispatcher, awayPose, draw, trackCursor);
 					} parameters;
 
 					Utils::CaptureSet<Heliostat> heliostats;

@@ -3,122 +3,11 @@
 #include "Detector.h"
 #include "ofxRulr/Nodes/GraphicsManager.h"
 
-
-vector<aruco::Marker> multiCropDetect(aruco::MarkerDetector& markerDetector, const cv::Mat& image, int cropIterations, float overlap) {
-	auto imageWidth = image.cols;
-	auto imageHeight = image.rows;
-
-	map<int, aruco::Marker> markersInAllCrops;
-
-	for (int cropIteration = 0; cropIteration < cropIterations; cropIteration++) {
-		auto stepRatio = 1.0f / pow(2, cropIteration);
-#ifdef ARUCO_MULTICROP_DEBUG
-		cout << cropIteration << ", " << stepRatio << endl;
-#endif
-
-		int stepWidth = imageWidth * stepRatio;
-		int stepHeight = imageHeight * stepRatio;
-
-		if (stepWidth == 0 || stepHeight == 0) {
-#ifdef ARUCO_MULTICROP_DEBUG
-			cout << "Skipping crop tier" << endl;
-#endif
-			continue;
-		}
-
-		int overlapWidth = stepWidth * overlap;
-		int overlapHeight = stepHeight * overlap;
-
-		for (int x = 0; x <= imageWidth - stepWidth; x += stepWidth) {
-			for (int y = 0; y <= imageHeight - stepHeight; y += stepHeight) {
-
-				//calc clamped window within image
-				int x_clamped = max(x - overlapWidth, 0);
-				int y_clamped = max(y - overlapHeight, 0);
-
-				int width_clamped = stepWidth + overlapWidth;
-				int height_clamped = stepHeight + overlapHeight;
-
-				width_clamped = min(width_clamped, imageWidth - x);
-				height_clamped = min(height_clamped, imageHeight - y);
-
-				//check we have an image
-				if (width_clamped == 0 || height_clamped == 0) {
-#ifdef ARUCO_MULTICROP_DEBUG
-					cout << "Skipping crop section" << endl;
-#endif
-					continue;
-				}
-
-				cv::Rect roi(x_clamped, y_clamped, width_clamped, height_clamped);
-#ifdef ARUCO_MULTICROP_DEBUG
-				cout << roi << "[" << imageWidth << "x" << imageHeight << "]" << endl;
-#endif
-
-				cv::Mat cropped = image(roi);
-
-				//perform detection
-				auto markersInCrop = markerDetector.detect(cropped);
-
-#ifdef ARUCO_MULTICROP_DEBUG
-				//preview result
-				cv::imshow("cropped", drawMarkers(cropped, markersInCrop));
-				cv::waitKey(0);
-#endif
-
-				//translate into image coords
-				for (auto& markerInCrop : markersInCrop) {
-					for (auto& point : markerInCrop) {
-						point.x += roi.x;
-						point.y += roi.y;
-					}
-				}
-
-				//save into markers
-				for (const auto& marker : markersInCrop) {
-					//this overwrites any previous finds
-					markersInAllCrops[marker.id] = marker;
-				}
-			}
-		}
-	}
-
-	//assemble vector of markers
-	vector<aruco::Marker> markerVector;
-	for (const auto& markerIt : markersInAllCrops) {
-		markerVector.push_back(markerIt.second);
-	}
-
-#ifdef ARUCO_MULTICROP_DEBUG
-	//subpix per marker
-	for (auto& marker : markerVector) {
-		cout << marker.id << ", ";
-		auto delta = marker[1] - marker[0];
-		auto length2 = delta.dot(delta);
-		auto length = sqrt(length2);
-		cout << " delta=" << delta;
-		cout << " length=" << length;
-
-		auto lengthPart = length / 8; // a square
-		lengthPart /= 1; // portion of square
-
-		lengthPart /= 2;
-		lengthPart += 1;
-
-		auto winSize = cv::Size(lengthPart, lengthPart);
-		cout << "winSize" << winSize << endl;
-
-		//perform subpix
-		cv::cornerSubPix(image
-			, marker
-			, winSize
-			, cv::Size(-1, -1)
-			, cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50, 1e-6));
-	}
-#endif
-
-	return markerVector;
-}
+struct MarkerDetectorClone {
+	aruco::MarkerDetector markerDetector;
+	aruco::Dictionary dictionary;
+	aruco::Dictionary::DICT_TYPES dictionaryType;
+};
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -286,24 +175,50 @@ namespace ofxRulr {
 						, cv::COLOR_RGB2GRAY);
 				}
 
-				auto mergeResults = [&](const vector<aruco::Marker>& newMarkers) {
-					// Add data to result
-					for (const auto& newMarker : newMarkers) {
-						bool foundInPriorData = false;
-						for (const auto& priorMarker : this->foundMarkers) {
-							if (priorMarker.id == newMarker.id) {
-								foundInPriorData = true;
-								break;
-							}
-						}
-						if (!foundInPriorData) {
-							this->foundMarkers.push_back(newMarker);
-						}
-					}
-				};
-
 				// Direct find
 				this->foundMarkers = this->markerDetector.detect(this->lastDetection.rawImage);
+
+				// Merge function
+				std::mutex lockFoundMarkers;
+				auto mergeResults = [&](const vector<aruco::Marker>& newMarkers) {
+					lockFoundMarkers.lock();
+					{
+						// Add data to result
+						for (const auto& newMarker : newMarkers) {
+							bool foundInPriorData = false;
+							for (const auto& priorMarker : this->foundMarkers) {
+								if (priorMarker.id == newMarker.id) {
+									foundInPriorData = true;
+									break;
+								}
+							}
+							if (!foundInPriorData) {
+								this->foundMarkers.push_back(newMarker);
+							}
+						}
+					}
+					lockFoundMarkers.unlock();
+				};
+
+				// Detector clone function
+				auto getDetecterClone = [&]() {
+					auto markerDetectorClone = make_shared<MarkerDetectorClone>();
+					stringstream ss;
+
+					this->markerDetector.toStream(ss);
+					markerDetectorClone->markerDetector.fromStream(ss);
+					this->buildDetector(markerDetectorClone->markerDetector
+						, markerDetectorClone->dictionary
+						, markerDetectorClone->dictionaryType);
+
+					return markerDetectorClone;
+				};
+
+				// Add strategy
+				vector<future<void>> strategies;
+				auto addStrategy = [&](const function<void()>& strategy) {
+					strategies.push_back(async(launch::async, strategy));
+				};
 
 				// Strategies
 				{
@@ -328,8 +243,11 @@ namespace ofxRulr {
 							, 0
 							, cv::NormTypes::NORM_MINMAX);
 
-						auto newMarkersFound = this->markerDetector.detect(this->lastDetection.normalisedImage);
-						mergeResults(newMarkersFound);
+						addStrategy([&]() {
+							auto markerDetectorClone = getDetecterClone();
+							auto newMarkersFound = markerDetectorClone->markerDetector.detect(this->lastDetection.normalisedImage);
+							mergeResults(newMarkersFound);
+						});
 					}
 					else {
 						this->lastDetection.normalisedImage = this->lastDetection.rawImage;
@@ -337,27 +255,87 @@ namespace ofxRulr {
 
 					// Multi-crop
 					if (this->parameters.strategies.multiCrop.enabled.get()) {
-						// Find markers in crop (note that if marker is too big for crop strategy then above method works better)
-						auto foundMarkersInCrops = multiCropDetect(this->markerDetector
-							, this->lastDetection.normalisedImage
-							, this->parameters.strategies.multiCrop.iterations.get()
-							, this->parameters.strategies.multiCrop.overlap.get());
+						auto imageWidth = image.cols;
+						auto imageHeight = image.rows;
 
-						mergeResults(foundMarkersInCrops);
+						map<int, aruco::Marker> markersInAllCrops;
+
+						auto iterations = this->parameters.strategies.multiCrop.iterations.get();
+						auto overlap = this->parameters.strategies.multiCrop.overlap.get();
+
+						for (int cropIteration = 0; cropIteration < iterations; cropIteration++) {
+							auto stepRatio = 1.0f / pow(2, cropIteration);
+							int stepWidth = imageWidth * stepRatio;
+							int stepHeight = imageHeight * stepRatio;
+
+							if (stepWidth == 0 || stepHeight == 0) {
+								continue;
+							}
+
+							int overlapWidth = stepWidth * overlap;
+							int overlapHeight = stepHeight * overlap;
+
+							for (int x = 0; x <= imageWidth - stepWidth; x += stepWidth) {
+								for (int y = 0; y <= imageHeight - stepHeight; y += stepHeight) {
+									//calc clamped window within image
+									int x_clamped = max(x - overlapWidth, 0);
+									int y_clamped = max(y - overlapHeight, 0);
+
+									int width_clamped = stepWidth + overlapWidth;
+									int height_clamped = stepHeight + overlapHeight;
+
+									width_clamped = min(width_clamped, imageWidth - x);
+									height_clamped = min(height_clamped, imageHeight - y);
+
+									// Check we have an image
+									if (width_clamped == 0 || height_clamped == 0) {
+										continue;
+									}
+
+									// Perform the find
+									addStrategy([=]() {
+										auto markerDetectorClone = getDetecterClone();
+
+										cv::Rect roi(x_clamped, y_clamped, width_clamped, height_clamped);
+										cv::Mat cropped = image(roi);
+
+										//perform detection
+										auto markersInCrop = markerDetectorClone->markerDetector.detect(cropped);
+
+										//translate into original image coords
+										for (auto& markerInCrop : markersInCrop) {
+											for (auto& point : markerInCrop) {
+												point.x += roi.x;
+												point.y += roi.y;
+											}
+										}
+
+										mergeResults(markersInCrop);
+										});
+								}
+							}
+						}
 					}
 
 					// Multi-brightess
 					if (this->parameters.strategies.multiBrightness.enabled.get()) {
 						for (int i = 2; i < this->parameters.strategies.multiBrightness.maxBrightess.get(); i++) {
-							cv::Mat brighterImage;
-							this->lastDetection.rawImage.convertTo(brighterImage
-								, CV_8U
-								, i
-								, 0);
-							auto markersFoundInBrightenedImage = this->markerDetector.detect(brighterImage);
-							mergeResults(markersFoundInBrightenedImage);
+							addStrategy([&]() {
+								cv::Mat brighterImage;
+								this->lastDetection.rawImage.convertTo(brighterImage
+									, CV_8U
+									, i
+									, 0);
+								auto markerDetectorClone = getDetecterClone();
+								auto markersFoundInBrightenedImage = markerDetectorClone->markerDetector.detect(brighterImage);
+								mergeResults(markersFoundInBrightenedImage);
+							});
 						}
 					}
+				}
+
+				for (auto& future : strategies) {
+					future.wait();
 				}
 
 				// refine corners 1
@@ -426,38 +404,42 @@ namespace ofxRulr {
 
 			//----------
 			void Detector::rebuildDetector() {
+				this->buildDetector(this->markerDetector, this->dictionary, this->dictionaryType);
+				this->cachedMarkerImages.clear();
+				this->detectorDirty = false;
+			}
+
+			//----------
+			void Detector::buildDetector(aruco::MarkerDetector& markerDetector, aruco::Dictionary& dictionary, aruco::Dictionary::DICT_TYPES& dictionaryType) const {
 				switch (this->parameters.dictionary.get())
 				{
 				case DetectorType::Original:
-					this->dictionaryType = aruco::Dictionary::ARUCO;
+					dictionaryType = aruco::Dictionary::ARUCO;
 					break;
 				case DetectorType::MIP_3612h:
-					this->dictionaryType = aruco::Dictionary::ARUCO_MIP_36h12;
+					dictionaryType = aruco::Dictionary::ARUCO_MIP_36h12;
 					break;
 				case DetectorType::ARTKP:
-					this->dictionaryType = aruco::Dictionary::ARTOOLKITPLUS;
+					dictionaryType = aruco::Dictionary::ARTOOLKITPLUS;
 					break;
 				case DetectorType::ARTAG:
-					this->dictionaryType = aruco::Dictionary::ARTAG;
+					dictionaryType = aruco::Dictionary::ARTAG;
 					break;
 				default:
 					throw(ofxRulr::Exception("Detector type not supported"));
 					break;
 				}
 
-				this->dictionary = aruco::Dictionary::loadPredefined(this->dictionaryType);
-				this->markerDetector.setDictionary(this->dictionaryType);
+				dictionary = aruco::Dictionary::loadPredefined(this->dictionaryType);
+				markerDetector.setDictionary(this->dictionaryType);
 
-				auto & parameters = this->markerDetector.getParameters();
+				auto& parameters = markerDetector.getParameters();
 				parameters.maxThreads = this->parameters.arucoDetector.threads.get();
 				parameters.enclosedMarker = this->parameters.arucoDetector.enclosedMarkers.get();
 				parameters.NAttemptsAutoThresFix = this->parameters.arucoDetector.thresholdAttempts.get();
 				parameters.AdaptiveThresWindowSize = this->parameters.arucoDetector.adaptiveThreshold.windowSize.get();
 				parameters.AdaptiveThresWindowSize_range = this->parameters.arucoDetector.adaptiveThreshold.windowSizeRange.get();
 				parameters.ThresHold = this->parameters.arucoDetector.threshold.get();
-
-				this->cachedMarkerImages.clear();
-				this->detectorDirty = false;
 			}
 
 			//----------

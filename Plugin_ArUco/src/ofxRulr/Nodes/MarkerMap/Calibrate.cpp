@@ -38,9 +38,11 @@ namespace ofxRulr {
 				Utils::serialize(json, this->name);
 				Utils::serialize(json, "IDs", this->IDs);
 				Utils::serialize(json, "imagePoints", this->imagePoints);
+				Utils::serialize(json, "imagePointsUndistorted", this->imagePointsUndistorted);
 				Utils::serialize(json, "residuals", this->residuals);
 				Utils::serialize(json, "cameraView", this->cameraView);
 				Utils::serialize(json, "cameraRays", this->cameraRays);
+				Utils::serialize(json, "initialised", this->initialised);
 			}
 
 			//----------
@@ -48,8 +50,10 @@ namespace ofxRulr {
 				Utils::deserialize(json, this->name);
 				Utils::deserialize(json, "IDs", this->IDs);
 				Utils::deserialize(json, "imagePoints", this->imagePoints);
+				Utils::deserialize(json, "imagePointsUndistorted", this->imagePointsUndistorted);
 				Utils::deserialize(json, "residuals", this->residuals);
 				Utils::deserialize(json, "cameraView", this->cameraView);
+				Utils::deserialize(json, "initialised", this->initialised);
 			}
 
 			//----------
@@ -136,31 +140,39 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 					});
-				inspector->addButton("Calibrate", [this]() {
+				inspector->addButton("Calibrate selected", [this]() {
+					try {
+						Utils::ScopedProcess scopedProcess("Calibrate");
+						this->calibrateSelected();
+						scopedProcess.end();
+					}
+					RULR_CATCH_ALL_TO_ERROR;
+					}, OF_KEY_RETURN)->setHeight(100.0f);
+				inspector->addButton("Calibrate (legacy)", [this]() {
 					try {
 						Utils::ScopedProcess scopedProcess("Calibrate");
 						this->calibrate();
 						scopedProcess.end();
 					}
 					RULR_CATCH_ALL_TO_ERROR;
-					}, OF_KEY_RETURN)->setHeight(100.0f);
-					inspector->addTitle("Progressive Markers Calibrate", ofxCvGui::Widgets::Title::Level::H3);
-					inspector->addButton("Once", [this]() {
-						try {
-							Utils::ScopedProcess scopedProcess("Calibrate");
-							this->calibrateProgressiveMarkers();
-							scopedProcess.end();
-						}
-						RULR_CATCH_ALL_TO_ERROR;
-						});
-					inspector->addButton("Continuously", [this]() {
-						try {
-							Utils::ScopedProcess scopedProcess("Calibrate");
-							this->calibrateProgressiveMarkersContinuously();
-							scopedProcess.end();
-						}
-						RULR_CATCH_ALL_TO_ALERT;
-						});
+					});
+				inspector->addTitle("Progressive Markers Calibrate", ofxCvGui::Widgets::Title::Level::H3);
+				inspector->addButton("Once", [this]() {
+					try {
+						Utils::ScopedProcess scopedProcess("Calibrate");
+						this->calibrateProgressiveMarkers();
+						scopedProcess.end();
+					}
+					RULR_CATCH_ALL_TO_ERROR;
+					});
+				inspector->addButton("Continuously", [this]() {
+					try {
+						Utils::ScopedProcess scopedProcess("Calibrate");
+						this->calibrateProgressiveMarkersContinuously();
+						scopedProcess.end();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					});
 			}
 
 			//----------
@@ -400,7 +412,7 @@ namespace ofxRulr {
 				}
 
 				// Position all markers in the genesis capture
-				{
+				if(genesisCapture) {
 					Utils::ScopedProcess scopedProcessGenesis("Process genesis capture", false);
 					initialiseUnseenMarkers(genesisCapture);
 				}
@@ -472,6 +484,7 @@ namespace ofxRulr {
 							capture->cameraView = camera->getViewInWorldSpace();
 							capture->cameraView.setFarClip(this->parameters.debug.cameraFarPlane.get());
 							capture->cameraView.color = capture->color;
+							capture->initialised = true;
 						}
 					}
 				}
@@ -491,9 +504,15 @@ namespace ofxRulr {
 						// gather marker IDs
 						{
 							for (auto marker : initialisationMarkers) {
+								if (marker->parameters.ignore.get()) {
+									continue;
+								}
 								markerIDs.push_back(marker->parameters.ID.get());
 							}
 							for (auto marker : markersWeInitialised) {
+								if (marker->parameters.ignore.get()) {
+									continue;
+								}
 								markerIDs.push_back(marker->parameters.ID.get());
 							}
 						}
@@ -509,9 +528,20 @@ namespace ofxRulr {
 						int viewIndex = 0;
 						for (auto capture : activeCaptures) {
 							auto size = capture->IDs.size();
+
+							// Serialization error previously
+							if (capture->imagePointsUndistorted.empty()) {
+								for (auto& imagePoints : capture->imagePoints) {
+									auto undistortedImagePoints = ofxCv::undistortImagePoints(ofxCv::toCv(imagePoints)
+										, camera->getCameraMatrix()
+										, camera->getDistortionCoefficients());
+									capture->imagePointsUndistorted.push_back(ofxCv::toOf(undistortedImagePoints));
+								}
+							}
+
 							for (size_t i = 0; i < size; i++) {
 								Solvers::MarkerProjections::Image image;
-								image.imagePoints = capture->imagePoints[i];
+								image.imagePointsUndistorted = capture->imagePointsUndistorted[i];
 								image.viewIndex = viewIndex;
 								image.objectIndex = -1;
 								for (int objectIndex = 0; objectIndex < markerIDs.size(); objectIndex++) {
@@ -625,6 +655,152 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void Calibrate::calibrateSelected() {
+				Utils::ScopedProcess scopedProcess("Calibrate selected");
+				this->throwIfMissingAConnection<Markers>();
+				this->throwIfMissingAConnection<Item::Camera>();
+				auto camera = this->getInput<Item::Camera>();
+				auto markersNode = this->getInput<Markers>();
+				auto markers = markersNode->getMarkers();
+
+				auto captures = this->captures.getSelection();
+
+				// Fix prior serialisation errors
+				{
+					for (auto capture : captures) {
+						// Serialization error previously
+						if (capture->imagePointsUndistorted.empty()) {
+							for (auto& imagePoints : capture->imagePoints) {
+								auto undistortedImagePoints = ofxCv::undistortImagePoints(ofxCv::toCv(imagePoints)
+									, camera->getCameraMatrix()
+									, camera->getDistortionCoefficients());
+								capture->imagePointsUndistorted.push_back(ofxCv::toOf(undistortedImagePoints));
+							}
+						}
+					}
+				}
+
+				// Initialise captures against seen markers
+				for (auto capture : captures) {
+					if (!capture->initialised) {
+						this->initialiseCaptureViewWithSeenMarkers(capture);
+					}
+				}
+
+				// Initialise markers with existing captures
+				for (auto capture : captures) {
+					this->initialiseUnseenMarkersInView(capture);
+				}
+
+				// Strip out ignored markers
+				{
+					vector<shared_ptr<Markers::Marker>> allMarkers = markers;
+					markers.clear();
+					for (auto marker : allMarkers) {
+						if (!marker->parameters.ignore.get()) {
+							markers.push_back(marker);
+						}
+					}
+				}
+
+				// Gather data
+				// Prepare the data
+				std::vector<vector<glm::vec3>> objectPoints;
+				vector<Solvers::MarkerProjections::Image> images;
+				Solvers::MarkerProjections::Solution initialSolution;
+				vector<int> fixedObjectIndices;
+				{
+					for (auto marker : markers) {
+						objectPoints.push_back(marker->getObjectVertices());
+						initialSolution.objects.push_back(Solvers::MarkerProjections::getTransform(marker->rigidBody->getTransform()));
+					}
+
+					// gather images and view transforms from captures
+					int viewIndex = 0;
+					for (auto capture : captures) {
+						for (int i = 0; i < capture->IDs.size(); i++) {
+							// check the markerID is in the set of markers that we are calibrating
+							bool isPresent = false;
+							auto markerID = capture->IDs[i];
+							for (auto marker : markers) {
+								if (marker->parameters.ID.get() == markerID) {
+									isPresent = true;
+									break;
+								}
+							}
+							if (!isPresent) {
+								// ignore this marker (which was seen in this view)
+								continue;
+							}
+
+							Solvers::MarkerProjections::Image image;
+							image.imagePointsUndistorted = capture->imagePointsUndistorted[i];
+							image.viewIndex = viewIndex;
+							image.objectIndex = -1;
+							for (int objectIndex = 0; objectIndex < markers.size(); objectIndex++) {
+								if (markers[objectIndex]->parameters.ID.get() == capture->IDs[i]) {
+									image.objectIndex = objectIndex;
+									break;
+								}
+							}
+							if (image.objectIndex != -1) {
+								images.push_back(image);
+							}
+						}
+
+						auto transform = capture->cameraView.getGlobalTransformMatrix();
+						auto viewTransform = glm::inverse(transform);
+						auto transform2 = Solvers::MarkerProjections::getTransform(viewTransform);
+						initialSolution.views.push_back(transform2);
+
+						viewIndex++;
+					}
+
+					// gather fixed object indices
+					for (size_t i = 0; i < markers.size(); i++) {
+						auto marker = markers[i];
+						if (marker->parameters.fixed.get()) {
+							fixedObjectIndices.push_back(i);
+						}
+					}
+				}
+
+				// Perform solve
+				{
+					auto solverSettings = Solvers::MarkerProjections::defaultSolverSettings();
+					solverSettings.options.max_num_iterations = this->parameters.calibration.bundleAdjustment.maxIterations.get();
+					solverSettings.options.function_tolerance = this->parameters.calibration.bundleAdjustment.functionTolerance.get();
+					solverSettings.options.num_threads = this->parameters.calibration.bundleAdjustment.numThreads.get();
+
+					auto cameraView = camera->getViewInObjectSpace();
+
+					auto result = Solvers::MarkerProjections::solve(camera->getWidth()
+						, camera->getHeight()
+						, cameraView.getClippedProjectionMatrix()
+						, objectPoints
+						, images
+						, fixedObjectIndices
+						, initialSolution
+						, solverSettings);
+
+					if (!result.isConverged()) {
+						if (this->parameters.calibration.bundleAdjustment.useIncompleteSolution.get()) {
+							unpackSolution(captures
+								, result.solution
+								, markers
+								, images);
+						}
+						throw(ofxRulr::Exception("Failed to converge"));
+					}
+
+					unpackSolution(captures
+						, result.solution
+						, markers
+						, images);
+				}
+			}
+
+			//----------
 			void Calibrate::calibrateProgressiveMarkers() {
 				Utils::ScopedProcess scopedProcess("Calibrate with strategy 'Progressive Markers'");
 
@@ -689,56 +865,8 @@ namespace ofxRulr {
 
 				auto capturesForThisStep = this->captures.getSelection();
 
-				// Function to unpack solutions
-				auto unpackSolution = [this](vector<shared_ptr<Capture>> captures
-					, Solvers::MarkerProjections::Solution& solution
-					, vector<shared_ptr<Markers::Marker>>& markers
-					, const vector<Solvers::MarkerProjections::Image>& images) {
-						for (size_t i = 0; i < captures.size(); i++) {
-							auto viewTransform = Solvers::MarkerProjections::getTransform(solution.views[i]);
-							auto rigidBodyTransform = glm::inverse(viewTransform);
-
-							auto rigidBodyTransform2 = Solvers::MarkerProjections::getTransform(rigidBodyTransform);
-
-							captures[i]->cameraView.setPosition(rigidBodyTransform2.translation);
-
-							auto orientation = ofxCeres::VectorMath::eulerToQuat(rigidBodyTransform2.rotation);
-							captures[i]->cameraView.setOrientation(orientation);
-						}
-
-						for (size_t i = 0; i < markers.size(); i++) {
-							auto marker = markers[i];
-							marker->rigidBody->setTransform(Solvers::MarkerProjections::getTransform(solution.objects[i]));
-						}
-
-						// Unproject camera rays for image points
-						for (auto capture : captures) {
-							capture->cameraRays.clear();
-							for (const auto& imagePoints : capture->imagePoints) {
-								vector<ofxRay::Ray> cameraRays;
-								capture->cameraView.castPixels(imagePoints, cameraRays, false);
-								for (auto& ray : cameraRays) {
-									ray.color = capture->color;
-									ray.t = glm::normalize(ray.t) * this->parameters.debug.cameraRayLength.get();
-									capture->cameraRays.push_back(ray);
-								}
-							}
-						}
-
-						// Get residuals per image
-						if (solution.reprojectionErrorPerImage.size() == images.size()) {
-							for (auto capture : captures) {
-								capture->residuals.clear();
-							}
-							for (size_t i = 0; i < images.size(); i++) {
-								auto& image = images[i];
-								captures[image.viewIndex]->residuals.push_back(solution.reprojectionErrorPerImage[i]);
-							}
-						}
-				};
-
 				// Function to solve
-				auto solveWithSelectedMarkers = [this, camera, &unpackSolution](vector<shared_ptr<Markers::Marker>> markers, vector<shared_ptr<Capture>> captures) {
+				auto solveWithSelectedMarkers = [this, camera](vector<shared_ptr<Markers::Marker>> markers, vector<shared_ptr<Capture>> captures) {
 					// Prepare the data
 					std::vector<vector<glm::vec3>> objectPoints;
 					vector<Solvers::MarkerProjections::Image> images;
@@ -769,8 +897,18 @@ namespace ofxRulr {
 									continue;
 								}
 
+								// Serialization error previously
+								if (capture->imagePointsUndistorted.empty()) {
+									for (auto& imagePoints : capture->imagePoints) {
+										auto undistortedImagePoints = ofxCv::undistortImagePoints(ofxCv::toCv(imagePoints)
+											, camera->getCameraMatrix()
+											, camera->getDistortionCoefficients());
+										capture->imagePointsUndistorted.push_back(ofxCv::toOf(undistortedImagePoints));
+									}
+									
+								}
 								Solvers::MarkerProjections::Image image;
-								image.imagePoints = capture->imagePoints[i];
+								image.imagePointsUndistorted = capture->imagePointsUndistorted[i];
 								image.viewIndex = viewIndex;
 								image.objectIndex = -1;
 								for (int objectIndex = 0; objectIndex < markers.size(); objectIndex++) {
@@ -824,7 +962,7 @@ namespace ofxRulr {
 						}
 
 						// Unpack the solution
-						unpackSolution(captures, result.solution, markers, images);
+						this->unpackSolution(captures, result.solution, markers, images);
 					}
 				};
 
@@ -907,7 +1045,8 @@ namespace ofxRulr {
 					auto undistortedImagePoints = ofxCv::undistortImagePoints(foundMarker
 						, camera->getCameraMatrix()
 						, camera->getDistortionCoefficients());
-					capture->imagePoints.push_back(ofxCv::toOf(undistortedImagePoints));
+					capture->imagePointsUndistorted.push_back(ofxCv::toOf(undistortedImagePoints));
+					capture->imagePoints.push_back(ofxCv::toOf((vector<cv::Point2f>&) foundMarker));
 				}
 				this->captures.add(capture);
 			}
@@ -949,6 +1088,53 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void Calibrate::unpackSolution(vector<shared_ptr<Capture>> captures
+				, Solvers::MarkerProjections::Solution& solution
+				, vector<shared_ptr<Markers::Marker>>& markers
+				, const vector<Solvers::MarkerProjections::Image>& images) {
+					for (size_t i = 0; i < captures.size(); i++) {
+						auto viewTransform = Solvers::MarkerProjections::getTransform(solution.views[i]);
+						auto rigidBodyTransform = glm::inverse(viewTransform);
+
+						auto rigidBodyTransform2 = Solvers::MarkerProjections::getTransform(rigidBodyTransform);
+
+						captures[i]->cameraView.setPosition(rigidBodyTransform2.translation);
+
+						auto orientation = ofxCeres::VectorMath::eulerToQuat(rigidBodyTransform2.rotation);
+						captures[i]->cameraView.setOrientation(orientation);
+					}
+
+					for (size_t i = 0; i < markers.size(); i++) {
+						auto marker = markers[i];
+						marker->rigidBody->setTransform(Solvers::MarkerProjections::getTransform(solution.objects[i]));
+					}
+
+					// Unproject camera rays for image points
+					for (auto capture : captures) {
+						capture->cameraRays.clear();
+						for (const auto& imagePoints : capture->imagePoints) {
+							vector<ofxRay::Ray> cameraRays;
+							capture->cameraView.castPixels(imagePoints, cameraRays, false);
+							for (auto& ray : cameraRays) {
+								ray.color = capture->color;
+								ray.t = glm::normalize(ray.t) * this->parameters.debug.cameraRayLength.get();
+								capture->cameraRays.push_back(ray);
+							}
+						}
+					}
+
+					// Get residuals per image
+					if (solution.reprojectionErrorPerImage.size() == images.size()) {
+						for (auto capture : captures) {
+							capture->residuals.clear();
+						}
+						for (size_t i = 0; i < images.size(); i++) {
+							auto& image = images[i];
+							captures[image.viewIndex]->residuals.push_back(solution.reprojectionErrorPerImage[i]);
+						}
+					}
+			};
+			//----------
 			void Calibrate::initialiseCaptureViewWithSeenMarkers(shared_ptr<Capture> capture) {
 				this->throwIfMissingAConnection<Markers>();
 				this->throwIfMissingAConnection<Item::Camera>();
@@ -974,7 +1160,7 @@ namespace ofxRulr {
 								continue;
 							}
 
-							const auto& markerImagePoints = ofxCv::toCv(capture->imagePoints[i]);
+							const auto& markerImagePoints = ofxCv::toCv(capture->imagePointsUndistorted[i]);
 							imagePoints.insert(imagePoints.end(), markerImagePoints.begin(), markerImagePoints.end());
 
 							const auto markerWorldPoints = ofxCv::toCv(marker->getWorldVertices());
@@ -983,6 +1169,10 @@ namespace ofxRulr {
 						catch (...) {
 							// marker is not initialised
 						}
+					}
+
+					if (imagePoints.empty()) {
+						throw(ofxRulr::Exception("Cannot initialise view - no prior markers found"));
 					}
 
 					cv::solvePnP(worldPoints
@@ -998,6 +1188,7 @@ namespace ofxRulr {
 					capture->cameraView = camera->getViewInWorldSpace();
 					capture->cameraView.setFarClip(this->parameters.debug.cameraFarPlane.get());
 					capture->cameraView.color = capture->color;
+					capture->initialised = true;
 				}
 			}
 

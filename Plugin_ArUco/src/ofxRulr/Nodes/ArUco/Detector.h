@@ -40,6 +40,7 @@ namespace ofxRulr {
 					, ("Raw", "Normalised", "Thresholded", "None"));
 
 				void rebuildDetector();
+				void buildDetector(aruco::MarkerDetector&, aruco::Dictionary&, aruco::Dictionary::DICT_TYPES&) const;
 
 				void changeDetectorCallback(DetectorType &);
 				void changeFloatCallback(float &);

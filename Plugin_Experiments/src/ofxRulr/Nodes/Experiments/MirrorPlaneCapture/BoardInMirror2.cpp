@@ -394,7 +394,8 @@ namespace ofxRulr {
 						for (auto heliostat : activeHeliostats) {
 							heliostat->navigateToReflectPointToPoint(camera->getPosition()
 								, boardCenter
-								, navigateSolverSettings);
+								, navigateSolverSettings
+								, false);
 						}
 
 						// Mark stale

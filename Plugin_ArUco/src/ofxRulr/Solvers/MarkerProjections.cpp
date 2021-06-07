@@ -29,12 +29,12 @@ struct MarkerProjection_Cost
 	MarkerProjection_Cost(int cameraWidth
 		, int cameraHeight
 		, const glm::mat4& cameraProjectionMatrix
-		, const vector<glm::vec2> imagePoints
+		, const vector<glm::vec2> imagePointsUndistorted
 		, const vector<glm::vec3> objectPoints)
 		: cameraWidth(cameraWidth)
 		, cameraHeight(cameraHeight)
 		, cameraProjectionMatrix(cameraProjectionMatrix)
-		, imagePoints(imagePoints)
+		, imagePointsUndistorted(imagePointsUndistorted)
 		, objectPoints(objectPoints)
 	{
 
@@ -66,7 +66,7 @@ struct MarkerProjection_Cost
 				(T)this->cameraWidth * (projectedPoint.x + (T)1.0) / (T)2.0
 				, (T)this->cameraHeight * ((T)1.0 - projectedPoint.y) / (T)2.0
 			};
-			auto actualImagePoint = (glm::tvec2<T>) this->imagePoints[i];
+			auto actualImagePoint = (glm::tvec2<T>) this->imagePointsUndistorted[i];
 			auto delta = projectedImagePoint - actualImagePoint;
 			residuals[i * 2 + 0] = delta.x;
 			residuals[i * 2 + 1] = delta.y;
@@ -94,7 +94,7 @@ struct MarkerProjection_Cost
 	int cameraWidth;
 	int cameraHeight;
 	const glm::mat4& cameraProjectionMatrix;
-	const vector<glm::vec2> imagePoints;
+	const vector<glm::vec2> imagePointsUndistorted;
 	const vector<glm::vec3> objectPoints;
 };
 
@@ -128,6 +128,7 @@ namespace ofxRulr {
 				, const ofxCeres::SolverSettings& solverSettings)
 		{
 			// Check the incoming data
+			set<int> unseenObjects;
 			{
 				// Check all objects seen once
 				{
@@ -137,7 +138,8 @@ namespace ofxRulr {
 							allObjects.insert(i);
 						}
 					}
-					auto unseenObjects = allObjects;
+
+					unseenObjects = allObjects;
 
 					for (const auto& image : images) {
 						if (allObjects.find(image.objectIndex) == allObjects.end()) {
@@ -148,13 +150,13 @@ namespace ofxRulr {
 						}
 					}
 
-					if (!unseenObjects.empty()) {
+					if (solverSettings.printReport && !unseenObjects.empty()) {
 						stringstream unseenObjectIndices;
 						for (auto unseenObject : unseenObjects) {
 							unseenObjectIndices << unseenObject << " ";
 						}
 
-						throw(ofxRulr::Exception("Images do not contain objects : " + unseenObjectIndices.str()));
+						cout << ("Images do not contain objects : " + unseenObjectIndices.str()) << std::endl;
 					}
 
 					if (initialSolution.objects.size() != objectPoints.size()) {
@@ -180,6 +182,8 @@ namespace ofxRulr {
 							unseenViews.erase(image.viewIndex);
 						}
 					}
+
+					// actually unseen objects don't matter, as they are never added to a problem block
 
 					if (!unseenViews.empty()) {
 						stringstream unseenViewIndices;
@@ -230,7 +234,7 @@ namespace ofxRulr {
 					auto costFunction = MarkerProjection_Cost::Create(cameraWidth
 						, cameraHeight
 						, cameraProjectionMatrix
-						, image.imagePoints
+						, image.imagePointsUndistorted
 						, objectPoints[image.objectIndex]);
 					problem.AddResidualBlock(costFunction
 						, NULL
@@ -292,7 +296,7 @@ namespace ofxRulr {
 					MarkerProjection_Cost costFunction(cameraWidth
 						, cameraHeight
 						, cameraProjectionMatrix
-						, image.imagePoints
+						, image.imagePointsUndistorted
 						, objectPoints[image.objectIndex]);
 
 					vector<double> residuals(4 * 2);

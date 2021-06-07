@@ -63,6 +63,7 @@ namespace ofxRulr {
 				ofParameter<bool> showFocusLine;
 
 				ofMesh focusLineGraph;
+				ofImage preview;
 			};
 		}
 	}

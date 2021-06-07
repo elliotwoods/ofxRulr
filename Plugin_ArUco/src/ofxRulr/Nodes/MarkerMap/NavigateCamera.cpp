@@ -69,6 +69,11 @@ namespace ofxRulr {
 
 					for (auto foundMarker : foundMarkers) {
 						for (auto storedMarker : markers) {
+							// Do not add ignored markers to the dataset
+							if (storedMarker->parameters.ignore.get()) {
+								continue;
+							}
+
 							if (storedMarker->parameters.ID.get() == foundMarker.id) {
 								const auto worldPointsToAdd = ofxCv::toCv(storedMarker->getWorldVertices());
 								worldPoints.insert(worldPoints.end(), worldPointsToAdd.begin(), worldPointsToAdd.end());
@@ -132,6 +137,11 @@ namespace ofxRulr {
 					// Gather image points of markers that weren't detected but should be in image bounds
 					map<int, vector<glm::vec2>> missingMarkerExpectedImagePoints;
 					for (auto marker : markers) {
+						// ignore ignored markers
+						if (marker->parameters.ignore.get()) {
+							continue;
+						}
+
 						// first check if the marker is missing
 						{
 							bool markerMissing = true;
