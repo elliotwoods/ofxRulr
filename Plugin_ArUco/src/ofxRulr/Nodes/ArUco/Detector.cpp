@@ -115,7 +115,7 @@ namespace ofxRulr {
 					return aruco::Dictionary::getTypeString(this->dictionaryType);
 				});
 				inspector->addButton("Retry detect", [this]() {
-					this->findMarkers(this->lastDetection.rawImage);
+					this->findMarkers(this->lastDetection.rawImage, false);
 				}, ' ');
 			}
 
@@ -166,19 +166,20 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const std::vector<aruco::Marker> & Detector::findMarkers(const cv::Mat & image) {
-				this->lastDetection.rawImage = image.clone();
+			std::vector<aruco::Marker>Detector::findMarkers(const cv::Mat & image, bool fromAnotherThread) {
+				Frame frame;
 
-				if (this->lastDetection.rawImage.channels() == 3) {
-					cv::cvtColor(this->lastDetection.rawImage
-						, this->lastDetection.rawImage
+				frame.rawImage = image.clone();
+
+				if (frame.rawImage.channels() == 3) {
+					cv::cvtColor(frame.rawImage
+						, frame.rawImage
 						, cv::COLOR_RGB2GRAY);
 				}
 
-				// Direct find
-				this->foundMarkers = this->markerDetector.detect(this->lastDetection.rawImage);
-
 				// Merge function
+				vector<aruco::Marker> foundMarkers;
+
 				std::mutex lockFoundMarkers;
 				auto mergeResults = [&](const vector<aruco::Marker>& newMarkers) {
 					lockFoundMarkers.lock();
@@ -186,14 +187,14 @@ namespace ofxRulr {
 						// Add data to result
 						for (const auto& newMarker : newMarkers) {
 							bool foundInPriorData = false;
-							for (const auto& priorMarker : this->foundMarkers) {
+							for (const auto& priorMarker : foundMarkers) {
 								if (priorMarker.id == newMarker.id) {
 									foundInPriorData = true;
 									break;
 								}
 							}
 							if (!foundInPriorData) {
-								this->foundMarkers.push_back(newMarker);
+								foundMarkers.push_back(newMarker);
 							}
 						}
 					}
@@ -222,35 +223,42 @@ namespace ofxRulr {
 
 				// Strategies
 				{
+					// Direct find
+					addStrategy([&]() {
+						auto detectorClone = getDetecterClone();
+						auto directMarkersFound = detectorClone->markerDetector.detect(frame.rawImage);
+						mergeResults(directMarkersFound);
+						});
+
 					// Normalize
 					if (this->parameters.strategies.normalize.enabled.get()) {
-						this->lastDetection.rawImage.convertTo(this->lastDetection.normalisedImage, CV_32F);
+						frame.rawImage.convertTo(frame.normalisedImage, CV_32F);
 
 						// Push values up so that mid value is middle of range 0-255
-						auto midValue = cv::mean(this->lastDetection.normalisedImage)[0];
+						auto midValue = cv::mean(frame.normalisedImage)[0];
 						if (midValue < 127) {
-							this->lastDetection.normalisedImage *= 127.0f / midValue;
+							frame.normalisedImage *= 127.0f / midValue;
 						}
 
 						// Copy back to 8 bit
-						this->lastDetection.normalisedImage.convertTo(this->lastDetection.normalisedImage
+						frame.normalisedImage.convertTo(frame.normalisedImage
 							, CV_8U);
 
 						// Normalise
-						cv::normalize(this->lastDetection.normalisedImage
-							, this->lastDetection.normalisedImage
+						cv::normalize(frame.normalisedImage
+							, frame.normalisedImage
 							, 255
 							, 0
 							, cv::NormTypes::NORM_MINMAX);
 
 						addStrategy([&]() {
 							auto markerDetectorClone = getDetecterClone();
-							auto newMarkersFound = markerDetectorClone->markerDetector.detect(this->lastDetection.normalisedImage);
+							auto newMarkersFound = markerDetectorClone->markerDetector.detect(frame.normalisedImage);
 							mergeResults(newMarkersFound);
 						});
 					}
 					else {
-						this->lastDetection.normalisedImage = this->lastDetection.rawImage;
+						frame.normalisedImage = frame.rawImage;
 					}
 
 					// Multi-crop
@@ -322,7 +330,7 @@ namespace ofxRulr {
 						for (int i = 2; i < this->parameters.strategies.multiBrightness.maxBrightess.get(); i++) {
 							addStrategy([&]() {
 								cv::Mat brighterImage;
-								this->lastDetection.rawImage.convertTo(brighterImage
+								frame.rawImage.convertTo(brighterImage
 									, CV_8U
 									, i
 									, 0);
@@ -334,6 +342,7 @@ namespace ofxRulr {
 					}
 				}
 
+
 				for (auto& future : strategies) {
 					future.wait();
 				}
@@ -342,7 +351,7 @@ namespace ofxRulr {
 				{
 					auto findRatio = this->parameters.cornerRefinement.zone1.get();
 					if (findRatio > 0.0f) {
-						for (auto& marker : this->foundMarkers) {
+						for (auto& marker : foundMarkers) {
 							auto length2 = 0.0f;
 							length2 += glm::length2(ofxCv::toOf(marker[1] - marker[0]));
 							length2 += glm::length2(ofxCv::toOf(marker[2] - marker[1]));
@@ -354,7 +363,7 @@ namespace ofxRulr {
 							auto windowSize = (int)searchLength;
 							windowSize = ((windowSize / 2) * 2) + 1;
 
-							cv::cornerSubPix(this->lastDetection.rawImage
+							cv::cornerSubPix(frame.rawImage
 								, (vector<cv::Point2f>&) marker
 								, cv::Size(windowSize, windowSize)
 								, cv::Size(1, 1)
@@ -367,7 +376,7 @@ namespace ofxRulr {
 				{
 					auto findRatio = this->parameters.cornerRefinement.zone2.get();
 					if (findRatio > 0.0f) {
-						for (auto& marker : this->foundMarkers) {
+						for (auto& marker : foundMarkers) {
 							auto length2 = 0.0f;
 							length2 += glm::length2(ofxCv::toOf(marker[1] - marker[0]));
 							length2 += glm::length2(ofxCv::toOf(marker[2] - marker[1]));
@@ -379,7 +388,7 @@ namespace ofxRulr {
 							auto windowSize = (int)searchLength;
 							windowSize = ((windowSize / 2) * 2) + 1;
 
-							cv::cornerSubPix(this->lastDetection.rawImage
+							cv::cornerSubPix(frame.rawImage
 								, (vector<cv::Point2f>&) marker
 								, cv::Size(windowSize, windowSize)
 								, cv::Size(1, 1)
@@ -389,17 +398,20 @@ namespace ofxRulr {
 				}
 
 				//speak the count
-				if (this->parameters.debug.speakCount) {
-					ofxRulr::Utils::speakCount(this->foundMarkers.size());
+				if (this->parameters.debug.speakCount && !fromAnotherThread) {
+					ofxRulr::Utils::speakCount(foundMarkers.size());
 				}
 
-				// build preview
-				{
+				// Store if on main thread and build preview
+				if(!fromAnotherThread) {
+					this->lastDetection = frame;
+					this->foundMarkers = foundMarkers;
 					this->cachedPreviewType = Preview::None;
 					this->preview.clear();
+					return foundMarkers;
 				}
 				
-				return this->foundMarkers;
+				return foundMarkers;
 			}
 
 			//----------

@@ -16,6 +16,8 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::Heliostats2);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::SolarAlignment);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::NavigateBodyToBody);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::TrackCursor);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::RemoteControl);
 
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::Dispatcher);
 

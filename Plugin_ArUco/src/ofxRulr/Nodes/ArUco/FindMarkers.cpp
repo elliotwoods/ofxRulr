@@ -190,7 +190,7 @@ namespace ofxRulr {
 
 				//perform the detection
 				{
-					this->rawMarkers = detectorNode->findMarkers(image);
+					this->rawMarkers = detectorNode->findMarkers(image, false);
 				}
 
 				//update preview image

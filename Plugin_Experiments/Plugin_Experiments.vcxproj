@@ -93,7 +93,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats2.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateBodyToBody.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\RemoteControl.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\TrackCursor.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\ProCamSolve\SolveProjector.cpp" />
@@ -123,7 +125,9 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats2.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateBodyToBody.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\planesToPoint.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\RemoteControl.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SolarAlignment.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\TrackCursor.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\BundlerCamera.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\PhotoScan\CalibrateProjector.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\ProCamSolve\SolveProjector.h" />

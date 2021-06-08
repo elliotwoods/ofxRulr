@@ -32,7 +32,7 @@ namespace ofxRulr {
 							this->navigate();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
-						}, ' ')->setHeight(100.0f);
+						}, OF_KEY_RETURN)->setHeight(100.0f);
 				}
 
 				//----------
@@ -44,9 +44,37 @@ namespace ofxRulr {
 					auto bodyA = this->getInput<Item::RigidBody>("Body A");
 					auto bodyB = this->getInput<Item::RigidBody>("Body B");
 
-					auto positionA = bodyA->getPosition();
-					auto positionB = bodyB->getPosition();
+					glm::vec3 positionA = bodyA->getPosition();
+					glm::vec3 positionB = bodyB->getPosition();
 
+					// Do board center if it's a board
+					{
+						{
+							auto board = dynamic_pointer_cast<Item::BoardInWorld>(bodyA);
+							if (board) {
+								auto worldPoints = board->getAllWorldPoints();
+								glm::vec3 center(0, 0, 0);
+								for (const auto& worldPoint : worldPoints) {
+									center += worldPoint;
+								}
+								center /= worldPoints.size();
+								positionA = center;
+							}
+						}
+
+						{
+							auto board = dynamic_pointer_cast<Item::BoardInWorld>(bodyB);
+							if (board) {
+								auto worldPoints = board->getAllWorldPoints();
+								glm::vec3 center(0, 0, 0);
+								for (const auto& worldPoint : worldPoints) {
+									center += worldPoint;
+								}
+								center /= worldPoints.size();
+								positionB = center;
+							}
+						}
+					}
 					auto solverSettings = ofxRulr::Solvers::HeliostatActionModel::Navigator::defaultSolverSettings();
 
 					solverSettings.options.max_num_iterations = this->parameters.maxIterations.get();
@@ -62,7 +90,7 @@ namespace ofxRulr {
 					}
 
 					if (this->parameters.pushValues) {
-						heliostatsNode->pushStale(true, true);
+						heliostatsNode->pushStale(true, false);
 					}
 				}
 			}

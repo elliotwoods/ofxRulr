@@ -97,21 +97,6 @@ namespace ofxRulr {
 							heliostat->update();
 						}
 					}
-
-					// face cursor
-					{
-						switch (this->parameters.trackCursor.get().get()) {
-						case WhenDrawOnWorldStage::Selected:
-							if (!this->isBeingInspected()) {
-								break;
-							}
-						case WhenDrawOnWorldStage::Always:
-							this->faceAllTowardsCursor();
-						case WhenDrawOnWorldStage::Never:
-						default:
-							break;
-						}
-					}
 				}
 
 				//----------
@@ -127,19 +112,8 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});
-					inspector->addButton("Face towards cursor", [this]() {
-						try {
-							this->faceAllTowardsCursor();
-						}
-						RULR_CATCH_ALL_TO_ALERT;
-						});
 
-					inspector->addButton("Face away", [this]() {
-						try {
-							this->faceAllAway();
-						}
-						RULR_CATCH_ALL_TO_ALERT;
-						});
+					inspector->addSpacer();
 
 					inspector->addButton("Push stale", [this]() {
 						try {
@@ -195,9 +169,41 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});
+					inspector->addButton("Center poly on limits", [this]() {
+						try {
+							Utils::ScopedProcess scopedProcess("Pull limits to poly");
+							this->centerPolyOnLimits();
+							scopedProcess.end();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+
+					inspector->addSpacer();
+
 					inspector->addButton("Reset detail parameters", [this]() {
 						try {
 							this->resetDetailParameters();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+
+					inspector->addSpacer();
+
+					inspector->addButton("Torque on", [this]() {
+						try {
+							this->setTorqueEnable(true);
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+					inspector->addButton("Torque off", [this]() {
+						try {
+							this->setTorqueEnable(false);
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+					inspector->addButton("Face away", [this]() {
+						try {
+							this->faceAllAway();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});
@@ -327,23 +333,6 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void Heliostats2::faceAllTowardsCursor() {
-					auto heliostats = this->heliostats.getSelection();
-					auto cursorInWorld = Graph::World::X().getWorldStage()->getCursorWorld();
-					
-					auto solverSettings = Solvers::HeliostatActionModel::Navigator::defaultSolverSettings();
-					solverSettings.printReport = this->parameters.navigator.printReport.get();
-					solverSettings.options.minimizer_progress_to_stdout = this->parameters.navigator.printReport.get();
-
-					for (auto heliostat : heliostats) {
-						heliostat->navigateToReflectPointToPoint(cursorInWorld
-							, cursorInWorld
-							, solverSettings
-							, false);
-					}
-				}
-
-				//----------
 				void Heliostats2::faceAllAway() {
 					auto heliostats = this->heliostats.getSelection();
 					for (auto heliostat : heliostats) {
@@ -353,16 +342,40 @@ namespace ofxRulr {
 				}
 
 				//----------
+				void Heliostats2::setTorqueEnable(bool value) {
+					this->throwIfMissingAConnection<Dispatcher>();
+					auto dispatcher = this->getInput<Dispatcher>();
+
+					Dispatcher::MultiSetRequest multiSetRequest;
+					auto heliostats = this->getHeliostats();
+					multiSetRequest.registerName = "Torque Enable";
+					for (auto heliostat : heliostats) {
+						multiSetRequest.servoValues[heliostat->parameters.servo1.ID.get()] = value ? 1 : 0;
+						multiSetRequest.servoValues[heliostat->parameters.servo2.ID.get()] = value ? 1 : 0;
+					}
+					if (heliostats.empty()) {
+						return;
+					}
+
+					dispatcher->multiSetRequest(multiSetRequest);
+				}
+
+				//----------
 				void Heliostats2::pushStale(bool blocking, bool waitUntilComplete) {
 					this->throwIfMissingAConnection<Dispatcher>();
 					auto dispatcher = this->getInput<Dispatcher>();
+
+					// Update all heliostats (e.g. in case calculations need to be made)
+					auto heliostats = this->heliostats.getSelection();
+					for (auto heliostat : heliostats) {
+						heliostat->update();
+					}
 
 					Dispatcher::MultiMoveRequest moveRequest;
 					moveRequest.waitUntilComplete = waitUntilComplete;
 					moveRequest.timeout = this->parameters.dispatcher.timeout.get();
 
 					// Gather movements
-					auto heliostats = this->heliostats.getSelection();
 					for (auto heliostat : heliostats) {
 						if(heliostat->parameters.servo1.getGoalPositionNeedsPush()) {
 							Dispatcher::MultiMoveRequest::Movement movement{
@@ -548,6 +561,15 @@ namespace ofxRulr {
 				}
 
 				//----------
+				void Heliostats2::centerPolyOnLimits() {
+					auto heliostats = this->getHeliostats();
+					for (auto heliostat : heliostats) {
+						heliostat->parameters.servo1.centerPolyOnLimits();
+						heliostat->parameters.servo2.centerPolyOnLimits();
+					}
+				}
+
+				//----------
 				void Heliostats2::selectRangeByString(const string& text) {
 					this->heliostats.selectNone();
 					auto allHeliostats = this->heliostats.getAllCaptures();
@@ -582,7 +604,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				cv::Mat Heliostats2::drawMirrorFaceMask(shared_ptr<Heliostat> heliostat, const ofxRay::Camera& cameraView) {
+				cv::Mat Heliostats2::drawMirrorFaceMask(shared_ptr<Heliostat> heliostat, const ofxRay::Camera& cameraView, float mirrorScale) {
 					ofFbo fbo;
 					{
 						ofFbo::Settings fboSettings;
@@ -614,7 +636,7 @@ namespace ofxRulr {
 							{
 								// Draw the selected heliostat mirror as white
 								ofSetColor(255);
-								heliostat->drawMirrorFace();
+								heliostat->drawMirrorFace(mirrorScale);
 
 								// Draw all other heliostat mirrors as black
 								ofSetColor(0);
@@ -623,7 +645,7 @@ namespace ofxRulr {
 										continue;
 									}
 									else {
-										otherHeliostat->drawMirrorFace();
+										otherHeliostat->drawMirrorFace(mirrorScale);
 									}
 								}
 							}
@@ -646,6 +668,12 @@ namespace ofxRulr {
 					cv::flip(image, result, 0);
 
 					return result;
+				}
+
+				//----------
+				void Heliostats2::Heliostat::clampAxisValuesToLimits() {
+					this->parameters.servo1.clampAngleToLimits();
+					this->parameters.servo2.clampAngleToLimits();
 				}
 
 #pragma mark Heliostat
@@ -746,14 +774,14 @@ namespace ofxRulr {
 						ofPushStyle();
 						{
 							ofSetColor(150);
-							this->drawMirrorFace();
+							this->drawMirrorFace(1.0f);
 						}
 						ofPopStyle();
 					}
 				}
 
 				//----------
-				void Heliostats2::Heliostat::drawMirrorFace() {
+				void Heliostats2::Heliostat::drawMirrorFace(float mirrorScale) {
 					glm::vec3 mirrorCenter, mirrorNormal;
 					Solvers::HeliostatActionModel::getMirrorCenterAndNormal({
 						this->parameters.servo1.angle.get()
@@ -765,7 +793,7 @@ namespace ofxRulr {
 
 					Solvers::HeliostatActionModel::drawMirror(mirrorCenter
 						, mirrorNormal
-						, this->parameters.diameter.get());
+						, this->parameters.diameter.get() * mirrorScale);
 				}
 
 				//----------
@@ -878,6 +906,8 @@ namespace ofxRulr {
 					else {
 						throw(ofxRulr::Exception("Cannot flip axis"));
 					}
+
+					this->update();
 				}
 
 				//----------
@@ -899,6 +929,8 @@ namespace ofxRulr {
 
 					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
 					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+
+					this->update();
 				}
 
 				//----------
@@ -921,6 +953,8 @@ namespace ofxRulr {
 
 					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
 					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+
+					this->update();
 				}
 
 				//----------
@@ -976,6 +1010,7 @@ namespace ofxRulr {
 
 				//----------
 				void Heliostats2::ServoParameters::update() {
+					this->clampAngleToLimits();
 					if (this->cachedAngle != this->angle.get()) {
 						this->calculateGoalPosition();
 						this->cachedAngle = this->angle.get();
@@ -998,7 +1033,12 @@ namespace ofxRulr {
 
 				//----------
 				void Heliostats2::ServoParameters::calculateGoalPosition() {
-					auto angle = this->angle;
+					auto goalPosition = angleToGoalPosition(this->angle.get());
+					this->goalPosition.set(goalPosition);
+				}
+
+				//----------
+				int Heliostats2::ServoParameters::angleToGoalPosition(float angle) {
 					const auto& polynomial = this->axisParameters.polynomial.get();
 
 					auto result = Solvers::HeliostatActionModel::SolvePosition::solvePosition(angle
@@ -1015,14 +1055,13 @@ namespace ofxRulr {
 						: goalPosition < 0
 							? 0
 							: goalPosition;
-					this->goalPosition.set(goalPosition);
+					return goalPosition;
 				}
 
 				//----------
 				void Heliostats2::ServoParameters::setPresentPosition(const Dispatcher::RegisterValue& registerValue) {
 					auto result = Solvers::HeliostatActionModel::positionToAngle<float>((float) registerValue
 						, this->axisParameters.polynomial.get());
-					this->angle.set(result);
 				}
 
 				//----------
@@ -1039,6 +1078,25 @@ namespace ofxRulr {
 					this->angle.setMax(result);
 				}
 
+				//----------
+				void Heliostats2::ServoParameters::clampAngleToLimits() {
+					if (this->angle.get() < this->angle.getMin()) {
+						this->angle.set(this->angle.getMin());
+					}
+					if (this->angle.get() > this->angle.getMax()) {
+						this->angle.set(this->angle.getMax());
+					}
+				}
+
+				//----------
+				void Heliostats2::ServoParameters::centerPolyOnLimits() {
+					auto centerAngle = (this->angle.getMin() + this->angle.getMax()) / 2.0f;
+					auto centerPosition = this->angleToGoalPosition(centerAngle);
+					auto centerOffset = centerPosition - 2048;
+					auto poly = this->axisParameters.polynomial.get();
+					poly.x = -centerOffset;
+					this->axisParameters.polynomial.set(poly);
+				}
 			}
 		}
 	}

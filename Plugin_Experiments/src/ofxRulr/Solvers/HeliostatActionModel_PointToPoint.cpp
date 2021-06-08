@@ -49,10 +49,10 @@ struct HeliostatActionModel_PointToPointCost
 			
 			auto angleBetween = dot(normalize(intendedDirection), mirrorNormal);
 			if (angleBetween < (T) 0) {
-				//residuals[1] = -angleBetween * (T) 1000.0;
+				residuals[1] = -angleBetween * (T) 1000.0;
 			}
 			else {
-				//residuals[1] = (T)0.0;
+				residuals[1] = (T)0.0;
 			}
 		}
 
@@ -64,7 +64,7 @@ struct HeliostatActionModel_PointToPointCost
 			, const glm::vec3& pointA
 			, const glm::vec3& pointB)
 	{
-		return new ceres::AutoDiffCostFunction<HeliostatActionModel_PointToPointCost, 1, 2>(
+		return new ceres::AutoDiffCostFunction<HeliostatActionModel_PointToPointCost, 2, 2>(
 			new HeliostatActionModel_PointToPointCost(parameters, pointA, pointB)
 			);
 	}
@@ -84,6 +84,15 @@ namespace ofxRulr {
 				, const HeliostatActionModel::AxisAngles<float>& initialAngles
 				, const ofxCeres::SolverSettings& solverSettings)
 		{
+			// If the points are equal, fall back to the normal solver instead
+			if (glm::length(pointA - pointB) < 1e-4) {
+				auto normal = glm::normalize(pointA - hamParameters.position);
+				return solveNormal(hamParameters
+					, normal
+					, initialAngles
+					, solverSettings);
+			}
+
 			// First solve with a basic normal solve
 			// (This is because we might get a reflection ray which is pointing directly away from target)
 			auto normal = glm::normalize(pointA - hamParameters.position) + glm::normalize(pointB - hamParameters.position);

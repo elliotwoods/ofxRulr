@@ -210,7 +210,7 @@ namespace ofxRulr {
 						auto detector = this->getInput<ArUco::Detector>();
 						auto markerMap = this->getInput<ArUco::MarkerMap>()->getMarkerMap();
 
-						auto markers = detector->findMarkers(image);
+						auto markers = detector->findMarkers(image, false);
 						if (markers.size() < this->parameters.cameraNavigation.minimumMarkers) {
 							throw(ofxRulr::Exception("Found " + ofToString(markers.size()) + " real markers. Need " + ofToString(this->parameters.cameraNavigation.minimumMarkers) + " for camera navigation"));
 						}

@@ -14,13 +14,15 @@ namespace ofxRulr {
 				void init();
 				void update();
 				void drawWorldStage();
-				void track(const cv::Mat& image);
+				void track(const cv::Mat& image, bool trustPriorPose); // trustPriorPose = don't search whole image
 				void populateInspector(ofxCvGui::InspectArguments&);
 			protected:
 				struct : ofParameterGroup {
 					ofParameter<bool> onNewFrame{ "On new frame", true };
 					ofParameter<int> minMarkerCount{ "Minimum marker count", 3 };
 					
+					ofParameter<bool> trustPriorPose{ "Trust prior pose", false };
+
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", true };
 						ofParameter<float> searchRange{ "Search range", 2.0f, 1.0f, 10.0f };
@@ -43,6 +45,7 @@ namespace ofxRulr {
 					PARAM_DECLARE("MarkerMapPoseTracker"
 						, onNewFrame
 						, minMarkerCount
+						, trustPriorPose
 						, findMissingMarkers
 						, ransac
 						, useExtrinsicGuess

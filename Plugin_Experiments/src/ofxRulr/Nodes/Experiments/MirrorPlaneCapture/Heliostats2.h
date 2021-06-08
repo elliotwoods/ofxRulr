@@ -54,10 +54,14 @@ namespace ofxRulr {
 						void markGoalPositionPushed();
 
 						void calculateGoalPosition();
+						int angleToGoalPosition(float angle);
+
 						void setPresentPosition(const Dispatcher::RegisterValue&);
 						void setMinPosition(const Dispatcher::RegisterValue&);
 						void setMaxPosition(const Dispatcher::RegisterValue&);
 
+						void clampAngleToLimits();
+						void centerPolyOnLimits();
 					protected:
 						HAMParameters::AxisParameters& axisParameters;
 						float cachedAngle = 0.0f;
@@ -77,7 +81,8 @@ namespace ofxRulr {
 						Heliostat();
 						string getDisplayString() const override;
 						void drawWorld(const DrawParameters&);
-						void drawMirrorFace();
+						void drawMirrorFace(float mirrorScale);
+						void clampAxisValuesToLimits();
 
 						struct Parameters : ofParameterGroup {
 							ofParameter<string> name{ "Name", "" };
@@ -138,8 +143,8 @@ namespace ofxRulr {
 					void removeHeliostat(shared_ptr<Heliostat> heliostat);
 					void importCSV();
 
-					void faceAllTowardsCursor();
 					void faceAllAway();
+					void setTorqueEnable(bool);
 
 					void pushStale(bool blocking, bool waitUntilComplete);
 					void pushAll(bool blocking);
@@ -147,10 +152,11 @@ namespace ofxRulr {
 					void pullAllLimits();
 
 					void resetDetailParameters();
+					void centerPolyOnLimits();
 
 					void selectRangeByString(const string&);
 
-					cv::Mat drawMirrorFaceMask(shared_ptr<Heliostat>, const ofxRay::Camera&);
+					cv::Mat drawMirrorFaceMask(shared_ptr<Heliostat>, const ofxRay::Camera&, float mirrorScale);
 
 				protected:
 					struct : ofParameterGroup {
@@ -171,15 +177,13 @@ namespace ofxRulr {
 							PARAM_DECLARE("Away pose", servo1, servo2);
 						} awayPose;
 
-						ofParameter<WhenDrawOnWorldStage> trackCursor{ "Track cursor", WhenDrawOnWorldStage::Never };
-
 						struct : ofParameterGroup {
 							ofParameter<WhenDrawOnWorldStage> labels{ "Labels", WhenDrawOnWorldStage::Selected };
 							ofParameter<bool> servoIndices{ "Servo indices", false };
 							PARAM_DECLARE("Draw", labels, servoIndices);
 						} draw;
 
-						PARAM_DECLARE("Heliostats2", navigator, dispatcher, awayPose, draw, trackCursor);
+						PARAM_DECLARE("Heliostats2", navigator, dispatcher, awayPose, draw);
 					} parameters;
 
 					Utils::CaptureSet<Heliostat> heliostats;

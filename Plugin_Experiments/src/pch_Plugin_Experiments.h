@@ -23,6 +23,8 @@
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/SolarAlignment.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Dispatcher.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/NavigateBodyToBody.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/TrackCursor.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/RemoteControl.h"
 
 #include "ofxRulr/Nodes/Experiments/PhotoScan/BundlerCamera.h"
 #include "ofxRulr/Nodes/Experiments/PhotoScan/CalibrateProjector.h"

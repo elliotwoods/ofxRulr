@@ -1033,7 +1033,7 @@ namespace ofxRulr {
 				markers->throwIfMissingAConnection<ArUco::Detector>();
 				auto detector = markers->getInput<ArUco::Detector>();
 
-				auto foundMarkers = detector->findMarkers(image);
+				auto foundMarkers = detector->findMarkers(image, false);
 				if (foundMarkers.empty()) {
 					throw(ofxRulr::Exception("No markers found"));
 				}

@@ -40,7 +40,9 @@ namespace ofxRulr {
 				this->rebuildPanel();
 
 				this->onDrawObject += [this]() {
-					this->getViewInObjectSpace().drawOnNearPlane(this->preview);
+					if (this->preview.isAllocated()) {
+						this->getViewInObjectSpace().drawOnNearPlane(this->preview);
+					}
 				};
 			}
 

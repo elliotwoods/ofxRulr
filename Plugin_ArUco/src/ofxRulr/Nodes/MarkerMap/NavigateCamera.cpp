@@ -34,7 +34,7 @@ namespace ofxRulr {
 							auto & pixels = frame->getPixels();
 							if (pixels.isAllocated()) {
 								auto image = ofxCv::toCv(pixels);
-								this->track(image);
+								this->track(image, this->parameters.trustPriorPose.get());
 							}
 						}
 					}
@@ -49,7 +49,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void NavigateCamera::track(const cv::Mat& image) {
+			void NavigateCamera::track(const cv::Mat& image, bool trustPriorPose) {
 				this->throwIfMissingAnyConnection();
 
 				auto markersNode = this->getInput<Markers>();
@@ -120,12 +120,19 @@ namespace ofxRulr {
 						, true);
 				};
 
+				std::vector<aruco::Marker> foundMarkers;
+
 				// Navigate using directly found markers
-				auto foundMarkers = detector->findMarkers(image);
-				navigateToFoundMarkers(foundMarkers);
+				if (!trustPriorPose) {
+					foundMarkers = detector->findMarkers(image, false);
+					navigateToFoundMarkers(foundMarkers);
+				}
+				else {
+					// leave it empty and we just look for missing markers
+				}
 
 				// Find missing markers and navigate using those also
-				if (this->parameters.findMissingMarkers.enabled.get()) {
+				if (this->parameters.findMissingMarkers.enabled.get() || trustPriorPose) {
 					// Bounds of camera image
 					auto imageBounds = ofRectangle(0
 						, 0
@@ -133,6 +140,9 @@ namespace ofxRulr {
 						, camera->getHeight());
 
 					auto cameraView = camera->getViewInWorldSpace();
+
+					vector<future<void>> futures;
+					std::mutex lockOutput;
 
 					// Gather image points of markers that weren't detected but should be in image bounds
 					map<int, vector<glm::vec2>> missingMarkerExpectedImagePoints;
@@ -204,39 +214,48 @@ namespace ofxRulr {
 							{
 								auto croppedImage = image(ofxCv::toCv(searchImageBounds)).clone();
 
-								auto foundMarkersInCrop = detector->findMarkers(croppedImage);
+								futures.push_back(std::async(std::launch::async, [&detector, &lockOutput, &foundMarkers, croppedImage, searchImageBounds]() {
+									auto foundMarkersInCrop = detector->findMarkers(croppedImage, true);
 
-								// Add them to our set if they are new
-								for (const auto & foundMarkerInCrop : foundMarkersInCrop) {
-									//Check it's not an existing one
-									{
-										bool alreadyFound = false;
+									// lock the output
+									lock_guard<mutex> lockGuard(lockOutput);
 
-										for (auto priorFoundMarker : foundMarkers) {
-											if (foundMarkerInCrop.id == priorFoundMarker.id) {
-												alreadyFound = true;
-												break;
+									// Add them to our set if they are new
+									for (const auto& foundMarkerInCrop : foundMarkersInCrop) {
+										//Check it's not an existing one
+										{
+											bool alreadyFound = false;
+
+											for (auto priorFoundMarker : foundMarkers) {
+												if (foundMarkerInCrop.id == priorFoundMarker.id) {
+													alreadyFound = true;
+													break;
+												}
+											}
+
+											if (alreadyFound) {
+												continue;
 											}
 										}
 
-										if (alreadyFound) {
-											continue;
+										// Offset the cropped coordinates and add to dataset
+										{
+											auto foundMarkerInCropMovedBackToImage = foundMarkerInCrop;
+											for (auto& imagePoint : foundMarkerInCropMovedBackToImage) {
+												imagePoint += ofxCv::toCv((glm::vec2)searchImageBounds.getTopLeft());
+											}
+											foundMarkers.push_back(foundMarkerInCropMovedBackToImage);
 										}
 									}
-
-									// Offset the cropped coordinates and add to dataset
-									{
-										auto foundMarkerInCropMovedBackToImage = foundMarkerInCrop;
-										for (auto& imagePoint : foundMarkerInCropMovedBackToImage) {
-											imagePoint += ofxCv::toCv((glm::vec2) searchImageBounds.getTopLeft());
-										}
-										foundMarkers.push_back(foundMarkerInCropMovedBackToImage);
-									}
-								}
+								}));
+								
 							}
 						}
 					}
 
+					for (auto& future : futures) {
+						future.wait();
+					}
  					navigateToFoundMarkers(foundMarkers);
 				}
 
@@ -275,7 +294,7 @@ namespace ofxRulr {
 							throw(ofxRulr::Exception("Pixels empty"));
 						}
 						auto image = ofxCv::toCv(frame->getPixels());
-						this->track(image);
+						this->track(image, this->parameters.trustPriorPose.get());
 						scopedProcess.end();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
@@ -294,7 +313,7 @@ namespace ofxRulr {
 							throw(ofxRulr::Exception("Pixels empty"));
 						}
 						auto image = ofxCv::toCv(frame->getPixels());
-						this->track(image);
+						this->track(image, this->parameters.trustPriorPose.get());
 						scopedProcess.end();
 					}
 					RULR_CATCH_ALL_TO_ALERT;

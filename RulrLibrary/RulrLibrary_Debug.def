@@ -481,6 +481,7 @@ EXPORTS
 	?drawDelayed@Controller@ofxCvGui@@QEAAX$$QEAV?$function@$$A6AXXZ@std@@@Z
 	?addChild@Element@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?addListenersToParent@Element@ofxCvGui@@QEAAXPEAV12@_N@Z
+	?addListenersToParent@Element@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@_N@Z
 	?arrange@Element@ofxCvGui@@QEAAXXZ
 	?getBounds@Element@ofxCvGui@@QEBAAEBVofRectangle@@XZ
 	?getCaption@Element@ofxCvGui@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ

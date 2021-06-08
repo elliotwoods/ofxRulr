@@ -72,6 +72,12 @@
     <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_Calibrator.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\TrackCursor.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\RemoteControl.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -130,6 +136,12 @@
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateBodyToBody.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\TrackCursor.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\RemoteControl.h">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
   </ItemGroup>

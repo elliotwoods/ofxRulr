@@ -29,7 +29,7 @@ namespace ofxRulr {
 
 				ofxCvGui::PanelPtr getPanel() override;
 				
-				const vector<aruco::Marker> & findMarkers(const cv::Mat & image);
+				vector<aruco::Marker> findMarkers(const cv::Mat & image, bool fromAnotherThread);
 			protected:
 				MAKE_ENUM(DetectorType
 					, (Original, MIP_3612h, ARTKP, ARTAG)
@@ -121,7 +121,7 @@ namespace ofxRulr {
 				map<int, shared_ptr<ofImage>> cachedMarkerImages;
 
 				//useful when debugging to research quickly
-				struct {
+				struct Frame {
 					cv::Mat thresholded;
 					cv::Mat normalisedImage;
 					cv::Mat rawImage;

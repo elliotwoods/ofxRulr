@@ -64,7 +64,7 @@ namespace ofxRulr {
 						throw(ofxRulr::Exception("Marker map is empty"));
 					}
 
-					auto markers = detectorNode->findMarkers(ofxCv::toCv(frame->getPixels()));
+					auto markers = detectorNode->findMarkers(ofxCv::toCv(frame->getPixels()), false);
 					if (markers.size() < this->parameters.minMarkerCount) {
 						throw(ofxRulr::Exception("Couldn't find enough markers"));
 					}

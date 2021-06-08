@@ -274,17 +274,20 @@ namespace ofxRulr {
 					markerPreview.clearVertices();
 					markerPreview.addVertices(marker->getWorldVertices());
 
-					if (detector && !marker->parameters.ignore.get()) {
-						auto& image = detector->getMarkerImage(marker->parameters.ID.get());
+					if (!marker->parameters.ignore.get()) {
+						if (detector) {
+							auto& image = detector->getMarkerImage(marker->parameters.ID.get());
 
-						image.bind();
-						{
+							image.bind();
+							{
+								markerPreview.draw();
+							}
+							image.unbind();
+						}
+						else {
+							// Just draw as a quad if we don't have detector
 							markerPreview.draw();
 						}
-						image.unbind();
-					}
-					else {
-						markerPreview.draw();
 					}
 
 					switch (this->parameters.draw.labels.get().get()) {

@@ -85,7 +85,8 @@ namespace ofxRulr {
 						, const cv::Mat& imageWithReflectionsWithoutRealBoard
 						, shared_ptr<Item::BoardInWorld>
 						, const map<Dispatcher::ServoID, Dispatcher::RegisterValue>&
-						, const string & comments);
+						, const string & comments
+						, float meanBrightness);
 
 
 					void addCapture(shared_ptr<ofxMachineVision::Frame>);
@@ -115,15 +116,17 @@ namespace ofxRulr {
 						} faceAway;
 
 						struct : ofParameterGroup {
-							ofParameter<int> minimumMarkers{ "Minimum markers", 1 };
-							PARAM_DECLARE("Tracking", minimumMarkers);
+							ofParameter<bool> enabled{ "Enabled", false };
+							ofParameter<bool> trustPriorPose{ "Trust prior pose", true };
+							PARAM_DECLARE("Camera Navigation", enabled, trustPriorPose);
 						} cameraNavigation;
 
 						struct : ofParameterGroup {
-							ofParameter<FindBoardMode> mode{ "Mode", FindBoardMode::Optimized };
+							ofParameter<bool> atStart{ "At start", false };
+							ofParameter<FindBoardMode> modeForReflections{ "Mode for reflections", FindBoardMode::Optimized };
 							ofParameter<bool> useAssistantIfFail{ "Use assistant if fail", true };
 							ofParameter<bool> updateBoardInFinalImage{ "Update board in final image", false };
-							PARAM_DECLARE("Find board", mode, useAssistantIfFail, updateBoardInFinalImage);
+							PARAM_DECLARE("Find board", atStart, modeForReflections, useAssistantIfFail, updateBoardInFinalImage);
 						} findBoard;
 
 						struct : ofParameterGroup {
@@ -132,11 +135,12 @@ namespace ofxRulr {
 						} servoControl;
 
 						struct : ofParameterGroup {
+							ofParameter<float> mirrorScale{ "Mirror scale (mask)", 1.0f, 0.8f, 2.0f };
 							ofParameter<bool> flip{ "Flip", true };
 
 							// Alternatively aim to board center
 							ofParameter<bool> aimToSeenBoardPoints{ "Aim to seen board points", true };
-							PARAM_DECLARE("Capture", flip, aimToSeenBoardPoints);
+							PARAM_DECLARE("Capture", mirrorScale, flip, aimToSeenBoardPoints);
 						} capture;
 
 						struct : ofParameterGroup {
