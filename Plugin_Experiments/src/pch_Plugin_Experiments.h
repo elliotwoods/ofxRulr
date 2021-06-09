@@ -25,6 +25,10 @@
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/NavigateBodyToBody.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/TrackCursor.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/RemoteControl.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/SunTracker.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/SunCalibrator.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Halo.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/NavigateToHalo.h"
 
 #include "ofxRulr/Nodes/Experiments/PhotoScan/BundlerCamera.h"
 #include "ofxRulr/Nodes/Experiments/PhotoScan/CalibrateProjector.h"
@@ -35,6 +39,7 @@
 
 #include "ofxRulr/Solvers/HeliostatActionModel.h"
 #include "ofxRulr/Solvers/MirrorPlaneFromRays.h"
+#include "ofxRulr/Solvers/RotationFrame.h"
 
 #include "pch_Plugin_Calibrate.h"
 #include "pch_Plugin_ArUco.h"
