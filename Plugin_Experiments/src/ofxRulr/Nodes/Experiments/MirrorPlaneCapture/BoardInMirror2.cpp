@@ -30,7 +30,7 @@ namespace ofxRulr {
 							ofSetColor(this->color);
 							ofSetSphereResolution(6);
 							for (const auto& worldPoint : this->worldPoints) {
-								ofDrawSphere(ofxCv::toOf(worldPoint), 0.001);
+								ofDrawSphere(ofxCv::toOf(worldPoint), drawOptions.worldPointsSize);
 							}
 						}
 						ofPopStyle();
@@ -568,20 +568,16 @@ namespace ofxRulr {
 						maskedImage.setTo(cv::Scalar(meanBrightness), invertedMask);
 					}
 
-					// Calculate if looking at front or back of board
-					bool reflectionShowsFront;
-					{
-						const auto boardPosition = boardInWorld->getPosition();
-						auto boardTransform = boardInWorld->getTransform();
-						auto mirrorToBoard = boardPosition - heliostat->parameters.hamParameters.position.get();
-						auto boardNormal = Utils::applyTransform(boardTransform, glm::vec3(0, 0, 1)) - boardPosition;
-						if (glm::dot(boardNormal, mirrorToBoard) < 0.0) {
-							reflectionShowsFront = true;
-						}
-						else {
-							reflectionShowsFront = false;
-						}
-					}
+					//// Calculate if looking at front or back of board
+					//bool reflectionShowsFront;
+					//{
+					//	const auto boardPosition = boardInWorld->getPosition();
+					//	auto cameraViewMatrix = cameraView.getViewMatrix();
+					//	auto boardInCamera = Utils::applyTransform(cameraViewMatrix, boardPosition);
+					//	auto heliostatInCamera = Utils::applyTransform(cameraViewMatrix, heliostat->parameters.hamParameters.position.get());
+
+					//	reflectionShowsFront = abs(boardInCamera.z) > abs(heliostatInCamera.z); // we don't need abs, we're just being lazy here to code for the correct sign
+					//}
 
 					// Find the board in the masked image
 					auto capture = make_shared<Capture>();
@@ -599,9 +595,9 @@ namespace ofxRulr {
 
 						// Find the board in the cropped image
 						{
-							bool foundBoard;
+							bool foundBoard = false;
 							
-							if (reflectionShowsFront) {
+							if (this->parameters.findBoard.reflectionSeesFront.get()) {
 								cv::Mat mirrored;
 								cv::flip(croppedRegion
 									, mirrored
@@ -614,7 +610,7 @@ namespace ofxRulr {
 								
 
 								if (!foundBoard && this->parameters.findBoard.useAssistantIfFail.get()) {
-									foundBoard = boardInWorld->findBoard(croppedRegion
+									foundBoard = boardInWorld->findBoard(mirrored
 										, imagePointsCropped
 										, objectPoints
 										, capture->worldPoints
@@ -914,6 +910,7 @@ namespace ofxRulr {
 						drawOptions.camera = this->parameters.debug.draw.cameras.get();
 						drawOptions.cameraRays = this->parameters.debug.draw.cameraRays.get();
 						drawOptions.worldPoints = this->parameters.debug.draw.worldPoints.get();
+						drawOptions.worldPointsSize = this->parameters.debug.draw.worldPointsSize.get();
 						drawOptions.reflectedRays = this->parameters.debug.draw.reflectedRays.get();
 						drawOptions.mirrorFace = this->parameters.debug.draw.mirrorFace.get();
 						auto captures = this->captures.getSelection();

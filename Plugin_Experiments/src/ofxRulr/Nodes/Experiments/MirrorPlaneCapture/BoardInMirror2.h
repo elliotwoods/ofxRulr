@@ -31,6 +31,7 @@ namespace ofxRulr {
 							bool camera;
 							bool cameraRays;
 							bool worldPoints;
+							float worldPointsSize;
 							bool reflectedRays;
 							bool mirrorFace;
 						};
@@ -122,11 +123,12 @@ namespace ofxRulr {
 						} cameraNavigation;
 
 						struct : ofParameterGroup {
+							ofParameter<bool> reflectionSeesFront{ "Reflection sees front", false };
 							ofParameter<bool> atStart{ "At start", false };
 							ofParameter<FindBoardMode> modeForReflections{ "Mode for reflections", FindBoardMode::Optimized };
 							ofParameter<bool> useAssistantIfFail{ "Use assistant if fail", true };
 							ofParameter<bool> updateBoardInFinalImage{ "Update board in final image", false };
-							PARAM_DECLARE("Find board", atStart, modeForReflections, useAssistantIfFail, updateBoardInFinalImage);
+							PARAM_DECLARE("Find board", reflectionSeesFront, atStart, modeForReflections, useAssistantIfFail, updateBoardInFinalImage);
 						} findBoard;
 
 						struct : ofParameterGroup {
@@ -179,10 +181,11 @@ namespace ofxRulr {
 								ofParameter<bool> cameras{ "Cameras", true };
 								ofParameter<bool> cameraRays{ "Camera rays", true };
 								ofParameter<bool> worldPoints{ "World points", true };
+								ofParameter<float> worldPointsSize{ "World points size", 0.01, 1e-3, 1e3};
 								ofParameter<bool> reflectedRays{ "Reflected rays", true };
 								ofParameter<bool> mirrorFace{ "Mirror face", true };
 								ofParameter<bool> report{ "Report", true };
-								PARAM_DECLARE("Draw", cameraRays, worldPoints, reflectedRays, mirrorFace, report);
+								PARAM_DECLARE("Draw", cameraRays, worldPoints, worldPointsSize, reflectedRays, mirrorFace, report);
 							} draw;
 							PARAM_DECLARE("Debug", draw);
 						} debug;
