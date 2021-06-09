@@ -87,6 +87,9 @@ namespace ofxRulr {
 						struct Parameters : ofParameterGroup {
 							ofParameter<string> name{ "Name", "" };
 
+							// Navigate to right tangent
+							ofParameter<bool> rightTangent{"Right tangent", false};
+
 							ServoParameters servo1;
 							ServoParameters servo2;
 
@@ -101,6 +104,7 @@ namespace ofxRulr {
 
 							PARAM_DECLARE("Heliostat"
 								, name
+								, rightTangent
 								, servo1
 								, servo2
 								, hamParameters
