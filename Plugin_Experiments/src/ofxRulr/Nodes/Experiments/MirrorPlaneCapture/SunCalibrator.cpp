@@ -22,55 +22,60 @@ namespace ofxRulr {
 
 					this->manageParameters(this->parameters);
 
-					this->light.setDirectional();
-
 					this->addInput<MarkerMap::NavigateCamera>();
 					this->addInput<SunTracker>();
 
-					this->panel = ofxCvGui::makePanel(this->preview);
+					this->panel = ofxCvGui::Panels::makeImage(this->preview);
 					{
 						this->panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
 							auto captures = this->captures.getSelection();
-							for(auto capture : captures) {
-								ofPushMatrix();
+							for (auto capture : captures) {
+								ofPushStyle();
 								{
-									ofTranslate(capture->centroidUndistorted.get());
-									ofPushStyle();
+									ofSetColor(capture->color);
+									ofPushMatrix();
 									{
-										ofSetColor(capture->color);
-										ofDrawLine(-5, 0, 5, 0);
-										ofDrawLine(0, -5, 0, 5);
-
-										ofPath path;
-										path.addVertices(capture->contour);
-										path.close();
-										ofNoFill();
-										path.draw();
+										ofTranslate(capture->centroidDistorted);
+										ofDrawLine(-50, 0, 50, 0);
+										ofDrawLine(0, -50, 0, 50);
 									}
-									ofPopStyle();
+									ofPopMatrix();
+
+									ofPolyline polyline;
+									for (const auto& vertex : capture->contour) {
+										polyline.addVertex({ vertex.x, vertex.y, 0.0f });
+									}
+									polyline.close();
+									ofNoFill();
+									polyline.draw();
 								}
-								ofPopMatrix();
+								ofPopStyle();
 							}
 						};
 					}
 				}
 
 				//---------
-				void SunCalibrator::drawWorld() {
+				void SunCalibrator::drawWorldStage() {
 					auto sunTracker = this->getInput<SunTracker>();
 					DrawOptions drawOptions;
 					{
 						drawOptions.cameraRay = this->parameters.draw.cameraRay.get();
 						drawOptions.cameraView = this->parameters.draw.cameraView.get();
-						drawOptions.solarVector = this->parameters.draw.solarVector.get();
+						drawOptions.solarVectorObjectSpace = this->parameters.draw.solarVector.get();
 						if(sunTracker) {
 							drawOptions.sunTrackerTransform = sunTracker->getTransform();
 						}
 					}
 					auto captures = this->captures.getSelection();
 					for(auto capture : captures) {
-						capture->drawWorld();
+						capture->drawWorld(drawOptions);
 					}
+				}
+
+				//---------
+				ofxCvGui::PanelPtr SunCalibrator::getPanel() {
+					return this->panel;
 				}
 
 				//---------
@@ -99,12 +104,12 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void SunCalibrator::serialize(nlohmann::json & json) const {
+				void SunCalibrator::serialize(nlohmann::json & json) {
 					this->captures.serialize(json["captures"]);
 				}
 
 				//---------
-				void SunCalibrator::deserialize(nlohmann::json & json){
+				void SunCalibrator::deserialize(const nlohmann::json & json){
 					if(json.contains("captures")) {
 						this->captures.deserialize(json["captures"]);
 					}
@@ -123,9 +128,11 @@ namespace ofxRulr {
 					// Ask for UNIX timestamp (i.e. don't trust the file times)
 					chrono::system_clock::time_point timestamp;
 					{
+						Utils::ScopedProcess scopedProcess("Input timestamp");
+
 						uint64_t epochTimestamp;
 						{
-							auto timeString = ofSystemTextBoxDialog("Milliseconds since UNIX epoch for capture");
+							auto timeString = ofSystemTextBoxDialog("Seconds since UNIX epoch for capture");
 							if(timeString.empty()) {
 								return;
 							}
@@ -133,38 +140,35 @@ namespace ofxRulr {
 							iss >> epochTimestamp;
 						}
 
-						timestamp = chrono::system_clock::time_point{chrono::milliseconds{epochTimestamp}};
+						timestamp = chrono::system_clock::time_point{chrono::seconds{epochTimestamp}};
+
+						scopedProcess.end();
 					}
 
 					// Navigate camera
-					{
+					if(this->parameters.capture.navigateCamera.get()) {
+						Utils::ScopedProcess scopedProcess("Navigate camera");
 						auto result = ofSystemLoadDialog("Select navigation image (WARNING : Pre-process the RAW using toolMonoDebayer)");
 						if (!result.bSuccess) {
 							return;
 						}
-						auto navigationImage = cv::imread(result.path);
-						if(navigationImage.getDepth() == cv::CV_16U) {
-							navigationImage.convertTo(navigationImage, cv::CV_8U);
-						}
-						navigateCameraNode->track(navigationImage);
+						auto navigationImage = cv::imread(result.filePath);
+						navigateCameraNode->track(navigationImage, false);
+						scopedProcess.end();
 					}
 
 					// Find sun in camera
 					{
+						Utils::ScopedProcess scopedProcess("Find sun in capture");
+
 						auto result = ofSystemLoadDialog("Select solar capture (WARNING : Pre-process the RAW using toolMonoDebayer)");
 						if (!result.bSuccess) {
 							return;
 						}
  						
-						ofShortPixels rawPixels;
-
-						// Load raw as-is
-						ofLoadImage(rawPixels
-							, result.path
-							, imageLoadSettings);
-						
-						// Down-convert to 8-bit
-						this->preview.getPixels() = rawPixels;
+						ofLoadImage(this->preview
+							, result.filePath);
+						this->preview.update();
 
 						cv::Mat image = ofxCv::toCv(this->preview.getPixels());
 						
@@ -227,30 +231,30 @@ namespace ofxRulr {
 						}
 
 						// Get the centroid
-						glm::vec2 centroid;
+						glm::vec2 centroidDistorted;
 						{
 							auto moment = cv::moments(image(ofxCv::toCv(bounds)));
-							centroid = glm::vec2(moment.m10 / moment.m00 + bounds.x
+							centroidDistorted = glm::vec2(moment.m10 / moment.m00 + bounds.x
 								, moment.m01 / moment.m00 + bounds.y);
 						}
 
 						// Undistort the centroid
 						glm::vec2 centroidUndistorted;
 						{
-							vector<cv::Point2f> imagePointsDistorted(1, centroid);
+							vector<cv::Point2f> imagePointsDistorted(1, ofxCv::toCv(centroidDistorted));
 							auto imagePointsUndistorted = ofxCv::undistortImagePoints(imagePointsDistorted
 								, camera->getCameraMatrix()
 								, camera->getDistortionCoefficients());
-							centroidUndistorted = imagePointsUndistorted[0];
+							centroidUndistorted = ofxCv::toOf(imagePointsUndistorted[0]);
 						}
 
 						// Get the camera ray vector
 						auto cameraView = camera->getViewInWorldSpace();
-						auto cameraRay = cameraView.castPixel(centroidUndistorted);
+						auto cameraRay = cameraView.castPixel(centroidUndistorted, false);
 						{
 							// Shorten the camera view for preview
 							cameraView.setFarClip(0.1f);
-							cameraRay.setLength(1.0f);
+							cameraRay.t = glm::normalize(cameraRay.t);
 						}
 
 						// Get the solar vector in object space for this time
@@ -259,22 +263,29 @@ namespace ofxRulr {
 						// Make and store the capture
 						auto capture = make_shared<Capture>();
 						{
-							capture->centroidUndistorted.set(centroidUndistorted);
-							capture->solarVectorObjectSpace.set(solarVectorObjectSpace);
-							capture->cameraRay = cameraRy;
+							capture->centroidDistorted = centroidDistorted;
+							capture->centroidUndistorted = centroidUndistorted;
+							capture->cameraRay = cameraRay;
 							capture->cameraRay.color = capture->color;
-							capture->contour = ofxCv::toOf(contour);
+
+							for (const auto& point : bestContour) {
+								capture->contour.push_back({ point.x, point.y });
+							}
+
 							capture->bounds = bounds;
 							capture->timestamp.set(timestamp);
 							capture->rebuildDateStrings();
 						}
 						this->captures.add(capture);
+
+						scopedProcess.end();
 					}
 				}
 
 				//---------
 				void SunCalibrator::calibrate() {
 					this->throwIfMissingAConnection<SunTracker>();
+					auto sunTracker = this->getInput<SunTracker>();
 
 					auto captures = this->captures.getSelection();
 					if(captures.size() < 2) {
@@ -286,7 +297,7 @@ namespace ofxRulr {
 					vector<glm::vec3> postTransformVectors;
 					{
 						for(auto capture : captures) {
-							preTransformVectors.push_back(capture->solarVectorObjectSpace.get());
+							preTransformVectors.push_back(sunTracker->getSolarVectorObjectSpace(capture->timestamp.get()));
 							postTransformVectors.push_back(glm::normalize(-capture->cameraRay.t));
 						}
 					}
@@ -294,41 +305,42 @@ namespace ofxRulr {
 					// Prepare to solve
 					auto solverSettings = Solvers::RotationFrame::defaultSolverSettings();
 					{
-						solverSettings.printOutput = this->parameters.solver.printOutput.get();
-						solverSettings.options.functionTolerance = this->parameters.solver.functionTolerance.get();
-						solverSettings.options.num_max_iterations = this->parameters.solver.maxIterations.get();
+						solverSettings.printReport = this->parameters.solver.printOutput.get();
+						solverSettings.options.function_tolerance= this->parameters.solver.functionTolerance.get();
+						solverSettings.options.max_num_iterations = this->parameters.solver.maxIterations.get();
 					}
 
 					// Perform the solve
-					auto result = RotationFrame::solve(preTransformVectors
+					auto result = Solvers::RotationFrame::solve(preTransformVectors
 						, postTransformVectors
 						, solverSettings);
 
-					sunTracker->setOrientation(result.rotation);	
+					sunTracker->setRotationQuat(result.solution.rotation);	
 				}
 
 #pragma mark Capture
 				//---------
-				void SunCalibrator::Capture::Capture() {
+				SunCalibrator::Capture::Capture() {
 					RULR_SERIALIZE_LISTENERS;
 				}
 
 				//---------
 				string SunCalibrator::Capture::getDisplayString() const {
 					stringstream ss;
-					ss << "(" << this->centroid.get() <<< ") = (" << this->solarVectorObjectSpace.get() << ")";
+					ss << "(" << this->centroidUndistorted << ")";
+					return ss.str();
 				}
 
 				//---------
 				void SunCalibrator::Capture::drawWorld(const DrawOptions& drawOptions) {
-					if(drawOptions.solarVector) {
+					if(drawOptions.solarVectorObjectSpace) {
 						ofPushMatrix();
 						{
 							ofMultMatrix(drawOptions.sunTrackerTransform);
 							ofPushStyle();
 							{
 								ofSetColor(this->color);
-								ofDrawArrow(- this->solarVector.get()
+								ofDrawArrow(- glm::normalize(this->cameraRay.t)
 								, {0, 0, 0}
 								, 0.1f);
 							}
@@ -348,9 +360,9 @@ namespace ofxRulr {
 
 				//---------
 				void SunCalibrator::Capture::serialize(nlohmann::json & json) const {
-					Utils::serialize(json, this->centroidUndistorted);
-					Utils::serialize(json, this->cameraVector);
-					Utils::serialize(json, this->solarVectorObjectSpace);
+					Utils::serialize(json, "centroidDistorted", this->centroidDistorted);
+					Utils::serialize(json, "centroidUndistorted", this->centroidUndistorted);
+					Utils::serialize(json, "cameraView", this->cameraView);
 					Utils::serialize(json, "cameraRay", this->cameraRay);
 					Utils::serialize(json, "contour", this->contour);
 					Utils::serialize(json, "bounds", this->bounds);
@@ -358,9 +370,9 @@ namespace ofxRulr {
 
 				//---------
 				void SunCalibrator::Capture::deserialize(const nlohmann::json & json) {
-					Utils::deserialize(json, this->centroidUndistorted);
-					Utils::deserialize(json, this->cameraVector);
-					Utils::deserialize(json, this->solarVectorObjectSpace);
+					Utils::deserialize(json, "centroidDistorted", this->centroidDistorted);
+					Utils::deserialize(json, "centroidUndistorted", this->centroidUndistorted);
+					Utils::deserialize(json, "cameraView", this->cameraView);
 					Utils::deserialize(json, "cameraRay", this->cameraRay);
 					Utils::deserialize(json, "contour", this->contour);
 					Utils::deserialize(json, "bounds", this->bounds);
@@ -372,9 +384,20 @@ namespace ofxRulr {
 
 					vector<ofxCvGui::ElementPtr> widgets;
 
-					widgets.push_back(make_shared<ofxCvGui::Widgets::EditableValue<glm::vec2>>(this->centroidUndistorted));
-					widgets.push_back(make_shared<ofxCvGui::Widgets::EditableValue<glm::vec3>>(this->cameraVector));
-					widgets.push_back(make_shared<ofxCvGui::Widgets::EditableValue<glm::vec3>>(this->solarVectorObjectSpace));
+					widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<glm::vec2>>("Centroid U", [this]() {
+						return this->centroidUndistorted;
+						}));
+
+					auto editTimestampWidget = make_shared<ofxCvGui::Widgets::EditableValue<uint64_t>>("Timestamp", [this]() {
+						return chrono::duration_cast<chrono::seconds>(this->timestamp.get().time_since_epoch()).count();
+						}, [this](string stringValue) {
+							uint64_t value;
+							stringstream ss(stringValue);
+							ss >> value;
+							this->timestamp.set(chrono::system_clock::time_point{ chrono::seconds{value} });
+							this->rebuildDateStrings();
+						});
+					widgets.push_back(editTimestampWidget);
 
 					for (auto& widget : widgets) {
 						element->addChild(widget);

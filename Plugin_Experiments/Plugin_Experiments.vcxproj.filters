@@ -78,6 +78,24 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\RemoteControl.cpp">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Halo.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\SolTrack\SolTrack_RiseSet.c">
+      <Filter>lib\SolTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\SolTrack\SolTrack.c">
+      <Filter>lib\SolTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SunTracker.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SunCalibrator.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\RotationFrame.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -144,6 +162,21 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\RemoteControl.h">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Halo.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\SolTrack\SolTrack.h">
+      <Filter>lib\SolTrack</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SunTracker.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\SunCalibrator.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\RotationFrame.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -172,6 +205,12 @@
     </Filter>
     <Filter Include="src\ofxRulr\Solvers">
       <UniqueIdentifier>{6128fe68-40b0-4f4d-82ab-1500ea95b3b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{5db2bd7b-8e0a-4388-8321-8cf52be5723d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\SolTrack">
+      <UniqueIdentifier>{68e327f3-1136-4e9b-aa75-3d990972191f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

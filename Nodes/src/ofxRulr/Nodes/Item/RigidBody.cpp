@@ -352,6 +352,12 @@ namespace ofxRulr {
 				this->onTransformChange.notifyListeners();
 			}
 
+			//---------
+			void RigidBody::setRotationQuat(const glm::quat& rotationQuat) {
+				auto rotationEuler = glm::eulerAngles(rotationQuat);
+				this->setRotationEuler(rotationEuler);
+			}
+
 			//----------
 			void RigidBody::setExtrinsics(cv::Mat rotation, cv::Mat translation, bool inverse) {
 				auto extrinsicsMatrix = ofxCv::makeMatrix(rotation, translation);

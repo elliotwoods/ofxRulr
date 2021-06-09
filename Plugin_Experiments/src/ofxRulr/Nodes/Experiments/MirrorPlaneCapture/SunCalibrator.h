@@ -10,7 +10,7 @@ namespace ofxRulr {
 					struct DrawOptions {
 						bool cameraRay;
 						bool cameraView;
-						bool solarVector;
+						bool solarVectorObjectSpace;
 						glm::mat4 sunTrackerTransform;
 					};
 
@@ -22,8 +22,8 @@ namespace ofxRulr {
 						void deserialize(const nlohmann::json &);
 						void drawWorld(const DrawOptions&);
 
-						ofParameter<glm::vec2> centroidUndistorted {"Centroid undistorted", {0, 0}};
-						ofParameter<glm::vec3> solarVectorObjectSpace {"Solar vector", glm::vec3() };
+						glm::vec2 centroidUndistorted;
+						glm::vec2 centroidDistorted;
 						ofxRay::Camera cameraView;
 						ofxRay::Ray cameraRay;
 						vector<glm::vec2> contour;
@@ -36,11 +36,11 @@ namespace ofxRulr {
 					string getTypeName() const override;
 
 					void init();
-					void drawWorld();
+					void drawWorldStage();
 					ofxCvGui::PanelPtr getPanel() override;
 
 					void populateInspector(ofxCvGui::InspectArguments&);
-					void serialize(nlohmann::json &) const;
+					void serialize(nlohmann::json &);
 					void deserialize(const nlohmann::json &);
 
 					void addFromFiles();
@@ -48,8 +48,9 @@ namespace ofxRulr {
 				protected:
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
-							ofParameter<int> threshold{"Threshold", 254, 0, 255};
-							PARAM_DECLARE("Capture", threshold);
+							ofParameter<bool> navigateCamera{ "Navigate camera", true };
+							ofParameter<int> threshold{"Threshold", 200, 0, 255};
+							PARAM_DECLARE("Capture", navigateCamera, threshold);
 						} capture;
 
 						struct : ofParameterGroup {
@@ -66,10 +67,11 @@ namespace ofxRulr {
 							PARAM_DECLARE("Draw", cameraRay, cameraView, solarVector);
 						} draw;
 						PARAM_DECLARE("SunCalibrator", capture, solver, draw);
-					};
+					} parameters;
 
+					Utils::CaptureSet<Capture> captures;
+					
 					shared_ptr<ofxCvGui::Panels::Image> panel;
-
 					ofImage preview;
 				};
 			}

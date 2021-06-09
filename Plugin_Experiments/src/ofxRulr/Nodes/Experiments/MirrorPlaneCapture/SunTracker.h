@@ -12,10 +12,11 @@ namespace ofxRulr {
 					string getTypeName() const override;
 
 					void init();
-					void update();
-					void populateInspector(ofxCvGui::InspectArguments&);
 
+					void update();
 					void drawObject();
+					
+					void populateInspector(ofxCvGui::InspectArguments&);
 
 					glm::vec2 getAzimuthAltitude(const chrono::system_clock::time_point&) const;
 					glm::vec3 getSolarVectorObjectSpace(const chrono::system_clock::time_point&) const;
@@ -32,12 +33,15 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<bool> renderInternal{"Render internal", true};
-							ofParameter<float> sphereRadius{"Sphere radius", 1.0f, 0.0f, 10.0f};
-							PARAM_DECLARE("Draw", renderInternal, sphereRadius);
+							ofParameter<float> sphereRadius{ "Sphere radius", 0.1f, 0.0f, 10.0f };
+							ofParameter<float> arrowLength{"Arrow length", 1.0f, 0.0f, 10.0f};
+							ofParameter<int> sphereResolution{ "Sphere resolution", 32 };
+							PARAM_DECLARE("Draw", renderInternal, sphereRadius, arrowLength, sphereResolution);
 						} draw;
 						PARAM_DECLARE("SunTracker", location, draw);
-					};
+					} parameters;
 
+					glm::vec3 solarVectorObjectSpaceNow;
 					ofLight light;
 				};
 			}

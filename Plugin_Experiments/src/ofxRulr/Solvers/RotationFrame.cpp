@@ -5,9 +5,9 @@ using namespace ofxCeres::VectorMath;
 
 template<typename T>
 glm::tquat<T> rodriguesToQuat(const glm::tvec3<T> & rodrigues) {
-	auto direction = glm::normalize(rodrigues);
+	auto axis = glm::normalize(rodrigues);
 	auto angle = glm::length(rodrigues);
-	return glm::tquat<T>::rotate(angle, direction);
+	return ofxCeres::VectorMath::angleAxis<T>(angle, axis);
 }
 
 struct RotationFrameCost
@@ -31,8 +31,9 @@ struct RotationFrameCost
 		};
 		auto rotation = rodriguesToQuat(rodrigues);
 
-		auto rotated = rotation * this->preRotation;
-		residuals[0] = acos(glm::dot(glm::normalize(rotated), glm::normalize(postRotation)));
+		auto rotated = ofxCeres::VectorMath::applyTransform(glm::tmat4x4<T>(rotation)
+			, (glm::tvec3<T>) this->preRotation);
+		residuals[0] = acos(glm::dot(glm::normalize(rotated), glm::normalize((glm::tvec3<T>) postRotation)));
 
 		return true;
 	}
@@ -41,7 +42,7 @@ struct RotationFrameCost
 		Create(const glm::vec3 & preRotation
 		, const glm::vec3 & postRotation)
 	{
-		return new ceres::AutoDiffCostFunction<MirrorPlaneFromRaysCost, 1, 3>(
+		return new ceres::AutoDiffCostFunction<RotationFrameCost, 1, 3>(
 			new RotationFrameCost(preRotation, postRotation)
 			);
 	}
@@ -87,7 +88,7 @@ namespace ofxRulr {
 			// Add all the correspondences
 			{
 				for (size_t i = 0; i < preRotation.size(); i++) {
-					auto costFunction = RotationFrame::Create(preRotation[i], postRotation[i]);
+					auto costFunction = RotationFrameCost::Create(preRotation[i], postRotation[i]);
 					problem.AddResidualBlock(costFunction
 						, NULL
 						, parameters);
