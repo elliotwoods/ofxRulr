@@ -23,6 +23,7 @@ namespace ofxRulr {
 				void SunTracker::init() {
 					RULR_RIGIDBODY_DRAW_OBJECT_LISTENER;
 					RULR_NODE_UPDATE_LISTENER;
+					RULR_NODE_INSPECTOR_LISTENER;
 
 					this->manageParameters(this->parameters);
 					this->light.setDirectional();
@@ -32,7 +33,12 @@ namespace ofxRulr {
 
 				//---------
 				void SunTracker::update() {
-					this->solarVectorObjectSpaceNow = this->getSolarVectorObjectSpace(chrono::system_clock::now());
+					if (this->parameters.debug.offsetTimeEnabled.get()) {
+						this->solarVectorObjectSpaceNow = this->getSolarVectorObjectSpace(this->getOffsetTime());
+					}
+					else {
+						this->solarVectorObjectSpaceNow = this->getSolarVectorObjectSpace(chrono::system_clock::now());
+					}
 				}
 
 				//---------
@@ -86,6 +92,15 @@ namespace ofxRulr {
 					inspector->addLiveValue<glm::vec3>("Solar vector (object)", [this]() {
 						return this->solarVectorObjectSpaceNow;
 						});
+
+					inspector->addLiveValue<string>("Offset time", [this]() {
+						time_t tt = chrono::system_clock::to_time_t(this->getOffsetTime());
+						tm local_tm = *localtime(&tt);
+
+						stringstream ss;
+						ss << local_tm.tm_hour << ":" << local_tm.tm_min;
+						return ss.str();
+						});
 				}
 
 
@@ -122,7 +137,7 @@ namespace ofxRulr {
 						, 0);
 
 					float thetaClockwiseFromNorth = solTrackResult.azimuthRefract * DEG_TO_RAD;
-					float theta = (PI / 2.0) - thetaClockwiseFromNorth;
+					float theta = - thetaClockwiseFromNorth;
 
 					float thi = solTrackResult.altitudeRefract * DEG_TO_RAD;
 
@@ -137,7 +152,7 @@ namespace ofxRulr {
 					auto thetaThi = this->getAzimuthAltitude(timePoint);
 
 
-					auto rotation = glm::rotate(thetaThi.x, glm::vec3(0, 1, 0))
+					auto rotation = glm::rotate(thetaThi.x, glm::vec3(0, -1, 0))
 						* glm::rotate(thetaThi.y, glm::vec3(0, 0, 1));
 
 					return Utils::applyTransform(glm::mat4(rotation), glm::vec3(-1.0f, 0.0f, 0.0f));
@@ -147,6 +162,14 @@ namespace ofxRulr {
 				glm::vec3 SunTracker::getSolarVectorWorldSpace(const chrono::system_clock::time_point& timePoint) const {
 					return Utils::applyTransform(glm::mat4(this->getRotationQuat()), this->getSolarVectorObjectSpace(timePoint));
 				}
+
+				//---------
+				chrono::system_clock::time_point SunTracker::getOffsetTime() const {
+					auto offset = chrono::minutes((int)(this->parameters.debug.offsetHours.get() * 60.0f));
+					auto now = chrono::system_clock::now();
+					return now + offset;
+				}
+
 			}
 		}
 	}

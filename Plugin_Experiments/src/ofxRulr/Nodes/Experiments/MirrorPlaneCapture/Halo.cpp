@@ -63,6 +63,11 @@ namespace ofxRulr {
 						ofPopStyle();
 					}
 				}
+				
+				//---------
+				float Halo::getRadius() const {
+					return this->parameters.diameter.get() / 2.0f;
+				}
 			}
 		}
 	}

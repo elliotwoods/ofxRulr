@@ -36,6 +36,18 @@ namespace ofxRulr {
 						ofPopStyle();
 					}
 
+					if (drawOptions.labelWorldPoints) {
+						glm::vec3 mean{ 0, 0, 0 };
+						for (const auto& worldPoint : this->worldPoints) {
+							mean += ofxCv::toOf(worldPoint);
+						}
+						mean /= this->worldPoints.size();
+
+						ofxCvGui::Utils::drawTextAnnotation(this->timeString
+							, mean
+							, this->color);
+					}
+
 					if (drawOptions.reflectedRays) {
 						for (const auto& ray : this->reflectedRays) {
 							ray.draw();
@@ -562,7 +574,7 @@ namespace ofxRulr {
 
 					// Mask the image
 					cv::Mat maskedImage = imageWithReflectionsWithoutRealBoard.clone();
-					{
+					if(this->parameters.capture.applyMask.get()) {
 						cv::Mat invertedMask;
 						cv::bitwise_not(mask, invertedMask);
 						maskedImage.setTo(cv::Scalar(meanBrightness), invertedMask);
@@ -911,6 +923,7 @@ namespace ofxRulr {
 						drawOptions.cameraRays = this->parameters.debug.draw.cameraRays.get();
 						drawOptions.worldPoints = this->parameters.debug.draw.worldPoints.get();
 						drawOptions.worldPointsSize = this->parameters.debug.draw.worldPointsSize.get();
+						drawOptions.labelWorldPoints = this->parameters.debug.draw.labelWorldPoints.get();
 						drawOptions.reflectedRays = this->parameters.debug.draw.reflectedRays.get();
 						drawOptions.mirrorFace = this->parameters.debug.draw.mirrorFace.get();
 						auto captures = this->captures.getSelection();

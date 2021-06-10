@@ -96,6 +96,12 @@
     <ClCompile Include="src\ofxRulr\Solvers\RotationFrame.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateToHalo.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_VectorToPoint.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -176,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\RotationFrame.h">
       <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateToHalo.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -32,6 +32,7 @@ namespace ofxRulr {
 							bool cameraRays;
 							bool worldPoints;
 							float worldPointsSize;
+							bool labelWorldPoints;
 							bool reflectedRays;
 							bool mirrorFace;
 						};
@@ -137,12 +138,13 @@ namespace ofxRulr {
 						} servoControl;
 
 						struct : ofParameterGroup {
-							ofParameter<float> mirrorScale{ "Mirror scale (mask)", 1.0f, 0.8f, 2.0f };
+							ofParameter<float> mirrorScale{ "Mirror scale (mask)", 1.0f, 0.8f, 6.0f };
+							ofParameter<bool> applyMask{ "Apply mask", true };
 							ofParameter<bool> flip{ "Flip", true };
 
 							// Alternatively aim to board center
 							ofParameter<bool> aimToSeenBoardPoints{ "Aim to seen board points", true };
-							PARAM_DECLARE("Capture", mirrorScale, flip, aimToSeenBoardPoints);
+							PARAM_DECLARE("Capture", mirrorScale, applyMask, flip, aimToSeenBoardPoints);
 						} capture;
 
 						struct : ofParameterGroup {
@@ -182,10 +184,11 @@ namespace ofxRulr {
 								ofParameter<bool> cameraRays{ "Camera rays", true };
 								ofParameter<bool> worldPoints{ "World points", true };
 								ofParameter<float> worldPointsSize{ "World points size", 0.01, 1e-3, 1e3};
+								ofParameter<bool> labelWorldPoints{ "Label world points", false };
 								ofParameter<bool> reflectedRays{ "Reflected rays", true };
 								ofParameter<bool> mirrorFace{ "Mirror face", true };
 								ofParameter<bool> report{ "Report", true };
-								PARAM_DECLARE("Draw", cameraRays, worldPoints, worldPointsSize, reflectedRays, mirrorFace, report);
+								PARAM_DECLARE("Draw", cameraRays, worldPoints, labelWorldPoints, worldPointsSize, reflectedRays, mirrorFace, report);
 							} draw;
 							PARAM_DECLARE("Debug", draw);
 						} debug;

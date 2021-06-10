@@ -188,6 +188,12 @@ namespace ofxRulr {
 					, const AxisAngles<float>& initialAngles
 					, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
 
+				static Result solveVectorToPoint(const Parameters<float>&
+					, const glm::vec3& incidentVector
+					, const glm::vec3& point
+					, const AxisAngles<float>& initialAngles
+					, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
+
 				static bool validate(const Parameters<float>&
 					, const AxisAngles<float>& axisAngles);
 

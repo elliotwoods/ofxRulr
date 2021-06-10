@@ -301,7 +301,7 @@ namespace ofxRulr {
 
 			//---------
 			glm::quat RigidBody::getRotationQuat() const {
-				return glm::quat(this->getRotationEuler());
+				return glm::quat(this->getRotationEuler() * DEG_TO_RAD);
 			}
 
 			//---------

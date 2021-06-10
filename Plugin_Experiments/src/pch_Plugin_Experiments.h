@@ -28,7 +28,7 @@
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/SunTracker.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/SunCalibrator.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Halo.h"
-//#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/NavigateToHalo.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/NavigateToHalo.h"
 
 #include "ofxRulr/Nodes/Experiments/PhotoScan/BundlerCamera.h"
 #include "ofxRulr/Nodes/Experiments/PhotoScan/CalibrateProjector.h"

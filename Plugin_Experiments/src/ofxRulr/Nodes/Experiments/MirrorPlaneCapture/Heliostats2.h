@@ -123,6 +123,10 @@ namespace ofxRulr {
 
 						void navigateToNormal(const glm::vec3&, const ofxCeres::SolverSettings&, bool throwIfOutsideRange);
 						void navigateToReflectPointToPoint(const glm::vec3&, const glm::vec3&, const ofxCeres::SolverSettings&, bool throwIfOutsideRange);
+						void navigateToReflectVectorToPoint(const glm::vec3& incidentVector
+							, const glm::vec3& point
+							, const ofxCeres::SolverSettings&
+							, bool throwIfOutsideRange);
 					protected:
 						ofxCvGui::ElementPtr getDataDisplay() override;
 					};

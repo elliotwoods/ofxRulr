@@ -958,6 +958,33 @@ namespace ofxRulr {
 				}
 
 				//----------
+				void Heliostats2::Heliostat::navigateToReflectVectorToPoint(const glm::vec3& incidentVector
+					, const glm::vec3& point
+					, const ofxCeres::SolverSettings& solverSettings
+					, bool throwIfOutsideRange) {
+					Solvers::HeliostatActionModel::AxisAngles<float> priorAngles{
+							this->parameters.servo1.angle
+							, this->parameters.servo2.angle
+					};
+					auto hamParameters = this->getHeliostatActionModelParameters();
+
+					auto result = Solvers::HeliostatActionModel::Navigator::solveConstrained(hamParameters
+						, [&](const Solvers::HeliostatActionModel::AxisAngles<float>& initialAngles) {
+							return Solvers::HeliostatActionModel::Navigator::solveVectorToPoint(hamParameters
+								, incidentVector
+								, point
+								, initialAngles
+								, solverSettings);
+						}, priorAngles
+						, throwIfOutsideRange);
+
+					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
+					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+
+					this->update();
+				}
+
+				//----------
 				ofxCvGui::ElementPtr Heliostats2::Heliostat::getDataDisplay() {
 					auto element = ofxCvGui::makeElement();
 

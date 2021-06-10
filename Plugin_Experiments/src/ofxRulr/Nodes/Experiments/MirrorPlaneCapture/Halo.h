@@ -14,6 +14,9 @@ namespace ofxRulr {
 					void init();
 
 					void drawObject();
+					
+					float getRadius() const;
+
 				protected:
 					struct : ofParameterGroup {
 						ofParameter<float> diameter{ "Diameter", 2.0f, 0.0f, 10.0f };

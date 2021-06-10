@@ -21,6 +21,8 @@ namespace ofxRulr {
 					glm::vec2 getAzimuthAltitude(const chrono::system_clock::time_point&) const;
 					glm::vec3 getSolarVectorObjectSpace(const chrono::system_clock::time_point&) const;
 					glm::vec3 getSolarVectorWorldSpace(const chrono::system_clock::time_point&) const;
+
+					chrono::system_clock::time_point getOffsetTime() const;
 				protected:
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
@@ -38,7 +40,14 @@ namespace ofxRulr {
 							ofParameter<int> sphereResolution{ "Sphere resolution", 32 };
 							PARAM_DECLARE("Draw", renderInternal, sphereRadius, arrowLength, sphereResolution);
 						} draw;
-						PARAM_DECLARE("SunTracker", location, draw);
+
+						struct : ofParameterGroup {
+							ofParameter<bool> offsetTimeEnabled{ "Offset time enabled", false };
+							ofParameter<float> offsetHours{ "Offset hours", 0, -24, 24 };
+							PARAM_DECLARE("Debug", offsetTimeEnabled, offsetHours);
+						} debug;
+
+						PARAM_DECLARE("SunTracker", location, draw, debug);
 					} parameters;
 
 					glm::vec3 solarVectorObjectSpaceNow;

@@ -16,6 +16,8 @@ namespace ofxRulr {
 				json << this->selected;
 				json << this->color;
 				json["timestamp"] << chrono::system_clock::to_time_t(this->timestamp.get());
+				json["date"] << this->dateString;
+				json["time"] << this->timeString;
 			};
 			this->onDeserialize += [this](const nlohmann::json & json) {
 				json >> this->selected;
