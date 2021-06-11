@@ -19,6 +19,7 @@ namespace ofxRulr {
 				void SunCalibrator::init() {
 					RULR_NODE_INSPECTOR_LISTENER;
 					RULR_NODE_DRAW_WORLD_LISTENER;
+					RULR_NODE_SERIALIZATION_LISTENERS;
 
 					this->manageParameters(this->parameters);
 

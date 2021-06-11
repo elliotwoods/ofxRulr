@@ -48,17 +48,35 @@ namespace ofxRulr {
 
 				//---------
 				void NavigateToHalo::update() {
+					bool autoNavigate = false;
+
 					// Check update time
-					if(this->parameters.schedule.enabled.get()) {
+					if (this->parameters.schedule.enabled.get()) {
 						auto timeSinceLastUpdate = chrono::system_clock::now() - this->lastUpdateTime;
 						auto secondsSinceLastUpdate = chrono::duration_cast<chrono::seconds>(timeSinceLastUpdate).count();
 
-						if(secondsSinceLastUpdate >= this->parameters.schedule.period.get()) {
-							try {
-								this->navigate();
-							}
-							RULR_CATCH_ALL_TO_ERROR;
+						if (secondsSinceLastUpdate >= this->parameters.schedule.period.get()) {
+							autoNavigate = true;
 						}
+					}
+
+					// On halo change
+					{
+						if (this->parameters.onHaloChange.get()) {
+							auto halo = this->getInput<Halo>();
+							if (halo) {
+								if (halo->isSettingsNew()) {
+									autoNavigate = true;
+								}
+							}
+						}
+					}
+
+					if (autoNavigate) {
+						try {
+							this->navigate();
+						}
+						RULR_CATCH_ALL_TO_ERROR;
 					}
 				}
 

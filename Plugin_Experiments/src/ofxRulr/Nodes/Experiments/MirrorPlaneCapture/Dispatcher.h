@@ -56,6 +56,7 @@ namespace ofxRulr {
 				protected:
 					struct : ofParameterGroup {
 						ofParameter<string> address{ "http://localhost:8000" };
+						PARAM_DECLARE("Dispatcher", address);
 					} parameters;
 				};
 			}

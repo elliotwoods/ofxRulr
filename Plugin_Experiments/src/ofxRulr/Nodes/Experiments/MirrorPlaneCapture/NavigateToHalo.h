@@ -23,6 +23,8 @@ namespace ofxRulr {
 
 				protected:
 					struct : ofParameterGroup {
+						ofParameter<bool> onHaloChange{ "On halo change", true };
+
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{"Enabled", false};
 							ofParameter<float> period{ "Period (s)", 10.0f, 1, 360 };
@@ -43,7 +45,7 @@ namespace ofxRulr {
 							PARAM_DECLARE("Draw", targets, lines, solarIncidentVectors);
 						} draw;
 						
-						PARAM_DECLARE("NavigateToHalo", schedule, solver, draw);
+						PARAM_DECLARE("NavigateToHalo", onHaloChange, schedule, solver, draw);
 					} parameters;
 
 					chrono::system_clock::time_point lastUpdateTime{ chrono::milliseconds{ 0 } };

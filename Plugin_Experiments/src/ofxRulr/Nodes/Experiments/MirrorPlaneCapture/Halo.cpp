@@ -16,9 +16,28 @@ namespace ofxRulr {
 
 				//---------
 				void Halo::init() {
+					RULR_NODE_UPDATE_LISTENER;
 					RULR_RIGIDBODY_DRAW_OBJECT_LISTENER;
 
 					this->manageParameters(this->parameters);
+					this->onTransformChange += [this]() {
+						this->isNew.nextFrame = true;
+					};
+				}
+
+				//---------
+				void Halo::update() {
+					if (this->parameters.diameter.get() != this->isNew.cachedDiameter) {
+						this->isNew.nextFrame = true;
+						this->isNew.cachedDiameter = this->parameters.diameter.get();
+					}
+					this->isNew.thisFrame = this->isNew.nextFrame;
+					this->isNew.nextFrame = false;
+				}
+
+				//---------
+				bool Halo::isSettingsNew() const {
+					return this->isNew.thisFrame;
 				}
 
 				//---------

@@ -5,9 +5,15 @@ using namespace ofxCeres::VectorMath;
 
 template<typename T>
 glm::tquat<T> rodriguesToQuat(const glm::tvec3<T> & rodrigues) {
-	auto axis = glm::normalize(rodrigues);
-	auto angle = glm::length(rodrigues);
-	return ofxCeres::VectorMath::angleAxis<T>(angle, axis);
+	if (length(rodrigues) == (T)0.0) {
+		// Not sure how it will differentiate from this state
+		return glm::tquat<T>();
+	}
+	else {
+		auto axis = glm::normalize(rodrigues);
+		auto angle = glm::length(rodrigues);
+		return ofxCeres::VectorMath::angleAxis<T>(angle, axis);
+	}
 }
 
 struct RotationFrameCost

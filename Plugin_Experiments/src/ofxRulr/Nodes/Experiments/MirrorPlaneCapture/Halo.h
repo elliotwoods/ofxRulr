@@ -12,9 +12,11 @@ namespace ofxRulr {
 					string getTypeName() const override;
 
 					void init();
+					void update();
+					bool isSettingsNew() const;
 
 					void drawObject();
-					
+
 					float getRadius() const;
 
 				protected:
@@ -29,6 +31,12 @@ namespace ofxRulr {
 						} draw;
 						PARAM_DECLARE("Halo", diameter, draw);
 					} parameters;
+
+					struct {
+						float cachedDiameter = 0.0f;
+						bool thisFrame = false;
+						bool nextFrame = false;
+					} isNew;
 				};
 			}
 		}
