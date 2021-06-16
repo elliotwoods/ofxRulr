@@ -3,19 +3,6 @@
 
 using namespace ofxCeres::VectorMath;
 
-template<typename T>
-glm::tquat<T> rodriguesToQuat(const glm::tvec3<T> & rodrigues) {
-	if (length(rodrigues) == (T)0.0) {
-		// Not sure how it will differentiate from this state
-		return glm::tquat<T>();
-	}
-	else {
-		auto axis = glm::normalize(rodrigues);
-		auto angle = glm::length(rodrigues);
-		return ofxCeres::VectorMath::angleAxis<T>(angle, axis);
-	}
-}
-
 struct RotationFrameCost
 {
 	RotationFrameCost(const glm::vec3 & preRotation
@@ -30,12 +17,12 @@ struct RotationFrameCost
 		operator()(const T* const parameters
 			, T* residuals) const
 	{
-		glm::tvec3<T> rodrigues {
+		glm::tvec3<T> eulerAngles {
 			parameters[0]
 			, parameters[1]
 			, parameters[2]
 		};
-		auto rotation = rodriguesToQuat(rodrigues);
+		auto rotation = eulerToQuat(eulerAngles);
 
 		auto rotated = ofxCeres::VectorMath::applyTransform(glm::tmat4x4<T>(rotation)
 			, (glm::tvec3<T>) this->preRotation);
@@ -113,7 +100,7 @@ namespace ofxRulr {
 
 			{
 				Result result(summary);
-				result.solution.rotation = rodriguesToQuat<float>({
+				result.solution.rotation = eulerToQuat<float>({
 					parameters[0]
 					, parameters[1]
 					, parameters[2]
