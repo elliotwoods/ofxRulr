@@ -199,6 +199,19 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						}, ' ');
+
+					inspector->addButton("Flip single", [this]() {
+						try {
+							this->flipSingle();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+					inspector->addButton("Flip selection", [this]() {
+						try {
+							this->flipSelection();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						}, 'f');
 				}
 
 				//---------
@@ -251,11 +264,38 @@ namespace ofxRulr {
 				}
 
 				//---------
+				void RemoteControl::flipSingle() {
+					this->throwIfMissingAnyConnection();
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					auto heliostats = heliostatsNode->getHeliostats();
+					for (auto heliostat : heliostats) {
+						if (heliostat->parameters.name.get() == this->parameters.singleName.get()) {
+							heliostat->flip();
+						}
+					}
+				}
+
+				//---------
+				void RemoteControl::flipSelection() {
+					this->throwIfMissingAnyConnection();
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					auto heliostats = heliostatsNode->getHeliostats();
+					Utils::ScopedProcess scopedProcess("Flip heliostats", heliostats.size());
+					for (auto heliostat : heliostats) {
+						try {
+							Utils::ScopedProcess scopedProcessHeliostat(heliostat->getName());
+							heliostat->flip();
+							scopedProcessHeliostat.end();
+						}
+						RULR_CATCH_ALL_TO_ERROR;
+					}
+				}
+
+				//---------
 				void RemoteControl::home(shared_ptr<Heliostats2::Heliostat> heliostat) {
 					heliostat->parameters.servo1.angle.set(0.0f);
 					heliostat->parameters.servo2.angle.set(0.0f);
 				}
-
 			}
 		}
 	}

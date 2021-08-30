@@ -63,6 +63,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\NavigateCamera.cpp">
       <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Transform.cpp">
+      <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Nodes\ArUco\Dictionary.h">
@@ -105,6 +108,9 @@
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\NavigateCamera.h">
+      <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Transform.h">
       <Filter>src\ofxRulr\Nodes\MarkerMap</Filter>
     </ClInclude>
   </ItemGroup>

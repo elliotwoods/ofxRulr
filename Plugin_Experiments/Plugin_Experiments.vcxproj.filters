@@ -102,6 +102,9 @@
     <ClCompile Include="src\ofxRulr\Solvers\HeliostatActionModel_VectorToPoint.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\PruneData.cpp">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Experiments.h" />
@@ -184,6 +187,9 @@
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\NavigateToHalo.h">
+      <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\PruneData.h">
       <Filter>src\ofxRulr\Experiments\MirrorPlaneCapture</Filter>
     </ClInclude>
   </ItemGroup>

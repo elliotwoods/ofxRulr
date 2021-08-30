@@ -164,6 +164,13 @@ namespace ofxRulr {
 							}
 							RULR_CATCH_ALL_TO_ALERT;
 							});
+
+						this->panel->addButton("Filter selection to inside camera", [this]() {
+							try {
+								this->filterHeliostatsToInsideCamera();
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+							});
 					}
 				}
 
@@ -603,7 +610,7 @@ namespace ofxRulr {
 							, croppedRegion
 							, 255
 							, 0
-							, cv::NORM_INF);
+							, cv::NORM_MINMAX);
 
 						// Find the board in the cropped image
 						{
@@ -969,7 +976,9 @@ namespace ofxRulr {
 				}
 
 				//--------
-				void BoardInMirror2::filterCapturesToHeliostatSelection() {
+				void
+					BoardInMirror2::filterCapturesToHeliostatSelection() 
+				{
 					this->throwIfMissingAConnection<Heliostats2>();
 					auto heliostatsNode = this->getInput<Heliostats2>();
 					auto activeHeliostats = heliostatsNode->getHeliostats();
@@ -990,7 +999,9 @@ namespace ofxRulr {
 				}
 
 				//--------
-				void BoardInMirror2::calculateResiduals() {
+				void
+					BoardInMirror2::calculateResiduals()
+				{
 					this->throwIfMissingAConnection<Heliostats2>();
 					auto heliostatsNode = this->getInput<Heliostats2>();
 					auto activeHeliostats = heliostatsNode->getHeliostats();
@@ -1024,8 +1035,32 @@ namespace ofxRulr {
 					}
 				}
 
+				//--------
+				void
+					BoardInMirror2::filterHeliostatsToInsideCamera()
+				{
+					this->throwIfMissingAConnection<Item::Camera>();
+					this->throwIfMissingAConnection<Heliostats2>();
+
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					auto cameraNode = this->getInput<Item::Camera>();
+
+					auto heliostats = heliostatsNode->getHeliostats();
+					auto cameraView = cameraNode->getViewInWorldSpace();
+
+					for (auto heliostat : heliostats) {
+						auto heliostatInCamera = cameraView.getNormalizedSCoordinateOfWorldPosition(heliostat->parameters.hamParameters.position.get());
+						if (abs(heliostatInCamera.x) > 1.0f
+							|| abs(heliostatInCamera.y) > 1.0f) {
+							heliostat->setSelected(false);
+						}
+					}
+				}
+
 				//----------
-				ofxCeres::SolverSettings BoardInMirror2::getNavigateSolverSettings() const {
+				ofxCeres::SolverSettings
+					BoardInMirror2::getNavigateSolverSettings() const 
+				{
 					auto solverSettings = ofxRulr::Solvers::HeliostatActionModel::Navigator::defaultSolverSettings();
 
 					solverSettings.options.max_num_iterations = this->parameters.navigate.maxIterations.get();

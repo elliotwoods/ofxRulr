@@ -48,6 +48,7 @@ namespace ofxRulr {
 			void select(shared_ptr<BaseCapture>);
 			void selectAll();
 			void selectNone();
+			void deleteSelection();
 
 			void populateWidgets(shared_ptr<ofxCvGui::Panels::Widgets>);
 			void serialize(nlohmann::json &);

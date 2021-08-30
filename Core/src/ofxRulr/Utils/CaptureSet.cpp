@@ -303,6 +303,15 @@ namespace ofxRulr {
 		}
 
 		//----------
+		void AbstractCaptureSet::deleteSelection() {
+			for (auto capture : this->captures) {
+				if (capture->isSelected()) {
+					this->remove(capture);
+				}
+			}
+		}
+
+		//----------
 		void AbstractCaptureSet::populateWidgets(shared_ptr<ofxCvGui::Panels::Widgets> widgetsPanel) {
 			widgetsPanel->add(this->listView);
 
@@ -313,6 +322,10 @@ namespace ofxRulr {
 			widgetsPanel->addButton("Clear", [this]() {
 				this->clear();
 			});
+
+			widgetsPanel->addButton("Delete selection", [this]() {
+				this->deleteSelection();
+				});
 
 			widgetsPanel->addLiveValue<int>("Select size", [this]() {
 				return this->getSelectionUntyped().size();

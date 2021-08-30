@@ -84,6 +84,14 @@ namespace ofxRulr {
 				{
 					this->panel = ofxCvGui::Panels::makeWidgets();
 					this->captures.populateWidgets(this->panel);
+					this->panel->addLiveValue<size_t>("Total markers in selection", [this]() {
+						auto selection = this->captures.getSelection();
+						size_t count = 0;
+						for (auto capture : selection) {
+							count += capture->IDs.size();
+						}
+						return count;
+						});
 				}
 
 				this->addInput<Item::Camera>();

@@ -190,8 +190,18 @@ namespace ofxRulr {
 				}
 
 				{
-					auto widget = make_shared<ofxCvGui::Widgets::LiveValue<glm::vec3>>("Position", [this]() {
-						return this->rigidBody->getPosition();
+					auto widget = make_shared<ofxCvGui::Widgets::LiveValue<string>>("Position", [this]() {
+						return ofToString(this->rigidBody->getPosition(), 3);
+						});
+					widget->setPosition({ 0, y });
+					y += widget->getHeight();
+					elementGroup->add(widget);
+					widgets.push_back(widget);
+				}
+
+				{
+					auto widget = make_shared<ofxCvGui::Widgets::LiveValue<string>>("Rotation", [this]() {
+						return ofToString(this->rigidBody->getRotationEuler(), 3);
 						});
 					widget->setPosition({ 0, y });
 					y += widget->getHeight();

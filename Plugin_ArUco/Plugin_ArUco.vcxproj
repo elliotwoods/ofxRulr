@@ -92,6 +92,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Calibrate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Markers.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\NavigateCamera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Transform.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\MarkerProjections.cpp" />
     <ClCompile Include="src\pch_Plugin_ArUco.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -112,6 +113,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Calibrate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Markers.h" />
     <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\NavigateCamera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Transform.h" />
     <ClInclude Include="src\ofxRulr\Solvers\MarkerProjections.h" />
     <ClInclude Include="src\pch_Plugin_ArUco.h" />
   </ItemGroup>

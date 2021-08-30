@@ -103,6 +103,8 @@ namespace ofxRulr {
 
 					void filterCapturesToHeliostatSelection();
 					void calculateResiduals();
+
+					void filterHeliostatsToInsideCamera();
 				protected:
 					ofxCeres::SolverSettings getNavigateSolverSettings() const;
 					ofxCeres::SolverSettings getCalibrateSolverSettings() const;

@@ -21,6 +21,10 @@ namespace ofxRulr {
 					void moveSelection(const glm::vec2& movement);
 					void homeSingle();
 					void homeSelection();
+
+					void flipSingle();
+					void flipSelection();
+
 					void move(shared_ptr<Heliostats2::Heliostat>, const glm::vec2& movement);
 					void home(shared_ptr<Heliostats2::Heliostat>);
 				protected:

@@ -23,6 +23,8 @@ EXPORTS
 	??0ofBuffer@@QEAA@PEBD_K@Z
 	??0ofBuffer@@QEAA@XZ
 	??0ofDirectory@@QEAA@AEBVpath@filesystem@boost@@@Z
+	??0ofFbo@@QEAA@$$QEAV0@@Z
+	??0ofFbo@@QEAA@AEBV0@@Z
 	??0ofFbo@@QEAA@XZ
 	??0ofFboSettings@@QEAA@V?$shared_ptr@VofBaseGLRenderer@@@std@@@Z
 	??0ofFile@@QEAA@AEBVpath@filesystem@boost@@W4Mode@0@_N@Z
@@ -61,6 +63,8 @@ EXPORTS
 	??1ofVboMesh@@UEAA@XZ
 	??1ofxOscMessage@@QEAA@XZ
 	??1ofxOscSender@@QEAA@XZ
+	??4ofFbo@@QEAAAEAV0@$$QEAV0@@Z
+	??4ofFbo@@QEAAAEAV0@AEBV0@@Z
 	??4ofNode@@QEAAAEAV0@$$QEAV0@@Z
 	??4ofNode@@QEAAAEAV0@AEBV0@@Z
 	??4ofRectangle@@QEAAAEAV0@AEBV0@@Z

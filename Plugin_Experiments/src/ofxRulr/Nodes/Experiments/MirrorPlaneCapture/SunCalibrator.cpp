@@ -166,13 +166,24 @@ namespace ofxRulr {
 						if (!result.bSuccess) {
 							return;
 						}
- 						
+
 						ofLoadImage(this->preview
 							, result.filePath);
 						this->preview.update();
 
-						cv::Mat image = ofxCv::toCv(this->preview.getPixels());
-						
+						cv::Mat image;
+						if (this->preview.getPixels().getNumChannels() == 1) {
+							image = ofxCv::toCv(this->preview.getPixels());
+						}
+						else {
+							cv::Mat colImage = ofxCv::toCv(this->preview.getPixels());
+							cv::cvtColor(colImage, image, cv::COLOR_RGB2GRAY);
+						}
+
+						if (image.empty()) {
+							throw(ofxRulr::Exception("Failed to load solar image - use 8bit format."));
+						}
+
 						// Threshold to binary image
 						cv::Mat binary;
 						{

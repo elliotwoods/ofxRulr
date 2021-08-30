@@ -115,7 +115,9 @@ namespace ofxRulr {
 					return aruco::Dictionary::getTypeString(this->dictionaryType);
 				});
 				inspector->addButton("Retry detect", [this]() {
+					Utils::ScopedProcess scopedProcess("Retry detection...", false);
 					this->findMarkers(this->lastDetection.rawImage, false);
+					cout << this->foundMarkers.size() << " markers found." << endl;
 				}, ' ');
 			}
 
@@ -372,7 +374,7 @@ namespace ofxRulr {
 					}
 				}
 
-				// refine corners 2 (sane code, different variable)
+				// refine corners 2 (same code, different settings)
 				{
 					auto findRatio = this->parameters.cornerRefinement.zone2.get();
 					if (findRatio > 0.0f) {
