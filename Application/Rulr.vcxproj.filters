@@ -22,6 +22,9 @@
     <ClCompile Include="..\..\ofxCanon\pairs\ofxRulr\Nodes\Canon\LiveView.cpp">
       <Filter>pairs\ofxCanon\ofxRulr\Nodes\Canon</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonRemote.cpp">
+      <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -77,6 +80,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ofxCanon\pairs\ofxRulr\Nodes\Canon\LiveView.h">
       <Filter>pairs\ofxCanon\ofxRulr\Nodes\Canon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ofxCanon\pairs\ofxMachineVision\Device\CanonRemote.h">
+      <Filter>pairs\ofxCanon\ofxMachineVision\Device</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

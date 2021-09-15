@@ -30,6 +30,7 @@ EXPORTS
 	??0ofFile@@QEAA@AEBVpath@filesystem@boost@@W4Mode@0@_N@Z
 	??0ofFile@@QEAA@XZ
 	??0ofHttpRequest@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0_N@Z
+	??0ofHttpRequest@@QEAA@XZ
 	??0ofLight@@QEAA@XZ
 	??0ofLogError@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0ofLogNotice@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -105,6 +106,7 @@ EXPORTS
 	?ofGetCurrentRenderer@@YAAEAV?$shared_ptr@VofBaseRenderer@@@std@@XZ
 	?ofGetCurrentWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@XZ
 	?ofGetElapsedTimef@@YAMXZ
+	?ofGetElapsedTimeMicros@@YA_KXZ
 	?ofGetElapsedTimeMillis@@YA_KXZ
 	?ofGetFrameNum@@YA_KXZ
 	?ofGetFrameRate@@YAMXZ
@@ -115,12 +117,14 @@ EXPORTS
 	?ofGetScreenHeight@@YAHXZ
 	?ofGetScreenWidth@@YAHXZ
 	?ofGetStyle@@YA?AVofStyle@@XZ
+	?ofGetSystemTimeMicros@@YA_KXZ
 	?ofHideCursor@@YAXXZ
 	?ofLerp@@YAMMMM@Z
 	?ofLoadIdentityMatrix@@YAXXZ
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@E@@AEBVofBuffer@@AEBUofImageLoadSettings@@@Z
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@E@@AEBVpath@filesystem@boost@@AEBUofImageLoadSettings@@@Z
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@G@@AEBVofBuffer@@AEBUofImageLoadSettings@@@Z
+	?ofLoadURL@@YA?AVofHttpResponse@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?ofLogToConsole@@YAXXZ
 	?ofMap@@YAMMMMMM_N@Z
 	?ofMultMatrix@@YAXAEBU?$mat@$03$03M$0A@@glm@@@Z
@@ -179,6 +183,7 @@ EXPORTS
 	?draw@?$ofImage_@E@@UEBAXMM@Z
 	?draw@?$ofImage_@E@@UEBAXMMMM@Z
 	?getTexture@?$ofImage_@E@@UEAAAEAVofTexture@@XZ
+	?load@?$ofImage_@E@@QEAA_NAEBVofBuffer@@AEBUofImageLoadSettings@@@Z
 	?load@?$ofImage_@E@@QEAA_NAEBVpath@filesystem@boost@@AEBUofImageLoadSettings@@@Z
 	?setFromPixels@?$ofImage_@E@@QEAAXAEBV?$ofPixels_@E@@@Z
 	?unbind@?$ofImage_@E@@QEBAXH@Z
@@ -374,6 +379,7 @@ EXPORTS
 	?setOrientation@ofNode@@QEAAXAEBU?$qua@M$0A@@glm@@@Z
 	?setPosition@ofNode@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	?add@ofParameterGroup@@QEAAXAEAVofAbstractParameter@@@Z
+	?clear@ofParameterGroup@@QEAAXXZ
 	?fromString@ofParameterGroup@@UEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?getEscapedName@ofParameterGroup@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getFirstParent@ofParameterGroup@@EEBA?BV1@XZ
@@ -908,6 +914,7 @@ EXPORTS
 	??$ofDrawBitmapString@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBU?$vec@$02M$0A@@glm@@@Z
 	??$ofDrawBitmapString@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@YAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@MMM@Z
 	??$ofFromString@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV01@@Z
+	??0?$EditableValue@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@@@Z
 	??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEBVBaseEnum@ofxCvGui@@@Z
 	??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEBVofAbstractParameter@@@Z
 	??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEBVofBuffer@@@Z

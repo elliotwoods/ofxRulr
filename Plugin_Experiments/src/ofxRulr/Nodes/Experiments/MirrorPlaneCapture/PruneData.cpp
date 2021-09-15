@@ -29,6 +29,7 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr
 					PruneData::getPanel()
 				{
+					return ofxCvGui::PanelPtr();
 				}
 			}
 		}

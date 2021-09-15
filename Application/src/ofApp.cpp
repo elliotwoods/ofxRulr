@@ -3,6 +3,7 @@
 
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/Canon.h"
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/CanonLiveView.h"
+#include "../../../ofxCanon/pairs/ofxMachineVision/Device/CanonRemote.h"
 #include "../../../ofxCanon/pairs/ofxRulr/Nodes/Canon/Control.h"
 #include "../../../ofxCanon/pairs/ofxRulr/Nodes/Canon/LiveView.h"
 
@@ -46,6 +47,7 @@ void ofApp::setup2(){
 	//
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::Canon>();
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonLiveView>();
+	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonRemote>();
 	RULR_DECLARE_NODE(ofxRulr::Nodes::Canon::Control);
 	RULR_DECLARE_NODE(ofxRulr::Nodes::Canon::LiveView);
 	//
