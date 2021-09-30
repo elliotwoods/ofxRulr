@@ -7,7 +7,9 @@
 #include "ofxRulr/Utils/Utils.h"
 #include "ofxRulr/Version.h"
 
+#ifndef DISABLE_OFXWEBWIDGETS
 #include "ofxWebWidgets.h"
+#endif
 
 using namespace ofxCvGui;
 

@@ -74,6 +74,9 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Lasers.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\CircleLaser.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.cpp" />
@@ -89,6 +92,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Lasers.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\CircleLaser.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.h" />

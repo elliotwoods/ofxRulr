@@ -49,7 +49,9 @@ namespace ofxRulr {
 
 			RULR_DECLARE_NODE(Application::Assets);
 			RULR_DECLARE_NODE(Application::openFrameworks);
+#ifndef DISABLE_OFXWEBWIDGETS
 			RULR_DECLARE_NODE(Application::HTTPServerControl);
+#endif
 			RULR_DECLARE_NODE(Application::Debugger);
 			
 			RULR_DECLARE_NODE(Data::Channels::Database);

@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef DISABLE_OFXWEBWIDGETS
+
 #include "ofxRulr/Nodes/Base.h"
 #include "ofxWebWidgets.h"
 
@@ -32,3 +34,5 @@ namespace ofxRulr {
 		}
 	}
 }
+
+#endif

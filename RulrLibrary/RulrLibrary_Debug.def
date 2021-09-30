@@ -659,6 +659,8 @@ EXPORTS
 	?addInt32Arg@ofxOscMessage@@QEAAXH@Z
 	?addIntArg@ofxOscMessage@@QEAAXH@Z
 	?setAddress@ofxOscMessage@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?getHost@ofxOscSender@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?getPort@ofxOscSender@@QEBAHXZ
 	?sendBundle@ofxOscSender@@QEAAXAEBVofxOscBundle@@@Z
 	?sendMessage@ofxOscSender@@QEAAXAEBVofxOscMessage@@_N@Z
 	?setup@ofxOscSender@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z

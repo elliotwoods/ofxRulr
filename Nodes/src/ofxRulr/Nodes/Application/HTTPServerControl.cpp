@@ -1,10 +1,12 @@
 #include "pch_RulrNodes.h"
+#ifndef DISABLE_OFXWEBWIDGETS
 #include "HTTPServerControl.h"
 
 #include "ofxRulr/Graph/World.h"
-#include "ofxWebWidgets.h"
 
+#include "ofxWebWidgets.h"
 using namespace ofxWebWidgets;
+
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -142,3 +144,5 @@ namespace ofxRulr {
 		}
 	}
 }
+
+#endif

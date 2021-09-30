@@ -6,3 +6,4 @@
 #include "pch_RulrCore.h"
 
 #include "ofxRulr/Nodes/Item/Camera.h"
+#include "ofxRulr/Utils/CaptureSet.h"
