@@ -159,10 +159,10 @@ namespace ofxRulr {
 										{
 											bool tetheredEnabled = false;
 											switch (this->parameters.capture.tetheredShootEnabled.get()) {
-											case WhenDrawOnWorldStage::Selected:
+											case WhenActive::Selected:
 												tetheredEnabled = this->isBeingInspected();
 												break;
-											case WhenDrawOnWorldStage::Always:
+											case WhenActive::Always:
 												tetheredEnabled = true;
 											default:
 												break;

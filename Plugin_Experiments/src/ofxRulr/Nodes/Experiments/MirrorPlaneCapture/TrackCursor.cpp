@@ -27,20 +27,7 @@ namespace ofxRulr {
 				//---------
 				void TrackCursor::update() {
 					{
-						bool shouldPerform = false;
-						switch (this->parameters.perform.get().get()) {
-						case WhenDrawOnWorldStage::Selected:
-							if (!this->isBeingInspected()) {
-								break;
-							}
-						case WhenDrawOnWorldStage::Always:
-							shouldPerform = true;
-							break;
-						case WhenDrawOnWorldStage::Never:
-						default:
-							break;
-						}
-
+						bool shouldPerform = isActive(this, this->parameters.perform);
 						if (shouldPerform) {
 							try {
 								this->track();

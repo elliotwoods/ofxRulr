@@ -17,7 +17,7 @@ namespace ofxRulr {
 				Calibrate::BeamCapture::getDisplayString() const
 			{
 				stringstream ss;
-				ss << this->imagePoint;
+				ss << "s: " << this->line.s << ", t: "<< this->line.t;
 				return ss.str();
 			}
 
@@ -28,6 +28,8 @@ namespace ofxRulr {
 				Utils::serialize(json, "imagePoint", this->imagePoint);
 				Utils::serialize(json, "urlOnImage", this->urlOnImage);
 				Utils::serialize(json, "urlOffImage", this->urlOffImage);
+
+				this->line.serialize(json["line"]);
 			}
 
 			//----------
@@ -37,6 +39,59 @@ namespace ofxRulr {
 				Utils::deserialize(json, "imagePoint", this->imagePoint);
 				Utils::deserialize(json, "urlOnImage", this->urlOnImage);
 				Utils::deserialize(json, "urlOffImage", this->urlOffImage);
+
+				if (json.contains("line")) {
+					this->line.deserialize(json["line"]);
+				}
+			}
+
+			//----------
+			ofxCvGui::ElementPtr
+				Calibrate::BeamCapture::getDataDisplay()
+			{
+				auto element = ofxCvGui::makeElement();
+
+				vector<ofxCvGui::ElementPtr> widgets;
+
+				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<string>>("", [this]() {
+					return this->getDisplayString();
+					}));
+				widgets.push_back(make_shared<ofxCvGui::Widgets::Toggle>(">>"
+					, [this]() {
+						if (this->parentSelection) {
+							return this->parentSelection->isSelected(this);
+						}
+						else {
+							return false;
+						}
+					}
+					, [this](bool value) {
+						if (this->parentSelection) {
+							this->parentSelection->select(this);
+						}
+						else {
+							ofLogError() << "EditSelection not initialised";
+						}
+					}));
+
+
+				for (auto& widget : widgets) {
+					element->addChild(widget);
+				}
+
+				element->onBoundsChange += [this, widgets](ofxCvGui::BoundsChangeArguments& args) {
+					auto bounds = args.localBounds;
+					bounds.height = 40.0f;
+
+					for (auto& widget : widgets) {
+						widget->setBounds(bounds);
+						bounds.y += bounds.height;
+					}
+				};
+
+				element->setHeight(widgets.size() * 40 + 10);
+
+				return element;
 			}
 
 #pragma mark LaserCapture
@@ -72,6 +127,60 @@ namespace ofxRulr {
 					this->beamCaptures.deserialize(json["beamCaptures"]);
 				}
 				Utils::deserialize(json, "laserAddress", this->laserAddress);
+
+				auto beamCaptures = this->beamCaptures.getAllCaptures();
+				for (auto beamCapture : beamCaptures) {
+					beamCapture->parentSelection = &this->ourSelection;
+				}
+			}
+
+			//----------
+			ofxCvGui::ElementPtr
+				Calibrate::LaserCapture::getDataDisplay()
+			{
+				auto element = ofxCvGui::makeElement();
+
+				vector<ofxCvGui::ElementPtr> widgets;
+
+				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<string>>("Laser #" + ofToString(this->laserAddress), [this]() {
+					return this->getDisplayString();
+					}));
+				widgets.push_back(make_shared<ofxCvGui::Widgets::Toggle>(">>"
+					, [this]() {
+						if (this->parentSelection) {
+							return this->parentSelection->isSelected(this);
+						}
+						else {
+							return false;
+						}
+					}
+					, [this](bool value) {
+						if (this->parentSelection) {
+							this->parentSelection->select(this);
+						}
+						else {
+							ofLogError() << "EditSelection not initialised";
+						}
+					}));
+
+
+				for (auto& widget : widgets) {
+					element->addChild(widget);
+				}
+
+				element->onBoundsChange += [this, widgets](ofxCvGui::BoundsChangeArguments& args) {
+					auto bounds = args.localBounds;
+					bounds.height = 40.0f;
+
+					for (auto& widget : widgets) {
+						widget->setBounds(bounds);
+						bounds.y += bounds.height;
+					}
+				};
+
+				element->setHeight(widgets.size() * 40 + 10);
+
+				return element;
 			}
 
 #pragma mark CameraCapture
@@ -104,6 +213,60 @@ namespace ofxRulr {
 				if (json.contains("laserCaptures")) {
 					this->laserCaptures.deserialize(json["laserCaptures"]);
 				}
+				
+				auto laserCaptures = this->laserCaptures.getAllCaptures();
+				for (auto capture : laserCaptures) {
+					capture->parentSelection = &this->ourSelection;
+				}
+			}
+
+			//----------
+			ofxCvGui::ElementPtr
+				Calibrate::CameraCapture::getDataDisplay()
+			{
+				auto element = ofxCvGui::makeElement();
+
+				vector<ofxCvGui::ElementPtr> widgets;
+
+				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<string>>("", [this]() {
+					return this->getDisplayString();
+					}));
+				widgets.push_back(make_shared<ofxCvGui::Widgets::Toggle>(">>"
+					, [this]() {
+						if (this->parentSelection) {
+							return this->parentSelection->isSelected(this);
+						}
+						else {
+							return false;
+						}
+					}
+					, [this](bool value) {
+						if (this->parentSelection) {
+							this->parentSelection->select(this);
+						}
+						else {
+							ofLogError() << "EditSelection not initialised";
+						}
+					}));
+
+
+				for (auto& widget : widgets) {
+					element->addChild(widget);
+				}
+
+				element->onBoundsChange += [this, widgets](ofxCvGui::BoundsChangeArguments& args) {
+					auto bounds = args.localBounds;
+					bounds.height = 40.0f;
+
+					for (auto& widget : widgets) {
+						widget->setBounds(bounds);
+						bounds.y += bounds.height;
+					}
+				};
+
+				element->setHeight(widgets.size() * 40 + 10);
+
+				return element;
 			}
 
 #pragma mark Calibrate
@@ -137,6 +300,13 @@ namespace ofxRulr {
 					this->cameraCaptures.populateWidgets(panel);
 					this->panel = panel;
 				}
+
+				this->cameraCaptures.onDeserialize += [this](const nlohmann::json&) {
+					auto captures = this->cameraCaptures.getAllCaptures();
+					for (auto capture : captures) {
+						capture->parentSelection = &this->cameraEditSelection;
+					}
+				};
 			}
 
 			//----------
@@ -151,6 +321,12 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_WARNING;
 					}, ' ');
+				inspector->addButton("Process", [this]() {
+					try {
+						this->process();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					}, 'p');
 			}
 
 			//----------
@@ -166,6 +342,10 @@ namespace ofxRulr {
 			{
 				if (json.contains("cameraCaptures")) {
 					this->cameraCaptures.deserialize(json["cameraCaptures"]);
+				}
+				auto cameraCaptures = this->cameraCaptures.getAllCaptures();
+				for (auto capture : cameraCaptures) {
+					capture->parentSelection = &this->cameraEditSelection;
 				}
 			}
 
@@ -192,6 +372,7 @@ namespace ofxRulr {
 				Utils::ScopedProcess scopedProcess("Calibrate", false, allLasers.size());
 
 				auto cameraCapture = make_shared<CameraCapture>();
+				cameraCapture->parentSelection = &this->cameraEditSelection;
 
 				// iterate through and send test beams
 				for (const auto & laser : allLasers) {
@@ -199,6 +380,7 @@ namespace ofxRulr {
 
 					auto laserCapture = make_shared<LaserCapture>();
 					laserCapture->laserAddress = laser->parameters.settings.address.get();
+					laserCapture->parentSelection = &cameraCapture->ourSelection;
 
 					// Gather other lasers
 					auto otherLasers = allLasers;
@@ -228,6 +410,7 @@ namespace ofxRulr {
 
 							auto beamCapture = make_shared<BeamCapture>();
 							beamCapture->imagePoint = calibrationImagePoint;
+							beamCapture->parentSelection = &laserCapture->ourSelection;
 
 							// Background capture
 							for (int i = 0; i < this->parameters.capture.signalSends.get(); i++) {
@@ -284,6 +467,85 @@ namespace ofxRulr {
 				if (!dryRun) {
 					this->cameraCaptures.add(cameraCapture);
 				}
+			}
+
+			//----------
+			void
+				Calibrate::process()
+			{
+				Utils::ScopedProcess scopedProcess("Process");
+
+				this->throwIfMissingAConnection<Lasers>();
+				auto lasersNode = this->getInput<Lasers>();
+				auto selectedLasers = lasersNode->getSelectedLasers();
+
+				auto cameraCaptures = this->cameraCaptures.getSelection();
+
+				{
+					Utils::ScopedProcess scopedProcessCameras("Cameras", false, cameraCaptures.size());
+
+					for (auto cameraCapture : cameraCaptures) {
+						auto laserCaptures = cameraCapture->laserCaptures.getSelection();
+						Utils::ScopedProcess scopedProcessCameras("Camera : " + cameraCapture->getDateString() + " " + cameraCapture->getTimeString(), false, laserCaptures.size());
+
+						for (auto laserCapture : laserCaptures) {
+							auto beamCaptures = laserCapture->beamCaptures.getSelection();
+							Utils::ScopedProcess scopedProcessLasers("Laser #" + ofToString(laserCapture->laserAddress), false, beamCaptures.size());
+
+							vector<Solvers::LinesFromPoint::CameraImagePoints> images;
+
+							cv::Mat preview;
+							
+							// Gather image points per beam in laser
+							for (auto beamCapture : beamCaptures) {
+								Utils::ScopedProcess scopedProcessBeam("Beam : " + ofToString(beamCapture->imagePoint), false, beamCaptures.size());
+
+								// Get the on and off images
+								auto onImage = this->fetchImage(beamCapture->urlOnImage);
+								auto offImage = this->fetchImage(beamCapture->urlOffImage);
+
+								// Get the positive difference
+								cv::Mat difference;
+								cv::subtract(onImage, offImage, difference);
+
+								// Allocate preview if needs be
+								if (preview.empty()) {
+									preview = cv::Mat::zeros(difference.size(), difference.type());
+								}
+
+								// Get the camera image points for this image
+								images.push_back(Solvers::LinesFromPoint::getCameraImagePoints(difference
+									, this->parameters.processing.normalizePercentile.get()
+									, this->parameters.processing.differenceThreshold.get()
+									, preview));
+							}
+
+							// Solve lines for the whole laser
+							auto solverSettings = Solvers::LinesFromPoint::defaultSolverSettings();
+							this->configureSolverSettings(solverSettings);
+							auto result = Solvers::LinesFromPoint::solve(images
+								, this->parameters.processing.distanceThreshold.get()
+								, this->parameters.processing.minMeanPixelValueOnLine.get()
+								, solverSettings);
+
+							// Pull data back from solve
+							laserCapture->imagePointInCamera = result.solution.point;
+							for (int i = 0; i < beamCaptures.size(); i++) {
+								beamCaptures[i]->line = result.solution.lines[i];
+								if (!result.solution.linesValid[i]) {
+									beamCaptures[i]->setSelected(false);
+								}
+								else {
+									beamCaptures[i]->line.drawOnImage(preview);
+								}
+							}
+
+							laserCapture->preview = preview;
+						}
+					}
+				}
+
+				scopedProcess.end();
 			}
 
 			//----------
@@ -393,6 +655,50 @@ namespace ofxRulr {
 				}
 
 				return results;
+			}
+
+			//----------
+			cv::Mat
+				Calibrate::fetchImage(const string& cameraPath) const
+			{
+				auto flags = cv::IMREAD_GRAYSCALE;
+
+				switch (this->parameters.processing.imageFileSource.get()) {
+					case ImageFileSource::Local:
+					{
+						auto splitPath = ofSplitString(cameraPath, "/");
+						auto filename = splitPath.back();
+						auto localPath = filesystem::path(this->parameters.processing.localPath.get());
+						if (localPath.empty()) {
+							throw(ofxRulr::Exception("Local path is empty"));
+						}
+						if (!filesystem::is_directory(localPath)) {
+							localPath = localPath.parent_path();
+						}
+						auto fullFilePath = localPath / filename;
+
+						return cv::imread(fullFilePath.string(), flags);
+					}
+					case ImageFileSource::Camera:
+					{
+						auto response = ofLoadURL("http://" + this->parameters.capture.remoteCamera.hostname.get() + ":8080" + cameraPath);
+						if (response.status == 200) {
+							auto data = response.data.getData();
+							vector<unsigned char> buffer(data, data + response.data.size());
+							return cv::imdecode(buffer, flags);
+						}
+					}
+				}
+			}
+
+			//----------
+			void
+				Calibrate::configureSolverSettings(ofxCeres::SolverSettings& solverSettings) const
+			{
+				solverSettings.printReport = this->parameters.solver.printOutput;
+				solverSettings.options.minimizer_progress_to_stdout = this->parameters.solver.printOutput;
+				solverSettings.options.max_num_iterations = this->parameters.solver.maxIterations;
+				solverSettings.options.num_threads = this->parameters.solver.threads;
 			}
 		}
 	}

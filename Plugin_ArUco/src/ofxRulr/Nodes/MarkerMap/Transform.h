@@ -33,7 +33,7 @@ namespace ofxRulr {
 				glm::mat4 getTransform() const;
 			protected:
 				struct : ofParameterGroup {
-					ofParameter<WhenDrawOnWorldStage> autoUpdate{ "Auto update", WhenDrawOnWorldStage::Selected };
+					ofParameter<WhenActive> autoUpdate{ "Auto update", WhenActive::Selected };
 
 					struct : ofParameterGroup {
 						ofParameter<float> x{ "X", 0., -0.2, 0.2 };

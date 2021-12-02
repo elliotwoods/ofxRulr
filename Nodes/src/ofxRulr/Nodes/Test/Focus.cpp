@@ -37,9 +37,9 @@ namespace ofxRulr {
 			//----------
 			void Focus::init() {
 				RULR_NODE_UPDATE_LISTENER;
-				RULR_NODE_INSPECTOR_LISTENER;
-				RULR_NODE_SERIALIZATION_LISTENERS;
 				
+				this->manageParameters(this->parameters);
+
 				auto cameraInput = this->addInput<Item::Camera>();
 				{
 					cameraInput->onNewConnection += [this](shared_ptr<Item::Camera> camera) {
@@ -88,11 +88,6 @@ namespace ofxRulr {
 				ofClear(0, 0);
 				this->preview.end();
 				
-				this->activewhen.set("Active when", 0, 0, 1);
-				this->blurSize.set("Blur size", 3, 1, 50);
-				this->highValue.set("High value", 0.01, 0, 1);
-				this->lowValue.set("Low value", 0.0, 0, 1);
-				
 				this->updateProcessSettings();
 				Utils::SoundEngine::X().addSource(static_pointer_cast<Focus>(this->shared_from_this()));
 			}
@@ -132,45 +127,16 @@ namespace ofxRulr {
 							this->result.isFrameNew = false;
 							
 							this->result.active = true;
-							this->result.valueNormalised = ofMap(this->result.value, this->lowValue, this->highValue, 0.0f, 1.0f);
+							this->result.valueNormalised = ofMap(this->result.value
+								, this->parameters.lowValue
+								, this->parameters.highValue
+								, 0.0f
+								, 1.0f);
 						}
 					} else {
 						this->result.active = false;
 					}
 				}
-			}
-			
-			//----------
-			void Focus::populateInspector(InspectArguments & inspectArguments) {
-				auto inspector = inspectArguments.inspector;
-				
-				auto activeWhenWidget = inspector->add(new Widgets::MultipleChoice("Active"));
-				{
-					activeWhenWidget->addOption("When selected");
-					activeWhenWidget->addOption("Always");
-					activeWhenWidget->entangle(this->activewhen);
-				}
-				
-				inspector->add(new Widgets::EditableValue<int>(this->blurSize));
-				
-				inspector->addSlider(this->highValue);
-				inspector->addSlider(this->lowValue);
-			}
-			
-			//----------
-			void Focus::serialize(nlohmann::json & json) {
-				Utils::serialize(json, this->activewhen);
-				Utils::serialize(json, this->blurSize);
-				Utils::serialize(json, this->highValue);
-				Utils::serialize(json, this->lowValue);
-			}
-			
-			//----------
-			void Focus::deserialize(const nlohmann::json & json) {
-				Utils::deserialize(json, this->activewhen);
-				Utils::deserialize(json, this->blurSize);
-				Utils::deserialize(json, this->highValue);
-				Utils::deserialize(json, this->lowValue);
 			}
 			
 			//----------
@@ -189,12 +155,7 @@ namespace ofxRulr {
 					return false;
 				}
 
-				if (this->activewhen == 1) {
-					//find when we're set to always find
-					return true;
-				}
-				else if (this->isBeingInspected()) {
-					//find when we're selected
+				if (isActive(this, this->parameters.activeWhen.get())) {
 					return true;
 				}
 				else {
@@ -361,9 +322,9 @@ namespace ofxRulr {
 			void Focus::updateProcessSettings() {
 				this->processSettingsMutex.lock();
 				this->processSettings.enabled = this->getRunFinderEnabled();
-				this->processSettings.blurSize = this->blurSize;
-				this->processSettings.lowValue = this->lowValue;
-				this->processSettings.highValue = this->highValue;
+				this->processSettings.blurSize = this->parameters.blurSize;
+				this->processSettings.lowValue = this->parameters.lowValue;
+				this->processSettings.highValue = this->parameters.highValue;
 				this->processSettingsMutex.unlock();
 			}
 		}

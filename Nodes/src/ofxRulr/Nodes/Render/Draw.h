@@ -8,6 +8,14 @@ namespace ofxRulr {
 		namespace Render {
 			class Draw : public Style, public Item::RigidBody {
 			public:
+				MAKE_ENUM(Culling
+					, (Back, Front, FrontAndBack)
+					, ("Back", "Front", "Front+Back"));
+
+				MAKE_ENUM(FrontFace
+					, (CCW, CW)
+					, ("CCW", "CW"));
+
 				Draw();
 				string getTypeName() const override;
 				void init();
@@ -17,8 +25,8 @@ namespace ofxRulr {
 				void customEnd() override;
 
 				struct : ofParameterGroup {
-					ofParameter<int> culling{ "Culling", 0 };
-					ofParameter<int> frontFace{ "Front face", 0};
+					ofParameter<Culling> culling{ "Culling", Culling::Back };
+					ofParameter<FrontFace> frontFace{ "Front face", FrontFace::CCW };
 
 					PARAM_DECLARE("Drawing", culling, frontFace);
 				} parameters;

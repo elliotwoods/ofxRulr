@@ -1,6 +1,32 @@
 #pragma once
 
 #include "ofxRulr.h"
+#include "ofxCeres.h"
+#include "ofxRulr/Solvers/LineToImage.h"
+#include "ofxRulr/Solvers/LineMCToImage.h"
+#include "ofxRulr/Solvers/LinesFromPoint.h"
+
+#define LINEMODEL Solvers::LineToImage
+
+template<typename T>
+struct EditSelection
+{
+	T* selection = nullptr;
+	ofxLiquidEvent<void> onSelectionChanged;
+
+	bool isSelected(const T* const item) {
+		return item == this->selection;
+	}
+	void select(T* const item) {
+		if (item != this->selection) {
+			this->selection = item;
+			this->onSelectionChanged.notifyListeners();
+		}
+	}
+	void deselect() {
+		this->select(nullptr);
+	}
+};
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -10,6 +36,10 @@ namespace ofxRulr {
 				MAKE_ENUM(LaserState
 					, (Off, TestPattern)
 					, ("Off", "TestPattern"));
+
+				MAKE_ENUM(ImageFileSource
+					, (Camera, Local)
+					, ("Camera", "Local"));
 
 				class BeamCapture : public Utils::AbstractCaptureSet::BaseCapture
 				{
@@ -22,6 +52,12 @@ namespace ofxRulr {
 					glm::vec2 imagePoint;
 					string urlOnImage;
 					string urlOffImage;
+
+					Solvers::LineToImage::Line line;
+
+					EditSelection<BeamCapture>* parentSelection = nullptr;
+				protected:
+					ofxCvGui::ElementPtr getDataDisplay() override;
 				};
 
 				class LaserCapture : public Utils::AbstractCaptureSet::BaseCapture
@@ -34,6 +70,15 @@ namespace ofxRulr {
 
 					int laserAddress;
 					Utils::CaptureSet<BeamCapture> beamCaptures;
+
+					glm::vec2 imagePointInCamera;
+
+					EditSelection<BeamCapture> ourSelection;
+					EditSelection<LaserCapture>* parentSelection = nullptr;
+
+					cv::Mat preview;
+				protected:
+					ofxCvGui::ElementPtr getDataDisplay() override;
 				};
 
 				class CameraCapture : public Utils::AbstractCaptureSet::BaseCapture
@@ -45,6 +90,11 @@ namespace ofxRulr {
 					void deserialize(const nlohmann::json&);
 
 					Utils::CaptureSet<LaserCapture> laserCaptures;
+
+					EditSelection<LaserCapture> ourSelection;
+					EditSelection<CameraCapture>* parentSelection = nullptr;
+				protected:
+					ofxCvGui::ElementPtr getDataDisplay() override;
 				};
 
 				Calibrate();
@@ -59,6 +109,9 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr getPanel() override;
 
 				void capture();
+				void process();
+
+				EditSelection<CameraCapture> cameraEditSelection;
 			protected:
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
@@ -97,7 +150,32 @@ namespace ofxRulr {
 							, signalSends
 							, dryRun);
 					} capture;
-					PARAM_DECLARE("Calibrate", capture);
+
+					struct : ofParameterGroup {
+						ofParameter<ImageFileSource> imageFileSource{ "Image file source", ImageFileSource::Local };
+						ofParameter<string> localPath{ "Local path", "E:\\DCIM\\100EOS5D\\0M8A4113.JPG" };
+						ofParameter<float> differenceThreshold{ "Difference threshold", 32, 0, 255 };
+						ofParameter<float> normalizePercentile{ "Normalize percentile", 1e-5 };
+						ofParameter<float> distanceThreshold{ "Distance threshold [px]", 10, 0, 1000 };
+						ofParameter<float> minMeanPixelValueOnLine{ "Min mean pixel value on line", 10, 0, 255 };
+
+						PARAM_DECLARE("Processing"
+							, imageFileSource
+							, localPath
+							, differenceThreshold
+							, normalizePercentile
+							, distanceThreshold
+							, minMeanPixelValueOnLine);
+					} processing;
+
+					struct : ofParameterGroup {
+						ofParameter<bool> printOutput{ "Print output", true };
+						ofParameter<int> maxIterations{ "Max iterations", 1000 };
+						ofParameter<int> threads{ "Threads", 16 };
+						PARAM_DECLARE("Solver", printOutput, maxIterations, threads);
+					} solver;
+
+					PARAM_DECLARE("Calibrate", capture, processing, solver);
 				} parameters;
 
 				vector<glm::vec2> getCalibrationImagePoints() const;
@@ -108,6 +186,8 @@ namespace ofxRulr {
 
 				void takePhoto();
 				vector<string> pollNewCameraFiles();
+				cv::Mat fetchImage(const string& cameraPath) const;
+				void configureSolverSettings(ofxCeres::SolverSettings&) const;
 
 				ofxCvGui::PanelPtr panel;
 

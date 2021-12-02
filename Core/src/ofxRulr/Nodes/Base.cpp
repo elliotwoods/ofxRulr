@@ -15,7 +15,7 @@ namespace ofxRulr {
 			this->initialized = false;
 			this->lastFrameUpdate = 0;
 			this->updateAllInputsFirst = true;
-			this->whenDrawOnWorldStage = WhenDrawOnWorldStage::Always;
+			this->whenDrawOnWorldStage = WhenActive::Always;
 		}
 
 		//----------
@@ -46,7 +46,7 @@ namespace ofxRulr {
 			this->onDeserialize.addListener([this](const nlohmann::json & json) {
 				int whenDrawOnWorldStageInt;
 				if (Utils::deserialize(json, "whenDrawOnWorldStage", whenDrawOnWorldStageInt)) {
-					this->whenDrawOnWorldStage = (WhenDrawOnWorldStage::Options) whenDrawOnWorldStageInt;
+					this->whenDrawOnWorldStage = (WhenActive::Options) whenDrawOnWorldStageInt;
 				}
 			}, this);
 			
@@ -184,7 +184,7 @@ namespace ofxRulr {
 				auto widget = inspector->addMultipleChoice("Draw on World Stage", { "Always", "Selected", "Never" });
 				widget->setSelection(this->whenDrawOnWorldStage);
 				widget->onValueChange += [this](int value) {
-					this->whenDrawOnWorldStage= (WhenDrawOnWorldStage::Options) value;
+					this->whenDrawOnWorldStage= (WhenActive::Options) value;
 				};
 			}
 
@@ -217,24 +217,8 @@ namespace ofxRulr {
 		}
 
 		//----------
-		WhenDrawOnWorldStage::Options Base::getWhenDrawOnWorldStage() const {
+		WhenActive::Options Base::getWhenDrawOnWorldStage() const {
 			return this->whenDrawOnWorldStage;
-		}
-
-		//----------
-		bool Base::checkDrawOnWorldStage(const WhenDrawOnWorldStage & whenDrawOnWorldStage) {
-			switch (whenDrawOnWorldStage.get()) {
-			case WhenDrawOnWorldStage::Selected:
-				if (!this->isBeingInspected()) {
-					return false;
-				}
-			case WhenDrawOnWorldStage::Always:
-				return true;
-				break;
-			case WhenDrawOnWorldStage::Never:
-			default:
-				return false;
-			}
 		}
 
 		//----------

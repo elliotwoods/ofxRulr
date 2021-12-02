@@ -300,28 +300,13 @@ namespace ofxRulr {
 						}
 					}
 
-					switch (this->parameters.draw.labels.get().get()) {
-					case WhenDrawOnWorldStage::Selected:
-						if (!this->isBeingInspected()) {
-							break;
-						}
-					case WhenDrawOnWorldStage::Always:
+					if(isActive(this, this->parameters.draw.labels)) {
 						ofxCvGui::Utils::drawTextAnnotation(ofToString(marker->parameters.ID.get())
 							, markerPreview.getVertex(0)
 							, this->getColor());
-						break;
-					case WhenDrawOnWorldStage::Never:
-					default:
-						break;
 					}
 
-					switch (this->parameters.draw.outlines.get().get()) {
-					case WhenDrawOnWorldStage::Selected:
-						if (!this->isBeingInspected()) {
-							break;
-						}
-					case WhenDrawOnWorldStage::Always:
-					{
+					if (isActive(this, this->parameters.draw.outlines)) {
 						ofPolyline line;
 						line.addVertices(markerPreview.getVertices());
 						line.close();
@@ -331,11 +316,6 @@ namespace ofxRulr {
 							line.draw();
 						}
 						ofPopStyle();
-					}
-						break;
-					case WhenDrawOnWorldStage::Never:
-					default:
-						break;
 					}
 
 					// Let the marker itself draw to world what it likes

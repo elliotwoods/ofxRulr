@@ -141,10 +141,10 @@ namespace ofxRulr {
 					ofParameter<int> projectorIndex{ "Projector Index", 0 }; 
 
 					struct : ofParameterGroup {
-						ofParameter<WhenDrawOnWorldStage> rays{ "Draw rays", WhenDrawOnWorldStage::Selected };
-						ofParameter<WhenDrawOnWorldStage> unclassifiedVertices{ "Draw unclassified vertices", WhenDrawOnWorldStage::Always };
-						ofParameter<WhenDrawOnWorldStage> lines{ "Lines", WhenDrawOnWorldStage::Always };
-						ofParameter<WhenDrawOnWorldStage> lineLabels{ "Line labels", WhenDrawOnWorldStage::Selected };
+						ofParameter<WhenActive> rays{ "Draw rays", WhenActive::Selected };
+						ofParameter<WhenActive> unclassifiedVertices{ "Draw unclassified vertices", WhenActive::Always };
+						ofParameter<WhenActive> lines{ "Lines", WhenActive::Always };
+						ofParameter<WhenActive> lineLabels{ "Line labels", WhenActive::Selected };
 						ofParameter<bool> linesOnProjectorPreview{ "Lines on projector preview", true };
 						PARAM_DECLARE("Draw", rays, unclassifiedVertices, lines, lineLabels, linesOnProjectorPreview);
 					} draw;

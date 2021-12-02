@@ -69,8 +69,8 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
-						ofParameter<WhenDrawOnWorldStage> labels{ "Labels", WhenDrawOnWorldStage::Selected };
-						ofParameter<WhenDrawOnWorldStage> outlines{ "Outlines", WhenDrawOnWorldStage::Always };
+						ofParameter<WhenActive> labels{ "Labels", WhenActive::Selected };
+						ofParameter<WhenActive> outlines{ "Outlines", WhenActive::Always };
 						PARAM_DECLARE("Draw", labels, outlines);
 					} draw;
 

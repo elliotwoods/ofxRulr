@@ -20,24 +20,22 @@ namespace ofxRulr {
 			//----------
 			ofxCvGui::ElementPtr AlignMarkerMap::Constraint::getDataDisplay() {
 				auto element = ofxCvGui::makeElement();
-				auto selectMarker = make_shared<ofxCvGui::Widgets::EditableValue<int>>(this->markerID);
+				auto selectMarker = make_shared<ofxCvGui::Widgets::EditableValue<int>>(this->parameters.markerID);
 				{
 					element->addChild(selectMarker);
 				}
 
 				auto selectPlane = make_shared<ofxCvGui::Widgets::MultipleChoice>("Plane");
 				{
-					selectPlane->addOptions({ "X", "Y", "Z" });
-					selectPlane->entangle(this->plane);
+					selectPlane->entangleManagedEnum(this->parameters.plane);
 					element->addChild(selectPlane);
 				}
 				auto selectPoints = make_shared<ofxCvGui::Widgets::MultipleChoice>("Points");
 				{
-					selectPoints->addOptions({ "All", "Center" });
-					selectPoints->entangle(this->points);
+					selectPoints->entangleManagedEnum(this->parameters.points);
 					element->addChild(selectPoints);
 				}
-				auto setOffset = make_shared<ofxCvGui::Widgets::EditableValue<float>>(this->offset);
+				auto setOffset = make_shared<ofxCvGui::Widgets::EditableValue<float>>(this->parameters.offset);
 				{
 					element->addChild(setOffset);
 				}
@@ -57,7 +55,7 @@ namespace ofxRulr {
 
 				element->onDraw += [this](ofxCvGui::DrawArguments) {
 					if (this->isSelected()) {
-						auto residual = sqrt(this->residual.get());
+						auto residual = sqrt(this->parameters.residual.get());
 						if (residual != 0.0f) {
 							ofxCvGui::Utils::drawText("Residual " + ofToString(residual, 3) + "m"
 								, -10, 170, false);
@@ -72,20 +70,12 @@ namespace ofxRulr {
 
 			//----------
 			void AlignMarkerMap::Constraint::serialize(nlohmann::json & json) {
-				json << this->markerID;
-				json << this->plane;
-				json << this->offset;
-				json << this->points;
-				json << this->residual;
+				Utils::serialize(json, parameters);
 			}
 
 			//----------
 			void AlignMarkerMap::Constraint::deserialize(const nlohmann::json & json) {
-				json >> this->markerID;
-				json >> this->plane;
-				json >> this->offset;
-				json >> this->points;
-				json >> this->residual;
+				Utils::deserialize(json, parameters);
 			}
 
 			//----------
@@ -97,7 +87,7 @@ namespace ofxRulr {
 				float residual = 0.0f;
 				for (const auto & point : this->cachedPoints) {
 					auto transformedPoint = point * transform;
-					const auto & delta = transformedPoint[this->plane.get()] - this->offset.get();
+					const auto & delta = transformedPoint[this->parameters.plane.get()] - this->parameters.offset.get();
 					residual += delta * delta;
 				}
 				return residual;
@@ -106,14 +96,14 @@ namespace ofxRulr {
 			//----------
 			void AlignMarkerMap::Constraint::updatePoints(shared_ptr<aruco::MarkerMap> markerMap) {
 				//will throw cv::exception if not available
-				const auto & markerInfo = markerMap->getMarker3DInfo(this->markerID);
+				const auto & markerInfo = markerMap->getMarker3DInfo(this->parameters.markerID);
 				this->cachedPoints.clear();
 				for (const auto & point : markerInfo.points) {
 					this->cachedPoints.push_back(ofxCv::toOf(point));
 				}
 
 				//take average if we selected 'center'
-				if (this->points.get() == (int) Points::Center) {
+				if (this->parameters.points.get() == Points::Center) {
 					ofVec3f accumulatePoint;
 					for (const auto & point : this->cachedPoints) {
 						accumulatePoint += point;
@@ -122,10 +112,10 @@ namespace ofxRulr {
 					this->cachedPoints.push_back(accumulatePoint / (float) markerInfo.size());
 				}
 
-				this->residual = this->getResidual(ofMatrix4x4());
+				this->parameters.residual = this->getResidual(ofMatrix4x4());
 				{
 					auto color = ofColor(100, 100, 100, 255);
-					color[this->plane.get()] = 255;
+					color[this->parameters.plane.get()] = 255;
 					this->color = color;
 				}
 			}
@@ -135,13 +125,13 @@ namespace ofxRulr {
 				ofMesh lines;
 				lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
 
-				auto planeIndex = this->plane.get();
+				auto planeIndex = this->parameters.plane.get();
 
 				for (const auto & point : this->cachedPoints) {
 					lines.addVertex(point);
 					{
 						auto pointFlattened = point;
-						pointFlattened[planeIndex] = this->offset.get();
+						pointFlattened[planeIndex] = this->parameters.offset.get();
 						lines.addVertex(pointFlattened);
 					}
 
@@ -261,7 +251,7 @@ namespace ofxRulr {
 							auto index = ofToInt(markerString);
 							auto capture = make_shared<Constraint>();
 							this->constraints.add(capture);
-							capture->markerID = index;
+							capture->parameters.markerID = index;
 						}
 					}
 				})->setHeight(100.0f);

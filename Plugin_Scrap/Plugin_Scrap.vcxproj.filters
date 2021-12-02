@@ -25,6 +25,9 @@
     <Filter Include="src\ofxRulr\Nodes\AnotherMoon">
       <UniqueIdentifier>{e121b947-4e8b-4ead-8c46-5274c644e78c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Solvers">
+      <UniqueIdentifier>{c52a9e38-fca7-4624-9cd8-ea018f080464}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -55,6 +58,24 @@
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\LineToImage.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\LineMCToImage.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\LinesFromPoint.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\PointFromLines.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Scrap.h" />
@@ -81,6 +102,24 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.h">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\LineToImage.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\LineMCToImage.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\LinesFromPoint.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\PointFromLines.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

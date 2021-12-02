@@ -28,6 +28,10 @@ namespace ofxRulr {
 				ofxLiquidEvent<bool> onSelectionChanged;
 				ofParameter<chrono::system_clock::time_point> timestamp{ "Timestamp", chrono::system_clock::now() };
 				void rebuildDateStrings();
+
+				const string& getDateString() const;
+				const string& getTimeString() const;
+				const string& getSecondString() const;
 			protected:
 				ofParameter<bool> selected{ "Selected", true };
 				virtual ofxCvGui::ElementPtr getDataDisplay();

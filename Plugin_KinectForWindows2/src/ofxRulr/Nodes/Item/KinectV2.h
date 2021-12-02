@@ -11,6 +11,14 @@ namespace ofxRulr {
 		namespace Item {
 			class KinectV2 : public ofxRulr::Nodes::Item::RigidBody {
 			public:
+				MAKE_ENUM(PlayState,
+					(Play, Pause),
+					("Play", "Pause"));
+
+				MAKE_ENUM(DrawType,
+					(Frustums, Bodies, All),
+					("Frustums", "Bodies", "All"));
+
 				KinectV2();
 				void init();
 				string getTypeName() const override;
@@ -30,16 +38,20 @@ namespace ofxRulr {
 				shared_ptr<ofxKinectForWindows2::Device> device;
 				shared_ptr<ofxCvGui::Panels::Groups::Strip> view;
 
-				ofParameter<int> playState;
-				ofParameter<int> viewType;
-
 				struct : ofParameterGroup {
-					ofParameter<bool> rgb{ "RGB", true };
-					ofParameter<bool> depth{ "Depth", true };
-					ofParameter<bool> ir{ "IR", false };
-					ofParameter<bool> body{ "Body", false };
-					PARAM_DECLARE("Enabled views", rgb, depth, ir, body);
-				} enabledViews;
+					ofParameter<PlayState> playState{ "Play state", PlayState::Play };
+					ofParameter<DrawType> viewType{ "View type", DrawType::All };
+
+					struct : ofParameterGroup {
+						ofParameter<bool> rgb{ "RGB", true };
+						ofParameter<bool> depth{ "Depth", true };
+						ofParameter<bool> ir{ "IR", false };
+						ofParameter<bool> body{ "Body", false };
+						PARAM_DECLARE("Enabled views", rgb, depth, ir, body);
+					} enabledViews;
+
+					PARAM_DECLARE("KinectV2", playState, viewType, enabledViews);
+				} parameters;
 			};
 		}
 	}

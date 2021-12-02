@@ -17,22 +17,12 @@ namespace ofxRulr {
 			//----------
 			void Draw::init() {
 				RULR_NODE_INSPECTOR_LISTENER;
-				this->manageParameters(this->parameters, false);
+				this->manageParameters(this->parameters);
 			}
 
 			//----------
 			void Draw::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
-				auto inspector = inspectArgs.inspector;
 
-				{
-					auto multipleChoice = inspector->addMultipleChoice("Culling", { "Back", "Front", "Front+Back" });
-					multipleChoice->entangle(this->parameters.culling);
-				}
-
-				{
-					auto multipleChoice = inspector->addMultipleChoice("Front face", { "CCW", "CW" });
-					multipleChoice->entangle(this->parameters.frontFace);
-				}
 			}
 
 			//----------
@@ -41,13 +31,13 @@ namespace ofxRulr {
 				glEnable(GL_CULL_FACE);
 
 				switch (this->parameters.culling.get()) {
-				case 0:
+				case Culling::Back:
 					glCullFace(GL_BACK);
 					break;
-				case 1:
+				case Culling::Front:
 					glCullFace(GL_FRONT);
 					break;
-				case 2:
+				case Culling::FrontAndBack:
 					glCullFace(GL_FRONT_AND_BACK);
 					break;
 				default:
@@ -55,10 +45,10 @@ namespace ofxRulr {
 				}
 
 				switch (this->parameters.frontFace.get()) {
-				case 0:
+				case FrontFace::CCW:
 					glFrontFace(GL_CCW);
 					break;
-				case 1:
+				case FrontFace::CW:
 					glFrontFace(GL_CW);
 					break;
 				default:

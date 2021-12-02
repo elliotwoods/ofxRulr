@@ -18,10 +18,6 @@ namespace ofxRulr {
 				void init();
 				void update();
 				
-				void populateInspector(ofxCvGui::InspectArguments &);
-				void serialize(nlohmann::json &);
-				void deserialize(const nlohmann::json &);
-				
 				ofxCvGui::PanelPtr getPanel() override;
 				
 				bool getRunFinderEnabled() const;
@@ -72,12 +68,13 @@ namespace ofxRulr {
 				
 				ofFbo preview;
 				
-				// 0 = when selected
-				// 1 = always
-				ofParameter<int> activewhen;
-				ofParameter<int> blurSize;
-				ofParameter<float> highValue;
-				ofParameter<float> lowValue;
+				struct : ofParameterGroup {
+					ofParameter<WhenActive> activeWhen{ "Active when", WhenActive::Selected };
+					ofParameter<int> blurSize{ "Blur size", 3, 1, 50 };
+					ofParameter<float> highValue{ "High value", 0.01, 0, 1 };
+					ofParameter<float> lowValue{ "Low value", 0, 0, 1 };
+					PARAM_DECLARE("Focus", activeWhen, blurSize, highValue, lowValue);
+				} parameters;
 				
 				struct {
 					int framesUntilNext = 0;

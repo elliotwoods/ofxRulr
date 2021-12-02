@@ -177,16 +177,7 @@ namespace ofxRulr {
 				//--------
 				void BoardInMirror2::update() {
 					{
-						bool tetheredEnabled = false;
-						switch (this->parameters.tetheredShootEnabled.get()) {
-						case WhenDrawOnWorldStage::Selected:
-							tetheredEnabled = this->isBeingInspected();
-							break;
-						case WhenDrawOnWorldStage::Always:
-							tetheredEnabled = true;
-						default:
-							break;
-						}
+						bool tetheredEnabled = isActive(this, this->parameters.tetheredShootEnabled.get());
 						if (tetheredEnabled) {
 							auto camera = this->getInput<Item::Camera>();
 							if (camera) {

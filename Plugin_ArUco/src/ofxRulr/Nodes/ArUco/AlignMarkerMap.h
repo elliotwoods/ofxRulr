@@ -13,24 +13,28 @@ namespace ofxRulr {
 		namespace ArUco {
 			class PLUGIN_ARUCO_EXPORTS AlignMarkerMap : public Nodes::Base {
 			public:
-				enum class Plane : int {
-					X, Y, Z
-				};
+				MAKE_ENUM(Plane
+					, (X, Y, Z)
+					, ("X", "Y", "Z"));
 
-				enum class Points : int {
-					All, Center
-				};
+				MAKE_ENUM(Points
+					, (All, Center)
+					, ("All", "Center"));
 
 				class Constraint : public Utils::AbstractCaptureSet::BaseCapture {
 				public:
 					Constraint();
 					string getDisplayString() const override;
 
-					ofParameter<int> markerID{ "Marker ID", 0 };
-					ofParameter<int> plane{ "Plane", (int)Plane::X };
-					ofParameter<float> offset{ "Offset", 0.0f };
-					ofParameter<int> points{ "Points", (int)Points::All };
-					ofParameter<float> residual{ "Residual (m)", 0.0f };
+					struct : ofParameterGroup {
+						ofParameter<int> markerID{ "Marker ID", 0 };
+						ofParameter<Plane> plane{ "Plane", Plane::X };
+						ofParameter<float> offset{ "Offset", 0.0f };
+						ofParameter<Points> points{ "Points", Points::All };
+						ofParameter<float> residual{ "Residual (m)", 0.0f };
+						PARAM_DECLARE("Constraint", markerID, plane, offset, points, residual);
+					} parameters;
+					
 
 					float getResidual(const ofMatrix4x4 & transform);
 					void updatePoints(shared_ptr<aruco::MarkerMap>);

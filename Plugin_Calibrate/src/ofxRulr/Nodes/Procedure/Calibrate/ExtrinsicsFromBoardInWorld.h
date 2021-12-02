@@ -40,7 +40,7 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
 							ofParameter<FindBoardMode> findBoardMode{ "Find board mode", FindBoardMode::Optimized };
-							ofParameter<WhenDrawOnWorldStage> tetheredShootEnabled{ "Tethered shoot enabled", WhenDrawOnWorldStage::Selected };
+							ofParameter<WhenActive> tetheredShootEnabled{ "Tethered shoot enabled", WhenActive::Selected };
 							PARAM_DECLARE("Capture", findBoardMode, tetheredShootEnabled);
 						} capture;
 

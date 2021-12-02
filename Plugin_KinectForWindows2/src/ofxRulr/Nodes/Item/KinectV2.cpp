@@ -37,9 +37,6 @@ namespace ofxRulr {
 				else {
 					throw(Exception("Cannot initialise Kinect device. We should find a way to fail elegantly here (and retry later)."));
 				}
-
-				this->playState.set("Play state", 0, 0, 1);
-				this->viewType.set("View type", 3, 0, 3);
 			}
 
 			//----------
@@ -49,7 +46,7 @@ namespace ofxRulr {
 
 			//----------
 			void KinectV2::update() {
-				if (this->device && this->playState == 0) {
+				if (this->device && this->parameters.playState.get() == PlayState::Play) {
 					this->device->update();
 				}
 			}
@@ -61,34 +58,31 @@ namespace ofxRulr {
 
 			//----------
 			void KinectV2::serialize(nlohmann::json & json) {
-				ofxRulr::Utils::serialize(json, this->viewType);
-				ofxRulr::Utils::serialize(json, this->enabledViews);
+				ofxRulr::Utils::serialize(json, this->parameters);
 			}
 
 			//----------
 			void KinectV2::deserialize(const nlohmann::json & json) {
-				ofxRulr::Utils::deserialize(json, this->viewType);
-				ofxRulr::Utils::deserialize(json, this->enabledViews);
-
+				ofxRulr::Utils::deserialize(json, this->parameters);
 				this->rebuildView();
 			}
 
 			//----------
 			void KinectV2::drawObject() {
 				if (this->device) {
-					switch (this->viewType.get()) { // don't break on the cases, flow through
-					case 2:
+					switch (this->parameters.viewType.get()) { // don't break on the cases, flow through
+					case DrawType::All:
 						//this should be something like 'draw pretty mesh'
 						//something seems to have been missed out of a merge in ofxKinectForWindows2
 						this->device->drawWorld();
-					case 1:
+					case DrawType::Bodies:
 					{
 						auto bodySource = this->device->getBodySource();
 						if (bodySource) {
 							bodySource->drawWorld();
 						}
 					}
-					case 0:
+					case DrawType::Frustums:
 					{
 						ofPushStyle();
 						ofSetColor(this->getColor());
@@ -119,28 +113,18 @@ namespace ofxRulr {
 			void KinectV2::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 				auto inspector = inspectArgs.inspector;
 
-				auto selectPlayState = make_shared<ofxCvGui::Widgets::MultipleChoice>("Play state");
-				selectPlayState->addOption("Play");
-				selectPlayState->addOption("Pause");
-				selectPlayState->entangle(this->playState);
-				inspector->add(selectPlayState);
-
-				auto selectViewType = make_shared<ofxCvGui::Widgets::MultipleChoice>("3D View");
-				selectViewType->addOption("Frustums");
-				selectViewType->addOption("Bodies");
-				selectViewType->addOption("All");
-				selectViewType->entangle(this->viewType);
-				inspector->add(selectViewType);
+				inspector->addMultipleChoice("Play state")->entangleManagedEnum(this->parameters.playState);
+				inspector->addMultipleChoice("3D view")->entangleManagedEnum(this->parameters.viewType);
 
 				inspector->add(new Widgets::Title("Enabled views", Widgets::Title::Level::H2));
 				{
 					auto changeViewsCallback = [this](ofParameter<bool> &) {
 						this->rebuildView();
 					};
-					inspector->addToggle(this->enabledViews.rgb)->onValueChange += changeViewsCallback;
-					inspector->addToggle(this->enabledViews.depth)->onValueChange += changeViewsCallback;
-					inspector->addToggle(this->enabledViews.ir)->onValueChange += changeViewsCallback;
-					inspector->addToggle(this->enabledViews.body)->onValueChange += changeViewsCallback;
+					inspector->addToggle(this->parameters.enabledViews.rgb)->onValueChange += changeViewsCallback;
+					inspector->addToggle(this->parameters.enabledViews.depth)->onValueChange += changeViewsCallback;
+					inspector->addToggle(this->parameters.enabledViews.ir)->onValueChange += changeViewsCallback;
+					inspector->addToggle(this->parameters.enabledViews.body)->onValueChange += changeViewsCallback;
 				}
 			}
 
@@ -148,13 +132,13 @@ namespace ofxRulr {
 			void KinectV2::rebuildView() {
 				this->view->clear();
 
-				if(this->enabledViews.rgb) {
+				if(this->parameters.enabledViews.rgb) {
 					auto rgbView = make_shared<ofxCvGui::Panels::Texture>(this->device->getColorSource()->getTexture());
 					rgbView->setCaption("RGB");
 					this->view->add(rgbView);
 				}
 
-				if (this->enabledViews.depth) {
+				if (this->parameters.enabledViews.depth) {
 					auto depthView = make_shared<ofxCvGui::Panels::Texture>(this->device->getDepthSource()->getTexture());
 					depthView->setCaption("Depth");
 					
@@ -165,13 +149,13 @@ namespace ofxRulr {
 					this->view->add(depthView);
 				}
 
-				if (this->enabledViews.ir) {
+				if (this->parameters.enabledViews.ir) {
 					auto irView = make_shared<ofxCvGui::Panels::Texture>(this->device->getInfraredSource()->getTexture());
 					irView->setCaption("IR");
 					this->view->add(irView);
 				}
 
-				if (this->enabledViews.body) {
+				if (this->parameters.enabledViews.body) {
 					auto & texture = this->device->getBodyIndexSource()->getTexture();
 					auto bodyView = make_shared<ofxCvGui::Panels::Texture>(texture);
 					bodyView->setCaption("Body");

@@ -33,15 +33,15 @@ namespace ofxRulr {
 					for (const auto node : world) {
 						const auto & whenDrawOnWorldStage = node->getWhenDrawOnWorldStage();
 						switch (whenDrawOnWorldStage) {
-						case WhenDrawOnWorldStage::Selected:
+						case WhenActive::Selected:
 							if (node->isBeingInspected()) {
 								node->drawWorldStage();
 							}
 							break;
-						case WhenDrawOnWorldStage::Always:
+						case WhenActive::Always:
 							node->drawWorldStage();
 							break;
-						case WhenDrawOnWorldStage::Never:
+						case WhenActive::Never:
 						default:
 							break;
 						}

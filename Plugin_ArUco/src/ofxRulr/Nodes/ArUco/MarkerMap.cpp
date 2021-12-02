@@ -65,19 +65,10 @@ namespace ofxRulr {
 							markerPreview.draw();
 						}
 
-						switch (this->parameters.drawLabels.get().get()) {
-						case WhenDrawOnWorldStage::Selected:
-							if (!this->isBeingInspected()) {
-								break;
-							}
-						case WhenDrawOnWorldStage::Always:
+						if (isActive(this, this->parameters.drawLabels.get())) {
 							ofxCvGui::Utils::drawTextAnnotation(ofToString(marker3D.id)
 								, ofxCv::toOf(marker3D[0])
 								, this->getColor());
-							break;
-						case WhenDrawOnWorldStage::Never:
-						default:
-							break;
 						}
 					}
 				}

@@ -185,8 +185,23 @@ namespace ofxRulr {
 				strftime(buff, 20, "%a %Y.%m.%d", localtime(&time));
 				this->dateString = string(buff);
 			}
-
 		}
+
+		//----------
+		const string& AbstractCaptureSet::BaseCapture::getDateString() const {
+			return this->dateString;
+		}
+
+		//----------
+		const string& AbstractCaptureSet::BaseCapture::getTimeString() const {
+			return this->timeString;
+		}
+
+		//----------
+		const string& AbstractCaptureSet::BaseCapture::getSecondString() const {
+			return this->secondString;
+		}
+
 #pragma mark AbstractCaptureSet
 		//----------
 		AbstractCaptureSet::AbstractCaptureSet() {

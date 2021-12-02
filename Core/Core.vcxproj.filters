@@ -180,6 +180,9 @@
     <ClCompile Include="src\ofxRulr\Utils\Serialization\Addons.cpp">
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Constants.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Graph\Pin.h">

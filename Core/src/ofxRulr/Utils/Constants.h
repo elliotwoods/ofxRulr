@@ -29,12 +29,16 @@
 #	define OFXRULR_API_ENTRY
 #endif
 
+#include "ofxCvGui/InspectController.h"
+
 namespace ofxRulr {
-	MAKE_ENUM(WhenDrawOnWorldStage
+	MAKE_ENUM(WhenActive
 		, (Always, Selected, Never)
 		, ("Always", "Selected", "Never"));
 
 	MAKE_ENUM(FindBoardMode
 		, (Raw, Optimized, Assistant)
 		, ("Raw", "Optimized", "Assistant"));
+
+	bool isActive(const ofxCvGui::IInspectable*, const WhenActive&);
 }

@@ -50,8 +50,7 @@ namespace ofxRulr {
 			void FindMarkers::update() {
 				
 				{
-					auto shouldProcess = this->parameters.detection.processWhen.get() == WhenDrawOnWorldStage::Always
-						|| this->parameters.detection.processWhen.get() == WhenDrawOnWorldStage::Selected && this->isBeingInspected();
+					auto shouldProcess = isActive(this, this->parameters.detection.processWhen);
 					if (shouldProcess) {
 						auto cameraNode = this->getInput<Item::Camera>();
 						if (cameraNode) {
@@ -103,22 +102,11 @@ namespace ofxRulr {
 							}
 							ofPopMatrix();
 
-							switch (this->parameters.drawLabels.get().get()) {
-							case WhenDrawOnWorldStage::Selected:
-								if (!this->isBeingInspected()) {
-									break;
-								}
-							case WhenDrawOnWorldStage::Always:
+							if (isActive(this, this->parameters.drawLabels)) {
 								ofxCvGui::Utils::drawTextAnnotation(ofToString(marker.first)
 									, marker.second->cornersInObjectSpace[0]
 									, this->getColor());
-								break;
-							case WhenDrawOnWorldStage::Never:
-							default:
-								break;
 							}
-
-
 						}
 						ofPopMatrix();
 					}

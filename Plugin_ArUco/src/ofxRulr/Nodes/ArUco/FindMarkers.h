@@ -47,7 +47,7 @@ namespace ofxRulr {
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
-						ofParameter<WhenDrawOnWorldStage> processWhen{ "Process when", WhenDrawOnWorldStage::Always };
+						ofParameter<WhenActive> processWhen{ "Process when", WhenActive::Always };
 						ofParameter<bool> speakCount{ "Speak count", true };
 
 						PARAM_DECLARE("Detection", processWhen, speakCount)
@@ -59,7 +59,7 @@ namespace ofxRulr {
 						PARAM_DECLARE("Save", whenToSave, folder);
 					} save;
 
-					ofParameter<WhenDrawOnWorldStage> drawLabels{ "Draw labels", WhenDrawOnWorldStage::Selected };
+					ofParameter<WhenActive> drawLabels{ "Draw labels", WhenActive::Selected };
 					PARAM_DECLARE("FindMarkers", detection, save, drawLabels);
 				} parameters;
 			};

@@ -234,23 +234,7 @@ namespace ofxRulr {
 						drawParameters.nodeIsSelected = this->isBeingInspected();
 
 						// should draw labels
-						{
-							bool shouldDraw = false;
-							switch (this->parameters.draw.labels.get().get()) {
-							case WhenDrawOnWorldStage::Selected:
-								if (!drawParameters.nodeIsSelected) {
-									break;
-								}
-							case WhenDrawOnWorldStage::Always:
-								shouldDraw = true;
-								break;
-							case WhenDrawOnWorldStage::Never:
-							default:
-								shouldDraw = false;
-								break;
-							}
-							drawParameters.labels = shouldDraw;
-						}
+						drawParameters.labels = isActive(this, this->parameters.draw.labels);
 
 						drawParameters.servoIndices = this->parameters.draw.servoIndices.get();
 					}

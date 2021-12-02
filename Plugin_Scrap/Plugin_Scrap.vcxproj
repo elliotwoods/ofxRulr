@@ -40,6 +40,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\addons\ofxRulr\ofxRulr_Plugin.props" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\..\ofxCeres\ofxCeresLib\ofxCeres.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\..\ofxCeres\ofxCeresLib\ofxCeres.props" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -74,13 +80,19 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Lasers.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\CircleLaser.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\LineMCToImage.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\LinesFromPoint.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\LineToImage.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\PointFromLines.cpp" />
     <ClCompile Include="src\pch_Plugin_Scrap.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -92,18 +104,29 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Lasers.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\CircleLaser.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\LineMCToImage.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\LinesFromPoint.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\LineToImage.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\PointFromLines.h" />
     <ClInclude Include="src\pch_Plugin_Scrap.h" />
     <ClInclude Include="src\polyfit\polyfit.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\polyfit\readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ofxCeres\ofxCeresLib\ofxCeresLib.vcxproj">
+      <Project>{c42c2af8-bb13-4fe4-81a5-41cd314f4fde}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

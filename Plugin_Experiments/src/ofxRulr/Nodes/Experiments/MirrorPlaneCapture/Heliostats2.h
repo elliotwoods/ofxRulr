@@ -186,7 +186,7 @@ namespace ofxRulr {
 						} awayPose;
 
 						struct : ofParameterGroup {
-							ofParameter<WhenDrawOnWorldStage> labels{ "Labels", WhenDrawOnWorldStage::Selected };
+							ofParameter<WhenActive> labels{ "Labels", WhenActive::Selected };
 							ofParameter<bool> servoIndices{ "Servo indices", false };
 							PARAM_DECLARE("Draw", labels, servoIndices);
 						} draw;

@@ -76,6 +76,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Base.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\GraphicsManager.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\CaptureSet.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\Constants.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Graphics.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Gui.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp" />

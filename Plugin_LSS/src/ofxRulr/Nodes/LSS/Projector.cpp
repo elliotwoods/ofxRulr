@@ -196,17 +196,17 @@ namespace ofxRulr {
 
 			//----------
 			void Projector::drawWorldStage() {
-				if (this->checkDrawOnWorldStage(this->parameters.draw.unclassifiedVertices)) {
+				if (isActive(this,this->parameters.draw.unclassifiedVertices)) {
 					this->unclassifiedVerticesPreview.draw(GL_POINTS, 0, this->unclassifiedVertices.size());
 				}
 
-				bool drawLabels = this->checkDrawOnWorldStage(this->parameters.draw.lineLabels.get());
-				if (this->checkDrawOnWorldStage(this->parameters.draw.lines)) {
+				bool drawLabels = isActive(this,this->parameters.draw.lineLabels.get());
+				if (isActive(this,this->parameters.draw.lines)) {
 					for (const auto & line : this->lines) {
 						line.drawWorld(drawLabels);
 					}
 				}
-				if (this->checkDrawOnWorldStage(this->parameters.draw.rays)) {
+				if (isActive(this,this->parameters.draw.rays)) {
 					auto scans = this->scans.getSelection();
 					for (const auto & scan : scans) {
 						scan->drawWorld();

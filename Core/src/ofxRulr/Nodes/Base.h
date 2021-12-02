@@ -83,8 +83,7 @@ namespace ofxRulr {
 
 			void drawWorldStage();
 			void drawWorldAdvanced(DrawWorldAdvancedArgs &);
-			WhenDrawOnWorldStage::Options getWhenDrawOnWorldStage() const;
-			bool checkDrawOnWorldStage(const WhenDrawOnWorldStage &);
+			WhenActive::Options getWhenDrawOnWorldStage() const;
 
 			template<typename NodeType>
 			void connect(shared_ptr<NodeType> node) {
@@ -192,7 +191,7 @@ namespace ofxRulr {
 			uint64_t lastFrameUpdate;
 			bool updateAllInputsFirst;
 
-			WhenDrawOnWorldStage::Options whenDrawOnWorldStage;
+			WhenActive::Options whenDrawOnWorldStage;
 
 			//we'd love to have parameters for drawWorldEnabled, etc
 			//but adding ofParameters here seems to cause crashes

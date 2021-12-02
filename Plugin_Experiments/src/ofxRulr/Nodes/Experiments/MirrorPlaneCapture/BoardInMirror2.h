@@ -110,7 +110,7 @@ namespace ofxRulr {
 					ofxCeres::SolverSettings getCalibrateSolverSettings() const;
 
 					struct : ofParameterGroup {
-						ofParameter<WhenDrawOnWorldStage> tetheredShootEnabled{ "Tethered shoot enabled", WhenDrawOnWorldStage::Selected };
+						ofParameter<WhenActive> tetheredShootEnabled{ "Tethered shoot enabled", WhenActive::Selected };
 						
 						struct : ofParameterGroup {
 							ofParameter<bool> beforeFindBoardDirect{ "Before find board direct", true };

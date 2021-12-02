@@ -27,7 +27,7 @@ namespace ofxRulr {
 				shared_ptr<aruco::MarkerMap> markerMap;
 
 				struct : ofParameterGroup {
-					ofParameter<WhenDrawOnWorldStage> drawLabels{ "Draw labels", WhenDrawOnWorldStage::Selected };
+					ofParameter<WhenActive> drawLabels{ "Draw labels", WhenActive::Selected };
 					PARAM_DECLARE("MarkerMap", drawLabels);
 				} parameters;
 			};

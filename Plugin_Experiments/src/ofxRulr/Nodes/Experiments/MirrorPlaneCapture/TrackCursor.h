@@ -26,7 +26,7 @@ namespace ofxRulr {
 							PARAM_DECLARE("Navigator", printReport, parameterTolerance);
 						} navigator;
 
-						ofParameter<WhenDrawOnWorldStage> perform{ "Perform", WhenDrawOnWorldStage::Never };
+						ofParameter<WhenActive> perform{ "Perform", WhenActive::Never };
 						PARAM_DECLARE("Track Cursor", navigator, perform);
 					} parameters;
 				};

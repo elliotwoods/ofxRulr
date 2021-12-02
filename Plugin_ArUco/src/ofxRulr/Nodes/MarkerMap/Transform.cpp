@@ -46,18 +46,8 @@ namespace ofxRulr {
 			{
 				auto navigateCamera = this->getInput<MarkerMap::NavigateCamera>();
 
-				bool shouldPerform;
-				auto whenShouldPerform = this->parameters.autoUpdate.get();
-				if (whenShouldPerform == WhenDrawOnWorldStage::Always
-					|| (this->isBeingInspected() && whenShouldPerform == WhenDrawOnWorldStage::Selected)) {
-					shouldPerform = true;
-				}
-				if (navigateCamera) {
-					auto camera = navigateCamera->getInput<Item::Camera>();
-					if (!camera) {
-						shouldPerform = false;
-					}
-				}
+				bool shouldPerform = isActive(this, this->parameters.autoUpdate);
+				
 				shouldPerform &= this->photo.isAllocated();
 
 				if (shouldPerform) {
