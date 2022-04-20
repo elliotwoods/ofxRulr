@@ -77,7 +77,7 @@ namespace ofxRulr {
 				float cachedDPI = 0;
 
 				ofImage preview;
-				ofxCvGui::PanelPtr panel;
+				shared_ptr<ofxCvGui::Panels::Image> panel;
 
 				set<shared_ptr<PaperSize>> paperSizes;
 			};

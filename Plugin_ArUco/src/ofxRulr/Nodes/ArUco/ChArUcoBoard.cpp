@@ -21,6 +21,7 @@ namespace ofxRulr {
 			//----------
 			void ChArUcoBoard::init() {
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_INSPECTOR_LISTENER;
 
 				auto panel = ofxCvGui::Panels::makeImage(this->preview);
 				panel->onDrawImage += [this](ofxCvGui::DrawImageArguments & args) {
@@ -130,7 +131,11 @@ namespace ofxRulr {
 			//----------
 			void ChArUcoBoard::populateInspector(ofxCvGui::InspectArguments & inspectArgs) {
 				auto inspector = inspectArgs.inspector;
-				inspector->addParameterGroup(this->parameters);
+				inspector->addToggle("Chrome enabled", [this]() {
+					return this->panel->getChromeEnabled();
+					}, [this](bool value) {
+						this->panel->setChromeEnabled(value);
+					});
 			}
 
 			//----------

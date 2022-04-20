@@ -677,7 +677,11 @@ namespace ofxRulr {
 						}
 						auto fullFilePath = localPath / filename;
 
-						return cv::imread(fullFilePath.string(), flags);
+						auto image = cv::imread(fullFilePath.string(), flags);
+						if (image.empty()) {
+							throw(Exception("Failed to load image at " + fullFilePath.string()));
+						}
+						return image;
 					}
 					case ImageFileSource::Camera:
 					{
@@ -686,6 +690,9 @@ namespace ofxRulr {
 							auto data = response.data.getData();
 							vector<unsigned char> buffer(data, data + response.data.size());
 							return cv::imdecode(buffer, flags);
+						}
+						else {
+							throw(Exception("Failed to load image from camera : " + (string) response.data));
 						}
 					}
 				}

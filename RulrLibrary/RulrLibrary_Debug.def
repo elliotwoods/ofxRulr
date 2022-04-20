@@ -539,6 +539,8 @@ EXPORTS
 	?makeWidgets@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWidgets@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?makeWorld@Panels@ofxCvGui@@YA?AV?$shared_ptr@VWorld@Panels@ofxCvGui@@@std@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
 	?addToolBarElement@Base@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@$$QEAV?$function@$$A6AXXZ@5@@Z
+	?getChromeEnabled@Base@Panels@ofxCvGui@@QEBA_NXZ
+	?setChromeEnabled@Base@Panels@ofxCvGui@@QEAAX_N@Z
 	?getPanelToImageTransform@BaseImage@Panels@ofxCvGui@@QEBA?AU?$mat@$03$03M$0A@@glm@@XZ
 	?getZoomFactor@BaseImage@Panels@ofxCvGui@@QEBAMXZ
 	?clearDrawObject@Draws@Panels@ofxCvGui@@QEAAXXZ
@@ -564,6 +566,7 @@ EXPORTS
 	?addSpacer@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VSpacer@Widgets@ofxCvGui@@@std@@_N@Z
 	?addTitle@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VTitle@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@W4Level@Title@13@@Z
 	?addToggle@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VToggle@Widgets@ofxCvGui@@@std@@AEAV?$ofParameter@_N@@@Z
+	?addToggle@Widgets@Panels@ofxCvGui@@QEAA?AV?$shared_ptr@VToggle@Widgets@ofxCvGui@@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@5@AEBV?$function@$$A6A_NXZ@5@AEBV?$function@$$A6AX_N@Z@5@@Z
 	?setGridEnabled@World@Panels@ofxCvGui@@QEAAX_N@Z
 	??0ScissorManager@Utils@ofxCvGui@@QEAA@XZ
 	?drawText@Utils@ofxCvGui@@YA?AVofRectangle@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV3@_N2@Z
