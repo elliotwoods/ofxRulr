@@ -521,14 +521,14 @@ namespace ofxRulr {
 					selection->serialize(json);
 
 					//push to clipboard
-					ofxClipboard::copy(json.dump(4));
+					ofSetClipboardString(json.dump(4));
 				}
 			}
 
 			//----------
 			void Patch::paste() {
 				//get the clipboard into json
-				const auto clipboardText = ofxClipboard::paste();
+				const auto clipboardText = ofGetClipboardString();
 				auto json = nlohmann::json::parse(clipboardText);
 
 				//if we got something
@@ -547,7 +547,7 @@ namespace ofxRulr {
 					json["Bounds"] << bounds;
 
 					//push the updated copy into the clipboard
-					ofxClipboard::copy(json.dump(4));
+					ofSetClipboardString(json.dump(4));
 				}
 			}
 

@@ -451,7 +451,7 @@ namespace ofxRulr {
 
 					stringstream ss;
 					ss << meanPlane.getABCD();
-					ofxClipboard::copy(ss.str());
+					ofSetClipboardString(ss.str());
 				}
 
 				//----------

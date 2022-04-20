@@ -13,7 +13,6 @@
 #include <future>
 
 //internal addons
-#include "ofxClipboard.h"
 #include <nlohmann/json.hpp>
 
 //external addons
