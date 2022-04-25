@@ -11,6 +11,7 @@
 #include "ofxRulr/Nodes/AnotherMoon/Calibrate.h"
 #include "ofxRulr/Nodes/AnotherMoon/LaserCaptures.h"
 #include "ofxRulr/Nodes/AnotherMoon/BeamCaptures.h"
+#include "ofxRulr/Nodes/AnotherMoon/SortFiles.h"
 
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
@@ -25,4 +26,5 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::Calibrate);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::LaserCaptures);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::BeamCaptures);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::SortFiles);
 OFXPLUGIN_PLUGIN_MODULES_END

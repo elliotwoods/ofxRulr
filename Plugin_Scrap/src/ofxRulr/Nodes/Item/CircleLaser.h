@@ -6,6 +6,9 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Item {
+			/// <summary>
+			/// Deprecated
+			/// </summary>
 			class CircleLaser : public Nodes::Base {
 			public:
 				CircleLaser();

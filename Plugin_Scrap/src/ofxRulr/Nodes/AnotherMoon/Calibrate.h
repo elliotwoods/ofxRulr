@@ -4,10 +4,14 @@
 #include "ofxCeres.h"
 #include "ofxRulr/Solvers/LineToImage.h"
 #include "ofxRulr/Solvers/LineMCToImage.h"
-#include "ofxRulr/Solvers/LinesFromPoint.h"
+#include "ofxRulr/Solvers/LinesWithCommonPoint.h"
 
 #define LINEMODEL Solvers::LineToImage
 
+/// <summary>
+/// Class for handling the ">>" to drill down into this selection
+/// </summary>
+/// <typeparam name="T"></typeparam>
 template<typename T>
 struct EditSelection
 {
@@ -41,6 +45,13 @@ namespace ofxRulr {
 					, (Camera, Local)
 					, ("Camera", "Local"));
 
+				struct ImagePath {
+					void serialize(nlohmann::json&);
+					void deserialize(const nlohmann::json&);
+					string pathOnCamera;
+					filesystem::path localCopy;
+				};
+
 				class BeamCapture : public Utils::AbstractCaptureSet::BaseCapture
 				{
 				public:
@@ -50,8 +61,9 @@ namespace ofxRulr {
 					void deserialize(const nlohmann::json&);
 
 					glm::vec2 imagePoint;
-					string urlOnImage;
-					string urlOffImage;
+
+					ImagePath onImage;
+					ImagePath offImage;
 
 					Solvers::LineToImage::Line line;
 
@@ -59,6 +71,7 @@ namespace ofxRulr {
 				protected:
 					ofxCvGui::ElementPtr getDataDisplay() override;
 				};
+
 
 				class LaserCapture : public Utils::AbstractCaptureSet::BaseCapture
 				{
@@ -80,6 +93,7 @@ namespace ofxRulr {
 				protected:
 					ofxCvGui::ElementPtr getDataDisplay() override;
 				};
+
 
 				class CameraCapture : public Utils::AbstractCaptureSet::BaseCapture
 				{
@@ -109,9 +123,12 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr getPanel() override;
 
 				void capture();
-				void process();
+				void process(); // Note that process is in seperate Calibrate_Process.cpp
 
 				EditSelection<CameraCapture> cameraEditSelection;
+
+				Utils::CaptureSet<CameraCapture> getCameraCaptures();
+				filesystem::path getLocalCopyPath(const ImagePath& cameraPath) const;
 			protected:
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
@@ -153,7 +170,7 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<ImageFileSource> imageFileSource{ "Image file source", ImageFileSource::Local };
-						ofParameter<string> localPath{ "Local path", "E:\\DCIM\\100EOS5D\\0M8A4113.JPG" };
+						ofParameter<filesystem::path> localDirectory{ "Local directory", "E:\\DCIM\\100EOS5D" };
 						ofParameter<float> differenceThreshold{ "Difference threshold", 32, 0, 255 };
 						ofParameter<float> normalizePercentile{ "Normalize percentile", 1e-5 };
 						ofParameter<float> distanceThreshold{ "Distance threshold [px]", 10, 0, 1000 };
@@ -161,7 +178,7 @@ namespace ofxRulr {
 
 						PARAM_DECLARE("Processing"
 							, imageFileSource
-							, localPath
+							, localDirectory
 							, differenceThreshold
 							, normalizePercentile
 							, distanceThreshold
@@ -186,7 +203,7 @@ namespace ofxRulr {
 
 				void takePhoto();
 				vector<string> pollNewCameraFiles();
-				cv::Mat fetchImage(const string& cameraPath) const;
+				cv::Mat fetchImage(const ImagePath&) const;
 				void configureSolverSettings(ofxCeres::SolverSettings&) const;
 
 				ofxCvGui::PanelPtr panel;

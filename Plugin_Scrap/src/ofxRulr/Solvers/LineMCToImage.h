@@ -4,10 +4,12 @@
 
 namespace ofxRulr {
 	namespace Solvers {
+		/// <summary>
+		/// MC refers to the line definition, i.e. y = mx + c
+		/// </summary>
 		class LineMCToImage : ofxCeres::Models::Base
 		{
 		public:
-			// Line as defined by ax + by + c = 0
 			template<typename T>
 			struct Line_ {
 				T m;

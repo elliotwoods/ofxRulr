@@ -2,10 +2,11 @@
 
 #include "ofxCeres.h"
 #include "LineToImage.h"
+#include "ofxRulr/Nodes/Item/Camera.h"
 
 namespace ofxRulr {
 	namespace Solvers {
-		class LinesFromPoint : ofxCeres::Models::Base
+		class LinesWithCommonPoint : ofxCeres::Models::Base
 		{
 		public:
 			struct Solution {
@@ -30,6 +31,7 @@ namespace ofxRulr {
 				, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
 
 			static CameraImagePoints getCameraImagePoints(const cv::Mat& differenceImage
+				, shared_ptr<Nodes::Item::Camera>
 				, float normalizePercentile
 				, float differenceThreshold
 				, cv::Mat& preview = cv::Mat());

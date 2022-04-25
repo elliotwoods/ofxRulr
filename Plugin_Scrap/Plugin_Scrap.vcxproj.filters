@@ -10,44 +10,37 @@
     <Filter Include="src\ofxRulr\Nodes">
       <UniqueIdentifier>{102be500-d5fe-4e78-a303-22dcfe9a58dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Nodes\AnotherMoon">
+      <UniqueIdentifier>{e121b947-4e8b-4ead-8c46-5274c644e78c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Item">
+      <UniqueIdentifier>{a34390c5-331d-4187-816d-2e7addc0721d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\ofxRulr\Nodes\Procedure">
       <UniqueIdentifier>{56f907bf-1697-4b37-9dda-c7415c2283ae}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\ofxRulr\Nodes\Procedure\Calibrate">
       <UniqueIdentifier>{cdad591d-1ad5-43a2-823b-94c7e38bedb5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\polyfit">
-      <UniqueIdentifier>{d8ebbc54-4aa9-42ee-a285-b2d973db9758}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr\Nodes\Item">
-      <UniqueIdentifier>{a34390c5-331d-4187-816d-2e7addc0721d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr\Nodes\AnotherMoon">
-      <UniqueIdentifier>{e121b947-4e8b-4ead-8c46-5274c644e78c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ofxRulr\Solvers">
       <UniqueIdentifier>{c52a9e38-fca7-4624-9cd8-ea018f080464}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\polyfit">
+      <UniqueIdentifier>{d8ebbc54-4aa9-42ee-a285-b2d973db9758}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\plugin.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
-    <ClCompile Include="src\pch_Plugin_Scrap.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_Process.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
-    <ClCompile Include="src\polyfit\polyfit.c">
-      <Filter>src\polyfit</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.cpp">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Item\CircleLaser.cpp">
-      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Lasers.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
@@ -55,44 +48,50 @@
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Solvers\LineToImage.cpp">
-      <Filter>src\ofxRulr\Solvers</Filter>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\CircleLaser.cpp">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.cpp">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Solvers\LineMCToImage.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.cpp">
-      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    <ClCompile Include="src\ofxRulr\Solvers\LinesWithCommonPoint.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.cpp">
-      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Solvers\LinesFromPoint.cpp">
+    <ClCompile Include="src\ofxRulr\Solvers\LineToImage.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Solvers\PointFromLines.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
+    <ClCompile Include="src\pch_Plugin_Scrap.cpp" />
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\polyfit\polyfit.c">
+      <Filter>src\polyfit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\pch_Plugin_Scrap.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
-    <ClInclude Include="src\polyfit\polyfit.h">
-      <Filter>src\polyfit</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.h">
-      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Item\CircleLaser.h">
-      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Lasers.h">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
@@ -100,26 +99,36 @@
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.h">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.h">
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.h">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Solvers\LineToImage.h">
-      <Filter>src\ofxRulr\Solvers</Filter>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\CircleLaser.h">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.h">
+      <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\LineMCToImage.h">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.h">
-      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    <ClInclude Include="src\ofxRulr\Solvers\LinesWithCommonPoint.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.h">
-      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Solvers\LinesFromPoint.h">
+    <ClInclude Include="src\ofxRulr\Solvers\LineToImage.h">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\PointFromLines.h">
       <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch_Plugin_Scrap.h" />
+    <ClInclude Include="src\polyfit\polyfit.h">
+      <Filter>src\polyfit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

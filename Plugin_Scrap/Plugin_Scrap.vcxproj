@@ -82,6 +82,8 @@
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_Process.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Lasers.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.cpp" />
@@ -90,7 +92,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\LineMCToImage.cpp" />
-    <ClCompile Include="src\ofxRulr\Solvers\LinesFromPoint.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\LinesWithCommonPoint.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\LineToImage.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\PointFromLines.cpp" />
     <ClCompile Include="src\pch_Plugin_Scrap.cpp">
@@ -109,12 +111,13 @@
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Lasers.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\CircleLaser.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.h" />
     <ClInclude Include="src\ofxRulr\Solvers\LineMCToImage.h" />
-    <ClInclude Include="src\ofxRulr\Solvers\LinesFromPoint.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\LinesWithCommonPoint.h" />
     <ClInclude Include="src\ofxRulr\Solvers\LineToImage.h" />
     <ClInclude Include="src\ofxRulr\Solvers\PointFromLines.h" />
     <ClInclude Include="src\pch_Plugin_Scrap.h" />

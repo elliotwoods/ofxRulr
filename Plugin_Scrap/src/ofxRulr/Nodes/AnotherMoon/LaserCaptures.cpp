@@ -63,8 +63,8 @@ namespace ofxRulr {
 					this->panel->addTitle("Select camera capture");
 				}
 				else {
+					panel->addTitle("Lasers:", ofxCvGui::Widgets::Title::Level::H3);
 					this->cameraCapture->laserCaptures.populateWidgets(this->panel);
-
 				}
 			}
 		}

@@ -1,13 +1,15 @@
 #include "pch_Plugin_Scrap.h"
-#include "LinesFromPoint.h"
+#include "LinesWithCommonPoint.h"
 #include "PointFromLines.h"
 #include <opencv2/opencv.hpp>
 
+#include "ofxRulr/Nodes/Item/Camera.h"
+
 typedef ofxRulr::Solvers::LineToImage::Line Line;
 
-struct LinesFromPointCost
+struct LinesWithCommonPointCost
 {
-	LinesFromPointCost(const glm::vec2& point
+	LinesWithCommonPointCost(const glm::vec2& point
 		, const float& weight)
 		: point(point)
 		, weight(weight)
@@ -35,8 +37,8 @@ struct LinesFromPointCost
 		Create(const glm::vec2& point
 			, const float& weight)
 	{
-		return new ceres::AutoDiffCostFunction<LinesFromPointCost, 1, 2, 1>(
-			new LinesFromPointCost(point, weight)
+		return new ceres::AutoDiffCostFunction<LinesWithCommonPointCost, 1, 2, 1>(
+			new LinesWithCommonPointCost(point, weight)
 			);
 	}
 
@@ -48,35 +50,35 @@ namespace ofxRulr {
 	namespace Solvers {
 		//----------
 		ofxCeres::SolverSettings
-			LinesFromPoint::defaultSolverSettings()
+			LinesWithCommonPoint::defaultSolverSettings()
 		{
 			ofxCeres::SolverSettings solverSettings;
 			return solverSettings;
 		}
 
 		//----------
-		LinesFromPoint::Result
-			LinesFromPoint::solve(const vector<CameraImagePoints>& cameraImagePoints
+		LinesWithCommonPoint::Result
+			LinesWithCommonPoint::solve(const vector<CameraImagePoints>& cameraImagePointSets
 				, const float& distanceThreshold
 				, const float& minMeanPixelValueOnLine
 				, const ofxCeres::SolverSettings& solverSettings)
 		{
-			if (cameraImagePoints.empty()) {
+			if (cameraImagePointSets.empty()) {
 				throw(ofxRulr::Exception("No images"));
 			}
 
 			// Initialise parameters
 			glm::tvec2<double> pointParameters( 0.0, 0.0 );
-			vector<vector<double>> angleParameters(cameraImagePoints.size(), vector<double>(1, 0.0));
+			vector<vector<double>> angleParameters(cameraImagePointSets.size(), vector<double>(1, 0.0));
 			vector<bool> passTest;
 			vector<Line> firstLines;
 			{
 
-				for (int i = 0; i < cameraImagePoints.size(); i++) {
+				for (int i = 0; i < cameraImagePointSets.size(); i++) {
 					cv::Vec4f openCVLine;
 
 					vector<cv::Point2i> intPoints;
-					for (const auto& point : cameraImagePoints[i].points) {
+					for (const auto& point : cameraImagePointSets[i].points) {
 						intPoints.push_back(ofxCv::toCv(point));
 					}
 
@@ -89,7 +91,7 @@ namespace ofxRulr {
 
 					firstLines.emplace_back(openCVLine);
 
-					auto meanPixelValueOnLine = firstLines.back().meanMaskedValue(cameraImagePoints[i].thresholdedImage);
+					auto meanPixelValueOnLine = firstLines.back().meanMaskedValue(cameraImagePointSets[i].thresholdedImage);
 					passTest.push_back(meanPixelValueOnLine >= minMeanPixelValueOnLine);
 				}
 
@@ -98,28 +100,32 @@ namespace ofxRulr {
 				pointParameters.x = findPointResult.solution.point.x;
 				pointParameters.y = findPointResult.solution.point.y;
 
-				// First guess of angle parametrs is the (opencv found line's start point) - (guessed convergence point)
-				for (int i = 0; i < cameraImagePoints.size(); i++) {
+				// First guess of angle parameters = (opencv found line's start point) - (guessed convergence point)
+				for (int i = 0; i < cameraImagePointSets.size(); i++) {
 					angleParameters[i][0] = atan2((double) firstLines[i].s.y - pointParameters.y
 						, (double) firstLines[i].s.x - pointParameters.x);
 				}
 			}
 
+			//--
+			// Fit the lines for all beam captures in this laser (in this camera)
+			//--
+			//
 			ceres::Problem problem;
 
 			// Add data to problem (but trim to only keep points that are already within max distance)
 			{
-				for (size_t i = 0; i < cameraImagePoints.size(); i++) {
+				for (size_t i = 0; i < cameraImagePointSets.size(); i++) {
 					if (!passTest[i]) {
 						continue;
 					}
 
-					auto& points = cameraImagePoints[i].points;
-					auto& weights = cameraImagePoints[i].weights;
+					auto& points = cameraImagePointSets[i].points;
+					auto& weights = cameraImagePointSets[i].weights;
 
 					for (size_t j = 0; j < points.size(); j++) {
 						if (firstLines[i].distanceToPoint(points[j]) <= distanceThreshold) {
-							problem.AddResidualBlock(LinesFromPointCost::Create(points[j], weights[j])
+							problem.AddResidualBlock(LinesWithCommonPointCost::Create(points[j], weights[j])
 								, NULL
 								, &pointParameters[0]
 								, angleParameters[i].data());
@@ -137,13 +143,15 @@ namespace ofxRulr {
 			if (solverSettings.printReport) {
 				cout << summary.FullReport() << endl;
 			}
+			//
+			//--
 
 			{
 				Result result(summary);
 				result.solution.point = (glm::vec2)pointParameters;
 				result.solution.linesValid = passTest;
 
-				for (int i = 0; i < cameraImagePoints.size(); i++) {
+				for (int i = 0; i < cameraImagePointSets.size(); i++) {
 					LineToImage::Line line(result.solution.point, (float)angleParameters[i][0]);
 					result.solution.lines.push_back(line);
 				}
@@ -153,25 +161,50 @@ namespace ofxRulr {
 		}
 
 		//---------
-		LinesFromPoint::CameraImagePoints
-			LinesFromPoint::getCameraImagePoints(const cv::Mat& differenceImage
+		LinesWithCommonPoint::CameraImagePoints
+			LinesWithCommonPoint::getCameraImagePoints(const cv::Mat& differenceImageRaw
+				, shared_ptr<Nodes::Item::Camera> cameraNode
 				, float normalizePercentile
 				, float differenceThreshold
 				, cv::Mat& preview)
 		{
-			// Take local difference
-			cv::Mat localDifference;
+			// Undistort the camera
+			cv::Mat differenceImage;
 			{
-				cv::Mat blurred;
-				cv::blur(differenceImage, blurred, cv::Size(64, 64));
-
-				cv::addWeighted(differenceImage, 1
-					, blurred, -1
-					, 0, localDifference);
+				cv::undistort(differenceImageRaw
+					, differenceImage
+					, cameraNode->getCameraMatrix()
+					, cameraNode->getDistortionCoefficients());
 			}
 
-			// Normalize the image 
+			// Take local difference on both raw and undistorted
+			cv::Mat localDifference;
+			cv::Mat localDifferenceRaw;
+			{
+				{
+					cv::Mat blurred;
+					cv::blur(differenceImageRaw, blurred, cv::Size(64, 64));
+
+					cv::addWeighted(differenceImageRaw, 1
+						, blurred, -1
+						, 0
+						, localDifferenceRaw);
+				}
+
+				{
+					cv::Mat blurred;
+					cv::blur(differenceImage, blurred, cv::Size(64, 64));
+
+					cv::addWeighted(differenceImage, 1
+						, blurred, -1
+						, 0
+						, localDifference);
+				}
+			}
+
+			// Normalize the images
 			cv::Mat normalizedImage;
+			cv::Mat normalizedImageRaw;
 			{
 				// Sort pixel values
 				vector<uint8_t> pixelValues;
@@ -187,6 +220,9 @@ namespace ofxRulr {
 				float normFactor = 127.0f / (float)maxValue;
 
 				// Apply norm factor
+				localDifferenceRaw.convertTo(normalizedImageRaw
+					, differenceImageRaw.type()
+					, normFactor);
 				localDifference.convertTo(normalizedImage
 					, differenceImage.type()
 					, normFactor);
@@ -194,26 +230,46 @@ namespace ofxRulr {
 				cout << "Max value : " << (int) maxValue << endl;
 			}
 
-			// Threshold the image and get the points
+			// Threshold the images and get the undistorted points
 			cv::Mat thresholded;
+			cv::Mat thresholdedRaw;
 			CameraImagePoints cameraImagePoints;
 			{
+				cv::threshold(normalizedImageRaw
+					, thresholdedRaw
+					, differenceThreshold
+					, 255
+					, cv::THRESH_BINARY);
+
 				cv::threshold(normalizedImage
 					, thresholded
 					, differenceThreshold
 					, 255
 					, cv::THRESH_BINARY);
 				
-				vector<cv::Point2i> pointsInt;
-				cv::findNonZero(thresholded, pointsInt);
-				for (const auto& pointInt : pointsInt) {
-					cameraImagePoints.points.emplace_back(pointInt.x, pointInt.y);
-					cameraImagePoints.weights.push_back(differenceImage.at<uint8_t>(pointInt.y, pointInt.x));
+				{
+					// Get the non-zero points in raw image
+					vector<cv::Point2i> pointsInt;
+					cv::findNonZero(thresholdedRaw, pointsInt);
+
+					// Gather the points
+					for (const auto& pointInt : pointsInt) {
+						cameraImagePoints.points.emplace_back(pointInt.x, pointInt.y);
+						cameraImagePoints.weights.push_back(differenceImageRaw.at<uint8_t>(pointInt.y, pointInt.x));
+					}
+
+					// Undistort the points
+					ofxCv::toCv(cameraImagePoints.points) = ofxCv::undistortImagePoints(ofxCv::toCv(cameraImagePoints.points)
+						, cameraNode->getCameraMatrix()
+						, cameraNode->getDistortionCoefficients());
 				}
 			}
 
-			// Draw on preview if supplied
-			if (!preview.empty()) {
+			// Draw on preview
+			{
+				// First layer is the undistorted difference image
+				preview = differenceImage.clone();
+
 				// Create the line image
 				cv::addWeighted(preview, 1.0
 					, thresholded, 0.1

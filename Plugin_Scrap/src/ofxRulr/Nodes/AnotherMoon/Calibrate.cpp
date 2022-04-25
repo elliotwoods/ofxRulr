@@ -5,6 +5,23 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace AnotherMoon {
+#pragma mark ImagePath
+			//----------
+			void
+				Calibrate::ImagePath::serialize(nlohmann::json& json)
+			{
+				Utils::serialize(json, "pathOnCamera", this->pathOnCamera);
+				Utils::serialize(json, "localCopy", this->localCopy);
+			}
+
+			//----------
+			void
+				Calibrate::ImagePath::deserialize(const nlohmann::json& json)
+			{
+				Utils::deserialize(json, "pathOnCamera", this->pathOnCamera);
+				Utils::deserialize(json, "localCopy", this->localCopy);
+			}
+
 #pragma mark BeamCapture
 			//----------
 			Calibrate::BeamCapture::BeamCapture()
@@ -26,8 +43,9 @@ namespace ofxRulr {
 				Calibrate::BeamCapture::serialize(nlohmann::json& json)
 			{
 				Utils::serialize(json, "imagePoint", this->imagePoint);
-				Utils::serialize(json, "urlOnImage", this->urlOnImage);
-				Utils::serialize(json, "urlOffImage", this->urlOffImage);
+
+				this->onImage.serialize(json["onImage"]);
+				this->offImage.serialize(json["offImage"]);
 
 				this->line.serialize(json["line"]);
 			}
@@ -37,8 +55,23 @@ namespace ofxRulr {
 				Calibrate::BeamCapture::deserialize(const nlohmann::json& json)
 			{
 				Utils::deserialize(json, "imagePoint", this->imagePoint);
-				Utils::deserialize(json, "urlOnImage", this->urlOnImage);
-				Utils::deserialize(json, "urlOffImage", this->urlOffImage);
+
+				// legacy encoding
+				{
+					if (json.contains("urlOnImage")) {
+						this->onImage.pathOnCamera = json["urlOnImage"].get<string>();
+					}
+					if (json.contains("urlOffImage")) {
+						this->offImage.pathOnCamera = json["urlOffImage"].get<string>();
+					}
+				}
+
+				if (json.contains("onImage")) {
+					this->onImage.deserialize(json["onImage"]);
+				}
+				if (json.contains("offImage")) {
+					this->offImage.deserialize(json["offImage"]);
+				}
 
 				if (json.contains("line")) {
 					this->line.deserialize(json["line"]);
@@ -56,23 +89,27 @@ namespace ofxRulr {
 				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<string>>("", [this]() {
 					return this->getDisplayString();
 					}));
-				widgets.push_back(make_shared<ofxCvGui::Widgets::Toggle>(">>"
-					, [this]() {
-						if (this->parentSelection) {
-							return this->parentSelection->isSelected(this);
+				{
+					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Beam capture"
+						, [this]() {
+							if (this->parentSelection) {
+								return this->parentSelection->isSelected(this);
+							}
+							else {
+								return false;
+							}
 						}
-						else {
-							return false;
-						}
-					}
-					, [this](bool value) {
-						if (this->parentSelection) {
-							this->parentSelection->select(this);
-						}
-						else {
-							ofLogError() << "EditSelection not initialised";
-						}
-					}));
+						, [this](bool value) {
+							if (this->parentSelection) {
+								this->parentSelection->select(this);
+							}
+							else {
+								ofLogError() << "EditSelection not initialised";
+							}
+						});
+					button->setDrawGlyph(u8"\uf03a");
+					widgets.push_back(button);
+				}
 
 
 				for (auto& widget : widgets) {
@@ -145,23 +182,27 @@ namespace ofxRulr {
 				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<string>>("Laser #" + ofToString(this->laserAddress), [this]() {
 					return this->getDisplayString();
 					}));
-				widgets.push_back(make_shared<ofxCvGui::Widgets::Toggle>(">>"
-					, [this]() {
-						if (this->parentSelection) {
-							return this->parentSelection->isSelected(this);
+				{
+					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Beams in laser"
+						, [this]() {
+							if (this->parentSelection) {
+								return this->parentSelection->isSelected(this);
+							}
+							else {
+								return false;
+							}
 						}
-						else {
-							return false;
-						}
-					}
-					, [this](bool value) {
-						if (this->parentSelection) {
-							this->parentSelection->select(this);
-						}
-						else {
-							ofLogError() << "EditSelection not initialised";
-						}
-					}));
+						, [this](bool value) {
+							if (this->parentSelection) {
+								this->parentSelection->select(this);
+							}
+							else {
+								ofLogError() << "EditSelection not initialised";
+							}
+						});
+					button->setDrawGlyph(u8"\uf03a");
+					widgets.push_back(button);
+				}
 
 
 				for (auto& widget : widgets) {
@@ -228,26 +269,30 @@ namespace ofxRulr {
 
 				vector<ofxCvGui::ElementPtr> widgets;
 
-				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<string>>("", [this]() {
-					return this->getDisplayString();
+				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<size_t>>("Laser capture count", [this]() {
+					return this->laserCaptures.size();
 					}));
-				widgets.push_back(make_shared<ofxCvGui::Widgets::Toggle>(">>"
-					, [this]() {
-						if (this->parentSelection) {
-							return this->parentSelection->isSelected(this);
+				{
+					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Lasers in camera"
+						, [this]() {
+							if (this->parentSelection) {
+								return this->parentSelection->isSelected(this);
+							}
+							else {
+								return false;
+							}
 						}
-						else {
-							return false;
-						}
-					}
-					, [this](bool value) {
-						if (this->parentSelection) {
-							this->parentSelection->select(this);
-						}
-						else {
-							ofLogError() << "EditSelection not initialised";
-						}
-					}));
+						, [this](bool value) {
+							if (this->parentSelection) {
+								this->parentSelection->select(this);
+							}
+							else {
+								ofLogError() << "EditSelection not initialised";
+							}
+						});
+					button->setDrawGlyph(u8"\uf03a");
+					widgets.push_back(button);
+				}
 
 
 				for (auto& widget : widgets) {
@@ -288,6 +333,7 @@ namespace ofxRulr {
 				Calibrate::init()
 			{
 				this->addInput<Lasers>();
+				this->addInput<Item::Camera>("Calibrated camera");
 
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
@@ -297,6 +343,7 @@ namespace ofxRulr {
 				{
 					// Make the panel
 					auto panel = ofxCvGui::Panels::makeWidgets();
+					panel->addTitle("Camera positions:", ofxCvGui::Widgets::Title::Level::H3);
 					this->cameraCaptures.populateWidgets(panel);
 					this->panel = panel;
 				}
@@ -418,7 +465,7 @@ namespace ofxRulr {
 							}
 							this->waitForDelay();
 							if (!dryRun) {
-								beamCapture->urlOffImage = this->captureToURL();
+								beamCapture->offImage.pathOnCamera = this->captureToURL();
 							}
 
 							// Positive capture image
@@ -428,7 +475,7 @@ namespace ofxRulr {
 							}
 							this->waitForDelay();
 							if (!dryRun) {
-								beamCapture->urlOnImage = this->captureToURL();
+								beamCapture->onImage.pathOnCamera = this->captureToURL();
 							}
 
 							if (!dryRun) {
@@ -470,83 +517,37 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void
-				Calibrate::process()
+			Utils::CaptureSet<Calibrate::CameraCapture>
+				Calibrate::getCameraCaptures()
 			{
-				Utils::ScopedProcess scopedProcess("Process");
-
-				this->throwIfMissingAConnection<Lasers>();
-				auto lasersNode = this->getInput<Lasers>();
-				auto selectedLasers = lasersNode->getSelectedLasers();
-
-				auto cameraCaptures = this->cameraCaptures.getSelection();
-
-				{
-					Utils::ScopedProcess scopedProcessCameras("Cameras", false, cameraCaptures.size());
-
-					for (auto cameraCapture : cameraCaptures) {
-						auto laserCaptures = cameraCapture->laserCaptures.getSelection();
-						Utils::ScopedProcess scopedProcessCameras("Camera : " + cameraCapture->getDateString() + " " + cameraCapture->getTimeString(), false, laserCaptures.size());
-
-						for (auto laserCapture : laserCaptures) {
-							auto beamCaptures = laserCapture->beamCaptures.getSelection();
-							Utils::ScopedProcess scopedProcessLasers("Laser #" + ofToString(laserCapture->laserAddress), false, beamCaptures.size());
-
-							vector<Solvers::LinesFromPoint::CameraImagePoints> images;
-
-							cv::Mat preview;
-							
-							// Gather image points per beam in laser
-							for (auto beamCapture : beamCaptures) {
-								Utils::ScopedProcess scopedProcessBeam("Beam : " + ofToString(beamCapture->imagePoint), false, beamCaptures.size());
-
-								// Get the on and off images
-								auto onImage = this->fetchImage(beamCapture->urlOnImage);
-								auto offImage = this->fetchImage(beamCapture->urlOffImage);
-
-								// Get the positive difference
-								cv::Mat difference;
-								cv::subtract(onImage, offImage, difference);
-
-								// Allocate preview if needs be
-								if (preview.empty()) {
-									preview = cv::Mat::zeros(difference.size(), difference.type());
-								}
-
-								// Get the camera image points for this image
-								images.push_back(Solvers::LinesFromPoint::getCameraImagePoints(difference
-									, this->parameters.processing.normalizePercentile.get()
-									, this->parameters.processing.differenceThreshold.get()
-									, preview));
-							}
-
-							// Solve lines for the whole laser
-							auto solverSettings = Solvers::LinesFromPoint::defaultSolverSettings();
-							this->configureSolverSettings(solverSettings);
-							auto result = Solvers::LinesFromPoint::solve(images
-								, this->parameters.processing.distanceThreshold.get()
-								, this->parameters.processing.minMeanPixelValueOnLine.get()
-								, solverSettings);
-
-							// Pull data back from solve
-							laserCapture->imagePointInCamera = result.solution.point;
-							for (int i = 0; i < beamCaptures.size(); i++) {
-								beamCaptures[i]->line = result.solution.lines[i];
-								if (!result.solution.linesValid[i]) {
-									beamCaptures[i]->setSelected(false);
-								}
-								else {
-									beamCaptures[i]->line.drawOnImage(preview);
-								}
-							}
-
-							laserCapture->preview = preview;
-						}
-					}
-				}
-
-				scopedProcess.end();
+				return this->cameraCaptures;
 			}
+
+			//----------
+			filesystem::path
+				Calibrate::getLocalCopyPath(const ImagePath& imagePath) const
+			{
+				if (imagePath.localCopy.empty()) {
+					// render an image path based on a local directory
+					auto url = imagePath.pathOnCamera;
+					auto splitPath = ofSplitString(url, "/");
+					auto filename = splitPath.back();
+					auto localPath = filesystem::path(this->parameters.processing.localDirectory.get());
+					if (localPath.empty()) {
+						throw(ofxRulr::Exception("Local path is empty"));
+					}
+					if (!filesystem::is_directory(localPath)) {
+						localPath = localPath.parent_path();
+					}
+					auto fullFilePath = localPath / filename;
+					return fullFilePath;
+				}
+				else {
+					// use the image path that's stored
+					return imagePath.localCopy;
+				}
+			}
+
 
 			//----------
 			vector<glm::vec2>
@@ -634,6 +635,8 @@ namespace ofxRulr {
 			vector<string>
 				Calibrate::pollNewCameraFiles()
 			{
+				// This function makes a request to a supported Canon EOS camera over REST 
+
 				ofHttpRequest request;
 				{
 					request.method = ofHttpRequest::GET;
@@ -646,6 +649,7 @@ namespace ofxRulr {
 					throw(ofxRulr::Exception("Couldn't poll camera : " + (string)response.data));
 				}
 
+				// Look through the response from the camera
 				auto json = nlohmann::json::parse(response.data);
 				vector<string> results;
 				if (json.contains("addedcontents")) {
@@ -659,23 +663,14 @@ namespace ofxRulr {
 
 			//----------
 			cv::Mat
-				Calibrate::fetchImage(const string& cameraPath) const
+				Calibrate::fetchImage(const ImagePath& imagePath) const
 			{
 				auto flags = cv::IMREAD_GRAYSCALE;
 
 				switch (this->parameters.processing.imageFileSource.get()) {
 					case ImageFileSource::Local:
 					{
-						auto splitPath = ofSplitString(cameraPath, "/");
-						auto filename = splitPath.back();
-						auto localPath = filesystem::path(this->parameters.processing.localPath.get());
-						if (localPath.empty()) {
-							throw(ofxRulr::Exception("Local path is empty"));
-						}
-						if (!filesystem::is_directory(localPath)) {
-							localPath = localPath.parent_path();
-						}
-						auto fullFilePath = localPath / filename;
+						auto fullFilePath = this->getLocalCopyPath(imagePath);
 
 						auto image = cv::imread(fullFilePath.string(), flags);
 						if (image.empty()) {
@@ -685,7 +680,7 @@ namespace ofxRulr {
 					}
 					case ImageFileSource::Camera:
 					{
-						auto response = ofLoadURL("http://" + this->parameters.capture.remoteCamera.hostname.get() + ":8080" + cameraPath);
+						auto response = ofLoadURL("http://" + this->parameters.capture.remoteCamera.hostname.get() + ":8080" + imagePath.pathOnCamera);
 						if (response.status == 200) {
 							auto data = response.data.getData();
 							vector<unsigned char> buffer(data, data + response.data.size());

@@ -7,6 +7,10 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace AnotherMoon {
+			/// <summary>
+			/// A set of lasers stored locally. Each laser is a BaseCapture.
+			/// Calibration data is stored externally in Calibrate node
+			/// </summary>
 			class Lasers : public Nodes::Base {
 			public:
 				MAKE_ENUM(State

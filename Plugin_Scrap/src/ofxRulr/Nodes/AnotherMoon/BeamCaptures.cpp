@@ -70,6 +70,7 @@ namespace ofxRulr {
 					this->panel->addTitle("Select laser capture");
 				}
 				else {
+					panel->addTitle("Beam positions:", ofxCvGui::Widgets::Title::Level::H3);
 					this->laserCapture->beamCaptures.populateWidgets(this->panel);
 				}
 			}
