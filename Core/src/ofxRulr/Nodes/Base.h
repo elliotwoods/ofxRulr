@@ -3,6 +3,7 @@
 #include "ofxRulr/Graph/Pin.h"
 #include "ofxRulr/Utils/Constants.h"
 #include "ofxRulr/Utils/Serializable.h"
+#include "ofxRulr/Utils/LambdaDrawable.h"
 #include "ofxRulr/Exception.h"
 #include "ofxRulr/Version.h"
 
@@ -73,9 +74,12 @@ namespace ofxRulr {
 			void setColor(const ofColor &);
 
 			///Calling getIcon caches the icon and the color
-			const ofBaseDraws & getIcon();
+			shared_ptr<Utils::LambdaDrawable> getIcon();
 			void setIcon(shared_ptr<ofBaseDraws>); // custom icon (e.g. live)
 			void setIcon(shared_ptr<ofxAssets::Image>); // standard icon
+			void setIconGlyph(const std::string&);
+			void setIconDefault();
+			void setIcon(shared_ptr<Utils::LambdaDrawable>);
 
 			const Graph::PinSet & getInputPins() const;
 			void populateInspector(ofxCvGui::InspectArguments &);
@@ -182,8 +186,7 @@ namespace ofxRulr {
 		private:
 			Graph::Editor::NodeHost * nodeHost;
 			Graph::PinSet inputPins;
-			shared_ptr<ofBaseDraws> customIcon;
-			shared_ptr<ofxAssets::Image> standardIcon;
+			shared_ptr<Utils::LambdaDrawable> icon;
 			shared_ptr<ofColor> color;
 
 			string name;

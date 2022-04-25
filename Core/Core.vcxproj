@@ -79,6 +79,7 @@
     <ClCompile Include="src\ofxRulr\Utils\Constants.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Graphics.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Gui.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\LambdaDrawable.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\PolyFit.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\ScopedProcess.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="src\ofxRulr\Utils\Constants.h" />
     <ClInclude Include="src\ofxRulr\Utils\Graphics.h" />
     <ClInclude Include="src\ofxRulr\Utils\Gui.h" />
+    <ClInclude Include="src\ofxRulr\Utils\LambdaDrawable.h" />
     <ClInclude Include="src\ofxRulr\Utils\Initialiser.h" />
     <ClInclude Include="src\ofxRulr\Utils\PolyFit.h" />
     <ClInclude Include="src\ofxRulr\Utils\ScopedProcess.h" />

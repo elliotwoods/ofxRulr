@@ -142,8 +142,8 @@ namespace ofxRulr {
 							});
 						widget->onDraw += [this](ofxCvGui::DrawArguments& args) {
 							auto size = min(args.localBounds.getHeight(), args.localBounds.getWidth()) * 0.9;
-							auto& icon = this->rigidBody->getIcon();
-							icon.draw(args.localBounds.getCenter() - glm::vec2(size / 2, size / 2), size, size);
+							auto icon = this->rigidBody->getIcon();
+							icon->draw(ofRectangle(args.localBounds.getCenter() - glm::vec2(size / 2, size / 2), size, size));
 						};
 						group->add(widget);
 						groupWidgets.push_back(widget);

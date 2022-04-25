@@ -2,6 +2,7 @@
 
 #include "../FactoryRegister.h"
 #include "ofxRulr/Utils/Constants.h"
+#include "ofxRulr/Utils/LambdaDrawable.h"
 
 #include "ofxCvGui/Element.h"
 #include "ofxCvGui/Utils/TextField.h"
@@ -15,10 +16,10 @@ namespace ofxRulr {
 				public:
 					ListItem(shared_ptr<BaseFactory>);
 					shared_ptr<BaseFactory> getFactory();
-					const ofBaseDraws & getIcon();
+					shared_ptr<Utils::LambdaDrawable> getIcon();
 				protected:
 					shared_ptr<BaseFactory> factory;
-					const ofBaseDraws * icon = nullptr;
+					shared_ptr<Utils::LambdaDrawable> icon;
 				};
 
 			public:

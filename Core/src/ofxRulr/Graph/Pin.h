@@ -27,7 +27,7 @@ namespace ofxRulr {
 			virtual bool checkSupports(shared_ptr<Nodes::Base>) const = 0;
 			virtual shared_ptr<Nodes::Base> getConnectionUntyped() const = 0;
 
-			virtual const ofBaseDraws & getNodeIcon() = 0;
+			virtual shared_ptr<Utils::LambdaDrawable> getNodeIcon() = 0;
 			virtual const ofColor & getNodeColor() const = 0;
 			
 			string getName() const;
@@ -142,11 +142,11 @@ namespace ofxRulr {
 				return this->connection.lock();
 			}
 
-			const ofBaseDraws & getNodeIcon() override {
+			shared_ptr<Utils::LambdaDrawable> getNodeIcon() override {
 				if (!this->icon) {
-					this->icon = & NodeType().getIcon();
+					this->icon = NodeType().getIcon();
 				}
-				return * this->icon;
+				return this->icon;
 			}
 
 			const ofColor & getNodeColor() const override {
@@ -158,7 +158,7 @@ namespace ofxRulr {
 		protected:
 			weak_ptr<NodeType> connection;
 			bool connectionMade; // this will stay true temporarily to handle the case where connected node is deleted and weak_ptr becomes invalid
-			const ofBaseDraws * icon = nullptr;
+			shared_ptr<Utils::LambdaDrawable> icon;
 			ofColor color;
 		};
 

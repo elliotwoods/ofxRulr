@@ -124,26 +124,38 @@ namespace ofxRulr {
 		}
 
 		//----------
-		const ofBaseDraws & Base::getIcon() {
-			if (this->customIcon) {
-				return * this->customIcon;
-			} else if (this->standardIcon) {
-				return this->standardIcon->get();
+		shared_ptr<Utils::LambdaDrawable> Base::getIcon() {
+			if (!this->icon) {
+				this->setIconDefault();
 			}
-			else {
-				this->standardIcon = GraphicsManager::X().getIcon(this->getTypeName());
-				return this->standardIcon->get();
-			}
+			return this->icon;
 		}
 
 		//----------
-		void Base::setIcon(shared_ptr<ofBaseDraws> customIcon) {
-			this->customIcon = customIcon;
+		void Base::setIcon(shared_ptr<ofBaseDraws> icon) {
+			this->icon = make_shared<Utils::LambdaDrawable>([icon](const ofRectangle& bounds) {
+				icon->draw(bounds);
+				});
 		}
 
 		//----------
-		void Base::setIcon(shared_ptr<ofxAssets::Image> standardIcon) {
-			this->standardIcon = standardIcon;
+		void Base::setIcon(shared_ptr<ofxAssets::Image> icon) {
+			this->icon = make_shared<Utils::LambdaDrawable>([icon](const ofRectangle& bounds) {
+				icon->get().draw(bounds);
+				});
+		}
+
+		//----------
+		void Base::setIconGlyph(const std::string& glyph) {
+			this->icon = make_shared<Utils::LambdaDrawable>([glyph](const ofRectangle& bounds) {
+				ofxCvGui::Utils::drawGlyph(glyph, bounds);
+				});
+		}
+
+		//----------
+		void Base::setIconDefault() {
+			auto image = GraphicsManager::X().getIcon(this->getTypeName());
+			this->setIcon(image);
 		}
 
 		//----------

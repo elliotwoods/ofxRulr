@@ -1,15 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="src\ofxRulr\Graph">
-      <UniqueIdentifier>{6c94d630-9339-4601-ae19-fdce499df997}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr\Graph\Editor">
-      <UniqueIdentifier>{e468759d-d487-48db-a966-6617ce9aa63d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr\Utils">
-      <UniqueIdentifier>{3323f018-b50f-4eb5-8d8e-8465f90f3e62}</UniqueIdentifier>
-    </Filter>
     <Filter Include="addons">
       <UniqueIdentifier>{7cfba1ea-d11f-4ef4-8926-c7e28ba7f0c9}</UniqueIdentifier>
     </Filter>
@@ -19,23 +10,8 @@
     <Filter Include="addons\ofxClipboard\src">
       <UniqueIdentifier>{82727677-eaf1-4107-9eb4-557d1488c722}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src">
-      <UniqueIdentifier>{3bce12bf-90a2-4feb-831d-ead413a41720}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr">
-      <UniqueIdentifier>{1d8e493b-f189-4d07-8a39-851fdc37f1aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr\Graph">
-      <UniqueIdentifier>{949fbb27-4f39-4e76-8daa-fdbd87a6060d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\ofxRulr\Nodes">
-      <UniqueIdentifier>{3e1f058f-86fd-4a62-b1e5-65fd6d04430f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="addons\ofxOsc">
       <UniqueIdentifier>{ce53975f-4aeb-4d64-8491-7493cff94dd0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxOsc\src">
-      <UniqueIdentifier>{a1384e3f-ba8a-43d7-8298-d23d1a114771}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs">
       <UniqueIdentifier>{43dad677-966c-467a-a934-9f06b53ee446}</UniqueIdentifier>
@@ -46,88 +22,55 @@
     <Filter Include="addons\ofxOsc\libs\oscpack\src">
       <UniqueIdentifier>{ba03b0ac-95bf-437c-bab2-feffe9323eec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
-      <UniqueIdentifier>{b98578c1-89c6-45d7-afb1-ab831ec74589}</UniqueIdentifier>
-    </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\ip">
       <UniqueIdentifier>{16e5253b-53b1-4def-9234-e22af55c626e}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\ip\win32">
       <UniqueIdentifier>{f33d6ad8-5ecb-42e3-a7af-f7cc31159585}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
+      <UniqueIdentifier>{b98578c1-89c6-45d7-afb1-ab831ec74589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOsc\src">
+      <UniqueIdentifier>{a1384e3f-ba8a-43d7-8298-d23d1a114771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{3bce12bf-90a2-4feb-831d-ead413a41720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{1d8e493b-f189-4d07-8a39-851fdc37f1aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Graph">
+      <UniqueIdentifier>{6c94d630-9339-4601-ae19-fdce499df997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Graph">
+      <UniqueIdentifier>{949fbb27-4f39-4e76-8daa-fdbd87a6060d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Graph\Editor">
+      <UniqueIdentifier>{e468759d-d487-48db-a966-6617ce9aa63d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{3e1f058f-86fd-4a62-b1e5-65fd6d04430f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Utils">
+      <UniqueIdentifier>{3323f018-b50f-4eb5-8d8e-8465f90f3e62}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\ofxRulr\Utils\Serialization">
       <UniqueIdentifier>{856fc72b-7aa2-42f2-be50-0144b90cde57}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ofxRulr\Graph\Pin.cpp">
-      <Filter>src\ofxRulr\Graph</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\World.cpp">
-      <Filter>src\ofxRulr\Graph</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\Editor\NodeHost.cpp">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\Editor\Patch.cpp">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\Editor\PinView.cpp">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\Editor\LinkHost.cpp">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\Editor\NodeBrowser.cpp">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Gui.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ofxClipboard\src\ofxClipboard.cpp">
       <Filter>addons\ofxClipboard\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Exception.cpp">
-      <Filter>src\ofxRulr</Filter>
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp">
+      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Base.cpp">
-      <Filter>src\ofxRulr\Nodes</Filter>
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtils.cpp">
+      <Filter>addons\ofxOsc\libs\oscpack\src\ip\win32</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\FactoryRegister.cpp">
-      <Filter>src\ofxRulr\Graph</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\PolyFit.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\ScopedProcess.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\SoundEngine.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="src\pch_RulrCore.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscMessage.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscParameterSync.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscReceiver.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\src\ofxOscBundle.cpp">
-      <Filter>addons\ofxOsc\src</Filter>
+    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\UdpSocket.cpp">
+      <Filter>addons\ofxOsc\libs\oscpack\src\ip\win32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscOutboundPacketStream.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
@@ -141,32 +84,86 @@
     <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscBundle.cpp">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtils.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip\win32</Filter>
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscMessage.cpp">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ofxOsc\libs\oscpack\src\ip\win32\UdpSocket.cpp">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip\win32</Filter>
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscParameterSync.cpp">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Graphics.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscReceiver.cpp">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Utils.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
+    <ClCompile Include="..\..\ofxOsc\src\ofxOscSender.cpp">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\CaptureSet.cpp">
-      <Filter>src\ofxRulr\Utils</Filter>
+    <ClCompile Include="src\ofxRulr\Exception.cpp">
+      <Filter>src\ofxRulr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\LinkHost.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\NodeBrowser.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\NodeHost.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\Patch.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\Editor\PinView.cpp">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\FactoryRegister.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\Pin.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\World.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Graph\WorldStage.cpp">
+      <Filter>src\ofxRulr\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Base.cpp">
+      <Filter>src\ofxRulr\Nodes</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\GraphicsManager.cpp">
       <Filter>src\ofxRulr\Nodes</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\ThreadPool.cpp">
+    <ClCompile Include="src\ofxRulr\Utils\CaptureSet.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Graph\WorldStage.cpp">
-      <Filter>src\ofxRulr\Graph</Filter>
+    <ClCompile Include="src\ofxRulr\Utils\Constants.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Graphics.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Gui.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Initialiser.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\LambdaDrawable.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\PolyFit.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\ScopedProcess.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Serializable.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Serialization\Addons.cpp">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Utils\Serialization\Native.cpp">
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
@@ -177,97 +174,37 @@
     <ClCompile Include="src\ofxRulr\Utils\Serialization\Parameters.cpp">
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Serialization\Addons.cpp">
-      <Filter>src\ofxRulr\Utils\Serialization</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Utils\Constants.cpp">
+    <ClCompile Include="src\ofxRulr\Utils\SoundEngine.cpp">
       <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\ThreadPool.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Utils\Utils.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch_RulrCore.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ofxRulr\Graph\Pin.h">
-      <Filter>src\ofxRulr\Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\World.h">
-      <Filter>src\ofxRulr\Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\Editor\NodeBrowser.h">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\Editor\NodeHost.h">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\Editor\Patch.h">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\Editor\PinView.h">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\Editor\LinkHost.h">
-      <Filter>src\ofxRulr\Graph\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Serializable.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Set.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Constants.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Gui.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Initialiser.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ofxClipboard\src\ofxClipboard.h">
       <Filter>addons\ofxClipboard\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Exception.h">
-      <Filter>src\ofxRulr</Filter>
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h">
+      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Version.h">
-      <Filter>src\ofxRulr</Filter>
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h">
+      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Base.h">
-      <Filter>src\ofxRulr\Nodes</Filter>
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\PacketListener.h">
+      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Graph\FactoryRegister.h">
-      <Filter>src\ofxRulr\Graph</Filter>
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\TimerListener.h">
+      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\PolyFit.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\ScopedProcess.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\SoundEngine.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\pch_RulrCore.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscMessage.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscParameterSync.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscReceiver.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscSender.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOsc.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscArg.h">
-      <Filter>addons\ofxOsc\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\src\ofxOscBundle.h">
-      <Filter>addons\ofxOsc\src</Filter>
+    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\UdpSocket.h">
+      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\MessageMappingOscPacketListener.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
@@ -293,41 +230,95 @@
     <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\osc\OscTypes.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
+    <ClInclude Include="..\..\ofxOsc\src\ofxOsc.h">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscArg.h">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\PacketListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscBundle.h">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\TimerListener.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscMessage.h">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ofxOsc\libs\oscpack\src\ip\UdpSocket.h">
-      <Filter>addons\ofxOsc\libs\oscpack\src\ip</Filter>
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscParameterSync.h">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Graphics.h">
-      <Filter>src\ofxRulr\Utils</Filter>
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscReceiver.h">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Utils.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\CaptureSet.h">
-      <Filter>src\ofxRulr\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\GraphicsManager.h">
-      <Filter>src\ofxRulr\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\ThreadPool.h">
-      <Filter>src\ofxRulr\Utils</Filter>
+    <ClInclude Include="..\..\ofxOsc\src\ofxOscSender.h">
+      <Filter>addons\ofxOsc\src</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Exception.h">
+      <Filter>src\ofxRulr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\LinkHost.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\NodeBrowser.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\NodeHost.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\Patch.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\Editor\PinView.h">
+      <Filter>src\ofxRulr\Graph\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\FactoryRegister.h">
+      <Filter>src\ofxRulr\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\Pin.h">
+      <Filter>src\ofxRulr\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Graph\World.h">
+      <Filter>src\ofxRulr\Graph</Filter>
+    </ClInclude>
     <ClInclude Include="src\ofxRulr\Graph\WorldStage.h">
       <Filter>src\ofxRulr\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Base.h">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\GraphicsManager.h">
+      <Filter>src\ofxRulr\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\CaptureSet.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Constants.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Graphics.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Gui.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Initialiser.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\LambdaDrawable.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\PolyFit.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\ScopedProcess.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Serializable.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Serialization\Addons.h">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Utils\Serialization\Native.h">
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
@@ -338,8 +329,23 @@
     <ClInclude Include="src\ofxRulr\Utils\Serialization\Parameters.h">
       <Filter>src\ofxRulr\Utils\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Utils\Serialization\Addons.h">
-      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    <ClInclude Include="src\ofxRulr\Utils\Set.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\SoundEngine.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\ThreadPool.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Utils.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Version.h">
+      <Filter>src\ofxRulr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch_RulrCore.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

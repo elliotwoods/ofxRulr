@@ -10,7 +10,7 @@ namespace ofxRulr {
 				this->setBounds(ofRectangle(0, 0, 300, 48 + 20));
 				this->setCachedView(true);
 				this->factory = factory;
-				this->icon = & factory->makeUntyped()->getIcon();
+				this->icon = factory->makeUntyped()->getIcon();
 
 				this->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					//background to hide ofFbo bad text
@@ -31,8 +31,8 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const ofBaseDraws & NodeBrowser::ListItem::getIcon() {
-				return * this->icon;
+			shared_ptr<Utils::LambdaDrawable> NodeBrowser::ListItem::getIcon() {
+				return this->icon;
 			}
 
 #pragma mark NodeBrowser
@@ -125,7 +125,10 @@ namespace ofxRulr {
 					auto currentSelection = this->currentSelection.lock();
 					string message;
 					if (currentSelection) {
-						currentSelection->getIcon().draw(10, 10, 96, 96);
+						auto icon = currentSelection->getIcon();
+						if (icon) {
+							icon->draw(10, 10, 96, 96);
+						}
 						message += currentSelection->getFactory()->getModuleTypeName();
 					}
 					message += "\n" + ofToString(this->listBox->getElementGroup()->getElements().size()) + " nodes found.\n";

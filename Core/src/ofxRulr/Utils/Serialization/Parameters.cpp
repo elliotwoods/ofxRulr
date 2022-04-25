@@ -183,7 +183,19 @@ namespace ofxRulr {
 					if (tryDeserialize<ofRectangle>(jsonGroup, parameter)) continue;
 
 					if (tryDeserialize<string>(jsonGroup, parameter)) continue;
-					if (tryDeserialize<filesystem::path>(jsonGroup, parameter)) continue;
+
+					// custom deserialize for filesystem::path since auto doesn't work
+					{
+						auto typedParameter = dynamic_pointer_cast<ofParameter<filesystem::path>>(parameter);
+						if (typedParameter) {
+							if (jsonGroup.contains(typedParameter->getName())) {
+								auto pathString = jsonGroup[typedParameter->getName()].get<string>();
+								auto path = filesystem::path(pathString);
+								typedParameter->set(path);
+							}
+							continue;
+						}
+					}
 
 					//group
 					{

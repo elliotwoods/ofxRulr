@@ -2,6 +2,7 @@
 
 #include "ofxCvGui/Element.h"
 #include "ofxRulr/Utils/Constants.h"
+#include "ofxRulr/Utils/LambdaDrawable.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -23,7 +24,7 @@ namespace ofxRulr {
 					this->setup(tempNode);
 				}
 			protected:
-				const ofBaseDraws * icon = nullptr;
+				shared_ptr<Utils::LambdaDrawable> icon;
 				string nodeTypeName;
 			};
 		}

@@ -50,6 +50,7 @@ EXPORTS
 	??0ofPath@@QEAA@XZ
 	??0ofPlanePrimitive@@QEAA@XZ
 	??0ofQuaternion@@QEAA@AEBU?$qua@M$0A@@glm@@@Z
+	??0ofRectangle@@QEAA@AEBU?$vec@$02M$0A@@glm@@MM@Z
 	??0ofRectangle@@QEAA@AEBV0@@Z
 	??0ofRectangle@@QEAA@MMMM@Z
 	??0ofRectangle@@QEAA@XZ
@@ -171,6 +172,7 @@ EXPORTS
 	?ofShowCursor@@YAXXZ
 	?ofSleepMillis@@YAXH@Z
 	?ofSplitString@@YA?AV?$vector@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$allocator@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@@std@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@0_N1@Z
+	?ofStringReplace@@YAXAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV12@1@Z
 	?ofSystemAlertDialog@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?ofSystemLoadDialog@@YA?AVofFileDialogResult@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_N0@Z
 	?ofSystemSaveDialog@@YA?AVofFileDialogResult@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0@Z
@@ -613,6 +615,7 @@ EXPORTS
 	?setSelection@MultipleChoice@Widgets@ofxCvGui@@QEAAXH@Z
 	?setSelection@MultipleChoice@Widgets@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?addIntValidator@Slider@Widgets@ofxCvGui@@QEAAXXZ
+	?setDrawGlyph@Toggle@Widgets@ofxCvGui@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?getCursorWorld@ofxGrabCam@@QEBAAEBU?$vec@$02M$0A@@glm@@XZ
 	??0BaseCodec@ofxGraycode@@QEAA@XZ
 	??0DataSet@ofxGraycode@@QEAA@XZ
@@ -759,13 +762,14 @@ EXPORTS
 	?drawWorldAdvanced@Base@Nodes@ofxRulr@@QEAAXAEAUDrawWorldAdvancedArgs@3@@Z
 	?drawWorldStage@Base@Nodes@ofxRulr@@QEAAXXZ
 	?getColor@Base@Nodes@ofxRulr@@QEAAAEBV?$ofColor_@E@@XZ
-	?getIcon@Base@Nodes@ofxRulr@@QEAAAEBVofBaseDraws@@XZ
+	?getIcon@Base@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VLambdaDrawable@Utils@ofxRulr@@@std@@XZ
 	?getInputPins@Base@Nodes@ofxRulr@@QEBAAEBV?$Set@VAbstractPin@Graph@ofxRulr@@@Utils@3@XZ
 	?getName@Base@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getTypeName@Base@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?manageParameters@Base@Nodes@ofxRulr@@QEAAXAEAVofParameterGroup@@_N@Z
 	?setColor@Base@Nodes@ofxRulr@@QEAAXAEBV?$ofColor_@E@@@Z
 	?setIcon@Base@Nodes@ofxRulr@@QEAAXV?$shared_ptr@VImage@ofxAssets@@@std@@@Z
+	?setIconGlyph@Base@Nodes@ofxRulr@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?setName@Base@Nodes@ofxRulr@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?throwIfMissingAnyConnection@Base@Nodes@ofxRulr@@QEBAXXZ
 	?update@Base@Nodes@ofxRulr@@QEAAXXZ
@@ -875,6 +879,7 @@ EXPORTS
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVCamera@ofxRay@@@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVofParameterGroup@@@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVofRectangle@@@Z
+	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVpath@filesystem@boost@@@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVPlane@ofxRay@@@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVRay@ofxRay@@@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEB_N@Z
@@ -899,6 +904,7 @@ EXPORTS
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBVCamera@ofxRay@@@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBVofParameterGroup@@@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBVofRectangle@@@Z
+	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBVpath@filesystem@boost@@@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBVPlane@ofxRay@@@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBVRay@ofxRay@@@Z
 	?speakCount@Utils@ofxRulr@@YAX_K@Z
