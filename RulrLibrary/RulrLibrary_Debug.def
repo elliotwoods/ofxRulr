@@ -513,6 +513,7 @@ EXPORTS
 	?toOf@ofxCv@@YAAEBV?$vector@U?$vec@$01M$0A@@glm@@V?$allocator@U?$vec@$01M$0A@@glm@@@std@@@std@@AEBV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@3@@Z
 	?toOf@ofxCv@@YAAEBV?$vector@U?$vec@$02M$0A@@glm@@V?$allocator@U?$vec@$02M$0A@@glm@@@std@@@std@@AEBV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@3@@Z
 	?undistortImagePoints@ofxCv@@YA?AV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@AEBV23@VMat@cv@@1@Z
+	?showImage@Modals@ofxCv@@YAXAEBVMat@cv@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBUWindowProperties@12@@Z
 	??0Controller@ofxCvGui@@QEAA@XZ
 	??0Element@ofxCvGui@@QEAA@XZ
 	??0InspectController@ofxCvGui@@QEAA@XZ
@@ -917,6 +918,7 @@ EXPORTS
 	?populateWidgets@AbstractCaptureSet@Utils@ofxRulr@@QEAAXV?$shared_ptr@VWidgets@Panels@ofxCvGui@@@std@@@Z
 	?remove@AbstractCaptureSet@Utils@ofxRulr@@QEAAXV?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@@Z
 	?select@AbstractCaptureSet@Utils@ofxRulr@@QEAAXV?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@@Z
+	?selectAll@AbstractCaptureSet@Utils@ofxRulr@@QEAAXXZ
 	?selectNone@AbstractCaptureSet@Utils@ofxRulr@@QEAAXXZ
 	?serialize@AbstractCaptureSet@Utils@ofxRulr@@QEAAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@@Z
 	?size@AbstractCaptureSet@Utils@ofxRulr@@QEBA_KXZ

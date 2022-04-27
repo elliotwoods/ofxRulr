@@ -80,6 +80,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Models\Line.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.cpp" />
@@ -91,6 +92,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\BundleAdjustmentPoints.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\LineMCToImage.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\LinesWithCommonPoint.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\LineToImage.cpp" />
@@ -106,6 +108,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Models\Line.h" />
+    <ClInclude Include="src\ofxRulr\Models\Camera.h" />
+    <ClInclude Include="src\ofxRulr\Models\Transform.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.h" />
@@ -116,6 +121,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\FindLine.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\LaserToWorld.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\BundleAdjustmentPoints.h" />
     <ClInclude Include="src\ofxRulr\Solvers\LineMCToImage.h" />
     <ClInclude Include="src\ofxRulr\Solvers\LinesWithCommonPoint.h" />
     <ClInclude Include="src\ofxRulr\Solvers\LineToImage.h" />

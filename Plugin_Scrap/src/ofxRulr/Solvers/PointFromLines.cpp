@@ -1,10 +1,11 @@
 #include "pch_Plugin_Scrap.h"
 #include "PointFromLines.h"
 #include <opencv2/opencv.hpp>
+#include "ofxRulr/Models/Line.h"
 
 const bool previewEnabled = false;
 
-typedef ofxRulr::Solvers::LineToImage::Line Line;
+typedef ofxRulr::Models::Line Line;
 
 struct PointFromLinesCost
 {
@@ -48,7 +49,7 @@ namespace ofxRulr {
 
 		//----------
 		PointFromLines::Result
-			PointFromLines::solve(const vector<LineToImage::Line>& lines
+			PointFromLines::solve(const vector<Line>& lines
 				, const ofxCeres::SolverSettings& solverSettings)
 		{
 			if (lines.empty()) {

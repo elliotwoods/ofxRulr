@@ -25,6 +25,7 @@ namespace ofxRulr {
 					ofParameter<bool> verbose{ "Verbose", true };
 					ofParameter<bool> stopOnException{ "Stop on exception", true };
 					ofParameter<bool> openFileFirst{ "Open file first", true };
+					ofParameter<bool> dontOverwrite{ "Don't overwrite", true };
 					PARAM_DECLARE("SortFiles"
 						, targetDirectory
 						, moveFiles
@@ -32,7 +33,8 @@ namespace ofxRulr {
 						, dryRun
 						, verbose
 						, stopOnException
-						, openFileFirst);
+						, openFileFirst
+						, dontOverwrite);
 				} parameters;
 			};
 		}

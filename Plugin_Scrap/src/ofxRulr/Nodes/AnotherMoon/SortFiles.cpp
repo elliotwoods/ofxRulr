@@ -58,6 +58,7 @@ namespace ofxRulr {
 				const auto verbose = this->parameters.verbose.get();
 				const auto stopOnException = this->parameters.stopOnException.get();
 				const auto openFileFirst = this->parameters.openFileFirst.get();
+				const auto dontOverwrite = this->parameters.dontOverwrite.get();
 
 				auto cameraCaptures = onlySelected
 					? calibrate->getCameraCaptures().getSelection()
@@ -71,10 +72,16 @@ namespace ofxRulr {
 							: cameraCapture->laserCaptures.getAllCaptures();
 						Utils::ScopedProcess scopedProcessLaserCaptures("Laser captures", false, laserCaptures.size());
 
+						auto cleanTimeString = cameraCapture->getTimeString();
+						ofStringReplace(cleanTimeString, ":", ".");
+						cameraCapture->directory = targetPathRoot / ("Camera " + cameraCapture->getDateString() + " " + cleanTimeString);
+
 						for (auto laserCapture : laserCaptures) {
 							auto beamCaptures = onlySelected
 								? laserCapture->beamCaptures.getSelection()
 								: laserCapture->beamCaptures.getAllCaptures();
+
+							laserCapture->directory = cameraCapture->directory / ("Laser " + ofToString(laserCapture->laserAddress));
 
 							Utils::ScopedProcess scopedProcessBeamCaptures("Beam captures", false, beamCaptures.size());
 
@@ -87,12 +94,8 @@ namespace ofxRulr {
 										if (!priorLocalPath.has_extension()) {
 											throw(ofxRulr::Exception("Local path : " + priorLocalPath.string() + " is invalid"));
 										}
-										auto cleanTimeString = cameraCapture->getTimeString();
-										ofStringReplace(cleanTimeString, ":", ".");
 
-										auto postLocalPath = targetPathRoot
-											/ ("Camera " + cameraCapture->getDateString() + " " + cleanTimeString)
-											/ ("Laser " + ofToString(laserCapture->laserAddress))
+										auto postLocalPath = laserCapture->directory
 											/ ("Beam " + ofToString(beamCaptureIndex) + (on ? " (on)" : " (off)")
 												+ priorLocalPath.extension().string());
 
@@ -109,6 +112,21 @@ namespace ofxRulr {
 														}
 														else {
 															cout << "Didn't create directories for " << parentPath.string() << std::endl;
+														}
+													}
+												}
+
+												// Check if file exists and is correct size
+												if (dontOverwrite) {
+													// Check if target file exists
+													if (filesystem::exists(postLocalPath)) {
+														// Check file size matches
+														if (filesystem::file_size(priorLocalPath)
+															== filesystem::file_size(postLocalPath)) {
+															return;
+														}
+														else {
+															filesystem::remove(postLocalPath);
 														}
 													}
 												}

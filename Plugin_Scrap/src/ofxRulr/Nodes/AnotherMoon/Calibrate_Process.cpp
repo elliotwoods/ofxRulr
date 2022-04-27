@@ -28,59 +28,102 @@ namespace ofxRulr {
 						Utils::ScopedProcess scopedProcessCameras("Camera : " + cameraCapture->getDateString() + " " + cameraCapture->getTimeString(), false, laserCaptures.size());
 
 						for (auto laserCapture : laserCaptures) {
-							auto beamCaptures = laserCapture->beamCaptures.getSelection();
-							Utils::ScopedProcess scopedProcessLasers("Laser #" + ofToString(laserCapture->laserAddress), false, beamCaptures.size());
+							try {
+								// in case of exception this will persist
+								laserCapture->setSelected(false);
 
-							vector<Solvers::LinesWithCommonPoint::CameraImagePoints> images;
+								const size_t minBeamCapture = 4;
 
-							cv::Mat preview;
+								auto beamCaptures = laserCapture->beamCaptures.getSelection();
+								Utils::ScopedProcess scopedProcessLasers("Laser #" + ofToString(laserCapture->laserAddress), false);
 
-							// Gather image points per beam in laser
-							for (auto beamCapture : beamCaptures) {
-								Utils::ScopedProcess scopedProcessBeam("Beam : " + ofToString(beamCapture->imagePoint), false, beamCaptures.size());
-
-								// Get the on and off images
-								auto onImage = this->fetchImage(beamCapture->onImage);
-								auto offImage = this->fetchImage(beamCapture->offImage);
-
-								// Get the positive difference
-								cv::Mat difference;
-								cv::subtract(onImage, offImage, difference);
-
-								// Allocate preview if needs be (unallocated = don't make preview)
-								if (preview.empty()) {
-									preview = cv::Mat::zeros(difference.size(), difference.type());
+								// Gather solveData and parameters
+								if (beamCaptures.size() < minBeamCapture) {
+									throw(ofxRulr::Exception("Too few beam captures (" + ofToString(beamCaptures.size()) + ") for laser #" + ofToString(laserCapture->laserAddress)));
 								}
 
-								// Get the camera image points for this image
-								images.push_back(Solvers::LinesWithCommonPoint::getCameraImagePoints(difference
-									, cameraNode
-									, this->parameters.processing.normalizePercentile.get()
-									, this->parameters.processing.differenceThreshold.get()
-									, preview));
+								// Gather solveData and parameters
+								Solvers::LinesWithCommonPoint::SolveData solveData;
+								{
+									solveData.cameraNode = cameraNode;
+									solveData.normalizePercentile = this->parameters.processing.normalizePercentile.get();
+									solveData.differenceThreshold = this->parameters.processing.differenceThreshold.get();
+									solveData.distanceThreshold = this->parameters.processing.distanceThreshold.get();
+									solveData.minMeanPixelValueOnLine = this->parameters.processing.minMeanPixelValueOnLine.get();
+
+									solveData.debug.previewEnabled = this->parameters.processing.preview.enabled.get();
+									solveData.debug.previewPopup = this->parameters.processing.preview.popup.get();
+									solveData.debug.previewSize = cv::Size(cameraNode->getWidth(), cameraNode->getHeight());
+									solveData.debug.directory = laserCapture->directory;
+								}
+
+								// Gather beams (load the files)
+								{
+									Utils::ScopedProcess scopedProcessGatherBeams("Gather beams", true, beamCaptures.size());
+									int beamIndex = 0;
+									for (auto beamCapture : beamCaptures) {
+										Utils::ScopedProcess scopedProcessBeam("Beam #" + ofToString(beamCapture->imagePoint));
+
+										solveData.onImages.push_back(this->fetchImage(beamCapture->onImage));
+										solveData.offImages.push_back(this->fetchImage(beamCapture->offImage));
+										beamIndex++;
+
+										scopedProcessBeam.end();
+									}
+									scopedProcessGatherBeams.end();
+								}
+
+								// Solve the lines with common convergence point
+								{
+									Utils::ScopedProcess scopedProcessSolve("Solve lines and convergence");
+
+									// Perform solve
+									auto solverSettings = Solvers::LinesWithCommonPoint::defaultSolverSettings();
+									this->configureSolverSettings(solverSettings);
+									auto result = Solvers::LinesWithCommonPoint::solve(solveData, solverSettings);
+
+									// Save the preview as report
+									if (this->parameters.processing.preview.enabled && this->parameters.processing.preview.save) {
+										cv::imwrite((laserCapture->directory / "Report - LinesWithCommonPoint.png").string(), result.solution.preview);
+									}
+
+									// Save the result
+									{
+										laserCapture->linesWithCommonPointSolveResult.success = result.isConverged();
+										laserCapture->linesWithCommonPointSolveResult.residual = result.residual;
+									}
+
+									// Pull data back from solve
+									for (int i = 0; i < beamCaptures.size(); i++) {
+										beamCaptures[i]->line = result.solution.lines[i];
+										if (!result.solution.linesValid[i]) {
+											cout << "Beam " << i << " is not valid and will be deselected" << endl;
+											beamCaptures[i]->setSelected(false);
+										}
+									}
+
+									// Check we still have enough data
+									{
+										auto validBeamCaptures = laserCapture->beamCaptures.getSelection();
+										if (validBeamCaptures.size() < minBeamCapture) {
+											throw(ofxRulr::Exception("Too few beams pass the line finding test"));
+										}
+									}
+
+
+									// Store imagePointInCamera only if valid
+									laserCapture->imagePointInCamera = result.solution.point;
+
+									// Store the preview
+									laserCapture->preview = result.solution.preview;
+
+									scopedProcessSolve.end();
+								}
+
+								scopedProcessLasers.end();
+								laserCapture->setSelected(true);
 							}
-
-							// Solve lines for the whole laser using a common convergence point
-							auto solverSettings = Solvers::LinesWithCommonPoint::defaultSolverSettings();
-							this->configureSolverSettings(solverSettings);
-							auto result = Solvers::LinesWithCommonPoint::solve(images
-								, this->parameters.processing.distanceThreshold.get()
-								, this->parameters.processing.minMeanPixelValueOnLine.get()
-								, solverSettings);
-
-							// Pull data back from solve
-							laserCapture->imagePointInCamera = result.solution.point;
-							for (int i = 0; i < beamCaptures.size(); i++) {
-								beamCaptures[i]->line = result.solution.lines[i];
-								if (!result.solution.linesValid[i]) {
-									beamCaptures[i]->setSelected(false);
-								}
-								else {
-									beamCaptures[i]->line.drawOnImage(preview);
-								}
-							}
-
-							laserCapture->preview = preview;
+							RULR_CATCH_ALL_TO_ERROR;
 						}
 					}
 				}

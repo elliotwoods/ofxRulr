@@ -47,8 +47,8 @@ namespace ofxRulr {
 			deserialize(const nlohmann::json& json, filesystem::path& value)
 		{
 			std::string valueString;
-			if (deserialize(json, valueString)) {
-				value = filesystem::path(value);
+			if (!json.is_null()) {
+				value = filesystem::path(json.get<string>());
 				return true;
 			}
 			else {

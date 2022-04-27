@@ -153,7 +153,12 @@ namespace ofxRulr {
 			{
 				this->beamCaptures.serialize(json["beamCaptures"]);
 				Utils::serialize(json, "laserAddress", this->laserAddress);
-
+				Utils::serialize(json, "directory", this->directory);
+				Utils::serialize(json, "imagePointInCamera", this->imagePointInCamera);
+				{
+					Utils::serialize(json["linesWithCommonPointSolveResult"], "residual", this->linesWithCommonPointSolveResult.residual);
+					Utils::serialize(json["linesWithCommonPointSolveResult"], "success", this->linesWithCommonPointSolveResult.success);
+				}
 			}
 
 			//----------
@@ -164,6 +169,13 @@ namespace ofxRulr {
 					this->beamCaptures.deserialize(json["beamCaptures"]);
 				}
 				Utils::deserialize(json, "laserAddress", this->laserAddress);
+				Utils::deserialize(json, "directory", this->directory);
+				Utils::deserialize(json, "imagePointInCamera", this->imagePointInCamera);
+
+				if(json.contains("linesWithCommonPointSolveResult")) {
+					Utils::deserialize(json["linesWithCommonPointSolveResult"], "residual", this->linesWithCommonPointSolveResult.residual);
+					Utils::deserialize(json["linesWithCommonPointSolveResult"], "success", this->linesWithCommonPointSolveResult.success);
+				}
 
 				auto beamCaptures = this->beamCaptures.getAllCaptures();
 				for (auto beamCapture : beamCaptures) {
@@ -245,6 +257,8 @@ namespace ofxRulr {
 				Calibrate::CameraCapture::serialize(nlohmann::json& json)
 			{
 				this->laserCaptures.serialize(json["laserCaptures"]);
+				Utils::serialize(json, "directory", this->directory);
+
 			}
 
 			//----------
@@ -254,6 +268,8 @@ namespace ofxRulr {
 				if (json.contains("laserCaptures")) {
 					this->laserCaptures.deserialize(json["laserCaptures"]);
 				}
+
+				Utils::deserialize(json, "directory", this->directory);
 				
 				auto laserCaptures = this->laserCaptures.getAllCaptures();
 				for (auto capture : laserCaptures) {
@@ -345,6 +361,9 @@ namespace ofxRulr {
 					auto panel = ofxCvGui::Panels::makeWidgets();
 					panel->addTitle("Camera positions:", ofxCvGui::Widgets::Title::Level::H3);
 					this->cameraCaptures.populateWidgets(panel);
+					panel->addButton("Select all children", [this]() {
+						this->selectAllChildren();
+						});
 					this->panel = panel;
 				}
 
@@ -690,6 +709,8 @@ namespace ofxRulr {
 							throw(Exception("Failed to load image from camera : " + (string) response.data));
 						}
 					}
+					default:
+						throw(Exception("Cannot fetchImage. Method is undefined"));
 				}
 			}
 
@@ -701,6 +722,22 @@ namespace ofxRulr {
 				solverSettings.options.minimizer_progress_to_stdout = this->parameters.solver.printOutput;
 				solverSettings.options.max_num_iterations = this->parameters.solver.maxIterations;
 				solverSettings.options.num_threads = this->parameters.solver.threads;
+				solverSettings.options.function_tolerance = this->parameters.solver.functionTolerance.get();
+				solverSettings.options.parameter_tolerance = this->parameters.solver.parameterTolerance.get();
+			}
+
+			//----------
+			void
+				Calibrate::selectAllChildren()
+			{
+				auto cameraCaptures = this->cameraCaptures.getSelection();
+				for (auto cameraCapture : cameraCaptures) {
+					cameraCapture->laserCaptures.selectAll();
+					auto laserCaptures = cameraCapture->laserCaptures.getAllCaptures();
+					for (auto laserCapture : laserCaptures) {
+						laserCapture->beamCaptures.selectAll();
+					}
+				}
 			}
 		}
 	}

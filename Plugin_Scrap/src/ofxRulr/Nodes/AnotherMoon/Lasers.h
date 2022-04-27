@@ -52,7 +52,7 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<int> address{ "Address", 0 };
 							ofParameter<glm::vec3> position{ "Position", {0, 0, 0} };
-							ofParameter<glm::vec3> rotation{ "Rotation", {0, 0,0} };
+							ofParameter<glm::vec3> rotation{ "Rotation", {0, 0, 0} };
 							ofParameter<glm::vec2> fov{ "FOV", {30, 30} };
 							ofParameter<glm::vec2> centerOffset{ "Center offset", {0, 0} };
 							PARAM_DECLARE("Settings", address, position,rotation, fov, centerOffset);

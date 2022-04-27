@@ -6,8 +6,6 @@
 #include "ofxRulr/Solvers/LineMCToImage.h"
 #include "ofxRulr/Solvers/LinesWithCommonPoint.h"
 
-#define LINEMODEL Solvers::LineToImage
-
 /// <summary>
 /// Class for handling the ">>" to drill down into this selection
 /// </summary>
@@ -65,7 +63,7 @@ namespace ofxRulr {
 					ImagePath onImage;
 					ImagePath offImage;
 
-					Solvers::LineToImage::Line line;
+					Models::Line line;
 
 					EditSelection<BeamCapture>* parentSelection = nullptr;
 				protected:
@@ -83,6 +81,7 @@ namespace ofxRulr {
 
 					int laserAddress;
 					Utils::CaptureSet<BeamCapture> beamCaptures;
+					filesystem::path directory;
 
 					glm::vec2 imagePointInCamera;
 
@@ -90,6 +89,11 @@ namespace ofxRulr {
 					EditSelection<LaserCapture>* parentSelection = nullptr;
 
 					cv::Mat preview;
+
+					struct {
+						bool success = false;
+						float residual = 0.0f;
+					} linesWithCommonPointSolveResult;
 				protected:
 					ofxCvGui::ElementPtr getDataDisplay() override;
 				};
@@ -104,6 +108,7 @@ namespace ofxRulr {
 					void deserialize(const nlohmann::json&);
 
 					Utils::CaptureSet<LaserCapture> laserCaptures;
+					filesystem::path directory;
 
 					EditSelection<LaserCapture> ourSelection;
 					EditSelection<CameraCapture>* parentSelection = nullptr;
@@ -176,20 +181,30 @@ namespace ofxRulr {
 						ofParameter<float> distanceThreshold{ "Distance threshold [px]", 10, 0, 1000 };
 						ofParameter<float> minMeanPixelValueOnLine{ "Min mean pixel value on line", 10, 0, 255 };
 
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", true};
+							ofParameter<bool> popup{ "Popup", false };
+							ofParameter<bool> save{ "Save", true };
+							PARAM_DECLARE("Preview", enabled, popup, save);
+						} preview;
+
 						PARAM_DECLARE("Processing"
 							, imageFileSource
 							, localDirectory
 							, differenceThreshold
 							, normalizePercentile
 							, distanceThreshold
-							, minMeanPixelValueOnLine);
+							, minMeanPixelValueOnLine
+							, preview);
 					} processing;
 
 					struct : ofParameterGroup {
 						ofParameter<bool> printOutput{ "Print output", true };
 						ofParameter<int> maxIterations{ "Max iterations", 1000 };
 						ofParameter<int> threads{ "Threads", 16 };
-						PARAM_DECLARE("Solver", printOutput, maxIterations, threads);
+						ofParameter<float> functionTolerance{ "Function tolerance", 1e-6, 0, 1 };
+						ofParameter<float> parameterTolerance{ "Parameter tolerance", 1e-8, 0, 1 };
+						PARAM_DECLARE("Solver", printOutput, maxIterations, threads, functionTolerance, parameterTolerance);
 					} solver;
 
 					PARAM_DECLARE("Calibrate", capture, processing, solver);
@@ -205,6 +220,8 @@ namespace ofxRulr {
 				vector<string> pollNewCameraFiles();
 				cv::Mat fetchImage(const ImagePath&) const;
 				void configureSolverSettings(ofxCeres::SolverSettings&) const;
+
+				void selectAllChildren();
 
 				ofxCvGui::PanelPtr panel;
 

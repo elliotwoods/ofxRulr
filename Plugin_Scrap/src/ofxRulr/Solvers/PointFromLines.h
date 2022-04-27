@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofxCeres.h"
-#include "LineToImage.h"
+#include "ofxRulr/Models/Line.h"
 
 namespace ofxRulr {
 	namespace Solvers {
@@ -16,7 +16,7 @@ namespace ofxRulr {
 
 			typedef ofxCeres::Result<Solution> Result;
 
-			static Result solve(const vector<LineToImage::Line>& lines
+			static Result solve(const vector<Models::Line>& lines
 				, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
 		};
 	}

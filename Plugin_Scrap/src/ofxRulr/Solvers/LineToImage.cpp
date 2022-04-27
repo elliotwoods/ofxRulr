@@ -20,7 +20,7 @@ struct LineToPointsCost
 			, T* residuals) const
 	{
 		// Construct line from parameters
-		ofxRulr::Solvers::LineToImage::Line_<T> line;
+		ofxRulr::Models::Line_<T> line;
 		line.fromParameters(parameters);
 
 		auto distance = line.distanceToPoint((glm::tvec2<T>) this->point);
@@ -108,7 +108,7 @@ namespace ofxRulr {
 						, 1e-2);
 					
 					// push to parameters
-					Line lineFirstGuess(lineFirstGuessOpenCV);
+					Models::Line lineFirstGuess(lineFirstGuessOpenCV);
 					lineFirstGuess.toParameters(parameters);
 
 					// make a preview

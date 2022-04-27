@@ -7,6 +7,9 @@
     <Filter Include="src\ofxRulr">
       <UniqueIdentifier>{f8a6306b-29fd-4ca4-936e-6f0ee4df836c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Models">
+      <UniqueIdentifier>{bbc71cb6-e621-443a-9353-0c1dec7a27f4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\ofxRulr\Nodes">
       <UniqueIdentifier>{102be500-d5fe-4e78-a303-22dcfe9a58dd}</UniqueIdentifier>
     </Filter>
@@ -30,6 +33,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Models\Line.cpp">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
@@ -63,6 +69,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.cpp">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\BundleAdjustmentPoints.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
     <ClCompile Include="src\ofxRulr\Solvers\LineMCToImage.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
@@ -84,6 +93,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Models\Camera.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\Line.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\Transform.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.h">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
@@ -113,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Procedure\Calibrate\ProjectCircle.h">
       <Filter>src\ofxRulr\Nodes\Procedure\Calibrate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\BundleAdjustmentPoints.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\LineMCToImage.h">
       <Filter>src\ofxRulr\Solvers</Filter>
