@@ -86,9 +86,20 @@ namespace ofxRulr {
 				const auto& onImageRaw = solveData.onImages[i];
 				const auto& offImageRaw = solveData.offImages[i];
 
-				// Get the positive difference
+				// Calculate a background
+				cv::Mat background;
+				{
+					auto boxKernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+					cv::dilate(offImageRaw
+						, background
+						, boxKernel
+						, cv::Point(-1, -1)
+						, 2);
+				}
+
+				// Get the positive difference vs the background
 				cv::Mat differenceRaw;
-				cv::subtract(onImageRaw, offImageRaw, differenceRaw);
+				cv::subtract(onImageRaw, background, differenceRaw);
 
 				// Get the camera image points for this image
 				images.push_back(Solvers::LinesWithCommonPoint::getCameraImagePoints(differenceRaw, solveData));
@@ -130,7 +141,7 @@ namespace ofxRulr {
 							if (meetsEdges.size() >= 2) {
 								auto firstEdge = meetsEdges.begin();
 								auto secondEdge = firstEdge++;
-								auto midLine = (*firstEdge + *secondEdge) / 2.0f;
+								auto midLine = (firstEdge->second + secondEdge->second) / 2.0f;
 
 								cv::putText(previewPlanes[0]
 									, "[" + ofToString(lineIndex) + "]"
@@ -138,7 +149,7 @@ namespace ofxRulr {
 									, cv::FONT_HERSHEY_PLAIN
 									, 5
 									, cv::Scalar(255)
-									, 8);
+									, 4);
 							}
 
 						}
@@ -208,39 +219,14 @@ namespace ofxRulr {
 					, solveData.cameraNode->getDistortionCoefficients());
 			}
 
-			// Take local difference on both raw and undistorted
-			cv::Mat localDifference;
-			cv::Mat localDifferenceRaw;
-			{
-				{
-					cv::Mat blurred;
-					cv::blur(differenceImageRaw, blurred, cv::Size(64, 64));
-
-					cv::addWeighted(differenceImageRaw, 1
-						, blurred, -1
-						, 0
-						, localDifferenceRaw);
-				}
-
-				{
-					cv::Mat blurred;
-					cv::blur(differenceImage, blurred, cv::Size(64, 64));
-
-					cv::addWeighted(differenceImage, 1
-						, blurred, -1
-						, 0
-						, localDifference);
-				}
-			}
-
 			// Normalize the images
 			cv::Mat normalizedImage;
 			cv::Mat normalizedImageRaw;
 			{
 				// Sort pixel values
 				vector<uint8_t> pixelValues;
-				auto data = localDifference.data;
-				auto size = localDifference.cols * localDifference.rows;
+				auto data = differenceImage.data;
+				auto size = differenceImage.cols * differenceImage.rows;
 				for (size_t i = 0; i < size; i += 4) {
 					pixelValues.push_back(data[i]);
 				}
@@ -252,10 +238,10 @@ namespace ofxRulr {
 				cout << "Max pixel value before normalisation : " << (int) maxValue << endl;
 
 				// Apply norm factor
-				localDifferenceRaw.convertTo(normalizedImageRaw
+				differenceImageRaw.convertTo(normalizedImageRaw
 					, differenceImageRaw.type()
 					, normFactor);
-				localDifference.convertTo(normalizedImage
+				differenceImage.convertTo(normalizedImage
 					, differenceImage.type()
 					, normFactor);
 			}
@@ -406,19 +392,69 @@ namespace ofxRulr {
 			}
 
 			// Solve the problem;
-			if (solverSettings.printReport) {
-				cout << "Solve LineswithCommonPoint" << endl;
-			}
 			ceres::Solver::Summary summary;
-			ceres::Solve(solverSettings.options
-				, &problem
-				, &summary);
+			{
+				Utils::ScopedProcess scopedProcessSolve("Solve LinesWithCommonPointCost", false);
 
-			if (solverSettings.printReport) {
-				cout << summary.FullReport() << endl;
+				ceres::Solve(solverSettings.options
+					, &problem
+					, &summary);
+
+				if (solverSettings.printReport) {
+					cout << summary.FullReport() << endl;
+				}
 			}
+			
 			//
 			//--
+
+
+			// Second solve to check if the inverse solution is better
+			// This can be true when lines are close to parallel e.g.:
+			// https://paper.dropbox.com/doc/KC72-Calibration-log-v2-bad-data-review--BgZXEJgBaTU_FpnTUScvfcqZAg-oOoTxlFbnkhsmWMkx5j3I#:uid=055393919998065264664187&h2=Parallel-outliers
+			const bool useAlternativeSolve = false;
+			if(useAlternativeSolve) {
+				auto firstPointParameters = pointParameters;
+				auto firstAngleParameters = angleParameters;
+
+				glm::vec2 pointOnLine;
+				{
+					auto testLine = Line((glm::vec2)firstPointParameters, angleParameters[0][0]);
+					auto edgeIntersects = testLine.getImageEdgeIntersects(solveData.cameraNode->getSize());
+					pointOnLine = (edgeIntersects.begin()->second + edgeIntersects.rbegin()->second) / 2.0f;
+				}
+
+				pointParameters.x = pointOnLine.x - pointParameters.x;
+				pointParameters.y = pointOnLine.y - pointParameters.y;
+
+				for (auto& angleParameter : angleParameters) {
+					angleParameter[0] += PI;
+				}
+
+				{
+					Utils::ScopedProcess scopedProcessSolve("Solve LinesWithCommonPointCost (alternative)", false);
+
+					ceres::Solver::Summary summaryAlt;
+					ceres::Solve(solverSettings.options
+						, &problem
+						, &summaryAlt);
+
+					if (solverSettings.printReport) {
+						cout << summaryAlt.FullReport() << endl;
+					}
+
+					if (summaryAlt.final_cost < summary.final_cost) {
+						// Use the alternative
+						cout << "Using alternative fit";
+						summary = summaryAlt;
+					}
+					else {
+						// Restore the first fit parameters
+						pointParameters = firstPointParameters;
+						angleParameters = firstAngleParameters;
+					}
+				}
+			}
 
 			{
 				Result result(summary);

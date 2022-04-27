@@ -30,7 +30,18 @@ namespace ofxRulr {
 						for (auto laserCapture : laserCaptures) {
 							try {
 								// in case of exception this will persist
-								laserCapture->setSelected(false);
+								{
+									laserCapture->setSelected(false);
+									laserCapture->linesWithCommonPointSolveResult.success = false;
+									laserCapture->linesWithCommonPointSolveResult.residual = 0.0f;
+								}
+
+								// check if it's disabled
+								{
+									if (laserCapture->parameters.markBad) {
+										throw(ofxRulr::Exception("This capture is marked as bad"));
+									}
+								}
 
 								const size_t minBeamCapture = 4;
 
@@ -87,12 +98,6 @@ namespace ofxRulr {
 										cv::imwrite((laserCapture->directory / "Report - LinesWithCommonPoint.png").string(), result.solution.preview);
 									}
 
-									// Save the result
-									{
-										laserCapture->linesWithCommonPointSolveResult.success = result.isConverged();
-										laserCapture->linesWithCommonPointSolveResult.residual = result.residual;
-									}
-
 									// Pull data back from solve
 									for (int i = 0; i < beamCaptures.size(); i++) {
 										beamCaptures[i]->line = result.solution.lines[i];
@@ -110,12 +115,14 @@ namespace ofxRulr {
 										}
 									}
 
+									// Save the result if valid
+									{
+										laserCapture->linesWithCommonPointSolveResult.success = result.isConverged();
+										laserCapture->linesWithCommonPointSolveResult.residual = result.residual;
 
-									// Store imagePointInCamera only if valid
-									laserCapture->imagePointInCamera = result.solution.point;
-
-									// Store the preview
-									laserCapture->preview = result.solution.preview;
+										laserCapture->imagePointInCamera = result.solution.point;
+										laserCapture->preview = result.solution.preview;
+									}
 
 									scopedProcessSolve.end();
 								}

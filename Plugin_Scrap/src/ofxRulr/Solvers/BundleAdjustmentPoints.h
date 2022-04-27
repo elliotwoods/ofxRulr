@@ -34,7 +34,7 @@ namespace ofxRulr {
 
 				~Problem();
 
-				void addImageConstraint(const Image&);
+				void addImageConstraint(const Image&, bool applyWeightByDistanceFromImageCenter);
 				void addSceneScaleConstraint(float maxRadius);
 				void addSceneCenteredConstraint(const glm::vec3& sceneCenter);
 				void addCameraZeroYawConstraint(int viewIndex);

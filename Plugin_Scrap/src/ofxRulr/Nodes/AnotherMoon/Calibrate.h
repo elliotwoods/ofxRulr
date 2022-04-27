@@ -94,6 +94,12 @@ namespace ofxRulr {
 						bool success = false;
 						float residual = 0.0f;
 					} linesWithCommonPointSolveResult;
+
+					struct : ofParameterGroup {
+						ofParameter<bool> markBad{ "Mark bad", false };
+						PARAM_DECLARE("LaserCapture", markBad);
+					} parameters;
+
 				protected:
 					ofxCvGui::ElementPtr getDataDisplay() override;
 				};
@@ -222,6 +228,7 @@ namespace ofxRulr {
 				void configureSolverSettings(ofxCeres::SolverSettings&) const;
 
 				void selectAllChildren();
+				void selectChildrenWithGoodLines();
 
 				ofxCvGui::PanelPtr panel;
 

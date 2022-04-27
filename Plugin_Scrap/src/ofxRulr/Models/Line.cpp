@@ -7,15 +7,18 @@ namespace ofxRulr {
 		void
 			Line::drawOnImage(cv::Mat& image) const
 		{
+			// Find where the line meets the edges of the image
 			auto whereMeetsImageEdges = this->getImageEdgeIntersects(image.size());
 			if (whereMeetsImageEdges.size() >= 2) {
 				const auto start = whereMeetsImageEdges.begin();
-				cosnt auto end = whereMeetsImageEdges.end();
+				const auto end = whereMeetsImageEdges.rbegin();
+
+				// Draw that
+				cv::line(image
+					, ofxCv::toCv(start->second)
+					, ofxCv::toCv(end->second)
+					, cv::Scalar(255));
 			}
-			cv::line(image
-				, *start
-				, *end
-				, cv::Scalar(255));
 		}
 
 		//----------

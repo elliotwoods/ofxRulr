@@ -159,6 +159,7 @@ namespace ofxRulr {
 					Utils::serialize(json["linesWithCommonPointSolveResult"], "residual", this->linesWithCommonPointSolveResult.residual);
 					Utils::serialize(json["linesWithCommonPointSolveResult"], "success", this->linesWithCommonPointSolveResult.success);
 				}
+				Utils::serialize(json, "parameters", this->parameters);
 			}
 
 			//----------
@@ -176,6 +177,8 @@ namespace ofxRulr {
 					Utils::deserialize(json["linesWithCommonPointSolveResult"], "residual", this->linesWithCommonPointSolveResult.residual);
 					Utils::deserialize(json["linesWithCommonPointSolveResult"], "success", this->linesWithCommonPointSolveResult.success);
 				}
+
+				Utils::deserialize(json, "parameters", this->parameters);
 
 				auto beamCaptures = this->beamCaptures.getAllCaptures();
 				for (auto beamCapture : beamCaptures) {
@@ -363,6 +366,9 @@ namespace ofxRulr {
 					this->cameraCaptures.populateWidgets(panel);
 					panel->addButton("Select all children", [this]() {
 						this->selectAllChildren();
+						});
+					panel->addButton("Select children with good lines", [this]() {
+						this->selectChildrenWithGoodLines();
 						});
 					this->panel = panel;
 				}
@@ -627,6 +633,8 @@ namespace ofxRulr {
 					// This is good - we got one file, return it as URL
 					return newFiles[0];
 				} while (ofGetElapsedTimef() - timeStart < this->parameters.capture.remoteCamera.captureTimeout.get());
+
+				throw(ofxRulr::Exception("Calibrate::captureToURL Timed out"));
 			}
 
 			//----------
@@ -736,6 +744,19 @@ namespace ofxRulr {
 					auto laserCaptures = cameraCapture->laserCaptures.getAllCaptures();
 					for (auto laserCapture : laserCaptures) {
 						laserCapture->beamCaptures.selectAll();
+					}
+				}
+			}
+
+			//----------
+			void
+				Calibrate::selectChildrenWithGoodLines()
+			{
+				auto cameraCaptures = this->cameraCaptures.getSelection();
+				for (auto cameraCapture : cameraCaptures) {
+					auto laserCaptures = cameraCapture->laserCaptures.getAllCaptures();
+					for (auto laserCapture : laserCaptures) {
+						laserCapture->setSelected(laserCapture->linesWithCommonPointSolveResult.success);
 					}
 				}
 			}

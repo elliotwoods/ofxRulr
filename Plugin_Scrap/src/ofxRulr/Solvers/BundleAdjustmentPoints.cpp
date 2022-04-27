@@ -7,9 +7,11 @@ struct ProjectedPointCost
 {
 	//---------
 	ProjectedPointCost(const glm::vec2& imagePoint
-		, const ofxRulr::Models::Intrinsics& cameraIntrinsics)
+		, const ofxRulr::Models::Intrinsics& cameraIntrinsics
+		, const float weight)
 		: imagePoint(imagePoint)
 		, cameraIntrinsics(cameraIntrinsics)
+		, weight(weight)
 	{
 
 	}
@@ -39,8 +41,8 @@ struct ProjectedPointCost
 		auto delta = projectedImagePoint - (glm::tvec2<T>) this->imagePoint;
 
 		// Give the residuals
-		residuals[0] = delta[0];
-		residuals[1] = delta[1];
+		residuals[0] = delta[0] * (T) this->weight;
+		residuals[1] = delta[1] * (T) this->weight;
 
 		return true;
 	}
@@ -48,15 +50,17 @@ struct ProjectedPointCost
 	//---------
 	static ceres::CostFunction*
 		Create(const glm::vec2& imagePoint
-			, const ofxRulr::Models::Intrinsics& cameraIntrinsics)
+			, const ofxRulr::Models::Intrinsics& cameraIntrinsics
+			, const float& weight)
 	{
 		return new ceres::AutoDiffCostFunction<ProjectedPointCost, 2, 3, 3, 3>(
-			new ProjectedPointCost(imagePoint, cameraIntrinsics)
+			new ProjectedPointCost(imagePoint, cameraIntrinsics, weight)
 			);
 	}
 
 	const glm::vec2 imagePoint;
 	const ofxRulr::Models::Intrinsics & cameraIntrinsics; // this is stored in Problem
+	const float weight;
 };
 
 struct SceneRadiusCost
@@ -287,7 +291,8 @@ namespace ofxRulr {
 
 		//---------
 		void
-		BundleAdjustmentPoints::Problem::addImageConstraint(const Image& image)
+		BundleAdjustmentPoints::Problem::addImageConstraint(const Image& image
+			, bool applyWeightByDistanceFromImageCenter)
 		{
 			if (image.pointIndex >= this->allWorldPointParameters.size()) {
 				throw(ofxRulr::Exception("image.pointIndex is out of range"));
@@ -301,8 +306,14 @@ namespace ofxRulr {
 			auto& viewTranslationData = this->allViewTranslateParameters[image.viewIndex];
 			auto& viewRotationData = this->allViewRotationParameters[image.viewIndex];
 
+			float weight = 1.0f;
+			if (applyWeightByDistanceFromImageCenter) {
+				auto distanceToImageCenter = image.imagePoint - glm::vec2(this->cameraIntrinsics.width, this->cameraIntrinsics.height);
+				weight = 1.0f / log(glm::length(distanceToImageCenter));
+			}
 			auto residualBlock = ProjectedPointCost::Create(image.imagePoint
-				, this->cameraIntrinsics);
+				, this->cameraIntrinsics
+				, weight);
 
 			this->problem.AddResidualBlock(residualBlock
 				, NULL

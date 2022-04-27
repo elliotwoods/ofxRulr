@@ -70,7 +70,16 @@ namespace ofxRulr {
 					this->panel->addTitle("Select laser capture");
 				}
 				else {
+					panel->addTitle("Laser #" + ofToString(this->laserCapture->laserAddress));
+					panel->addIndicatorBool("Solve success", [this]() {
+						return this->laserCapture->linesWithCommonPointSolveResult.success;
+						});
+					panel->addLiveValue<float>("Residual", [this]() {
+						return this->laserCapture->linesWithCommonPointSolveResult.residual;
+						});
 					panel->addTitle("Beam positions:", ofxCvGui::Widgets::Title::Level::H3);
+					panel->addParameterGroup(this->laserCapture->parameters);
+
 					this->laserCapture->beamCaptures.populateWidgets(this->panel);
 				}
 			}

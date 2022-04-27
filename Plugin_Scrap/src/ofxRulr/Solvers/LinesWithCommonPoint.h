@@ -18,6 +18,8 @@ namespace ofxRulr {
 				/// This preview is only available when solveData.debug.previewEnabled = true
 				/// </summary>
 				cv::Mat preview;
+
+				vector<float> meanPixelValuesOnLine;
 			};
 
 			struct CameraImagePoints {
