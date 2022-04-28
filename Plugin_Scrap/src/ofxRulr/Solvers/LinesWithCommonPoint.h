@@ -46,6 +46,7 @@ namespace ofxRulr {
 				float differenceThreshold;
 				float distanceThreshold;
 				float minMeanPixelValueOnLine;
+				bool useAlternativeSolve;
 
 				struct {
 					bool previewEnabled = false;

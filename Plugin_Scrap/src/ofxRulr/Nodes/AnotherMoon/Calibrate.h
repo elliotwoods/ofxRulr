@@ -97,7 +97,8 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<bool> markBad{ "Mark bad", false };
-						PARAM_DECLARE("LaserCapture", markBad);
+						ofParameter<bool> useAlternativeSolve{ "Use alternative solve", false };
+						PARAM_DECLARE("LaserCapture", markBad, useAlternativeSolve);
 					} parameters;
 
 				protected:

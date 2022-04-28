@@ -402,6 +402,7 @@ namespace ofxRulr {
 
 				if (solverSettings.printReport) {
 					cout << summary.FullReport() << endl;
+					cout << "Solved center point : " << pointParameters << endl;
 				}
 			}
 			
@@ -412,20 +413,19 @@ namespace ofxRulr {
 			// Second solve to check if the inverse solution is better
 			// This can be true when lines are close to parallel e.g.:
 			// https://paper.dropbox.com/doc/KC72-Calibration-log-v2-bad-data-review--BgZXEJgBaTU_FpnTUScvfcqZAg-oOoTxlFbnkhsmWMkx5j3I#:uid=055393919998065264664187&h2=Parallel-outliers
-			const bool useAlternativeSolve = false;
-			if(useAlternativeSolve) {
+			if(solveData.useAlternativeSolve) {
 				auto firstPointParameters = pointParameters;
 				auto firstAngleParameters = angleParameters;
 
-				glm::vec2 pointOnLine;
+				glm::vec2 pointMidLine;
 				{
 					auto testLine = Line((glm::vec2)firstPointParameters, angleParameters[0][0]);
 					auto edgeIntersects = testLine.getImageEdgeIntersects(solveData.cameraNode->getSize());
-					pointOnLine = (edgeIntersects.begin()->second + edgeIntersects.rbegin()->second) / 2.0f;
+					pointMidLine = (edgeIntersects.begin()->second + edgeIntersects.rbegin()->second) / 2.0f;
 				}
 
-				pointParameters.x = pointOnLine.x - pointParameters.x;
-				pointParameters.y = pointOnLine.y - pointParameters.y;
+				pointParameters.x = pointMidLine.x - pointParameters.x;
+				pointParameters.y = pointMidLine.y - pointParameters.y;
 
 				for (auto& angleParameter : angleParameters) {
 					angleParameter[0] += PI;
@@ -441,18 +441,16 @@ namespace ofxRulr {
 
 					if (solverSettings.printReport) {
 						cout << summaryAlt.FullReport() << endl;
+						cout << "Alternative solved center point : " << pointParameters << endl;
 					}
 
-					if (summaryAlt.final_cost < summary.final_cost) {
-						// Use the alternative
-						cout << "Using alternative fit";
-						summary = summaryAlt;
-					}
-					else {
-						// Restore the first fit parameters
-						pointParameters = firstPointParameters;
-						angleParameters = firstAngleParameters;
-					}
+					// Choose alternative if it's closer to center
+					auto distanceToFirstSolve = glm::distance(pointMidLine, (glm::vec2) firstPointParameters);
+					auto distanceToSecondSolve = glm::distance(pointMidLine, (glm::vec2)pointParameters);
+
+					// Use the alternative
+					cout << "Using alternative fit";
+					summary = summaryAlt;
 				}
 			}
 

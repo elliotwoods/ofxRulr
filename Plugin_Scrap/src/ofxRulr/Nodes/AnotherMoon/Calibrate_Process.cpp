@@ -61,6 +61,7 @@ namespace ofxRulr {
 									solveData.differenceThreshold = this->parameters.processing.differenceThreshold.get();
 									solveData.distanceThreshold = this->parameters.processing.distanceThreshold.get();
 									solveData.minMeanPixelValueOnLine = this->parameters.processing.minMeanPixelValueOnLine.get();
+									solveData.useAlternativeSolve = laserCapture->parameters.useAlternativeSolve.get();
 
 									solveData.debug.previewEnabled = this->parameters.processing.preview.enabled.get();
 									solveData.debug.previewPopup = this->parameters.processing.preview.popup.get();
