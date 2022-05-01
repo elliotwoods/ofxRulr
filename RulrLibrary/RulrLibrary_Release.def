@@ -818,9 +818,11 @@ EXPORTS
 	?getRotationQuat@RigidBody@Item@Nodes@ofxRulr@@QEBA?AU?$qua@M$0A@@glm@@XZ
 	?getTransform@RigidBody@Item@Nodes@ofxRulr@@QEBA?AU?$mat@$03$03M$0A@@glm@@XZ
 	?init@RigidBody@Item@Nodes@ofxRulr@@QEAAXXZ
+	?lookAt@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBU?$vec@$02M$0A@@glm@@0@Z
 	?serialize@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@@Z
 	?setExtrinsics@RigidBody@Item@Nodes@ofxRulr@@QEAAXVMat@cv@@0_N@Z
 	?setPosition@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
+	?setRotationEuler@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	?setRotationQuat@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBU?$qua@M$0A@@glm@@@Z
 	?setTransform@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBU?$mat@$03$03M$0A@@glm@@@Z
 	?getCameraMatrix@View@Item@Nodes@ofxRulr@@QEBA?AVMat@cv@@XZ

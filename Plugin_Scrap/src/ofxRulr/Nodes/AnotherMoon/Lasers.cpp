@@ -5,203 +5,6 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace AnotherMoon {
-#pragma mark Laser
-			//----------
-			Lasers::Laser::Laser()
-			{
-				RULR_SERIALIZE_LISTENERS;
-			}
-
-			//----------
-			Lasers::Laser::~Laser()
-			{
-				this->shutown();
-			}
-
-			//----------
-			void
-				Lasers::Laser::setParent(Lasers* parent)
-			{
-				this->parent = parent;
-			}
-
-			//----------
-			string
-				Lasers::Laser::getDisplayString() const
-			{
-				stringstream ss;
-				ss << this->parameters.settings.address << " : (" << this->parameters.settings.position << ") [" << this->parameters.settings.centerOffset << "]";
-				return ss.str();
-			}
-
-			//----------
-			void
-				Lasers::Laser::serialize(nlohmann::json& json)
-			{
-				Utils::serialize(json, this->parameters);
-			}
-
-			//----------
-			void
-				Lasers::Laser::deserialize(const nlohmann::json& json)
-			{
-				Utils::deserialize(json, this->parameters);
-			}
-
-			//----------
-			void
-				Lasers::Laser::populateInspector(ofxCvGui::InspectArguments& inspectArgs)
-			{
-				
-			}
-
-			//----------
-			void
-				Lasers::Laser::drawWorldStage()
-			{
-				ofPushMatrix();
-				{
-					ofMultMatrix(this->getTransform());
-					ofxCvGui::Utils::drawTextAnnotation(ofToString(this->parameters.settings.address), glm::vec3(0, 0, 0), this->color);
-					ofDrawAxis(1.0f);
-				}
-				ofPopMatrix();
-			}
-
-			//----------
-			glm::mat4
-				Lasers::Laser::getTransform() const
-			{
-				return glm::translate(this->parameters.settings.position.get())
-					* glm::mat4(glm::quat(this->parameters.settings.rotation.get()));
-			}
-
-			//----------
-			void
-				Lasers::Laser::shutown()
-			{
-				ofxOscMessage msg;
-				msg.setAddress("/shutdown");
-				this->sendMessage(msg);
-			}
-
-			//----------
-			void
-				Lasers::Laser::standby()
-			{
-				{
-					ofxOscMessage msg;
-					msg.setAddress("/standby");
-					this->sendMessage(msg);
-				}
-
-				// Early LaserClient has spelling mistake - so we send this too
-				{
-					ofxOscMessage msg;
-					msg.setAddress("/stanby");
-					this->sendMessage(msg);
-				}
-			}
-
-			//----------
-			void
-				Lasers::Laser::run()
-			{
-				ofxOscMessage msg;
-				msg.setAddress("/run");
-				this->sendMessage(msg);
-			}
-
-			//----------
-			void
-				Lasers::Laser::setBrightness(float value)
-			{
-				ofxOscMessage msg;
-				msg.setAddress("/brightness");
-				msg.addFloatArg(value);
-				this->sendMessage(msg);
-			}
-
-			//----------
-			void
-				Lasers::Laser::setSize(float value)
-			{
-				ofxOscMessage msg;
-				msg.setAddress("/size");
-				msg.addFloatArg(value);
-				this->sendMessage(msg);
-			}
-
-			//----------
-			void
-				Lasers::Laser::setSource(const Source& source)
-			{
-				int sourceIndex = 1;
-				switch (source.get()) {
-				case Source::Circle:
-					sourceIndex = 0;
-					break;
-				case Source::USB:
-					sourceIndex = 1;
-					break;
-				case Source::Memory:
-					sourceIndex = 2;
-					break;
-				default:
-					break;
-				}
-				
-				ofxOscMessage msg;
-				msg.setAddress("/source");
-				msg.addInt32Arg(sourceIndex);
-				this->sendMessage(msg);
-			}
-
-			//----------
-			void
-				Lasers::Laser::drawCircle(glm::vec2 center, float radius)
-			{
-				center += this->parameters.settings.centerOffset.get();
-
-				ofxOscMessage msg;
-				msg.setAddress("/circle");
-				msg.addFloatArg(center.x);
-				msg.addFloatArg(center.y);
-				msg.addFloatArg(radius);
-				this->sendMessage(msg);
-			}
-
-			//----------
-			string
-				Lasers::Laser::getHostname() const
-			{
-				return this->parent->parameters.baseAddress.get() + ofToString(this->parameters.settings.address);
-			}
-
-			//----------
-			void
-				Lasers::Laser::sendMessage(const ofxOscMessage & msg)
-			{
-				if (this->oscSender) {
-					if (this->oscSender->getHost() != this->getHostname()
-						|| this->oscSender->getPort() != this->parent->parameters.remotePort.get()) {
-						this->oscSender.reset();
-					}
-				}
-				
-				if (!this->oscSender) {
-					this->oscSender = make_unique<ofxOscSender>();
-					this->oscSender->setup(this->getHostname(), this->parent->parameters.remotePort.get());
-				}
-
-				// can put some error checking here in-between
-
-				if (this->oscSender) {
-					this->oscSender->sendMessage(msg);
-				}
-			}
-
-#pragma mark Lasers
 			//----------
 			Lasers::Lasers()
 			{
@@ -237,6 +40,14 @@ namespace ofxRulr {
 			void
 				Lasers::update()
 			{
+				{
+					// laser has a RigidBody inside, so we should update it
+					auto lasers = this->lasers.getAllCaptures();
+					for (auto laser : lasers) {
+						laser->update();
+					}
+				}
+
 				if (this->parameters.signalEnabled.get()) {
 					// Update state
 					{
@@ -343,13 +154,13 @@ namespace ofxRulr {
 						: this->parameters.deselectedState.get();
 
 					switch (stateToSend.get()) {
-					case State::Shutdown:
+					case Laser::State::Shutdown:
 						laser->shutown();
 						break;
-					case State::Standby:
+					case Laser::State::Standby:
 						laser->standby();
 						break;
-					case State::Run:
+					case Laser::State::Run:
 						laser->run();
 						break;
 					default:
@@ -417,12 +228,12 @@ namespace ofxRulr {
 				for (auto laser : lasers) {
 					laser->setSize(1.0f);
 					laser->setBrightness(1.0f);
-					laser->setSource(Source::USB);
+					laser->setSource(Laser::Source::USB);
 				}
 			}
 
 			//----------
-			vector<shared_ptr<Lasers::Laser>>
+			vector<shared_ptr<Laser>>
 				Lasers::getSelectedLasers()
 			{
 				return this->lasers.getSelection();
@@ -439,7 +250,7 @@ namespace ofxRulr {
 					for (const auto& line : lines) {
 						auto columns = ofSplitString(line, ",");
 
-						shared_ptr<Lasers::Laser> laser;
+						shared_ptr<Laser> laser;
 
 						if (columns.size() >= 1) {
 							auto laserAddress = ofToInt(columns[0]);
@@ -459,7 +270,7 @@ namespace ofxRulr {
 
 								if (!foundInPriors) {
 									// It's not in priors, set this up as a new one
-									laser = make_shared<Lasers::Laser>();
+									laser = make_shared<Laser>();
 									laser->setParent(this);
 									laser->parameters.settings.address.set(laserAddress);
 									this->lasers.add(laser);
@@ -469,7 +280,7 @@ namespace ofxRulr {
 						}
 
 						if (columns.size() >= 4) {
-							laser->parameters.settings.position.set({
+							laser->getRigidBody()->setPosition({
 								ofToFloat(columns[1])
 								, ofToFloat(columns[2])
 								, ofToFloat(columns[3])
@@ -477,7 +288,7 @@ namespace ofxRulr {
 						}
 
 						if (columns.size() >= 7) {
-							laser->parameters.settings.rotation.set({
+							laser->getRigidBody()->setRotationEuler({
 								ofToFloat(columns[4])
 								, ofToFloat(columns[5])
 								, ofToFloat(columns[6])

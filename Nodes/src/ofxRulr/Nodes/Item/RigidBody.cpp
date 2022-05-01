@@ -314,6 +314,20 @@ namespace ofxRulr {
 			}
 
 			//---------
+			void RigidBody::lookAt(const glm::vec3& targetPosition
+				, const glm::vec3& upVector) {
+				auto currentPositon = this->getPosition();
+				auto transform = glm::lookAt(currentPositon, targetPosition, upVector);
+
+				// Follow the Rulr camera standard of +Z towards target, +Y down
+				transform = glm::rotate(glm::inverse(transform)
+					, (float) PI
+					, glm::vec3{ 1, 0, 0 });
+
+				this->setTransform(transform);
+			}
+
+			//---------
 			void RigidBody::setTransform(const glm::mat4 & transform) {
 				auto & translationRow = transform[3]; //last row is translation. rip it out;
 

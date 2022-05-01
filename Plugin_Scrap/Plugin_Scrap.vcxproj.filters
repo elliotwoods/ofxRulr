@@ -45,6 +45,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_Process.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Laser.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
@@ -109,6 +112,9 @@
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Laser.h">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.h">

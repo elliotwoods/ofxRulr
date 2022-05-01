@@ -38,6 +38,9 @@ namespace ofxRulr {
 				void setRotationEuler(const glm::vec3&);
 				void setRotationQuat(const glm::quat&);
 
+				void lookAt(const glm::vec3& targetPosition
+					, const glm::vec3& upVector = glm::vec3(0, -1, 0));
+
 				/* Rotation/Translation from object's reference frame to world reference frame (or inverse) */
 				void setExtrinsics(cv::Mat rotationVector, cv::Mat translation, bool inverse = false);
 

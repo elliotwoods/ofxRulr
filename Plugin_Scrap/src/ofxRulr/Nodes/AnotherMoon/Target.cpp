@@ -76,7 +76,7 @@ namespace ofxRulr {
 				{
 					auto lasers = this->getInput<Lasers>()->getSelectedLasers();
 					for (auto laser : lasers) {
-						meanPosition += laser->parameters.settings.position.get();
+						meanPosition += laser->getRigidBody()->getPosition();
 					}
 					meanPosition /= (float)lasers.size();
 				}
@@ -95,7 +95,7 @@ namespace ofxRulr {
 
 				auto lasers = this->getInput<Lasers>()->getSelectedLasers();
 				for (auto laser : lasers) {
-					
+					laser->getRigidBody()->lookAt(targetPosition);
 				}
 			}
 		}

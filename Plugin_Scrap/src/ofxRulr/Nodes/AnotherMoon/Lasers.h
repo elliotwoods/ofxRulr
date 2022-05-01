@@ -4,6 +4,8 @@
 #include "ofxRulr/Utils/CaptureSet.h"
 #include "ofxOsc.h"
 
+#include "Laser.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace AnotherMoon {
@@ -13,58 +15,6 @@ namespace ofxRulr {
 			/// </summary>
 			class Lasers : public Nodes::Base {
 			public:
-				MAKE_ENUM(State
-					, (Shutdown, Standby, Run)
-					, ("Shutdown", "Standby", "Run"));
-
-				MAKE_ENUM(Source
-					, (Circle, USB, Memory)
-					, ("Circle", "USB", "Memory"));
-
-				class Laser : public Utils::AbstractCaptureSet::BaseCapture, public ofxCvGui::IInspectable {
-				public:
-					Laser();
-					~Laser();
-					void setParent(Lasers*);
-
-					string getDisplayString() const override;
-					void serialize(nlohmann::json&);
-					void deserialize(const nlohmann::json&);
-					void populateInspector(ofxCvGui::InspectArguments&);
-					void drawWorldStage();
-
-					glm::mat4 getTransform() const;
-
-					void shutown();
-					void standby();
-					void run();
-
-					void setBrightness(float);
-					void setSize(float);
-					void setSource(const Source&);
-
-					void drawCircle(glm::vec2 center, float radius);
-
-					string getHostname() const;
-					void sendMessage(const ofxOscMessage&);
-
-					struct : ofParameterGroup {
-						struct : ofParameterGroup {
-							ofParameter<int> address{ "Address", 0 };
-							ofParameter<glm::vec3> position{ "Position", {0, 0, 0} };
-							ofParameter<glm::vec3> rotation{ "Rotation", {0, 0, 0} };
-							ofParameter<glm::vec2> fov{ "FOV", {30, 30} };
-							ofParameter<glm::vec2> centerOffset{ "Center offset", {0, 0} };
-							PARAM_DECLARE("Settings", address, position,rotation, fov, centerOffset);
-						} settings;
-
-						PARAM_DECLARE("Laser", settings);
-					} parameters;
-				protected:
-					Lasers * parent;
-					unique_ptr<ofxOscSender> oscSender;
-				};
-
 				Lasers();
 				string getTypeName() const override;
 				
@@ -90,6 +40,8 @@ namespace ofxRulr {
 
 				vector<shared_ptr<Laser>> getSelectedLasers();
 			protected:
+				friend Laser;
+
 				void importCSV();
 
 				Utils::CaptureSet<Laser> lasers;
@@ -99,8 +51,8 @@ namespace ofxRulr {
 					ofParameter<string> baseAddress{ "Base address", "10.0.1." };
 					ofParameter<int> remotePort{ "Remote port", 4000 };
 					ofParameter<bool> signalEnabled{ "Signal enabled", false };
-					ofParameter<State> selectedState{"Selected state", State::Standby};
-					ofParameter<State> deselectedState{"Deselected state", State::Shutdown};
+					ofParameter<Laser::State> selectedState{"Selected state", Laser::State::Standby};
+					ofParameter<Laser::State> deselectedState{"Deselected state", Laser::State::Shutdown};
 					ofParameter<bool> sendToDeselected{ "Send to deselected", false };
 					
 					struct : ofParameterGroup {
