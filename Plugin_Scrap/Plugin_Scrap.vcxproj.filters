@@ -57,6 +57,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Target.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Item\CircleLaser.cpp">
       <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClCompile>
@@ -118,6 +121,9 @@
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Target.h">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Item\CircleLaser.h">

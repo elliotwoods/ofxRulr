@@ -63,6 +63,7 @@ namespace ofxRulr {
 				{
 					ofMultMatrix(this->getTransform());
 					ofxCvGui::Utils::drawTextAnnotation(ofToString(this->parameters.settings.address), glm::vec3(0, 0, 0), this->color);
+					ofDrawAxis(1.0f);
 				}
 				ofPopMatrix();
 			}
@@ -438,10 +439,33 @@ namespace ofxRulr {
 					for (const auto& line : lines) {
 						auto columns = ofSplitString(line, ",");
 
-						auto laser = make_shared<Lasers::Laser>();
-						laser->setParent(this);
+						shared_ptr<Lasers::Laser> laser;
+
 						if (columns.size() >= 1) {
-							laser->parameters.settings.address.set(ofToInt(columns[0]));
+							auto laserAddress = ofToInt(columns[0]);
+
+							// first check if we should be using an existing laser
+							{
+								auto priorLasers = this->lasers.getAllCaptures();
+								bool foundInPriors = false;
+								for (auto priorLaser : priorLasers) {
+									if (priorLaser->parameters.settings.address.get() == laserAddress) {
+										// It's in priors, use that
+										laser = priorLaser;
+										foundInPriors = true;
+										break;
+									}
+								}
+
+								if (!foundInPriors) {
+									// It's not in priors, set this up as a new one
+									laser = make_shared<Lasers::Laser>();
+									laser->setParent(this);
+									laser->parameters.settings.address.set(laserAddress);
+									this->lasers.add(laser);
+								}
+							}
+
 						}
 
 						if (columns.size() >= 4) {
@@ -466,8 +490,6 @@ namespace ofxRulr {
 								, ofToFloat(columns[8])
 								});
 						}
-
-						this->lasers.add(laser);
 					}
 				}
 			}
