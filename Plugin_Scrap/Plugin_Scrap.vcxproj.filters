@@ -42,7 +42,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_Process.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_Lines.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Laser.cpp">
@@ -96,6 +96,9 @@
     </ClCompile>
     <ClCompile Include="src\polyfit\polyfit.c">
       <Filter>src\polyfit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_InitialCameras.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

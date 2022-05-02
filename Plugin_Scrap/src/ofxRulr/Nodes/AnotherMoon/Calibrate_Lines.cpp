@@ -7,7 +7,7 @@ namespace ofxRulr {
 		namespace AnotherMoon {
 			//----------
 			void
-				Calibrate::process()
+				Calibrate::calibrateLines()
 			{
 				Utils::ScopedProcess scopedProcess("Process");
 

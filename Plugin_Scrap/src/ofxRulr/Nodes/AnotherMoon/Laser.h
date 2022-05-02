@@ -12,6 +12,7 @@ namespace ofxRulr {
 			class Laser
 				: public Utils::AbstractCaptureSet::BaseCapture
 				, public ofxCvGui::IInspectable
+				, public enable_shared_from_this<Laser>
 			{
 			public:
 				MAKE_ENUM(State
@@ -57,9 +58,19 @@ namespace ofxRulr {
 						PARAM_DECLARE("Settings", address, fov, centerOffset);
 					} settings;
 
-					PARAM_DECLARE("Laser", settings);
+					struct : ofParameterGroup {
+						struct : ofParameterGroup {
+							ofParameter<WhenActive> centerLine{ "Center line", WhenActive::Selected };
+							PARAM_DECLARE("Draw", centerLine);
+						} draw;
+						PARAM_DECLARE("Debug", draw);
+					} debug;
+
+					PARAM_DECLARE("Laser", settings, debug);
 				} parameters;
 			protected:
+				ofxCvGui::ElementPtr getDataDisplay() override;
+
 				Lasers* parent;
 				unique_ptr<ofxOscSender> oscSender;
 				shared_ptr<Item::RigidBody> rigidBody = make_shared<Item::RigidBody>();

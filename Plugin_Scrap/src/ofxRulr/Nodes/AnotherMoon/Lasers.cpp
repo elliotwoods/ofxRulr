@@ -240,6 +240,22 @@ namespace ofxRulr {
 			}
 
 			//----------
+			shared_ptr<Laser>
+				Lasers::findLaser(int address)
+			{
+				auto lasers = this->lasers.getSelection();
+				for (auto laser : lasers) {
+					if (laser->parameters.settings.address.get() == address) {
+						return laser;
+					}
+				}
+
+				// return null if not found
+				return shared_ptr<Laser>();
+			}
+
+
+			//----------
 			void
 				Lasers::importCSV()
 			{

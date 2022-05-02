@@ -72,6 +72,24 @@ namespace ofxRulr {
 			}
 			imageAsset = imageAssetSet[pathToSting(nodeNamePath)];
 			this->cachedIcons.emplace(nodeTypeName, imageAsset);
+
+			// Check that mip mapping is enabled
+			{
+				auto wasUsingArb = ofGetUsingArbTex();
+				ofDisableArbTex();
+				{
+					auto& texture = imageAsset->get().getTexture();
+					if (!texture.hasMipmap()) {
+						texture.enableMipmap();
+						texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
+						texture.setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST);
+						texture.loadData(imageAsset->get().getPixels());
+					}
+				}
+				if (wasUsingArb) {
+					ofEnableArbTex();
+				}
+			}
 			return imageAsset;
 		}
 

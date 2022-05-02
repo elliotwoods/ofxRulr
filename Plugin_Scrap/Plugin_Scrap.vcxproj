@@ -83,9 +83,10 @@
     <ClCompile Include="src\ofxRulr\Models\Line.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\BeamCaptures.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_InitialCameras.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Laser.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_Process.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_Lines.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Lasers.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.cpp" />

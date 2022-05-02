@@ -39,6 +39,7 @@ namespace ofxRulr {
 				void setDefaultSettings();
 
 				vector<shared_ptr<Laser>> getSelectedLasers();
+				shared_ptr<Laser> findLaser(int address);
 			protected:
 				friend Laser;
 

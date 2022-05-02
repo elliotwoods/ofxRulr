@@ -433,6 +433,7 @@ EXPORTS
 	?getWidth@ofRectangle@@QEBAMXZ
 	?inside@ofRectangle@@QEBA_NAEBU?$vec@$01M$0A@@glm@@@Z
 	?inside@ofRectangle@@QEBA_NAEBU?$vec@$02M$0A@@glm@@@Z
+	?setFromCenter@ofRectangle@@QEAAXAEBU?$vec@$02M$0A@@glm@@MM@Z
 	?close@ofSerial@@QEAAXXZ
 	?isInitialized@ofSerial@@QEBA_NXZ
 	?setup@ofSerial@@QEAA_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
@@ -518,6 +519,7 @@ EXPORTS
 	??0Element@ofxCvGui@@QEAA@XZ
 	??0InspectController@ofxCvGui@@QEAA@XZ
 	?getDefaultTypeface@ofxCvGui@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?inspect@ofxCvGui@@YAXV?$shared_ptr@VIInspectable@ofxCvGui@@@std@@@Z
 	?makeElement@ofxCvGui@@YA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
 	?makeElementGroup@ofxCvGui@@YA?AV?$shared_ptr@VElementGroup@ofxCvGui@@@std@@XZ
 	?init@Builder@ofxCvGui@@QEAAXXZ
@@ -599,8 +601,11 @@ EXPORTS
 	?getSingletonStore@?$Singleton@VScissorManager@Utils@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	?getSingletonStore@?$Singleton@VController@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	?add@?$ElementGroup_@VElement@ofxCvGui@@@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
+	??0?$ElementGroup_@VElement@ofxCvGui@@@ofxCvGui@@QEAA@XZ
+	??1?$ElementGroup_@VElement@ofxCvGui@@@ofxCvGui@@UEAA@XZ
 	?getSingletonStore@?$Singleton@VInspectController@ofxCvGui@@@ofxSingleton@@SAAEAVSingletonStore@12@XZ
 	??0Button@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6AXXZ@4@H@Z
+	??0HorizontalStack@Widgets@ofxCvGui@@QEAA@XZ
 	??0Indicator@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6A?AW4Status@Indicator@Widgets@ofxCvGui@@XZ@4@@Z
 	??0MultipleChoice@Widgets@ofxCvGui@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0SelectFile@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@Vpath@filesystem@boost@@@@@Z
@@ -616,6 +621,7 @@ EXPORTS
 	?setSelection@MultipleChoice@Widgets@ofxCvGui@@QEAAXH@Z
 	?setSelection@MultipleChoice@Widgets@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?addIntValidator@Slider@Widgets@ofxCvGui@@QEAAXXZ
+	?setDrawable@Toggle@Widgets@ofxCvGui@@QEAAXAEBV?$function@$$A6AXAEAUDrawArguments@ofxCvGui@@@Z@std@@@Z
 	?setDrawGlyph@Toggle@Widgets@ofxCvGui@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?getCursorWorld@ofxGrabCam@@QEBAAEBU?$vec@$02M$0A@@glm@@XZ
 	??0BaseCodec@ofxGraycode@@QEAA@XZ

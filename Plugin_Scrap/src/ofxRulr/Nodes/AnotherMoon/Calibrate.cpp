@@ -244,6 +244,7 @@ namespace ofxRulr {
 			Calibrate::CameraCapture::CameraCapture()
 			{
 				RULR_SERIALIZE_LISTENERS;
+				this->cameraTransform->init();
 			}
 
 			//----------
@@ -261,6 +262,7 @@ namespace ofxRulr {
 			{
 				this->laserCaptures.serialize(json["laserCaptures"]);
 				Utils::serialize(json, "directory", this->directory);
+				this->cameraTransform->serialize(json["cameraTransform"]);
 
 			}
 
@@ -278,6 +280,45 @@ namespace ofxRulr {
 				for (auto capture : laserCaptures) {
 					capture->parentSelection = &this->ourSelection;
 				}
+
+				if (json.contains("cameraTransform")) {
+					this->cameraTransform->deserialize(json["cameraTransform"]);
+				}
+			}
+
+			//----------
+			void
+				Calibrate::CameraCapture::update()
+			{
+				// Set the name for in the WorldStage
+				this->cameraTransform->setName(this->timeString);
+				this->cameraTransform->setColor(this->color);
+			}
+
+			//----------
+			void
+				Calibrate::CameraCapture::drawWorldStage(const DrawArguments& args)
+			{
+				this->cameraTransform->drawWorldStage();
+				{
+					ofPushMatrix();
+					{
+						ofMultMatrix(this->cameraTransform->getTransform());
+						this->drawObjectSpace(args);
+					}
+					ofPopMatrix();
+				}
+			}
+
+			//----------
+			void
+				Calibrate::CameraCapture::drawObjectSpace(const DrawArguments& args)
+			{
+				if (args.camera) {
+					auto view = args.camera->getViewInObjectSpace();
+					view.color = this->color;
+					view.draw();
+				}
 			}
 
 			//----------
@@ -286,11 +327,13 @@ namespace ofxRulr {
 			{
 				auto element = ofxCvGui::makeElement();
 
-				vector<ofxCvGui::ElementPtr> widgets;
+				auto stack = make_shared<ofxCvGui::Widgets::HorizontalStack>();
 
-				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<size_t>>("Laser capture count", [this]() {
+				stack->add(make_shared<ofxCvGui::Widgets::LiveValue<size_t>>("Laser capture count", [this]() {
 					return this->laserCaptures.size();
 					}));
+
+				// Select lasers in camera
 				{
 					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Lasers in camera"
 						, [this]() {
@@ -310,27 +353,30 @@ namespace ofxRulr {
 							}
 						});
 					button->setDrawGlyph(u8"\uf03a");
-					widgets.push_back(button);
+					stack->add(button);
+				}
+
+				// Select the rigidBody
+				{
+					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Camera transform"
+						, [this]() {
+							return this->cameraTransform->isBeingInspected();
+						}
+						, [this](bool value) {
+							if (value) {
+								ofxCvGui::inspect(this->cameraTransform);
+							}
+						});
+					button->setDrawable([this](ofxCvGui::DrawArguments& args) {
+						ofRectangle bounds;
+						bounds.setFromCenter(args.localBounds.getCenter(), 32, 32);
+						this->cameraTransform->getIcon()->draw(bounds);
+						});
+					stack->add(button);
 				}
 
 
-				for (auto& widget : widgets) {
-					element->addChild(widget);
-				}
-
-				element->onBoundsChange += [this, widgets](ofxCvGui::BoundsChangeArguments& args) {
-					auto bounds = args.localBounds;
-					bounds.height = 40.0f;
-
-					for (auto& widget : widgets) {
-						widget->setBounds(bounds);
-						bounds.y += bounds.height;
-					}
-				};
-
-				element->setHeight(widgets.size() * 40 + 10);
-
-				return element;
+				return stack;
 			}
 
 #pragma mark Calibrate
@@ -356,6 +402,7 @@ namespace ofxRulr {
 
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
+				RULR_NODE_DRAW_WORLD_LISTENER;
 
 				this->manageParameters(this->parameters);
 
@@ -383,6 +430,19 @@ namespace ofxRulr {
 
 			//----------
 			void
+				Calibrate::update()
+			{
+				// they need updating to pull the name
+				{
+					auto cameraCaptures = this->cameraCaptures.getAllCaptures();
+					for (auto cameraCapture : cameraCaptures) {
+						cameraCapture->update();
+					}
+				}
+			}
+
+			//----------
+			void
 				Calibrate::populateInspector(ofxCvGui::InspectArguments& inspectArgs)
 			{
 				auto inspector = inspectArgs.inspector;
@@ -393,12 +453,23 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_WARNING;
 					}, ' ');
-				inspector->addButton("Process", [this]() {
-					try {
-						this->process();
-					}
-					RULR_CATCH_ALL_TO_ALERT;
-					}, 'p');
+
+				inspector->addTitle("Calibrate", ofxCvGui::Widgets::Title::Level::H2);
+				{
+					inspector->addButton("Lines", [this]() {
+						try {
+							this->calibrateLines();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						}, '1');
+
+					inspector->addButton("Initial cameras", [this]() {
+						try {
+							this->calibrateInitialCameras();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						}, '2');
+				}
 			}
 
 			//----------
@@ -427,6 +498,24 @@ namespace ofxRulr {
 				Calibrate::getPanel()
 			{
 				return this->panel;
+			}
+
+			//----------
+			void
+				Calibrate::drawWorldStage()
+			{
+				if (ofxRulr::isActive(this, this->parameters.draw.cameras)) {
+					//prep draw parameters
+					CameraCapture::DrawArguments drawArgs;
+					auto cameraNode = this->getInput<Item::Camera>();
+					if (cameraNode) {
+						drawArgs.camera = cameraNode;
+					}
+					auto cameraCaptures = this->cameraCaptures.getSelection();
+					for (auto cameraCapture : cameraCaptures) {
+						cameraCapture->drawWorldStage(drawArgs);
+					}
+				}
 			}
 
 			//----------

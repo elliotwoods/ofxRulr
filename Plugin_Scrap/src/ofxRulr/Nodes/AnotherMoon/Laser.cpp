@@ -9,6 +9,8 @@ namespace ofxRulr {
 			Laser::Laser()
 			{
 				RULR_SERIALIZE_LISTENERS;
+				RULR_NODE_INSPECTOR_LISTENER;
+				this->rigidBody->init();
 			}
 
 			//----------
@@ -68,7 +70,8 @@ namespace ofxRulr {
 			void
 				Laser::populateInspector(ofxCvGui::InspectArguments& inspectArgs)
 			{
-
+				auto inspector = inspectArgs.inspector;
+				inspector->addParameterGroup(this->parameters);
 			}
 
 			//----------
@@ -76,6 +79,19 @@ namespace ofxRulr {
 				Laser::drawWorldStage()
 			{
 				this->rigidBody->drawWorldStage();
+
+				// Draw center line
+				if (ofxRulr::isActive(this, this->parameters.debug.draw.centerLine)) {
+					ofPushMatrix();
+					ofPushStyle();
+					{
+						ofMultMatrix(this->rigidBody->getTransform());
+						ofSetColor(this->color);
+						ofDrawLine({ 0, 0, 0 }, { 0, 0, 100 });
+					}
+					ofPopStyle();
+					ofPopMatrix();
+				}
 			}
 
 			//----------
@@ -208,6 +224,64 @@ namespace ofxRulr {
 				if (this->oscSender) {
 					this->oscSender->sendMessage(msg);
 				}
+			}
+
+			//----------
+			ofxCvGui::ElementPtr
+				Laser::getDataDisplay()
+			{
+				auto stack = make_shared<ofxCvGui::Widgets::HorizontalStack>();
+
+				// Add items to stack
+				{
+					// Laser number
+					{
+						auto element = make_shared<ofxCvGui::Element>();
+						element->onDraw += [this](ofxCvGui::DrawArguments& args) {
+							ofxCvGui::Utils::drawText("Laser #" + ofToString(this->parameters.settings.address)
+								, args.localBounds
+								, false
+								, false);
+						};
+						stack->add(element);
+					}
+
+					// Select this
+					{
+						auto toggle = make_shared<ofxCvGui::Widgets::Toggle>("Inspect"
+							, [this]() {
+								return this->isBeingInspected();
+							}
+							, [this](const bool& selected) {
+								if (selected) {
+									ofxCvGui::inspect(this->shared_from_this());
+								}
+							});
+						toggle->setDrawGlyph(u8"\uf002");
+						stack->add(toggle);
+					}
+
+					// Select this
+					{
+						auto toggle = make_shared<ofxCvGui::Widgets::Toggle>("RigidBody"
+							, [this]() {
+								return this->rigidBody->isBeingInspected();
+							}
+							, [this](const bool& selected) {
+								if (selected) {
+									ofxCvGui::inspect(this->rigidBody);
+								}
+							});
+						toggle->setDrawable([this](ofxCvGui::DrawArguments& args) {
+							ofRectangle bounds;
+							bounds.setFromCenter(args.localBounds.getCenter(), 32, 32);
+							this->rigidBody->getIcon()->draw(bounds);
+							});
+						stack->add(toggle);
+					}
+				}
+
+				return stack;
 			}
 		}
 	}

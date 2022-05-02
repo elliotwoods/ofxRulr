@@ -109,17 +109,27 @@ namespace ofxRulr {
 				class CameraCapture : public Utils::AbstractCaptureSet::BaseCapture
 				{
 				public:
+					struct DrawArguments {
+						shared_ptr<Item::Camera> camera;
+					};
+
 					CameraCapture();
 					string getDisplayString() const override;
 					void serialize(nlohmann::json&);
 					void deserialize(const nlohmann::json&);
+
+					void update();
+					void drawWorldStage(const DrawArguments&);
 
 					Utils::CaptureSet<LaserCapture> laserCaptures;
 					filesystem::path directory;
 
 					EditSelection<LaserCapture> ourSelection;
 					EditSelection<CameraCapture>* parentSelection = nullptr;
+
+					shared_ptr<Item::RigidBody> cameraTransform = make_shared<Item::RigidBody>();
 				protected:
+					void drawObjectSpace(const DrawArguments&);
 					ofxCvGui::ElementPtr getDataDisplay() override;
 				};
 
@@ -127,15 +137,18 @@ namespace ofxRulr {
 				string getTypeName() const override;
 
 				void init();
+				void update();
 
 				void populateInspector(ofxCvGui::InspectArguments&);
 				void serialize(nlohmann::json&);
 				void deserialize(const nlohmann::json&);
 
 				ofxCvGui::PanelPtr getPanel() override;
+				void drawWorldStage();
 
 				void capture();
-				void process(); // Note that process is in seperate Calibrate_Process.cpp
+				void calibrateLines(); // Note that process is in seperate Calibrate_Process.cpp
+				void calibrateInitialCameras();
 
 				EditSelection<CameraCapture> cameraEditSelection;
 
@@ -214,7 +227,12 @@ namespace ofxRulr {
 						PARAM_DECLARE("Solver", printOutput, maxIterations, threads, functionTolerance, parameterTolerance);
 					} solver;
 
-					PARAM_DECLARE("Calibrate", capture, processing, solver);
+					struct : ofParameterGroup {
+						ofParameter<WhenActive> cameras{ "Cameras", WhenActive::Always };
+						PARAM_DECLARE("Draw", cameras)
+					} draw;
+
+					PARAM_DECLARE("Calibrate", capture, processing, solver, draw);
 				} parameters;
 
 				vector<glm::vec2> getCalibrationImagePoints() const;
