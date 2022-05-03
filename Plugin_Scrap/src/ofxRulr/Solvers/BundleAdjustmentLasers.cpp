@@ -184,7 +184,7 @@ namespace ofxRulr {
 
 				this->allLaserTranslationParameters.push_back(laserTranslationParameters);
 				this->allLaserRotationParameters.push_back(laserRotationParameters);
-				this->allLaserFovParameters.push_back(laserRotationParameters);
+				this->allLaserFovParameters.push_back(laserFovParameters);
 			}
 		}
 
