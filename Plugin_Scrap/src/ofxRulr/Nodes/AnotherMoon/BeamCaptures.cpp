@@ -28,6 +28,10 @@ namespace ofxRulr {
 				this->panel = ofxCvGui::Panels::makeWidgets();
 
 				this->rebuildView();
+
+				// Because we recycle this class from elsewhere
+				this->parameters.draw.setName("Draw");
+				this->parameters.draw.rays.set(WhenActive::Always);
 			}
 
 			//----------
@@ -51,6 +55,35 @@ namespace ofxRulr {
 
 				if (this->laserCapture != priorLaserCapture) {
 					this->rebuildView();
+				}
+			}
+
+			//----------
+			void
+				BeamCaptures::drawWorldStage()
+			{
+				if (this->laserCapture) {
+					auto laserCapturesNode = this->getInput<LaserCaptures>();
+					if (laserCapturesNode) {
+						auto calibrateNode = laserCapturesNode->getInput<Calibrate>();
+						if (calibrateNode) {
+							// Setup the parameters
+							Calibrate::DrawParameters drawParameters;
+							{
+								drawParameters.beamCaptures = this->parameters.draw;
+							}
+							
+							// Setup the draw arguments
+							Calibrate::DrawArguments args{
+								this
+								, calibrateNode->getInput<Item::Camera>()
+								, calibrateNode->getInput<Lasers>()
+								, drawParameters
+							};
+
+							this->laserCapture->drawWorldStage(args);
+						}
+					}
 				}
 			}
 

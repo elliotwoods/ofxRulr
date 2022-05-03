@@ -6,6 +6,8 @@
 #include "ofxRulr/Solvers/LineMCToImage.h"
 #include "ofxRulr/Solvers/LinesWithCommonPoint.h"
 
+#include "Lasers.h"
+
 /// <summary>
 /// Class for handling the ">>" to drill down into this selection
 /// </summary>
@@ -50,6 +52,27 @@ namespace ofxRulr {
 					filesystem::path localCopy;
 				};
 
+				struct DrawParameters : ofParameterGroup {
+					struct CameraCaptures : ofParameterGroup {
+						ofParameter<WhenActive> cameras{ "Cameras", WhenActive::Always };
+						PARAM_DECLARE("Camera captures", cameras);
+					} cameraCaptures;
+
+					struct BeamCaptures : ofParameterGroup {
+						ofParameter<WhenActive> rays{ "Rays", WhenActive::Never };
+						PARAM_DECLARE("Beam captures", rays);
+					} beamCaptures;
+
+					PARAM_DECLARE("Draw", cameraCaptures, beamCaptures)
+				};
+
+				struct DrawArguments {
+					const Nodes::Base* nodeForSelection;
+					shared_ptr<Item::Camera> camera;
+					shared_ptr<Lasers> lasers;
+					const DrawParameters & drawParameters;
+				};
+
 				class BeamCapture : public Utils::AbstractCaptureSet::BaseCapture
 				{
 				public:
@@ -58,7 +81,7 @@ namespace ofxRulr {
 					void serialize(nlohmann::json&);
 					void deserialize(const nlohmann::json&);
 
-					glm::vec2 imagePoint;
+					glm::vec2 projectionPoint;
 
 					ImagePath onImage;
 					ImagePath offImage;
@@ -78,6 +101,8 @@ namespace ofxRulr {
 					string getDisplayString() const override;
 					void serialize(nlohmann::json&);
 					void deserialize(const nlohmann::json&);
+
+					void drawWorldStage(const DrawArguments&);
 
 					int laserAddress;
 					Utils::CaptureSet<BeamCapture> beamCaptures;
@@ -109,11 +134,8 @@ namespace ofxRulr {
 				class CameraCapture : public Utils::AbstractCaptureSet::BaseCapture
 				{
 				public:
-					struct DrawArguments {
-						shared_ptr<Item::Camera> camera;
-					};
-
 					CameraCapture();
+					string getName() const;
 					string getDisplayString() const override;
 					void serialize(nlohmann::json&);
 					void deserialize(const nlohmann::json&);
@@ -147,8 +169,13 @@ namespace ofxRulr {
 				void drawWorldStage();
 
 				void capture();
+
+				void deselectLasersWithNoData(size_t minimumCameraCaptureCount = 1);
+
 				void calibrateLines(); // Note that process is in seperate Calibrate_Process.cpp
 				void calibrateInitialCameras();
+				void calibrateBundleAdjustPoints();
+				void calibrateBundleAdjustLasers();
 
 				EditSelection<CameraCapture> cameraEditSelection;
 
@@ -208,7 +235,7 @@ namespace ofxRulr {
 							PARAM_DECLARE("Preview", enabled, popup, save);
 						} preview;
 
-						PARAM_DECLARE("Processing"
+						PARAM_DECLARE("Line finder"
 							, imageFileSource
 							, localDirectory
 							, differenceThreshold
@@ -216,7 +243,25 @@ namespace ofxRulr {
 							, distanceThreshold
 							, minMeanPixelValueOnLine
 							, preview);
-					} processing;
+					} lineFinder;
+
+					struct : ofParameterGroup {
+						ofParameter<bool> sceneCenterConstraint{ "Scene center contraint", true };
+						ofParameter<bool> sceneRadiusConstraint{ "Scene radius contraint", true };
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", true };
+							ofParameter<int> cameraIndex{ "Camera index", 0};
+							PARAM_DECLARE("Camera with 0 yaw", enabled, cameraIndex);
+						} cameraWith0Yaw;
+
+						ofParameter<bool> planeConstraint{"Plane constraint", true};
+
+						PARAM_DECLARE("Bundle adjustment"
+							, sceneCenterConstraint
+							, sceneRadiusConstraint
+							, cameraWith0Yaw
+							, planeConstraint);
+					} bundleAdjustment;
 
 					struct : ofParameterGroup {
 						ofParameter<bool> printOutput{ "Print output", true };
@@ -227,12 +272,10 @@ namespace ofxRulr {
 						PARAM_DECLARE("Solver", printOutput, maxIterations, threads, functionTolerance, parameterTolerance);
 					} solver;
 
-					struct : ofParameterGroup {
-						ofParameter<WhenActive> cameras{ "Cameras", WhenActive::Always };
-						PARAM_DECLARE("Draw", cameras)
-					} draw;
+					
+					DrawParameters draw;
 
-					PARAM_DECLARE("Calibrate", capture, processing, solver, draw);
+					PARAM_DECLARE("Calibrate", capture, lineFinder, bundleAdjustment, solver, draw);
 				} parameters;
 
 				vector<glm::vec2> getCalibrationImagePoints() const;

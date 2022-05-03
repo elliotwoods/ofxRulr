@@ -3,6 +3,7 @@
 #include "ofxRulr.h"
 #include "ofxRulr/Utils/CaptureSet.h"
 #include "ofxOsc.h"
+#include "ofxRulr/Models/LaserProjector.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -23,6 +24,12 @@ namespace ofxRulr {
 					, (Circle, USB, Memory)
 					, ("Circle", "USB", "Memory"));
 
+				struct DrawArguments {
+					bool rigidBody;
+					bool trussLine;
+					bool centerLine;
+				};
+
 				Laser();
 				~Laser();
 				void setParent(Lasers*);
@@ -33,7 +40,7 @@ namespace ofxRulr {
 				void serialize(nlohmann::json&);
 				void deserialize(const nlohmann::json&);
 				void populateInspector(ofxCvGui::InspectArguments&);
-				void drawWorldStage();
+				void drawWorldStage(const DrawArguments&);
 
 				shared_ptr<Item::RigidBody> getRigidBody();
 
@@ -50,6 +57,8 @@ namespace ofxRulr {
 				string getHostname() const;
 				void sendMessage(const ofxOscMessage&);
 
+				Models::LaserProjector getModel() const;
+
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
 						ofParameter<int> address{ "Address", 0 };
@@ -58,15 +67,7 @@ namespace ofxRulr {
 						PARAM_DECLARE("Settings", address, fov, centerOffset);
 					} settings;
 
-					struct : ofParameterGroup {
-						struct : ofParameterGroup {
-							ofParameter<WhenActive> centerLine{ "Center line", WhenActive::Selected };
-							PARAM_DECLARE("Draw", centerLine);
-						} draw;
-						PARAM_DECLARE("Debug", draw);
-					} debug;
-
-					PARAM_DECLARE("Laser", settings, debug);
+					PARAM_DECLARE("Laser", settings);
 				} parameters;
 			protected:
 				ofxCvGui::ElementPtr getDataDisplay() override;

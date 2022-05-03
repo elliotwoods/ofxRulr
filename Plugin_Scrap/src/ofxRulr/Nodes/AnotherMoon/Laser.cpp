@@ -76,12 +76,23 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Laser::drawWorldStage()
+				Laser::drawWorldStage(const DrawArguments& args)
 			{
-				this->rigidBody->drawWorldStage();
+				// Draw Rigid body
+				if (args.rigidBody) {
+					this->rigidBody->drawWorldStage();
+				}
+				else {
+					ofPushMatrix();
+					{
+						ofMultMatrix(this->rigidBody->getTransform());
+						ofDrawAxis(1.0f);
+					}
+					ofPopMatrix();
+				}
 
 				// Draw center line
-				if (ofxRulr::isActive(this, this->parameters.debug.draw.centerLine)) {
+				if (args.centerLine) {
 					ofPushMatrix();
 					ofPushStyle();
 					{
@@ -91,6 +102,17 @@ namespace ofxRulr {
 					}
 					ofPopStyle();
 					ofPopMatrix();
+				}
+
+				// Draw truss line
+				if (args.trussLine) {
+					auto position = this->rigidBody->getPosition();
+					ofPushStyle();
+					{
+						ofSetColor(100);
+						ofDrawLine(position, position * glm::vec3(1, 0, 1));
+					}
+					ofPopStyle();
 				}
 			}
 
@@ -224,6 +246,16 @@ namespace ofxRulr {
 				if (this->oscSender) {
 					this->oscSender->sendMessage(msg);
 				}
+			}
+
+			//----------
+			Models::LaserProjector
+				Laser::getModel() const
+			{
+				return Models::LaserProjector{
+					this->rigidBody->getTransform()
+					, this->parameters.settings.fov.get()
+				};
 			}
 
 			//----------

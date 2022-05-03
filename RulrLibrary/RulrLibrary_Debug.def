@@ -491,6 +491,7 @@ EXPORTS
 	?makeCheckerboardMesh@ofxCv@@YA?AV?$ofMesh_@U?$vec@$02M$0A@@glm@@U12@V?$ofColor_@M@@U?$vec@$01M$0A@@2@@@V?$Size_@H@cv@@M_N@Z
 	?makeCheckerboardPoints@ofxCv@@YA?AV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@std@@V?$Size_@H@cv@@M_N@Z
 	?makeMatrix@ofxCv@@YA?AU?$mat@$03$03M$0A@@glm@@VMat@cv@@0@Z
+	?reprojectionError@ofxCv@@YAMAEBV?$vector@V?$Point_@M@cv@@V?$allocator@V?$Point_@M@cv@@@std@@@std@@AEBV?$vector@V?$Point3_@M@cv@@V?$allocator@V?$Point3_@M@cv@@@std@@@3@AEBVMat@cv@@222@Z
 	?selectROI@ofxCv@@YA_NVMat@cv@@AEAV?$Rect_@H@3@@Z
 	?toCv@ofxCv@@YA?AV?$Rect_@H@cv@@VofRectangle@@@Z
 	?toCv@ofxCv@@YA?AVMat@cv@@AEAV23@@Z

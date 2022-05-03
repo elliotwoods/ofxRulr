@@ -9,7 +9,7 @@ namespace ofxRulr {
 			void
 				Calibrate::calibrateLines()
 			{
-				Utils::ScopedProcess scopedProcess("Process");
+				Utils::ScopedProcess scopedProcess("Lines");
 
 				this->throwIfMissingAConnection<Lasers>();
 				this->throwIfMissingAConnection<Item::Camera>();
@@ -25,7 +25,7 @@ namespace ofxRulr {
 
 					for (auto cameraCapture : cameraCaptures) {
 						auto laserCaptures = cameraCapture->laserCaptures.getSelection();
-						Utils::ScopedProcess scopedProcessCameras("Camera : " + cameraCapture->getDateString() + " " + cameraCapture->getTimeString(), false, laserCaptures.size());
+						Utils::ScopedProcess scopedProcessCameras("Camera : " + cameraCapture->getName(), false, laserCaptures.size());
 
 						for (auto laserCapture : laserCaptures) {
 							try {
@@ -57,14 +57,14 @@ namespace ofxRulr {
 								Solvers::LinesWithCommonPoint::SolveData solveData;
 								{
 									solveData.cameraNode = cameraNode;
-									solveData.normalizePercentile = this->parameters.processing.normalizePercentile.get();
-									solveData.differenceThreshold = this->parameters.processing.differenceThreshold.get();
-									solveData.distanceThreshold = this->parameters.processing.distanceThreshold.get();
-									solveData.minMeanPixelValueOnLine = this->parameters.processing.minMeanPixelValueOnLine.get();
+									solveData.normalizePercentile = this->parameters.lineFinder.normalizePercentile.get();
+									solveData.differenceThreshold = this->parameters.lineFinder.differenceThreshold.get();
+									solveData.distanceThreshold = this->parameters.lineFinder.distanceThreshold.get();
+									solveData.minMeanPixelValueOnLine = this->parameters.lineFinder.minMeanPixelValueOnLine.get();
 									solveData.useAlternativeSolve = laserCapture->parameters.useAlternativeSolve.get();
 
-									solveData.debug.previewEnabled = this->parameters.processing.preview.enabled.get();
-									solveData.debug.previewPopup = this->parameters.processing.preview.popup.get();
+									solveData.debug.previewEnabled = this->parameters.lineFinder.preview.enabled.get();
+									solveData.debug.previewPopup = this->parameters.lineFinder.preview.popup.get();
 									solveData.debug.previewSize = cv::Size(cameraNode->getWidth(), cameraNode->getHeight());
 									solveData.debug.directory = laserCapture->directory;
 								}
@@ -74,7 +74,7 @@ namespace ofxRulr {
 									Utils::ScopedProcess scopedProcessGatherBeams("Gather beams", true, beamCaptures.size());
 									int beamIndex = 0;
 									for (auto beamCapture : beamCaptures) {
-										Utils::ScopedProcess scopedProcessBeam("Beam #" + ofToString(beamCapture->imagePoint));
+										Utils::ScopedProcess scopedProcessBeam("Beam #" + ofToString(beamCapture->projectionPoint));
 
 										solveData.onImages.push_back(this->fetchImage(beamCapture->onImage));
 										solveData.offImages.push_back(this->fetchImage(beamCapture->offImage));
@@ -95,7 +95,7 @@ namespace ofxRulr {
 									auto result = Solvers::LinesWithCommonPoint::solve(solveData, solverSettings);
 
 									// Save the preview as report
-									if (this->parameters.processing.preview.enabled && this->parameters.processing.preview.save) {
+									if (this->parameters.lineFinder.preview.enabled && this->parameters.lineFinder.preview.save) {
 										cv::imwrite((laserCapture->directory / "Report - LinesWithCommonPoint.png").string(), result.solution.preview);
 									}
 

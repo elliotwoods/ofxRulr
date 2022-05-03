@@ -80,11 +80,19 @@ struct SceneRadiusCost
 		operator()(T const * const * parameters
 			, T* residuals) const
 	{
+		// Calculate mean
+		glm::tvec3<T> meanPosition;
+		for (size_t i = 0; i < this->pointCount; i++) {
+			const auto& point = *(glm::tvec3<T>*) parameters[i];
+			meanPosition += point;
+		}
+		meanPosition /= (T)this->pointCount;
+
 		// Calculate max radius
 		T maxRadius = (T)0;
 		for (size_t i = 0; i < this->pointCount; i++) {
 			const auto& point = *(glm::tvec3<T>*) parameters[i];
-			auto radius = ofxCeres::VectorMath::length(point);
+			auto radius = ofxCeres::VectorMath::distance(meanPosition, point);
 			if (radius > maxRadius) {
 				maxRadius = radius;
 			}
@@ -208,6 +216,59 @@ struct CameraFixedRotateCost
 	const size_t angle;
 };
 
+struct PointsInPlaneCost
+{
+	//---------
+	PointsInPlaneCost(const size_t& plane
+		, const size_t& pointCount)
+		: plane(plane)
+		, pointCount(pointCount)
+	{
+
+	}
+
+	//---------
+	template<typename T>
+	bool
+		operator()(T const* const* worldPointParameters
+			, T* residuals) const
+	{
+		// Calculate scene center
+		glm::tvec3<T> accumulator((T)0, (T)0, (T)0);
+		for (size_t i = 0; i < this->pointCount; i++) {
+			const auto& point = *(glm::tvec3<T>*) worldPointParameters[i];
+			accumulator = accumulator + point;
+		}
+		auto mean = accumulator / (T)this->pointCount;
+
+		// Give the residuals
+		for (size_t i = 0; i < pointCount; i++) {
+			residuals[i] = worldPointParameters[i][this->plane] - mean[this->plane];
+		}
+
+		return true;
+	}
+
+	//---------
+	static ceres::CostFunction*
+		Create(const size_t& plane
+			, const size_t& pointCount)
+	{
+		// Make a dynamic cost function
+		auto costFunction = new ceres::DynamicAutoDiffCostFunction<PointsInPlaneCost, 4>(
+			new PointsInPlaneCost(plane, pointCount)
+			);
+		for (size_t i = 0; i < pointCount; i++) {
+			costFunction->AddParameterBlock(3);
+		}
+		costFunction->SetNumResiduals(pointCount);
+		return costFunction;
+	}
+
+	const size_t plane;
+	const size_t pointCount;
+};
+
 namespace ofxRulr {
 	namespace Solvers {
 		//---------
@@ -291,7 +352,7 @@ namespace ofxRulr {
 
 		//---------
 		void
-		BundleAdjustmentPoints::Problem::addImageConstraint(const Image& image
+		BundleAdjustmentPoints::Problem::addImagePointObservation(const Image& image
 			, bool applyWeightByDistanceFromImageCenter)
 		{
 			if (image.pointIndex >= this->allWorldPointParameters.size()) {
@@ -309,7 +370,7 @@ namespace ofxRulr {
 			float weight = 1.0f;
 			if (applyWeightByDistanceFromImageCenter) {
 				auto distanceToImageCenter = image.imagePoint - glm::vec2(this->cameraIntrinsics.width, this->cameraIntrinsics.height);
-				weight = 1.0f / log(glm::length(distanceToImageCenter));
+				weight = 1.0f / sqrt(glm::length(distanceToImageCenter));
 			}
 			auto residualBlock = ProjectedPointCost::Create(image.imagePoint
 				, this->cameraIntrinsics
@@ -371,11 +432,22 @@ namespace ofxRulr {
 		}
 
 		//---------
+		void
+			BundleAdjustmentPoints::Problem::addPointsInPlaneConstraint(size_t plane)
+		{
+			auto residualBlock = PointsInPlaneCost::Create(plane, this->allWorldPointParameters.size());
+			this->problem.AddResidualBlock(residualBlock
+				, NULL
+				, this->allWorldPointParameters);
+			
+		}
+
+		//---------
 		BundleAdjustmentPoints::Result
 			BundleAdjustmentPoints::Problem::solve(const ofxCeres::SolverSettings& solverSettings)
 		{
 			if (solverSettings.printReport) {
-				cout << "Solve LineswithCommonPoint" << endl;
+				cout << "Solve BundleAdjustmentPoints" << endl;
 			}
 			ceres::Solver::Summary summary;
 			ceres::Solve(solverSettings.options

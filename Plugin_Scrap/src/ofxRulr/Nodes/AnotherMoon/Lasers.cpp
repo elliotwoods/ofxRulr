@@ -70,9 +70,14 @@ namespace ofxRulr {
 			void
 				Lasers::drawWorldStage()
 			{
+				Laser::DrawArguments args;
+				args.rigidBody = ofxRulr::isActive(this, this->parameters.draw.rigidBody);
+				args.trussLine = ofxRulr::isActive(this, this->parameters.draw.trussLine);
+				args.centerLine = ofxRulr::isActive(this, this->parameters.draw.centerLine);
+
 				auto lasers = this->lasers.getSelection();
 				for (auto laser : lasers) {
-					laser->drawWorldStage();
+					laser->drawWorldStage(args);
 				}
 			}
 

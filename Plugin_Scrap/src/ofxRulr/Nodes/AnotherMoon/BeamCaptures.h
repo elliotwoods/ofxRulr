@@ -13,12 +13,18 @@ namespace ofxRulr {
 
 				void init();
 				void update();
+				void drawWorldStage();
 
 				ofxCvGui::PanelPtr getPanel() override;
 				Calibrate::LaserCapture* laserCapture = nullptr;
 			protected:
 				void rebuildView();
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
+
+				struct : ofParameterGroup {
+					Calibrate::DrawParameters::BeamCaptures draw;
+					PARAM_DECLARE("BeamCaptures", draw);
+				} parameters;
 			};
 		}
 	}

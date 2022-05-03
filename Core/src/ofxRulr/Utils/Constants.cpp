@@ -1,7 +1,7 @@
 #include "pch_RulrCore.h"
 
 namespace ofxRulr {
-	bool isActive(const ofxCvGui::IInspectable* selectable, const WhenActive& whenActive) {
+	bool isActive(const ofxCvGui::IInspectable* const selectable, const WhenActive& whenActive) {
 		switch (whenActive.get()) {
 		case WhenActive::Selected:
 			if (!selectable->isBeingInspected()) {

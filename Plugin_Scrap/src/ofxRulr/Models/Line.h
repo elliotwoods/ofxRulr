@@ -25,6 +25,11 @@ namespace ofxRulr {
 				this->t[1] = sin(angle);
 			}
 
+			Line_(const glm::tvec2<T>& s, const glm::tvec2<T>& t)
+			: s(s)
+			, t(t) {
+			}
+
 			// ax + by + c = 0
 			// NOTE : We presume the line doesn't go vertical here!
 			glm::tvec3<T> getABC() const {
@@ -51,6 +56,11 @@ namespace ofxRulr {
 				return ofxCeres::VectorMath::distanceLineToPoint(abc, point);
 			}
 
+			glm::tvec2<T> getClosestPointTo(const glm::tvec2<T>& a) const {
+				auto u = ofxCeres::VectorMath::dot(a - this->s, this->t);
+				return this->s + u * this->t;
+			}
+
 			template<typename T2>
 			void fromParameters(T2* const parameters) {
 				this->s[0] = (T)parameters[0];
@@ -64,6 +74,11 @@ namespace ofxRulr {
 				parameters[0] = (T2)this->s[0];
 				parameters[1] = (T2)this->s[1];
 				parameters[2] = (T2)atan2(this->t[1], this->t[2]);
+			}
+
+			template<typename T2>
+			Line_<T2> castTo() const {
+				return Line_<T2>((glm::tvec2<T2>) this->s, (glm::tvec2<T2>) this->t);
 			}
 		};
 

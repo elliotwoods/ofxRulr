@@ -1,43 +1,37 @@
 #pragma once
 
 #include "ofxRulr/Models/Camera.h"
+#include "ofxRulr/Models/LaserProjector.h"
 
 namespace ofxRulr {
 	namespace Solvers {
-		/// <summary>
-		/// We presume that we already have camera intrisincs
-		/// and that image points are already undistorted.
-		/// </summary>
-		class BundleAdjustmentPoints {
+		class BundleAdjustmentLasers {
 		public:
 			struct Image {
-				int pointIndex;
-				int viewIndex;
-				glm::vec2 imagePoint;
+				int cameraIndex;
+				int laserProjectorIndex;
+				Models::Line imageLine;
+				glm::vec2 projectedPoint;
 			};
 
 			struct Solution {
-				vector<glm::vec3> worldPoints;
 				vector<Models::Transform> cameraViewTransforms;
+				vector<Models::LaserProjector> laserProjectors;
 			};
+
 			typedef ofxCeres::Result<Solution> Result;
 
 			static ofxCeres::SolverSettings defaultSolverSettings();
 
 			class Problem {
 			public:
-				Problem(size_t pointCount
-					, size_t viewCount
-					, const Models::Intrinsics& cameraIntrinsics);
 				Problem(const Solution& initialSolution
 					, const Models::Intrinsics& cameraIntrinsics);
-
 				~Problem();
 
-				void addImagePointObservation(const Image&, bool applyWeightByDistanceFromImageCenter);
+				void addLineImageObservation(const Image&);
 				void addSceneScaleConstraint(float maxRadius);
 				void addSceneCenteredConstraint(const glm::vec3& sceneCenter);
-				void addCameraZeroYawConstraint(int viewIndex);
 				void addCameraZeroRollConstrant(int viewIndex);
 				void addPointsInPlaneConstraint(size_t plane);
 
@@ -46,9 +40,11 @@ namespace ofxRulr {
 				ceres::Problem problem;
 				const Models::Intrinsics cameraIntrinsics;
 
-				vector<double*> allWorldPointParameters;
-				vector<double*> allViewTranslateParameters;
-				vector<double*> allViewRotationParameters;
+				vector<double*> allCameraTranslationParameters;
+				vector<double*> allCameraRotationParameters;
+				vector<double*> allLaserTranslationParameters;
+				vector<double*> allLaserRotationParameters;
+				vector<double*> allLaserFovParameters;
 			};
 		};
 	}

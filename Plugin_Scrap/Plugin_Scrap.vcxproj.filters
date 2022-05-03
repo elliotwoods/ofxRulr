@@ -100,6 +100,15 @@
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_InitialCameras.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_BundleAdjustPoints.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\BundleAdjustmentLasers.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_BundleAdjustLasers.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Models\Camera.h">
@@ -165,6 +174,18 @@
     <ClInclude Include="src\pch_Plugin_Scrap.h" />
     <ClInclude Include="src\polyfit\polyfit.h">
       <Filter>src\polyfit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\LaserProjector.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\Intrinsics.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\Ray.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\BundleAdjustmentLasers.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

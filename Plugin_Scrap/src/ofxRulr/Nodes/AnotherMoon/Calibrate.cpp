@@ -42,7 +42,7 @@ namespace ofxRulr {
 			void
 				Calibrate::BeamCapture::serialize(nlohmann::json& json)
 			{
-				Utils::serialize(json, "imagePoint", this->imagePoint);
+				Utils::serialize(json, "projectionPoint", this->projectionPoint);
 
 				this->onImage.serialize(json["onImage"]);
 				this->offImage.serialize(json["offImage"]);
@@ -54,10 +54,12 @@ namespace ofxRulr {
 			void
 				Calibrate::BeamCapture::deserialize(const nlohmann::json& json)
 			{
-				Utils::deserialize(json, "imagePoint", this->imagePoint);
-
 				// legacy encoding
 				{
+					if (json.contains("imagePoint")) {
+						Utils::deserialize(json, "imagePoint", this->projectionPoint);
+					}
+
 					if (json.contains("urlOnImage")) {
 						this->onImage.pathOnCamera = json["urlOnImage"].get<string>();
 					}
@@ -65,6 +67,8 @@ namespace ofxRulr {
 						this->offImage.pathOnCamera = json["urlOffImage"].get<string>();
 					}
 				}
+
+				Utils::deserialize(json, "projectionPoint", this->projectionPoint);
 
 				if (json.contains("onImage")) {
 					this->onImage.deserialize(json["onImage"]);
@@ -187,6 +191,46 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void
+				Calibrate::LaserCapture::drawWorldStage(const DrawArguments& args)
+			{
+				// Draw beams
+				if (args.lasers && ofxRulr::isActive(args.nodeForSelection, args.drawParameters.beamCaptures.rays.get())) {
+					auto lasers = args.lasers->getSelectedLasers();
+
+					// Find corresponding laser
+					shared_ptr<Laser> laser;
+					for (const auto& it : lasers) {
+						if (it->parameters.settings.address.get() == this->laserAddress) {
+							laser = it;
+							break;
+						}
+					}
+
+					// Draw beams
+					if (laser) {
+						auto laserModel = laser->getModel();
+						auto beamCaptures = this->beamCaptures.getSelection();
+
+						ofMesh lines;
+						lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
+
+						for (auto beamCapture : beamCaptures) {
+							auto rayModel = laserModel.castRayWorldSpace(beamCapture->projectionPoint);
+							
+							lines.addVertex(rayModel.s);
+							lines.addVertex(rayModel.s + rayModel.t);
+
+							lines.addColor(beamCapture->color.get());
+							lines.addColor(beamCapture->color.get());
+						}
+
+						lines.draw();
+					}
+				}
+			}
+
+			//----------
 			ofxCvGui::ElementPtr
 				Calibrate::LaserCapture::getDataDisplay()
 			{
@@ -249,6 +293,13 @@ namespace ofxRulr {
 
 			//----------
 			string
+				Calibrate::CameraCapture::getName() const
+			{
+				return this->timeString;
+			}
+
+			//----------
+			string
 				Calibrate::CameraCapture::getDisplayString() const
 			{
 				stringstream ss;
@@ -291,7 +342,7 @@ namespace ofxRulr {
 				Calibrate::CameraCapture::update()
 			{
 				// Set the name for in the WorldStage
-				this->cameraTransform->setName(this->timeString);
+				this->cameraTransform->setName(this->getName());
 				this->cameraTransform->setColor(this->color);
 			}
 
@@ -300,13 +351,18 @@ namespace ofxRulr {
 				Calibrate::CameraCapture::drawWorldStage(const DrawArguments& args)
 			{
 				this->cameraTransform->drawWorldStage();
-				{
+				if(ofxRulr::isActive(args.nodeForSelection, args.drawParameters.cameraCaptures.cameras)) {
 					ofPushMatrix();
 					{
 						ofMultMatrix(this->cameraTransform->getTransform());
 						this->drawObjectSpace(args);
 					}
 					ofPopMatrix();
+				}
+
+				auto laserCaptures = this->laserCaptures.getSelection();
+				for (auto laserCapture : laserCaptures) {
+					laserCapture->drawWorldStage(args);
 				}
 			}
 
@@ -400,6 +456,7 @@ namespace ofxRulr {
 				this->addInput<Lasers>();
 				this->addInput<Item::Camera>("Calibrated camera");
 
+				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_DRAW_WORLD_LISTENER;
@@ -469,6 +526,20 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						}, '2');
+
+					inspector->addButton("Bundle adjust points", [this]() {
+						try {
+							this->calibrateBundleAdjustPoints();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						}, '3');
+
+					inspector->addButton("Bundle adjust lasers", [this]() {
+						try {
+							this->calibrateBundleAdjustLasers();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						}, '4');
 				}
 			}
 
@@ -504,17 +575,17 @@ namespace ofxRulr {
 			void
 				Calibrate::drawWorldStage()
 			{
-				if (ofxRulr::isActive(this, this->parameters.draw.cameras)) {
-					//prep draw parameters
-					CameraCapture::DrawArguments drawArgs;
-					auto cameraNode = this->getInput<Item::Camera>();
-					if (cameraNode) {
-						drawArgs.camera = cameraNode;
-					}
-					auto cameraCaptures = this->cameraCaptures.getSelection();
-					for (auto cameraCapture : cameraCaptures) {
-						cameraCapture->drawWorldStage(drawArgs);
-					}
+				//prep draw parameters
+				DrawArguments drawArgs{
+					this
+					, this->getInput<Item::Camera>()
+					, this->getInput<Lasers>()
+					, this->parameters.draw
+				};
+
+				auto cameraCaptures = this->cameraCaptures.getSelection();
+				for (auto cameraCapture : cameraCaptures) {
+					cameraCapture->drawWorldStage(drawArgs);
 				}
 			}
 
@@ -570,7 +641,7 @@ namespace ofxRulr {
 							Utils::ScopedProcess scopedProcessImagePoint(ofToString(calibrationImagePoint));
 
 							auto beamCapture = make_shared<BeamCapture>();
-							beamCapture->imagePoint = calibrationImagePoint;
+							beamCapture->projectionPoint = calibrationImagePoint;
 							beamCapture->parentSelection = &laserCapture->ourSelection;
 
 							// Background capture
@@ -646,7 +717,7 @@ namespace ofxRulr {
 					auto url = imagePath.pathOnCamera;
 					auto splitPath = ofSplitString(url, "/");
 					auto filename = splitPath.back();
-					auto localPath = filesystem::path(this->parameters.processing.localDirectory.get());
+					auto localPath = filesystem::path(this->parameters.lineFinder.localDirectory.get());
 					if (localPath.empty()) {
 						throw(ofxRulr::Exception("Local path is empty"));
 					}
@@ -659,6 +730,40 @@ namespace ofxRulr {
 				else {
 					// use the image path that's stored
 					return imagePath.localCopy;
+				}
+			}
+
+			//----------
+			void
+				Calibrate::deselectLasersWithNoData(size_t minimumCameraCaptureCount)
+			{
+				this->throwIfMissingAConnection<Lasers>();
+				auto lasersNode = this->getInput<Lasers>();
+				auto lasers = lasersNode->getSelectedLasers();
+				auto cameraCaptures = this->cameraCaptures.getSelection();
+
+				for (auto laser : lasers) {
+					size_t seenInCountViews = 0;
+					for (auto cameraCapture : cameraCaptures) {
+						auto laserCaptures = cameraCapture->laserCaptures.getSelection();
+
+						// Deselect any without children
+						for (auto laserCapture : laserCaptures) {
+							// Check if it has any beamCaptures
+							if (laserCapture->beamCaptures.getSelection().size() == 0) {
+								laserCapture->setSelected(false);
+							}
+
+							// Count if selected and is this laser
+							if (laserCapture->isSelected()
+								&& laserCapture->laserAddress == laser->parameters.settings.address.get()) {
+								seenInCountViews++;
+							}
+						}
+					}
+					if (seenInCountViews < minimumCameraCaptureCount) {
+						laser->setSelected(false);
+					}
 				}
 			}
 
@@ -783,7 +888,7 @@ namespace ofxRulr {
 			{
 				auto flags = cv::IMREAD_GRAYSCALE;
 
-				switch (this->parameters.processing.imageFileSource.get()) {
+				switch (this->parameters.lineFinder.imageFileSource.get()) {
 					case ImageFileSource::Local:
 					{
 						auto fullFilePath = this->getLocalCopyPath(imagePath);

@@ -76,14 +76,22 @@ namespace ofxRulr {
 						PARAM_DECLARE("Test image", enabled, circleRadius, animation);
 					} testImage;
 
-					PARAM_DECLARE("Laser"
+					struct : ofParameterGroup {
+						ofParameter<WhenActive> rigidBody{ "Rigid Body", WhenActive::Selected };
+						ofParameter<WhenActive> trussLine{ "Truss line", WhenActive::Always };
+						ofParameter<WhenActive> centerLine{ "Center line", WhenActive::Selected };
+						PARAM_DECLARE("Draw", rigidBody, trussLine, centerLine);
+					} draw;
+
+					PARAM_DECLARE("Lasers"
 						, baseAddress
 						, signalEnabled
 						, selectedState
 						, deselectedState
 						, sendToDeselected
 						, pushState
-						, testImage);
+						, testImage
+						, draw);
 				} parameters;
 
 				chrono::system_clock::time_point lastPushStateTime = chrono::system_clock::now();

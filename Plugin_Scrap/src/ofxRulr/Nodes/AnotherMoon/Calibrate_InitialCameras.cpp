@@ -9,7 +9,7 @@ namespace ofxRulr {
 			void
 				Calibrate::calibrateInitialCameras()
 			{
-				Utils::ScopedProcess scopedProcess("Process");
+				Utils::ScopedProcess scopedProcess("Initial camera poses");
 
 				this->throwIfMissingAConnection<Lasers>();
 				this->throwIfMissingAConnection<Item::Camera>();
@@ -24,6 +24,8 @@ namespace ofxRulr {
 					Utils::ScopedProcess scopedProcessCameras("Cameras", false, cameraCaptures.size());
 
 					for (auto cameraCapture : cameraCaptures) {
+						Utils::ScopedProcess scopedProcessCameraCapture(cameraCapture->getName());
+
 						// Gather data
 						vector<glm::vec2> imagePoints;
 						vector<glm::vec3> worldPoints;
@@ -55,7 +57,23 @@ namespace ofxRulr {
 
 							cameraCapture->cameraTransform->setExtrinsics(rotationVector
 								, translation
-								, false);
+								, true);
+
+							{
+								cv::Mat translationI, rotationVectorI;
+								cameraCapture->cameraTransform->getExtrinsics(translationI
+									, rotationVectorI
+									, true);
+								auto reprojectionError = ofxCv::reprojectionError(ofxCv::toCv(imagePoints)
+									, ofxCv::toCv(worldPoints)
+									, rotationVectorI
+									, translationI
+									, cameraNode->getCameraMatrix()
+									, cameraNode->getDistortionCoefficients());
+								cout << "Reprojection error " << reprojectionError << endl;
+							}
+
+							scopedProcessCameraCapture.end();
 						}
 					}
 				}

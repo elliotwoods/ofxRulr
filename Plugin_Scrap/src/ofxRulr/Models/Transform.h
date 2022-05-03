@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxCeres.h"
+#include <glm/gtx/matrix_decompose.hpp>
 
 namespace ofxRulr {
 	namespace Models {
@@ -26,15 +27,31 @@ namespace ofxRulr {
 
 			}
 
-			const glm::tvec3<T> translation;
-			const glm::tvec3<T> rotation;
+			Transform_(const glm::tmat4x4<T> & matrix) {
+				glm::vec3 scale;
+				glm::quat orientation;
+				glm::vec3 translation, skew;
+				glm::vec4 perspective;
 
-			glm::tmat4x4<T> getTransform() 
+				glm::decompose(matrix
+					, scale
+					, orientation
+					, translation
+					, skew
+					, perspective);
+				this->translation = (glm::tvec3<T>) translation;
+				this->rotation = (glm::tvec3<T>) glm::eulerAngles(orientation);
+			}
+
+			glm::tvec3<T> translation;
+			glm::tvec3<T> rotation;
+
+			glm::tmat4x4<T> getTransform() const
 			{
 				return ofxCeres::VectorMath::createTransform(this->translation, this->rotation);
 			}
 
-			glm::tvec3<T> applyTransform(const glm::tvec3<T>& point) 
+			glm::tvec3<T> applyTransform(const glm::tvec3<T>& point) const
 			{
 				return ofxCeres::VectorMath::applyTransform(this->getTransform()
 					, point);

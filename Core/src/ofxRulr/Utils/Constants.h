@@ -40,5 +40,5 @@ namespace ofxRulr {
 		, (Raw, Optimized, Assistant)
 		, ("Raw", "Optimized", "Assistant"));
 
-	bool isActive(const ofxCvGui::IInspectable*, const WhenActive&);
+	bool isActive(const ofxCvGui::IInspectable* const, const WhenActive&);
 }
