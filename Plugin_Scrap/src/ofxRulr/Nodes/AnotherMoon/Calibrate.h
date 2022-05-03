@@ -188,7 +188,7 @@ namespace ofxRulr {
 
 				EditSelection<CameraCapture> cameraEditSelection;
 
-				Utils::CaptureSet<CameraCapture> getCameraCaptures();
+				const Utils::CaptureSet<CameraCapture> & getCameraCaptures();
 				filesystem::path getLocalCopyPath(const ImagePath& cameraPath) const;
 			protected:
 				struct : ofParameterGroup {

@@ -109,6 +109,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_BundleAdjustLasers.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\SynthesiseCaptures.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Models\Camera.h">
@@ -186,6 +189,9 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\BundleAdjustmentLasers.h">
       <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\SynthesiseCaptures.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

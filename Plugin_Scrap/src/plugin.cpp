@@ -13,6 +13,7 @@
 #include "ofxRulr/Nodes/AnotherMoon/BeamCaptures.h"
 #include "ofxRulr/Nodes/AnotherMoon/SortFiles.h"
 #include "ofxRulr/Nodes/AnotherMoon/Target.h"
+#include "ofxRulr/Nodes/AnotherMoon/SynthesiseCaptures.h"
 
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
@@ -29,4 +30,5 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::BeamCaptures);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::SortFiles);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::Target);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::SynthesiseCaptures);
 OFXPLUGIN_PLUGIN_MODULES_END

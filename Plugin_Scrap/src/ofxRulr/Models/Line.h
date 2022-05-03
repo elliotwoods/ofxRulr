@@ -87,6 +87,8 @@ namespace ofxRulr {
 			Line()
 				: Line_<float>() {}
 
+			Line(const Line_<float>& line);
+
 			Line(const cv::Vec4f& openCVLine)
 			: Line_<float>(openCVLine) { }
 

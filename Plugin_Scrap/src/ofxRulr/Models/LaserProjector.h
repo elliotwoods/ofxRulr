@@ -23,8 +23,8 @@ namespace ofxRulr {
 			Ray_<T> castRayObjectSpace(const glm::tvec2<T>& projectionPoint)
 			{
 				auto angles = this->projectionPointToAngles(projectionPoint);
-				auto direction = glm::rotateX(glm::tvec3<T>(0, 0, 1), angles.y);
-				direction = glm::rotateY(direction, angles.x);
+				auto direction = glm::rotateY(glm::tvec3<T>(0, 0, 1), angles.x);
+				direction = glm::rotateX(direction, angles.y);
 				return Ray_<T> {
 					glm::tvec3<T>()
 					, direction

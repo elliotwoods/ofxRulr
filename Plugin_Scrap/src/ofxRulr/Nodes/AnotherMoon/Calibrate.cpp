@@ -736,7 +736,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			Utils::CaptureSet<Calibrate::CameraCapture>
+			const Utils::CaptureSet<Calibrate::CameraCapture> &
 				Calibrate::getCameraCaptures()
 			{
 				return this->cameraCaptures;

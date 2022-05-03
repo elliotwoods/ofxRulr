@@ -4,6 +4,12 @@
 namespace ofxRulr {
 	namespace Models {
 		//----------
+		Line::Line(const Line_<float>& line)
+			: Line_<float>(line)
+		{
+		}
+
+		//----------
 		void
 			Line::drawOnImage(cv::Mat& image) const
 		{
