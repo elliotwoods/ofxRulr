@@ -15,11 +15,17 @@ namespace ofxRulr {
 				void update();
 				void drawWorldStage();
 
+				void populateInspector(ofxCvGui::InspectArguments&);
+
 				ofxCvGui::PanelPtr getPanel() override;
 				Calibrate::LaserCapture* laserCapture = nullptr;
+
+				void colorByProjectionPoint();
+
 			protected:
 				void rebuildView();
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
+
 
 				struct : ofParameterGroup {
 					Calibrate::DrawParameters::BeamCaptures draw;

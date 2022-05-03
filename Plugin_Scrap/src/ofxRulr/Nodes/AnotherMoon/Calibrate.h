@@ -60,7 +60,8 @@ namespace ofxRulr {
 
 					struct BeamCaptures : ofParameterGroup {
 						ofParameter<WhenActive> rays{ "Rays", WhenActive::Never };
-						PARAM_DECLARE("Beam captures", rays);
+						ofParameter<WhenActive> rayIndices{ "Ray indices", WhenActive::Never };
+						PARAM_DECLARE("Beam captures", rays, rayIndices);
 					} beamCaptures;
 
 					PARAM_DECLARE("Draw", cameraCaptures, beamCaptures)
@@ -89,6 +90,7 @@ namespace ofxRulr {
 					Models::Line line;
 
 					EditSelection<BeamCapture>* parentSelection = nullptr;
+					float residual = 0.0f;
 				protected:
 					ofxCvGui::ElementPtr getDataDisplay() override;
 				};

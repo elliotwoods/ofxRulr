@@ -95,6 +95,50 @@ struct ProjectedLineCost
 namespace ofxRulr {
 	namespace Solvers {
 		//----------
+		void
+			BundleAdjustmentLasers::fillCameraParameters(const Models::Transform& cameraViewTransform
+			, double* cameraTranslationParameters
+			, double* cameraRotationParameters)
+		{
+			{
+				cameraTranslationParameters[0] = (double)cameraViewTransform.translation[0];
+				cameraTranslationParameters[1] = (double)cameraViewTransform.translation[1];
+				cameraTranslationParameters[2] = (double)cameraViewTransform.translation[2];
+			}
+
+			{
+				cameraRotationParameters[0] = (double)cameraViewTransform.rotation[0];
+				cameraRotationParameters[1] = (double)cameraViewTransform.rotation[1];
+				cameraRotationParameters[2] = (double)cameraViewTransform.rotation[2];
+			}
+		}
+
+		//----------
+		void
+			BundleAdjustmentLasers::fillLaserParameters(const Models::LaserProjector& laserProjector
+				, double* laserTranslationParameters
+				, double* laserRotationParameters
+				, double* laserFovParameters)
+		{
+			{
+				laserTranslationParameters[0] = laserProjector.rigidBodyTransform.translation[0];
+				laserTranslationParameters[1] = laserProjector.rigidBodyTransform.translation[1];
+				laserTranslationParameters[2] = laserProjector.rigidBodyTransform.translation[2];
+			}
+
+			{
+				laserRotationParameters[0] = laserProjector.rigidBodyTransform.rotation[0];
+				laserRotationParameters[1] = laserProjector.rigidBodyTransform.rotation[1];
+				laserRotationParameters[2] = laserProjector.rigidBodyTransform.rotation[2];
+			}
+
+			{
+				laserFovParameters[0] = laserProjector.fov[0];
+				laserFovParameters[1] = laserProjector.fov[1];
+			}
+		}
+
+		//----------
 		ofxCeres::SolverSettings
 			BundleAdjustmentLasers::defaultSolverSettings()
 		{
@@ -116,51 +160,31 @@ namespace ofxRulr {
 			, const Models::Intrinsics& cameraIntrinsics)
 			: cameraIntrinsics(cameraIntrinsics)
 		{
-			for (const auto& cameraView : initialSolution.cameraViewTransforms) {
-				{
-					auto data = new double[3];
-					data[0] = (double)cameraView.translation[0];
-					data[1] = (double)cameraView.translation[1];
-					data[2] = (double)cameraView.translation[2];
-					this->allCameraTranslationParameters.push_back(data);
-				}
+			for(const auto& cameraViewTransform : initialSolution.cameraViewTransforms) {
+				auto cameraTranslationParameters = new double[3];
+				auto cameraRotationParameters = new double[3];
 
-				{
-					auto data = new double[3];
-					data[0] = (double)cameraView.rotation[0];
-					data[1] = (double)cameraView.rotation[1];
-					data[2] = (double)cameraView.rotation[2];
-					this->allCameraRotationParameters.push_back(data);
-				}
+				fillCameraParameters(cameraViewTransform
+					, cameraTranslationParameters
+					, cameraRotationParameters);
+
+				this->allCameraTranslationParameters.push_back(cameraTranslationParameters);
+				this->allCameraRotationParameters.push_back(cameraRotationParameters);
 			}
 
 			for (const auto& laserProjector : initialSolution.laserProjectors) {
-				{
-					const auto& rigidBodyTransform = laserProjector.rigidBodyTransform;
+				auto laserTranslationParameters = new double[3];
+				auto laserRotationParameters = new double[3];
+				auto laserFovParameters = new double[2];
 
-					{
-						auto data = new double[3];
-						data[0] = (double)rigidBodyTransform.translation[0];
-						data[1] = (double)rigidBodyTransform.translation[1];
-						data[2] = (double)rigidBodyTransform.translation[2];
-						this->allLaserTranslationParameters.push_back(data);
-					}
+				fillLaserParameters(laserProjector
+					, laserTranslationParameters
+					, laserRotationParameters
+					, laserFovParameters);
 
-					{
-						auto data = new double[3];
-						data[0] = (double)rigidBodyTransform.rotation[0];
-						data[1] = (double)rigidBodyTransform.rotation[1];
-						data[2] = (double)rigidBodyTransform.rotation[2];
-						this->allLaserRotationParameters.push_back(data);
-					}
-				}
-
-				{
-					auto data = new double[2];
-					data[0] = (double)laserProjector.fov[0];
-					data[1] = (double)laserProjector.fov[1];
-					this->allLaserFovParameters.push_back(data);
-				}
+				this->allLaserTranslationParameters.push_back(laserTranslationParameters);
+				this->allLaserRotationParameters.push_back(laserRotationParameters);
+				this->allLaserFovParameters.push_back(laserRotationParameters);
 			}
 		}
 
@@ -220,7 +244,7 @@ namespace ofxRulr {
 				, cameraViewRotationData
 				, laserRigidBodyTranslationData
 				, laserRigidBodyRotationData
-				, laserRigidBodyRotationData);
+				, laserFovData);
 		}
 
 		//----------
@@ -267,6 +291,51 @@ namespace ofxRulr {
 
 				return result;
 			}
+		}
+
+		//----------
+		float
+			BundleAdjustmentLasers::getResidual(const Solution& solution
+				, const Models::Intrinsics& cameraIntrinsics
+				, const Image& image)
+		{
+			double cameraViewTranslationParameters[3];
+			double cameraViewRotationParameters[3];
+			double laserTranslationParameters[3];
+			double laserRotationParameters[3];
+			double laserFovParameters[2];
+
+			// Fill the parameters
+			{
+				fillCameraParameters(solution.cameraViewTransforms[image.cameraIndex]
+					, cameraViewTranslationParameters
+					, cameraViewRotationParameters);
+				fillLaserParameters(solution.laserProjectors[image.laserProjectorIndex]
+					, laserTranslationParameters
+					, laserRotationParameters
+					, laserFovParameters);
+			}
+
+			// Create cost function
+			ProjectedLineCost costFunction (image.projectedPoint
+				, image.imageLine
+				, cameraIntrinsics
+				, 1.0f);
+
+			// Calculate residuals
+			double residuals[2];
+			if (!costFunction(cameraViewTranslationParameters
+				, cameraViewRotationParameters
+				, laserTranslationParameters
+				, laserRotationParameters
+				, laserFovParameters
+				, residuals)) {
+				throw(ofxRulr::Exception("BundleAdjustmentLasers::getResidual : Failed to evaluate cost function"));
+			}
+
+			// Take RMS
+			float rms = sqrt((residuals[0] * residuals[0] + residuals[1] * residuals[1]) / 2.0f);
+			return rms;
 		}
 	}
 }

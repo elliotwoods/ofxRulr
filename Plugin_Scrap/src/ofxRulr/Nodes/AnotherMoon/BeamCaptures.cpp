@@ -23,6 +23,10 @@ namespace ofxRulr {
 				BeamCaptures::init()
 			{
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_DRAW_WORLD_LISTENER;
+				RULR_NODE_INSPECTOR_LISTENER;
+
+				this->manageParameters(this->parameters);
 
 				this->addInput<LaserCaptures>();
 				this->panel = ofxCvGui::Panels::makeWidgets();
@@ -88,10 +92,42 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void
+				BeamCaptures::populateInspector(ofxCvGui::InspectArguments& args)
+			{
+				auto inspector = args.inspector;
+				inspector->addButton("Color by projectionPoint", [this]() {
+					try {
+						this->colorByProjectionPoint();
+					}
+					RULR_CATCH_ALL_TO_ALERT
+					});
+			}
+
+
+			//----------
 			ofxCvGui::PanelPtr
 				BeamCaptures::getPanel()
 			{
 				return this->panel;
+			}
+
+			//----------
+			void
+				BeamCaptures::colorByProjectionPoint()
+			{
+				if (!this->laserCapture) {
+					throw(ofxRulr::Exception("No LaserCapture is selected"));
+				}
+
+				auto beamCaptures = this->laserCapture->beamCaptures.getAllCaptures();
+				for (auto beamCapture : beamCaptures) {
+					beamCapture->color = ofColor{
+						ofMap(beamCapture->projectionPoint.x, -1, 1, 0, 255)
+						, ofMap(beamCapture->projectionPoint.y, -1, 1, 0, 255)
+						, 0
+					};
+				}
 			}
 
 			//----------

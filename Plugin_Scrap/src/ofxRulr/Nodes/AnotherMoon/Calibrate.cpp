@@ -34,7 +34,7 @@ namespace ofxRulr {
 				Calibrate::BeamCapture::getDisplayString() const
 			{
 				stringstream ss;
-				ss << "s: " << this->line.s << ", t: "<< this->line.t;
+				ss << "residual: " << this->residual;
 				return ss.str();
 			}
 
@@ -43,11 +43,13 @@ namespace ofxRulr {
 				Calibrate::BeamCapture::serialize(nlohmann::json& json)
 			{
 				Utils::serialize(json, "projectionPoint", this->projectionPoint);
+				Utils::serialize(json, "residual", this->residual);
 
 				this->onImage.serialize(json["onImage"]);
 				this->offImage.serialize(json["offImage"]);
 
 				this->line.serialize(json["line"]);
+
 			}
 
 			//----------
@@ -69,6 +71,7 @@ namespace ofxRulr {
 				}
 
 				Utils::deserialize(json, "projectionPoint", this->projectionPoint);
+				Utils::deserialize(json, "residual", this->residual);
 
 				if (json.contains("onImage")) {
 					this->onImage.deserialize(json["onImage"]);
@@ -177,7 +180,7 @@ namespace ofxRulr {
 				Utils::deserialize(json, "directory", this->directory);
 				Utils::deserialize(json, "imagePointInCamera", this->imagePointInCamera);
 
-				if(json.contains("linesWithCommonPointSolveResult")) {
+				if (json.contains("linesWithCommonPointSolveResult")) {
 					Utils::deserialize(json["linesWithCommonPointSolveResult"], "residual", this->linesWithCommonPointSolveResult.residual);
 					Utils::deserialize(json["linesWithCommonPointSolveResult"], "success", this->linesWithCommonPointSolveResult.success);
 				}
@@ -194,8 +197,11 @@ namespace ofxRulr {
 			void
 				Calibrate::LaserCapture::drawWorldStage(const DrawArguments& args)
 			{
+				auto drawRays = ofxRulr::isActive(args.nodeForSelection, args.drawParameters.beamCaptures.rays.get());
+				auto drawRayIndices = ofxRulr::isActive(args.nodeForSelection, args.drawParameters.beamCaptures.rayIndices.get());
+
 				// Draw beams
-				if (args.lasers && ofxRulr::isActive(args.nodeForSelection, args.drawParameters.beamCaptures.rays.get())) {
+				if (args.lasers && (drawRays || drawRayIndices)) {
 					auto lasers = args.lasers->getSelectedLasers();
 
 					// Find corresponding laser
@@ -207,25 +213,39 @@ namespace ofxRulr {
 						}
 					}
 
-					// Draw beams
+					// Draw beam rays
 					if (laser) {
 						auto laserModel = laser->getModel();
 						auto beamCaptures = this->beamCaptures.getSelection();
 
 						ofMesh lines;
-						lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
 
+						size_t beamIndex = 0;
 						for (auto beamCapture : beamCaptures) {
 							auto rayModel = laserModel.castRayWorldSpace(beamCapture->projectionPoint);
-							
-							lines.addVertex(rayModel.s);
-							lines.addVertex(rayModel.s + rayModel.t);
 
-							lines.addColor(beamCapture->color.get());
-							lines.addColor(beamCapture->color.get());
+							if (drawRays) {
+								lines.addVertex(rayModel.s);
+								lines.addVertex(rayModel.s + rayModel.t);
+
+								lines.addColor(beamCapture->color.get());
+								lines.addColor(beamCapture->color.get());
+							}
+
+							if (drawRayIndices) {
+
+								ofxCvGui::Utils::drawTextAnnotation(ofToString(beamIndex)
+									, rayModel.s + rayModel.t
+									, beamCapture->color);
+							}
+
+							beamIndex++;
 						}
 
-						lines.draw();
+						if (drawRays) {
+							lines.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
+							lines.draw();
+						}
 					}
 				}
 			}

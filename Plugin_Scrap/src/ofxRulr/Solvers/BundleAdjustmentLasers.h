@@ -22,6 +22,15 @@ namespace ofxRulr {
 			typedef ofxCeres::Result<Solution> Result;
 
 			static ofxCeres::SolverSettings defaultSolverSettings();
+			
+			static void fillCameraParameters(const Models::Transform&
+				, double* cameraTranslationParameters
+				, double* cameraRotationParameters);
+
+			static void fillLaserParameters(const Models::LaserProjector&
+				, double* laserTranslationParameters
+				, double* laserRotationParameters
+				, double* laserFovParameters);
 
 			class Problem {
 			public:
@@ -46,6 +55,10 @@ namespace ofxRulr {
 				vector<double*> allLaserRotationParameters;
 				vector<double*> allLaserFovParameters;
 			};
+
+			static float getResidual(const Solution&
+				, const Models::Intrinsics &
+				, const Image&);
 		};
 	}
 }

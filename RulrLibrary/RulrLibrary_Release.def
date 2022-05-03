@@ -747,7 +747,7 @@ EXPORTS
 	?setEnd@Ray@ofxRay@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	??0Exception@ofxRulr@@QEAA@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0NotImplementedException@ofxRulr@@QEAA@XZ
-	?isActive@ofxRulr@@YA_NPEBVIInspectable@ofxCvGui@@AEBVWhenActive@1@@Z
+	?isActive@ofxRulr@@YA_NQEBVIInspectable@ofxCvGui@@AEBVWhenActive@1@@Z
 	?what@Exception@ofxRulr@@UEBAPEBDXZ
 	??0AbstractPin@Graph@ofxRulr@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0World@Graph@ofxRulr@@QEAA@XZ

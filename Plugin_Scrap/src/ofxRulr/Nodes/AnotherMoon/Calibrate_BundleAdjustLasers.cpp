@@ -64,7 +64,12 @@ namespace ofxRulr {
 					}
 				}
 
-				// Add images to problem
+				// Gather images
+				struct AssociatedImage {
+					Solvers::BundleAdjustmentLasers::Image image;
+					shared_ptr<BeamCapture> beamCapture;
+				};
+				vector<AssociatedImage> associatedImages;
 				{
 					for (size_t cameraIndex = 0; cameraIndex < cameraCaptures.size(); cameraIndex++) {
 						auto cameraCapture = cameraCaptures[cameraIndex];
@@ -77,10 +82,20 @@ namespace ofxRulr {
 								image.cameraIndex= cameraIndex;
 								image.projectedPoint = beamCapture->projectionPoint;
 								image.imageLine= beamCapture->line;
-								problem.addLineImageObservation(image);
+
+								// Store alongside beamCapture (this is used to easily fill residuals later)
+								associatedImages.push_back(AssociatedImage{
+									image
+									, beamCapture
+									});
 							}
 						}
 					}
+				}
+
+				// Add images to problem
+				for (const auto& associatedImage : associatedImages) {
+					problem.addLineImageObservation(associatedImage.image);
 				}
 
 				//// Add scene constraints
@@ -144,6 +159,14 @@ namespace ofxRulr {
 						const auto rigidBodyTransform = glm::inverse(viewTransform);
 						cameraCapture->cameraTransform->setTransform(rigidBodyTransform);
 					}
+				}
+
+				// Calculate and store residuals on images
+				for(const auto& associatedImage : associatedImages) {
+					auto residual = Solvers::BundleAdjustmentLasers::getResidual(solution
+						, cameraIntrinsics
+						, associatedImage.image);
+					associatedImage.beamCapture->residual = residual;
 				}
 
 				scopedProcess.end();
