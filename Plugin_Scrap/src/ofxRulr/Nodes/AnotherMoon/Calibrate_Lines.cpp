@@ -16,7 +16,7 @@ namespace ofxRulr {
 
 				auto cameraNode = this->getInput<Item::Camera>();
 				auto lasersNode = this->getInput<Lasers>();
-				auto selectedLasers = lasersNode->getSelectedLasers();
+				auto selectedLasers = lasersNode->getLasersSelected();
 
 				auto cameraCaptures = this->cameraCaptures.getSelection();
 

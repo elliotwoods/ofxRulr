@@ -28,6 +28,7 @@ namespace ofxRulr {
 					bool rigidBody;
 					bool trussLine;
 					bool centerLine;
+					bool centerOffsetLine;
 				};
 
 				Laser();
@@ -53,6 +54,7 @@ namespace ofxRulr {
 				void setSource(const Source&);
 
 				void drawCircle(glm::vec2 center, float radius);
+				void drawCalibrationBeam(const glm::vec2 & projectionPoint);
 
 				string getHostname() const;
 				void sendMessage(const ofxOscMessage&);

@@ -30,7 +30,7 @@ namespace ofxRulr {
 				this->panel->onDraw += [this](ofxCvGui::DrawArguments& args) {
 					auto lasersNode = this->getInput<Lasers>();
 					if (lasersNode) {
-						auto lasers = lasersNode->getSelectedLasers();
+						auto lasers = lasersNode->getLasersSelected();
 						for (auto laser : lasers) {
 							auto centerOffset = laser->parameters.settings.centerOffset.get();
 
@@ -64,7 +64,7 @@ namespace ofxRulr {
 								? this->parameters.adjust.fastSpeed.get()
 								: this->parameters.adjust.slowSpeed.get();
 
-							auto lasers = lasersNode->getSelectedLasers();
+							auto lasers = lasersNode->getLasersSelected();
 							for (auto laser : lasers) {
 								auto newCenter = laser->parameters.settings.centerOffset.get()  + movement;
 								laser->parameters.settings.centerOffset.set(newCenter);
@@ -98,7 +98,7 @@ namespace ofxRulr {
 							? this->parameters.adjust.fastSpeed.get()
 							: this->parameters.adjust.slowSpeed.get();
 
-						auto lasers = lasersNode->getSelectedLasers();
+						auto lasers = lasersNode->getLasersSelected();
 						for (auto laser : lasers) {
 							auto newCenter = laser->parameters.settings.centerOffset.get() + movement;
 							laser->parameters.settings.centerOffset.set(newCenter);

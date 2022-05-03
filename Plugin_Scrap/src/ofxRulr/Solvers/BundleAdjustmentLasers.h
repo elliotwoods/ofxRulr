@@ -12,6 +12,14 @@ namespace ofxRulr {
 				int laserProjectorIndex;
 				Models::Line imageLine;
 				glm::vec2 projectedPoint;
+
+				string toString() const {
+					stringstream ss;
+					ss << "cameraIndex (" << this->cameraIndex << ") "
+						<< "laserIndex (" << this->laserProjectorIndex << ") "
+						<< "projectedPoint (" << this->projectedPoint << ")";
+					return ss.str();
+				}
 			};
 
 			struct Solution {
@@ -39,10 +47,11 @@ namespace ofxRulr {
 				~Problem();
 
 				void addLineImageObservation(const Image&);
-				void addSceneScaleConstraint(float maxRadius);
-				void addSceneCenteredConstraint(const glm::vec3& sceneCenter);
+				void addLaserLayoutScaleConstraint(float maxRadius);
+				void addLaserLayoutCenteredConstraint(const glm::vec3& sceneCenter);
+				void addCameraZeroYawConstraint(int viewIndex);
 				void addCameraZeroRollConstrant(int viewIndex);
-				void addPointsInPlaneConstraint(size_t plane);
+				void addLasersInPlaneConstraint(size_t plane);
 
 				Result solve(const ofxCeres::SolverSettings&);
 			protected:

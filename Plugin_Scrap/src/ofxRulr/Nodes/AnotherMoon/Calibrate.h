@@ -91,6 +91,11 @@ namespace ofxRulr {
 
 					EditSelection<BeamCapture>* parentSelection = nullptr;
 					float residual = 0.0f;
+
+					/// <summary>
+					/// Denotes if the projectionPoint is offset by the lasers' centerOffset when captured.
+					/// </summary>
+					bool isOffset = true;
 				protected:
 					ofxCvGui::ElementPtr getDataDisplay() override;
 				};
@@ -173,11 +178,13 @@ namespace ofxRulr {
 				void capture();
 
 				void deselectLasersWithNoData(size_t minimumCameraCaptureCount = 1);
+				void offsetBeamCaptures();
 
 				void calibrateLines(); // Note that process is in seperate Calibrate_Process.cpp
 				void calibrateInitialCameras();
 				void calibrateBundleAdjustPoints();
 				void calibrateBundleAdjustLasers();
+
 
 				EditSelection<CameraCapture> cameraEditSelection;
 

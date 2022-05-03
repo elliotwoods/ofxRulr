@@ -104,6 +104,19 @@ namespace ofxRulr {
 					ofPopMatrix();
 				}
 
+				// Draw center offset line
+				if (args.centerOffsetLine) {
+					auto model = this->getModel();
+					ofPushStyle();
+					{
+						auto ray = model.castRayWorldSpace(this->parameters.settings.centerOffset);
+						ofSetColor(this->color);
+						ofDrawLine(ray.s
+							, ray.s + ray.t * 100);
+					}
+					ofPopStyle();
+				}
+
 				// Draw truss line
 				if (args.trussLine) {
 					auto position = this->rigidBody->getPosition();
@@ -217,6 +230,19 @@ namespace ofxRulr {
 				msg.addFloatArg(radius);
 				this->sendMessage(msg);
 			}
+
+			//----------
+			void
+				Laser::drawCalibrationBeam(const glm::vec2 & projectionPoint)
+			{
+				ofxOscMessage msg;
+				msg.setAddress("/circle");
+				msg.addFloatArg(projectionPoint.x);
+				msg.addFloatArg(projectionPoint.y);
+				msg.addFloatArg(0);
+				this->sendMessage(msg);
+			}
+
 
 			//----------
 			string

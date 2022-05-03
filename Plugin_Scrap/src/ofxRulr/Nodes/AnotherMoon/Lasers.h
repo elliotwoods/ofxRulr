@@ -38,7 +38,9 @@ namespace ofxRulr {
 
 				void setDefaultSettings();
 
-				vector<shared_ptr<Laser>> getSelectedLasers();
+				vector<shared_ptr<Laser>> getLasersSelected();
+				vector<shared_ptr<Laser>> getLasersAll();
+
 				shared_ptr<Laser> findLaser(int address);
 			protected:
 				friend Laser;
@@ -80,7 +82,8 @@ namespace ofxRulr {
 						ofParameter<WhenActive> rigidBody{ "Rigid Body", WhenActive::Selected };
 						ofParameter<WhenActive> trussLine{ "Truss line", WhenActive::Always };
 						ofParameter<WhenActive> centerLine{ "Center line", WhenActive::Selected };
-						PARAM_DECLARE("Draw", rigidBody, trussLine, centerLine);
+						ofParameter<WhenActive> centerOffsetLine{ "Center offset line", WhenActive::Never };
+						PARAM_DECLARE("Draw", rigidBody, trussLine, centerLine, centerOffsetLine);
 					} draw;
 
 					PARAM_DECLARE("Lasers"

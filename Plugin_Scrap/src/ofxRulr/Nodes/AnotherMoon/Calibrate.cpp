@@ -44,6 +44,7 @@ namespace ofxRulr {
 			{
 				Utils::serialize(json, "projectionPoint", this->projectionPoint);
 				Utils::serialize(json, "residual", this->residual);
+				Utils::serialize(json, "isOffset", this->isOffset);
 
 				this->onImage.serialize(json["onImage"]);
 				this->offImage.serialize(json["offImage"]);
@@ -72,6 +73,7 @@ namespace ofxRulr {
 
 				Utils::deserialize(json, "projectionPoint", this->projectionPoint);
 				Utils::deserialize(json, "residual", this->residual);
+				Utils::deserialize(json, "isOffset", this->isOffset);
 
 				if (json.contains("onImage")) {
 					this->onImage.deserialize(json["onImage"]);
@@ -202,7 +204,7 @@ namespace ofxRulr {
 
 				// Draw beams
 				if (args.lasers && (drawRays || drawRayIndices)) {
-					auto lasers = args.lasers->getSelectedLasers();
+					auto lasers = args.lasers->getLasersSelected();
 
 					// Find corresponding laser
 					shared_ptr<Laser> laser;
@@ -531,6 +533,14 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_WARNING;
 					}, ' ');
 
+				inspector->addButton("Offset beam captures", [this]() {
+					try {
+						this->offsetBeamCaptures();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					});
+
+
 				inspector->addTitle("Calibrate", ofxCvGui::Widgets::Title::Level::H2);
 				{
 					inspector->addButton("Lines", [this]() {
@@ -615,7 +625,7 @@ namespace ofxRulr {
 			{
 				this->throwIfMissingAConnection<Lasers>();
 				auto lasersNode = this->getInput<Lasers>();
-				auto allLasers = lasersNode->getSelectedLasers();
+				auto allLasers = lasersNode->getLasersSelected();
 
 				auto calibrationImagePoints = this->getCalibrationImagePoints();
 
@@ -664,6 +674,10 @@ namespace ofxRulr {
 							beamCapture->projectionPoint = calibrationImagePoint;
 							beamCapture->parentSelection = &laserCapture->ourSelection;
 
+							// Originally we were offsetting when rendering
+							// Now we send raw beams out without offset during calibration
+							beamCapture->isOffset = false; 
+
 							// Background capture
 							for (int i = 0; i < this->parameters.capture.signalSends.get(); i++) {
 								laser->standby();
@@ -675,7 +689,7 @@ namespace ofxRulr {
 
 							// Positive capture image
 							for (int i = 0; i < this->parameters.capture.signalSends.get(); i++) {
-								laser->drawCircle(calibrationImagePoint, 0.0f);
+								laser->drawCalibrationBeam(calibrationImagePoint);
 								laser->run();
 							}
 							this->waitForDelay();
@@ -759,7 +773,7 @@ namespace ofxRulr {
 			{
 				this->throwIfMissingAConnection<Lasers>();
 				auto lasersNode = this->getInput<Lasers>();
-				auto lasers = lasersNode->getSelectedLasers();
+				auto lasers = lasersNode->getLasersSelected();
 				auto cameraCaptures = this->cameraCaptures.getSelection();
 
 				for (auto laser : lasers) {
@@ -783,6 +797,65 @@ namespace ofxRulr {
 					}
 					if (seenInCountViews < minimumCameraCaptureCount) {
 						laser->setSelected(false);
+					}
+				}
+			}
+
+			//----------
+			void
+				Calibrate::offsetBeamCaptures()
+			{
+				// Perform for all data (ignore selection)
+
+				this->throwIfMissingAConnection<Lasers>();
+
+				auto lasers = this->getInput<Lasers>()->getLasersAll();
+
+				auto cameraCaptures = this->cameraCaptures.getAllCaptures();
+				for(auto cameraCapture : cameraCaptures) {
+					auto laserCaptures = cameraCapture->laserCaptures.getAllCaptures();
+					for (auto laserCapture : laserCaptures) {
+						auto beamCaptures = laserCapture->beamCaptures.getAllCaptures();
+
+						// find laser
+						shared_ptr<Laser> laser;
+						for (auto it : lasers) {
+							if (it->parameters.settings.address.get() == laserCapture->laserAddress) {
+								laser = it;
+								break;
+							}
+						}
+						if (!laser) {
+							// ignore laserCapture if we don't have any laser for it
+							continue;
+						}
+
+						// get center offset
+						const auto & centerOffset = laser->parameters.settings.centerOffset.get();
+
+						// Correct the beam captures
+						size_t beamCaptureIndex = 0;
+						for (auto beamCapture : beamCaptures) {
+							if (beamCapture->isOffset) {
+								beamCapture->projectionPoint += centerOffset;
+								if (beamCapture->projectionPoint.x < -1
+									|| beamCapture->projectionPoint.x > 1
+									|| beamCapture->projectionPoint.y < -1
+									|| beamCapture->projectionPoint.y > 1) {
+									cout << cameraCapture->getTimeString()
+										<< "::" << laserCapture->laserAddress
+										<< "::" << beamCaptureIndex
+										<< " is outside range : " << beamCapture->projectionPoint
+										<< endl;
+
+									beamCapture->projectionPoint.x = ofClamp(beamCapture->projectionPoint.x, -1, 1);
+									beamCapture->projectionPoint.y = ofClamp(beamCapture->projectionPoint.y, -1, 1);
+								}
+
+								beamCapture->isOffset = false;
+							}
+							beamCaptureIndex++;
+						}
 					}
 				}
 			}

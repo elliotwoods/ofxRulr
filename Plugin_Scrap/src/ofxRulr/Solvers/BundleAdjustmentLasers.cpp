@@ -7,7 +7,7 @@ struct ProjectedLineCost
 	ProjectedLineCost(const glm::vec2& projectionPoint
 		, const ofxRulr::Models::Line& imageLine
 		, const ofxRulr::Models::Intrinsics& cameraIntrinsics
-		, const float weight)
+		, const double weight)
 		: projectionPoint(projectionPoint)
 		, imageLine(imageLine)
 		, cameraIntrinsics(cameraIntrinsics)
@@ -81,7 +81,7 @@ struct ProjectedLineCost
 		Create(const glm::vec2& projectionPoint
 			, const ofxRulr::Models::Line& imageLine
 			, const ofxRulr::Models::Intrinsics& cameraIntrinsics
-			, const float weight)
+			, const double weight)
 	{
 		return new ceres::AutoDiffCostFunction<ProjectedLineCost, 2, 3, 3, 3, 3, 2>(
 			new ProjectedLineCost(projectionPoint, imageLine, cameraIntrinsics, weight)
@@ -91,9 +91,229 @@ struct ProjectedLineCost
 	const glm::vec2 projectionPoint;
 	const ofxRulr::Models::Line imageLine;
 	const ofxRulr::Models::Intrinsics& cameraIntrinsics; // this is stored in Problem
-	const float weight;
+	const double weight;
 };
 
+struct SceneRadiusCost
+{
+	//---------
+	SceneRadiusCost(const double& targetMeanRadius
+		, size_t pointCount
+		, const double& weight)
+		: targetMeanRadius(targetMeanRadius)
+		, pointCount(pointCount)
+		, weight(weight)
+	{
+
+	}
+
+	//---------
+	template<typename T>
+	bool
+		operator()(T const* const* parameters
+			, T* residuals) const
+	{
+		// Calculate mean
+		glm::tvec3<T> meanPosition;
+		for (size_t i = 0; i < this->pointCount; i++) {
+			const auto& point = *(glm::tvec3<T>*) parameters[i];
+			meanPosition += point;
+		}
+		meanPosition /= (T)this->pointCount;
+
+		// Calculate mean radius
+		T meanRadius = (T)0;
+		for (size_t i = 0; i < this->pointCount; i++) {
+			const auto& point = *(glm::tvec3<T>*) parameters[i];
+			auto radius = ofxCeres::VectorMath::distance(meanPosition, point);
+			meanRadius += radius;
+		}
+		meanRadius /= (T)this->pointCount;
+
+		// Residual is log(meanRadius / targetMaxRadius). i.e. = 0 when they are equal
+		residuals[0] = log(meanRadius / (T)this->targetMeanRadius) * weight;
+
+		return true;
+	}
+
+	//---------
+	static ceres::CostFunction*
+		Create(const double& targetMeanRadius
+			, size_t pointCount
+			, const double& weight)
+	{
+		// Make a dynamic cost function
+		auto costFunction = new ceres::DynamicAutoDiffCostFunction<SceneRadiusCost, 4>(
+			new SceneRadiusCost(targetMeanRadius, pointCount, weight)
+			);
+		for (size_t i = 0; i < pointCount; i++) {
+			costFunction->AddParameterBlock(3);
+		}
+		costFunction->SetNumResiduals(1);
+		return costFunction;
+	}
+
+	const double targetMeanRadius;
+	const size_t pointCount;
+	const double weight;
+};
+
+struct SceneCenterCost
+{
+	//---------
+	SceneCenterCost(const glm::vec3& sceneCenter
+		, size_t pointCount
+		, const double & weight)
+		: sceneCenter(sceneCenter)
+		, pointCount(pointCount)
+		, weight(weight)
+	{
+
+	}
+
+	//---------
+	template<typename T>
+	bool
+		operator()(T const* const* parameters
+			, T* residuals) const
+	{
+		// Calculate scene center
+		glm::tvec3<T> accumulator((T)0, (T)0, (T)0);
+		for (size_t i = 0; i < this->pointCount; i++) {
+			const auto& point = *(glm::tvec3<T>*) parameters[i];
+			accumulator = accumulator + point;
+		}
+		auto mean = accumulator / (T)this->pointCount;
+
+		auto delta = mean - (glm::tvec3<T>) this->sceneCenter;
+
+		// Residual is 3D
+		residuals[0] = delta[0] * this->weight;
+		residuals[1] = delta[1] * this->weight;
+		residuals[2] = delta[2] * this->weight;
+
+		return true;
+	}
+
+	//---------
+	static ceres::CostFunction*
+		Create(const glm::vec3& sceneCenter
+			, size_t pointCount
+			, const double& weight)
+	{
+		// Make a dynamic cost function
+		auto costFunction = new ceres::DynamicAutoDiffCostFunction<SceneCenterCost, 4>(
+			new SceneCenterCost(sceneCenter, pointCount, weight)
+			);
+		for (size_t i = 0; i < pointCount; i++) {
+			costFunction->AddParameterBlock(3);
+		}
+		costFunction->SetNumResiduals(3);
+		return costFunction;
+	}
+
+	const glm::vec3 sceneCenter;
+	const size_t pointCount;
+	const double weight;
+};
+
+struct CameraFixedRotateCost
+{
+	//---------
+	CameraFixedRotateCost(const size_t& axis
+		, const double& angle
+		, const double& weight)
+		: axis(axis)
+		, angle(angle)
+		, weight(weight)
+	{
+
+	}
+
+	//---------
+	template<typename T>
+	bool
+		operator()(const T* const cameraViewRotationParameters
+			, T* residuals) const
+	{
+		// Aiming for specific euler angle
+		auto delta = cameraViewRotationParameters[this->axis] - (T)this->angle;
+		residuals[0] = delta * this->weight;
+
+		return true;
+	}
+
+	//---------
+	static ceres::CostFunction*
+		Create(const size_t& axis
+			, const double& angle
+			, const double& weight)
+	{
+		return new ceres::AutoDiffCostFunction<CameraFixedRotateCost, 1, 3>(
+			new CameraFixedRotateCost(axis, angle, weight)
+			);
+	}
+
+	const size_t axis;
+	const double angle;
+	const double weight;
+};
+
+struct PointsInPlaneCost
+{
+	//---------
+	PointsInPlaneCost(const size_t& planeIndex
+		, const size_t& pointCount
+		, const double& weight)
+		: planeIndex(planeIndex)
+		, pointCount(pointCount)
+		, weight(weight)
+	{
+
+	}
+
+	//---------
+	template<typename T>
+	bool
+		operator()(T const* const* worldPointParameters
+			, T* residuals) const
+	{
+		// Calculate scene center
+		auto accumulator = (T)0;
+		for (size_t i = 0; i < this->pointCount; i++) {
+			accumulator += worldPointParameters[i][this->planeIndex];
+		}
+		auto mean = accumulator / (T)this->pointCount;
+
+		// Give the residuals
+		for (size_t i = 0; i < pointCount; i++) {
+			residuals[i] = (worldPointParameters[i][this->planeIndex] - mean) * this->weight;
+		}
+
+		return true;
+	}
+
+	//---------
+	static ceres::CostFunction*
+		Create(const size_t& planeIndex
+			, const size_t& pointCount
+			, const double& weight)
+	{
+		// Make a dynamic cost function
+		auto costFunction = new ceres::DynamicAutoDiffCostFunction<PointsInPlaneCost, 4>(
+			new PointsInPlaneCost(planeIndex, pointCount, weight)
+			);
+		for (size_t i = 0; i < pointCount; i++) {
+			costFunction->AddParameterBlock(3);
+		}
+		costFunction->SetNumResiduals(pointCount);
+		return costFunction;
+	}
+
+	const size_t planeIndex;
+	const size_t pointCount;
+	const double weight;
+};
 
 namespace ofxRulr {
 	namespace Solvers {
@@ -248,6 +468,79 @@ namespace ofxRulr {
 				, laserRigidBodyTranslationData
 				, laserRigidBodyRotationData
 				, laserFovData);
+		}
+
+		//---------
+		void
+			BundleAdjustmentLasers::Problem::addLaserLayoutScaleConstraint(float maxRadius)
+		{
+			auto residualBlock = SceneRadiusCost::Create(maxRadius
+				, this->allLaserTranslationParameters.size()
+				, 1e6);
+
+			this->problem.AddResidualBlock(residualBlock
+				, NULL
+				, this->allLaserTranslationParameters);
+		}
+
+		//---------
+		void
+			BundleAdjustmentLasers::Problem::addLaserLayoutCenteredConstraint(const glm::vec3& sceneCenter)
+		{
+			auto residualBlock = SceneCenterCost::Create(sceneCenter
+				, this->allLaserTranslationParameters.size()
+				, 1e6);
+
+			this->problem.AddResidualBlock(residualBlock
+				, NULL
+				, this->allLaserTranslationParameters);
+		}
+
+		//---------
+		void
+			BundleAdjustmentLasers::Problem::addCameraZeroYawConstraint(int viewIndex)
+		{
+			if (viewIndex >= this->allCameraRotationParameters.size()) {
+				throw(ofxRulr::Exception("viewIndex is out of range"));
+			}
+
+			auto residualBlock = CameraFixedRotateCost::Create(1
+				, 0.0f
+				, 1e6);
+
+			this->problem.AddResidualBlock(residualBlock
+				, NULL
+				, this->allCameraRotationParameters[viewIndex]);
+		}
+
+		//---------
+		void
+			BundleAdjustmentLasers::Problem::addCameraZeroRollConstrant(int viewIndex)
+		{
+			if (viewIndex >= this->allCameraRotationParameters.size()) {
+				throw(ofxRulr::Exception("viewIndex is out of range"));
+			}
+
+			auto residualBlock = CameraFixedRotateCost::Create(2
+				, 0.0f
+				, 1e6);
+
+			this->problem.AddResidualBlock(residualBlock
+				, NULL
+				, this->allCameraRotationParameters[viewIndex]);
+		}
+
+		//---------
+		void
+			BundleAdjustmentLasers::Problem::addLasersInPlaneConstraint(size_t plane)
+		{
+			auto residualBlock = PointsInPlaneCost::Create(plane
+				, this->allLaserTranslationParameters.size()
+				, 1e6);
+
+			this->problem.AddResidualBlock(residualBlock
+				, NULL
+				, this->allLaserTranslationParameters);
 		}
 
 		//----------

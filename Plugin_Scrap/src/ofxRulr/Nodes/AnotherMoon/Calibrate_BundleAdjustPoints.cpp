@@ -23,7 +23,7 @@ namespace ofxRulr {
 				// First deselect lasers seen in fewer than 2 cameras
 				this->deselectLasersWithNoData(2);
 
-				auto selectedLasers = lasersNode->getSelectedLasers();
+				auto selectedLasers = lasersNode->getLasersSelected();
 
 				// Build initial solution
 				Solvers::BundleAdjustmentPoints::Solution initialSolution;

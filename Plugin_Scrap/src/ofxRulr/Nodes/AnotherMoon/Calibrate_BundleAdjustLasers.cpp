@@ -23,7 +23,7 @@ namespace ofxRulr {
 				// First deselect lasers seen in fewer than 2 cameras
 				this->deselectLasersWithNoData(2);
 
-				auto selectedLasers = lasersNode->getSelectedLasers();
+				auto selectedLasers = lasersNode->getLasersSelected();
 
 				// Build initial solution
 				Solvers::BundleAdjustmentLasers::Solution initialSolution;
@@ -109,47 +109,46 @@ namespace ofxRulr {
 					problem.addLineImageObservation(associatedImage.image);
 				}
 
-				//// Add scene constraints
-				//{
-				//	// Scene center
-				//	glm::vec3 sceneCenter;
-				//	{
-				//		glm::vec3 accumulator;
-				//		for (auto laser : selectedLasers) {
-				//			accumulator += laser->getRigidBody()->getPosition();
-				//		}
-				//		sceneCenter = accumulator / selectedLasers.size();
+				// Add scene constraints
+				{
+					// Scene center
+					glm::vec3 sceneCenter;
+					{
+						glm::vec3 accumulator;
+						for (auto laser : selectedLasers) {
+							accumulator += laser->getRigidBody()->getPosition();
+						}
+						sceneCenter = accumulator / selectedLasers.size();
 
-				//		if (this->parameters.bundleAdjustment.sceneCenterConstraint.get()) {
-				//			problem.addSceneCenteredConstraint(sceneCenter);
-				//		}
-				//	}
+						if (this->parameters.bundleAdjustment.sceneCenterConstraint.get()) {
+							problem.addLaserLayoutCenteredConstraint(sceneCenter);
+						}
+					}
 
-				//	// Scene radius
-				//	float sceneRadius = 0.0f;
-				//	{
-				//		for (auto laser : selectedLasers) {
-				//			auto distance = glm::distance(sceneCenter, laser->getRigidBody()->getPosition());
-				//			if (distance > sceneRadius) {
-				//				sceneRadius = distance;
-				//			}
-				//		}
+					// Scene radius
+					float sceneradius = 0.0f;
+					{
+						for (auto laser : selectedLasers) {
+							auto distance = glm::distance(sceneCenter, laser->getRigidBody()->getPosition());
+							sceneradius += distance;
+						}
+						sceneradius /= (float)selectedLasers.size();
 
-				//		if (this->parameters.bundleAdjustment.sceneRadiusConstraint.get()) {
-				//			problem.addSceneScaleConstraint(sceneRadius);
-				//		}
-				//	}
+						if (this->parameters.bundleAdjustment.sceneRadiusConstraint.get()) {
+							problem.addLaserLayoutScaleConstraint(sceneradius);
+						}
+					}
 
-				//	// Camera yaw fixed for first camera
-				//	if (this->parameters.bundleAdjustment.cameraWith0Yaw.enabled) {
-				//		problem.addCameraZeroYawConstraint(this->parameters.bundleAdjustment.cameraWith0Yaw.cameraIndex);
-				//	}
+					// Camera yaw fixed for first camera
+					if (this->parameters.bundleAdjustment.cameraWith0Yaw.enabled) {
+						problem.addCameraZeroYawConstraint(this->parameters.bundleAdjustment.cameraWith0Yaw.cameraIndex);
+					}
 
-				//	// Plane constraint
-				//	if (this->parameters.bundleAdjustment.planeConstraint) {
-				//		problem.addPointsInPlaneConstraint(1);
-				//	}
-				//}
+					// Plane constraint
+					if (this->parameters.bundleAdjustment.planeConstraint) {
+						problem.addLasersInPlaneConstraint(1);
+					}
+				}
 
 				// Solve the problem
 				auto solverSettings = Solvers::BundleAdjustmentLasers::defaultSolverSettings();
@@ -177,6 +176,12 @@ namespace ofxRulr {
 					auto residual = Solvers::BundleAdjustmentLasers::getResidual(solution
 						, cameraIntrinsics
 						, associatedImage.image);
+					if (isnan(residual)) {
+						// translate to laserAddress
+						auto imageCopy = associatedImage.image;
+						imageCopy.laserProjectorIndex = laserAddressByIndex[imageCopy.laserProjectorIndex];
+						throw(ofxRulr::Exception("NaN residual for image : " + imageCopy.toString()));
+					}
 					associatedImage.beamCapture->residual = residual;
 				}
 

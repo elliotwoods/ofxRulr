@@ -74,6 +74,7 @@ namespace ofxRulr {
 				args.rigidBody = ofxRulr::isActive(this, this->parameters.draw.rigidBody);
 				args.trussLine = ofxRulr::isActive(this, this->parameters.draw.trussLine);
 				args.centerLine = ofxRulr::isActive(this, this->parameters.draw.centerLine);
+				args.centerOffsetLine = ofxRulr::isActive(this, this->parameters.draw.centerOffsetLine);
 
 				auto lasers = this->lasers.getSelection();
 				for (auto laser : lasers) {
@@ -239,9 +240,16 @@ namespace ofxRulr {
 
 			//----------
 			vector<shared_ptr<Laser>>
-				Lasers::getSelectedLasers()
+				Lasers::getLasersSelected()
 			{
 				return this->lasers.getSelection();
+			}
+
+			//----------
+			vector<shared_ptr<Laser>>
+				Lasers::getLasersAll ()
+			{
+				return this->lasers.getAllCaptures();
 			}
 
 			//----------

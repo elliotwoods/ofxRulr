@@ -74,7 +74,7 @@ namespace ofxRulr {
 				// Take mean positon
 				glm::vec3 meanPosition(0, 0, 0);
 				{
-					auto lasers = this->getInput<Lasers>()->getSelectedLasers();
+					auto lasers = this->getInput<Lasers>()->getLasersSelected();
 					for (auto laser : lasers) {
 						meanPosition += laser->getRigidBody()->getPosition();
 					}
@@ -93,7 +93,7 @@ namespace ofxRulr {
 
 				auto targetPosition = this->getInput<Item::RigidBody>()->getPosition();
 
-				auto lasers = this->getInput<Lasers>()->getSelectedLasers();
+				auto lasers = this->getInput<Lasers>()->getLasersSelected();
 				for (auto laser : lasers) {
 					laser->getRigidBody()->lookAt(targetPosition);
 				}
