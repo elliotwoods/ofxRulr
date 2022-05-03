@@ -83,7 +83,7 @@ struct ProjectedLineCost
 			, const ofxRulr::Models::Intrinsics& cameraIntrinsics
 			, const float weight)
 	{
-		return new ceres::AutoDiffCostFunction<ProjectedLineCost, 2, 3, 3, 3, 3, 3>(
+		return new ceres::AutoDiffCostFunction<ProjectedLineCost, 2, 3, 3, 3, 3, 2>(
 			new ProjectedLineCost(projectionPoint, imageLine, cameraIntrinsics, weight)
 			);
 	}
