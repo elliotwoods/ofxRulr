@@ -58,6 +58,10 @@ namespace ofxRulr {
 					size_t index = 0;
 					for (auto laser : selectedLasers) {
 						auto address = laser->parameters.settings.address.get();
+
+						if (laserIndexByAddress.find(address) != laserIndexByAddress.end()) {
+							throw(ofxRulr::Exception("Duplicate laser address : " + ofToString(address)));
+						}
 						laserAddressByIndex[index] = address;
 						laserIndexByAddress[address] = index;
 						index++;
@@ -75,10 +79,17 @@ namespace ofxRulr {
 						auto cameraCapture = cameraCaptures[cameraIndex];
 						auto laserCaptures = cameraCapture->laserCaptures.getSelection();
 						for (auto laserCapture : laserCaptures) {
+
+							// check laser is part of set
+							auto findIndex = laserIndexByAddress.find(laserCapture->laserAddress);
+							if (findIndex == laserIndexByAddress.end()) {
+								continue;
+							}
+
 							auto beamCaptures = laserCapture->beamCaptures.getSelection();
 							for (auto beamCapture : beamCaptures) {
 								Solvers::BundleAdjustmentLasers::Image image;
-								image.laserProjectorIndex = laserIndexByAddress[laserCapture->laserAddress];
+								image.laserProjectorIndex = findIndex->second;
 								image.cameraIndex= cameraIndex;
 								image.projectedPoint = beamCapture->projectionPoint;
 								image.imageLine= beamCapture->line;

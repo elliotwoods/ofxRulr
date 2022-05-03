@@ -45,15 +45,6 @@ struct ProjectedLineCost
 		// Cast the line
 		auto imageLine = this->imageLine.castTo<T>();
 
-		// Residual of observed line vs world position of laser
-		{
-			// Project the laser position into camera space
-			auto laserProjectorInCamera = camera.worldToImage(laserProjector.rigidBodyTransform.translation);
-
-			// Delta the projected camera vs observed line as residual
-			residuals[0] = imageLine.distanceToPoint(laserProjectorInCamera);
-		}
-
 		// Residual of observed line vs ray in camera
 		{
 			// Project the laser projectionPoint into world space Ray
@@ -64,10 +55,22 @@ struct ProjectedLineCost
 
 			// Take a point on the line close to the center of camera image
 			const auto imageCenter = (glm::tvec2<T>) this->cameraIntrinsics.getCenter();
-			const auto pointInImage = line.getClosestPointTo(imageCenter);
+			{
+				const auto pointInImage = line.getClosestPointTo(imageCenter);
+				residuals[0] = imageLine.distanceToPoint(pointInImage);
+			}
+			
+			// Take a point on the line in direction of laser projector
+			{
+				const auto projectorInCamera = camera.worldToImage(laserProjector.rigidBodyTransform.translation);
+				const auto u = ofxCeres::VectorMath::dot(projectorInCamera - line.s, line.t);
 
-			// Delta the point vs observed line as residual
-			residuals[1] = imageLine.distanceToPoint(pointInImage);
+				// Walk along projected line towards laser projector by cameraWidth pixels
+				const auto pointAlongLineTowardsLaserProjector = line.s
+					+ line.t * u * (T) this->cameraIntrinsics.width;
+
+				residuals[1] = imageLine.distanceToPoint(pointAlongLineTowardsLaserProjector);
+			}
 		}
 
 		return true;
