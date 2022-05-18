@@ -43,6 +43,10 @@ namespace ofxRulr {
 				this->rotation = (glm::tvec3<T>) glm::eulerAngles(orientation);
 			}
 
+			Transform_() {
+
+			}
+
 			glm::tvec3<T> translation;
 			glm::tvec3<T> rotation;
 

@@ -1,6 +1,7 @@
 #include "pch_Plugin_Scrap.h"
 #include "Lasers.h"
 
+using namespace ofxRulr::Data::AnotherMoon;
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -34,34 +35,73 @@ namespace ofxRulr {
 					this->panel = make_shared<ofxCvGui::Panels::Widgets>();
 					this->lasers.populateWidgets(this->panel);
 				}
+
+				this->messageRouter.init(MessageRouter::Port::Server
+					, MessageRouter::Port::Client);
 			}
 
 			//----------
 			void
 				Lasers::update()
 			{
+				// Update all lasers
 				{
-					// laser has a RigidBody inside, so we should update it
 					auto lasers = this->lasers.getAllCaptures();
 					for (auto laser : lasers) {
 						laser->update();
 					}
 				}
 
-				if (this->parameters.signalEnabled.get()) {
-					// Update state
+				// Set state by selection
+				if (this->parameters.setStateBySelected.enabled.get()) {
+					this->setStateBySelection();
+				}
+
+				// Scheduled full send
+				{
+					if (this->parameters.pushFullState.enabled) {
+						auto duration = chrono::system_clock::now() - this->lastPushAllTime;
+						if (duration > chrono::seconds(this->parameters.pushFullState.updatePeriod)) {
+							this->pushStateAll();
+						}
+					}
+				}
+
+				// Test image
+				if (this->parameters.testImage.enabled) {
+					this->sendTestImageToSelected();
+				}
+
+				// Perform communications
+				{
+					auto lasers = this->getLasersAll();
+
+					// Messages
 					{
-						if (this->parameters.pushState.scheduled) {
-							auto timeSinceLastUpdate = chrono::system_clock::now() - this->lastPushStateTime;
-							if (timeSinceLastUpdate > chrono::seconds(this->parameters.pushState.updatePeriod)) {
-								this->pushState();
+						shared_ptr<IncomingMessage> incomingMessage;
+						while (this->messageRouter.getIncomingMessage(incomingMessage)) {
+							// find the matching laser
+							for (auto laser : lasers) {
+								if (laser->getHostname() == incomingMessage->getRemoteHost()) {
+									laser->processIncomingMessage(incomingMessage);
+									break;
+								}
 							}
 						}
 					}
 
-					// Test image
-					if (this->parameters.testImage.enabled) {
-						this->sendTestImageToAll();
+					// ACKs
+					{
+						shared_ptr<AckMessageIncoming> incomingMessage;
+						while (this->messageRouter.getIncomingAck(incomingMessage)) {
+							// find the matching laser
+							for (auto laser : lasers) {
+								if (laser->getHostname() == incomingMessage->getRemoteHost()) {
+									laser->processIncomingAck(incomingMessage);
+									break;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -116,24 +156,15 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ALERT;
 					});
 
-				inspector->addButton("Push state", [this]() {
-					this->pushState();
-					});
-
-				inspector->addButton("Set size...", [this]() {
-					auto result = ofSystemTextBoxDialog("Size");
-					if (!result.empty()) {
-						auto value = ofToFloat(result);
-						this->setSize(value);
+				inspector->addButton("Import JSON", [this]() {
+					try {
+						this->importJson();
 					}
-					});
+					RULR_CATCH_ALL_TO_ALERT;
+					})->addToolTip("RunDeck make_nodes.py");
 
-				inspector->addButton("Set brightness...", [this]() {
-					auto result = ofSystemTextBoxDialog("Brightness");
-					if (!result.empty()) {
-						auto value = ofToFloat(result);
-						this->setBrightness(value);
-					}
+				inspector->addButton("Set state by selection", [this]() {
+					this->setStateBySelection();
 					});
 			}
 
@@ -146,35 +177,29 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Lasers::pushState()
+				Lasers::setStateBySelection()
 			{
 				auto allLasers = this->lasers.getAllCaptures();
 				for (auto laser : allLasers) {
 					// Ignore if we shouldn't send to deselected modules
-					if (!laser->isSelected() && !this->parameters.sendToDeselected) {
-						continue;
-					}
-
 					auto stateToSend = laser->isSelected()
-						? this->parameters.selectedState.get()
-						: this->parameters.deselectedState.get();
+						? this->parameters.setStateBySelected.selectedState.get()
+						: this->parameters.setStateBySelected.deselectedState.get();
 
-					switch (stateToSend.get()) {
-					case Laser::State::Shutdown:
-						laser->shutown();
-						break;
-					case Laser::State::Standby:
-						laser->standby();
-						break;
-					case Laser::State::Run:
-						laser->run();
-						break;
-					default:
-						break;
-					}
+					laser->parameters.deviceState.state.set(stateToSend);
+				}
+			}
+
+			//----------
+			void
+				Lasers::pushStateAll()
+			{
+				auto lasers = this->getLasersAll();
+				for (auto laser : lasers) {
+					laser->pushAll();
 				}
 
-				this->lastPushStateTime = chrono::system_clock::now();
+				this->lastPushAllTime = chrono::system_clock::now();
 			}
 
 			//----------
@@ -200,42 +225,10 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Lasers::sendTestImageToAll()
+				Lasers::sendTestImageToSelected()
 			{
 				auto lasers = this->lasers.getSelection();
 				this->sendTestImageTo(lasers);
-			}
-
-			//----------
-			void
-				Lasers::setSize(float size)
-			{
-				auto lasers = this->lasers.getSelection();
-				for (auto laser : lasers) {
-					laser->setSize(size);
-				}
-			}
-
-			//----------
-			void
-				Lasers::setBrightness(float brightness)
-			{
-				auto lasers = this->lasers.getSelection();
-				for (auto laser : lasers) {
-					laser->setBrightness(brightness);
-				}
-			}
-
-			//----------
-			void
-				Lasers::setDefaultSettings()
-			{
-				auto lasers = this->lasers.getSelection();
-				for (auto laser : lasers) {
-					laser->setSize(1.0f);
-					laser->setBrightness(1.0f);
-					laser->setSource(Laser::Source::USB);
-				}
 			}
 
 			//----------
@@ -258,7 +251,7 @@ namespace ofxRulr {
 			{
 				auto lasers = this->lasers.getSelection();
 				for (auto laser : lasers) {
-					if (laser->parameters.settings.address.get() == address) {
+					if (laser->parameters.communications.address.get() == address) {
 						return laser;
 					}
 				}
@@ -267,6 +260,13 @@ namespace ofxRulr {
 				return shared_ptr<Laser>();
 			}
 
+
+			//----------
+			void
+				Lasers::sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage> message)
+			{
+				this->messageRouter.sendOutgoingMessage(message);
+			}
 
 			//----------
 			void
@@ -289,7 +289,7 @@ namespace ofxRulr {
 								auto priorLasers = this->lasers.getAllCaptures();
 								bool foundInPriors = false;
 								for (auto priorLaser : priorLasers) {
-									if (priorLaser->parameters.settings.address.get() == laserAddress) {
+									if (priorLaser->parameters.communications.address.get() == laserAddress) {
 										// It's in priors, use that
 										laser = priorLaser;
 										foundInPriors = true;
@@ -301,7 +301,7 @@ namespace ofxRulr {
 									// It's not in priors, set this up as a new one
 									laser = make_shared<Laser>();
 									laser->setParent(this);
-									laser->parameters.settings.address.set(laserAddress);
+									laser->parameters.communications.address.set(laserAddress);
 									this->lasers.add(laser);
 								}
 							}
@@ -325,10 +325,71 @@ namespace ofxRulr {
 						}
 
 						if (columns.size() >= 9) {
-							laser->parameters.settings.fov.set({
+							laser->parameters.intrinsics.fov.set({
 								ofToFloat(columns[7])
 								, ofToFloat(columns[8])
 								});
+						}
+					}
+				}
+			}
+
+			//----------
+			void
+				Lasers::importJson()
+			{
+				// Load json (from our RunDeck format created by make_nodes.py)
+
+				auto result = ofSystemLoadDialog("Select Json file");
+				if (result.bSuccess) {
+					this->lasers.clear();
+
+					auto fileContents = ofFile(result.filePath).readToBuffer();
+					auto json = nlohmann::json::parse(fileContents);
+
+					for (auto jsonModule : json) {
+						shared_ptr<Laser> laser;
+
+						// Do some checks
+						{
+							if (!jsonModule.contains("data")) {
+								continue;
+							}
+						}
+
+						auto laserAddress = jsonModule["data"]["serialNumber"].get<int>();
+						auto positionIndex = jsonModule["data"]["positionIndex"].get<int>();
+
+						// check if we should be using an existing laser
+						{
+							auto priorLasers = this->lasers.getAllCaptures();
+							bool foundInPriors = false;
+							for (auto priorLaser : priorLasers) {
+								if (priorLaser->parameters.communications.address.get() == laserAddress) {
+									// It's in priors, use that
+									laser = priorLaser;
+									foundInPriors = true;
+									break;
+								}
+							}
+
+							if (!foundInPriors) {
+								// It's not in priors, set this up as a new one
+								laser = make_shared<Laser>();
+								laser->setParent(this);
+								laser->parameters.communications.address.set(laserAddress);
+								this->lasers.add(laser);
+							}
+						}
+
+						laser->parameters.positionIndex.set(positionIndex);
+						
+						{
+							glm::vec3 worldPosition;
+							worldPosition.x = jsonModule["data"]["worldPosition"]["x"];
+							worldPosition.y = jsonModule["data"]["worldPosition"]["y"];
+							worldPosition.z = jsonModule["data"]["worldPosition"]["z"];
+							laser->getRigidBody()->setPosition(worldPosition);
 						}
 					}
 				}

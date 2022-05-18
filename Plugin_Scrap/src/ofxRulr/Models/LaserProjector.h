@@ -51,10 +51,10 @@ namespace ofxRulr {
 			template<typename T2>
 			LaserProjector_<T2> castTo() const
 			{
-				return LaserProjector_<T2> {
-					this->rigidBodyTransform.castTo<T2>
-					, (glm::tvec2<T2>) this->fov
-				};
+				LaserProjector_<T2> castLaserProjector;
+				castLaserProjector.rigidBodyTransform = this->rigidBodyTransform.castTo<T2>();
+				castLaserProjector.fov = (glm::tvec2<T2>) this->fov;
+				return castLaserProjector;
 			}
 		};
 

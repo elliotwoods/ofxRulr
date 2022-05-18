@@ -57,7 +57,7 @@ namespace ofxRulr {
 				{
 					size_t index = 0;
 					for (auto laser : selectedLasers) {
-						auto address = laser->parameters.settings.address.get();
+						auto address = laser->parameters.communications.address.get();
 
 						if (laserIndexByAddress.find(address) != laserIndexByAddress.end()) {
 							throw(ofxRulr::Exception("Duplicate laser address : " + ofToString(address)));
@@ -160,7 +160,7 @@ namespace ofxRulr {
 				{
 					for (const auto& it : laserAddressByIndex) {
 						selectedLasers[it.first]->getRigidBody()->setTransform(solution.laserProjectors[it.first].rigidBodyTransform.getTransform());
-						selectedLasers[it.first]->parameters.settings.fov.set(solution.laserProjectors[it.first].fov);
+						selectedLasers[it.first]->parameters.intrinsics.fov.set(solution.laserProjectors[it.first].fov);
 					}
 
 					for (size_t cameraIndex = 0; cameraIndex < cameraCaptures.size(); cameraIndex++) {

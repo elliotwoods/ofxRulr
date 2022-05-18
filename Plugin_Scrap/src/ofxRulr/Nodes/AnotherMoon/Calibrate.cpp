@@ -209,7 +209,7 @@ namespace ofxRulr {
 					// Find corresponding laser
 					shared_ptr<Laser> laser;
 					for (const auto& it : lasers) {
-						if (it->parameters.settings.address.get() == this->laserAddress) {
+						if (it->parameters.communications.address.get() == this->laserAddress) {
 							laser = it;
 							break;
 						}
@@ -638,10 +638,10 @@ namespace ofxRulr {
 
 				// iterate through and send test beams
 				for (const auto & laser : allLasers) {
-					Utils::ScopedProcess scopedProcessLaser("Laser #" + ofToString(laser->parameters.settings.address.get()), false);
+					Utils::ScopedProcess scopedProcessLaser("Laser #" + ofToString(laser->parameters.communications.address.get()), false);
 
 					auto laserCapture = make_shared<LaserCapture>();
-					laserCapture->laserAddress = laser->parameters.settings.address.get();
+					laserCapture->laserAddress = laser->parameters.communications.address.get();
 					laserCapture->parentSelection = &cameraCapture->ourSelection;
 
 					// Gather other lasers
@@ -654,14 +654,14 @@ namespace ofxRulr {
 					}
 					else {
 						for (const auto & otherLaser : otherLasers) {
-							otherLaser->standby();
+							otherLaser->parameters.deviceState.state.set(Laser::State::Standby);
+							otherLaser->pushState();
 						}
 					}
 
 					// Set the state for this laser
-					for (int i = 0; i < this->parameters.capture.signalSends.get(); i++) {
-						laser->run();
-					}
+					laser->parameters.deviceState.state.set(Laser::State::Run);
+					laser->pushState();
 
 					Utils::ScopedProcess scopedProcessImagePoints("Image points", false, calibrationImagePoints.size());
 
@@ -680,7 +680,8 @@ namespace ofxRulr {
 
 							// Background capture
 							for (int i = 0; i < this->parameters.capture.signalSends.get(); i++) {
-								laser->standby();
+								laser->parameters.deviceState.state.set(Laser::State::Standby);
+								laser->pushState();
 							}
 							this->waitForDelay();
 							if (!dryRun) {
@@ -690,7 +691,8 @@ namespace ofxRulr {
 							// Positive capture image
 							for (int i = 0; i < this->parameters.capture.signalSends.get(); i++) {
 								laser->drawCalibrationBeam(calibrationImagePoint);
-								laser->run();
+								laser->parameters.deviceState.state.set(Laser::State::Run);
+								laser->pushState();
 							}
 							this->waitForDelay();
 							if (!dryRun) {
@@ -725,7 +727,8 @@ namespace ofxRulr {
 				else {
 					for (const auto& laser : allLasers) {
 						for (int i = 0; i < this->parameters.capture.signalSends.get(); i++) {
-							laser->standby();
+							laser->parameters.deviceState.state.set(Laser::State::Standby);
+							laser->pushState();
 						}
 					}
 				}
@@ -790,7 +793,7 @@ namespace ofxRulr {
 
 							// Count if selected and is this laser
 							if (laserCapture->isSelected()
-								&& laserCapture->laserAddress == laser->parameters.settings.address.get()) {
+								&& laserCapture->laserAddress == laser->parameters.communications.address.get()) {
 								seenInCountViews++;
 							}
 						}
@@ -820,7 +823,7 @@ namespace ofxRulr {
 						// find laser
 						shared_ptr<Laser> laser;
 						for (auto it : lasers) {
-							if (it->parameters.settings.address.get() == laserCapture->laserAddress) {
+							if (it->parameters.communications.address.get() == laserCapture->laserAddress) {
 								laser = it;
 								break;
 							}
@@ -831,7 +834,7 @@ namespace ofxRulr {
 						}
 
 						// get center offset
-						const auto & centerOffset = laser->parameters.settings.centerOffset.get();
+						const auto & centerOffset = laser->parameters.intrinsics.centerOffset.get();
 
 						// Correct the beam captures
 						size_t beamCaptureIndex = 0;

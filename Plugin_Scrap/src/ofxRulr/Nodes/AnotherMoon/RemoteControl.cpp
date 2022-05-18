@@ -23,6 +23,7 @@ namespace ofxRulr {
 				RemoteControl::init()
 			{
 				this->manageParameters(this->parameters);
+				RULR_NODE_INSPECTOR_LISTENER;
 
 				this->addInput<Lasers>();
 
@@ -32,7 +33,7 @@ namespace ofxRulr {
 					if (lasersNode) {
 						auto lasers = lasersNode->getLasersSelected();
 						for (auto laser : lasers) {
-							auto centerOffset = laser->parameters.settings.centerOffset.get();
+							auto centerOffset = laser->parameters.intrinsics.centerOffset.get();
 
 							auto drawX = ofMap(centerOffset.x, -1, 1, 0, args.localBounds.getWidth());
 							auto drawY = ofMap(centerOffset.y, 1, -1, 0, args.localBounds.getHeight());
@@ -66,8 +67,8 @@ namespace ofxRulr {
 
 							auto lasers = lasersNode->getLasersSelected();
 							for (auto laser : lasers) {
-								auto newCenter = laser->parameters.settings.centerOffset.get()  + movement;
-								laser->parameters.settings.centerOffset.set(newCenter);
+								auto newCenter = laser->parameters.intrinsics.centerOffset.get()  + movement;
+								laser->parameters.intrinsics.centerOffset.set(newCenter);
 							}
 						}
 					}
@@ -100,11 +101,25 @@ namespace ofxRulr {
 
 						auto lasers = lasersNode->getLasersSelected();
 						for (auto laser : lasers) {
-							auto newCenter = laser->parameters.settings.centerOffset.get() + movement;
-							laser->parameters.settings.centerOffset.set(newCenter);
+							auto newCenter = laser->parameters.intrinsics.centerOffset.get() + movement;
+							laser->parameters.intrinsics.centerOffset.set(newCenter);
 						}
 					}
 				};
+			}
+
+			//---------
+			void
+				RemoteControl::populateInspector(ofxCvGui::InspectArguments& args)
+			{
+				auto inspector = args.inspector;
+
+				inspector->addButton("Home all", [this]() {
+					try {
+						this->homeAll();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					});
 			}
 
 			//---------
@@ -114,6 +129,17 @@ namespace ofxRulr {
 				return this->panel;
 			}
 
+			//---------
+			void
+				RemoteControl::homeAll()
+			{
+				this->throwIfMissingAnyConnection();
+				auto lasersNode = this->getInput<Lasers>();
+				auto lasers = lasersNode->getLasersSelected();
+				for (auto laser : lasers) {
+					laser->parameters.intrinsics.centerOffset.set({ 0, 0 });
+				}
+			}
 		}
 	}
 }

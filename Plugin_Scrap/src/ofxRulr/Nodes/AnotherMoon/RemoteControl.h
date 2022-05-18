@@ -11,8 +11,11 @@ namespace ofxRulr {
 				string getTypeName() const override;
 
 				void init();
+				void populateInspector(ofxCvGui::InspectArguments&);
 				
 				ofxCvGui::PanelPtr getPanel() override;
+
+				void homeAll();
 			protected:
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {

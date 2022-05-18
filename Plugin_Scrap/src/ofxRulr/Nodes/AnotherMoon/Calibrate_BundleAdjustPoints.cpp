@@ -56,7 +56,7 @@ namespace ofxRulr {
 				{
 					size_t index = 0;
 					for (auto laser : selectedLasers) {
-						auto address = laser->parameters.settings.address.get();
+						auto address = laser->parameters.communications.address.get();
 						laserAddressByIndex[index] = address;
 						laserIndexByAddress[address] = index;
 						index++;

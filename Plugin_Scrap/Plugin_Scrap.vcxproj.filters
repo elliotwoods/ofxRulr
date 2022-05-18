@@ -31,6 +31,12 @@
     <Filter Include="src\polyfit">
       <UniqueIdentifier>{d8ebbc54-4aa9-42ee-a285-b2d973db9758}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Data">
+      <UniqueIdentifier>{01ef9b46-3131-4105-b0ac-0757ee9d16f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Data\AnotherMoon">
+      <UniqueIdentifier>{30f6efa3-33bc-4389-a3e5-a93ded93f8ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Models\Line.cpp">
@@ -112,6 +118,21 @@
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\SynthesiseCaptures.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\AnotherMoon\Message.cpp">
+      <Filter>src\ofxRulr\Data\AnotherMoon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\AnotherMoon\MessageRouter.cpp">
+      <Filter>src\ofxRulr\Data\AnotherMoon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Moon.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\DrawMoon.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\NavigateToWorldPoint.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Models\Camera.h">
@@ -192,6 +213,21 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\SynthesiseCaptures.h">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Data\AnotherMoon\Message.h">
+      <Filter>src\ofxRulr\Data\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Data\AnotherMoon\MessageRouter.h">
+      <Filter>src\ofxRulr\Data\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\DrawMoon.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Moon.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\NavigateToWorldPoint.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

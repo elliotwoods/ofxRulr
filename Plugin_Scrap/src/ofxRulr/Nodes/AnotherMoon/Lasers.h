@@ -2,6 +2,8 @@
 
 #include "ofxRulr.h"
 #include "ofxRulr/Utils/CaptureSet.h"
+#include "ofxRulr/Data/AnotherMoon/MessageRouter.h"
+
 #include "ofxOsc.h"
 
 #include "Laser.h"
@@ -28,41 +30,46 @@ namespace ofxRulr {
 
 				ofxCvGui::PanelPtr getPanel() override;
 
-				void pushState();
-				
+				void setStateBySelection();
+				void pushStateAll();
+
 				void sendTestImageTo(const std::vector<shared_ptr<Laser>>);
-				void sendTestImageToAll();
-
-				void setSize(float);
-				void setBrightness(float);
-
-				void setDefaultSettings();
+				void sendTestImageToSelected();
 
 				vector<shared_ptr<Laser>> getLasersSelected();
 				vector<shared_ptr<Laser>> getLasersAll();
 
 				shared_ptr<Laser> findLaser(int address);
+
+				void sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage>);
 			protected:
 				friend Laser;
 
 				void importCSV();
+				void importJson();
 
 				Utils::CaptureSet<Laser> lasers;
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
+
+				Data::AnotherMoon::MessageRouter messageRouter;
 
 				struct : ofParameterGroup {
 					ofParameter<string> baseAddress{ "Base address", "10.0.1." };
 					ofParameter<int> remotePort{ "Remote port", 4000 };
 					ofParameter<bool> signalEnabled{ "Signal enabled", false };
-					ofParameter<Laser::State> selectedState{"Selected state", Laser::State::Standby};
-					ofParameter<Laser::State> deselectedState{"Deselected state", Laser::State::Shutdown};
-					ofParameter<bool> sendToDeselected{ "Send to deselected", false };
+
+					struct : ofParameterGroup {
+						ofParameter<bool> enabled{ "Enabled", true };
+						ofParameter<Laser::State> selectedState{ "Selected state", Laser::State::Standby };
+						ofParameter<Laser::State> deselectedState{ "Deselected state", Laser::State::Shutdown };
+						PARAM_DECLARE("Set state by selected", enabled, selectedState, deselectedState);
+					} setStateBySelected;
 					
 					struct : ofParameterGroup {
-						ofParameter<bool> scheduled{ "Scheduled", true };
-						ofParameter<float> updatePeriod{ "Update period [s]", 1.0f };
-						PARAM_DECLARE("Push state", scheduled, updatePeriod);
-					} pushState;
+						ofParameter<bool> enabled{ "Enabled", true };
+						ofParameter<float> updatePeriod{ "Update period [s]", 10.0f, 0, 60.0f };
+						PARAM_DECLARE("Push full state", enabled, updatePeriod);
+					} pushFullState;
 
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", false };
@@ -88,16 +95,13 @@ namespace ofxRulr {
 
 					PARAM_DECLARE("Lasers"
 						, baseAddress
-						, signalEnabled
-						, selectedState
-						, deselectedState
-						, sendToDeselected
-						, pushState
+						, setStateBySelected
+						, pushFullState
 						, testImage
 						, draw);
 				} parameters;
 
-				chrono::system_clock::time_point lastPushStateTime = chrono::system_clock::now();
+				chrono::system_clock::time_point lastPushAllTime = chrono::system_clock::now();
 			};
 		}
 	}

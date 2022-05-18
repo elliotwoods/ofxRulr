@@ -5,9 +5,23 @@
 #include "ofxOsc.h"
 #include "ofxRulr/Models/LaserProjector.h"
 
+#include "ofxRulr/Data/AnotherMoon/MessageRouter.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace AnotherMoon {
+			struct IsFrameNew {
+				void notify() {
+					this->notifyFrameNew = true;
+				}
+				void update() {
+					this->isFrameNew = this->notifyFrameNew;
+					this->notifyFrameNew = false;
+				}
+				bool isFrameNew = false;
+				bool notifyFrameNew = false;
+			};
+
 			class Lasers;
 
 			class Laser
@@ -45,38 +59,113 @@ namespace ofxRulr {
 
 				shared_ptr<Item::RigidBody> getRigidBody();
 
-				void shutown();
-				void standby();
-				void run();
+				shared_ptr<Data::AnotherMoon::OutgoingMessageRetry> createOutgoingMessageRetry() const;
+				shared_ptr<Data::AnotherMoon::OutgoingMessageOnce> createOutgoingMessageOnce() const;
 
-				void setBrightness(float);
-				void setSize(float);
-				void setSource(const Source&);
+				void shutdown();
+
+				void pushState();
+				void pushLocalKeepAlive();
+				void pushSource();
+				void pushColor();
+				void pushTransform();
+				void pushCircle();
+				void pushAll();
 
 				void drawCircle(glm::vec2 center, float radius);
 				void drawCalibrationBeam(const glm::vec2 & projectionPoint);
+				void drawPicture(const vector<glm::vec2>&);
+
+				void drawWorldPoints(const vector<glm::vec3>&);
 
 				string getHostname() const;
-				void sendMessage(const ofxOscMessage&);
+				void sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage>);
+				void processIncomingMessage(shared_ptr<Data::AnotherMoon::IncomingMessage>);
+				void processIncomingAck(shared_ptr<Data::AnotherMoon::AckMessageIncoming>);
 
 				Models::LaserProjector getModel() const;
 
+				struct DeviceStateParameters : ofParameterGroup {
+					ofParameter<State> state{ "State", State::Shutdown };
+					ofParameter<bool> localKeepAlive{ "Local keep alive", false };
+
+					struct : ofParameterGroup {
+						ofParameter<Source> source{ "Source", Source::Memory };
+
+						struct : ofParameterGroup {
+							ofParameter<float> red{ "Red", 0.0f, 0.0f, 1.0f };
+							ofParameter<float> green{ "Green", 0.0f, 0.0f, 1.0f };
+							ofParameter<float> blue{ "Blue", 0.0f, 0.0f, 1.0f };
+							PARAM_DECLARE("Color", red, green, blue);
+						} color;
+
+						struct : ofParameterGroup {
+							ofParameter<float> sizeX{ "Size X", 1.0f, 0.0f, 1.0f };
+							ofParameter<float> sizeY{ "Size Y", 1.0f, 0.0f, 1.0f };
+							ofParameter<float> offsetX{ "Offset X", 0, -1.0f, 1.0f };
+							ofParameter<float> offsetY{ "Offset Y", 0, -1.0f, 1.0f };
+							PARAM_DECLARE("Transform", sizeX, sizeY, offsetX, offsetY);
+						} transform;
+
+						struct : ofParameterGroup {
+							ofParameter<float> sizeX{ "Size X", 1.0f, 0.0f, 1.0f };
+							ofParameter<float> sizeY{ "Size Y", 1.0f, 0.0f, 1.0f };
+							ofParameter<float> offsetX{ "Offset X", 0, -1.0f, 1.0f };
+							ofParameter<float> offsetY{ "Offset Y", 0, -1.0f, 1.0f };
+							ofParameter<float> phase{ "Phase", 90.0f, 0.0f, 1.0f };
+							ofParameter<float> frequency{ "Frequency", 50.0f, 0.0f, 100.0f };
+							PARAM_DECLARE("Circle", sizeX, sizeY, offsetX, offsetY, phase, frequency);
+						} circle;
+
+						PARAM_DECLARE("Projection", source, color, transform);
+					} projection;
+
+					PARAM_DECLARE("Device state", state, localKeepAlive, projection);
+				};
+
 				struct : ofParameterGroup {
+					ofParameter<int> positionIndex{ "Position index", 1 };
+
 					struct : ofParameterGroup {
 						ofParameter<int> address{ "Address", 0 };
+						ofParameter<int> retryDuration{ "Retry duration [ms]", 10000 };
+						ofParameter<int> retryPeriod{ "Retry period [ms]", 500 };
+
+						struct : ofParameterGroup {
+							ofParameter<WhenActive> enabled{ "Enabled", WhenActive::Selected };
+							ofParameter<int> period{ "Period [ms]", 500 };
+							PARAM_DECLARE("Keep alive", enabled, period);
+						} keepAlive;
+							ofParameter<string> hostnameOverride{ "Hostname override", "" };
+						PARAM_DECLARE("Communications", address, retryDuration, retryPeriod, keepAlive, hostnameOverride);
+					} communications;
+
+					struct : ofParameterGroup {
 						ofParameter<glm::vec2> fov{ "FOV", {30, 30} };
 						ofParameter<glm::vec2> centerOffset{ "Center offset", {0, 0} };
-						PARAM_DECLARE("Settings", address, fov, centerOffset);
-					} settings;
+						PARAM_DECLARE("Settings", fov, centerOffset);
+					} intrinsics;
 
-					PARAM_DECLARE("Laser", settings);
+					DeviceStateParameters deviceState;
+					
+					PARAM_DECLARE("Laser", positionIndex, communications, intrinsics, deviceState);
 				} parameters;
+
 			protected:
 				ofxCvGui::ElementPtr getDataDisplay() override;
 
 				Lasers* parent;
-				unique_ptr<ofxOscSender> oscSender;
+
 				shared_ptr<Item::RigidBody> rigidBody = make_shared<Item::RigidBody>();
+
+				DeviceStateParameters sentDeviceParameters;
+				chrono::system_clock::time_point lastKeepAliveSent{};
+
+				IsFrameNew isFrameNewAck;
+				IsFrameNew isFrameNewIncoming;
+
+				vector<glm::vec2> lastPictureSent;
+				ofMesh lastPicturePreviewWorld;
 			};
 		}
 	}

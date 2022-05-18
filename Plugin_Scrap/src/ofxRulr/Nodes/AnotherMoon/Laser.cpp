@@ -2,6 +2,10 @@
 #include "Laser.h"
 #include "Lasers.h"
 
+#include "ofxRulr/Solvers/NavigateToWorldPoint.h"
+
+using namespace ofxRulr::Data::AnotherMoon;
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace AnotherMoon {
@@ -16,7 +20,7 @@ namespace ofxRulr {
 			//----------
 			Laser::~Laser()
 			{
-				this->shutown();
+				this->shutdown();
 			}
 
 			//----------
@@ -31,7 +35,7 @@ namespace ofxRulr {
 				Laser::getDisplayString() const
 			{
 				stringstream ss;
-				ss << this->parameters.settings.address << " : (" << this->rigidBody->getPosition() << ") [" << this->parameters.settings.centerOffset << "]";
+				ss << this->parameters.communications.address << " : (" << this->rigidBody->getPosition() << ") [" << this->parameters.intrinsics.centerOffset << "]";
 				return ss.str();
 			}
 
@@ -39,9 +43,64 @@ namespace ofxRulr {
 			void
 				Laser::update()
 			{
-				this->rigidBody->setName(ofToString(this->parameters.settings.address.get()));
+				this->rigidBody->setName(ofToString(this->parameters.positionIndex.get()));
 				this->rigidBody->setColor(this->color);
 				this->rigidBody->update();
+
+				// Keep alive message
+				if (ofxRulr::isActive(this, this->parameters.communications.keepAlive.enabled.get())) {
+					auto now = chrono::system_clock::now();
+					auto period = chrono::milliseconds(this->parameters.communications.keepAlive.period.get());
+					if (this->lastKeepAliveSent + period < now) {
+						this->lastKeepAliveSent = now;
+						auto message = this->createOutgoingMessageOnce();
+						message->setAddress("/keepAlive");
+						this->sendMessage(message);
+					}
+				}
+
+				// Check all parameters for stale and push if needed
+				{
+					if(this->parameters.deviceState.state.get() != this->sentDeviceParameters.state.get()) {
+						this->pushState();
+					}
+
+					if (this->parameters.deviceState.localKeepAlive.get() != this->sentDeviceParameters.localKeepAlive.get()) {
+						this->pushLocalKeepAlive();
+					}
+
+					if (this->parameters.deviceState.projection.source.get() != this->sentDeviceParameters.projection.source.get()) {
+						this->pushSource();
+					}
+
+					if (this->parameters.deviceState.projection.color.red.get() != this->sentDeviceParameters.projection.color.red.get()
+						|| this->parameters.deviceState.projection.color.green.get() != this->sentDeviceParameters.projection.color.green.get()
+						|| this->parameters.deviceState.projection.color.blue.get() != this->sentDeviceParameters.projection.color.blue.get()) {
+						this->pushColor();
+					}
+
+					if (this->parameters.deviceState.projection.transform.sizeX.get() != this->sentDeviceParameters.projection.transform.sizeX.get()
+						|| this->parameters.deviceState.projection.transform.sizeY.get() != this->sentDeviceParameters.projection.transform.sizeY.get()
+						|| this->parameters.deviceState.projection.transform.offsetX.get() != this->sentDeviceParameters.projection.transform.offsetX.get()
+						|| this->parameters.deviceState.projection.transform.offsetY.get() != this->sentDeviceParameters.projection.transform.offsetY.get()) {
+						this->pushTransform();
+					}
+
+					if (this->parameters.deviceState.projection.circle.sizeX.get() != this->sentDeviceParameters.projection.circle.sizeX.get()
+						|| this->parameters.deviceState.projection.circle.sizeY.get() != this->sentDeviceParameters.projection.circle.sizeY.get()
+						|| this->parameters.deviceState.projection.circle.offsetX.get() != this->sentDeviceParameters.projection.circle.offsetX.get()
+						|| this->parameters.deviceState.projection.circle.offsetY.get() != this->sentDeviceParameters.projection.circle.offsetY.get()
+						|| this->parameters.deviceState.projection.circle.frequency.get() != this->sentDeviceParameters.projection.circle.frequency.get()
+						|| this->parameters.deviceState.projection.circle.phase.get() != this->sentDeviceParameters.projection.circle.phase.get()) {
+						this->pushCircle();
+					}
+				}
+
+				// Heartbeats
+				{
+					this->isFrameNewAck.update();
+					this->isFrameNewIncoming.update();
+				}
 			}
 
 			//----------
@@ -64,6 +123,42 @@ namespace ofxRulr {
 						this->rigidBody->deserialize(json["rigidBody"]);
 					}
 				}
+
+				// Legacy
+				{
+					if (json.contains("Laser")) {
+						const auto& jsonLaser = json["Laser"];
+
+						// Before we changed settings to communications and intrinsics
+						if (jsonLaser.contains("Settings")) {
+							const auto& jsonSettings = jsonLaser["Settings"];
+							if (jsonSettings.contains("Address")) {
+								this->parameters.communications.address.set(jsonSettings["Address"].get<int>());
+							}
+							if (jsonSettings.contains("FOV")) {
+								const auto& jsonFOV = jsonSettings["FOV"];
+								if (jsonFOV.size() >= 2) {
+									glm::vec2 fov{
+										jsonFOV[0].get<float>()
+										, jsonFOV[1].get<float>()
+									};
+									this->parameters.intrinsics.fov.set(fov);
+								}
+							}
+						}
+
+						// Before we had Position and Address seperate
+						if (jsonLaser.contains("Communications")) {
+							if (jsonLaser["Communications"].contains("Address")) {
+								if (!jsonLaser.contains("Position index")) {
+									this->parameters.positionIndex.set(jsonLaser["Communications"]["Address"].get<int>());
+								}
+							}
+						}
+					}
+
+					
+				}
 			}
 
 			//----------
@@ -71,6 +166,34 @@ namespace ofxRulr {
 				Laser::populateInspector(ofxCvGui::InspectArguments& inspectArgs)
 			{
 				auto inspector = inspectArgs.inspector;
+				inspector->addHeartbeat("Incoming OSC", [this]() {
+					return this->isFrameNewIncoming.isFrameNew;
+					});
+				inspector->addHeartbeat("Incoming Ack", [this]() {
+					return this->isFrameNewAck.isFrameNew;
+					});
+
+				{
+					inspector->addTitle("Last picture preview", ofxCvGui::Widgets::Title::Level::H3);
+					auto element = ofxCvGui::makeElement();
+					element->setHeight(inspector->getWidth());
+					inspector->add(element);
+
+					element->onDraw += [this](ofxCvGui::DrawArguments& args) {
+						if (!this->lastPictureSent.empty()) {
+							ofPolyline line;
+
+							for (const auto& projectionPoint : this->lastPictureSent) {
+								line.addVertex(ofMap(projectionPoint.x, -1, 1, 0, args.localBounds.width)
+									, ofMap(projectionPoint.y, 1, -1, 0, args.localBounds.height)
+									, 0);
+							}
+							line.close();
+							line.draw();
+						}
+					};
+				}
+
 				inspector->addParameterGroup(this->parameters);
 			}
 
@@ -109,7 +232,7 @@ namespace ofxRulr {
 					auto model = this->getModel();
 					ofPushStyle();
 					{
-						auto ray = model.castRayWorldSpace(this->parameters.settings.centerOffset);
+						auto ray = model.castRayWorldSpace(this->parameters.intrinsics.centerOffset);
 						ofSetColor(this->color);
 						ofDrawLine(ray.s
 							, ray.s + ray.t * 100);
@@ -137,141 +260,280 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void
-				Laser::shutown()
+			shared_ptr<OutgoingMessageRetry>
+				Laser::createOutgoingMessageRetry() const
 			{
-				ofxOscMessage msg;
-				msg.setAddress("/shutdown");
-				this->sendMessage(msg);
+				return make_shared<OutgoingMessageRetry>(this->getHostname()
+					, std::chrono::milliseconds(this->parameters.communications.retryDuration.get())
+					, std::chrono::milliseconds(this->parameters.communications.retryPeriod.get()));
+			}
+
+			//----------
+			shared_ptr<OutgoingMessageOnce>
+				Laser::createOutgoingMessageOnce() const
+			{
+				return make_shared<OutgoingMessageOnce>(this->getHostname());
 			}
 
 			//----------
 			void
-				Laser::standby()
+				Laser::shutdown()
 			{
+				auto message = this->createOutgoingMessageRetry();
 				{
-					ofxOscMessage msg;
-					msg.setAddress("/standby");
-					this->sendMessage(msg);
+					message->setAddress("/shutdown");
 				}
-
-				// Early LaserClient has spelling mistake - so we send this too
+				this->sendMessage(message);
 				{
-					ofxOscMessage msg;
-					msg.setAddress("/stanby");
-					this->sendMessage(msg);
+					auto state = this->parameters.deviceState.state.get();
+					state.set(State::Shutdown);
+					this->parameters.deviceState.state.set(state);
 				}
+				// Just to update the cached parameters (will send message twice also)
+				this->pushState();
 			}
 
 			//----------
 			void
-				Laser::run()
+				Laser::pushState()
 			{
-				ofxOscMessage msg;
-				msg.setAddress("/run");
-				this->sendMessage(msg);
-			}
-
-			//----------
-			void
-				Laser::setBrightness(float value)
-			{
-				ofxOscMessage msg;
-				msg.setAddress("/brightness");
-				msg.addFloatArg(value);
-				this->sendMessage(msg);
-			}
-
-			//----------
-			void
-				Laser::setSize(float value)
-			{
-				ofxOscMessage msg;
-				msg.setAddress("/size");
-				msg.addFloatArg(value);
-				this->sendMessage(msg);
-			}
-
-			//----------
-			void
-				Laser::setSource(const Source& source)
-			{
-				int sourceIndex = 1;
-				switch (source.get()) {
-				case Source::Circle:
-					sourceIndex = 0;
-					break;
-				case Source::USB:
-					sourceIndex = 1;
-					break;
-				case Source::Memory:
-					sourceIndex = 2;
-					break;
-				default:
-					break;
+				auto message = this->createOutgoingMessageRetry();
+				{
+					message->setAddress("/device/setState");
+					message->addInt32Arg(this->parameters.deviceState.state.get().toIndex());
 				}
+				this->sendMessage(message);
 
-				ofxOscMessage msg;
-				msg.setAddress("/source");
-				msg.addInt32Arg(sourceIndex);
-				this->sendMessage(msg);
+				this->sentDeviceParameters.state.set(this->parameters.deviceState.state.get());
+			}
+
+			//----------
+			void
+				Laser::pushLocalKeepAlive()
+			{
+				auto message = this->createOutgoingMessageRetry();
+				{
+					message->setAddress("/device/keepAlive");
+					message->addBoolArg(this->parameters.deviceState.localKeepAlive.get());
+				}
+				this->sendMessage(message);
+
+				this->sentDeviceParameters.localKeepAlive.set(this->parameters.deviceState.localKeepAlive.get());
+			}
+
+			//----------
+			void
+				Laser::pushSource()
+			{
+				auto message = this->createOutgoingMessageRetry();
+				{
+					message->setAddress("/device/setSource");
+					message->addInt32Arg(this->parameters.deviceState.projection.source.get().toIndex());
+				}
+				this->sendMessage(message);
+
+				this->sentDeviceParameters.projection.source.set(this->parameters.deviceState.projection.source.get());
+			}
+
+			//----------
+			void
+				Laser::pushColor()
+			{
+				auto message = this->createOutgoingMessageRetry();
+				{
+					message->setAddress("/device/setColor");
+					message->addFloatArg(this->parameters.deviceState.projection.color.red.get());
+					message->addFloatArg(this->parameters.deviceState.projection.color.green.get());
+					message->addFloatArg(this->parameters.deviceState.projection.color.blue.get());
+				}
+				this->sendMessage(message);
+
+				this->sentDeviceParameters.projection.color.red.set(this->parameters.deviceState.projection.color.red.get());
+				this->sentDeviceParameters.projection.color.green.set(this->parameters.deviceState.projection.color.green.get());
+				this->sentDeviceParameters.projection.color.blue.set(this->parameters.deviceState.projection.color.blue.get());
+			}
+
+			//----------
+			void
+				Laser::pushTransform()
+			{
+				auto message = this->createOutgoingMessageRetry();
+				{
+					message->setAddress("/device/setTransform");
+					message->addFloatArg(this->parameters.deviceState.projection.transform.sizeX.get());
+					message->addFloatArg(this->parameters.deviceState.projection.transform.sizeY.get());
+					message->addFloatArg(this->parameters.deviceState.projection.transform.offsetX.get());
+					message->addFloatArg(this->parameters.deviceState.projection.transform.offsetY.get());
+				}
+				this->sendMessage(message);
+
+				this->sentDeviceParameters.projection.transform.sizeX.set(this->parameters.deviceState.projection.transform.sizeX.get());
+				this->sentDeviceParameters.projection.transform.sizeY.set(this->parameters.deviceState.projection.transform.sizeY.get());
+				this->sentDeviceParameters.projection.transform.offsetX.set(this->parameters.deviceState.projection.transform.offsetX.get());
+				this->sentDeviceParameters.projection.transform.offsetY.set(this->parameters.deviceState.projection.transform.offsetY.get());
+			}
+
+			//----------
+			void
+				Laser::pushCircle()
+			{
+				auto message = this->createOutgoingMessageRetry();
+				{
+					message->setAddress("/device/setCircle");
+					message->addFloatArg(this->parameters.deviceState.projection.circle.sizeX.get());
+					message->addFloatArg(this->parameters.deviceState.projection.circle.sizeY.get());
+					message->addFloatArg(this->parameters.deviceState.projection.circle.offsetX.get());
+					message->addFloatArg(this->parameters.deviceState.projection.circle.offsetY.get());
+					message->addFloatArg(this->parameters.deviceState.projection.circle.phase.get());
+					message->addFloatArg(this->parameters.deviceState.projection.circle.frequency.get());
+				}
+				this->sendMessage(message);
+
+				this->sentDeviceParameters.projection.circle.sizeX.set(this->parameters.deviceState.projection.circle.sizeX.get());
+				this->sentDeviceParameters.projection.circle.sizeY.set(this->parameters.deviceState.projection.circle.sizeY.get());
+				this->sentDeviceParameters.projection.circle.offsetX.set(this->parameters.deviceState.projection.circle.offsetX.get());
+				this->sentDeviceParameters.projection.circle.offsetY.set(this->parameters.deviceState.projection.circle.offsetY.get());
+				this->sentDeviceParameters.projection.circle.phase.set(this->parameters.deviceState.projection.circle.phase.get());
+				this->sentDeviceParameters.projection.circle.frequency.set(this->parameters.deviceState.projection.circle.frequency.get());
+			}
+
+			//----------
+			void
+				Laser::pushAll()
+			{
+				this->pushState();
+				this->pushLocalKeepAlive();
+				this->pushSource();
+				this->pushColor();
+				this->pushTransform();
+				this->pushCircle();
 			}
 
 			//----------
 			void
 				Laser::drawCircle(glm::vec2 center, float radius)
 			{
-				center += this->parameters.settings.centerOffset.get();
+				center += this->parameters.intrinsics.centerOffset.get();
 
-				ofxOscMessage msg;
-				msg.setAddress("/circle");
-				msg.addFloatArg(center.x);
-				msg.addFloatArg(center.y);
-				msg.addFloatArg(radius);
-				this->sendMessage(msg);
+				auto message = this->createOutgoingMessageRetry();
+				{
+					message->setAddress("/picture/circle");
+					message->addFloatArg(center.x);
+					message->addFloatArg(center.y);
+					message->addFloatArg(radius);
+				}
+				this->sendMessage(message);
 			}
 
 			//----------
 			void
 				Laser::drawCalibrationBeam(const glm::vec2 & projectionPoint)
 			{
-				ofxOscMessage msg;
-				msg.setAddress("/circle");
-				msg.addFloatArg(projectionPoint.x);
-				msg.addFloatArg(projectionPoint.y);
-				msg.addFloatArg(0);
-				this->sendMessage(msg);
+				auto message = this->createOutgoingMessageRetry();
+				{
+					message->setAddress("/picture/point");
+					message->addFloatArg(projectionPoint.x);
+					message->addFloatArg(projectionPoint.y);
+				}
+				this->sendMessage(message);
 			}
 
+			//----------
+			void
+				Laser::drawPicture(const vector<glm::vec2>& projectionPoints)
+			{
+				auto message = this->createOutgoingMessageRetry();
+				{
+					message->setAddress("/picture/picture");
+					for (const auto& projectionPoint : projectionPoints) {
+						message->addFloatArg(projectionPoint.x);
+						message->addFloatArg(projectionPoint.y);
+					}
+				}
+				this->sendMessage(message);
+				this->lastPictureSent = projectionPoints;
+			}
+
+			//----------
+			void
+				Laser::drawWorldPoints(const vector<glm::vec3>& worldPoints)
+			{
+				bool usePriors = this->lastPictureSent.size() == worldPoints.size();
+
+				const auto& solverSettings = ofxRulr::Solvers::NavigateToWorldPoint::defaultSolverSettings();
+				const auto& laserProjectorModel = this->getModel();
+
+				vector<glm::vec2> results;
+
+				if (usePriors) {
+					// With priors
+					size_t i = 0;
+					for (auto& worldPoint : worldPoints) {
+						auto initialGuess = this->lastPictureSent[i++];
+						if (glm::any(glm::isnan(initialGuess))
+							|| initialGuess.x < -1 || initialGuess.x > 1
+							|| initialGuess.y < -1 || initialGuess.y > 1) {
+							if (i > 0) {
+								initialGuess = results.back(); // use previous point
+							}
+							else {
+								initialGuess = { 0, 0 };
+							}
+						}
+
+						auto result = ofxRulr::Solvers::NavigateToWorldPoint::solve(worldPoint
+							, laserProjectorModel
+							, initialGuess
+							, solverSettings);
+						results.push_back(result.solution.point);
+					}
+				}
+				else {
+					// Without priors
+					for (auto& worldPoint : worldPoints) {
+						auto result = ofxRulr::Solvers::NavigateToWorldPoint::solve(worldPoint
+							, laserProjectorModel
+							, glm::vec2(0, 0)
+							, solverSettings);
+						results.push_back(result.solution.point);
+					}
+				}
+				
+				this->drawPicture(results);
+			}
 
 			//----------
 			string
 				Laser::getHostname() const
 			{
-				return this->parent->parameters.baseAddress.get() + ofToString(this->parameters.settings.address);
+				const auto& hostnameOverride = this->parameters.communications.hostnameOverride.get();
+				if (!hostnameOverride.empty()) {
+					return hostnameOverride;
+				}
+				else {
+					return this->parent->parameters.baseAddress.get() + ofToString(this->parameters.communications.address);
+				}
 			}
 
 			//----------
 			void
-				Laser::sendMessage(const ofxOscMessage& msg)
+				Laser::sendMessage(shared_ptr<OutgoingMessage> message)
 			{
-				if (this->oscSender) {
-					if (this->oscSender->getHost() != this->getHostname()
-						|| this->oscSender->getPort() != this->parent->parameters.remotePort.get()) {
-						this->oscSender.reset();
-					}
-				}
+				this->parent->sendMessage(message);
+			}
 
-				if (!this->oscSender) {
-					this->oscSender = make_unique<ofxOscSender>();
-					this->oscSender->setup(this->getHostname(), this->parent->parameters.remotePort.get());
-				}
+			//----------
+			void
+				Laser::processIncomingMessage(shared_ptr<IncomingMessage> message)
+			{
+				this->isFrameNewIncoming.notify();
+			}
 
-				// can put some error checking here in-between
-
-				if (this->oscSender) {
-					this->oscSender->sendMessage(msg);
-				}
+			//----------
+			void
+				Laser::processIncomingAck(shared_ptr<AckMessageIncoming> message)
+			{
+				this->isFrameNewAck.notify();
 			}
 
 			//----------
@@ -280,7 +542,7 @@ namespace ofxRulr {
 			{
 				return Models::LaserProjector{
 					this->rigidBody->getTransform()
-					, this->parameters.settings.fov.get()
+					, this->parameters.intrinsics.fov.get()
 				};
 			}
 
@@ -296,15 +558,45 @@ namespace ofxRulr {
 					{
 						auto element = make_shared<ofxCvGui::Element>();
 						element->onDraw += [this](ofxCvGui::DrawArguments& args) {
-							ofxCvGui::Utils::drawText("Laser #" + ofToString(this->parameters.settings.address)
-								, args.localBounds
+							auto bounds = args.localBounds;
+							bounds.height /= 2.0f;
+
+							ofxCvGui::Utils::drawText("Position #" + ofToString(this->parameters.positionIndex)
+								, bounds
+								, false
+								, false);
+
+							bounds.y += bounds.height;
+
+							ofxCvGui::Utils::drawText(this->getHostname()
+								, bounds
 								, false
 								, false);
 						};
 						stack->add(element);
 					}
 
-					// Select this
+					// Acks
+					{
+						auto verticalStack = make_shared<ofxCvGui::Widgets::VerticalStack>();
+						stack->add(verticalStack);
+						{
+							{
+								auto heartbeat = make_shared<ofxCvGui::Widgets::Heartbeat>("Rx", [this]() {
+									return this->isFrameNewIncoming.isFrameNew;
+									});
+								verticalStack->add(heartbeat);
+							}
+							{
+								auto heartbeat = make_shared<ofxCvGui::Widgets::Heartbeat>("Ack", [this]() {
+									return this->isFrameNewAck.isFrameNew;
+									});
+								verticalStack->add(heartbeat);
+							}
+						}
+					}
+
+					// Inspect this
 					{
 						auto toggle = make_shared<ofxCvGui::Widgets::Toggle>("Inspect"
 							, [this]() {
@@ -319,7 +611,7 @@ namespace ofxRulr {
 						stack->add(toggle);
 					}
 
-					// Select this
+					// Inspect rigidBody
 					{
 						auto toggle = make_shared<ofxCvGui::Widgets::Toggle>("RigidBody"
 							, [this]() {
