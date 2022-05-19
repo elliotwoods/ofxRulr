@@ -165,6 +165,7 @@ namespace ofxRulr {
 
 				IsFrameNew isFrameNewAck;
 				IsFrameNew isFrameNewIncoming;
+				IsFrameNew isFrameNewTransmit;
 
 				vector<glm::vec2> lastPictureSent;
 				ofMesh lastPicturePreviewWorld;

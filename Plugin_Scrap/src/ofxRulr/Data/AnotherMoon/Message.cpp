@@ -68,7 +68,7 @@ namespace ofxRulr {
 				: targetHost(targetHost)
 			{
 				this->index = this->nextIndex++;
-				this->addInt64Arg(this->nextIndex);
+				this->addInt64Arg(this->index);
 				this->targetHost = targetHost;
 			}
 
@@ -174,7 +174,11 @@ namespace ofxRulr {
 				: OutgoingMessageOnce(incomingMessage.getRemoteHost())
 			{
 				this->index = incomingMessage.index;
+
+				// Remove existing ID (inherited)
+				this->clear();
 				this->setAddress(this->ackAddress);
+				this->addInt64Arg(this->index);
 			}
 
 			//----------

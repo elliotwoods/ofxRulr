@@ -116,6 +116,7 @@ namespace ofxRulr {
 				{
 					this->isFrameNewAck.update();
 					this->isFrameNewIncoming.update();
+					this->isFrameNewTransmit.update();
 				}
 			}
 
@@ -182,13 +183,6 @@ namespace ofxRulr {
 				Laser::populateInspector(ofxCvGui::InspectArguments& inspectArgs)
 			{
 				auto inspector = inspectArgs.inspector;
-				inspector->addHeartbeat("Incoming OSC", [this]() {
-					return this->isFrameNewIncoming.isFrameNew;
-					});
-				inspector->addHeartbeat("Incoming Ack", [this]() {
-					return this->isFrameNewAck.isFrameNew;
-					});
-
 				{
 					inspector->addTitle("Last picture preview", ofxCvGui::Widgets::Title::Level::H3);
 					auto element = ofxCvGui::makeElement();
@@ -558,6 +552,7 @@ namespace ofxRulr {
 				Laser::sendMessage(shared_ptr<OutgoingMessage> message)
 			{
 				this->parent->sendMessage(message);
+				this->isFrameNewTransmit.notify();
 			}
 
 			//----------
@@ -619,6 +614,12 @@ namespace ofxRulr {
 						auto verticalStack = make_shared<ofxCvGui::Widgets::VerticalStack>();
 						stack->add(verticalStack);
 						{
+							{
+								auto heartbeat = make_shared<ofxCvGui::Widgets::Heartbeat>("Tx", [this]() {
+									return this->isFrameNewTransmit.isFrameNew;
+									});
+								verticalStack->add(heartbeat);
+							}
 							{
 								auto heartbeat = make_shared<ofxCvGui::Widgets::Heartbeat>("Rx", [this]() {
 									return this->isFrameNewIncoming.isFrameNew;
