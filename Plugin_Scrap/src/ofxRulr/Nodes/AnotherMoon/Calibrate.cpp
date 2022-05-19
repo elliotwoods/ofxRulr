@@ -636,9 +636,9 @@ namespace ofxRulr {
 				auto cameraCapture = make_shared<CameraCapture>();
 				cameraCapture->parentSelection = &this->cameraEditSelection;
 
-				auto tryNtimes = [](const function<future<void>()>& getFuture) {
+				auto tryNtimes = [this](const function<future<void>()>& getFuture) {
 					bool success = false;
-					for (int t = 0; t < 5; t++) {
+					for (int t = 0; t < this->parameters.capture.messageTransmitTries.get(); t++) {
 						try {
 							auto future = getFuture();
 							future.get();
@@ -667,6 +667,7 @@ namespace ofxRulr {
 					case LaserState::Shutdown:
 						for (auto laser : otherLasers) {
 							laser->shutdown();
+							laser->parameters.deviceState.state.set(Laser::State::Shutdown);
 							tryNtimes([&]() {
 								return laser->pushState();
 								});
@@ -693,12 +694,13 @@ namespace ofxRulr {
 						break;
 					}
 
-					// Set the state for this laser
-					laser->parameters.deviceState.state.set(Laser::State::Run);
-					tryNtimes([&]() {
-						return laser->pushState();
-						});
-					
+					// Turn this laser on
+					{
+						laser->parameters.deviceState.state.set(Laser::State::Run);
+						tryNtimes([&]() {
+							return laser->pushState();
+							});
+					}
 
 					// Create a new laserCapture
 					auto laserCapture = make_shared<LaserCapture>();
@@ -729,12 +731,18 @@ namespace ofxRulr {
 
 								// Capture background pass
 								{
-									laser->parameters.deviceState.state.set(Laser::State::Standby);
-									tryNtimes([&]() {
-										return laser->pushState();
-										});
+									// Zero brightness
+									{
+										laser->parameters.deviceState.projection.color.red.set(0);
+										laser->parameters.deviceState.projection.color.green.set(0);
+										laser->parameters.deviceState.projection.color.blue.set(0);
+										tryNtimes([&]() {
+											return laser->pushColor();
+											});
+									}
 
 									this->waitForDelay();
+
 									if (!dryRun) {
 										beamCapture->offImage.pathOnCamera = this->captureToURL();
 									}
@@ -742,11 +750,15 @@ namespace ofxRulr {
 
 								// Capture foreground pass (positive image)
 								{
-									// Set to Run mode
-									laser->parameters.deviceState.state.set(Laser::State::Run);
-									tryNtimes([&]() {
-										return laser->pushState();
-										});
+									// Full brightness
+									{
+										laser->parameters.deviceState.projection.color.red.set(0);
+										laser->parameters.deviceState.projection.color.green.set(0);
+										laser->parameters.deviceState.projection.color.blue.set(0);
+										tryNtimes([&]() {
+											return laser->pushColor();
+											});
+									}
 
 									// Draw the beam
 									tryNtimes([&]() {
@@ -755,6 +767,7 @@ namespace ofxRulr {
 									
 
 									this->waitForDelay();
+
 									if (!dryRun) {
 										beamCapture->onImage.pathOnCamera = this->captureToURL();
 									}
@@ -789,10 +802,10 @@ namespace ofxRulr {
 				}
 				else {
 					for (const auto& laser : allLasers) {
-						for (int i = 0; i < this->parameters.capture.signalSends.get(); i++) {
-							laser->parameters.deviceState.state.set(Laser::State::Standby);
-							laser->pushState();
-						}
+						laser->parameters.deviceState.state.set(Laser::State::Standby);
+						tryNtimes([&]() {
+							return laser->pushState();
+							});
 					}
 				}
 

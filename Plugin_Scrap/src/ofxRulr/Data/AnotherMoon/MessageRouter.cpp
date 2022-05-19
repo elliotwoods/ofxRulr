@@ -94,6 +94,8 @@ namespace ofxRulr {
 					if (incomingMessage->getAddress() == Message::ackAddress) {
 						// RECEIVED AN ACK
 
+						auto ackIncoming = make_shared<AckMessageIncoming>(*incomingMessage);
+
 						// Delete outgoing messages waiting for this ack
 						{
 							this->activeOutgoingMessagesMutex.lock();
@@ -101,7 +103,7 @@ namespace ofxRulr {
 								// Delete all outbox messages waiting for this ack
 								for (auto it = this->activeOutgoingMessages.begin(); it != this->activeOutgoingMessages.end();)
 								{
-									if ((*it)->index == incomingMessage->index)
+									if ((*it)->index == ackIncoming->index)
 									{
 										// Alert listeners that it worked
 										(*it)->onSent.set_value();
@@ -146,7 +148,7 @@ namespace ofxRulr {
 
 						// Strip messages from outbox, with same address as new message (if it's not an ACK)
 						if (activeOutgoingMessage->getAddress() != Message::ackAddress) {
-							
+
 							this->activeOutgoingMessagesMutex.lock();
 							{
 								for (auto it = this->activeOutgoingMessages.begin(); it != this->activeOutgoingMessages.end(); )
@@ -165,9 +167,13 @@ namespace ofxRulr {
 							}
 							this->activeOutgoingMessagesMutex.unlock();
 						}
-						
+
 						// Put this message into outgoing loop
-						this->activeOutgoingMessages.push_back(activeOutgoingMessage);
+						this->activeOutgoingMessagesMutex.lock();
+						{
+							this->activeOutgoingMessages.push_back(activeOutgoingMessage);
+						}
+						this->activeOutgoingMessagesMutex.unlock();
 					}
 				}
 

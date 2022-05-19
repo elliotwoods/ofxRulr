@@ -20,7 +20,7 @@ namespace ofxRulr {
 						, const Address&
 						, const HostName& target);
 					TimeoutException(const OutgoingMessageRetry&);
-					char const* what() const override;
+					char const* what() const noexcept override;
 
 					const std::chrono::system_clock::duration duration;
 					const Address& address;

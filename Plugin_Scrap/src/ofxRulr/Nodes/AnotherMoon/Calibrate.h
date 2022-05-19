@@ -212,7 +212,7 @@ namespace ofxRulr {
 						ofParameter<LaserState> laserStateForOthers{ "State for others", LaserState::Standby };
 						ofParameter<float> outputDelay{ "Output delay [s]", 0.5, 0, 5.0 };
 						ofParameter<bool> continueOnFail{ "Continue on fail", false };
-						ofParameter<int> signalSends{ "Signal sends", 10 };
+						ofParameter<int> messageTransmitTries{ "Messaege transmit tries", 5 };
 
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true };
@@ -225,7 +225,7 @@ namespace ofxRulr {
 							, laserStateForOthers
 							, outputDelay
 							, continueOnFail
-							, signalSends
+							, messageTransmitTries
 							, dryRun);
 					} capture;
 

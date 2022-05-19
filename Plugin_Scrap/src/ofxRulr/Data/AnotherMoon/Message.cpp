@@ -33,7 +33,7 @@ namespace ofxRulr {
 
 			//----------
 			char const *
-				Message::TimeoutException::what() const
+				Message::TimeoutException::what() const noexcept
 			{
 				return this->message;
 			}
