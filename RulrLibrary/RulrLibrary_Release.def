@@ -699,8 +699,10 @@ EXPORTS
 	?addInt64Arg@ofxOscMessage@@QEAAX_J@Z
 	?addIntArg@ofxOscMessage@@QEAAXH@Z
 	?getAddress@ofxOscMessage@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?getArgAsFloat@ofxOscMessage@@QEBAM_K@Z
 	?getArgAsInt64@ofxOscMessage@@QEBA_J_K@Z
 	?getArgType@ofxOscMessage@@QEBA?AW4_ofxOscArgType@@_K@Z
+	?getNumArgs@ofxOscMessage@@QEBA_KXZ
 	?getRemoteHost@ofxOscMessage@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?setAddress@ofxOscMessage@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?getNextMessage@ofxOscReceiver@@QEAA_NAEAVofxOscMessage@@@Z

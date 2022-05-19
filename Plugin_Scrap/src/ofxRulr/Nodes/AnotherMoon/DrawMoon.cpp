@@ -30,7 +30,16 @@ namespace ofxRulr {
 
 				this->manageParameters(this->parameters);
 
-				this->addInput<Moon>();
+				auto moonInput = this->addInput<Moon>();
+				moonInput->onNewConnection += [this](shared_ptr<Moon> moonNode) {
+					moonNode->onMoonChange.addListener([this]() {
+						this->moonIsNewNotify = true;
+						}, this);
+				};
+				moonInput->onDeleteConnection += [this](shared_ptr<Moon> moonNode) {
+					moonNode->onMoonChange.removeListeners(this);
+				};
+
 				this->addInput<Lasers>();
 			}
 
@@ -43,6 +52,15 @@ namespace ofxRulr {
 						this->drawLasers();
 					}
 					RULR_CATCH_ALL_TO_ERROR;
+				}
+
+				{
+					this->moonIsNew = this->moonIsNewNotify;
+					this->moonIsNewNotify = false;
+				}
+
+				if (this->moonIsNew) {
+					this->drawLasers();
 				}
 			}
 

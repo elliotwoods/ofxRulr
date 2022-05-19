@@ -38,8 +38,8 @@ namespace ofxRulr {
 			class Calibrate : public Nodes::Base {
 			public:
 				MAKE_ENUM(LaserState
-					, (Off, TestPattern)
-					, ("Off", "TestPattern"));
+					, (Shutdown, Standby, Run, TestPattern)
+					, ("Shutdown", "Standby", "Run", "TestPattern"));
 
 				MAKE_ENUM(ImageFileSource
 					, (Camera, Local)
@@ -209,7 +209,7 @@ namespace ofxRulr {
 								, captureTimeout);
 						} remoteCamera;
 
-						ofParameter<LaserState> laserStateForOthers{ "State for others", LaserState::TestPattern };
+						ofParameter<LaserState> laserStateForOthers{ "State for others", LaserState::Standby };
 						ofParameter<float> outputDelay{ "Output delay [s]", 0.5, 0, 5.0 };
 						ofParameter<bool> continueOnFail{ "Continue on fail", false };
 						ofParameter<int> signalSends{ "Signal sends", 10 };

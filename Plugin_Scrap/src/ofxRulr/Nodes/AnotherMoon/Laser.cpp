@@ -48,14 +48,30 @@ namespace ofxRulr {
 				this->rigidBody->update();
 
 				// Keep alive message
-				if (ofxRulr::isActive(this, this->parameters.communications.keepAlive.enabled.get())) {
-					auto now = chrono::system_clock::now();
-					auto period = chrono::milliseconds(this->parameters.communications.keepAlive.period.get());
-					if (this->lastKeepAliveSent + period < now) {
-						this->lastKeepAliveSent = now;
-						auto message = this->createOutgoingMessageOnce();
-						message->setAddress("/keepAlive");
-						this->sendMessage(message);
+				{
+					// Selected rather than inspected
+					bool shouldSend;
+					switch(this->parameters.communications.keepAlive.enabled.get().get()) {
+					case WhenActive::Always:
+						shouldSend = true;
+						break;
+					case WhenActive::Selected:
+						shouldSend = this->isSelected();
+						break;
+					case WhenActive::Never:
+					default:
+						shouldSend = false;
+						break;
+					}
+					if (shouldSend) {
+						auto now = chrono::system_clock::now();
+						auto period = chrono::milliseconds(this->parameters.communications.keepAlive.period.get());
+						if (this->lastKeepAliveSent + period < now) {
+							this->lastKeepAliveSent = now;
+							auto message = this->createOutgoingMessageOnce();
+							message->setAddress("/keepAlive");
+							this->sendMessage(message);
+						}
 					}
 				}
 
@@ -246,7 +262,7 @@ namespace ofxRulr {
 					ofPushStyle();
 					{
 						ofSetColor(100);
-						ofDrawLine(position, position * glm::vec3(1, 0, 1));
+						ofDrawLine(position, position * glm::vec3(1, 0, 1) + glm::vec3(0, args.groundHeight, 0));
 					}
 					ofPopStyle();
 				}
@@ -257,6 +273,19 @@ namespace ofxRulr {
 				Laser::getRigidBody()
 			{
 				return this->rigidBody;
+			}
+
+			//----------
+			string
+				Laser::getHostname() const
+			{
+				const auto& hostnameOverride = this->parameters.communications.hostnameOverride.get();
+				if (!hostnameOverride.empty()) {
+					return hostnameOverride;
+				}
+				else {
+					return this->parent->parameters.baseAddress.get() + ofToString(this->parameters.communications.address);
+				}
 			}
 
 			//----------
@@ -283,6 +312,7 @@ namespace ofxRulr {
 				{
 					message->setAddress("/shutdown");
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 				{
 					auto state = this->parameters.deviceState.state.get();
@@ -294,7 +324,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void
+			future<void>
 				Laser::pushState()
 			{
 				auto message = this->createOutgoingMessageRetry();
@@ -302,13 +332,15 @@ namespace ofxRulr {
 					message->setAddress("/device/setState");
 					message->addInt32Arg(this->parameters.deviceState.state.get().toIndex());
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 
 				this->sentDeviceParameters.state.set(this->parameters.deviceState.state.get());
+				return future;
 			}
 
 			//----------
-			void
+			future<void>
 				Laser::pushLocalKeepAlive()
 			{
 				auto message = this->createOutgoingMessageRetry();
@@ -316,13 +348,15 @@ namespace ofxRulr {
 					message->setAddress("/device/keepAlive");
 					message->addBoolArg(this->parameters.deviceState.localKeepAlive.get());
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 
 				this->sentDeviceParameters.localKeepAlive.set(this->parameters.deviceState.localKeepAlive.get());
+				return future;
 			}
 
 			//----------
-			void
+			future<void>
 				Laser::pushSource()
 			{
 				auto message = this->createOutgoingMessageRetry();
@@ -330,13 +364,15 @@ namespace ofxRulr {
 					message->setAddress("/device/setSource");
 					message->addInt32Arg(this->parameters.deviceState.projection.source.get().toIndex());
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 
 				this->sentDeviceParameters.projection.source.set(this->parameters.deviceState.projection.source.get());
+				return future;
 			}
 
 			//----------
-			void
+			future<void>
 				Laser::pushColor()
 			{
 				auto message = this->createOutgoingMessageRetry();
@@ -346,15 +382,17 @@ namespace ofxRulr {
 					message->addFloatArg(this->parameters.deviceState.projection.color.green.get());
 					message->addFloatArg(this->parameters.deviceState.projection.color.blue.get());
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 
 				this->sentDeviceParameters.projection.color.red.set(this->parameters.deviceState.projection.color.red.get());
 				this->sentDeviceParameters.projection.color.green.set(this->parameters.deviceState.projection.color.green.get());
 				this->sentDeviceParameters.projection.color.blue.set(this->parameters.deviceState.projection.color.blue.get());
+				return future;
 			}
 
 			//----------
-			void
+			future<void>
 				Laser::pushTransform()
 			{
 				auto message = this->createOutgoingMessageRetry();
@@ -365,16 +403,18 @@ namespace ofxRulr {
 					message->addFloatArg(this->parameters.deviceState.projection.transform.offsetX.get());
 					message->addFloatArg(this->parameters.deviceState.projection.transform.offsetY.get());
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 
 				this->sentDeviceParameters.projection.transform.sizeX.set(this->parameters.deviceState.projection.transform.sizeX.get());
 				this->sentDeviceParameters.projection.transform.sizeY.set(this->parameters.deviceState.projection.transform.sizeY.get());
 				this->sentDeviceParameters.projection.transform.offsetX.set(this->parameters.deviceState.projection.transform.offsetX.get());
 				this->sentDeviceParameters.projection.transform.offsetY.set(this->parameters.deviceState.projection.transform.offsetY.get());
+				return future;
 			}
 
 			//----------
-			void
+			future<void>
 				Laser::pushCircle()
 			{
 				auto message = this->createOutgoingMessageRetry();
@@ -387,6 +427,7 @@ namespace ofxRulr {
 					message->addFloatArg(this->parameters.deviceState.projection.circle.phase.get());
 					message->addFloatArg(this->parameters.deviceState.projection.circle.frequency.get());
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 
 				this->sentDeviceParameters.projection.circle.sizeX.set(this->parameters.deviceState.projection.circle.sizeX.get());
@@ -395,6 +436,8 @@ namespace ofxRulr {
 				this->sentDeviceParameters.projection.circle.offsetY.set(this->parameters.deviceState.projection.circle.offsetY.get());
 				this->sentDeviceParameters.projection.circle.phase.set(this->parameters.deviceState.projection.circle.phase.get());
 				this->sentDeviceParameters.projection.circle.frequency.set(this->parameters.deviceState.projection.circle.frequency.get());
+
+				return future;
 			}
 
 			//----------
@@ -410,7 +453,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void
+			std::future<void>
 				Laser::drawCircle(glm::vec2 center, float radius)
 			{
 				center += this->parameters.intrinsics.centerOffset.get();
@@ -422,11 +465,13 @@ namespace ofxRulr {
 					message->addFloatArg(center.y);
 					message->addFloatArg(radius);
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
+				return future;
 			}
 
 			//----------
-			void
+			std::future<void>
 				Laser::drawCalibrationBeam(const glm::vec2 & projectionPoint)
 			{
 				auto message = this->createOutgoingMessageRetry();
@@ -435,11 +480,13 @@ namespace ofxRulr {
 					message->addFloatArg(projectionPoint.x);
 					message->addFloatArg(projectionPoint.y);
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
+				return future;
 			}
 
 			//----------
-			void
+			std::future<void>
 				Laser::drawPicture(const vector<glm::vec2>& projectionPoints)
 			{
 				auto message = this->createOutgoingMessageRetry();
@@ -450,12 +497,14 @@ namespace ofxRulr {
 						message->addFloatArg(projectionPoint.y);
 					}
 				}
+				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 				this->lastPictureSent = projectionPoints;
+				return future;
 			}
 
 			//----------
-			void
+			std::future<void>
 				Laser::drawWorldPoints(const vector<glm::vec3>& worldPoints)
 			{
 				bool usePriors = this->lastPictureSent.size() == worldPoints.size();
@@ -469,7 +518,7 @@ namespace ofxRulr {
 					// With priors
 					size_t i = 0;
 					for (auto& worldPoint : worldPoints) {
-						auto initialGuess = this->lastPictureSent[i++];
+						auto initialGuess = this->lastPictureSent[i];
 						if (glm::any(glm::isnan(initialGuess))
 							|| initialGuess.x < -1 || initialGuess.x > 1
 							|| initialGuess.y < -1 || initialGuess.y > 1) {
@@ -486,6 +535,8 @@ namespace ofxRulr {
 							, initialGuess
 							, solverSettings);
 						results.push_back(result.solution.point);
+
+						i++;
 					}
 				}
 				else {
@@ -499,20 +550,7 @@ namespace ofxRulr {
 					}
 				}
 				
-				this->drawPicture(results);
-			}
-
-			//----------
-			string
-				Laser::getHostname() const
-			{
-				const auto& hostnameOverride = this->parameters.communications.hostnameOverride.get();
-				if (!hostnameOverride.empty()) {
-					return hostnameOverride;
-				}
-				else {
-					return this->parent->parameters.baseAddress.get() + ofToString(this->parameters.communications.address);
-				}
+				return this->drawPicture(results);
 			}
 
 			//----------

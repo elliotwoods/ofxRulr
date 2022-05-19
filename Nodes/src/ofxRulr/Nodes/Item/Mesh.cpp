@@ -40,8 +40,6 @@ namespace ofxRulr {
 
 				this->addInput<Render::Style>();
 
-				this->modelLoader = make_unique<ofxAssimpModelLoader>();
-
 				//HACK : This is more common, esp coming from PhotoScan data
 				this->parameters.transform.theirXIsOur = Axes::NegX;
 				this->parameters.transform.theirYIsOur = Axes::NegY;
@@ -105,6 +103,10 @@ namespace ofxRulr {
 
 			//----------
 			void Mesh::drawObjectAdvanced(DrawWorldAdvancedArgs & args) {
+				if (!this->modelLoader) {
+					return;
+				}
+
 				auto style = this->getInput<Render::Style>();
 
 				if (args.enableStyle && style) {
@@ -137,11 +139,6 @@ namespace ofxRulr {
 					if (this->parameters.drawStyle.faces) {
 						this->modelLoader->drawFaces();
 					}
-
-					modelLoader->enableMaterials();
-					modelLoader->enableColors();
-					modelLoader->enableTextures();
-					modelLoader->enableNormals();
 				}
 				ofPopMatrix();
 
@@ -354,13 +351,20 @@ namespace ofxRulr {
 			//----------
 			void Mesh::loadMesh() {
 				if (this->meshFilename.get().empty()) {
-					this->modelLoader->clear();
+					this->modelLoader.reset();
 				}
 				else {
-					this->modelLoader->loadModel(this->meshFilename.get());
+					this->modelLoader = make_unique<ofxAssimpModelLoader>();
+					if (!this->modelLoader->loadModel(this->meshFilename.get())) {
+						this->modelLoader.reset();
+					}
+				}	
+
+				if (this->modelLoader) {
 					this->modelLoader->calculateDimensions();
-				}				
-				this->modelLoader->setScaleNormalization(false);
+					this->modelLoader->setScaleNormalization(false);
+				}
+				
 				this->meshDirty = false;
 			}
 

@@ -19,6 +19,8 @@ namespace ofxRulr {
 			protected:
 				struct : ofParameterGroup {
 					ofParameter<WhenActive> live{ "Live", WhenActive::Never };
+					ofParameter<WhenActive> onMoonChange { "On Moon change", WhenActive::Never };
+
 					ofParameter<float> resolution{ "Resolution", 100, 10, 1000 };
 
 					struct : ofParameterGroup {
@@ -27,7 +29,7 @@ namespace ofxRulr {
 						PARAM_DECLARE("Debug draw", enabled, lines);
 					} debugDraw;
 
-					PARAM_DECLARE("Draw Moon", live, resolution, debugDraw);
+					PARAM_DECLARE("Draw Moon", live, onMoonChange, resolution, debugDraw);
 				} parameters;
 
 				struct Preview {
@@ -36,6 +38,9 @@ namespace ofxRulr {
 				};
 
 				vector<Preview> previews;
+
+				bool moonIsNew = false;
+				bool moonIsNewNotify = false;
 			};
 		}
 	}

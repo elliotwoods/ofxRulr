@@ -43,6 +43,7 @@ namespace ofxRulr {
 					bool trussLine;
 					bool centerLine;
 					bool centerOffsetLine;
+					float groundHeight;
 				};
 
 				Laser();
@@ -57,6 +58,7 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::InspectArguments&);
 				void drawWorldStage(const DrawArguments&);
 
+				string getHostname() const;
 				shared_ptr<Item::RigidBody> getRigidBody();
 
 				shared_ptr<Data::AnotherMoon::OutgoingMessageRetry> createOutgoingMessageRetry() const;
@@ -64,21 +66,21 @@ namespace ofxRulr {
 
 				void shutdown();
 
-				void pushState();
-				void pushLocalKeepAlive();
-				void pushSource();
-				void pushColor();
-				void pushTransform();
-				void pushCircle();
+				std::future<void> pushState();
+				std::future<void> pushLocalKeepAlive();
+				std::future<void> pushSource();
+				std::future<void> pushColor();
+				std::future<void> pushTransform();
+				std::future<void> pushCircle();
+
 				void pushAll();
 
-				void drawCircle(glm::vec2 center, float radius);
-				void drawCalibrationBeam(const glm::vec2 & projectionPoint);
-				void drawPicture(const vector<glm::vec2>&);
+				std::future<void> drawCircle(glm::vec2 center, float radius);
+				std::future<void> drawCalibrationBeam(const glm::vec2 & projectionPoint);
+				std::future<void> drawPicture(const vector<glm::vec2>&);
 
-				void drawWorldPoints(const vector<glm::vec3>&);
+				std::future<void> drawWorldPoints(const vector<glm::vec3>&);
 
-				string getHostname() const;
 				void sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage>);
 				void processIncomingMessage(shared_ptr<Data::AnotherMoon::IncomingMessage>);
 				void processIncomingAck(shared_ptr<Data::AnotherMoon::AckMessageIncoming>);

@@ -92,7 +92,7 @@ namespace ofxRulr {
 
 					// Check if it's an ack
 					if (incomingMessage->getAddress() == Message::ackAddress) {
-						// Treat as incoming ack
+						// RECEIVED AN ACK
 
 						// Delete outgoing messages waiting for this ack
 						{
@@ -103,6 +103,10 @@ namespace ofxRulr {
 								{
 									if ((*it)->index == incomingMessage->index)
 									{
+										// Alert listeners that it worked
+										(*it)->onSent.set_value();
+
+										// Delete it from the queue
 										it = this->activeOutgoingMessages.erase(it);
 									}
 									else {
@@ -117,7 +121,7 @@ namespace ofxRulr {
 						this->incomingAcks.send(make_shared<AckMessageIncoming>(oscMessage));
 					}
 					else {
-						// Treat as incoming message
+						// RECEIVED A STANDARD MESSAGE
 
 						// Send message to main thread
 						this->incomingMessages.send(incomingMessage);
@@ -137,19 +141,20 @@ namespace ofxRulr {
 			{
 				// Receive messages to send from main thread
 				{
-					std::shared_ptr<OutgoingMessage> outgoingMessage;
-					while (this->outgoingMessages.tryReceive(outgoingMessage, 10)) {
+					std::shared_ptr<OutgoingMessage> activeOutgoingMessage;
+					while (this->outgoingMessages.tryReceive(activeOutgoingMessage, 10)) {
 
 						// Strip messages from outbox, with same address as new message (if it's not an ACK)
-						if (outgoingMessage->getAddress() != Message::ackAddress) {
+						if (activeOutgoingMessage->getAddress() != Message::ackAddress) {
 							
 							this->activeOutgoingMessagesMutex.lock();
 							{
 								for (auto it = this->activeOutgoingMessages.begin(); it != this->activeOutgoingMessages.end(); )
 								{
+									const auto& otherExistingActiveMessage = *it;
 									// If matching address and target host
-									if ((*it)->getAddress() == outgoingMessage->getAddress()
-										&& (*it)->getTargetHost() == outgoingMessage->getTargetHost()) {
+									if (otherExistingActiveMessage->getAddress() == activeOutgoingMessage->getAddress()
+										&& otherExistingActiveMessage->getTargetHost() == activeOutgoingMessage->getTargetHost()) {
 										// erase the old one
 										it = this->activeOutgoingMessages.erase(it);
 									}
@@ -162,7 +167,7 @@ namespace ofxRulr {
 						}
 						
 						// Put this message into outgoing loop
-						this->activeOutgoingMessages.push_back(outgoingMessage);
+						this->activeOutgoingMessages.push_back(activeOutgoingMessage);
 					}
 				}
 
@@ -172,6 +177,12 @@ namespace ofxRulr {
 					for (auto it = this->activeOutgoingMessages.begin(); it != this->activeOutgoingMessages.end(); ) {
 						auto outgoingMessage = *it;
 						if (outgoingMessage->getShouldDestroy()) {
+							auto outgoingMessageRetry = dynamic_pointer_cast<OutgoingMessageRetry>(outgoingMessage);
+							if (outgoingMessageRetry) {
+								// The message has expired - send an exception
+								outgoingMessage->onSent.set_exception(make_exception_ptr(Message::TimeoutException(*outgoingMessageRetry)));
+							}
+							
 							it = this->activeOutgoingMessages.erase(it);
 						}
 						else {

@@ -2,6 +2,7 @@
 
 #include "ofxRulr.h"
 #include "ofxRulr/Nodes/Item/RigidBody.h"
+#include "ofxOsc.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -12,9 +13,15 @@ namespace ofxRulr {
 				string getTypeName() const override;
 
 				void init();
+				void update();
+
+				void populateInspector(ofxCvGui::InspectArguments&);
+
 				void drawObject();
 
 				float getRadius() const;
+
+				ofxLiquidEvent<void> onMoonChange;
 			protected:
 				struct : ofParameterGroup {
 					ofParameter<float> diameter{ "Diameter", 5.0f };
@@ -25,8 +32,24 @@ namespace ofxRulr {
 						PARAM_DECLARE("Draw", resolution, filled);
 					} draw;
 
-					PARAM_DECLARE("Moon", diameter, draw);
+					struct : ofParameterGroup {
+						ofParameter<bool> enabled{ "Enabled", false };
+						ofParameter<int> port{ "Port", 5000 };
+						PARAM_DECLARE("Osc Receiver", enabled, port);
+					} oscReceiver;
+
+					PARAM_DECLARE("Moon", diameter, draw, oscReceiver);
 				} parameters;
+
+				ofEventListener listenerDiameter;
+				unique_ptr<ofxOscReceiver> oscReceiver;
+
+				void callbackDiameter(float&);
+
+				struct {
+					bool isFrameNew = false;
+					bool notifyFrameNew = false;
+				} oscFrameNew;
 			};
 		}
 	}

@@ -31,7 +31,7 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr getPanel() override;
 
 				void setStateBySelection();
-				void pushStateAll();
+				void pushAllSelected();
 
 				void sendTestImageTo(const std::vector<shared_ptr<Laser>>);
 				void sendTestImageToSelected();

@@ -120,6 +120,16 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 					});
+				inspector->addButton("Set RGB all", [this]() {
+					try {
+						this->setRGBAll(
+							this->parameters.setValues.color.red
+							, this->parameters.setValues.color.green
+							, this->parameters.setValues.color.blue
+						);
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					}, ' ');
 			}
 
 			//---------
@@ -138,6 +148,20 @@ namespace ofxRulr {
 				auto lasers = lasersNode->getLasersSelected();
 				for (auto laser : lasers) {
 					laser->parameters.intrinsics.centerOffset.set({ 0, 0 });
+				}
+			}
+
+			//---------
+			void
+				RemoteControl::setRGBAll(float red, float green, float blue)
+			{
+				this->throwIfMissingAnyConnection();
+				auto lasersNode = this->getInput<Lasers>();
+				auto lasers = lasersNode->getLasersSelected();
+				for (auto laser : lasers) {
+					laser->parameters.deviceState.projection.color.red.set(red);
+					laser->parameters.deviceState.projection.color.green.set(green);
+					laser->parameters.deviceState.projection.color.blue.set(blue);
 				}
 			}
 		}

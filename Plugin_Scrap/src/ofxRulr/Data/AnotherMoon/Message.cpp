@@ -5,8 +5,38 @@ using namespace std;
 namespace ofxRulr {
 	namespace Data {
 		namespace AnotherMoon {
+#pragma mark Message
 			//----------
 			const string Message::ackAddress = "/ack";
+
+			//----------
+			Message::TimeoutException::TimeoutException(const std::chrono::system_clock::duration& duration
+				, const Address& address
+				, const HostName& target)
+				: duration(duration)
+				, address(address)
+				, target(target)
+			{
+				sprintf(this->message, "Timeout sending to '%s:%s', (%d ms)"
+					, this->target.c_str()
+					, this->address.c_str()
+					, (int32_t) (std::chrono::duration_cast<std::chrono::milliseconds>(this->duration)).count());
+			}
+
+			//----------
+			Message::TimeoutException::TimeoutException(const OutgoingMessageRetry& outgoingMessageRetry)
+				: TimeoutException(outgoingMessageRetry.getRetryDuration()
+					, outgoingMessageRetry.getAddress()
+					, outgoingMessageRetry.getTargetHost())
+			{
+			}
+
+			//----------
+			char const *
+				Message::TimeoutException::what() const
+			{
+				return this->message;
+			}
 
 #pragma mark IncomingMessage
 			//-----------
@@ -34,7 +64,7 @@ namespace ofxRulr {
 			size_t OutgoingMessage::nextIndex = 0;
 
 			//----------
-			OutgoingMessage::OutgoingMessage(const string& targetHost)
+			OutgoingMessage::OutgoingMessage(const HostName& targetHost)
 				: targetHost(targetHost)
 			{
 				this->index = this->nextIndex++;
@@ -43,7 +73,7 @@ namespace ofxRulr {
 			}
 
 			//----------
-			const string&
+			const Message::HostName&
 				OutgoingMessage::getTargetHost() const
 			{
 				return this->targetHost;
@@ -51,7 +81,7 @@ namespace ofxRulr {
 
 #pragma mark OutgoingMessageOnce
 			//----------
-			OutgoingMessageOnce::OutgoingMessageOnce(const string& targetHost)
+			OutgoingMessageOnce::OutgoingMessageOnce(const HostName& targetHost)
 				: OutgoingMessage(targetHost)
 			{
 
@@ -80,15 +110,17 @@ namespace ofxRulr {
 				return this->sendCount > 0;
 			}
 
+
 #pragma mark OutgoingMessageRetry
 			//----------
-			OutgoingMessageRetry::OutgoingMessageRetry(const string& targetHost
+			OutgoingMessageRetry::OutgoingMessageRetry(const HostName& targetHost
 				, const std::chrono::system_clock::duration& retryDuration
 				, const std::chrono::system_clock::duration& retryPeriod)
 				: OutgoingMessage(targetHost)
 				, retryDuration(retryDuration)
-				, retryDeadline(std::chrono::system_clock::now() + retryPeriod)
+				, retryDeadline(std::chrono::system_clock::now() + retryDuration)
 			{
+
 			}
 
 			//----------
@@ -127,6 +159,13 @@ namespace ofxRulr {
 				// Otherwise check deadline
 				auto now = std::chrono::system_clock::now();
 				return now > retryDeadline;
+			}
+
+			//----------
+			std::chrono::system_clock::duration
+				OutgoingMessageRetry::getRetryDuration() const
+			{
+				return this->retryDuration;
 			}
 
 #pragma mark AckknowledgeMessage

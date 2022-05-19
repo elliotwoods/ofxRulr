@@ -62,7 +62,7 @@ namespace ofxRulr {
 					if (this->parameters.pushFullState.enabled) {
 						auto duration = chrono::system_clock::now() - this->lastPushAllTime;
 						if (duration > chrono::seconds(this->parameters.pushFullState.updatePeriod)) {
-							this->pushStateAll();
+							this->pushAllSelected();
 						}
 					}
 				}
@@ -111,10 +111,20 @@ namespace ofxRulr {
 				Lasers::drawWorldStage()
 			{
 				Laser::DrawArguments args;
-				args.rigidBody = ofxRulr::isActive(this, this->parameters.draw.rigidBody);
-				args.trussLine = ofxRulr::isActive(this, this->parameters.draw.trussLine);
-				args.centerLine = ofxRulr::isActive(this, this->parameters.draw.centerLine);
-				args.centerOffsetLine = ofxRulr::isActive(this, this->parameters.draw.centerOffsetLine);
+				{
+					args.rigidBody = ofxRulr::isActive(this, this->parameters.draw.rigidBody);
+					args.trussLine = ofxRulr::isActive(this, this->parameters.draw.trussLine);
+					args.centerLine = ofxRulr::isActive(this, this->parameters.draw.centerLine);
+					args.centerOffsetLine = ofxRulr::isActive(this, this->parameters.draw.centerOffsetLine);
+
+					// Ground height
+					{
+						auto worldPanelUntyped = ofxRulr::Graph::World::X().getWorldStage()->getPanel();
+						auto worldPanel = static_pointer_cast<ofxCvGui::Panels::WorldManaged>(worldPanelUntyped);
+						args.groundHeight = worldPanel->parameters.grid.roomMax.get().y;
+					}
+					
+				}
 
 				auto lasers = this->lasers.getSelection();
 				for (auto laser : lasers) {
@@ -192,9 +202,9 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Lasers::pushStateAll()
+				Lasers::pushAllSelected()
 			{
-				auto lasers = this->getLasersAll();
+				auto lasers = this->getLasersSelected();
 				for (auto laser : lasers) {
 					laser->pushAll();
 				}

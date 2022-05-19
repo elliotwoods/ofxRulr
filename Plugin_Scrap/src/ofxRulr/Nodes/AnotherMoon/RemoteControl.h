@@ -16,6 +16,7 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr getPanel() override;
 
 				void homeAll();
+				void setRGBAll(float, float, float);
 			protected:
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
@@ -24,7 +25,17 @@ namespace ofxRulr {
 						PARAM_DECLARE("Adjust", slowSpeed, fastSpeed);
 					} adjust;
 
-					PARAM_DECLARE("RemoteControl", adjust);
+					struct : ofParameterGroup {
+						struct : ofParameterGroup {
+							ofParameter<float> red{ "Red", 0.0f, 0.0f, 1.0f };
+							ofParameter<float> green{ "Green", 0.0f, 0.0f, 1.0f };
+							ofParameter<float> blue{ "Blue", 0.0f, 0.0f, 1.0f };
+							PARAM_DECLARE("Color", red, green, blue);
+						} color;
+						PARAM_DECLARE("Set values", color);
+					} setValues;
+
+					PARAM_DECLARE("RemoteControl", adjust, setValues);
 				} parameters;
 
 				ofxCvGui::PanelPtr panel;

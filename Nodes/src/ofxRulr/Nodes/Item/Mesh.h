@@ -61,6 +61,12 @@ namespace ofxRulr {
 						PARAM_DECLARE("Transform", scale, theirXIsOur, theirYIsOur, theirZIsOur);
 					} transform;
 
+					struct : ofParameterGroup {
+						ofParameter<bool> enable{ "Enable", true };
+						ofParameter<bool> normalizeCoordinates{ "Normalize coordinates", true };
+						PARAM_DECLARE("Texture", enable, normalizeCoordinates);
+					} texture;
+
 					PARAM_DECLARE("Model", drawStyle, transform);
 				} parameters;
 			};
