@@ -122,7 +122,7 @@ namespace ofxRulr {
 
 				// Solve the problem
 				auto solverSettings = Solvers::BundleAdjustmentPoints::defaultSolverSettings();
-				this->configureSolverSettings(solverSettings);
+				this->configureSolverSettings(solverSettings, this->parameters.bundleAdjustment.solverSettings);
 				auto result = problem.solve(solverSettings);
 				auto& solution = result.solution;
 

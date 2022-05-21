@@ -25,6 +25,8 @@ namespace ofxRulr {
 				bool getIncomingAck(std::shared_ptr<AckMessageIncoming>&);
 				void sendOutgoingMessage(const std::shared_ptr<OutgoingMessage>& message);
 
+				void setAckTimeLoggingEnabled(bool);
+				ofThreadChannel<int> ackTime;
 			protected:
 				void receiveThreadLoop();
 				void sendThreadLoop();
@@ -49,6 +51,8 @@ namespace ofxRulr {
 				std::thread sendThread;
 				bool isClosing = false;
 				bool isOpen = false;
+
+				bool ackTimeLoggingEnabled = false;
 			};
 		}
 	}

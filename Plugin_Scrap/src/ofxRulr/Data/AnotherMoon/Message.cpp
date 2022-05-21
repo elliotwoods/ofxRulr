@@ -79,6 +79,13 @@ namespace ofxRulr {
 				return this->targetHost;
 			}
 
+			//----------
+			chrono::system_clock::duration
+				OutgoingMessage::getAge() const
+			{
+				return chrono::system_clock::now() - this->birthTime;
+			}
+
 #pragma mark OutgoingMessageOnce
 			//----------
 			OutgoingMessageOnce::OutgoingMessageOnce(const HostName& targetHost)

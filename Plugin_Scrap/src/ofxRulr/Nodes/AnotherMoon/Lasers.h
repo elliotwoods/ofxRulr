@@ -41,7 +41,8 @@ namespace ofxRulr {
 
 				shared_ptr<Laser> findLaser(int address);
 
-				void sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage>);
+				bool sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage>);
+				bool isCommunicationEnabled() const;
 			protected:
 				friend Laser;
 
@@ -54,9 +55,12 @@ namespace ofxRulr {
 				Data::AnotherMoon::MessageRouter messageRouter;
 
 				struct : ofParameterGroup {
-					ofParameter<string> baseAddress{ "Base address", "10.0.1." };
-					ofParameter<int> remotePort{ "Remote port", 4000 };
-					ofParameter<bool> signalEnabled{ "Signal enabled", false };
+					struct : ofParameterGroup {
+						ofParameter<bool> enabled{ "Enabled", true };
+						ofParameter<string> baseAddress{ "Base address", "10.0.1." };
+						ofParameter<bool> logAcks{ "Log acks", false };
+						PARAM_DECLARE("Communications", enabled, baseAddress, logAcks);
+					} communications;
 
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", true };
@@ -94,7 +98,7 @@ namespace ofxRulr {
 					} draw;
 
 					PARAM_DECLARE("Lasers"
-						, baseAddress
+						, communications
 						, setStateBySelected
 						, pushFullState
 						, testImage

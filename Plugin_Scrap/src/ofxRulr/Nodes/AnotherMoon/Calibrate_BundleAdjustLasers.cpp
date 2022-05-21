@@ -150,9 +150,14 @@ namespace ofxRulr {
 					}
 				}
 
+				// Optionally set the laser positions as fixed
+				if (this->parameters.bundleAdjustment.laserPositionsFixed) {
+					problem.setLaserPositionsFixed();
+				}
+
 				// Solve the problem
 				auto solverSettings = Solvers::BundleAdjustmentLasers::defaultSolverSettings();
-				this->configureSolverSettings(solverSettings);
+				this->configureSolverSettings(solverSettings, this->parameters.bundleAdjustment.solverSettings);
 				auto result = problem.solve(solverSettings);
 				auto& solution = result.solution;
 

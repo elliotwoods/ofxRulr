@@ -53,6 +53,9 @@ namespace ofxRulr {
 				void addCameraZeroRollConstrant(int viewIndex);
 				void addLasersInPlaneConstraint(size_t plane);
 
+				void setLaserPositionsFixed();
+				void setLaserPositionsVariable();
+
 				Result solve(const ofxCeres::SolverSettings&);
 			protected:
 				ceres::Problem problem;

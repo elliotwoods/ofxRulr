@@ -270,6 +270,21 @@ namespace ofxRulr {
 			}
 
 			//----------
+			bool
+				Laser::getIsAbnormal() const
+			{
+				if (!this->parameters.communications.hostnameOverride.get().empty()) {
+					return true;
+				}
+
+				if (!this->parent->isCommunicationEnabled()) {
+					return true;
+				}
+
+				return false;
+			}
+
+			//----------
 			string
 				Laser::getHostname() const
 			{
@@ -278,7 +293,7 @@ namespace ofxRulr {
 					return hostnameOverride;
 				}
 				else {
-					return this->parent->parameters.baseAddress.get() + ofToString(this->parameters.communications.address);
+					return this->parent->parameters.communications.baseAddress.get() + ofToString(this->parameters.communications.address);
 				}
 			}
 
@@ -551,8 +566,9 @@ namespace ofxRulr {
 			void
 				Laser::sendMessage(shared_ptr<OutgoingMessage> message)
 			{
-				this->parent->sendMessage(message);
-				this->isFrameNewTransmit.notify();
+				if (this->parent->sendMessage(message)) {
+					this->isFrameNewTransmit.notify();
+				}
 			}
 
 			//----------
@@ -593,6 +609,17 @@ namespace ofxRulr {
 						element->onDraw += [this](ofxCvGui::DrawArguments& args) {
 							auto bounds = args.localBounds;
 							bounds.height /= 2.0f;
+
+							// Abnormal notice
+							if (this->getIsAbnormal()) {
+								ofPushStyle();
+								{
+									ofSetColor(100, 50, 50);
+									ofFill();
+									ofDrawRectangle(args.localBounds);
+								}
+								ofPopStyle();
+							}
 
 							ofxCvGui::Utils::drawText("Position #" + ofToString(this->parameters.positionIndex)
 								, bounds

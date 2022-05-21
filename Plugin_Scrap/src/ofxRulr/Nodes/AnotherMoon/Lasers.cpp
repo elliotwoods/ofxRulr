@@ -102,6 +102,27 @@ namespace ofxRulr {
 								}
 							}
 						}
+
+						if (this->parameters.communications.logAcks.get()) {
+							this->messageRouter.setAckTimeLoggingEnabled(true);
+
+							int ackTime;
+							vector<int> ackTimes;
+							while (this->messageRouter.ackTime.tryReceive(ackTime)) {
+								ackTimes.push_back(ackTime);
+							}
+							if (!ackTimes.empty()) {
+								static auto file = std::fopen(ofToDataPath("logAcks.txt").c_str(), "w");
+								char message[100];
+								for (const auto& ackTime : ackTimes) {
+									sprintf(message, "%d\n", ackTime);
+									std::fputs(message, file);
+								}
+							}
+						}
+						else {
+							this->messageRouter.setAckTimeLoggingEnabled(false);
+						}
 					}
 				}
 			}
@@ -272,10 +293,24 @@ namespace ofxRulr {
 
 
 			//----------
-			void
+			bool
 				Lasers::sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage> message)
 			{
-				this->messageRouter.sendOutgoingMessage(message);
+				if (this->isCommunicationEnabled()) {
+					this->messageRouter.sendOutgoingMessage(message);
+					return true;
+				}
+				else {
+					message->onSent.set_exception(std::make_exception_ptr(Exception("Communications disabled")));
+					return false;
+				}
+			}
+
+			//----------
+			bool
+				Lasers::isCommunicationEnabled() const
+			{
+				return this->parameters.communications.enabled.get();
 			}
 
 			//----------

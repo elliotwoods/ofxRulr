@@ -60,6 +60,7 @@ namespace ofxRulr {
 
 				string getHostname() const;
 				shared_ptr<Item::RigidBody> getRigidBody();
+				bool getIsAbnormal() const;
 
 				shared_ptr<Data::AnotherMoon::OutgoingMessageRetry> createOutgoingMessageRetry() const;
 				shared_ptr<Data::AnotherMoon::OutgoingMessageOnce> createOutgoingMessageOnce() const;

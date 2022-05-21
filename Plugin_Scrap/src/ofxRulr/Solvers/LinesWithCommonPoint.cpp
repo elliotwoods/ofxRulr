@@ -53,6 +53,9 @@ namespace ofxRulr {
 			LinesWithCommonPoint::defaultSolverSettings()
 		{
 			ofxCeres::SolverSettings solverSettings;
+			{
+				solverSettings.options.num_threads = std::thread::hardware_concurrency();
+			}
 			return solverSettings;
 		}
 
@@ -250,7 +253,7 @@ namespace ofxRulr {
 			cv::Mat thresholdedRaw;
 			CameraImagePoints cameraImagePoints;
 			{
-				cv::threshold(normalizedImageRaw
+				cv::threshold(differenceImageRaw
 					, thresholdedRaw
 					, solveData.differenceThreshold
 					, 255
@@ -265,6 +268,7 @@ namespace ofxRulr {
 					cameraImagePoints.points.emplace_back(pointInt.x, pointInt.y);
 					cameraImagePoints.weights.push_back(differenceImageRaw.at<uint8_t>(pointInt.y, pointInt.x));
 				}
+				cout << "Found " << cameraImagePoints.points.size() << " cameraImagePoints" << endl;
 
 				// Undistort the points
 				ofxCv::toCv(cameraImagePoints.points) = ofxCv::undistortImagePoints(ofxCv::toCv(cameraImagePoints.points)
@@ -306,10 +310,15 @@ namespace ofxRulr {
 			}
 
 			// Initialise parameters
+			struct ValidLine {
+				Line line;
+				int beamCaptureIndex;
+			};
 			glm::tvec2<double> pointParameters(0.0, 0.0);
-			vector<vector<double>> angleParameters(cameraImagePointSets.size(), vector<double>(1, 0.0));
 			vector<bool> passTest;
-			vector<Line> firstLines;
+			vector<Line> validLinesInitial;
+			map<int, int> validLineIndexByBeamIndex;
+			vector<vector<double>> angleParameters;
 			{
 
 				for (int i = 0; i < cameraImagePointSets.size(); i++) {
@@ -330,24 +339,34 @@ namespace ofxRulr {
 					auto line = Line(openCVLine);
 
 					auto meanPixelValueOnLine = line.meanMaskedValue(cameraImagePointSets[i].thresholdedImage);
-					passTest.push_back(meanPixelValueOnLine >= solveData.minMeanPixelValueOnLine);
+					cout << "Mean value for pixels on line in thresholded image for beam " << i << " = " << meanPixelValueOnLine << endl;
 
-					firstLines.push_back(line);
+					auto thisPassesTest = meanPixelValueOnLine >= solveData.minMeanPixelValueOnLine;
+					passTest.push_back(thisPassesTest);
 
-					if (solveData.debug.previewEnabled) {
-						line.drawOnImage(preview);
+					if (thisPassesTest) {
+						validLineIndexByBeamIndex.emplace(i, validLinesInitial.size());
+						validLinesInitial.push_back(line);
+
+						// Now we only draw red line if it's passed the test
+						if (solveData.debug.previewEnabled) {
+							line.drawOnImage(preview);
+						}
 					}
 				}
 
 				// Guess convergence point using lines found with opencv
-				auto findPointResult = PointFromLines::solve(firstLines);
-				pointParameters.x = findPointResult.solution.point.x;
-				pointParameters.y = findPointResult.solution.point.y;
+				{
+					auto findPointResult = PointFromLines::solve(validLinesInitial);
+					pointParameters.x = findPointResult.solution.point.x;
+					pointParameters.y = findPointResult.solution.point.y;
+				}
 
 				// First guess of angle parameters = (opencv found line's start point) - (guessed convergence point)
-				for (int i = 0; i < cameraImagePointSets.size(); i++) {
-					angleParameters[i][0] = atan2((double)firstLines[i].s.y - pointParameters.y
-						, (double)firstLines[i].s.x - pointParameters.x);
+				for (int i = 0; i < validLinesInitial.size(); i++) {
+					angleParameters.push_back(vector<double>(1, 0.0));
+					angleParameters[i][0] = atan2((double)validLinesInitial[i].s.y - pointParameters.y
+						, (double)validLinesInitial[i].s.x - pointParameters.x);
 				}
 
 				// Show initial guess for lines and convergence
@@ -372,20 +391,19 @@ namespace ofxRulr {
 
 			// Add data to problem (but trim to only keep points that are already within max distance)
 			{
-				for (size_t i = 0; i < cameraImagePointSets.size(); i++) {
-					if (!passTest[i]) {
-						continue;
-					}
+				for(const auto & it : validLineIndexByBeamIndex) {
+					const auto & beamIndex = it.first;
+					const auto & validLineIndex = it.second;
 
-					auto& points = cameraImagePointSets[i].points;
-					auto& weights = cameraImagePointSets[i].weights;
+					auto& points = cameraImagePointSets[beamIndex].points;
+					auto& weights = cameraImagePointSets[beamIndex].weights;
 
 					for (size_t j = 0; j < points.size(); j++) {
-						if (firstLines[i].distanceToPoint(points[j]) <= solveData.distanceThreshold) {
+						if (validLinesInitial[validLineIndex].distanceToPoint(points[j]) <= solveData.distanceThreshold) {
 							problem.AddResidualBlock(LinesWithCommonPointCost::Create(points[j], weights[j])
 								, NULL
 								, &pointParameters[0]
-								, angleParameters[i].data());
+								, angleParameters[validLineIndex].data());
 						}
 					}
 				}
@@ -412,6 +430,7 @@ namespace ofxRulr {
 
 			// Second solve to check if the inverse solution is better
 			// This can be true when lines are close to parallel e.g.:
+			// This also might be broken now (since we changed the solve to only perform on valid lines, so angleParameters is now variable length and data needs to be handled with validLinesInitial for reordering
 			// https://paper.dropbox.com/doc/KC72-Calibration-log-v2-bad-data-review--BgZXEJgBaTU_FpnTUScvfcqZAg-oOoTxlFbnkhsmWMkx5j3I#:uid=055393919998065264664187&h2=Parallel-outliers
 			if(solveData.useAlternativeSolve) {
 				auto firstPointParameters = pointParameters;
@@ -460,8 +479,16 @@ namespace ofxRulr {
 				result.solution.linesValid = passTest;
 
 				for (int i = 0; i < cameraImagePointSets.size(); i++) {
-					Line line(result.solution.point, (float)angleParameters[i][0]);
-					result.solution.lines.push_back(line);
+					auto findIndex = validLineIndexByBeamIndex.find(i);
+					if (findIndex == validLineIndexByBeamIndex.end()) {
+						// This line did not pass test and is not part of solution
+						result.solution.lines.push_back(Line());
+					}
+					else {
+						// Line passed test and is part of solution
+						Line line(result.solution.point, (float)angleParameters[findIndex->second][0]);
+						result.solution.lines.push_back(line);
+					}
 				}
 
 				result.solution.preview = preview;

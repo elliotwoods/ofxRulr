@@ -45,29 +45,35 @@ namespace ofxRulr {
 
 						// Perform the solve and store
 						{
+							auto useExtrinsicGuess = this->parameters.initialCameras.useExtrinsicGuess.get();
+
 							cv::Mat rotationVector, translation;
 							
-							cv::solvePnP(ofxCv::toCv(worldPoints)
+							if (useExtrinsicGuess) {
+								cameraCapture->cameraTransform->getExtrinsics(rotationVector
+									, translation
+									, true);
+							}
+
+							if (!cv::solvePnP(ofxCv::toCv(worldPoints)
 								, ofxCv::toCv(imagePoints)
 								, cameraNode->getCameraMatrix()
 								, cameraNode->getDistortionCoefficients()
 								, rotationVector
 								, translation
-								, false);
+								, useExtrinsicGuess)) {
+								throw(Exception("SolvePnP failed"));
+							}
 
 							cameraCapture->cameraTransform->setExtrinsics(rotationVector
 								, translation
 								, true);
 
 							{
-								cv::Mat translationI, rotationVectorI;
-								cameraCapture->cameraTransform->getExtrinsics(translationI
-									, rotationVectorI
-									, true);
 								auto reprojectionError = ofxCv::reprojectionError(ofxCv::toCv(imagePoints)
 									, ofxCv::toCv(worldPoints)
-									, rotationVectorI
-									, translationI
+									, rotationVector
+									, translation
 									, cameraNode->getCameraMatrix()
 									, cameraNode->getDistortionCoefficients());
 								cout << "Reprojection error " << reprojectionError << endl;

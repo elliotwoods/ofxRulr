@@ -185,12 +185,22 @@ namespace ofxRulr {
 				void calibrateBundleAdjustPoints();
 				void calibrateBundleAdjustLasers();
 
+				void pruneBeamCapturesByResidual(float);
 
 				EditSelection<CameraCapture> cameraEditSelection;
 
 				const Utils::CaptureSet<CameraCapture> & getCameraCaptures();
 				filesystem::path getLocalCopyPath(const ImagePath& cameraPath) const;
 			protected:
+				struct SolverSettings : ofParameterGroup {
+					ofParameter<bool> printOutput{ "Print output", true };
+					ofParameter<int> maxIterations{ "Max iterations", 1000 };
+					ofParameter<int> threads{ "Threads", 16 };
+					ofParameter<float> functionTolerance{ "Function tolerance", 1e-6, 0, 1 };
+					ofParameter<float> parameterTolerance{ "Parameter tolerance", 1e-8, 0, 1 };
+					PARAM_DECLARE("Solver settings", printOutput, maxIterations, threads, functionTolerance, parameterTolerance);
+				};
+
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
@@ -232,10 +242,13 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<ImageFileSource> imageFileSource{ "Image file source", ImageFileSource::Local };
 						ofParameter<filesystem::path> localDirectory{ "Local directory", "E:\\DCIM\\100EOS5D" };
-						ofParameter<float> differenceThreshold{ "Difference threshold", 32, 0, 255 };
+						ofParameter<bool> amplifyBlue{ "Amplify blue", false };
+						ofParameter<float> differenceThreshold{ "Difference threshold", 4, 0, 255 };
 						ofParameter<float> normalizePercentile{ "Normalize percentile", 1e-5 };
 						ofParameter<float> distanceThreshold{ "Distance threshold [px]", 10, 0, 1000 };
-						ofParameter<float> minMeanPixelValueOnLine{ "Min mean pixel value on line", 10, 0, 255 };
+						ofParameter<float> minMeanPixelValueOnLine{ "Min mean pixel value on line", 32, 0, 255 };
+
+						SolverSettings solverSettings;
 
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true};
@@ -247,16 +260,24 @@ namespace ofxRulr {
 						PARAM_DECLARE("Line finder"
 							, imageFileSource
 							, localDirectory
+							, amplifyBlue
 							, differenceThreshold
 							, normalizePercentile
 							, distanceThreshold
 							, minMeanPixelValueOnLine
+							, solverSettings
 							, preview);
 					} lineFinder;
 
 					struct : ofParameterGroup {
+						ofParameter<bool> useExtrinsicGuess{ "Use extrinsic guess", false };
+						PARAM_DECLARE("Initial cameras", useExtrinsicGuess);
+					} initialCameras;
+
+					struct : ofParameterGroup {
 						ofParameter<bool> sceneCenterConstraint{ "Scene center contraint", true };
 						ofParameter<bool> sceneRadiusConstraint{ "Scene radius contraint", true };
+
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true };
 							ofParameter<int> cameraIndex{ "Camera index", 0};
@@ -265,26 +286,22 @@ namespace ofxRulr {
 
 						ofParameter<bool> planeConstraint{"Plane constraint", true};
 
+						ofParameter<bool> laserPositionsFixed{ "Laser positions fixed", false };
+
+						SolverSettings solverSettings;
+
 						PARAM_DECLARE("Bundle adjustment"
 							, sceneCenterConstraint
 							, sceneRadiusConstraint
 							, cameraWith0Yaw
-							, planeConstraint);
+							, planeConstraint
+							, laserPositionsFixed
+							, solverSettings);
 					} bundleAdjustment;
 
-					struct : ofParameterGroup {
-						ofParameter<bool> printOutput{ "Print output", true };
-						ofParameter<int> maxIterations{ "Max iterations", 1000 };
-						ofParameter<int> threads{ "Threads", 16 };
-						ofParameter<float> functionTolerance{ "Function tolerance", 1e-6, 0, 1 };
-						ofParameter<float> parameterTolerance{ "Parameter tolerance", 1e-8, 0, 1 };
-						PARAM_DECLARE("Solver", printOutput, maxIterations, threads, functionTolerance, parameterTolerance);
-					} solver;
-
-					
 					DrawParameters draw;
 
-					PARAM_DECLARE("Calibrate", capture, lineFinder, bundleAdjustment, solver, draw);
+					PARAM_DECLARE("Calibrate", capture, lineFinder, initialCameras, bundleAdjustment, draw);
 				} parameters;
 
 				vector<glm::vec2> getCalibrationImagePoints() const;
@@ -296,15 +313,18 @@ namespace ofxRulr {
 				void takePhoto();
 				vector<string> pollNewCameraFiles();
 				cv::Mat fetchImage(const ImagePath&) const;
-				void configureSolverSettings(ofxCeres::SolverSettings&) const;
+				cv::Mat fetchImageAmplifyBlue(const ImagePath&) const;
+				void configureSolverSettings(ofxCeres::SolverSettings&, const SolverSettings& parameters) const;
 
 				void selectAllChildren();
-				void selectChildrenWithGoodLines();
+				void selectChildrenWithSolvedLines();
+
 
 				ofxCvGui::PanelPtr panel;
 
 				Utils::CaptureSet<CameraCapture> cameraCaptures;
 				ofURLFileLoader urlLoader;
+
 			};
 		}
 	}

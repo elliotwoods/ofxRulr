@@ -78,6 +78,7 @@ namespace ofxRulr {
 
 										solveData.onImages.push_back(this->fetchImage(beamCapture->onImage));
 										solveData.offImages.push_back(this->fetchImage(beamCapture->offImage));
+
 										beamIndex++;
 
 										scopedProcessBeam.end();
@@ -89,10 +90,11 @@ namespace ofxRulr {
 								{
 									Utils::ScopedProcess scopedProcessSolve("Solve lines and convergence");
 
-									// Perform solve
+									// SOLVE
 									auto solverSettings = Solvers::LinesWithCommonPoint::defaultSolverSettings();
-									this->configureSolverSettings(solverSettings);
-									auto result = Solvers::LinesWithCommonPoint::solve(solveData, solverSettings);
+									this->configureSolverSettings(solverSettings, this->parameters.lineFinder.solverSettings);
+									auto result = Solvers::LinesWithCommonPoint::solve(solveData
+										, solverSettings);
 
 									// Save the preview as report
 									if (this->parameters.lineFinder.preview.enabled && this->parameters.lineFinder.preview.save) {

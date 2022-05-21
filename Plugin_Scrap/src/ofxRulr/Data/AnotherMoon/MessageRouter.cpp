@@ -70,6 +70,13 @@ namespace ofxRulr {
 
 			//----------
 			void
+				MessageRouter::setAckTimeLoggingEnabled(bool enabled)
+			{
+				this->ackTimeLoggingEnabled = enabled;
+			}
+
+			//----------
+			void
 				MessageRouter::receiveThreadLoop()
 			{
 				// Check server settings
@@ -107,6 +114,12 @@ namespace ofxRulr {
 									{
 										// Alert listeners that it worked
 										(*it)->onSent.set_value();
+
+										// Send to histogram if enabled
+										if (this->ackTimeLoggingEnabled) {
+											auto ackTimeMillis = chrono::duration_cast<chrono::milliseconds>((*it)->getAge()).count();
+											this->ackTime.send(ackTimeMillis);
+										}
 
 										// Delete it from the queue
 										it = this->activeOutgoingMessages.erase(it);

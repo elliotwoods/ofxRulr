@@ -34,7 +34,7 @@ namespace ofxRulr {
 				Calibrate::BeamCapture::getDisplayString() const
 			{
 				stringstream ss;
-				ss << "residual: " << this->residual;
+				ss << "residual: " << this->residual << ". Line : " << this->line.s << "->" << this->line.t;
 				return ss.str();
 			}
 
@@ -493,9 +493,9 @@ namespace ofxRulr {
 					panel->addButton("Select all children", [this]() {
 						this->selectAllChildren();
 						});
-					panel->addButton("Select children with good lines", [this]() {
-						this->selectChildrenWithGoodLines();
-						});
+					panel->addButton("Select children with solved lines", [this]() {
+						this->selectChildrenWithSolvedLines();
+						})->addToolTip("Has solution and not marked bad");
 					this->panel = panel;
 				}
 
@@ -571,6 +571,21 @@ namespace ofxRulr {
 						RULR_CATCH_ALL_TO_ALERT;
 						}, '4');
 				}
+
+				inspector->addTitle("Prune", ofxCvGui::Widgets::Title::Level::H2);
+				{
+					inspector->addButton("Beam captures by residual", [this]() {
+						try {
+							auto text = ofSystemTextBoxDialog("Max residual");
+							if (!text.empty()) {
+								auto maxResidual = ofToFloat(text);
+								this->pruneBeamCapturesByResidual(maxResidual);
+							}
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+				}
+
 			}
 
 			//----------
@@ -623,6 +638,11 @@ namespace ofxRulr {
 			void
 				Calibrate::capture()
 			{
+				// This is because we have an issue disposing
+				static vector<shared_ptr<CameraCapture>> allCameraCaptures;
+				static vector<shared_ptr<LaserCapture>> allLaserCaptures;
+				static vector<shared_ptr<BeamCapture>> allBeamCaptures;
+
 				this->throwIfMissingAConnection<Lasers>();
 				auto lasersNode = this->getInput<Lasers>();
 				auto allLasers = lasersNode->getLasersSelected();
@@ -634,24 +654,28 @@ namespace ofxRulr {
 				Utils::ScopedProcess scopedProcess("Calibrate", false, allLasers.size());
 
 				auto cameraCapture = make_shared<CameraCapture>();
+				allCameraCaptures.push_back(cameraCapture);
 				cameraCapture->parentSelection = &this->cameraEditSelection;
 
 				auto tryNtimes = [this](const function<future<void>()>& getFuture) {
-					bool success = false;
-					for (int t = 0; t < this->parameters.capture.messageTransmitTries.get(); t++) {
-						try {
-							auto future = getFuture();
-							future.get();
-							success = true;
-							break;
+					return std::async([=]() {
+						bool success = false;
+						for (int t = 0; t < this->parameters.capture.messageTransmitTries.get(); t++) {
+							try {
+								auto future = getFuture();
+								future.get();
+								success = true;
+								break;
+							}
+							catch (const std::exception& e) {
+								ofLogWarning("Message send failed") << e.what();
+							}
 						}
-						catch (const std::exception& e) {
-							ofLogWarning("Message send failed") << e.what();
+						if (!success) {
+							throw(Exception("Max tries reached sending message"));
 						}
-					}
-					if (!success) {
-						throw(Exception("Max tries reached sending message"));
-					}
+						});
+
 				};
 
 				// iterate through lasers, send beams and capture
@@ -663,47 +687,54 @@ namespace ofxRulr {
 					otherLasers.erase(std::remove(otherLasers.begin(), otherLasers.end(), laser), otherLasers.end());
 					
 					// Set all others to laserStateForOthers
-					switch (this->parameters.capture.laserStateForOthers.get().get()) {
-					case LaserState::Shutdown:
-						for (auto laser : otherLasers) {
-							laser->shutdown();
-							laser->parameters.deviceState.state.set(Laser::State::Shutdown);
-							tryNtimes([&]() {
-								return laser->pushState();
-								});
+					{
+						vector<std::future<void>> actions;
+						switch (this->parameters.capture.laserStateForOthers.get().get()) {
+						case LaserState::Shutdown:
+							for (auto laser : otherLasers) {
+								laser->shutdown();
+								laser->parameters.deviceState.state.set(Laser::State::Shutdown);
+								actions.push_back(tryNtimes([=]() {
+									return laser->pushState();
+									}));
+							}
+							break;
+						case LaserState::Standby:
+							for (auto laser : otherLasers) {
+								laser->parameters.deviceState.state.set(Laser::State::Standby);
+								actions.push_back(tryNtimes([=]() {
+									return laser->pushState();
+									}));
+							}
+							break;
+						case LaserState::Run:
+							for (auto laser : otherLasers) {
+								laser->parameters.deviceState.state.set(Laser::State::Run);
+								actions.push_back(tryNtimes([=]() {
+									return laser->pushState();
+									}));
+							}
+							break;
+						case LaserState::TestPattern:
+							lasersNode->sendTestImageTo(otherLasers);
+							break;
 						}
-						break;
-					case LaserState::Standby:
-						for (auto laser : otherLasers) {
-							laser->parameters.deviceState.state.set(Laser::State::Standby);
-							tryNtimes([&]() {
-								return laser->pushState();
-								});
+						for (auto& action : actions) {
+							action.get();
 						}
-						break;
-					case LaserState::Run:
-						for (auto laser : otherLasers) {
-							laser->parameters.deviceState.state.set(Laser::State::Run);
-							tryNtimes([&]() {
-								return laser->pushState();
-								});
-						}
-						break;
-					case LaserState::TestPattern:
-						lasersNode->sendTestImageTo(otherLasers);
-						break;
 					}
 
 					// Turn this laser on
 					{
 						laser->parameters.deviceState.state.set(Laser::State::Run);
-						tryNtimes([&]() {
+						tryNtimes([=]() {
 							return laser->pushState();
-							});
+							}).get();
 					}
 
 					// Create a new laserCapture
 					auto laserCapture = make_shared<LaserCapture>();
+					allLaserCaptures.push_back(laserCapture);
 					{
 						laserCapture->laserAddress = laser->parameters.communications.address.get();
 						laserCapture->parentSelection = &cameraCapture->ourSelection;
@@ -716,9 +747,11 @@ namespace ofxRulr {
 							, calibrationImagePoints.size());
 						for (const auto& calibrationImagePoint : calibrationImagePoints) {
 							try {
+								auto beamCapture = make_shared<BeamCapture>();
+								allBeamCaptures.push_back(beamCapture);
+
 								Utils::ScopedProcess scopedProcessImagePoint(ofToString(calibrationImagePoint));
 
-								auto beamCapture = make_shared<BeamCapture>();
 								beamCapture->projectionPoint = calibrationImagePoint;
 								beamCapture->parentSelection = &laserCapture->ourSelection;
 
@@ -736,9 +769,9 @@ namespace ofxRulr {
 										laser->parameters.deviceState.projection.color.red.set(0);
 										laser->parameters.deviceState.projection.color.green.set(0);
 										laser->parameters.deviceState.projection.color.blue.set(0);
-										tryNtimes([&]() {
+										tryNtimes([=]() {
 											return laser->pushColor();
-											});
+											}).get();
 									}
 
 									this->waitForDelay();
@@ -750,21 +783,20 @@ namespace ofxRulr {
 
 								// Capture foreground pass (positive image)
 								{
+									// Draw the beam
+									tryNtimes([=]() {
+										return laser->drawCalibrationBeam(calibrationImagePoint);
+										}).get();
+
 									// Full brightness
 									{
-										laser->parameters.deviceState.projection.color.red.set(0);
-										laser->parameters.deviceState.projection.color.green.set(0);
-										laser->parameters.deviceState.projection.color.blue.set(0);
-										tryNtimes([&]() {
+										laser->parameters.deviceState.projection.color.red.set(1);
+										laser->parameters.deviceState.projection.color.green.set(1);
+										laser->parameters.deviceState.projection.color.blue.set(1);
+										tryNtimes([=]() {
 											return laser->pushColor();
-											});
+											}).get();
 									}
-
-									// Draw the beam
-									tryNtimes([&]() {
-										return laser->drawCalibrationBeam(calibrationImagePoint);
-										});
-									
 
 									this->waitForDelay();
 
@@ -801,11 +833,15 @@ namespace ofxRulr {
 					lasersNode->sendTestImageTo(allLasers);
 				}
 				else {
+					vector<std::future<void>> actions;
 					for (const auto& laser : allLasers) {
 						laser->parameters.deviceState.state.set(Laser::State::Standby);
-						tryNtimes([&]() {
+						actions.push_back(tryNtimes([=]() {
 							return laser->pushState();
-							});
+							}));
+					}
+					for (auto& action : actions) {
+						action.get();
 					}
 				}
 
@@ -939,6 +975,23 @@ namespace ofxRulr {
 				}
 			}
 
+			//----------
+			void
+				Calibrate::pruneBeamCapturesByResidual(float maxResidual)
+			{
+				auto cameraCaptures = this->cameraCaptures.getSelection();
+				for (auto cameraCapture : cameraCaptures) {
+					auto laserCaptures = cameraCapture->laserCaptures.getSelection();
+					for (auto laserCapture : laserCaptures) {
+						auto beamCaptures = laserCapture->beamCaptures.getSelection();
+						for (auto beamCapture : beamCaptures) {
+							if (beamCapture->residual > maxResidual) {
+								beamCapture->setSelected(false);
+							}
+						}
+					}
+				}
+			}
 
 			//----------
 			vector<glm::vec2>
@@ -1058,6 +1111,10 @@ namespace ofxRulr {
 			cv::Mat
 				Calibrate::fetchImage(const ImagePath& imagePath) const
 			{
+				if (this->parameters.lineFinder.amplifyBlue.get()) {
+					return this->fetchImageAmplifyBlue(imagePath);
+				}
+
 				auto flags = cv::IMREAD_GRAYSCALE;
 
 				switch (this->parameters.lineFinder.imageFileSource.get()) {
@@ -1089,15 +1146,42 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void
-				Calibrate::configureSolverSettings(ofxCeres::SolverSettings& solverSettings) const
+			cv::Mat
+				Calibrate::fetchImageAmplifyBlue(const ImagePath& imagePath) const
 			{
-				solverSettings.printReport = this->parameters.solver.printOutput;
-				solverSettings.options.minimizer_progress_to_stdout = this->parameters.solver.printOutput;
-				solverSettings.options.max_num_iterations = this->parameters.solver.maxIterations;
-				solverSettings.options.num_threads = this->parameters.solver.threads;
-				solverSettings.options.function_tolerance = this->parameters.solver.functionTolerance.get();
-				solverSettings.options.parameter_tolerance = this->parameters.solver.parameterTolerance.get();
+				switch (this->parameters.lineFinder.imageFileSource.get()) {
+				case ImageFileSource::Local:
+				{
+					auto fullFilePath = this->getLocalCopyPath(imagePath);
+
+					auto image = cv::imread(fullFilePath.string());
+					if (image.empty()) {
+						throw(Exception("Failed to load image at " + fullFilePath.string()));
+					}
+					
+					cv::Mat colorPlanes[3];
+					cv::Mat blueMinusOthers;
+					cv::split(image, colorPlanes);
+					cv::subtract(colorPlanes[0], colorPlanes[1], blueMinusOthers);
+					cv::subtract(blueMinusOthers, colorPlanes[2], blueMinusOthers);
+					blueMinusOthers = 4 * blueMinusOthers;
+					return blueMinusOthers;
+				}
+				default:
+					throw(Exception("Cannot fetchImage. Method is not implemented by fetchImageAmplifyBlue"));
+				}
+			}
+
+			//----------
+			void
+				Calibrate::configureSolverSettings(ofxCeres::SolverSettings& solverSettings, const SolverSettings& parameters) const
+			{
+				solverSettings.printReport = parameters.printOutput;
+				solverSettings.options.minimizer_progress_to_stdout = parameters.printOutput;
+				solverSettings.options.max_num_iterations = parameters.maxIterations;
+				solverSettings.options.num_threads = parameters.threads;
+				solverSettings.options.function_tolerance = parameters.functionTolerance.get();
+				solverSettings.options.parameter_tolerance = parameters.parameterTolerance.get();
 			}
 
 			//----------
@@ -1116,13 +1200,15 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Calibrate::selectChildrenWithGoodLines()
+				Calibrate::selectChildrenWithSolvedLines()
 			{
 				auto cameraCaptures = this->cameraCaptures.getSelection();
 				for (auto cameraCapture : cameraCaptures) {
 					auto laserCaptures = cameraCapture->laserCaptures.getAllCaptures();
 					for (auto laserCapture : laserCaptures) {
-						laserCapture->setSelected(laserCapture->linesWithCommonPointSolveResult.success);
+						auto good = laserCapture->linesWithCommonPointSolveResult.success
+							&& !laserCapture->parameters.markBad.get();
+						laserCapture->setSelected(good);
 					}
 				}
 			}

@@ -544,6 +544,26 @@ namespace ofxRulr {
 		}
 
 		//----------
+		void
+			BundleAdjustmentLasers::Problem::setLaserPositionsFixed()
+		{
+			for (auto laserTranslationParameters : this->allLaserTranslationParameters)
+			{
+				this->problem.SetParameterBlockConstant(laserTranslationParameters);
+			}
+		}
+
+		//----------
+		void
+			BundleAdjustmentLasers::Problem::setLaserPositionsVariable()
+		{
+			for (auto laserTranslationParameters : this->allLaserTranslationParameters)
+			{
+				this->problem.SetParameterBlockVariable(laserTranslationParameters);
+			}
+		}
+
+		//----------
 		BundleAdjustmentLasers::Result
 			BundleAdjustmentLasers::Problem::solve(const ofxCeres::SolverSettings& solverSettings)
 		{

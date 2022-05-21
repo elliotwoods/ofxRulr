@@ -24,7 +24,7 @@ namespace ofxRulr {
 				ofxLiquidEvent<void> onMoonChange;
 			protected:
 				struct : ofParameterGroup {
-					ofParameter<float> diameter{ "Diameter", 5.0f };
+					ofParameter<float> diameter{ "Diameter", 5.0f, 0, 10 };
 
 					struct : ofParameterGroup {
 						ofParameter<int> resolution{ "Resolution", 5 };

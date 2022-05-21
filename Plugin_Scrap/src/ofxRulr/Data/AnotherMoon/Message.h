@@ -58,6 +58,7 @@ namespace ofxRulr {
 				OutgoingMessage(const HostName& targetHost);
 				
 				const HostName& getTargetHost() const;
+				std::chrono::system_clock::duration getAge() const;
 
 				virtual void markAsSent() = 0;
 				virtual bool getShouldSend() const = 0;
@@ -68,6 +69,7 @@ namespace ofxRulr {
 				static size_t nextIndex;
 				HostName targetHost;
 				size_t sendCount = 0;
+				std::chrono::system_clock::time_point birthTime = std::chrono::system_clock::now();
 			};
 
 			class OutgoingMessageOnce : public OutgoingMessage {
