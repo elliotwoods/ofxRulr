@@ -90,5 +90,27 @@ namespace ofxRulr {
 				SoundEngine::X().play("ofxRulr::success", true);
 			}
 		}
+
+		//----------
+		ofTexture&
+			getGridTexture()
+		{
+			static unique_ptr<ofTexture> texture;
+
+			if (!texture) {
+				auto wasArbTex = ofGetUsingArbTex();
+				ofDisableArbTex();
+				{
+					texture = make_unique<ofTexture>();
+					texture->enableMipmap();
+					texture->loadData(ofxAssets::image("ofxCvGui::grid-10-dark").getPixels());
+					texture->setTextureWrap(GL_REPEAT, GL_REPEAT);
+					texture->setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST);
+				}
+				if (wasArbTex) ofEnableArbTex();
+			}
+			
+			return *texture;
+		}
 	}
 }

@@ -496,6 +496,9 @@ namespace ofxRulr {
 					panel->addButton("Select children with solved lines", [this]() {
 						this->selectChildrenWithSolvedLines();
 						})->addToolTip("Has solution and not marked bad");
+					panel->addButton("Deselect children with bad lines", [this]() {
+						this->deselectChildrenWithBadLines();
+						});
 					this->panel = panel;
 				}
 
@@ -566,10 +569,17 @@ namespace ofxRulr {
 
 					inspector->addButton("Bundle adjust lasers", [this]() {
 						try {
-							this->calibrateBundleAdjustLasers();
+							this->calibrateBundleAdjustLasers(true);
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						}, '4');
+
+					inspector->addButton("Calculate laser residuals", [this]() {
+						try {
+							this->calibrateBundleAdjustLasers(false);
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						}, '5');
 				}
 
 				inspector->addTitle("Prune", ofxCvGui::Widgets::Title::Level::H2);
@@ -1209,6 +1219,30 @@ namespace ofxRulr {
 						auto good = laserCapture->linesWithCommonPointSolveResult.success
 							&& !laserCapture->parameters.markBad.get();
 						laserCapture->setSelected(good);
+					}
+				}
+			}
+
+			//----------
+			void
+				Calibrate::deselectChildrenWithBadLines()
+			{
+				auto cameraCaptures = this->cameraCaptures.getAllCaptures();
+				for (auto cameraCapture : cameraCaptures) {
+					auto laserCaptures = cameraCapture->laserCaptures.getSelection();
+					bool hasLaserCapture = false;
+					for (auto laserCapture : laserCaptures) {
+						auto good = laserCapture->linesWithCommonPointSolveResult.success
+							&& !laserCapture->parameters.markBad.get();
+						if (!good) {
+							laserCapture->setSelected(false);
+						}
+						else {
+							hasLaserCapture = true;
+						}
+					}
+					if (!hasLaserCapture) {
+						cameraCapture->setSelected(false);
 					}
 				}
 			}

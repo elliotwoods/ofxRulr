@@ -48,6 +48,7 @@ EXPORTS
 	??0ofNode@@QEAA@XZ
 	??0ofParameterGroup@@QEAA@XZ
 	??0ofPath@@QEAA@XZ
+	??0ofPlanePrimitive@@QEAA@MMHHW4ofPrimitiveMode@@@Z
 	??0ofPlanePrimitive@@QEAA@XZ
 	??0ofQuaternion@@QEAA@AEBU?$qua@M$0A@@glm@@@Z
 	??0ofRectangle@@QEAA@AEBU?$vec@$02M$0A@@glm@@MM@Z
@@ -286,6 +287,7 @@ EXPORTS
 	?nextId@StdFunctionId@priv@of@@0U?$atomic@_K@std@@A
 	?draw@of3dPrimitive@@UEBAXXZ
 	?drawWireframe@of3dPrimitive@@QEBAXXZ
+	?getMesh@of3dPrimitive@@QEAAAEAV?$ofMesh_@U?$vec@$02M$0A@@glm@@U12@V?$ofColor_@M@@U?$vec@$01M$0A@@2@@@XZ
 	?mapTexCoordsFromTexture@of3dPrimitive@@QEAAXAEBVofTexture@@@Z
 	?setUseVbo@of3dPrimitive@@QEAAX_N@Z
 	?escape@ofAbstractParameter@@MEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBV23@@Z
@@ -912,6 +914,7 @@ EXPORTS
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVpath@filesystem@boost@@@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVPlane@ofxRay@@@Z
 	?deserialize@Utils@ofxRulr@@YA_NAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEAVRay@ofxRay@@@Z
+	?getGridTexture@Utils@ofxRulr@@YAAEAVofTexture@@XZ
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEB_N@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBH@Z
 	?serialize@Utils@ofxRulr@@YAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@AEBM@Z

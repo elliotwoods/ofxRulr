@@ -17,5 +17,7 @@ namespace ofxRulr {
 		OFXRULR_API_ENTRY glm::vec2 applyTransform(const glm::mat4&, const glm::vec2&);
 
 		OFXRULR_API_ENTRY void speakCount(size_t);
+
+		OFXRULR_API_ENTRY ofTexture& getGridTexture();
 	}
 }

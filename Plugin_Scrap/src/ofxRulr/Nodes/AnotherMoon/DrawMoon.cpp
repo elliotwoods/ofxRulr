@@ -54,13 +54,23 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ERROR;
 				}
 
+
 				{
 					this->moonIsNew = this->moonIsNewNotify;
 					this->moonIsNewNotify = false;
 				}
 
-				if (this->moonIsNew) {
+				if (this->moonIsNew && ofxRulr::isActive(this, this->parameters.onMoonChange.get())) {
 					this->drawLasers();
+				}
+
+				{
+					auto now = chrono::system_clock::now();
+					auto timeSinceLastUpdate = this->schedule.lastUpdate - now;
+					auto interval = std::chrono::milliseconds((int) (this->parameters.schedule.interval.get() * 1000));
+					if (timeSinceLastUpdate >= interval) {
+						this->drawLasers();
+					}
 				}
 			}
 
@@ -154,6 +164,8 @@ namespace ofxRulr {
 					}
 
 					laser->drawWorldPoints(points);
+
+					this->schedule.lastUpdate = chrono::system_clock::now();
 				}
 			}
 		}

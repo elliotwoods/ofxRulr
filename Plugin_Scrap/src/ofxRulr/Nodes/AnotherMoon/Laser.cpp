@@ -15,6 +15,8 @@ namespace ofxRulr {
 				RULR_SERIALIZE_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 				this->rigidBody->init();
+				this->parameters.intrinsics.fov.addListener(this, &Laser::callbackIntrinsicsChange);
+				this->parameters.intrinsics.centerOffset.addListener(this, &Laser::callbackIntrinsicsChange);
 			}
 
 			//----------
@@ -173,8 +175,6 @@ namespace ofxRulr {
 							}
 						}
 					}
-
-					
 				}
 			}
 
@@ -215,25 +215,40 @@ namespace ofxRulr {
 				if (args.rigidBody) {
 					this->rigidBody->drawWorldStage();
 				}
-				else {
-					ofPushMatrix();
-					{
-						ofMultMatrix(this->rigidBody->getTransform());
-						ofDrawAxis(1.0f);
-					}
-					ofPopMatrix();
-				}
 
-				// Draw center line
-				if (args.centerLine) {
+				// In object space
+				{
 					ofPushMatrix();
-					ofPushStyle();
 					{
 						ofMultMatrix(this->rigidBody->getTransform());
-						ofSetColor(this->color);
-						ofDrawLine({ 0, 0, 0 }, { 0, 0, 100 });
+
+						// Draw axis
+						ofDrawAxis(1.0f);
+
+						// Draw center line
+						if (args.centerLine) {
+							ofPushStyle();
+							{
+								ofSetColor(this->color);
+								ofDrawLine({ 0, 0, 0 }, { 0, 0, 100 });
+							}
+							ofPopStyle();
+						}
+
+						// Draw model preview
+						if (args.modelPreview) {
+							auto& gridTexture = ofxRulr::Utils::getGridTexture();
+							gridTexture.bind();
+							{
+								ofPushMatrix();
+								{
+									this->modelPreview.draw();
+								}
+								ofPopMatrix();
+							}
+							gridTexture.unbind();
+						}
 					}
-					ofPopStyle();
 					ofPopMatrix();
 				}
 
@@ -596,6 +611,29 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void
+				Laser::rebuildModelPreview()
+			{
+				auto model = this->getModel();
+
+				this->modelPreview.clear();
+
+				auto planePrimitive = ofPlanePrimitive(2.0f, 2.0f, 9, 9);
+				const auto & planeVertices = planePrimitive.getMesh().getVertices();
+				vector<glm::vec3> vertices;
+				vector<glm::vec2> textureCoordinates;
+				for (auto& planeVertex : planeVertices) {
+					auto ray = model.castRayObjectSpace({ planeVertex.x, planeVertex.y });
+					vertices.push_back(ray.t);
+					textureCoordinates.push_back(glm::vec2(planeVertex.x, planeVertex.y) * 0.5f + glm::vec2(0.5f, 0.5f));
+				}
+				this->modelPreview.addVertices(vertices);
+				this->modelPreview.addTexCoords(textureCoordinates);
+				this->modelPreview.addIndices(planePrimitive.getMesh().getIndices());
+				this->modelPreview.setMode(planePrimitive.getMesh().getMode());
+			}
+
+			//----------
 			ofxCvGui::ElementPtr
 				Laser::getDataDisplay()
 			{
@@ -698,6 +736,13 @@ namespace ofxRulr {
 				}
 
 				return stack;
+			}
+
+			//----------
+			void
+				Laser::callbackIntrinsicsChange(glm::vec2&)
+			{
+				this->rebuildModelPreview();
 			}
 		}
 	}

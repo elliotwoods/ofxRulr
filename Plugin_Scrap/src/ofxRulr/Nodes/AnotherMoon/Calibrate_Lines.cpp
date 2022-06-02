@@ -43,7 +43,7 @@ namespace ofxRulr {
 									}
 								}
 
-								const size_t minBeamCapture = 4;
+								const size_t minBeamCapture = 2;
 
 								auto beamCaptures = laserCapture->beamCaptures.getSelection();
 								Utils::ScopedProcess scopedProcessLasers("Laser #" + ofToString(laserCapture->laserAddress), false);

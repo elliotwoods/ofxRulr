@@ -56,6 +56,15 @@ namespace ofxRulr {
 				void setLaserPositionsFixed();
 				void setLaserPositionsVariable();
 
+				void setLaserRotationsFixed();
+				void setLaserRotationsVariable();
+
+				void setLaserFOVsFixed();
+				void setLaserFOVsVariable();
+
+				void setCamerasFixed();
+				void setCamerasVariable();
+
 				Result solve(const ofxCeres::SolverSettings&);
 			protected:
 				ceres::Problem problem;
@@ -66,6 +75,9 @@ namespace ofxRulr {
 				vector<double*> allLaserTranslationParameters;
 				vector<double*> allLaserRotationParameters;
 				vector<double*> allLaserFovParameters;
+
+				set<int> activeCameras;
+				set<int> activeLasers;
 			};
 
 			static float getResidual(const Solution&

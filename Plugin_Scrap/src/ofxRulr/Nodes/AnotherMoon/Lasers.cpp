@@ -137,6 +137,7 @@ namespace ofxRulr {
 					args.trussLine = ofxRulr::isActive(this, this->parameters.draw.trussLine);
 					args.centerLine = ofxRulr::isActive(this, this->parameters.draw.centerLine);
 					args.centerOffsetLine = ofxRulr::isActive(this, this->parameters.draw.centerOffsetLine);
+					args.modelPreview = ofxRulr::isActive(this, this->parameters.draw.modelPreview);
 
 					// Ground height
 					{
@@ -197,6 +198,10 @@ namespace ofxRulr {
 				inspector->addButton("Set state by selection", [this]() {
 					this->setStateBySelection();
 					});
+
+				inspector->addButton("Push full state", [this]() {
+					pushAllSelected();
+					}, OF_KEY_RETURN)->setHeight(100.0f);
 			}
 
 			//----------

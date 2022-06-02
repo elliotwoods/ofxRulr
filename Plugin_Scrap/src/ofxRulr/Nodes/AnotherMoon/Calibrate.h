@@ -183,7 +183,7 @@ namespace ofxRulr {
 				void calibrateLines(); // Note that process is in seperate Calibrate_Process.cpp
 				void calibrateInitialCameras();
 				void calibrateBundleAdjustPoints();
-				void calibrateBundleAdjustLasers();
+				void calibrateBundleAdjustLasers(bool performSolve); // Otherwise just get the residuals
 
 				void pruneBeamCapturesByResidual(float);
 
@@ -286,7 +286,18 @@ namespace ofxRulr {
 
 						ofParameter<bool> planeConstraint{"Plane constraint", true};
 
-						ofParameter<bool> laserPositionsFixed{ "Laser positions fixed", false };
+						struct : ofParameterGroup {
+							struct : ofParameterGroup {
+								ofParameter<bool> position{ "Position", false };
+								ofParameter<bool> rotation{ "Rotation", false };
+								ofParameter<bool> fov{ "FOV", false };
+								PARAM_DECLARE("Lasers", position, rotation, fov);
+							} lasers;
+
+							ofParameter<bool> cameras{ "Cameras", false };
+
+							PARAM_DECLARE("Fixed", lasers, cameras)
+						} fixed;
 
 						SolverSettings solverSettings;
 
@@ -295,7 +306,7 @@ namespace ofxRulr {
 							, sceneRadiusConstraint
 							, cameraWith0Yaw
 							, planeConstraint
-							, laserPositionsFixed
+							, fixed
 							, solverSettings);
 					} bundleAdjustment;
 
@@ -318,6 +329,7 @@ namespace ofxRulr {
 
 				void selectAllChildren();
 				void selectChildrenWithSolvedLines();
+				void deselectChildrenWithBadLines();
 
 
 				ofxCvGui::PanelPtr panel;

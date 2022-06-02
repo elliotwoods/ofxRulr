@@ -32,6 +32,14 @@ namespace ofxRulr {
 				this->onTransformChange += [this]() {
 					this->onMoonChange.notifyListeners();
 					};
+
+				// Set different bounds (for easier editing)
+				{
+					for (int i = 0; i < 3; i++) {
+						RigidBody::translation[i].setMin(-50);
+						RigidBody::translation[i].setMax(50);
+					}
+				}
 			}
 
 			//------------

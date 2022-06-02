@@ -447,6 +447,10 @@ namespace ofxRulr {
 				throw(ofxRulr::Exception("image.laserProjectorIndex is out of range"));
 			}
 
+			// Mark these cameras and lasers as active (in case we want to set their parameters as fixed)
+			this->activeCameras.insert(image.cameraIndex);
+			this->activeLasers.insert(image.laserProjectorIndex);
+
 			auto& cameraViewTranslationData = this->allCameraTranslationParameters[image.cameraIndex];
 			auto& cameraViewRotationData = this->allCameraRotationParameters[image.cameraIndex];
 
@@ -547,9 +551,8 @@ namespace ofxRulr {
 		void
 			BundleAdjustmentLasers::Problem::setLaserPositionsFixed()
 		{
-			for (auto laserTranslationParameters : this->allLaserTranslationParameters)
-			{
-				this->problem.SetParameterBlockConstant(laserTranslationParameters);
+			for (auto& activeLaserIndex : this->activeLasers) {
+				this->problem.SetParameterBlockConstant(this->allLaserTranslationParameters[activeLaserIndex]);
 			}
 		}
 
@@ -557,9 +560,64 @@ namespace ofxRulr {
 		void
 			BundleAdjustmentLasers::Problem::setLaserPositionsVariable()
 		{
-			for (auto laserTranslationParameters : this->allLaserTranslationParameters)
-			{
-				this->problem.SetParameterBlockVariable(laserTranslationParameters);
+			for (auto& activeLaserIndex : this->activeLasers) {
+				this->problem.SetParameterBlockVariable(this->allLaserTranslationParameters[activeLaserIndex]);
+			}
+		}
+
+		//----------
+		void
+			BundleAdjustmentLasers::Problem::setLaserRotationsFixed()
+		{
+			for (auto& activeLaserIndex : this->activeLasers) {
+				this->problem.SetParameterBlockConstant(this->allLaserRotationParameters[activeLaserIndex]);
+			}
+		}
+
+		//----------
+		void
+			BundleAdjustmentLasers::Problem::setLaserRotationsVariable()
+		{
+			for (auto& activeLaserIndex : this->activeLasers) {
+				this->problem.SetParameterBlockVariable(this->allLaserRotationParameters[activeLaserIndex]);
+			}
+		}
+
+		//----------
+		void
+			BundleAdjustmentLasers::Problem::setLaserFOVsFixed()
+		{
+			for (auto& activeLaserIndex : this->activeLasers) {
+				this->problem.SetParameterBlockConstant(this->allLaserFovParameters[activeLaserIndex]);
+			}
+		}
+
+		//----------
+		void
+			BundleAdjustmentLasers::Problem::setLaserFOVsVariable()
+		{
+			for (auto& activeLaserIndex : this->activeLasers) {
+				this->problem.SetParameterBlockVariable(this->allLaserFovParameters[activeLaserIndex]);
+			}
+		}
+
+		//----------
+		void
+			BundleAdjustmentLasers::Problem::setCamerasFixed()
+		{
+			for (auto& activeCameraIndex : this->activeCameras) {
+				this->problem.SetParameterBlockConstant(this->allCameraTranslationParameters[activeCameraIndex]);
+				this->problem.SetParameterBlockConstant(this->allCameraRotationParameters[activeCameraIndex]);
+			}
+		}
+
+		//----------
+		void
+			BundleAdjustmentLasers::Problem::setCamerasVariable()
+		{
+			for (auto& activeCameraIndex : this->activeCameras) {
+				this->problem.SetParameterBlockVariable(this->allCameraTranslationParameters[activeCameraIndex]);
+				this->problem.SetParameterBlockVariable(this->allCameraRotationParameters[activeCameraIndex]);
 			}
 		}
 

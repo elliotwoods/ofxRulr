@@ -43,6 +43,7 @@ namespace ofxRulr {
 					bool trussLine;
 					bool centerLine;
 					bool centerOffsetLine;
+					bool modelPreview;
 					float groundHeight;
 				};
 
@@ -87,6 +88,8 @@ namespace ofxRulr {
 				void processIncomingAck(shared_ptr<Data::AnotherMoon::AckMessageIncoming>);
 
 				Models::LaserProjector getModel() const;
+
+				void rebuildModelPreview();
 
 				struct DeviceStateParameters : ofParameterGroup {
 					ofParameter<State> state{ "State", State::Shutdown };
@@ -157,6 +160,8 @@ namespace ofxRulr {
 			protected:
 				ofxCvGui::ElementPtr getDataDisplay() override;
 
+				void callbackIntrinsicsChange(glm::vec2&);
+
 				Lasers* parent;
 
 				shared_ptr<Item::RigidBody> rigidBody = make_shared<Item::RigidBody>();
@@ -170,6 +175,8 @@ namespace ofxRulr {
 
 				vector<glm::vec2> lastPictureSent;
 				ofMesh lastPicturePreviewWorld;
+
+				ofMesh modelPreview;
 			};
 		}
 	}

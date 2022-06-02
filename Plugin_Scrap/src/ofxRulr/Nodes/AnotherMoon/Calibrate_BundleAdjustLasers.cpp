@@ -8,9 +8,9 @@ namespace ofxRulr {
 		namespace AnotherMoon {
 			//----------
 			void
-				Calibrate::calibrateBundleAdjustLasers()
+				Calibrate::calibrateBundleAdjustLasers(bool performSolve)
 			{
-				Utils::ScopedProcess scopedProcess("Bundle adjust points");
+				Utils::ScopedProcess scopedProcess(performSolve ? "Bundle adjust points" : "Calculate residuals");
 
 				this->throwIfMissingAConnection<Lasers>();
 				this->throwIfMissingAConnection<Item::Camera>();
@@ -90,9 +90,9 @@ namespace ofxRulr {
 							for (auto beamCapture : beamCaptures) {
 								Solvers::BundleAdjustmentLasers::Image image;
 								image.laserProjectorIndex = findIndex->second;
-								image.cameraIndex= cameraIndex;
+								image.cameraIndex = cameraIndex;
 								image.projectedPoint = beamCapture->projectionPoint;
-								image.imageLine= beamCapture->line;
+								image.imageLine = beamCapture->line;
 
 								// Store alongside beamCapture (this is used to easily fill residuals later)
 								associatedImages.push_back(AssociatedImage{
@@ -150,16 +150,37 @@ namespace ofxRulr {
 					}
 				}
 
-				// Optionally set the laser positions as fixed
-				if (this->parameters.bundleAdjustment.laserPositionsFixed) {
-					problem.setLaserPositionsFixed();
+				// Options to set parameters as fixed
+				{
+					if (this->parameters.bundleAdjustment.fixed.lasers.position) {
+						problem.setLaserPositionsFixed();
+					}
+
+					if (this->parameters.bundleAdjustment.fixed.lasers.rotation) {
+						problem.setLaserRotationsFixed();
+					}
+
+					if (this->parameters.bundleAdjustment.fixed.lasers.fov) {
+						problem.setLaserFOVsFixed();
+					}
+
+					if (this->parameters.bundleAdjustment.fixed.cameras) {
+						problem.setCamerasFixed();
+					}
 				}
+				
 
 				// Solve the problem
-				auto solverSettings = Solvers::BundleAdjustmentLasers::defaultSolverSettings();
-				this->configureSolverSettings(solverSettings, this->parameters.bundleAdjustment.solverSettings);
-				auto result = problem.solve(solverSettings);
-				auto& solution = result.solution;
+				Solvers::BundleAdjustmentLasers::Solution solution;
+				if (performSolve) {
+					auto solverSettings = Solvers::BundleAdjustmentLasers::defaultSolverSettings();
+					this->configureSolverSettings(solverSettings, this->parameters.bundleAdjustment.solverSettings);
+					auto result = problem.solve(solverSettings);
+					solution = result.solution;
+				}
+				else {
+					solution = initialSolution;
+				}
 
 				// Pull the solution back out
 				{
@@ -177,7 +198,7 @@ namespace ofxRulr {
 				}
 
 				// Calculate and store residuals on images
-				for(const auto& associatedImage : associatedImages) {
+				for (const auto& associatedImage : associatedImages) {
 					auto residual = Solvers::BundleAdjustmentLasers::getResidual(solution
 						, cameraIntrinsics
 						, associatedImage.image);

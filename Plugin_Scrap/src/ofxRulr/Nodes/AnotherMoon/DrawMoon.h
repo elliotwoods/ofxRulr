@@ -29,7 +29,13 @@ namespace ofxRulr {
 						PARAM_DECLARE("Debug draw", enabled, lines);
 					} debugDraw;
 
-					PARAM_DECLARE("Draw Moon", live, onMoonChange, resolution, debugDraw);
+					struct : ofParameterGroup {
+						ofParameter<bool> enabled{ "Enabled", false };
+						ofParameter<float> interval{ "Interval [s]", 5 };
+						PARAM_DECLARE("Schedule", enabled, interval);
+					} schedule;
+
+					PARAM_DECLARE("Draw Moon", live, onMoonChange, resolution, debugDraw, schedule);
 				} parameters;
 
 				struct Preview {
@@ -41,6 +47,10 @@ namespace ofxRulr {
 
 				bool moonIsNew = false;
 				bool moonIsNewNotify = false;
+
+				struct {
+					chrono::system_clock::time_point lastUpdate = chrono::system_clock::now();
+				} schedule;
 			};
 		}
 	}

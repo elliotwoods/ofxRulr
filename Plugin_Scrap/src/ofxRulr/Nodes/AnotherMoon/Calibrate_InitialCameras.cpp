@@ -55,13 +55,28 @@ namespace ofxRulr {
 									, true);
 							}
 
+							int flags = 0;
+							{
+								if (worldPoints.size() < 3) {
+									throw(Exception("Cannot perform SolvePnP with fewer than 3 points"));
+								}
+								if (worldPoints.size() == 3) {
+									flags |= cv::SolvePnPMethod::SOLVEPNP_AP3P;
+								}
+								else if (worldPoints.size() < 6) {
+									flags |= cv::SolvePnPMethod::SOLVEPNP_EPNP;
+								}
+							}
+
+
 							if (!cv::solvePnP(ofxCv::toCv(worldPoints)
 								, ofxCv::toCv(imagePoints)
 								, cameraNode->getCameraMatrix()
 								, cameraNode->getDistortionCoefficients()
 								, rotationVector
 								, translation
-								, useExtrinsicGuess)) {
+								, useExtrinsicGuess
+								, flags)) {
 								throw(Exception("SolvePnP failed"));
 							}
 
