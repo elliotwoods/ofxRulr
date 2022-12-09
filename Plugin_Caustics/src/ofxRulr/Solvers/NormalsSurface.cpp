@@ -52,6 +52,10 @@ namespace ofxRulr {
 			NormalsSurface::solve(const Models::IntegratedSurface& initialCondition
 				, const ofxCeres::SolverSettings& solverSettings)
 		{
+			if (initialCondition.distortedGrid.positions.empty()) {
+				throw(ofxCeres::Exception("Grid is empty"));
+			}
+
 			ceres::Problem problem;
 
 			// Create the surface

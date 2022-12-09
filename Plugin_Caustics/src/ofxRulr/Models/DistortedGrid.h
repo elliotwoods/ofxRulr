@@ -16,8 +16,8 @@ namespace ofxRulr {
 			void setParameters(const T* parameters)
 			{
 				this->currentPosition = this->initialPosition
-					+ rightVector * atan(parameters[0]) * (T)(PI / 4)
-					+ downVector * atan(parameters[1]) * (T)(PI / 4);
+					+ rightVector * atan(parameters[0]) / (T) ((PI / 2) * 4) // to get to -0.25...0.25
+					+ downVector * atan(parameters[1]) / (T) ((PI / 2) * 4);
 			}
 		};
 

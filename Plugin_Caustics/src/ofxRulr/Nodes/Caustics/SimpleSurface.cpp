@@ -1,7 +1,9 @@
 #include "pch_Plugin_Caustics.h"
 #include "SimpleSurface.h"
 #include "Target.h"
+
 #include "ofxRulr/Solvers/NormalsSurface.h"
+#include "ofxRulr/Solvers/Normal.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -47,6 +49,24 @@ namespace ofxRulr {
 				SimpleSurface::getPanel()
 			{
 				auto panel = ofxCvGui::Panels::makeBlank();
+
+				panel->onDraw += [this](ofxCvGui::DrawArguments& args) {
+					ofPushMatrix();
+					{
+						const auto scale = this->parameters.scale.get();
+
+						ofPushMatrix();
+						{
+							ofScale(args.localBounds.width, args.localBounds.height);
+							ofTranslate(0.5, 0.5);
+							ofScale(1.0f / scale);
+
+							this->preview.surface.draw();
+						}
+						ofPopMatrix();
+					}
+					ofPopMatrix();
+				};
 				return panel;
 			}
 
@@ -109,20 +129,26 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ALERT;
 					}, '1');
 
-
-				inspector->addButton("Solve surface", [this]() {
+				inspector->addButton("Solve normals", [this]() {
 					try {
-						this->solveSurface();
+						this->solveNormals();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 					}, '2');
+
+				inspector->addButton("Solve surface distortion", [this]() {
+					try {
+						this->solveSurfaceDistortion();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					}, '3');
 
 				inspector->addButton("Integrate normals", [this]() {
 					try {
 						this->integrateNormals();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
-					}, '3');
+					}, '4');
 			}
 
 			//----------
@@ -158,7 +184,7 @@ namespace ofxRulr {
 				for (auto& row : this->integratedSurface.distortedGrid.positions) {
 					for (size_t i = 0; i < resolution; i++) {
 						row[i].target = targetPoints[i];
-						row[i].normal = glm::normalize(targetPoints[i] - row[i].currentPosition);
+						row[i].incoming = glm::vec3(0, 0, 1);
 					}
 				}
 				this->preview.dirty = true;
@@ -166,12 +192,42 @@ namespace ofxRulr {
 
 			//----------
 			void
-				SimpleSurface::solveSurface()
+				SimpleSurface::solveNormals()
+			{
+				for (auto& row : this->integratedSurface.distortedGrid.positions) {
+					for (auto& position : row) {
+						auto refracted = glm::normalize(position.target - position.currentPosition);
+						auto incident = position.incoming;
+						auto exitIORvsIncidentIOR = 1.0 / this->parameters.optics.materialIOR.get();
+						auto result = Solvers::Normal::solve(incident
+							, refracted
+							, exitIORvsIncidentIOR
+							, this->parameters.normalsSolver.solverSettings.getSolverSettings());
+						position.normal = result.solution;
+					}
+				}
+
+				this->preview.dirty = true;
+			}
+
+			//----------
+			void
+				SimpleSurface::solveSurfaceDistortion()
 			{
 				auto surface = this->integratedSurface;
+				surface.distortedGrid.calculateDirectionVectors();
+
+				// Bake existing transform
+				for (auto& row : surface.distortedGrid.positions) {
+					for (auto& position : row) {
+						position.initialPosition = position.currentPosition;
+					}
+				}
+
 				auto result = Solvers::NormalsSurface::solve(surface
 					, this->parameters.surfaceSolver.solverSettings.getSolverSettings());
 				this->integratedSurface = result.solution.surface;
+				this->preview.dirty = true;
 			}
 
 			//----------
@@ -204,6 +260,24 @@ namespace ofxRulr {
 					for (const auto& position : row) {
 						const auto direction = glm::normalize(position.target - position.currentPosition);
 
+						// Add normal
+						{
+							{
+								this->preview.directions.addVertex(position.currentPosition);
+								this->preview.directions.addVertex(position.currentPosition + position.normal * scale);
+							}
+
+							{
+								ofFloatColor color(
+									ofMap(position.normal.x * 10, -1, 1, 0, 1)
+									, ofMap(position.normal.y * 10, -1, 1, 0, 1)
+									, ofMap(position.normal.z, -1, 1, 0, 1)
+								);
+								this->preview.directions.addColor(color);
+								this->preview.directions.addColor(color);
+							}
+						}
+
 						// Add direction
 						{
 							{
@@ -212,11 +286,21 @@ namespace ofxRulr {
 							}
 
 							{
-								ofFloatColor color(
-									ofMap(direction.x * 10, -1, 1, 0, 1)
-									, ofMap(direction.y * 10, -1, 1, 0, 1)
-									, ofMap(direction.z, -1, 1, 0, 1)
-								);
+								ofFloatColor color(this->parameters.draw.rayBrightness);
+								this->preview.directions.addColor(color);
+								this->preview.directions.addColor(color);
+							}
+						}
+
+						// Add incoming
+						{
+							{
+								this->preview.directions.addVertex(position.currentPosition);
+								this->preview.directions.addVertex(position.currentPosition - position.incoming * scale);
+							}
+
+							{
+								ofFloatColor color(this->parameters.draw.rayBrightness);
 								this->preview.directions.addColor(color);
 								this->preview.directions.addColor(color);
 							}

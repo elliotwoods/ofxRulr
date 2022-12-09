@@ -12,6 +12,9 @@
     <ClCompile Include="src\ofxRulr\Solvers\NormalsSurface.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\Normal.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Caustics.h" />
@@ -28,6 +31,9 @@
       <Filter>src\ofxRulr\Models</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\NormalsSurface.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\Normal.h">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
   </ItemGroup>

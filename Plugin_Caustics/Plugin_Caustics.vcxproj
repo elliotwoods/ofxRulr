@@ -74,7 +74,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch_Plugin_Experiments.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>pch_Plugin_Caustics.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../../addons/ofxRulr/Plugin_Calibrate/src;../../../addons/ofxRulr/Plugin_ArUco/src;.\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -89,6 +89,7 @@
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Caustics\Target.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\Normal.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\NormalsSurface.cpp" />
     <ClCompile Include="src\pch_Plugin_Caustics.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -100,6 +101,7 @@
     <ClInclude Include="src\ofxRulr\Models\IntegratedSurface.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Caustics\Target.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\Normal.h" />
     <ClInclude Include="src\ofxRulr\Solvers\NormalsSurface.h" />
     <ClInclude Include="src\pch_Plugin_Caustics.h" />
   </ItemGroup>

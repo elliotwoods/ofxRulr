@@ -3,6 +3,8 @@
 #include "ofxRulr.h"
 #include "ofxRulr/Nodes/Item/RigidBody.h"
 #include "ofxRulr/Models/IntegratedSurface.h"
+#include "ofxRulr/Solvers/Normal.h"
+#include "ofxRulr/Solvers/NormalsSurface.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -22,7 +24,8 @@ namespace ofxRulr {
 				void deserialize(const nlohmann::json&);
 
 				void initialise();
-				void solveSurface();
+				void solveNormals();
+				void solveSurfaceDistortion();
 				void integrateNormals();
 
 				void updatePreview();
@@ -32,17 +35,34 @@ namespace ofxRulr {
 					ofParameter<int> resolution{ "Resolution", 256 };
 
 					struct : ofParameterGroup {
-						ofxCeres::ParameterisedSolverSettings solverSettings;
+						ofParameter<float> materialIOR{ "Material IOR", 1.5304, 1, 2 };
+						PARAM_DECLARE("Optics", materialIOR);
+					} optics;
+
+					struct : ofParameterGroup {
+						ofxCeres::ParameterisedSolverSettings solverSettings{ Solvers::Normal::getDefaultSolverSettings() };
+						PARAM_DECLARE("Normals solver", solverSettings);
+					} normalsSolver;
+
+					struct : ofParameterGroup {
+						ofxCeres::ParameterisedSolverSettings solverSettings{ Solvers::NormalsSurface::getDefaultSolverSettings() };
 						PARAM_DECLARE("Surface solver", solverSettings);
 					} surfaceSolver;
 
 					struct : ofParameterGroup {
 						ofParameter<float> vectorLength{ "Vector length", 0.1, 0, 0.1 };
 						ofParameter<float> targetSize{ "Target size", 0.02, 0, 0.1 };
-						PARAM_DECLARE("Draw", vectorLength, targetSize)
+						ofParameter<float> rayBrightness{ "Ray brightness", 0.3, 0, 1 };
+						PARAM_DECLARE("Draw", vectorLength, targetSize, rayBrightness)
 					} draw;
 
-					PARAM_DECLARE("SimpleSurface", scale, resolution, surfaceSolver, draw);
+					PARAM_DECLARE("SimpleSurface"
+						, scale
+						, resolution
+						, optics
+						, normalsSolver
+						, surfaceSolver
+						, draw);
 				} parameters;
 
 				Models::IntegratedSurface integratedSurface;

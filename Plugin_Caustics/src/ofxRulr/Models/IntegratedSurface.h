@@ -7,8 +7,10 @@ namespace ofxRulr {
 		template<typename T>
 		struct SurfacePosition_ : DistortedGridPosition_<T>
 		{
-			glm::tvec3<T> normal;
 			glm::tvec3<T> target;
+			glm::tvec3<T> incoming;
+
+			glm::tvec3<T> normal; // calculated value
 
 			T dz_dx() const
 			{
@@ -87,6 +89,10 @@ namespace ofxRulr {
 
 			void getResiduals(T* residuals) const
 			{
+				if (this->distortedGrid.positions.empty()) {
+					throw(ofxCeres::Exception("Grid is empty"));
+				}
+
 				// Calculate the 2 normal routes for each vertex and the disparity between them
 				// As per diagram at bottom of page 5 of reMarkable 2022-12
 				// Note that in the maths we use 'y' but here we use 'z' for height
@@ -120,6 +126,10 @@ namespace ofxRulr {
 
 			void integrateHeights()
 			{
+				if (this->distortedGrid.positions.empty()) {
+					throw(ofxCeres::Exception("Grid is empty"));
+				}
+
 				// Similar to above but store the height
 
 				// First go along bottom row
