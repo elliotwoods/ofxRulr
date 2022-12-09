@@ -139,6 +139,13 @@ namespace ofxRulr {
 
 			//------------
 			void
+				Moon::setDiameter(float value)
+			{
+				this->parameters.diameter.set(value);
+			}
+
+			//------------
+			void
 				Moon::callbackDiameter(float&)
 			{
 				this->onMoonChange.notifyListeners();

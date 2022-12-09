@@ -16,6 +16,7 @@
 #include "ofxRulr/Nodes/AnotherMoon/SynthesiseCaptures.h"
 #include "ofxRulr/Nodes/AnotherMoon/Moon.h"
 #include "ofxRulr/Nodes/AnotherMoon/DrawMoon.h"
+#include "ofxRulr/Nodes/AnotherMoon/ExportPictures.h"
 
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
@@ -35,4 +36,5 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::SynthesiseCaptures);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::DrawMoon);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::Moon);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::ExportPictures);
 OFXPLUGIN_PLUGIN_MODULES_END

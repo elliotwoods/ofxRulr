@@ -328,20 +328,20 @@ namespace ofxRulr {
 						return string();
 					}
 				});
-				inspector->addLiveValue<ofVec3f>("Bounds min", [this]() {
+				inspector->addLiveValue<glm::vec3>("Bounds min", [this]() {
 					if (this->modelLoader) {
 						return this->modelLoader->getSceneMin();
 					}
 					else {
-						return ofVec3f();
+						return glm::vec3();
 					}
 				});
-				inspector->addLiveValue<ofVec3f>("Bounds max", [this]() {
+				inspector->addLiveValue<glm::vec3>("Bounds max", [this]() {
 					if (this->modelLoader) {
 						return this->modelLoader->getSceneMax();
 					}
 					else {
-						return ofVec3f();
+						return glm::vec3();
 					}
 				});
 
@@ -355,7 +355,7 @@ namespace ofxRulr {
 				}
 				else {
 					this->modelLoader = make_unique<ofxAssimpModelLoader>();
-					if (!this->modelLoader->loadModel(this->meshFilename.get())) {
+					if (!this->modelLoader->load(this->meshFilename.get())) {
 						this->modelLoader.reset();
 					}
 				}	

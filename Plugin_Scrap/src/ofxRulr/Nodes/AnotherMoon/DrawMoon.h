@@ -15,11 +15,13 @@ namespace ofxRulr {
 				void drawWorldStage();
 				void populateInspector(ofxCvGui::InspectArguments&);
 
-				void drawLasers();
+				void drawLasers(bool throwIfPictureOutsideLimits);
+				void searchHeight(float range);
 			protected:
 				struct : ofParameterGroup {
 					ofParameter<WhenActive> live{ "Live", WhenActive::Never };
 					ofParameter<WhenActive> onMoonChange { "On Moon change", WhenActive::Never };
+					ofParameter<bool> errorIfOutsideRange{ "Error if outside range", true };
 
 					ofParameter<float> resolution{ "Resolution", 100, 10, 1000 };
 
@@ -35,7 +37,7 @@ namespace ofxRulr {
 						PARAM_DECLARE("Schedule", enabled, interval);
 					} schedule;
 
-					PARAM_DECLARE("Draw Moon", live, onMoonChange, resolution, debugDraw, schedule);
+					PARAM_DECLARE("Draw Moon", live, onMoonChange, errorIfOutsideRange, resolution, debugDraw, schedule);
 				} parameters;
 
 				struct Preview {

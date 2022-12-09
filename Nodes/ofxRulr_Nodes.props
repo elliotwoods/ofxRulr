@@ -9,7 +9,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxTriangle\libs\triangle\include;..\..\..\addons\ofxTriangle\src;..\..\..\addons\ofxTriangulate\src;..\..\..\addons\ofxSpinCursor\src;..\..\..\addons\ofxRulr\Nodes\src;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\src;..\..\..\addons\ofxObjLoader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxTriangle\libs\triangle\include;..\..\..\addons\ofxTriangle\src;..\..\..\addons\ofxTriangulate\src;..\..\..\addons\ofxSpinCursor\src;..\..\..\addons\ofxRulr\Nodes\src;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\assimp\include;..\..\..\addons\ofxAssimpModelLoader\src;..\..\..\addons\ofxObjLoader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

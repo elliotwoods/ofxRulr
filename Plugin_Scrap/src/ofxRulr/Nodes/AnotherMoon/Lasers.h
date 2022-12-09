@@ -95,7 +95,8 @@ namespace ofxRulr {
 						ofParameter<WhenActive> centerLine{ "Center line", WhenActive::Selected };
 						ofParameter<WhenActive> centerOffsetLine{ "Center offset line", WhenActive::Never };
 						ofParameter<WhenActive> modelPreview{ "Model preview", WhenActive::Always };
-						PARAM_DECLARE("Draw", rigidBody, trussLine, centerLine, centerOffsetLine, modelPreview);
+						ofParameter<WhenActive> frustum{ "Frustum", WhenActive::Selected };
+						PARAM_DECLARE("Draw", rigidBody, trussLine, centerLine, centerOffsetLine, modelPreview, frustum);
 					} draw;
 
 					PARAM_DECLARE("Lasers"

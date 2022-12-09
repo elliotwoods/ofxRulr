@@ -1,3 +1,4 @@
+#define _HAS_STD_BYTE 0
 #include "ofxPlugin.h"
 
 #include "ofxMachineVision/Device/Spinnaker.h"

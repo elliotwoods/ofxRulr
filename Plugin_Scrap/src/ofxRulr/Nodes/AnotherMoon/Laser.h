@@ -45,6 +45,7 @@ namespace ofxRulr {
 					bool centerOffsetLine;
 					bool modelPreview;
 					float groundHeight;
+					bool frustum;
 				};
 
 				Laser();
@@ -90,6 +91,11 @@ namespace ofxRulr {
 				Models::LaserProjector getModel() const;
 
 				void rebuildModelPreview();
+				void rebuildFrustumPreview();
+
+				const vector<glm::vec2>& getLastPicture() const;
+				void exportLastPicture(const std::filesystem::path&) const;
+				bool pictureIsOutsideRange() const;
 
 				struct DeviceStateParameters : ofParameterGroup {
 					ofParameter<State> state{ "State", State::Shutdown };
@@ -177,6 +183,7 @@ namespace ofxRulr {
 				ofMesh lastPicturePreviewWorld;
 
 				ofMesh modelPreview;
+				ofMesh frustumPreview;
 			};
 		}
 	}

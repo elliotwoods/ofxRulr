@@ -42,12 +42,6 @@ namespace ofxRulr {
 				};
 			}
 
-			Line_<T> projectIntoCamera(const glm::tvec2<T>& projectionPoint
-				, const Camera_<T>& camera)
-			{
-				
-			}
-
 			template<typename T2>
 			LaserProjector_<T2> castTo() const
 			{

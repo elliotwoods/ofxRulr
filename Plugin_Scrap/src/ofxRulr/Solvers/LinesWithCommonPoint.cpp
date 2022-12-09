@@ -119,7 +119,7 @@ namespace ofxRulr {
 
 					// Add it into channel 1 (green channel)
 					cv::addWeighted(previewPlanes[1], 1.0
-						, differenceUndistorted, 1.0 / (double) size
+						, differenceUndistorted, 128 / solveData.differenceThreshold
 						, 1.0
 						, previewPlanes[1]);
 				}
@@ -171,13 +171,6 @@ namespace ofxRulr {
 					, cv::FONT_HERSHEY_PLAIN
 					, 8
 					, cv::Scalar(255));
-
-				//normalise this plane because it's dim (before writing on it)
-				cv::normalize(previewPlanes[1]
-					, previewPlanes[1]
-					, 0
-					, 255
-					, cv::NORM_MINMAX);
 				cv::putText(previewPlanes[1]
 					, "Difference"
 					, cv::Point(10, 200)

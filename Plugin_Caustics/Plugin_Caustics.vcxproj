@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{45CE5AA6-9DFD-497A-8CAF-1743A8075F5A}</ProjectGuid>
-    <RootNamespace>examplePlugin</RootNamespace>
+    <ProjectGuid>{8380823C-ECE5-438A-BC6C-1AB0604C8228}</ProjectGuid>
+    <RootNamespace>ofxRulr::Nodes::Caustics</RootNamespace>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
-    <ProjectName>Plugin_ArUco</ProjectName>
+    <ProjectName>Plugin_Caustics</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -39,12 +39,13 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\addons\ofxRulr\ofxRulr_Plugin.props" />
-    <Import Project="..\..\..\addons\ofxArUco\ofxArUcoLib\ofxArUco.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\..\ofxArUco\ofxArUcoLib\ofxArUco.props" />
     <Import Project="..\..\ofxCeres\ofxCeresLib\ofxCeres.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\..\ofxArUco\ofxArUcoLib\ofxArUco.props" />
     <Import Project="..\..\ofxCeres\ofxCeresLib\ofxCeres.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -55,8 +56,9 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch_Plugin_ArUco.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>pch_Plugin_Caustics.h</PrecompiledHeaderFile>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>../../../addons/ofxRulr/Plugin_Calibrate/src;../../../addons/ofxRulr/Plugin_ArUco/src;.\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -72,7 +74,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch_Plugin_ArUco.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>pch_Plugin_Experiments.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>../../../addons/ofxRulr/Plugin_Calibrate/src;../../../addons/ofxRulr/Plugin_ArUco/src;.\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -83,48 +86,29 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\Detector.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\Dictionary.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\AlignMarkerMap.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\MarkerMap.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\MarkerMapPoseTracker.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\OSCRelay.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\ArUco\FindMarkers.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Calibrate.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Markers.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\NavigateCamera.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\MarkerMap\Transform.cpp" />
-    <ClCompile Include="src\ofxRulr\Solvers\MarkerProjections.cpp" />
-    <ClCompile Include="src\pch_Plugin_ArUco.cpp">
+    <ClCompile Include="plugin.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Caustics\Target.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\NormalsSurface.cpp" />
+    <ClCompile Include="src\pch_Plugin_Caustics.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Constants_Plugin_ArUco.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\ChArUcoBoard.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\Detector.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\Dictionary.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\AlignMarkerMap.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\MarkerMap.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\MarkerMapPoseTracker.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\OSCRelay.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\ArUco\FindMarkers.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Calibrate.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Markers.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\NavigateCamera.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\MarkerMap\Transform.h" />
-    <ClInclude Include="src\ofxRulr\Solvers\MarkerProjections.h" />
-    <ClInclude Include="src\pch_Plugin_ArUco.h" />
+    <ClInclude Include="src\ofxRulr\Models\DistortedGrid.h" />
+    <ClInclude Include="src\ofxRulr\Models\IntegratedSurface.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Caustics\Target.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\NormalsSurface.h" />
+    <ClInclude Include="src\pch_Plugin_Caustics.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ofxArUco\ofxArUcoLib\ofxArUcoLib.vcxproj">
-      <Project>{fc33c381-dc7a-45ad-8ef0-647e3b03db69}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\ofxCeres\ofxCeresLib\ofxCeresLib.vcxproj">
       <Project>{c42c2af8-bb13-4fe4-81a5-41cd314f4fde}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugin_Calibrate\Plugin_Calibrate.vcxproj">
+      <Project>{c135c231-f751-482d-9e4c-c29473e3dd98}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

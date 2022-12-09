@@ -220,6 +220,7 @@ namespace ofxRulr {
 						} remoteCamera;
 
 						ofParameter<LaserState> laserStateForOthers{ "State for others", LaserState::Standby };
+						ofParameter<bool> standbyForBackgroundCapture{ "Standby for background capture", false };
 						ofParameter<float> outputDelay{ "Output delay [s]", 0.5, 0, 5.0 };
 						ofParameter<bool> continueOnFail{ "Continue on fail", false };
 						ofParameter<int> messageTransmitTries{ "Messaege transmit tries", 5 };
@@ -233,6 +234,7 @@ namespace ofxRulr {
 							, imagePoints
 							, remoteCamera
 							, laserStateForOthers
+							, standbyForBackgroundCapture
 							, outputDelay
 							, continueOnFail
 							, messageTransmitTries

@@ -784,6 +784,16 @@ namespace ofxRulr {
 											}).get();
 									}
 
+									// Standby
+									if (this->parameters.capture.standbyForBackgroundCapture) {
+										auto state = laser->parameters.deviceState.state.get();
+										state.set(Laser::State::Standby);
+										laser->parameters.deviceState.state.set(state);
+										tryNtimes([=]() {
+											return laser->pushState();
+											}).get();
+									}
+
 									this->waitForDelay();
 
 									if (!dryRun) {
@@ -805,6 +815,16 @@ namespace ofxRulr {
 										laser->parameters.deviceState.projection.color.blue.set(1);
 										tryNtimes([=]() {
 											return laser->pushColor();
+											}).get();
+									}
+
+									// Remove standby
+									if (this->parameters.capture.standbyForBackgroundCapture) {
+										auto state = laser->parameters.deviceState.state.get();
+										state.set(Laser::State::Run);
+										laser->parameters.deviceState.state.set(state);
+										tryNtimes([=]() {
+											return laser->pushState();
 											}).get();
 									}
 

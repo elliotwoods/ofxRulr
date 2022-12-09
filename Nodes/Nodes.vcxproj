@@ -66,10 +66,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp64.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp64d.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\assimp\lib\vs\x64\$(Configuration)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
       <Command>robocopy "$(OF_ROOT)/addons/\ofxAssimpModelLoader/libs/assimp/assimp/lib/vs$(Platform_Actual)/" "$(TargetDir)/" "*.dll" /njs /njh /np /fp /bytes
@@ -97,7 +97,7 @@ if errorlevel 1 exit 0</Command>
       <AdditionalDependencies>assimp64.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\assimp\lib\vs\x64\$(Configuration)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
       <Command>robocopy "$(OF_ROOT)/addons/\ofxAssimpModelLoader/libs/assimp/assimp/lib/vs$(Platform_Actual)/" "$(TargetDir)/" "*.dll" /njs /njh /np /fp /bytes

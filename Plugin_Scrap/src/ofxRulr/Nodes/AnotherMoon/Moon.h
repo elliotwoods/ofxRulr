@@ -20,6 +20,8 @@ namespace ofxRulr {
 				void drawObject();
 
 				float getRadius() const;
+				
+				void setDiameter(float);
 
 				ofxLiquidEvent<void> onMoonChange;
 			protected:

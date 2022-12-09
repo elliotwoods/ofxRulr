@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\pch_Plugin_Caustics.cpp" />
+    <ClCompile Include="plugin.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.cpp">
+      <Filter>src\ofxRulr\Nodes\Caustics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Caustics\Target.cpp">
+      <Filter>src\ofxRulr\Nodes\Caustics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\NormalsSurface.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_Caustics.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.h">
+      <Filter>src\ofxRulr\Nodes\Caustics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Caustics\Target.h">
+      <Filter>src\ofxRulr\Nodes\Caustics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\DistortedGrid.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\IntegratedSurface.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\NormalsSurface.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{f60c430e-c7de-4f53-b71b-67774de79b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{64226ba7-7382-4274-b7ca-27b81fa94d45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{a1e28779-fff9-4d38-a4c6-cb0d6b3e5271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Caustics">
+      <UniqueIdentifier>{0014f069-4d8e-4ef3-9193-96bdf049df7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Models">
+      <UniqueIdentifier>{46bd89c1-8600-4fc9-b25c-5db53a3761b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Solvers">
+      <UniqueIdentifier>{e771b309-ff76-4d9d-9074-996903ce06d5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

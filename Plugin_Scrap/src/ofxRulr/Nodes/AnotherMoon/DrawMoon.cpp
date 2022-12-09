@@ -49,7 +49,7 @@ namespace ofxRulr {
 			{
 				if (ofxRulr::isActive(this, this->parameters.live.get())) {
 					try {
-						this->drawLasers();
+						this->drawLasers(this->parameters.errorIfOutsideRange);
 					}
 					RULR_CATCH_ALL_TO_ERROR;
 				}
@@ -61,7 +61,10 @@ namespace ofxRulr {
 				}
 
 				if (this->moonIsNew && ofxRulr::isActive(this, this->parameters.onMoonChange.get())) {
-					this->drawLasers();
+					try {
+						this->drawLasers(this->parameters.errorIfOutsideRange);
+					}
+					RULR_CATCH_ALL_TO_ERROR;
 				}
 
 				{
@@ -69,7 +72,10 @@ namespace ofxRulr {
 					auto timeSinceLastUpdate = this->schedule.lastUpdate - now;
 					auto interval = std::chrono::milliseconds((int) (this->parameters.schedule.interval.get() * 1000));
 					if (timeSinceLastUpdate >= interval) {
-						this->drawLasers();
+						try {
+							this->drawLasers(this->parameters.errorIfOutsideRange);
+						}
+						RULR_CATCH_ALL_TO_ERROR;
 					}
 				}
 			}
@@ -99,15 +105,27 @@ namespace ofxRulr {
 				auto inspector = args.inspector;
 				inspector->addButton("Draw lasers", [this]() {
 					try {
-						this->drawLasers();
+						this->drawLasers(true);
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 					}, OF_KEY_RETURN)->setHeight(100.0f);
+
+				inspector->addButton("Search height", [this]() {
+					try {
+						auto text = ofSystemTextBoxDialog("Search height range");
+						if (text.empty()) {
+							return;
+						}
+						auto range = ofToFloat(text);
+						this->searchHeight(range);
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					}, 's');
 			}
 
 			//------------
 			void
-				DrawMoon::drawLasers()
+				DrawMoon::drawLasers(bool throwIfPictureOutsideLimits)
 			{
 				this->throwIfMissingAnyConnection();
 
@@ -155,7 +173,7 @@ namespace ofxRulr {
 						}
 					}
 
-					// Update preview
+					// Update 3D preview
 					if (this->parameters.debugDraw.enabled) {
 						debugOutput->polyline.addVertices(points);
 						debugOutput->polyline.close();
@@ -163,10 +181,77 @@ namespace ofxRulr {
 						debugOutput++;
 					}
 
+					// Project image points for 3D points
 					laser->drawWorldPoints(points);
+					
+					// Check if image is outisde of limits
+					if (throwIfPictureOutsideLimits) {
+						const auto& picture = laser->getLastPicture();
+						for (auto point : picture) {
+							if (point.x < -1 || point.x > 1
+								|| point.y < -1 || point.y > 1) {
+								throw(ofxRulr::Exception("Picture is outisde range for Laser #" + ofToString(laser->parameters.positionIndex.get())));
+							}
+						}
+					}
 
 					this->schedule.lastUpdate = chrono::system_clock::now();
 				}
+			}
+
+			//------------
+			void
+				DrawMoon::searchHeight(float range)
+			{
+				this->throwIfMissingAConnection<Moon>();
+				auto moon = this->getInput<Moon>();
+
+				auto midPosition = moon->getPosition();
+				auto midHeight = midPosition.y;
+
+				auto minSearchHeight = midHeight - range;
+				auto maxSearchHeight = midHeight + range;
+				auto minHeight = maxSearchHeight;
+				auto maxHeight = minSearchHeight;
+				bool anyHeightOK = false;
+
+				const float step = 0.1;
+				const int steps = (maxSearchHeight - minSearchHeight) / step + 1;
+				Utils::ScopedProcess scopedProcess("Searching heights", true, steps);
+
+				for (float height = minSearchHeight; height <= maxSearchHeight; height += step) {
+					try {
+						Utils::ScopedProcess scopedProcessHeight(ofToString(height), steps);
+						auto position = midPosition;
+						position.y = height;
+						moon->setPosition(position);
+						this->drawLasers(true);
+
+						// success
+						anyHeightOK = true;
+						if (height < minHeight) {
+							minHeight = height;
+						}
+						if (height > maxHeight) {
+							maxHeight = height;
+						}
+
+						scopedProcessHeight.end();
+					}
+					catch (...) {
+
+					}
+				}
+
+				if (anyHeightOK) {
+					cout << "Minimum height : " << minHeight << endl;
+					cout << "Maximum height : " << maxHeight << endl;
+				}
+				else {
+					throw(ofxRulr::Exception("All heights failed"));
+				}
+
+				scopedProcess.end();
 			}
 		}
 	}

@@ -240,13 +240,23 @@ namespace ofxRulr {
 							auto& gridTexture = ofxRulr::Utils::getGridTexture();
 							gridTexture.bind();
 							{
-								ofPushMatrix();
-								{
-									this->modelPreview.draw();
-								}
-								ofPopMatrix();
+								this->modelPreview.draw();
 							}
 							gridTexture.unbind();
+						}
+
+						// Draw frustum
+						if (args.frustum) {
+							ofPushStyle();
+							{
+								auto color = this->color.get();
+								ofSetColor(color);
+								this->frustumPreview.drawWireframe();
+								color.a = 100;
+								ofSetColor(color);
+								this->frustumPreview.drawFaces();
+							}
+							ofPopStyle();
 						}
 					}
 					ofPopMatrix();
@@ -293,6 +303,10 @@ namespace ofxRulr {
 				}
 
 				if (!this->parent->isCommunicationEnabled()) {
+					return true;
+				}
+
+				if (this->pictureIsOutsideRange()) {
 					return true;
 				}
 
@@ -634,6 +648,74 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void
+				Laser::rebuildFrustumPreview()
+			{
+				auto model = this->getModel();
+
+				this->frustumPreview.clear();
+				this->frustumPreview.setMode(ofPrimitiveMode::OF_PRIMITIVE_TRIANGLE_FAN);
+				this->frustumPreview.addVertex({ 0, 0, 0 });
+
+				vector<glm::vec2> projectionPoints{
+					{ -1, -1 },
+					{ -1, 0 },
+					{ -1, 1 },
+					{ 0, -1 },
+					{ 1, -1 },
+					{ 1, 0 },
+					{ 1, 1 },
+					{ 0, 1 },
+					{ -1, 1 },
+					{ -1, 0 },
+					{ -1, -1 }
+				};
+
+				for (const auto& projectionPoint : projectionPoints) {
+					auto ray = model.castRayObjectSpace(projectionPoint);
+					auto vertex = ray.t * 100.0f;
+					this->frustumPreview.addVertex(vertex);
+				}
+			}
+
+			//----------
+			const vector<glm::vec2>&
+				Laser::getLastPicture() const
+			{
+				return this->lastPictureSent;
+			}
+
+			//----------
+			void
+				Laser::exportLastPicture(const std::filesystem::path& path) const
+			{
+				vector<float> values;
+				for (const auto& point : this->lastPictureSent) {
+					values.push_back(point.x);
+					values.push_back(point.y);
+				}
+				nlohmann::json json = values;
+
+				ofstream file(path.string(), ios::out);
+				file << json.dump(4);
+				file.close();
+			}
+
+			//----------
+			bool
+				Laser::pictureIsOutsideRange() const
+			{
+				for (auto point : this->lastPictureSent) {
+					if (point.x < -1 || point.y > 1
+						|| point.y < -1 || point.y > 1) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			//----------
 			ofxCvGui::ElementPtr
 				Laser::getDataDisplay()
 			{
@@ -743,6 +825,7 @@ namespace ofxRulr {
 				Laser::callbackIntrinsicsChange(glm::vec2&)
 			{
 				this->rebuildModelPreview();
+				this->rebuildFrustumPreview();
 			}
 		}
 	}

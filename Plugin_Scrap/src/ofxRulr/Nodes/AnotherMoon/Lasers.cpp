@@ -150,6 +150,7 @@ namespace ofxRulr {
 
 				auto lasers = this->lasers.getSelection();
 				for (auto laser : lasers) {
+					args.frustum = ofxRulr::isActive(laser.get(), this->parameters.draw.frustum);
 					laser->drawWorldStage(args);
 				}
 			}

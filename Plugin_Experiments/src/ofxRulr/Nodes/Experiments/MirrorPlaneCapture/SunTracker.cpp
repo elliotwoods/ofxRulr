@@ -1,8 +1,6 @@
 #include "pch_Plugin_Experiments.h"
 
-extern "C" {
 #include "SolTrack/SolTrack.h"
-}
 
 namespace ofxRulr {
 	namespace Nodes {
