@@ -25,12 +25,16 @@ namespace ofxRulr {
 				void deserialize(const nlohmann::json&);
 
 				void initialise();
+				void calculateTargets();
 				void solveNormals();
 				void solveHeightMap();
 				void poissonStepHeightMap();
 				void combinedSolveStepHeightMap();
 				void sectionSolve();
 				void healDiscontinuities();
+				void healAround(size_t i, size_t j);
+
+				void pyramidUp();
 
 				void updatePreview();
 
@@ -63,7 +67,9 @@ namespace ofxRulr {
 							ofParameter<size_t> overlap{ "Overlap", 0 };
 							ofParameter<bool> continuously{ "Continuously", false };
 							ofParameter<float> healHeightAmplitude{ "Heal height amp", 0.1, 0, 2 };
-							PARAM_DECLARE("Section solve", i, j, width, overlap, continuously, healHeightAmplitude);
+							ofParameter<bool> moveVertically{ "Move vertically", false };
+							ofParameter<int> iterations{ "Iterations", 1 };
+							PARAM_DECLARE("Section solve", i, j, width, overlap, continuously, healHeightAmplitude, moveVertically, iterations);
 						} sectionSolve;
 
 						PARAM_DECLARE("Surface solver", solverSettings, universalSolve, poissonSolver, sectionSolve);

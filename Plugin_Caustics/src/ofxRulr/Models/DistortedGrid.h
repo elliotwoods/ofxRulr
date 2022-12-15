@@ -49,7 +49,8 @@ namespace ofxRulr {
 				return newDistortedGrid;
 			}
 
-			void initGrid(size_t size, T scale)
+			void
+				initGrid(size_t size, T scale)
 			{
 				if (size < 2) {
 					throw(ofxCeres::Exception("Minimum DistortedGrid size is 2x2"));
@@ -75,7 +76,8 @@ namespace ofxRulr {
 				this->calculateDirectionVectors();
 			}
 
-			void initFromPreviousGrid(const DistortedGrid_<T, PositionType>& previousGrid)
+			void
+				initFromPreviousGrid(const DistortedGrid_<T, PositionType>& previousGrid)
 			{
 				this->positions.clear();
 
@@ -95,7 +97,8 @@ namespace ofxRulr {
 				this->calculateDirectionVectors();
 			}
 
-			void calculateDirectionVectors()
+			void
+				calculateDirectionVectors()
 			{
 				for (size_t j = 0; j < this->positions.size(); j++) {
 					auto& row = this->positions[j];
@@ -125,7 +128,8 @@ namespace ofxRulr {
 				}
 			}
 
-			void fromParameters(const T* parameters)
+			void
+				fromParameters(const T* parameters)
 			{
 				auto movingParameters = parameters;
 
@@ -139,7 +143,8 @@ namespace ofxRulr {
 				}
 			}
 
-			size_t getParameterCount() const
+			size_t
+				getParameterCount() const
 			{
 				size_t count = 0;
 				for (const auto& row : this->positions) {
@@ -162,7 +167,8 @@ namespace ofxRulr {
 				return this->positions[j][i];
 			}
 
-			size_t cols() const
+			size_t
+				cols() const
 			{
 				if (this->rows() == 0) {
 					return 0;
@@ -172,24 +178,28 @@ namespace ofxRulr {
 				}
 			}
 
-			size_t rows() const
+			size_t
+				rows() const
 			{
 				return this->positions.size();
 			}
 
-			bool inside(size_t i, size_t j) const
+			bool
+				inside(size_t i, size_t j) const
 			{
 				return i >= 0 && j >= 0
 					&& i < this->cols() && j < this->rows();
 			}
 
-			bool inside(int i, int j) const
+			bool
+				inside(int i, int j) const
 			{
 				return i >= 0 && j >= 0
 					&& i < this->cols() && j < this->rows();
 			}
 
-			void serialize(nlohmann::json& json)
+			void
+				serialize(nlohmann::json& json)
 			{
 				auto rows = this->rows();
 				auto cols = this->cols();
@@ -210,7 +220,8 @@ namespace ofxRulr {
 				}
 			}
 
-			void deserialize(const nlohmann::json& json)
+			void
+				deserialize(const nlohmann::json& json)
 			{
 				if (!json.contains("rows")) {
 					return;
@@ -240,6 +251,62 @@ namespace ofxRulr {
 						position.deserialize(jsonPosition);
 						row.push_back(position);
 					}
+				}
+			}
+
+			DistortedGrid_<T, PositionType>
+				pyramidUp() const
+			{
+				DistortedGrid_<T, PositionType> newGrid;
+				newGrid.initGrid(this->cols() * 2, 1.0f);
+
+				for (size_t _j = 0; _j < newGrid.rows(); _j++) {
+					for (size_t _i = 0; _i < newGrid.cols(); _i++) {
+						float coordX = ofMap(_i, 0, newGrid.cols() - 1, 0, 1);
+						float coordY = ofMap(_j, 0, newGrid.rows() - 1, 0, 1);
+
+						newGrid.at(_i, _j) = this->getInterpolatedNorm(coordX, coordY);
+					}
+				}
+				return newGrid;
+			}
+
+			PositionType
+				getInterpolatedNorm(float x, float y) const
+			{
+				float i = ofMap(x, 0, 1, 0, this->cols() - 1);
+				float j = ofMap(y, 0, 1, 0, this->rows() - 1);
+
+				auto i_frac = i - floor(i);
+				auto j_frac = j - floor(j);
+
+				if (i_frac == 0 && j_frac == 0) {
+					// exact grid position
+					return this->at((size_t)i, (size_t)j);
+				}
+				else if (i_frac == 0 && j_frac != 0) {
+					// on a column
+					const auto& upper = this->at((size_t)i, (size_t)floor(j));
+					const auto& lower = this->at((size_t)i, (size_t)floor(j) + 1);
+					return upper.getInterpolated(lower, j_frac);
+				}
+				else if (i_frac != 0 && j_frac == 0) {
+					// on a row
+					const auto& left = this->at((size_t)floor(i), (size_t)j);
+					const auto& right = this->at((size_t)floor(i) + 1, (size_t)j);
+					return left.getInterpolated(right, i_frac);
+				}
+				else {
+					// in a middle
+					const auto& TL = this->at((size_t)floor(i), (size_t)floor(j));
+					const auto& TR = this->at((size_t)floor(i) + 1, (size_t)floor(j));
+					const auto& BL = this->at((size_t)floor(i), (size_t)floor(j) + 1);
+					const auto& BR = this->at((size_t)floor(i) + 1, (size_t)floor(j) + 1);
+
+					auto upper = TL.getInterpolated(TR, i_frac);
+					auto lower = BL.getInterpolated(BR, i_frac);
+					
+					return upper.getInterpolated(lower, j_frac);
 				}
 			}
 		};

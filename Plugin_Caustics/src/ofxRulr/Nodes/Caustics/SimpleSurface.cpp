@@ -48,7 +48,9 @@ namespace ofxRulr {
 				if (this->parameters.surfaceSolver.sectionSolve.continuously) {
 					try {
 						this->healDiscontinuities();
-						this->sectionSolve();
+						for (int i = 0; i < this->parameters.surfaceSolver.sectionSolve.iterations.get(); i++) {
+							this->sectionSolve();
+						}
 					}
 					RULR_CATCH_ALL_TO_ERROR;
 				}
@@ -192,7 +194,9 @@ namespace ofxRulr {
 
 				inspector->addButton("Section solve", [this]() {
 					try {
-						this->sectionSolve();
+						for (int i = 0; i < this->parameters.surfaceSolver.sectionSolve.iterations.get(); i++) {
+							this->sectionSolve();
+						}
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 					}, '6');
@@ -203,6 +207,13 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 					}, 'h');
+
+				inspector->addButton("Pyramid up", [this]() {
+					try {
+						this->pyramidUp();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					}, 'p');
 
 				inspector->addButton("Export height map", [this]() {
 					try {
@@ -236,7 +247,6 @@ namespace ofxRulr {
 				SimpleSurface::initialise()
 			{
 				this->throwIfMissingAConnection<Target>();
-				auto target = this->getInput<Target>();
 
 				const auto resolution = this->parameters.resolution.get();
 				const auto scale = this->parameters.scale.get();
@@ -244,6 +254,19 @@ namespace ofxRulr {
 				const auto ourTransform = this->getTransform();
 
 				this->surface.distortedGrid.initGrid(resolution, scale);
+
+				this->calculateTargets();
+
+				this->preview.dirty = true;
+			}
+
+			//----------
+			void
+				SimpleSurface::calculateTargets()
+			{
+				auto target = this->getInput<Target>();
+
+				const auto resolution = this->parameters.resolution.get();
 
 				const auto curves = target->getResampledCurves(resolution);
 				auto targetPoints = target->getTargetPointsForCurves(curves);
@@ -255,6 +278,7 @@ namespace ofxRulr {
 						row[i].incoming = glm::vec3(0, 0, 1);
 					}
 				}
+
 				this->preview.dirty = true;
 			}
 
@@ -388,17 +412,39 @@ namespace ofxRulr {
 
 				// Update section (so we iterate through)
 				{
-					i_start += width;
-					if (i_start >= cols) {
-						i_start = 0;
+					auto moveVertically = this->parameters.surfaceSolver.sectionSolve.moveVertically.get();
+					bool reachedEnd = false;
+					if (moveVertically) {
 						j_start += width;
-						if (j_start >= rows) {
+						if (j_start >= this->surface.distortedGrid.rows()) {
 							j_start = 0;
+							i_start += width;
+							if (i_start >= this->surface.distortedGrid.cols()) {
+								i_start = 0;
+								reachedEnd = true;
+							}
+						}
+					}
+					else
+					{
+						i_start += width;
+						if (i_start >= this->surface.distortedGrid.cols()) {
+							i_start = 0;
+							j_start += width;
+							if (j_start >= this->surface.distortedGrid.rows()) {
+								j_start = 0;
+								reachedEnd = true;
+							}
 						}
 					}
 
 					this->parameters.surfaceSolver.sectionSolve.i.set(i_start);
 					this->parameters.surfaceSolver.sectionSolve.j.set(j_start);
+
+					if (reachedEnd) {
+						moveVertically ^= true;
+						this->parameters.surfaceSolver.sectionSolve.moveVertically.set(moveVertically);
+					}
 				}
 
 				this->preview.dirty = true;
@@ -438,34 +484,10 @@ namespace ofxRulr {
 
 								auto meanDistance = accumulate / count;
 
-								// Check if no discontinuity found
-								if (meanDistance < maxZMagnitude) {
-									continue;
+								// Check if discontinuity found
+								if (meanDistance >  maxZMagnitude) {
+									this->healAround(i, j);
 								}
-							}
-
-							// Take the local mean except for us
-							{
-								float accumulate = 0.0f;
-								float count = 0.0f;
-								{
-									auto addToMean = [&](int _i, int _j) {
-										if (this->surface.distortedGrid.inside(_i, _j)) {
-											count++;
-											accumulate += this->surface.distortedGrid.at(_i, _j).getHeight();
-										}
-									};
-									//Perform on local neighbors;
-									addToMean(i - 1, j);
-									addToMean(i + 1, j);
-									addToMean(i, j - 1);
-									addToMean(i, j + 1);
-								}
-
-								auto mean = accumulate / count;
-
-								// set outselves to the mean
-								ourPosition.setHeight(mean);
 							}
 						}
 					}
@@ -473,7 +495,89 @@ namespace ofxRulr {
 
 				this->preview.dirty = true;
 			}
+			//----------
+			void
+				SimpleSurface::healAround(size_t i, size_t j)
+			{
+				// To do a heal we:
+				// 1. zero any big vertices
+				// 2. solve around the region
 
+				// Setup the region
+				Models::SurfaceSectionSettings surfaceSectionSettings;
+				const auto& width = (int)this->parameters.surfaceSolver.sectionSolve.width.get();
+				auto i_start = (int)i - width / 2;
+				auto j_start = (int)j - width / 2; 
+				{
+
+					if (i_start < 0) {
+						i_start = 0;
+					}
+					if (j_start < 0) {
+						j_start = 0;
+					}
+
+					const auto rows = this->surface.distortedGrid.rows();
+					const auto cols = this->surface.distortedGrid.cols();
+
+					{
+						surfaceSectionSettings.i_start = i_start;
+						surfaceSectionSettings.j_start = j_start;
+						surfaceSectionSettings.width = width;
+						surfaceSectionSettings.height = width;
+					}
+
+					// check if it overlaps edge
+					if (surfaceSectionSettings.i_end() > cols) {
+						surfaceSectionSettings.width -= surfaceSectionSettings.i_end() - cols;
+					}
+					if (surfaceSectionSettings.j_end() > rows) {
+						surfaceSectionSettings.height -= surfaceSectionSettings.j_end() - rows;
+					}
+				}
+
+				// 1. Zero any large heights
+				{
+					const auto maxHeightAbs = this->parameters.surfaceSolver.sectionSolve.healHeightAmplitude.get();
+
+					for (size_t j = surfaceSectionSettings.j_start; j < surfaceSectionSettings.j_end(); j++) {
+						for (size_t i = surfaceSectionSettings.i_start; i < surfaceSectionSettings.i_end(); i++) {
+							auto& position = this->surface.distortedGrid.at(i, j);
+							if (abs(position.getHeight()) > maxHeightAbs) {
+								position.setHeight(0);
+							}
+						}
+					}
+				}
+
+				// 2. Local region solve
+				{
+					// perform solve
+					{
+						auto result = Solvers::NormalsSurface::solveSection(this->surface
+							, this->parameters.surfaceSolver.solverSettings.getSolverSettings()
+							, surfaceSectionSettings);
+						this->surface = result.solution.surface;
+					}
+				}
+				
+
+				this->preview.dirty = true;
+			}
+
+			//----------
+			void
+				SimpleSurface::pyramidUp()
+			{
+				// upscale the surface
+				this->surface.distortedGrid = this->surface.distortedGrid.pyramidUp();
+
+				// apply the target positions
+				this->calculateTargets();
+				
+				// calculate new normals
+				this->solveNormals();
+			}
 			//----------
 			void
 				SimpleSurface::updatePreview()

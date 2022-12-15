@@ -72,6 +72,22 @@ namespace ofxRulr {
 
 				return newPosition;
 			}
+
+			SurfacePosition_ getInterpolated(const SurfacePosition_& other, T ratio) const
+			{
+				SurfacePosition_ newPosition;
+				{
+					newPosition.target = this->target * ((T)1 - ratio) + other.target * ratio;
+					newPosition.incoming = this->incoming * ((T)1 - ratio) + other.incoming * ratio;
+					newPosition.normal = this->normal * ((T)1 - ratio) + other.normal * ratio;
+
+					newPosition.initialPosition = this->initialPosition * ((T)1 - ratio) + other.initialPosition * ratio;
+					newPosition.rightVector = this->rightVector * ((T)1 - ratio) + other.rightVector * ratio;
+					newPosition.downVector = this->downVector * ((T)1 - ratio) + other.downVector * ratio;
+					newPosition.currentPosition = this->currentPosition * ((T)1 - ratio) + other.currentPosition * ratio;
+				}
+				return newPosition;
+			}
 		};
 	}
 }
