@@ -55,6 +55,7 @@ namespace ofxRulr {
 
 				void clearDrawing();
 				void normaliseDrawing();
+				void simpleLineDrawing();
 
 				vector<Curve> getCurves() const;
 				vector<Curve> getResampledCurves(size_t) const;

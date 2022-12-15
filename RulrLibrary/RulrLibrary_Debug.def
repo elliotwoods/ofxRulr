@@ -368,6 +368,7 @@ EXPORTS
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@E@@H@Z
 	?readToPixels@ofFbo@@QEBAXAEAV?$ofPixels_@M@@H@Z
 	?unbind@ofFbo@@QEBAXXZ
+	?close@ofFile@@QEAAXXZ
 	?getAbsolutePath@ofFile@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getExtension@ofFile@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getFileName@ofFile@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ

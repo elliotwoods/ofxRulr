@@ -12,6 +12,11 @@ namespace ofxRulr {
 			glm::tvec3<T> rightVector;
 			glm::tvec3<T> downVector;
 			glm::tvec3<T> currentPosition;
+			
+			DistortedGridPosition_()
+			{
+
+			}
 
 			void setParameters(const T* parameters)
 			{
@@ -155,6 +160,75 @@ namespace ofxRulr {
 				at(size_t i, size_t j)
 			{
 				return this->positions[j][i];
+			}
+
+			size_t cols() const
+			{
+				if (this->rows() == 0) {
+					return 0;
+				}
+				else {
+					return this->positions.front().size();
+				}
+			}
+
+			size_t rows() const
+			{
+				return this->positions.size();
+			}
+
+			void serialize(nlohmann::json& json)
+			{
+				auto rows = this->rows();
+				auto cols = this->cols();
+
+				json["rows"] = rows;
+				json["cols"] = cols;
+
+				auto& jsonPositions = json["positions"];
+				for (size_t j = 0; j < rows; j++) {
+					nlohmann::json jsonRow;
+					for (size_t i = 0; i < cols; i++) {
+						nlohmann::json jsonPosition;
+						const auto& position = this->at(i, j);
+						position.serialize(jsonPosition);
+						jsonRow.push_back(jsonPosition);
+					}
+					jsonPositions.push_back(jsonRow);
+				}
+			}
+
+			void deserialize(const nlohmann::json& json)
+			{
+				if (!json.contains("rows")) {
+					return;
+				}
+				if (!json.contains("cols")) {
+					return;
+				}
+
+				auto rows = (size_t)json["rows"];
+				auto cols = (size_t)json["cols"];
+
+				if (!json.contains("positions")) {
+					return;
+				}
+
+				auto& jsonPositions = json["positions"];
+
+				this->positions.clear();
+				for (size_t j = 0; j < rows; j++) {
+					this->positions.push_back(vector<PositionType>());
+					auto& row = this->positions.back();
+
+					const auto& jsonRow = jsonPositions[j];
+					for (size_t i = 0; i < cols; i++) {
+						const auto& jsonPosition = jsonRow[i];
+						PositionType position;
+						position.deserialize(jsonPosition);
+						row.push_back(position);
+					}
+				}
 			}
 		};
 	}

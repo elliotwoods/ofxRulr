@@ -9,10 +9,13 @@
     <ClCompile Include="src\ofxRulr\Nodes\Caustics\Target.cpp">
       <Filter>src\ofxRulr\Nodes\Caustics</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Solvers\NormalsSurface.cpp">
+    <ClCompile Include="src\ofxRulr\Solvers\IntegratedSurface.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Solvers\Normal.cpp">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\NormalsSurface.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -30,10 +33,19 @@
     <ClInclude Include="src\ofxRulr\Models\IntegratedSurface.h">
       <Filter>src\ofxRulr\Models</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Solvers\NormalsSurface.h">
+    <ClInclude Include="src\ofxRulr\Solvers\IntegratedSurface.h">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\Normal.h">
+      <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\Surface.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\SurfacePosition.h">
+      <Filter>src\ofxRulr\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\NormalsSurface.h">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
   </ItemGroup>

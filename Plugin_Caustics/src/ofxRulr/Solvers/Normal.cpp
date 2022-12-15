@@ -29,11 +29,11 @@ struct NormalCost {
 		
 		auto incident = (glm::tvec3<T>) this->incident;
 		auto refractedDesired = (glm::tvec3<T>) this->refracted;
-		auto eta = (T)this->exitIORvsIncidentIOR;
+		auto exitIORvsIncidentIOR = (T)this->exitIORvsIncidentIOR;
 		
 		auto refractedEstimated = ofxCeres::VectorMath::refract(incident
 			, normal
-			, eta);
+			, exitIORvsIncidentIOR);
 		
 		auto delta = refractedEstimated - refractedDesired;
 
@@ -72,6 +72,7 @@ namespace ofxRulr {
 			solverSettings.printReport = false;
 			solverSettings.options.minimizer_type = ceres::MinimizerType::LINE_SEARCH;
 			solverSettings.options.minimizer_progress_to_stdout = false;
+			solverSettings.options.logging_type = ceres::SILENT;
 
 			return solverSettings;
 		}

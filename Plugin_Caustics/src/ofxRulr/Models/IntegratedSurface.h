@@ -1,54 +1,10 @@
 #pragma once
 
 #include "DistortedGrid.h"
+#include "SurfacePosition.h"
 
 namespace ofxRulr {
 	namespace Models {
-		template<typename T>
-		struct SurfacePosition_ : DistortedGridPosition_<T>
-		{
-			glm::tvec3<T> target;
-			glm::tvec3<T> incoming;
-
-			glm::tvec3<T> normal; // calculated value
-
-			T dz_dx() const
-			{
-				return tan(atan2(normal.z, normal.x) - acos(0));
-			}
-
-			T dz_dy() const
-			{
-				return tan(atan2(normal.z, normal.y) - acos(0));
-			}
-
-			T getHeight() const
-			{
-				return this->currentPosition.z;
-			}
-
-			void setHeight(T height)
-			{
-				this->currentPosition.z = height;
-			}
-
-			template<typename T2>
-			SurfacePosition_<T2> castTo() const
-			{
-				SurfacePosition_<T2> newPosition;
-
-				newPosition.normal = (glm::tvec3<T2>) this->normal;
-				newPosition.target = (glm::tvec3<T2>) this->target;
-
-				newPosition.initialPosition = (glm::tvec3<T2>) this->initialPosition;
-				newPosition.rightVector = (glm::tvec3<T2>) this->rightVector;
-				newPosition.downVector = (glm::tvec3<T2>) this->downVector;
-				newPosition.currentPosition = (glm::tvec3<T2>) this->currentPosition;
-
-				return newPosition;
-			}
-		};
-
 		template<typename T>
 		struct IntegratedSurface_ {
 			DistortedGrid_<T, SurfacePosition_<T>> distortedGrid;
@@ -87,44 +43,7 @@ namespace ofxRulr {
 				return count;
 			}
 
-			void getResiduals(T* residuals) const
-			{
-				if (this->distortedGrid.positions.empty()) {
-					throw(ofxCeres::Exception("Grid is empty"));
-				}
-
-				// Calculate the 2 normal routes for each vertex and the disparity between them
-				// As per diagram at bottom of page 5 of reMarkable 2022-12
-				// Note that in the maths we use 'y' but here we use 'z' for height
-
-				for (size_t j = 1; j < this->distortedGrid.positions.size(); j++) {
-					const auto& row = this->distortedGrid.positions[j];
-					for (size_t i = 1; i < row.size(); i++) {
-						const auto& position = this->distortedGrid.at(i, j);
-						const auto& leftPosition = this->distortedGrid.at(i - 1, j);
-						const auto& downPosition = this->distortedGrid.at(i, j - 1);
-
-						// We calculate the height (z) of the current vertex given 2 neighboring vertices
-
-						const auto heightFromX = getHeightAt2(leftPosition.currentPosition.x
-							, position.currentPosition.x
-							, leftPosition.dz_dx()
-							, position.dz_dx()
-							, leftPosition.getHeight());
-
-						const auto heightFromY = getHeightAt2(downPosition.currentPosition.y
-							, position.currentPosition.y
-							, downPosition.dz_dy()
-							, position.dz_dy()
-							, leftPosition.getHeight());
-
-						// The residual is the difference between the 2
-						*residuals++ = heightFromY - heightFromX;
-					}
-				}
-			}
-
-			void integrateHeights()
+			void integrateHeights(T* residuals = nullptr, glm::tvec3<T>* residualPositions = nullptr)
 			{
 				if (this->distortedGrid.positions.empty()) {
 					throw(ofxCeres::Exception("Grid is empty"));
@@ -133,19 +52,35 @@ namespace ofxRulr {
 				// Similar to above but store the height
 
 				// First go along bottom row
+				//{
+				//	auto& row = this->distortedGrid.positions.front();
+				//	for (size_t i = 1; i < row.size(); i++) {
+				//		auto& position = row[i];
+				//		const auto& leftPosition = row[i - 1];
+
+				//		const auto heightFromX = getHeightAt2(leftPosition.currentPosition.x
+				//			, position.currentPosition.x
+				//			, leftPosition.dz_dx()
+				//			, position.dz_dx()
+				//			, leftPosition.getHeight());
+
+				//		position.setHeight(heightFromX);
+				//	}
+				//}
+
+				// Then go along left edge
 				{
-					auto& row = this->distortedGrid.positions.front();
-					for (size_t i = 1; i < row.size(); i++) {
-						auto& position = row[i];
-						const auto& leftPosition = row[i - 1];
+					for (size_t j = 1; j < this->distortedGrid.positions.size(); j++) {
+						const auto& downPosition = this->distortedGrid.at(0, j - 1);
+						auto& position = this->distortedGrid.at(0, j);
 
-						const auto heightFromX = getHeightAt2(leftPosition.currentPosition.x
-							, position.currentPosition.x
-							, leftPosition.dz_dx()
-							, position.dz_dx()
-							, leftPosition.getHeight());
+						const auto heightFromY = getHeightAt2(downPosition.currentPosition.y
+							, position.currentPosition.y
+							, downPosition.dz_dy()
+							, position.dz_dy()
+							, downPosition.getHeight());
 
-						position.setHeight(heightFromX);
+						position.setHeight(heightFromY);
 					}
 				}
 
@@ -169,9 +104,17 @@ namespace ofxRulr {
 							, position.currentPosition.y
 							, downPosition.dz_dy()
 							, position.dz_dy()
-							, leftPosition.getHeight());
+							, downPosition.getHeight());
 
-						position.setHeight((heightFromX + heightFromY) / (T)2);
+						if (residuals) {
+							*residuals++ = heightFromY - heightFromX;
+						}
+
+						position.setHeight(heightFromY);
+
+						if (residualPositions) {
+							*residualPositions++ = position.currentPosition;
+						}
 					}
 				}
 			}

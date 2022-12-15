@@ -322,6 +322,10 @@ namespace ofxRulr {
 					this->normaliseDrawing();
 					});
 
+				inspector->addButton("Simple line", [this]() {
+					this->simpleLineDrawing();
+					});
+
 				inspector->addButton("Delete last", [this]() {
 					if (!this->curves.empty()) {
 						this->curves.resize(this->curves.size() - 1);
@@ -401,6 +405,24 @@ namespace ofxRulr {
 						vertex = (vertex - oldCenter) * scaleUpFactor + glm::vec3(0.5, 0.5, 0.0f);
 					}
 					curve.calc();
+				}
+			}
+
+			//----------
+			void
+				Target::simpleLineDrawing()
+			{
+				this->curves.clear();
+				this->curves.resize(1);
+				auto& curve = this->curves.front();
+
+				size_t resolution = 16;
+				for (size_t i = 0; i < resolution; i++) {
+					curve.addVertex({
+						ofMap(i, 0, resolution - 1, 0, 1)
+						, 0.5f
+						, 0.0f
+						});
 				}
 			}
 

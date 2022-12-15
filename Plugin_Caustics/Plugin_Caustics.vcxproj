@@ -90,6 +90,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Caustics\Target.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\Normal.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\IntegratedSurface.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\NormalsSurface.cpp" />
     <ClCompile Include="src\pch_Plugin_Caustics.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -99,9 +100,12 @@
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Models\DistortedGrid.h" />
     <ClInclude Include="src\ofxRulr\Models\IntegratedSurface.h" />
+    <ClInclude Include="src\ofxRulr\Models\Surface.h" />
+    <ClInclude Include="src\ofxRulr\Models\SurfacePosition.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Caustics\Target.h" />
     <ClInclude Include="src\ofxRulr\Solvers\Normal.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\IntegratedSurface.h" />
     <ClInclude Include="src\ofxRulr\Solvers\NormalsSurface.h" />
     <ClInclude Include="src\pch_Plugin_Caustics.h" />
   </ItemGroup>

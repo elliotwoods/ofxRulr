@@ -4,6 +4,7 @@
 #include "ofxRulr/Nodes/Item/RigidBody.h"
 #include "ofxRulr/Models/IntegratedSurface.h"
 #include "ofxRulr/Solvers/Normal.h"
+#include "ofxRulr/Solvers/IntegratedSurface.h"
 #include "ofxRulr/Solvers/NormalsSurface.h"
 
 namespace ofxRulr {
@@ -25,10 +26,14 @@ namespace ofxRulr {
 
 				void initialise();
 				void solveNormals();
-				void solveSurfaceDistortion();
-				void integrateNormals();
+				void solveHeightMap();
+				void poissonStepHeightMap();
+				void combinedSolveStepHeightMap();
+				void sectionSolve();
 
 				void updatePreview();
+
+				void exportHeightMap(const std::filesystem::path&) const;
 			protected:
 				struct : ofParameterGroup {
 					ofParameter<float> scale{ "Scale", 1.0f, 0.0f, 10.0f };
@@ -40,38 +45,71 @@ namespace ofxRulr {
 					} optics;
 
 					struct : ofParameterGroup {
-						ofxCeres::ParameterisedSolverSettings solverSettings{ Solvers::Normal::getDefaultSolverSettings() };
-						PARAM_DECLARE("Normals solver", solverSettings);
-					} normalsSolver;
+						ofxCeres::ParameterisedSolverSettings solverSettings{ Solvers::NormalsSurface::getDefaultSolverSettings() };
+						ofParameter<bool> universalSolve{ "Universal solve", false };
+
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", false };
+							ofParameter<float> factor{ "Factor", 1.5 };
+							ofParameter<int> iterations{ "Iterations", 1 };
+							PARAM_DECLARE("Poisson", enabled, factor, iterations);
+						} poissonSolver;
+
+						struct : ofParameterGroup {
+							ofParameter<size_t> i{ "i", 0 };
+							ofParameter<size_t> j{ "j", 0 };
+							ofParameter<size_t> width{ "Width", 8 };
+							ofParameter<size_t> overlap{ "Overlap", 0 };
+							ofParameter<bool> continuously{ "Continuously", false };
+							PARAM_DECLARE("Section solve", i, j, width, overlap, continuously);
+						} sectionSolve;
+
+						PARAM_DECLARE("Surface solver", solverSettings, universalSolve, poissonSolver, sectionSolve);
+					} surfaceSolver;
 
 					struct : ofParameterGroup {
-						ofxCeres::ParameterisedSolverSettings solverSettings{ Solvers::NormalsSurface::getDefaultSolverSettings() };
-						PARAM_DECLARE("Surface solver", solverSettings);
-					} surfaceSolver;
+						ofxCeres::ParameterisedSolverSettings solverSettings{ Solvers::Normal::getDefaultSolverSettings() };
+						PARAM_DECLARE("Normal solver", solverSettings);
+					} normalSolver;
 
 					struct : ofParameterGroup {
 						ofParameter<float> vectorLength{ "Vector length", 0.1, 0, 0.1 };
 						ofParameter<float> targetSize{ "Target size", 0.02, 0, 0.1 };
 						ofParameter<float> rayBrightness{ "Ray brightness", 0.3, 0, 1 };
-						PARAM_DECLARE("Draw", vectorLength, targetSize, rayBrightness)
+
+						struct : ofParameterGroup {
+							ofParameter<bool> targets{ "Targets", true };
+							ofParameter<bool> rays{ "Rays", true };
+							ofParameter<bool> normals{ "Normals", true };
+							ofParameter<bool> surface{ "Surface", true };
+							ofParameter<bool> residuals{ "Resisuals", false };
+							PARAM_DECLARE("Enabled", targets, rays, normals, surface, residuals);
+						} enabled;
+
+						PARAM_DECLARE("Draw", vectorLength, targetSize, rayBrightness, enabled)
 					} draw;
 
 					PARAM_DECLARE("SimpleSurface"
 						, scale
 						, resolution
 						, optics
-						, normalsSolver
 						, surfaceSolver
+						, normalSolver
 						, draw);
 				} parameters;
 
-				Models::IntegratedSurface integratedSurface;
+				Models::Surface surface;
 
 				struct {
 					bool dirty = true;
-					ofMesh directions;
+					ofMesh rays;
+					ofMesh normals;
 					ofMesh surface;
 					vector<glm::vec3> targets;
+					
+					vector<float> residuals;
+					vector<glm::vec3> residualPositions;
+					float maxResidual = 0.0f;
 				} preview;
 			};
 		}
