@@ -34,6 +34,22 @@ namespace ofxRulr {
 				this->manageParameters(this->parameters);
 
 				this->addInput<Target>();
+
+				this->preview.lighting.left.setDirectional();
+				this->preview.lighting.top.setDirectional();
+				this->preview.lighting.front.setDirectional();
+				this->preview.lighting.left.lookAt({ -1, 0, 0 });
+				this->preview.lighting.top.lookAt({ 0, -1, 0 });
+				this->preview.lighting.front.lookAt({ 1, 0, -1 });
+				this->preview.lighting.left.setDiffuseColor({ 1, 0, 0 });
+				this->preview.lighting.top.setDiffuseColor({ 0, 1, 0 });
+				this->preview.lighting.front.setDiffuseColor({ 0, 0, 1 });
+				this->preview.lighting.left.setSpecularColor({ 0, 0, 0 });
+				this->preview.lighting.top.setSpecularColor({ 0, 0, 0 });
+				this->preview.lighting.front.setSpecularColor({ 0, 0, 0 });
+				this->preview.lighting.left.setAmbientColor({ 0, 0, 0 });
+				this->preview.lighting.top.setAmbientColor({ 0, 0, 0 });
+				this->preview.lighting.front.setAmbientColor({ 0, 0, 0 });
 			}
 
 			//----------
@@ -149,6 +165,22 @@ namespace ofxRulr {
 						ofxCvGui::Utils::drawTextAnnotation(ofToString(residual, 2), residualPosition, color);
 					}
 				}
+
+				if (this->parameters.draw.enabled.solidMesh) {
+					ofEnableLighting();
+					{
+						this->preview.lighting.left.enable();
+						this->preview.lighting.top.enable();
+						this->preview.lighting.front.enable();
+
+						this->solidMesh.draw();
+
+						this->preview.lighting.left.disable();
+						this->preview.lighting.top.disable();
+						this->preview.lighting.front.disable();
+					}
+					ofDisableLighting();
+				}
 			}
 
 			//----------
@@ -215,11 +247,29 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ALERT;
 					}, 'p');
 
-				inspector->addButton("Export height map", [this]() {
+				inspector->addButton("Build solid mesh", [this]() {
+					try {
+						this->buildSolidMesh();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					}, 'b');
+
+				inspector->addButton("Export heightmap", [this]() {
 					try {
 						auto result = ofSystemSaveDialog("heightmap.csv", "Save heightmap");
 						if (result.bSuccess) {
 							this->exportHeightMap(result.filePath);
+						}
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					});
+
+				inspector->addButton("Export mesh", [this]() {
+					try {
+						auto result = ofSystemSaveDialog("mesh.ply", "Save mesh");
+						if (result.bSuccess) {
+							this->buildSolidMesh();
+							this->exportMesh(result.filePath);
 						}
 					}
 					RULR_CATCH_ALL_TO_ALERT;
@@ -266,7 +316,7 @@ namespace ofxRulr {
 			{
 				auto target = this->getInput<Target>();
 
-				const auto resolution = this->parameters.resolution.get();
+				const auto resolution = this->surface.distortedGrid.cols();
 
 				const auto curves = target->getResampledCurves(resolution);
 				auto targetPoints = target->getTargetPointsForCurves(curves);
@@ -691,6 +741,220 @@ namespace ofxRulr {
 					file << std::endl;
 				}
 				file.close();
+			}
+
+			//----------
+			void
+				SimpleSurface::exportMesh(const std::filesystem::path& path) const
+			{
+				this->solidMesh.save(path, false);
+			}
+
+			//----------
+			void
+				SimpleSurface::buildSolidMesh()
+			{
+				ofMesh mesh;
+
+				auto rows = this->surface.distortedGrid.rows();
+				auto cols = this->surface.distortedGrid.cols();
+
+				auto getVertex = [&](size_t i, size_t j) {
+					return this->surface.distortedGrid.at(i, j).currentPosition;
+				};
+
+				auto getIndexOnFrontFace = [&](size_t i, size_t j) {
+					return i + j * cols;
+				};
+
+				// front face
+				{
+					// Add points on front face
+					for (size_t j = 0; j < rows; j++) {
+						for (size_t i = 0; i < cols; i++) {
+							const auto& position = this->surface.distortedGrid.at(i, j);
+							mesh.addVertex(position.currentPosition);
+							mesh.addNormal(position.normal);
+						}
+					}
+
+					// Add triangles on front face
+					for (size_t j = 0; j < rows-1; j++) {
+						for (size_t i = 0; i < cols-1; i++) {
+							mesh.addIndex(getIndexOnFrontFace(i, j));
+							mesh.addIndex(getIndexOnFrontFace(i, j + 1));
+							mesh.addIndex(getIndexOnFrontFace(i+1, j));
+
+							mesh.addIndex(getIndexOnFrontFace(i + 1, j));
+							mesh.addIndex(getIndexOnFrontFace(i, j + 1));
+							mesh.addIndex(getIndexOnFrontFace(i + 1, j + 1));
+						}
+					}
+				}
+
+				// back face
+				{
+					const auto backFaceZ = this->parameters.mesh.backFaceZ.get();
+					struct {
+						size_t topEdge;
+						size_t bottomEdge;
+						size_t leftEdge;
+						size_t rightEdge;
+						size_t centerBack;
+					} indexStart;
+
+					// Vertices
+					{
+						// Top edge
+						indexStart.topEdge = mesh.getNumVertices();
+						for (size_t i = 0; i < cols; i++) {
+							mesh.addVertex(getVertex(i, 0)
+							* glm::vec3(1, 1, 0) + glm::vec3(0, 0, backFaceZ));
+							mesh.addNormal({ 0, 1, 0 });
+						}
+
+						// Bottom edge
+						indexStart.bottomEdge = mesh.getNumVertices();
+						for (size_t i = 0; i < cols; i++) {
+							mesh.addVertex(getVertex(i, rows - 1)
+								* glm::vec3(1, 1, 0) + glm::vec3(0, 0, backFaceZ));
+							mesh.addNormal({ 0, -1, 0 });
+						}
+
+						// Left edge
+						indexStart.leftEdge = mesh.getNumVertices();
+						for (size_t j = 1; j < rows - 1; j++) {
+							mesh.addVertex(getVertex(0, j)
+								* glm::vec3(1, 1, 0) + glm::vec3(0, 0, backFaceZ));
+							mesh.addNormal({ -1, 0, 0 });
+						}
+
+						// Right edge
+						indexStart.rightEdge = mesh.getNumVertices();
+						for (size_t j = 1; j < rows - 1; j++) {
+							mesh.addVertex(getVertex(cols - 1, j)
+							* glm::vec3(1, 1, 0) + glm::vec3(0, 0, backFaceZ));
+							mesh.addNormal({ 1, 0, 0 });
+						}
+
+						// Center back
+						indexStart.centerBack = mesh.getNumVertices();
+						mesh.addVertex(glm::vec3(0, 0, backFaceZ));
+						mesh.addNormal({ 0, 0, -1 });
+					}
+
+					// Triangles
+					{
+						auto getIndexOnTopEdge = [&](size_t i) {
+							return indexStart.topEdge + i;
+						};
+						auto getIndexOnBottomEdge = [&](size_t i) {
+							return indexStart.bottomEdge + i;
+						};
+						auto getIndexOnLeftEdge = [&](size_t j) {
+							if (j == 0) {
+								return getIndexOnTopEdge(0);
+							}
+							else if (j == rows - 1) {
+								return getIndexOnBottomEdge(0);
+							}
+							else {
+								return indexStart.leftEdge + (j - 1);
+							}
+						};
+						auto getIndexOnRightEdge = [&](size_t j) {
+							if (j == 0) {
+								return getIndexOnTopEdge(cols - 1);
+							}
+							else if (j == rows - 1) {
+								return getIndexOnBottomEdge(cols - 1);
+							}
+							else {
+								return indexStart.rightEdge + (j - 1);
+							}
+						};
+
+						// Side edges
+						{
+							// Top edge
+							for (size_t i = 0; i < cols - 1; i++) {
+								mesh.addIndex(getIndexOnFrontFace(i, 0));
+								mesh.addIndex(getIndexOnFrontFace(i + 1, 0));
+								mesh.addIndex(getIndexOnTopEdge(i));
+
+								mesh.addIndex(getIndexOnFrontFace(i + 1, 0));
+								mesh.addIndex(getIndexOnTopEdge(i + 1));
+								mesh.addIndex(getIndexOnTopEdge(i));
+							}
+
+							// Bottom edge
+							for (size_t i = 0; i < cols - 1; i++) {
+								mesh.addIndex(getIndexOnFrontFace(i, rows - 1));
+								mesh.addIndex(getIndexOnBottomEdge(i));
+								mesh.addIndex(getIndexOnFrontFace(i + 1, rows - 1));
+
+								mesh.addIndex(getIndexOnFrontFace(i + 1, rows - 1));
+								mesh.addIndex(getIndexOnBottomEdge(i));
+								mesh.addIndex(getIndexOnBottomEdge(i + 1));
+							}
+
+							// Left edge
+							for (size_t j = 0; j < rows - 1; j++) {
+								mesh.addIndex(getIndexOnFrontFace(0, j));
+								mesh.addIndex(getIndexOnLeftEdge(j));
+								mesh.addIndex(getIndexOnFrontFace(0, j + 1));
+
+								mesh.addIndex(getIndexOnLeftEdge(j));
+								mesh.addIndex(getIndexOnFrontFace(0, j + 1));
+								mesh.addIndex(getIndexOnLeftEdge(j + 1));
+							}
+
+							// Right edge
+							for (size_t j = 0; j < rows - 1; j++) {
+								mesh.addIndex(getIndexOnFrontFace(cols - 1, j));
+								mesh.addIndex(getIndexOnRightEdge(j));
+								mesh.addIndex(getIndexOnFrontFace(cols - 1, j + 1));
+
+								mesh.addIndex(getIndexOnRightEdge(j));
+								mesh.addIndex(getIndexOnFrontFace(cols - 1, j + 1));
+								mesh.addIndex(getIndexOnRightEdge(j + 1));
+							}
+						}
+
+						// Back face triangles (connect to back center)
+						{
+							// Top edge
+							for (size_t i = 0; i < cols - 1; i++) {
+								mesh.addIndex(indexStart.centerBack);
+								mesh.addIndex(getIndexOnTopEdge(i));
+								mesh.addIndex(getIndexOnTopEdge(i + 1));
+							}
+
+							// Bottom edge
+							for (size_t i = 0; i < cols - 1; i++) {
+								mesh.addIndex(indexStart.centerBack);
+								mesh.addIndex(getIndexOnBottomEdge(i + 1));
+								mesh.addIndex(getIndexOnBottomEdge(i));
+							}
+
+							// Left edge
+							for (size_t j = 0; j < rows - 1; j++) {
+								mesh.addIndex(indexStart.centerBack);
+								mesh.addIndex(getIndexOnLeftEdge(j + 1));
+								mesh.addIndex(getIndexOnLeftEdge(j));
+							}
+
+							// Right edge
+							for (size_t j = 0; j < rows - 1; j++) {
+								mesh.addIndex(indexStart.centerBack);
+								mesh.addIndex(getIndexOnRightEdge(j));
+								mesh.addIndex(getIndexOnRightEdge(j + 1));
+							}
+						}
+					}
+				}
+
+				this->solidMesh = mesh;
 			}
 		}
 	}

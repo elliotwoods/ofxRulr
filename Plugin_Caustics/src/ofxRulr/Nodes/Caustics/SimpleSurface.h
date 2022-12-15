@@ -38,7 +38,9 @@ namespace ofxRulr {
 
 				void updatePreview();
 
+				void buildSolidMesh();
 				void exportHeightMap(const std::filesystem::path&) const;
+				void exportMesh(const std::filesystem::path&) const;
 			protected:
 				struct : ofParameterGroup {
 					ofParameter<float> scale{ "Scale", 1.0f, 0.0f, 10.0f };
@@ -91,11 +93,17 @@ namespace ofxRulr {
 							ofParameter<bool> normals{ "Normals", true };
 							ofParameter<bool> surface{ "Surface", true };
 							ofParameter<bool> residuals{ "Resisuals", false };
-							PARAM_DECLARE("Enabled", targets, rays, normals, surface, residuals);
+							ofParameter<bool> solidMesh{ "Solid mesh", false };
+							PARAM_DECLARE("Enabled", targets, rays, normals, surface, residuals, solidMesh);
 						} enabled;
 
 						PARAM_DECLARE("Draw", vectorLength, targetSize, rayBrightness, enabled)
 					} draw;
+
+					struct : ofParameterGroup {
+						ofParameter<float> backFaceZ{ "Back face Z", -0.02, -1, 1 };
+						PARAM_DECLARE("Mesh", backFaceZ);
+					} mesh;
 
 					PARAM_DECLARE("SimpleSurface"
 						, scale
@@ -103,7 +111,8 @@ namespace ofxRulr {
 						, optics
 						, surfaceSolver
 						, normalSolver
-						, draw);
+						, draw
+						, mesh);
 				} parameters;
 
 				Models::Surface surface;
@@ -118,7 +127,15 @@ namespace ofxRulr {
 					vector<float> residuals;
 					vector<glm::vec3> residualPositions;
 					float maxResidual = 0.0f;
+
+					struct {
+						ofLight left;
+						ofLight top;
+						ofLight front;
+					} lighting;
 				} preview;
+
+				ofMesh solidMesh;
 			};
 		}
 	}

@@ -97,6 +97,7 @@ EXPORTS
 	?ofDisableAlphaBlending@@YAXXZ
 	?ofDisableBlendMode@@YAXXZ
 	?ofDisableDepthTest@@YAXXZ
+	?ofDisableLighting@@YAXXZ
 	?ofDrawArrow@@YAXAEBU?$vec@$02M$0A@@glm@@0M@Z
 	?ofDrawAxis@@YAXM@Z
 	?ofDrawBitmapStringHighlight@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBU?$vec@$02M$0A@@glm@@AEBV?$ofColor_@E@@2@Z
@@ -117,6 +118,7 @@ EXPORTS
 	?ofEnableAlphaBlending@@YAXXZ
 	?ofEnableBlendMode@@YAXW4ofBlendMode@@@Z
 	?ofEnableDepthTest@@YAXXZ
+	?ofEnableLighting@@YAXXZ
 	?ofEnableSmoothing@@YAXXZ
 	?ofFill@@YAXXZ
 	?ofGetCurrentRenderer@@YAAEAV?$shared_ptr@VofBaseRenderer@@@std@@XZ
@@ -383,6 +385,7 @@ EXPORTS
 	?setAmbientColor@ofLight@@QEAAXAEBV?$ofColor_@M@@@Z
 	?setDiffuseColor@ofLight@@QEAAXAEBV?$ofColor_@M@@@Z
 	?setDirectional@ofLight@@QEAAXXZ
+	?setSpecularColor@ofLight@@QEAAXAEBV?$ofColor_@M@@@Z
 	?getPadding@ofLog@@CAAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getInverse@ofMatrix4x4@@QEBA?AV1@XZ
 	?makeFromMultiplicationOf@ofMatrix4x4@@QEAAXAEBV1@0@Z
