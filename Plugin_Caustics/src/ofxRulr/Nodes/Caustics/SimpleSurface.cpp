@@ -47,6 +47,7 @@ namespace ofxRulr {
 				}
 				if (this->parameters.surfaceSolver.sectionSolve.continuously) {
 					try {
+						this->healDiscontinuities();
 						this->sectionSolve();
 					}
 					RULR_CATCH_ALL_TO_ERROR;
@@ -196,6 +197,13 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ALERT;
 					}, '6');
 
+				inspector->addButton("Heal discontinuities", [this]() {
+					try {
+						this->healDiscontinuities();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					}, 'h');
+
 				inspector->addButton("Export height map", [this]() {
 					try {
 						auto result = ofSystemSaveDialog("heightmap.csv", "Save heightmap");
@@ -204,7 +212,7 @@ namespace ofxRulr {
 						}
 					}
 					RULR_CATCH_ALL_TO_ALERT;
-					}, 'h');
+					}, 'e');
 			}
 
 			//----------
@@ -243,7 +251,7 @@ namespace ofxRulr {
 				// All rows have same targets
 				for (auto& row : this->surface.distortedGrid.positions) {
 					for (size_t i = 0; i < resolution; i++) {
-						row[i].target = targetPoints[i] * glm::vec3(0, 0, 1); // HACK!
+						row[i].target = targetPoints[i]; // HACK!
 						row[i].incoming = glm::vec3(0, 0, 1);
 					}
 				}
@@ -370,22 +378,98 @@ namespace ofxRulr {
 					surfaceSectionSettings.height -= surfaceSectionSettings.j_end() - rows;
 				}
 
-				auto result = Solvers::NormalsSurface::solveSection(surface
-					, this->parameters.surfaceSolver.solverSettings.getSolverSettings()
-					, surfaceSectionSettings);
-				this->surface = result.solution.surface;
-
-				i_start += width;
-				if (i_start >= cols) {
-					i_start = 0;
-					j_start += width;
-					if (j_start >= rows) {
-						j_start = 0;
-					}
+				// perform solve
+				{
+					auto result = Solvers::NormalsSurface::solveSection(surface
+						, this->parameters.surfaceSolver.solverSettings.getSolverSettings()
+						, surfaceSectionSettings);
+					this->surface = result.solution.surface;
 				}
 
-				this->parameters.surfaceSolver.sectionSolve.i.set(i_start);
-				this->parameters.surfaceSolver.sectionSolve.j.set(j_start);
+				// Update section (so we iterate through)
+				{
+					i_start += width;
+					if (i_start >= cols) {
+						i_start = 0;
+						j_start += width;
+						if (j_start >= rows) {
+							j_start = 0;
+						}
+					}
+
+					this->parameters.surfaceSolver.sectionSolve.i.set(i_start);
+					this->parameters.surfaceSolver.sectionSolve.j.set(j_start);
+				}
+
+				this->preview.dirty = true;
+			}
+
+			//----------
+			void
+				SimpleSurface::healDiscontinuities()
+			{
+				{
+					const auto maxZMagnitude = this->parameters.surfaceSolver.sectionSolve.healHeightAmplitude.get();
+
+					for (int j = 0; j < (int) this->surface.distortedGrid.rows(); j++) {
+						for (int i = 0; i < (int) this->surface.distortedGrid.cols(); i++) {
+							
+							auto& ourPosition = this->surface.distortedGrid.at(i, j);
+							const auto ourHeight = ourPosition.getHeight();
+
+							//First take mean of out distance to neighboring heights to see if we are a problem
+							{
+								float accumulate = 0.0f;
+								float count = 0.0f;
+								{
+									auto addToMean = [&](int _i, int _j) {
+										if (this->surface.distortedGrid.inside(_i, _j)) {
+											count++;
+											accumulate += abs(this->surface.distortedGrid.at(_i, _j).getHeight() - ourHeight);
+										}
+									};
+									//Perform on local grid
+									for (int _j = j - 1; _j < j + 1; _j++) {
+										for (int _i = i - 1; _i < i + 1; _i++) {
+											addToMean(_i, _j);
+										}
+									}
+								}
+
+								auto meanDistance = accumulate / count;
+
+								// Check if no discontinuity found
+								if (meanDistance < maxZMagnitude) {
+									continue;
+								}
+							}
+
+							// Take the local mean except for us
+							{
+								float accumulate = 0.0f;
+								float count = 0.0f;
+								{
+									auto addToMean = [&](int _i, int _j) {
+										if (this->surface.distortedGrid.inside(_i, _j)) {
+											count++;
+											accumulate += this->surface.distortedGrid.at(_i, _j).getHeight();
+										}
+									};
+									//Perform on local neighbors;
+									addToMean(i - 1, j);
+									addToMean(i + 1, j);
+									addToMean(i, j - 1);
+									addToMean(i, j + 1);
+								}
+
+								auto mean = accumulate / count;
+
+								// set outselves to the mean
+								ourPosition.setHeight(mean);
+							}
+						}
+					}
+				}
 
 				this->preview.dirty = true;
 			}

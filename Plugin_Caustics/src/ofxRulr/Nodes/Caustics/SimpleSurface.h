@@ -30,6 +30,7 @@ namespace ofxRulr {
 				void poissonStepHeightMap();
 				void combinedSolveStepHeightMap();
 				void sectionSolve();
+				void healDiscontinuities();
 
 				void updatePreview();
 
@@ -61,7 +62,8 @@ namespace ofxRulr {
 							ofParameter<size_t> width{ "Width", 8 };
 							ofParameter<size_t> overlap{ "Overlap", 0 };
 							ofParameter<bool> continuously{ "Continuously", false };
-							PARAM_DECLARE("Section solve", i, j, width, overlap, continuously);
+							ofParameter<float> healHeightAmplitude{ "Heal height amp", 0.1, 0, 2 };
+							PARAM_DECLARE("Section solve", i, j, width, overlap, continuously, healHeightAmplitude);
 						} sectionSolve;
 
 						PARAM_DECLARE("Surface solver", solverSettings, universalSolve, poissonSolver, sectionSolve);

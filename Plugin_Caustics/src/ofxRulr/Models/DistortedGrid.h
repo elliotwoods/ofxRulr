@@ -177,6 +177,18 @@ namespace ofxRulr {
 				return this->positions.size();
 			}
 
+			bool inside(size_t i, size_t j) const
+			{
+				return i >= 0 && j >= 0
+					&& i < this->cols() && j < this->rows();
+			}
+
+			bool inside(int i, int j) const
+			{
+				return i >= 0 && j >= 0
+					&& i < this->cols() && j < this->rows();
+			}
+
 			void serialize(nlohmann::json& json)
 			{
 				auto rows = this->rows();
