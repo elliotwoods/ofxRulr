@@ -128,7 +128,7 @@ namespace ofxRulr {
 					ofMesh normals;
 					ofMesh surface;
 					vector<glm::vec3> targets;
-					
+
 					vector<float> residuals;
 					vector<glm::vec3> residualPositions;
 					float maxResidual = 0.0f;

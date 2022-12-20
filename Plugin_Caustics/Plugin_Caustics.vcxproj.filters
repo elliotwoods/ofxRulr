@@ -18,6 +18,9 @@
     <ClCompile Include="src\ofxRulr\Solvers\NormalsSurface.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Caustics\BlockSolver.cpp">
+      <Filter>src\ofxRulr\Nodes\Caustics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Caustics.h" />
@@ -47,6 +50,12 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\NormalsSurface.h">
       <Filter>src\ofxRulr\Solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Caustics\BlockSolver.h">
+      <Filter>src\ofxRulr\Nodes\Caustics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Caustics\Surface2.h">
+      <Filter>src\ofxRulr\Nodes\Caustics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -100,6 +100,15 @@ namespace ofxRulr {
 
 					ofxCvGui::Utils::drawText(ofToString(this->surface.distortedGrid.cols()) + "x" + ofToString(this->surface.distortedGrid.rows()), 10, 10);
 				};
+
+				{
+					auto button = make_shared<ofxCvGui::Widgets::Toggle>(this->parameters.surfaceSolver.sectionSolve.continuously);
+					button->setWidth(200.0f);
+					button->setHeight(80.0f);
+					button->setPosition({ 15, 50 });
+					panel->addChild(button);
+				}
+
 				return panel;
 			}
 
@@ -452,10 +461,14 @@ namespace ofxRulr {
 					surfaceSectionSettings.height -= surfaceSectionSettings.j_end() - rows;
 				}
 
+				if (width > 4096) {
+					throw(ofxRulr::Exception("Issue with width"));
+				}
+
 				// perform solve
 				{
 					auto result = Solvers::NormalsSurface::solveSection(surface
-						, this->parameters.surfaceSolver.solverSettings.getSolverSettings()
+						, this->parameters.surfaceSolver.sectionSolve.solverSettings.getSolverSettings()
 						, surfaceSectionSettings);
 					this->surface = result.solution.surface;
 				}
@@ -727,6 +740,21 @@ namespace ofxRulr {
 			}
 
 			//----------
+			Models::Surface&
+				SimpleSurface::getSurface()
+			{
+				return this->surface;
+			}
+
+			//----------
+			void
+				SimpleSurface::setSurface(const Models::Surface& surface)
+			{
+				this->surface = surface;
+				this->preview.dirty = true;
+			}
+
+			//----------
 			void
 				SimpleSurface::exportHeightMap(const std::filesystem::path& path) const
 			{
@@ -767,6 +795,8 @@ namespace ofxRulr {
 					return i + j * cols;
 				};
 
+				float minOnFrontFace = 1.0f;
+
 				// front face
 				{
 					// Add points on front face
@@ -775,6 +805,10 @@ namespace ofxRulr {
 							const auto& position = this->surface.distortedGrid.at(i, j);
 							mesh.addVertex(position.currentPosition);
 							mesh.addNormal(position.normal);
+
+							if (position.getHeight() < minOnFrontFace) {
+								minOnFrontFace = position.getHeight();
+							}
 						}
 					}
 
@@ -782,19 +816,19 @@ namespace ofxRulr {
 					for (size_t j = 0; j < rows-1; j++) {
 						for (size_t i = 0; i < cols-1; i++) {
 							mesh.addIndex(getIndexOnFrontFace(i, j));
-							mesh.addIndex(getIndexOnFrontFace(i, j + 1));
 							mesh.addIndex(getIndexOnFrontFace(i+1, j));
+							mesh.addIndex(getIndexOnFrontFace(i, j + 1));
 
 							mesh.addIndex(getIndexOnFrontFace(i + 1, j));
-							mesh.addIndex(getIndexOnFrontFace(i, j + 1));
 							mesh.addIndex(getIndexOnFrontFace(i + 1, j + 1));
+							mesh.addIndex(getIndexOnFrontFace(i, j + 1));
 						}
 					}
 				}
 
 				// back face
 				{
-					const auto backFaceZ = this->parameters.mesh.backFaceZ.get();
+					const auto backFaceZ = this->parameters.mesh.backFaceZ.get() + minOnFrontFace;
 					struct {
 						size_t topEdge;
 						size_t bottomEdge;
@@ -879,30 +913,30 @@ namespace ofxRulr {
 							// Top edge
 							for (size_t i = 0; i < cols - 1; i++) {
 								mesh.addIndex(getIndexOnFrontFace(i, 0));
-								mesh.addIndex(getIndexOnFrontFace(i + 1, 0));
 								mesh.addIndex(getIndexOnTopEdge(i));
+								mesh.addIndex(getIndexOnFrontFace(i + 1, 0));
 
 								mesh.addIndex(getIndexOnFrontFace(i + 1, 0));
-								mesh.addIndex(getIndexOnTopEdge(i + 1));
 								mesh.addIndex(getIndexOnTopEdge(i));
+								mesh.addIndex(getIndexOnTopEdge(i + 1));
 							}
 
 							// Bottom edge
 							for (size_t i = 0; i < cols - 1; i++) {
 								mesh.addIndex(getIndexOnFrontFace(i, rows - 1));
-								mesh.addIndex(getIndexOnBottomEdge(i));
 								mesh.addIndex(getIndexOnFrontFace(i + 1, rows - 1));
+								mesh.addIndex(getIndexOnBottomEdge(i));
 
 								mesh.addIndex(getIndexOnFrontFace(i + 1, rows - 1));
-								mesh.addIndex(getIndexOnBottomEdge(i));
 								mesh.addIndex(getIndexOnBottomEdge(i + 1));
+								mesh.addIndex(getIndexOnBottomEdge(i));
 							}
 
 							// Left edge
 							for (size_t j = 0; j < rows - 1; j++) {
 								mesh.addIndex(getIndexOnFrontFace(0, j));
-								mesh.addIndex(getIndexOnLeftEdge(j));
 								mesh.addIndex(getIndexOnFrontFace(0, j + 1));
+								mesh.addIndex(getIndexOnLeftEdge(j));
 
 								mesh.addIndex(getIndexOnLeftEdge(j));
 								mesh.addIndex(getIndexOnFrontFace(0, j + 1));
@@ -916,8 +950,8 @@ namespace ofxRulr {
 								mesh.addIndex(getIndexOnFrontFace(cols - 1, j + 1));
 
 								mesh.addIndex(getIndexOnRightEdge(j));
-								mesh.addIndex(getIndexOnFrontFace(cols - 1, j + 1));
 								mesh.addIndex(getIndexOnRightEdge(j + 1));
+								mesh.addIndex(getIndexOnFrontFace(cols - 1, j + 1));
 							}
 						}
 
@@ -926,29 +960,29 @@ namespace ofxRulr {
 							// Top edge
 							for (size_t i = 0; i < cols - 1; i++) {
 								mesh.addIndex(indexStart.centerBack);
-								mesh.addIndex(getIndexOnTopEdge(i));
 								mesh.addIndex(getIndexOnTopEdge(i + 1));
+								mesh.addIndex(getIndexOnTopEdge(i));
 							}
 
 							// Bottom edge
 							for (size_t i = 0; i < cols - 1; i++) {
 								mesh.addIndex(indexStart.centerBack);
-								mesh.addIndex(getIndexOnBottomEdge(i + 1));
 								mesh.addIndex(getIndexOnBottomEdge(i));
+								mesh.addIndex(getIndexOnBottomEdge(i + 1));
 							}
 
 							// Left edge
 							for (size_t j = 0; j < rows - 1; j++) {
 								mesh.addIndex(indexStart.centerBack);
-								mesh.addIndex(getIndexOnLeftEdge(j + 1));
 								mesh.addIndex(getIndexOnLeftEdge(j));
+								mesh.addIndex(getIndexOnLeftEdge(j + 1));
 							}
 
 							// Right edge
 							for (size_t j = 0; j < rows - 1; j++) {
 								mesh.addIndex(indexStart.centerBack);
-								mesh.addIndex(getIndexOnRightEdge(j));
 								mesh.addIndex(getIndexOnRightEdge(j + 1));
+								mesh.addIndex(getIndexOnRightEdge(j));
 							}
 						}
 					}

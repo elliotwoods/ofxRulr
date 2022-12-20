@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="plugin.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Caustics\BlockSolver.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Caustics\Target.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\Normal.cpp" />
@@ -102,7 +103,9 @@
     <ClInclude Include="src\ofxRulr\Models\IntegratedSurface.h" />
     <ClInclude Include="src\ofxRulr\Models\Surface.h" />
     <ClInclude Include="src\ofxRulr\Models\SurfacePosition.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Caustics\BlockSolver.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Caustics\SimpleSurface.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Caustics\Surface2.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Caustics\Target.h" />
     <ClInclude Include="src\ofxRulr\Solvers\Normal.h" />
     <ClInclude Include="src\ofxRulr\Solvers\IntegratedSurface.h" />

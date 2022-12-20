@@ -309,6 +309,32 @@ namespace ofxRulr {
 					return upper.getInterpolated(lower, j_frac);
 				}
 			}
+
+			DistortedGrid_<T, PositionType>
+				getSubSection(size_t i_start, size_t j_start, size_t width, size_t height) const
+			{
+				DistortedGrid_<T, PositionType> newGrid;
+
+				for (size_t _j = 0; _j < height; _j++) {
+					newGrid.positions.push_back(vector<PositionType>());
+					auto& newRow = newGrid.positions.back();
+
+					for (size_t _i = 0; _i < width; _i++) {
+						newRow.push_back(this->at(_i + i_start, _j + j_start));
+					}
+				}
+				return newGrid;
+			}
+
+			void
+				setSubSection(size_t i_start, size_t j_start, const DistortedGrid_<T, PositionType>& subGrid)
+			{
+				for (size_t _j = 0; _j < subGrid.rows(); _j++) {
+					for (size_t _i = 0; _i < subGrid.cols(); _i++) {
+						this->at(_i + i_start, _j + j_start) = subGrid.at(_i, _j);
+					}
+				}
+			}
 		};
 	}
 }
