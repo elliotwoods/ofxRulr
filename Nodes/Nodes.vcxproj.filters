@@ -285,6 +285,12 @@
     <ClInclude Include="src\ofxRulr\Nodes\Application\Debugger.h">
       <Filter>src\ofxRulr\Nodes\Application</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Render\WorldThroughView.h">
+      <Filter>src\ofxRulr\Nodes\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Grid.h">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ofxSpinCursor\src\ofxSpinCursor.cpp">
@@ -442,6 +448,12 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Application\Debugger.cpp">
       <Filter>src\ofxRulr\Nodes\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Render\WorldThroughView.cpp">
+      <Filter>src\ofxRulr\Nodes\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Grid.cpp">
+      <Filter>src\ofxRulr\Nodes\Item</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

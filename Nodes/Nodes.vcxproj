@@ -142,6 +142,7 @@ if errorlevel 1 exit 0</Command>
     <ClInclude Include="src\ofxRulr\Nodes\Item\Board.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\BoardInWorld.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Camera.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Item\Grid.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Mesh.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\Projector.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Item\RandomPatternBoard.h" />
@@ -154,6 +155,7 @@ if errorlevel 1 exit 0</Command>
     <ClInclude Include="src\ofxRulr\Nodes\Render\Lighting.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Render\NodeThroughView.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Render\Style.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Render\WorldThroughView.h" />
     <ClInclude Include="src\ofxRulr\Nodes\System\VideoOutput.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Template.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Test\ARCube.h" />
@@ -223,6 +225,7 @@ if errorlevel 1 exit 0</Command>
     <ClCompile Include="src\ofxRulr\Nodes\Item\AbstractBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Board.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Camera.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Item\Grid.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Mesh.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\Projector.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Item\RandomPatternBoard.cpp" />
@@ -235,6 +238,7 @@ if errorlevel 1 exit 0</Command>
     <ClCompile Include="src\ofxRulr\Nodes\Render\Lighting.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Render\NodeThroughView.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Render\Style.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Render\WorldThroughView.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\System\VideoOutput.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Template.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Test\ARCube.cpp" />

@@ -24,6 +24,9 @@ namespace ofxRulr {
 			shared_ptr<Editor::Patch> getPatch() const;
 			shared_ptr<WorldStage> getWorldStage() const;
 
+			void drawWorld() const;
+			void drawWorldAdvanced(DrawWorldAdvancedArgs&) const;
+
 			ofParameter<bool> lockSelection{ "Lock selection", false };
 		protected:
 			static ofxCvGui::Controller * gui; ///< Why is this static? Needs comment.  I presume it's so we can grid multiple worlds?

@@ -24,11 +24,13 @@
 #include "ofxRulr/Nodes/Item/View.h"
 #include "ofxRulr/Nodes/Item/BoardInWorld.h"
 #include "ofxRulr/Nodes/Item/RandomPatternBoard.h"
+#include "ofxRulr/Nodes/Item/Grid.h"
 
 #include "ofxRulr/Nodes/Procedure/Scan/Graycode.h"
 #include "ofxRulr/Nodes/Procedure/Triangulate.h"
 
 #include "ofxRulr/Nodes/Render/NodeThroughView.h"
+#include "ofxRulr/Nodes/Render/WorldThroughView.h"
 #include "ofxRulr/Nodes/Render/Draw.h"
 #include "ofxRulr/Nodes/Render/Lighting.h"
 
@@ -70,12 +72,14 @@ namespace ofxRulr {
 			RULR_DECLARE_NODE(Item::View);
 			RULR_DECLARE_NODE(Item::BoardInWorld);
 			RULR_DECLARE_NODE(Item::RandomPatternBoard);
+			RULR_DECLARE_NODE(Item::Grid);
 
 			RULR_DECLARE_NODE(Procedure::Scan::Graycode);
 
 			RULR_DECLARE_NODE(Procedure::Triangulate);
 
 			RULR_DECLARE_NODE(Render::NodeThroughView);
+			RULR_DECLARE_NODE(Render::WorldThroughView);
 			RULR_DECLARE_NODE(Render::Draw);
 			RULR_DECLARE_NODE(Render::Lighting);
 

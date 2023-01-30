@@ -103,7 +103,6 @@ namespace ofxRulr {
 			//
 			if (enableWorldStage) {
 				this->worldStage = make_shared<WorldStage>();
-				this->worldStage->setWorld(*this);
 				this->worldStage->init();
 				this->worldStage->setName("WorldStage");
 				this->add(this->worldStage); // we intentionally do this after building the Node grid
@@ -250,6 +249,34 @@ namespace ofxRulr {
 		//----------
 		shared_ptr<ofxRulr::Graph::WorldStage> World::getWorldStage() const {
 			return this->worldStage;
+		}
+
+		//----------
+		void World::drawWorld() const {
+			// Blank args
+			DrawWorldAdvancedArgs args;
+
+			this->drawWorldAdvanced(args);
+		}
+
+		//----------
+		void World::drawWorldAdvanced(DrawWorldAdvancedArgs& args) const {
+			for (const auto node : *this) {
+				const auto& whenDrawOnWorldStage = node->getWhenDrawOnWorldStage();
+				switch (whenDrawOnWorldStage) {
+				case WhenActive::Selected:
+					if (node->isBeingInspected()) {
+						node->drawWorldAdvanced(args);
+					}
+					break;
+				case WhenActive::Always:
+					node->drawWorldAdvanced(args);
+					break;
+				case WhenActive::Never:
+				default:
+					break;
+				}
+			}
 		}
 	}
 }

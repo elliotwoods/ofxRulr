@@ -14,8 +14,6 @@ namespace ofxRulr {
 			string getTypeName() const override;
 			void init();
 
-			void setWorld(const Utils::Set<Nodes::Base> &);
-
 			void update();
 			ofxCvGui::PanelPtr getPanel() override;
 			glm::vec3 getCursorWorld(bool forceUpdate = false) const;
@@ -27,8 +25,6 @@ namespace ofxRulr {
 			void populateInspector(ofxCvGui::InspectArguments &);
 
 			shared_ptr<ofxCvGui::Panels::WorldManaged> view;
-
-			const Utils::Set<Nodes::Base> * world;
 
 			ofCamera * camera = nullptr;
 			ofTexture * grid;

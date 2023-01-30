@@ -1,15 +1,14 @@
 #include "pch_RulrCore.h"
 #include "WorldStage.h"
+#include "World.h"
 
 using namespace ofxCvGui;
 
 namespace ofxRulr {
 	namespace Graph {
 		//----------
-		WorldStage::WorldStage() :
-		world() {
+		WorldStage::WorldStage() {
 			RULR_NODE_INIT_LISTENER;
-			this->world = nullptr;
 		}
 
 		//----------
@@ -28,35 +27,13 @@ namespace ofxRulr {
 				ofBackgroundGradient(40, 0);
 			}, this, -1);
 			this->view->onDrawWorld += [this](ofCamera &) {
-				if (this->world) {
-					auto & world = *this->world;
-					for (const auto node : world) {
-						const auto & whenDrawOnWorldStage = node->getWhenDrawOnWorldStage();
-						switch (whenDrawOnWorldStage) {
-						case WhenActive::Selected:
-							if (node->isBeingInspected()) {
-								node->drawWorldStage();
-							}
-							break;
-						case WhenActive::Always:
-							node->drawWorldStage();
-							break;
-						case WhenActive::Never:
-						default:
-							break;
-						}
-					}
-				}
+				static auto& world = Graph::World::X();
+				world.drawWorld();
 			};
 			auto & camera = this->view->getCamera();
 			camera.setNearClip(0.01f);
 			camera.setFarClip(10000.0f);
 			this->camera = &camera;
-		}
-
-		//----------
-		void WorldStage::setWorld(const Utils::Set<Nodes::Base> & world) {
-			this->world = &world;
 		}
 
 		//----------
