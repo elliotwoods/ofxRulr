@@ -103,18 +103,24 @@ namespace ofxRulr {
 
 			//----------
 			void Mesh::drawObjectAdvanced(DrawWorldAdvancedArgs & args) {
+
 				if (!this->modelLoader) {
 					return;
 				}
 
 				auto style = this->getInput<Render::Style>();
 
-				if (args.enableStyle && style) {
-					style->begin();
+				if (args.enableStyle) {
+					if (style) {
+						style->begin();
+					}
 				}
 
-				if (args.enableTextures && texture.isAllocated()) {
-					texture.bind();
+				if (args.enableTextures) {
+					auto& texture = this->texture.getTexture();
+					if (texture.isAllocated()) {
+						texture.bind();
+					}
 				}
 
 				ofPushMatrix();
@@ -142,12 +148,16 @@ namespace ofxRulr {
 				}
 				ofPopMatrix();
 
-				if (args.enableTextures && texture.isAllocated()) {
-					texture.unbind();
+				if (args.enableTextures) {
+					if (texture.isAllocated()) {
+						texture.unbind();
+					}
 				}
 
-				if (args.enableStyle && style) {
-					style->end();
+				if (args.enableStyle) {
+					if (style) {
+						style->end();
+					}
 				}
 			}
 

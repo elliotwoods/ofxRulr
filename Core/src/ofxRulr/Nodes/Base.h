@@ -40,12 +40,13 @@
 namespace ofxRulr {
 	struct DrawWorldAdvancedArgs {
 		bool useStandardDrawWhereCustomIsNotAvailable = true;
-		bool enableGui = false;
-		bool enableStyle = false;
-		bool enableMaterials = false;
-		bool enableColors = false;
-		bool enableTextures = false;
+		bool enableGui = true;
+		bool enableStyle = true;
+		bool enableMaterials = true;
+		bool enableColors = true;
+		bool enableTextures = true;
 		bool enableNormals = true;
+		ofxLiquidEvent<void> onDrawFinal;
 	};
 
 	namespace Graph {

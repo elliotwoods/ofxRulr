@@ -277,6 +277,9 @@ namespace ofxRulr {
 					break;
 				}
 			}
+
+			// Perform any delayed draws
+			args.onDrawFinal.notifyListeners();
 		}
 	}
 }

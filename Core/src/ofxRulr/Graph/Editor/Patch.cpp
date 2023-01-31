@@ -212,7 +212,7 @@ namespace ofxRulr {
 				this->view = MAKE(View, *this);
 
 				RULR_NODE_UPDATE_LISTENER;
-				RULR_NODE_DRAW_WORLD_LISTENER;
+				RULR_NODE_DRAW_WORLD_ADVANCED_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
 
@@ -400,11 +400,11 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Patch::drawWorldStage() {
+			void Patch::drawWorldAdvanced(DrawWorldAdvancedArgs& args) {
 				for (auto nodeHost : this->nodeHosts) {
 					auto node = nodeHost.second->getNodeInstance();
 					if (isActive(node.get(), node->getWhenDrawOnWorldStage())) {
-						node->drawWorldStage();
+						node->drawWorldAdvanced(args);
 					}
 				}
 			}

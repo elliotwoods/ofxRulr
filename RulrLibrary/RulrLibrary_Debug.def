@@ -1,5 +1,6 @@
 Library RulrLibrary_Debug
 EXPORTS
+	__imp_glDepthMask
 	__imp_glDisable
 	__imp_glEnable
 	__imp_glFlush
