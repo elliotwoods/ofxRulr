@@ -111,7 +111,7 @@ namespace ofxRulr {
 
 					void drawWorldStage(const DrawArguments&);
 
-					int laserAddress;
+					int serialNumber;
 					Utils::CaptureSet<BeamCapture> beamCaptures;
 					filesystem::path directory;
 

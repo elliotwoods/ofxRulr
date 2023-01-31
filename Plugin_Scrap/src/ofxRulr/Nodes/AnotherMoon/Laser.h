@@ -39,6 +39,7 @@ namespace ofxRulr {
 					, ("Circle", "USB", "Memory"));
 
 				struct DrawArguments {
+					ofxRulr::DrawWorldAdvancedArgs& drawArgs;
 					bool rigidBody;
 					bool trussLine;
 					bool centerLine;
@@ -46,6 +47,7 @@ namespace ofxRulr {
 					bool modelPreview;
 					float groundHeight;
 					bool frustum;
+					bool picture;
 				};
 
 				Laser();
@@ -136,20 +138,21 @@ namespace ofxRulr {
 				};
 
 				struct : ofParameterGroup {
+					ofParameter<int> serialNumber{ "Serial number", 1 };
 					ofParameter<int> positionIndex{ "Position index", 1 };
 
 					struct : ofParameterGroup {
-						ofParameter<int> address{ "Address", 0 };
-						ofParameter<int> retryDuration{ "Retry duration [ms]", 10000 };
-						ofParameter<int> retryPeriod{ "Retry period [ms]", 500 };
+						ofParameter<string> hostname{ "IP Address", "10.0.1.1" };
 
 						struct : ofParameterGroup {
 							ofParameter<WhenActive> enabled{ "Enabled", WhenActive::Selected };
 							ofParameter<int> period{ "Period [ms]", 500 };
 							PARAM_DECLARE("Keep alive", enabled, period);
 						} keepAlive;
-							ofParameter<string> hostnameOverride{ "Hostname override", "" };
-						PARAM_DECLARE("Communications", address, retryDuration, retryPeriod, keepAlive, hostnameOverride);
+
+						ofParameter<string> hostnameOverride{ "Hostname override", "" };
+
+						PARAM_DECLARE("Communications", hostname, keepAlive, hostnameOverride);
 					} communications;
 
 					struct : ofParameterGroup {
@@ -167,6 +170,7 @@ namespace ofxRulr {
 				ofxCvGui::ElementPtr getDataDisplay() override;
 
 				void callbackIntrinsicsChange(glm::vec2&);
+				void updatePicturePreviewWorld();
 
 				Lasers* parent;
 
@@ -181,6 +185,7 @@ namespace ofxRulr {
 
 				vector<glm::vec2> lastPictureSent;
 				ofMesh lastPicturePreviewWorld;
+				bool lastPicturePreviewWorldStale = true;
 
 				ofMesh modelPreview;
 				ofMesh frustumPreview;

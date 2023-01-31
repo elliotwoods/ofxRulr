@@ -96,6 +96,7 @@ namespace ofxRulr {
 			protected:
 				std::chrono::system_clock::time_point lastSendTime; // value initialise to zeros
 				std::chrono::system_clock::duration retryDuration;
+				std::chrono::system_clock::duration retryPeriod;
 				std::chrono::system_clock::time_point retryDeadline;
 			};
 

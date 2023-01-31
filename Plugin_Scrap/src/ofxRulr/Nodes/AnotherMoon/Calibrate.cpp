@@ -161,7 +161,7 @@ namespace ofxRulr {
 				Calibrate::LaserCapture::serialize(nlohmann::json& json)
 			{
 				this->beamCaptures.serialize(json["beamCaptures"]);
-				Utils::serialize(json, "laserAddress", this->laserAddress);
+				Utils::serialize(json, "serialNumber", this->serialNumber);
 				Utils::serialize(json, "directory", this->directory);
 				Utils::serialize(json, "imagePointInCamera", this->imagePointInCamera);
 				{
@@ -178,7 +178,7 @@ namespace ofxRulr {
 				if (json.contains("beamCaptures")) {
 					this->beamCaptures.deserialize(json["beamCaptures"]);
 				}
-				Utils::deserialize(json, "laserAddress", this->laserAddress);
+				Utils::deserialize(json, "serialNumber", this->serialNumber);
 				Utils::deserialize(json, "directory", this->directory);
 				Utils::deserialize(json, "imagePointInCamera", this->imagePointInCamera);
 
@@ -209,7 +209,7 @@ namespace ofxRulr {
 					// Find corresponding laser
 					shared_ptr<Laser> laser;
 					for (const auto& it : lasers) {
-						if (it->parameters.communications.address.get() == this->laserAddress) {
+						if (it->parameters.serialNumber.get() == this->serialNumber) {
 							laser = it;
 							break;
 						}
@@ -260,7 +260,7 @@ namespace ofxRulr {
 
 				vector<ofxCvGui::ElementPtr> widgets;
 
-				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<string>>("Laser #" + ofToString(this->laserAddress), [this]() {
+				widgets.push_back(make_shared<ofxCvGui::Widgets::LiveValue<string>>("Serial #" + ofToString(this->serialNumber), [this]() {
 					return this->getDisplayString();
 					}));
 				{
@@ -690,7 +690,7 @@ namespace ofxRulr {
 
 				// iterate through lasers, send beams and capture
 				for (const auto & laser : allLasers) {
-					Utils::ScopedProcess scopedProcessLaser("Laser #" + ofToString(laser->parameters.communications.address.get()), false);
+					Utils::ScopedProcess scopedProcessLaser("Laser s#" + ofToString(laser->parameters.serialNumber.get()) + "p#" + ofToString(laser->parameters.positionIndex.get()), false);
 
 					// Gather other lasers
 					auto otherLasers = allLasers;
@@ -698,6 +698,8 @@ namespace ofxRulr {
 					
 					// Set all others to laserStateForOthers
 					{
+						Utils::ScopedProcess scopedProcessOtherLasers("Setting state on other lasers", false);
+
 						vector<std::future<void>> actions;
 						switch (this->parameters.capture.laserStateForOthers.get().get()) {
 						case LaserState::Shutdown:
@@ -736,6 +738,8 @@ namespace ofxRulr {
 
 					// Turn this laser on
 					{
+						Utils::ScopedProcess scopedProcessOtherLasers("Setting state on this laser", false);
+
 						laser->parameters.deviceState.state.set(Laser::State::Run);
 						tryNtimes([=]() {
 							return laser->pushState();
@@ -746,7 +750,7 @@ namespace ofxRulr {
 					auto laserCapture = make_shared<LaserCapture>();
 					allLaserCaptures.push_back(laserCapture);
 					{
-						laserCapture->laserAddress = laser->parameters.communications.address.get();
+						laserCapture->serialNumber = laser->parameters.serialNumber.get();
 						laserCapture->parentSelection = &cameraCapture->ourSelection;
 					}
 
@@ -935,7 +939,7 @@ namespace ofxRulr {
 
 							// Count if selected and is this laser
 							if (laserCapture->isSelected()
-								&& laserCapture->laserAddress == laser->parameters.communications.address.get()) {
+								&& laserCapture->serialNumber == laser->parameters.serialNumber.get()) {
 								seenInCountViews++;
 							}
 						}
@@ -965,7 +969,7 @@ namespace ofxRulr {
 						// find laser
 						shared_ptr<Laser> laser;
 						for (auto it : lasers) {
-							if (it->parameters.communications.address.get() == laserCapture->laserAddress) {
+							if (it->parameters.serialNumber.get() == laserCapture->serialNumber) {
 								laser = it;
 								break;
 							}
@@ -988,7 +992,7 @@ namespace ofxRulr {
 									|| beamCapture->projectionPoint.y < -1
 									|| beamCapture->projectionPoint.y > 1) {
 									cout << cameraCapture->getTimeString()
-										<< "::" << laserCapture->laserAddress
+										<< "::" << laserCapture->serialNumber
 										<< "::" << beamCaptureIndex
 										<< " is outside range : " << beamCapture->projectionPoint
 										<< endl;

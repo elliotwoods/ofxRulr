@@ -37,7 +37,7 @@ namespace ofxRulr {
 				Laser::getDisplayString() const
 			{
 				stringstream ss;
-				ss << this->parameters.communications.address << " : (" << this->rigidBody->getPosition() << ") [" << this->parameters.intrinsics.centerOffset << "]";
+				ss << "s#" << this->parameters.serialNumber << " / p" << this->rigidBody->getPosition() << ") [" << this->parameters.intrinsics.centerOffset << "]";
 				return ss.str();
 			}
 
@@ -152,7 +152,7 @@ namespace ofxRulr {
 						if (jsonLaser.contains("Settings")) {
 							const auto& jsonSettings = jsonLaser["Settings"];
 							if (jsonSettings.contains("Address")) {
-								this->parameters.communications.address.set(jsonSettings["Address"].get<int>());
+								this->parameters.serialNumber.set(jsonSettings["Address"].get<int>());
 							}
 							if (jsonSettings.contains("FOV")) {
 								const auto& jsonFOV = jsonSettings["FOV"];
@@ -258,6 +258,26 @@ namespace ofxRulr {
 							}
 							ofPopStyle();
 						}
+
+						// Draw picture
+						if (args.picture) {
+							this->updatePicturePreviewWorld();
+
+							args.drawArgs.onDrawFinal += [this]() {
+								ofPushStyle();
+								ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ADD);
+								{
+									ofColor color(255, 200);
+									ofSetColor(color);
+									this->lastPicturePreviewWorld.drawWireframe();
+									color.a = 100;
+									ofSetColor(color);
+									this->lastPicturePreviewWorld.drawFaces();
+								}
+								ofDisableBlendMode();
+								ofPopStyle();
+							};
+						}
 					}
 					ofPopMatrix();
 				}
@@ -322,7 +342,7 @@ namespace ofxRulr {
 					return hostnameOverride;
 				}
 				else {
-					return this->parent->parameters.communications.baseAddress.get() + ofToString(this->parameters.communications.address);
+					return this->parameters.communications.hostname.get();
 				}
 			}
 
@@ -331,8 +351,8 @@ namespace ofxRulr {
 				Laser::createOutgoingMessageRetry() const
 			{
 				return make_shared<OutgoingMessageRetry>(this->getHostname()
-					, std::chrono::milliseconds(this->parameters.communications.retryDuration.get())
-					, std::chrono::milliseconds(this->parameters.communications.retryPeriod.get()));
+					, std::chrono::milliseconds(this->parent->parameters.communications.retryDuration.get())
+					, std::chrono::milliseconds(this->parent->parameters.communications.retryPeriod.get()));
 			}
 
 			//----------
@@ -538,6 +558,7 @@ namespace ofxRulr {
 				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 				this->lastPictureSent = projectionPoints;
+				this->lastPicturePreviewWorldStale = true;
 				return future;
 			}
 
@@ -741,7 +762,7 @@ namespace ofxRulr {
 								ofPopStyle();
 							}
 
-							ofxCvGui::Utils::drawText("Position #" + ofToString(this->parameters.positionIndex)
+							ofxCvGui::Utils::drawText("p" + ofToString(this->parameters.positionIndex) + ":s" + ofToString(this->parameters.serialNumber)
 								, bounds
 								, false
 								, false);
@@ -826,6 +847,37 @@ namespace ofxRulr {
 			{
 				this->rebuildModelPreview();
 				this->rebuildFrustumPreview();
+			}
+
+			//----------
+			void
+				Laser::updatePicturePreviewWorld()
+			{
+				if (this->lastPicturePreviewWorldStale) {
+					this->lastPicturePreviewWorld.clear();
+
+					auto model = this->getModel();
+
+					this->lastPicturePreviewWorld.clear();
+					this->lastPicturePreviewWorld.setMode(ofPrimitiveMode::OF_PRIMITIVE_TRIANGLE_FAN);
+					this->lastPicturePreviewWorld.addVertex({ 0, 0, 0 });
+
+					if (!this->lastPictureSent.empty()) {
+						for (const auto& projectionPoint : lastPictureSent) {
+							auto ray = model.castRayObjectSpace(projectionPoint);
+							auto vertex = ray.t * 100.0f;
+							this->frustumPreview.addVertex(vertex);
+						}
+
+						// close it with the first point again
+						const auto& projectionPoint = lastPictureSent.front();
+						auto ray = model.castRayObjectSpace(projectionPoint);
+						auto vertex = ray.t * 100.0f;
+						this->frustumPreview.addVertex(vertex);
+					}
+
+					this->lastPicturePreviewWorldStale = false;
+				}
 			}
 		}
 	}

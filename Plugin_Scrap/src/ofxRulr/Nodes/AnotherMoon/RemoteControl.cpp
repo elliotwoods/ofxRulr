@@ -130,6 +130,19 @@ namespace ofxRulr {
 					}
 					RULR_CATCH_ALL_TO_ALERT;
 					}, ' ');
+
+				inspector->addButton("Set Transform all", [this]() {
+					try {
+						this->setTransformAll(
+							this->parameters.setValues.transform.sizeX
+							, this->parameters.setValues.transform.sizeY
+							, this->parameters.setValues.transform.offsetX
+							, this->parameters.setValues.transform.offsetY
+						);
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					}, 't');
+
 			}
 
 			//---------
@@ -162,6 +175,21 @@ namespace ofxRulr {
 					laser->parameters.deviceState.projection.color.red.set(red);
 					laser->parameters.deviceState.projection.color.green.set(green);
 					laser->parameters.deviceState.projection.color.blue.set(blue);
+				}
+			}
+
+			//---------
+			void
+				RemoteControl::setTransformAll(float sizeX, float sizeY, float offsetX, float offsetY)
+			{
+				this->throwIfMissingAnyConnection();
+				auto lasersNode = this->getInput<Lasers>();
+				auto lasers = lasersNode->getLasersSelected();
+				for (auto laser : lasers) {
+					laser->parameters.deviceState.projection.transform.sizeX.set(sizeX);
+					laser->parameters.deviceState.projection.transform.sizeY.set(sizeY);
+					laser->parameters.deviceState.projection.transform.offsetX.set(offsetX);
+					laser->parameters.deviceState.projection.transform.offsetY.set(offsetY);
 				}
 			}
 		}

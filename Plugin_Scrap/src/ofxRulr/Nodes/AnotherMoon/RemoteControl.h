@@ -17,6 +17,7 @@ namespace ofxRulr {
 
 				void homeAll();
 				void setRGBAll(float, float, float);
+				void setTransformAll(float, float, float, float);
 			protected:
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
@@ -32,7 +33,16 @@ namespace ofxRulr {
 							ofParameter<float> blue{ "Blue", 0.0f, 0.0f, 1.0f };
 							PARAM_DECLARE("Color", red, green, blue);
 						} color;
-						PARAM_DECLARE("Set values", color);
+
+						struct : ofParameterGroup {
+							ofParameter<float> sizeX{ "Size X", 1.0f, 0.0f, 1.0f };
+							ofParameter<float> sizeY{ "Size Y", 1.0f, 0.0f, 1.0f };
+							ofParameter<float> offsetX{ "Offset X", 0.0f, 0.0f, 1.0f };
+							ofParameter<float> offsetY{ "Offset Y", 0.0f, 0.0f, 1.0f };
+							PARAM_DECLARE("Transform", sizeX, sizeY, offsetX, offsetY);
+						} transform;
+
+						PARAM_DECLARE("Set values", color, transform);
 					} setValues;
 
 					PARAM_DECLARE("RemoteControl", adjust, setValues);

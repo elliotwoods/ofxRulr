@@ -83,7 +83,7 @@ namespace ofxRulr {
 						// Find the laser
 						shared_ptr<Laser> laser;
 						for (auto it : lasers) {
-							if (it->parameters.communications.address.get() == laserCapture->laserAddress) {
+							if (it->parameters.serialNumber.get() == laserCapture->serialNumber) {
 								laser = it;
 								break;
 							}

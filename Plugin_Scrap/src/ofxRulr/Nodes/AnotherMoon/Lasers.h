@@ -22,7 +22,7 @@ namespace ofxRulr {
 				
 				void init();
 				void update();
-				void drawWorldStage();
+				void drawWorldAdvanced(DrawWorldAdvancedArgs&);
 
 				void serialize(nlohmann::json&);
 				void deserialize(const nlohmann::json&);
@@ -39,14 +39,13 @@ namespace ofxRulr {
 				vector<shared_ptr<Laser>> getLasersSelected();
 				vector<shared_ptr<Laser>> getLasersAll();
 
-				shared_ptr<Laser> findLaser(int address);
+				shared_ptr<Laser> findLaser(int serialNumber);
 
 				bool sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage>);
 				bool isCommunicationEnabled() const;
 			protected:
 				friend Laser;
 
-				void importCSV();
 				void importJson();
 
 				Utils::CaptureSet<Laser> lasers;
@@ -57,9 +56,10 @@ namespace ofxRulr {
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", true };
-						ofParameter<string> baseAddress{ "Base address", "10.0.1." };
 						ofParameter<bool> logAcks{ "Log acks", false };
-						PARAM_DECLARE("Communications", enabled, baseAddress, logAcks);
+						ofParameter<int> retryDuration{ "Retry duration [ms]", 10000 };
+						ofParameter<int> retryPeriod{ "Retry period [ms]", 500 };
+						PARAM_DECLARE("Communications", enabled, logAcks, retryDuration, retryPeriod);
 					} communications;
 
 					struct : ofParameterGroup {
@@ -96,7 +96,8 @@ namespace ofxRulr {
 						ofParameter<WhenActive> centerOffsetLine{ "Center offset line", WhenActive::Never };
 						ofParameter<WhenActive> modelPreview{ "Model preview", WhenActive::Always };
 						ofParameter<WhenActive> frustum{ "Frustum", WhenActive::Selected };
-						PARAM_DECLARE("Draw", rigidBody, trussLine, centerLine, centerOffsetLine, modelPreview, frustum);
+						ofParameter<WhenActive> picturePreview{ "Picture preview", WhenActive::Selected };
+						PARAM_DECLARE("Draw", rigidBody, trussLine, centerLine, centerOffsetLine, modelPreview, frustum, picturePreview);
 					} draw;
 
 					PARAM_DECLARE("Lasers"

@@ -139,7 +139,7 @@ namespace ofxRulr {
 					this->panel->addTitle("Select laser capture");
 				}
 				else {
-					panel->addTitle("Laser #" + ofToString(this->laserCapture->laserAddress));
+					panel->addTitle("Serial #" + ofToString(this->laserCapture->serialNumber));
 					panel->addIndicatorBool("Solve success", [this]() {
 						return this->laserCapture->linesWithCommonPointSolveResult.success;
 						});

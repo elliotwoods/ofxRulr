@@ -25,7 +25,7 @@ namespace ofxRulr {
 			{
 				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
-				RULR_NODE_DRAW_WORLD_LISTENER;
+				RULR_NODE_DRAW_WORLD_ADVANCED_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 
 				this->manageParameters(this->parameters);
@@ -129,15 +129,16 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Lasers::drawWorldStage()
+				Lasers::drawWorldAdvanced(DrawWorldAdvancedArgs& drawArgs)
 			{
-				Laser::DrawArguments args;
+				Laser::DrawArguments args{ drawArgs };
 				{
 					args.rigidBody = ofxRulr::isActive(this, this->parameters.draw.rigidBody);
 					args.trussLine = ofxRulr::isActive(this, this->parameters.draw.trussLine);
 					args.centerLine = ofxRulr::isActive(this, this->parameters.draw.centerLine);
 					args.centerOffsetLine = ofxRulr::isActive(this, this->parameters.draw.centerOffsetLine);
 					args.modelPreview = ofxRulr::isActive(this, this->parameters.draw.modelPreview);
+					args.picture = ofxRulr::isActive(this, this->parameters.draw.picturePreview);
 
 					// Ground height
 					{
@@ -181,13 +182,6 @@ namespace ofxRulr {
 				Lasers::populateInspector(ofxCvGui::InspectArguments& inspectArgs)
 			{
 				auto inspector = inspectArgs.inspector;
-
-				inspector->addButton("Import CSV", [this]() {
-					try {
-						this->importCSV();
-					}
-					RULR_CATCH_ALL_TO_ALERT;
-					});
 
 				inspector->addButton("Import JSON", [this]() {
 					try {
@@ -284,11 +278,11 @@ namespace ofxRulr {
 
 			//----------
 			shared_ptr<Laser>
-				Lasers::findLaser(int address)
+				Lasers::findLaser(int serialNumber)
 			{
 				auto lasers = this->lasers.getSelection();
 				for (auto laser : lasers) {
-					if (laser->parameters.communications.address.get() == address) {
+					if (laser->parameters.serialNumber.get() == serialNumber) {
 						return laser;
 					}
 				}
@@ -321,72 +315,6 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Lasers::importCSV()
-			{
-				auto result = ofSystemLoadDialog("Select CSV file");
-				if (result.bSuccess) {
-					auto contents = (string) ofBuffer(ofFile(result.filePath));
-					auto lines = ofSplitString(contents, "\n");
-					for (const auto& line : lines) {
-						auto columns = ofSplitString(line, ",");
-
-						shared_ptr<Laser> laser;
-
-						if (columns.size() >= 1) {
-							auto laserAddress = ofToInt(columns[0]);
-
-							// first check if we should be using an existing laser
-							{
-								auto priorLasers = this->lasers.getAllCaptures();
-								bool foundInPriors = false;
-								for (auto priorLaser : priorLasers) {
-									if (priorLaser->parameters.communications.address.get() == laserAddress) {
-										// It's in priors, use that
-										laser = priorLaser;
-										foundInPriors = true;
-										break;
-									}
-								}
-
-								if (!foundInPriors) {
-									// It's not in priors, set this up as a new one
-									laser = make_shared<Laser>();
-									laser->setParent(this);
-									laser->parameters.communications.address.set(laserAddress);
-									this->lasers.add(laser);
-								}
-							}
-
-						}
-
-						if (columns.size() >= 4) {
-							laser->getRigidBody()->setPosition({
-								ofToFloat(columns[1])
-								, ofToFloat(columns[2])
-								, ofToFloat(columns[3])
-								});
-						}
-
-						if (columns.size() >= 7) {
-							laser->getRigidBody()->setRotationEuler({
-								ofToFloat(columns[4])
-								, ofToFloat(columns[5])
-								, ofToFloat(columns[6])
-								});
-						}
-
-						if (columns.size() >= 9) {
-							laser->parameters.intrinsics.fov.set({
-								ofToFloat(columns[7])
-								, ofToFloat(columns[8])
-								});
-						}
-					}
-				}
-			}
-
-			//----------
-			void
 				Lasers::importJson()
 			{
 				// Load json (from our RunDeck format created by make_nodes.py)
@@ -408,15 +336,16 @@ namespace ofxRulr {
 							}
 						}
 
-						auto laserAddress = jsonModule["data"]["serialNumber"].get<int>();
+						auto serialNumber = jsonModule["data"]["serialNumber"].get<int>();
 						auto positionIndex = jsonModule["data"]["positionIndex"].get<int>();
+						auto hostname = jsonModule["hostname"].get<string>();
 
 						// check if we should be using an existing laser
 						{
 							auto priorLasers = this->lasers.getAllCaptures();
 							bool foundInPriors = false;
 							for (auto priorLaser : priorLasers) {
-								if (priorLaser->parameters.communications.address.get() == laserAddress) {
+								if (priorLaser->parameters.positionIndex.get() == positionIndex) {
 									// It's in priors, use that
 									laser = priorLaser;
 									foundInPriors = true;
@@ -428,7 +357,8 @@ namespace ofxRulr {
 								// It's not in priors, set this up as a new one
 								laser = make_shared<Laser>();
 								laser->setParent(this);
-								laser->parameters.communications.address.set(laserAddress);
+								laser->parameters.serialNumber.set(serialNumber);
+								laser->parameters.communications.hostname.set(hostname);
 								this->lasers.add(laser);
 							}
 						}

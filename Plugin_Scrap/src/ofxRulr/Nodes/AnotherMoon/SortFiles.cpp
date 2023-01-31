@@ -81,7 +81,7 @@ namespace ofxRulr {
 								? laserCapture->beamCaptures.getSelection()
 								: laserCapture->beamCaptures.getAllCaptures();
 
-							laserCapture->directory = cameraCapture->directory / ("Laser " + ofToString(laserCapture->laserAddress));
+							laserCapture->directory = cameraCapture->directory / ("Laser " + ofToString(laserCapture->serialNumber));
 
 							Utils::ScopedProcess scopedProcessBeamCaptures("Beam captures", false, beamCaptures.size());
 

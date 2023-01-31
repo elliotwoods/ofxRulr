@@ -46,11 +46,11 @@ namespace ofxRulr {
 								const size_t minBeamCapture = 2;
 
 								auto beamCaptures = laserCapture->beamCaptures.getSelection();
-								Utils::ScopedProcess scopedProcessLasers("Laser #" + ofToString(laserCapture->laserAddress), false);
+								Utils::ScopedProcess scopedProcessLasers("Laser #" + ofToString(laserCapture->serialNumber), false);
 
 								// Gather solveData and parameters
 								if (beamCaptures.size() < minBeamCapture) {
-									throw(ofxRulr::Exception("Too few beam captures (" + ofToString(beamCaptures.size()) + ") for laser #" + ofToString(laserCapture->laserAddress)));
+									throw(ofxRulr::Exception("Too few beam captures (" + ofToString(beamCaptures.size()) + ") for laser s#" + ofToString(laserCapture->serialNumber)));
 								}
 
 								// Gather solveData and parameters

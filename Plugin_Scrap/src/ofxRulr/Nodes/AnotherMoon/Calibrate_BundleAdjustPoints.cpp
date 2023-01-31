@@ -51,14 +51,14 @@ namespace ofxRulr {
 					, cameraIntrinsics);
 
 				// Map laser addresses to indices
-				map<size_t, int> laserAddressByIndex;
-				map<int, size_t> laserIndexByAddress;
+				map<size_t, int> laserSerialNumberByIndex;
+				map<int, size_t> laserIndexBySerialNumber;
 				{
 					size_t index = 0;
 					for (auto laser : selectedLasers) {
-						auto address = laser->parameters.communications.address.get();
-						laserAddressByIndex[index] = address;
-						laserIndexByAddress[address] = index;
+						auto serialNumber = laser->parameters.serialNumber.get();
+						laserSerialNumberByIndex[index] = serialNumber;
+						laserIndexBySerialNumber[serialNumber] = index;
 						index++;
 					}
 				}
@@ -70,7 +70,7 @@ namespace ofxRulr {
 						auto laserCaptures = cameraCapture->laserCaptures.getSelection();
 						for(auto laserCapture : laserCaptures) {
 							Solvers::BundleAdjustmentPoints::Image image;
-							image.pointIndex = laserIndexByAddress[laserCapture->laserAddress];
+							image.pointIndex = laserIndexBySerialNumber[laserCapture->serialNumber];
 							image.viewIndex = cameraIndex;
 							image.imagePoint = laserCapture->imagePointInCamera;
 							problem.addImagePointObservation(image, true);
@@ -128,7 +128,7 @@ namespace ofxRulr {
 
 				// Pull the solution back out
 				{
-					for (const auto& it : laserAddressByIndex) {
+					for (const auto& it : laserSerialNumberByIndex) {
 						selectedLasers[it.first]->getRigidBody()->setPosition(solution.worldPoints[it.first]);
 					}
 

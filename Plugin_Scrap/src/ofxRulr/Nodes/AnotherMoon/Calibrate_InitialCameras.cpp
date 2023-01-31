@@ -33,7 +33,7 @@ namespace ofxRulr {
 							auto laserCaptures = cameraCapture->laserCaptures.getSelection();
 							for (auto laserCapture : laserCaptures) {
 								// Get the laser that matches this capture
-								auto laser = lasersNode->findLaser(laserCapture->laserAddress);
+								auto laser = lasersNode->findLaser(laserCapture->serialNumber);
 								if (!laser) {
 									continue;
 								}

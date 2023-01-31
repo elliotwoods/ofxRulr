@@ -53,17 +53,17 @@ namespace ofxRulr {
 
 				// Map laser addresses to indices
 				map<size_t, int> laserAddressByIndex;
-				map<int, size_t> laserIndexByAddress;
+				map<int, size_t> laserIndexBySerialNumber;
 				{
 					size_t index = 0;
 					for (auto laser : selectedLasers) {
-						auto address = laser->parameters.communications.address.get();
+						auto serialNumber = laser->parameters.serialNumber.get();
 
-						if (laserIndexByAddress.find(address) != laserIndexByAddress.end()) {
-							throw(ofxRulr::Exception("Duplicate laser address : " + ofToString(address)));
+						if (laserIndexBySerialNumber.find(serialNumber) != laserIndexBySerialNumber.end()) {
+							throw(ofxRulr::Exception("Duplicate laser serialNumber : " + ofToString(serialNumber)));
 						}
-						laserAddressByIndex[index] = address;
-						laserIndexByAddress[address] = index;
+						laserAddressByIndex[index] = serialNumber;
+						laserIndexBySerialNumber[serialNumber] = index;
 						index++;
 					}
 				}
@@ -81,8 +81,8 @@ namespace ofxRulr {
 						for (auto laserCapture : laserCaptures) {
 
 							// check laser is part of set
-							auto findIndex = laserIndexByAddress.find(laserCapture->laserAddress);
-							if (findIndex == laserIndexByAddress.end()) {
+							auto findIndex = laserIndexBySerialNumber.find(laserCapture->serialNumber);
+							if (findIndex == laserIndexBySerialNumber.end()) {
 								continue;
 							}
 
