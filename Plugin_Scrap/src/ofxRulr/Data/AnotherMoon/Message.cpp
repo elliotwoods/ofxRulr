@@ -125,6 +125,7 @@ namespace ofxRulr {
 				, const std::chrono::system_clock::duration& retryPeriod)
 				: OutgoingMessage(targetHost)
 				, retryDuration(retryDuration)
+				, retryPeriod(retryPeriod)
 				, retryDeadline(std::chrono::system_clock::now() + retryDuration)
 			{
 
@@ -150,7 +151,7 @@ namespace ofxRulr {
 
 				// Otherwise check retry period and deadline
 				auto now = std::chrono::system_clock::now();
-				return now - this->lastSendTime > this->retryDuration
+				return now - this->lastSendTime > this->retryPeriod
 					&& now < retryDeadline;
 			}
 
