@@ -164,6 +164,10 @@ namespace ofxRulr {
 						problem.setLaserFOVsFixed();
 					}
 
+					if (this->parameters.bundleAdjustment.fixed.lasers.centerOffset) {
+						problem.setLaserCenterOffsetsFixed();
+					}
+
 					if (this->parameters.bundleAdjustment.fixed.cameras) {
 						problem.setCamerasFixed();
 					}
@@ -187,6 +191,7 @@ namespace ofxRulr {
 					for (const auto& it : laserAddressByIndex) {
 						selectedLasers[it.first]->getRigidBody()->setTransform(solution.laserProjectors[it.first].rigidBodyTransform.getTransform());
 						selectedLasers[it.first]->parameters.intrinsics.fov.set(solution.laserProjectors[it.first].fov);
+						selectedLasers[it.first]->parameters.intrinsics.centerOffset.set(solution.laserProjectors[it.first].centerOffset);
 					}
 
 					for (size_t cameraIndex = 0; cameraIndex < cameraCaptures.size(); cameraIndex++) {

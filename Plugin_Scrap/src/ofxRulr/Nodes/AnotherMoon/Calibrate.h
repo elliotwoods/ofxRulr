@@ -301,7 +301,8 @@ namespace ofxRulr {
 								ofParameter<bool> position{ "Position", false };
 								ofParameter<bool> rotation{ "Rotation", false };
 								ofParameter<bool> fov{ "FOV", false };
-								PARAM_DECLARE("Lasers", position, rotation, fov);
+								ofParameter<bool> centerOffset{ "Center offset", true };
+								PARAM_DECLARE("Lasers", position, rotation, fov, centerOffset);
 							} lasers;
 
 							ofParameter<bool> cameras{ "Cameras", false };

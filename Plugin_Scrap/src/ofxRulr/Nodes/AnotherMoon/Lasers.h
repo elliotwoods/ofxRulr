@@ -92,12 +92,12 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<WhenActive> rigidBody{ "Rigid Body", WhenActive::Selected };
 						ofParameter<WhenActive> trussLine{ "Truss line", WhenActive::Always };
-						ofParameter<WhenActive> centerLine{ "Center line", WhenActive::Selected };
-						ofParameter<WhenActive> centerOffsetLine{ "Center offset line", WhenActive::Never };
+						ofParameter<WhenActive> opticalAxis{ "Optical axis", WhenActive::Selected };
+						ofParameter<WhenActive> centerRay{ "Center ray", WhenActive::Never };
 						ofParameter<WhenActive> modelPreview{ "Model preview", WhenActive::Always };
 						ofParameter<WhenActive> frustum{ "Frustum", WhenActive::Selected };
 						ofParameter<WhenActive> picturePreview{ "Picture preview", WhenActive::Selected };
-						PARAM_DECLARE("Draw", rigidBody, trussLine, centerLine, centerOffsetLine, modelPreview, frustum, picturePreview);
+						PARAM_DECLARE("Draw", rigidBody, trussLine, opticalAxis, centerRay, modelPreview, frustum, picturePreview);
 					} draw;
 
 					PARAM_DECLARE("Lasers"

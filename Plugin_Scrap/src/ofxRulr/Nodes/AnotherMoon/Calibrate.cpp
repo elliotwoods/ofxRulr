@@ -915,7 +915,9 @@ goto_nextLaser:
 
 goto_endCameraCapture:
 				if (!dryRun) {
-					this->cameraCaptures.add(cameraCapture);
+					if (cameraCapture->laserCaptures.size() > 0) {
+						this->cameraCaptures.add(cameraCapture);
+					}
 				}
 			}
 

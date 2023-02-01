@@ -232,8 +232,8 @@ namespace ofxRulr {
 						// Draw axis
 						ofDrawAxis(1.0f);
 
-						// Draw center line
-						if (args.centerLine) {
+						// Draw optical axis
+						if (args.opticalAxis) {
 							ofPushStyle();
 							{
 								ofSetColor(this->color);
@@ -289,12 +289,12 @@ namespace ofxRulr {
 					ofPopMatrix();
 				}
 
-				// Draw center offset line
-				if (args.centerOffsetLine) {
+				// Draw center ray
+				if (args.centerRay) {
 					auto model = this->getModel();
 					ofPushStyle();
 					{
-						auto ray = model.castRayWorldSpace(this->parameters.intrinsics.centerOffset);
+						auto ray = model.castRayWorldSpace({ 0.0, 0.0 });
 						ofSetColor(this->color);
 						ofDrawLine(ray.s
 							, ray.s + ray.t * 100);
@@ -528,7 +528,7 @@ namespace ofxRulr {
 			std::future<void>
 				Laser::drawCircle(glm::vec2 center, float radius)
 			{
-				center += this->parameters.intrinsics.centerOffset.get();
+				center -= this->parameters.intrinsics.centerOffset.get();
 
 				auto message = this->createOutgoingMessageRetry();
 				{

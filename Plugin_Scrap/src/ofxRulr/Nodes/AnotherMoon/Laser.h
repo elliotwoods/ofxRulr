@@ -42,8 +42,8 @@ namespace ofxRulr {
 					ofxRulr::DrawWorldAdvancedArgs& drawArgs;
 					bool rigidBody;
 					bool trussLine;
-					bool centerLine;
-					bool centerOffsetLine;
+					bool opticalAxis;
+					bool centerRay;
 					bool modelPreview;
 					float groundHeight;
 					bool frustum;

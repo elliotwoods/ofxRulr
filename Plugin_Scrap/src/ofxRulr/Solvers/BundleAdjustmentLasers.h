@@ -38,7 +38,8 @@ namespace ofxRulr {
 			static void fillLaserParameters(const Models::LaserProjector&
 				, double* laserTranslationParameters
 				, double* laserRotationParameters
-				, double* laserFovParameters);
+				, double* laserFovParameters
+				, double* laserCenterOffsetParameters);
 
 			class Problem {
 			public:
@@ -62,6 +63,9 @@ namespace ofxRulr {
 				void setLaserFOVsFixed();
 				void setLaserFOVsVariable();
 
+				void setLaserCenterOffsetsFixed();
+				void setLaserCenterOffsetsVariable();
+
 				void setCamerasFixed();
 				void setCamerasVariable();
 
@@ -72,9 +76,11 @@ namespace ofxRulr {
 
 				vector<double*> allCameraTranslationParameters;
 				vector<double*> allCameraRotationParameters;
+
 				vector<double*> allLaserTranslationParameters;
 				vector<double*> allLaserRotationParameters;
 				vector<double*> allLaserFovParameters;
+				vector<double*> allLaserCenterOffsetParameters;
 
 				set<int> activeCameras;
 				set<int> activeLasers;

@@ -10,19 +10,20 @@ namespace ofxRulr {
 		template<typename T>
 		struct LaserProjector_ {
 			Transform_<T> rigidBodyTransform;
-			glm::tvec2<T> fov;
+			glm::tvec2<T> fov{ (T)0, (T)0 };
+			glm::tvec2<T> fov2{ (T)0, (T)0 }; // second order fov param
 
 			glm::tvec2<T> projectionPointToAngles(const glm::tvec2<T>& projectionPoint)
 			{
 				return {
-					projectionPoint.x * this->fov.x / (T)2 * DEG_TO_RAD
-					, projectionPoint.y * this->fov.y / (T)2 * DEG_TO_RAD
+					(projectionPoint.x + centerOffset.x) * (this->fov.x / (T)2 * DEG_TO_RAD)
+					, (projectionPoint.y + centerOffset.y) * (this->fov.y / (T)2 * DEG_TO_RAD)
 				};
 			}
 
 			Ray_<T> castRayObjectSpace(const glm::tvec2<T>& projectionPoint)
 			{
-				auto angles = this->projectionPointToAngles(projectionPoint);
+				auto angles = this->projectionPointToAngles(projectionPoint + centerOffset);
 				auto direction = glm::rotateY(glm::tvec3<T>(0, 0, 1), angles.x);
 				direction = glm::rotateX(direction, angles.y);
 				return Ray_<T> {
@@ -48,6 +49,7 @@ namespace ofxRulr {
 				LaserProjector_<T2> castLaserProjector;
 				castLaserProjector.rigidBodyTransform = this->rigidBodyTransform.castTo<T2>();
 				castLaserProjector.fov = (glm::tvec2<T2>) this->fov;
+				castLaserProjector.centerOffset = (glm::tvec2<T2>) this->centerOffset;
 				return castLaserProjector;
 			}
 		};
