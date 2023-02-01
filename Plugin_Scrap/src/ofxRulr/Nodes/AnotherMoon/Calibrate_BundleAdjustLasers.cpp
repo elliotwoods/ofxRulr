@@ -10,7 +10,7 @@ namespace ofxRulr {
 			void
 				Calibrate::calibrateBundleAdjustLasers(bool performSolve)
 			{
-				Utils::ScopedProcess scopedProcess(performSolve ? "Bundle adjust points" : "Calculate residuals");
+				Utils::ScopedProcess scopedProcess(performSolve ? "Bundle adjust lasers" : "Calculate residuals");
 
 				this->throwIfMissingAConnection<Lasers>();
 				this->throwIfMissingAConnection<Item::Camera>();

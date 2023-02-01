@@ -190,6 +190,13 @@ namespace ofxRulr {
 					inspector->add(element);
 
 					element->onDraw += [this](ofxCvGui::DrawArguments& args) {
+						ofPushStyle();
+						{
+							ofSetColor(200);
+							ofDrawRectangle(args.localBounds);
+						}
+						ofPopStyle();
+
 						if (!this->lastPictureSent.empty()) {
 							ofPolyline line;
 
