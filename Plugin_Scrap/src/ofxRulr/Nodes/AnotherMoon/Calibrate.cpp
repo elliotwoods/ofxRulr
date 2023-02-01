@@ -541,7 +541,7 @@ namespace ofxRulr {
 						this->offsetBeamCaptures();
 					}
 					RULR_CATCH_ALL_TO_ALERT;
-					});
+					})->addToolTip("Apply center offset (legacy)");
 
 
 				inspector->addTitle("Calibrate", ofxCvGui::Widgets::Title::Level::H2);
@@ -595,6 +595,15 @@ namespace ofxRulr {
 						RULR_CATCH_ALL_TO_ALERT;
 						});
 				}
+
+				inspector->addSpacer();
+
+				inspector->addButton("Fix missing serial numbers", [this]() {
+					try {
+						this->assignSerialNumbersBySelectedLasers();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					});
 
 			}
 
@@ -667,218 +676,244 @@ namespace ofxRulr {
 				allCameraCaptures.push_back(cameraCapture);
 				cameraCapture->parentSelection = &this->cameraEditSelection;
 
-				auto tryNtimes = [this](const function<future<void>()>& getFuture) {
-					return std::async([=]() {
-						bool success = false;
-						for (int t = 0; t < this->parameters.capture.messageTransmitTries.get(); t++) {
-							try {
-								auto future = getFuture();
-								future.get();
-								success = true;
+				try {
+					auto tryNtimes = [this](const function<future<void>()>& getFuture) {
+						return std::async([=]() {
+							bool success = false;
+							for (int t = 0; t < this->parameters.capture.messageTransmitTries.get(); t++) {
+								try {
+									auto future = getFuture();
+									future.get();
+									success = true;
+									break;
+								}
+								catch (const std::exception& e) {
+									ofLogWarning("Message send failed") << e.what();
+								}
+							}
+							if (!success) {
+								throw(Exception("Max tries reached sending message"));
+							}
+							});
+
+					};
+
+					// Flush the incoming camera buffer and ignore them
+					{
+						auto ignoredImages = this->pollNewCameraFiles();
+					}
+
+					// iterate through lasers, send beams and capture
+					for (const auto& laser : allLasers) {
+						Utils::ScopedProcess scopedProcessLaser("Laser s#" + ofToString(laser->parameters.serialNumber.get()) + "p#" + ofToString(laser->parameters.positionIndex.get()), false);
+
+						// Gather other lasers
+						auto otherLasers = allLasers;
+						otherLasers.erase(std::remove(otherLasers.begin(), otherLasers.end(), laser), otherLasers.end());
+
+						// Set all others to laserStateForOthers
+						{
+							Utils::ScopedProcess scopedProcessOtherLasers("Setting state on other lasers", false);
+
+							vector<std::future<void>> actions;
+							switch (this->parameters.capture.laserStateForOthers.get().get()) {
+							case LaserState::Shutdown:
+								for (auto laser : otherLasers) {
+									laser->shutdown();
+									laser->parameters.deviceState.state.set(Laser::State::Shutdown);
+									actions.push_back(tryNtimes([=]() {
+										return laser->pushState();
+										}));
+								}
+								break;
+							case LaserState::Standby:
+								for (auto laser : otherLasers) {
+									laser->parameters.deviceState.state.set(Laser::State::Standby);
+									actions.push_back(tryNtimes([=]() {
+										return laser->pushState();
+										}));
+								}
+								break;
+							case LaserState::Run:
+								for (auto laser : otherLasers) {
+									laser->parameters.deviceState.state.set(Laser::State::Run);
+									actions.push_back(tryNtimes([=]() {
+										return laser->pushState();
+										}));
+								}
+								break;
+							case LaserState::TestPattern:
+								lasersNode->sendTestImageTo(otherLasers);
 								break;
 							}
-							catch (const std::exception& e) {
-								ofLogWarning("Message send failed") << e.what();
+							for (auto& action : actions) {
+								action.get();
 							}
 						}
-						if (!success) {
-							throw(Exception("Max tries reached sending message"));
+
+						// Turn this laser on
+						{
+							Utils::ScopedProcess scopedProcessOtherLasers("Setting state on this laser", false);
+
+							laser->parameters.deviceState.state.set(Laser::State::Run);
+							tryNtimes([=]() {
+								return laser->pushState();
+								}).get();
 						}
-						});
 
-				};
+						// Create a new laserCapture
+						auto laserCapture = make_shared<LaserCapture>();
+						allLaserCaptures.push_back(laserCapture);
+						{
+							laserCapture->serialNumber = laser->parameters.serialNumber.get();
+							laserCapture->parentSelection = &cameraCapture->ourSelection;
+						}
 
-				// iterate through lasers, send beams and capture
-				for (const auto & laser : allLasers) {
-					Utils::ScopedProcess scopedProcessLaser("Laser s#" + ofToString(laser->parameters.serialNumber.get()) + "p#" + ofToString(laser->parameters.positionIndex.get()), false);
+						// Iterate thorugh the calibration image points
+						{
+							Utils::ScopedProcess scopedProcessImagePoints("Image points"
+								, false
+								, calibrationImagePoints.size());
+							for (const auto& calibrationImagePoint : calibrationImagePoints) {
+								try {
+									auto beamCapture = make_shared<BeamCapture>();
+									allBeamCaptures.push_back(beamCapture);
 
-					// Gather other lasers
-					auto otherLasers = allLasers;
-					otherLasers.erase(std::remove(otherLasers.begin(), otherLasers.end(), laser), otherLasers.end());
-					
-					// Set all others to laserStateForOthers
-					{
-						Utils::ScopedProcess scopedProcessOtherLasers("Setting state on other lasers", false);
+									Utils::ScopedProcess scopedProcessImagePoint(ofToString(calibrationImagePoint));
 
+									beamCapture->projectionPoint = calibrationImagePoint;
+									beamCapture->parentSelection = &laserCapture->ourSelection;
+
+									//Legacy
+									{
+										// Originally we were offsetting when rendering
+										// Now we send raw beams out without offset during calibration
+										beamCapture->isOffset = false;
+									}
+
+									// Capture background pass
+									{
+										// Zero brightness
+										{
+											laser->parameters.deviceState.projection.color.red.set(0);
+											laser->parameters.deviceState.projection.color.green.set(0);
+											laser->parameters.deviceState.projection.color.blue.set(0);
+											tryNtimes([=]() {
+												return laser->pushColor();
+												}).get();
+										}
+
+										// Standby
+										if (this->parameters.capture.standbyForBackgroundCapture) {
+											auto state = laser->parameters.deviceState.state.get();
+											state.set(Laser::State::Standby);
+											laser->parameters.deviceState.state.set(state);
+											tryNtimes([=]() {
+												return laser->pushState();
+												}).get();
+										}
+
+										this->waitForDelay();
+
+										if (!dryRun) {
+											try {
+												beamCapture->offImage.pathOnCamera = this->captureToURL();
+											}
+											catch (const Exception& e) {
+												RULR_ERROR << e.what();
+												switch (this->parameters.capture.remoteCamera.ifCameraShootFails.get()) {
+												case IfCameraShootFails::NextBeam:
+													goto goto_nextBeam;
+												case IfCameraShootFails::NextLaser:
+													goto goto_nextLaser;
+												case IfCameraShootFails::End:
+													goto goto_endCameraCapture;
+												}
+											}
+										}
+									}
+
+									// Capture foreground pass (positive image)
+									{
+										// Draw the beam
+										tryNtimes([=]() {
+											return laser->drawCalibrationBeam(calibrationImagePoint);
+											}).get();
+
+											// Full brightness
+											{
+												laser->parameters.deviceState.projection.color.red.set(1);
+												laser->parameters.deviceState.projection.color.green.set(1);
+												laser->parameters.deviceState.projection.color.blue.set(1);
+												tryNtimes([=]() {
+													return laser->pushColor();
+													}).get();
+											}
+
+											// Remove standby
+											if (this->parameters.capture.standbyForBackgroundCapture) {
+												auto state = laser->parameters.deviceState.state.get();
+												state.set(Laser::State::Run);
+												laser->parameters.deviceState.state.set(state);
+												tryNtimes([=]() {
+													return laser->pushState();
+													}).get();
+											}
+
+											this->waitForDelay();
+
+											if (!dryRun) {
+												beamCapture->onImage.pathOnCamera = this->captureToURL();
+											}
+									}
+
+									// Save the data
+									if (!dryRun) {
+										laserCapture->beamCaptures.add(beamCapture);
+									}
+
+									scopedProcessImagePoint.end();
+								}
+								RULR_CATCH_ALL_TO({
+									if (this->parameters.capture.continueOnFail) {
+										ofLogError(this->getTypeName()) << e.what();
+									}
+									else {
+										throw e;
+									}
+									});
+goto_nextBeam:
+								cout << "Skipping beam" << std::endl;
+							}
+goto_nextLaser:
+							cout << "Skipping laser" << std::endl;
+						}
+
+						if (laserCapture->beamCaptures.size() > 0) {
+							cameraCapture->laserCaptures.add(laserCapture);
+						}
+					}
+
+					// Set all to laserStateForOthers
+					if (this->parameters.capture.laserStateForOthers.get() == LaserState::TestPattern) {
+						lasersNode->sendTestImageTo(allLasers);
+					}
+					else {
 						vector<std::future<void>> actions;
-						switch (this->parameters.capture.laserStateForOthers.get().get()) {
-						case LaserState::Shutdown:
-							for (auto laser : otherLasers) {
-								laser->shutdown();
-								laser->parameters.deviceState.state.set(Laser::State::Shutdown);
-								actions.push_back(tryNtimes([=]() {
-									return laser->pushState();
-									}));
-							}
-							break;
-						case LaserState::Standby:
-							for (auto laser : otherLasers) {
-								laser->parameters.deviceState.state.set(Laser::State::Standby);
-								actions.push_back(tryNtimes([=]() {
-									return laser->pushState();
-									}));
-							}
-							break;
-						case LaserState::Run:
-							for (auto laser : otherLasers) {
-								laser->parameters.deviceState.state.set(Laser::State::Run);
-								actions.push_back(tryNtimes([=]() {
-									return laser->pushState();
-									}));
-							}
-							break;
-						case LaserState::TestPattern:
-							lasersNode->sendTestImageTo(otherLasers);
-							break;
+						for (const auto& laser : allLasers) {
+							laser->parameters.deviceState.state.set(Laser::State::Standby);
+							actions.push_back(tryNtimes([=]() {
+								return laser->pushState();
+								}));
 						}
 						for (auto& action : actions) {
 							action.get();
 						}
 					}
-
-					// Turn this laser on
-					{
-						Utils::ScopedProcess scopedProcessOtherLasers("Setting state on this laser", false);
-
-						laser->parameters.deviceState.state.set(Laser::State::Run);
-						tryNtimes([=]() {
-							return laser->pushState();
-							}).get();
-					}
-
-					// Create a new laserCapture
-					auto laserCapture = make_shared<LaserCapture>();
-					allLaserCaptures.push_back(laserCapture);
-					{
-						laserCapture->serialNumber = laser->parameters.serialNumber.get();
-						laserCapture->parentSelection = &cameraCapture->ourSelection;
-					}
-
-					// Iterate thorugh the calibration image points
-					{
-						Utils::ScopedProcess scopedProcessImagePoints("Image points"
-							, false
-							, calibrationImagePoints.size());
-						for (const auto& calibrationImagePoint : calibrationImagePoints) {
-							try {
-								auto beamCapture = make_shared<BeamCapture>();
-								allBeamCaptures.push_back(beamCapture);
-
-								Utils::ScopedProcess scopedProcessImagePoint(ofToString(calibrationImagePoint));
-
-								beamCapture->projectionPoint = calibrationImagePoint;
-								beamCapture->parentSelection = &laserCapture->ourSelection;
-
-								//Legacy
-								{
-									// Originally we were offsetting when rendering
-									// Now we send raw beams out without offset during calibration
-									beamCapture->isOffset = false;
-								}
-
-								// Capture background pass
-								{
-									// Zero brightness
-									{
-										laser->parameters.deviceState.projection.color.red.set(0);
-										laser->parameters.deviceState.projection.color.green.set(0);
-										laser->parameters.deviceState.projection.color.blue.set(0);
-										tryNtimes([=]() {
-											return laser->pushColor();
-											}).get();
-									}
-
-									// Standby
-									if (this->parameters.capture.standbyForBackgroundCapture) {
-										auto state = laser->parameters.deviceState.state.get();
-										state.set(Laser::State::Standby);
-										laser->parameters.deviceState.state.set(state);
-										tryNtimes([=]() {
-											return laser->pushState();
-											}).get();
-									}
-
-									this->waitForDelay();
-
-									if (!dryRun) {
-										beamCapture->offImage.pathOnCamera = this->captureToURL();
-									}
-								}
-
-								// Capture foreground pass (positive image)
-								{
-									// Draw the beam
-									tryNtimes([=]() {
-										return laser->drawCalibrationBeam(calibrationImagePoint);
-										}).get();
-
-									// Full brightness
-									{
-										laser->parameters.deviceState.projection.color.red.set(1);
-										laser->parameters.deviceState.projection.color.green.set(1);
-										laser->parameters.deviceState.projection.color.blue.set(1);
-										tryNtimes([=]() {
-											return laser->pushColor();
-											}).get();
-									}
-
-									// Remove standby
-									if (this->parameters.capture.standbyForBackgroundCapture) {
-										auto state = laser->parameters.deviceState.state.get();
-										state.set(Laser::State::Run);
-										laser->parameters.deviceState.state.set(state);
-										tryNtimes([=]() {
-											return laser->pushState();
-											}).get();
-									}
-
-									this->waitForDelay();
-
-									if (!dryRun) {
-										beamCapture->onImage.pathOnCamera = this->captureToURL();
-									}
-								}
-
-								// Save the data
-								if (!dryRun) {
-									laserCapture->beamCaptures.add(beamCapture);
-								}
-
-								scopedProcessImagePoint.end();
-							}
-							RULR_CATCH_ALL_TO({
-								if (this->parameters.capture.continueOnFail) {
-									ofLogError(this->getTypeName()) << e.what();
-								}
-								else {
-									throw e;
-								}
-								});
-						}
-					}
-
-					if (laserCapture->beamCaptures.size() > 0) {
-						cameraCapture->laserCaptures.add(laserCapture);
-					}
 				}
+				RULR_CATCH_ALL_TO_ALERT;
 
-				// Set all to laserStateForOthers
-				if (this->parameters.capture.laserStateForOthers.get() == LaserState::TestPattern) {
-					lasersNode->sendTestImageTo(allLasers);
-				}
-				else {
-					vector<std::future<void>> actions;
-					for (const auto& laser : allLasers) {
-						laser->parameters.deviceState.state.set(Laser::State::Standby);
-						actions.push_back(tryNtimes([=]() {
-							return laser->pushState();
-							}));
-					}
-					for (auto& action : actions) {
-						action.get();
-					}
-				}
-
+goto_endCameraCapture:
 				if (!dryRun) {
 					this->cameraCaptures.add(cameraCapture);
 				}
@@ -1102,6 +1137,7 @@ namespace ofxRulr {
 					nlohmann::json requestData;
 					requestData["af"] = false;
 					request.body = requestData.dump();
+					request.timeoutSeconds = this->parameters.capture.remoteCamera.requestTimeout.get();
 				}
 
 				auto response = this->urlLoader.handleRequest(request);
@@ -1121,6 +1157,7 @@ namespace ofxRulr {
 				{
 					request.method = ofHttpRequest::GET;
 					request.url = this->getBaseCameraURL() + "event/polling";
+					request.timeoutSeconds = this->parameters.capture.remoteCamera.requestTimeout.get();
 				}
 
 				auto response = this->urlLoader.handleRequest(request);
@@ -1267,6 +1304,26 @@ namespace ofxRulr {
 					}
 					if (!hasLaserCapture) {
 						cameraCapture->setSelected(false);
+					}
+				}
+			}
+
+			//----------
+			void
+				Calibrate::assignSerialNumbersBySelectedLasers()
+			{
+				this->throwIfMissingAConnection<Lasers>();
+				auto lasers = this->getInput<Lasers>()->getLasersSelected();
+
+				auto cameraCaptures = this->cameraCaptures.getSelection();
+				for (auto cameraCapture : cameraCaptures) {
+					auto laserCaptures = cameraCapture->laserCaptures.getSelection();
+					if (lasers.size() != laserCaptures.size()) {
+						throw(Exception("Laser count doesn't match count in capture"));
+					}
+
+					for (size_t i = 0; i < laserCaptures.size(); i++) {
+						laserCaptures[i]->serialNumber = lasers[i]->parameters.serialNumber.get();
 					}
 				}
 			}

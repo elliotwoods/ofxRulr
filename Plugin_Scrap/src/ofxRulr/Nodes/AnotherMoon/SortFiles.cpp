@@ -53,10 +53,9 @@ namespace ofxRulr {
 				}
 
 				const auto onlySelected = this->parameters.selectionOnly.get();
-				const auto moveInsteadOfCopy = this->parameters.moveFiles.get();
+				const auto moveOrCopy = this->parameters.moveOrCopy.get();
 				const auto dryRun = this->parameters.dryRun.get();
 				const auto verbose = this->parameters.verbose.get();
-				const auto stopOnException = this->parameters.stopOnException.get();
 				const auto openFileFirst = this->parameters.openFileFirst.get();
 				const auto dontOverwrite = this->parameters.dontOverwrite.get();
 
@@ -87,7 +86,7 @@ namespace ofxRulr {
 
 							int beamCaptureIndex = 0;
 							for (auto beamCapture : beamCaptures) {
-								auto moveOrCopy = [&](Calibrate::ImagePath& imagePath
+								auto moveOrCopyAction = [&](Calibrate::ImagePath& imagePath
 									, const int beamCaptureIndex
 									, const bool on) {
 										auto priorLocalPath = calibrate->getLocalCopyPath(imagePath);
@@ -140,16 +139,20 @@ namespace ofxRulr {
 												{
 													try {
 														if (verbose) {
-															cout << (moveInsteadOfCopy ? "Move " : "Copy ") << priorLocalPath.string() << " to " << postLocalPath.string();
+															cout << moveOrCopy.toString() << " " << priorLocalPath.string() << " to " << postLocalPath.string();
 														}
 
-														if (!moveInsteadOfCopy) {
+														switch (moveOrCopy.get()) {
+														case MoveOrCopy::Copy:
 															filesystem::copy(priorLocalPath
 																, postLocalPath);
-														}
-														else {
+															break;
+														case MoveOrCopy::Move:
 															filesystem::rename(priorLocalPath
 																, postLocalPath);
+															break;
+														default:
+															break;
 														}
 
 														if (verbose) {
@@ -158,18 +161,12 @@ namespace ofxRulr {
 														imagePath.localCopy = postLocalPath;
 													}
 													catch (filesystem::filesystem_error& error) {
-														if (verbose) {
-															cout << " [FAILED] : " << error.what() << std::endl;
-														}
-
-														if (stopOnException) {
-															throw(error);
-														}
+														throw(Exception("Move/Copy failed : " + std::string(error.what())));
 													}
 												}
 											}
 											else {
-												cout << (moveInsteadOfCopy ? "Move " : "Copy ")
+												cout << this->parameters.moveOrCopy.get().toString() << " "
 													<< priorLocalPath
 													<< " to "
 													<< postLocalPath
@@ -180,12 +177,25 @@ namespace ofxRulr {
 
 								Utils::ScopedProcess scopedProcessBeamCapture(ofToString(beamCaptureIndex), false);
 
-								moveOrCopy(beamCapture->onImage
-									, beamCaptureIndex
-									, true);
-								moveOrCopy(beamCapture->offImage
-									, beamCaptureIndex
-									, false);
+								try {
+									moveOrCopyAction(beamCapture->onImage
+										, beamCaptureIndex
+										, true);
+									moveOrCopyAction(beamCapture->offImage
+										, beamCaptureIndex
+										, false);
+								}
+								catch (const Exception& e) {
+									if (this->parameters.onError.get() == OnError::DisableBeam) {
+										// Just disable this beam capture
+										beamCapture->setSelected(false);
+										RULR_ERROR << e.what();
+									}
+									else {
+										// Really just throw out
+										throw(e);
+									}
+								}
 
 								beamCaptureIndex++;
 							}

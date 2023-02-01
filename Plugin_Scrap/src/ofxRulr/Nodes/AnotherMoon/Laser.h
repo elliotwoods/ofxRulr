@@ -62,6 +62,8 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::InspectArguments&);
 				void drawWorldStage(const DrawArguments&);
 
+				string getLabelName() const;
+
 				string getHostname() const;
 				shared_ptr<Item::RigidBody> getRigidBody();
 				bool getIsAbnormal() const;
@@ -163,7 +165,7 @@ namespace ofxRulr {
 
 					DeviceStateParameters deviceState;
 					
-					PARAM_DECLARE("Laser", positionIndex, communications, intrinsics, deviceState);
+					PARAM_DECLARE("Laser", serialNumber, positionIndex, communications, intrinsics, deviceState);
 				} parameters;
 
 			protected:

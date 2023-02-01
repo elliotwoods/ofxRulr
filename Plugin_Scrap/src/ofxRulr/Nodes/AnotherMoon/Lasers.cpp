@@ -278,9 +278,9 @@ namespace ofxRulr {
 
 			//----------
 			shared_ptr<Laser>
-				Lasers::findLaser(int serialNumber)
+				Lasers::findLaser(int serialNumber, bool onlySelected)
 			{
-				auto lasers = this->lasers.getSelection();
+				auto lasers = onlySelected ? this->lasers.getSelection() : this->lasers.getAllCaptures();
 				for (auto laser : lasers) {
 					if (laser->parameters.serialNumber.get() == serialNumber) {
 						return laser;
@@ -321,6 +321,13 @@ namespace ofxRulr {
 
 				auto result = ofSystemLoadDialog("Select Json file");
 				if (result.bSuccess) {
+					auto priorLasers = this->lasers.getAllCaptures();
+					set<size_t> previousPositionSelections;
+					for (auto priorLaser : priorLasers) {
+						if (priorLaser->isSelected()) {
+							previousPositionSelections.insert(priorLaser->parameters.positionIndex.get());
+						}
+					}
 					this->lasers.clear();
 
 					auto fileContents = ofFile(result.filePath).readToBuffer();
@@ -342,7 +349,6 @@ namespace ofxRulr {
 
 						// check if we should be using an existing laser
 						{
-							auto priorLasers = this->lasers.getAllCaptures();
 							bool foundInPriors = false;
 							for (auto priorLaser : priorLasers) {
 								if (priorLaser->parameters.positionIndex.get() == positionIndex) {
@@ -357,13 +363,18 @@ namespace ofxRulr {
 								// It's not in priors, set this up as a new one
 								laser = make_shared<Laser>();
 								laser->setParent(this);
-								laser->parameters.serialNumber.set(serialNumber);
-								laser->parameters.communications.hostname.set(hostname);
-								this->lasers.add(laser);
+								laser->parameters.positionIndex.set(positionIndex);
 							}
 						}
 
-						laser->parameters.positionIndex.set(positionIndex);
+						// we always remove to start with, even if it's a prior
+						this->lasers.add(laser);
+						if (previousPositionSelections.find(laser->parameters.positionIndex.get()) != previousPositionSelections.end()) {
+							laser->setSelected(true);
+						}
+
+						laser->parameters.serialNumber.set(serialNumber);
+						laser->parameters.communications.hostname.set(hostname);
 						
 						{
 							glm::vec3 worldPosition;

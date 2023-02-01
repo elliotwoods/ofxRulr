@@ -33,7 +33,7 @@ namespace ofxRulr {
 							auto laserCaptures = cameraCapture->laserCaptures.getSelection();
 							for (auto laserCapture : laserCaptures) {
 								// Get the laser that matches this capture
-								auto laser = lasersNode->findLaser(laserCapture->serialNumber);
+								auto laser = lasersNode->findLaser(laserCapture->serialNumber, false);
 								if (!laser) {
 									continue;
 								}
@@ -58,7 +58,7 @@ namespace ofxRulr {
 							int flags = 0;
 							{
 								if (worldPoints.size() < 3) {
-									throw(Exception("Cannot perform SolvePnP with fewer than 3 points"));
+									throw(Exception("Cannot perform SolvePnP with fewer than 3 points. Check that you have lasers selected"));
 								}
 								if (worldPoints.size() == 3) {
 									flags |= cv::SolvePnPMethod::SOLVEPNP_AP3P;

@@ -39,7 +39,7 @@ namespace ofxRulr {
 				vector<shared_ptr<Laser>> getLasersSelected();
 				vector<shared_ptr<Laser>> getLasersAll();
 
-				shared_ptr<Laser> findLaser(int serialNumber);
+				shared_ptr<Laser> findLaser(int serialNumber, bool onlySelected);
 
 				bool sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage>);
 				bool isCommunicationEnabled() const;

@@ -66,33 +66,36 @@ namespace ofxRulr {
 					while (this->oscReceiver->getNextMessage(message)) {
 						this->oscFrameNew.notifyFrameNew = true;
 
-						if (message.getAddress() == "/position" && message.getNumArgs() >= 3) {
-							glm::vec3 position{
-								message.getArgAsFloat(0)
-								, message.getArgAsFloat(1)
-								, message.getArgAsFloat(2)
-							};
-							this->setPosition(position);
-						}
+						try {
+							if (message.getAddress() == "/position" && message.getNumArgs() >= 3) {
+								glm::vec3 position{
+									message.getArgAsFloat(0)
+									, message.getArgAsFloat(1)
+									, message.getArgAsFloat(2)
+								};
+								this->setPosition(position);
+							}
 
-						if (message.getAddress() == "/radius" && message.getNumArgs() >= 1) {
-							this->parameters.diameter.set(message.getArgAsFloat(0) * 2.0f);
-						}
+							if (message.getAddress() == "/radius" && message.getNumArgs() >= 1) {
+								this->parameters.diameter.set(message.getArgAsFloat(0) * 2.0f);
+							}
 
-						if (message.getAddress() == "/diameter" && message.getNumArgs() >= 1) {
-							this->parameters.diameter.set(message.getArgAsFloat(0));
-						}
+							if (message.getAddress() == "/diameter" && message.getNumArgs() >= 1) {
+								this->parameters.diameter.set(message.getArgAsFloat(0));
+							}
 
-						if (message.getAddress() == "/moon" && message.getNumArgs() >= 4) {
-							glm::vec3 position{
-								message.getArgAsFloat(0)
-								, message.getArgAsFloat(1)
-								, message.getArgAsFloat(2)
-							};
-							this->setPosition(position);
+							if (message.getAddress() == "/moon" && message.getNumArgs() >= 4) {
+								glm::vec3 position{
+									message.getArgAsFloat(0)
+									, message.getArgAsFloat(1)
+									, message.getArgAsFloat(2)
+								};
+								this->setPosition(position);
 
-							this->parameters.diameter.set(message.getArgAsFloat(3));
+								this->parameters.diameter.set(message.getArgAsFloat(3));
+							}
 						}
+						RULR_CATCH_ALL_TO_ERROR;
 					}
 				}
 

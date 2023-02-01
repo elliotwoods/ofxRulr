@@ -45,6 +45,10 @@ namespace ofxRulr {
 					, (Camera, Local)
 					, ("Camera", "Local"));
 
+				MAKE_ENUM(IfCameraShootFails
+					, (NextBeam, NextLaser, End)
+					, ("NextBeam", "NextLaser", "End"));
+
 				struct ImagePath {
 					void serialize(nlohmann::json&);
 					void deserialize(const nlohmann::json&);
@@ -213,10 +217,14 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<string> hostname{ "Hostname", "10.0.0.180" };
+							ofParameter<float> requestTimeout{ "Request timeout [s]", 10.0f };
 							ofParameter<float> captureTimeout{ "Capture timeout [s]", 10.0f };
+							ofParameter<IfCameraShootFails> ifCameraShootFails{ "If camera shoot fails", IfCameraShootFails::NextLaser };
 							PARAM_DECLARE("Remote camera"
 								, hostname
-								, captureTimeout);
+								, requestTimeout
+								, captureTimeout
+								, ifCameraShootFails);
 						} remoteCamera;
 
 						ofParameter<LaserState> laserStateForOthers{ "State for others", LaserState::Standby };
@@ -333,6 +341,8 @@ namespace ofxRulr {
 				void selectChildrenWithSolvedLines();
 				void deselectChildrenWithBadLines();
 
+				// This is to fix some corrupted data on an early run. Feel free to remove later
+				void assignSerialNumbersBySelectedLasers();
 
 				ofxCvGui::PanelPtr panel;
 

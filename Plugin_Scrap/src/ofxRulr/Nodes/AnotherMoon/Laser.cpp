@@ -37,7 +37,7 @@ namespace ofxRulr {
 				Laser::getDisplayString() const
 			{
 				stringstream ss;
-				ss << "s#" << this->parameters.serialNumber << " / p" << this->rigidBody->getPosition() << ") [" << this->parameters.intrinsics.centerOffset << "]";
+				ss << this->getLabelName() << " (" << this->rigidBody->getPosition() << ") [" << this->parameters.intrinsics.centerOffset << "]";
 				return ss.str();
 			}
 
@@ -45,7 +45,7 @@ namespace ofxRulr {
 			void
 				Laser::update()
 			{
-				this->rigidBody->setName(ofToString(this->parameters.positionIndex.get()));
+				this->rigidBody->setName(this->getLabelName());
 				this->rigidBody->setColor(this->color);
 				this->rigidBody->update();
 
@@ -305,6 +305,13 @@ namespace ofxRulr {
 					}
 					ofPopStyle();
 				}
+			}
+
+			//----------
+			string
+				Laser::getLabelName() const
+			{
+				return "p" + ofToString(this->parameters.positionIndex.get()) + ":s" + ofToString(this->parameters.serialNumber.get());
 			}
 
 			//----------
@@ -762,7 +769,7 @@ namespace ofxRulr {
 								ofPopStyle();
 							}
 
-							ofxCvGui::Utils::drawText("p" + ofToString(this->parameters.positionIndex) + ":s" + ofToString(this->parameters.serialNumber)
+							ofxCvGui::Utils::drawText(this->getLabelName()
 								, bounds
 								, false
 								, false);
