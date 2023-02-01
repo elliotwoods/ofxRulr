@@ -135,7 +135,6 @@ namespace ofxRulr {
 				{
 					args.rigidBody = ofxRulr::isActive(this, this->parameters.draw.rigidBody);
 					args.trussLine = ofxRulr::isActive(this, this->parameters.draw.trussLine);
-					args.opticalAxis = ofxRulr::isActive(this, this->parameters.draw.opticalAxis);
 					args.centerRay = ofxRulr::isActive(this, this->parameters.draw.centerRay);
 					args.modelPreview = ofxRulr::isActive(this, this->parameters.draw.modelPreview);
 					args.picture = ofxRulr::isActive(this, this->parameters.draw.picturePreview);

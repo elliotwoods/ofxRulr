@@ -27,6 +27,8 @@ namespace ofxRulr {
 
 				this->addInput<Lasers>();
 
+				/*
+				* We got rid of the centerOffset, so now this can't control anything
 				this->panel = ofxCvGui::Panels::makeBlank();
 				this->panel->onDraw += [this](ofxCvGui::DrawArguments& args) {
 					auto lasersNode = this->getInput<Lasers>();
@@ -106,6 +108,7 @@ namespace ofxRulr {
 						}
 					}
 				};
+				*/
 			}
 
 			//---------
@@ -114,12 +117,12 @@ namespace ofxRulr {
 			{
 				auto inspector = args.inspector;
 
-				inspector->addButton("Home all", [this]() {
-					try {
-						this->homeAll();
-					}
-					RULR_CATCH_ALL_TO_ALERT;
-					});
+				//inspector->addButton("Home all", [this]() {
+				//	try {
+				//		this->homeAll();
+				//	}
+				//	RULR_CATCH_ALL_TO_ALERT;
+				//	});
 				inspector->addButton("Set RGB all", [this]() {
 					try {
 						this->setRGBAll(
@@ -152,17 +155,17 @@ namespace ofxRulr {
 				return this->panel;
 			}
 
-			//---------
-			void
-				RemoteControl::homeAll()
-			{
-				this->throwIfMissingAnyConnection();
-				auto lasersNode = this->getInput<Lasers>();
-				auto lasers = lasersNode->getLasersSelected();
-				for (auto laser : lasers) {
-					laser->parameters.intrinsics.centerOffset.set({ 0, 0 });
-				}
-			}
+			////---------
+			//void
+			//	RemoteControl::homeAll()
+			//{
+			//	this->throwIfMissingAnyConnection();
+			//	auto lasersNode = this->getInput<Lasers>();
+			//	auto lasers = lasersNode->getLasersSelected();
+			//	for (auto laser : lasers) {
+			//		laser->parameters.intrinsics.centerOffset.set({ 0, 0 });
+			//	}
+			//}
 
 			//---------
 			void

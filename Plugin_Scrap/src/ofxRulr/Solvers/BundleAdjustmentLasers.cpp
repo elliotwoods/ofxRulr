@@ -24,7 +24,7 @@ struct ProjectedLineCost
 			, const T* const laserRigidBodyTranslationParameters
 			, const T* const laserRigidBodyRotationParameters
 			, const T* const laserFovParameters
-			, const T* const laserCenterOffsetParameters
+			, const T* const laserFov2Parameters
 			, T* residuals) const
 	{
 		// Construct the camera
@@ -41,8 +41,8 @@ struct ProjectedLineCost
 				laserFovParameters[0]
 				, laserFovParameters[1]
 			}, {
-				laserCenterOffsetParameters[0]
-				, laserCenterOffsetParameters[1]
+				laserFov2Parameters[0]
+				, laserFov2Parameters[1]
 			}
 		};
 
@@ -346,7 +346,7 @@ namespace ofxRulr {
 				, double* laserTranslationParameters
 				, double* laserRotationParameters
 				, double* laserFovParameters
-				, double* laserOffsetDevices)
+				, double* laserFov2Parameters)
 		{
 			{
 				laserTranslationParameters[0] = laserProjector.rigidBodyTransform.translation[0];
@@ -366,8 +366,8 @@ namespace ofxRulr {
 			}
 
 			{
-				laserOffsetDevices[0] = laserProjector.centerOffset[0];
-				laserOffsetDevices[1] = laserProjector.centerOffset[1];
+				laserFov2Parameters[0] = laserProjector.fov2[0];
+				laserFov2Parameters[1] = laserProjector.fov2[1];
 			}
 		}
 
@@ -409,18 +409,18 @@ namespace ofxRulr {
 				auto laserTranslationParameters = new double[3];
 				auto laserRotationParameters = new double[3];
 				auto laserFovParameters = new double[2];
-				auto laserCenterOffsetParameters = new double[2];
+				auto laserFov2Parameters = new double[2];
 
 				fillLaserParameters(laserProjector
 					, laserTranslationParameters
 					, laserRotationParameters
 					, laserFovParameters
-					, laserCenterOffsetParameters);
+					, laserFov2Parameters);
 
 				this->allLaserTranslationParameters.push_back(laserTranslationParameters);
 				this->allLaserRotationParameters.push_back(laserRotationParameters);
 				this->allLaserFovParameters.push_back(laserFovParameters);
-				this->allLaserCenterOffsetParameters.push_back(laserCenterOffsetParameters);
+				this->allLaserFov2Parameters.push_back(laserFov2Parameters);
 			}
 		}
 
@@ -447,7 +447,7 @@ namespace ofxRulr {
 				delete[] parameters;
 			}
 
-			for (auto parameters : this->allLaserCenterOffsetParameters) {
+			for (auto parameters : this->allLaserFov2Parameters) {
 				delete[] parameters;
 			}
 		}
@@ -474,7 +474,7 @@ namespace ofxRulr {
 			auto& laserRigidBodyTranslationData = this->allLaserTranslationParameters[image.laserProjectorIndex];
 			auto& laserRigidBodyRotationData = this->allLaserRotationParameters[image.laserProjectorIndex];
 			auto& laserFovData = this->allLaserFovParameters[image.laserProjectorIndex];
-			auto& laserCenterOffsetData = this->allLaserCenterOffsetParameters[image.laserProjectorIndex];
+			auto& laserFov2Data = this->allLaserFov2Parameters[image.laserProjectorIndex];
 
 			const float weight = 1.0f;
 
@@ -490,7 +490,7 @@ namespace ofxRulr {
 				, laserRigidBodyTranslationData
 				, laserRigidBodyRotationData
 				, laserFovData
-				, laserCenterOffsetData);
+				, laserFov2Data);
 		}
 
 		//---------
@@ -622,19 +622,19 @@ namespace ofxRulr {
 
 		//----------
 		void
-			BundleAdjustmentLasers::Problem::setLaserCenterOffsetsFixed()
+			BundleAdjustmentLasers::Problem::setLaserFOV2sFixed()
 		{
 			for (auto& activeLaserIndex : this->activeLasers) {
-				this->problem.SetParameterBlockConstant(this->allLaserCenterOffsetParameters[activeLaserIndex]);
+				this->problem.SetParameterBlockConstant(this->allLaserFov2Parameters[activeLaserIndex]);
 			}
 		}
 
 		//----------
 		void
-			BundleAdjustmentLasers::Problem::setLaserCenterOffsetsVariable()
+			BundleAdjustmentLasers::Problem::setLaserFOV2sVariable()
 		{
 			for (auto& activeLaserIndex : this->activeLasers) {
-				this->problem.SetParameterBlockVariable(this->allLaserCenterOffsetParameters[activeLaserIndex]);
+				this->problem.SetParameterBlockVariable(this->allLaserFov2Parameters[activeLaserIndex]);
 			}
 		}
 
@@ -698,10 +698,10 @@ namespace ofxRulr {
 						auto laserFovParameters = this->allLaserFovParameters[i];
 						auto fov = (glm::vec2)glm::tvec2<double>(laserFovParameters[0], laserFovParameters[1]);
 
-						auto laserCenterOffsetParameters = this->allLaserCenterOffsetParameters[i];
-						auto centerOffset = (glm::vec2)glm::tvec2<double>(laserCenterOffsetParameters[0], laserCenterOffsetParameters[1]);
+						auto laserFov2Parameters = this->allLaserFov2Parameters[i];
+						auto fov2 = (glm::vec2)glm::tvec2<double>(laserFov2Parameters[0], laserFov2Parameters[1]);
 
-						result.solution.laserProjectors.emplace_back(Models::LaserProjector{ transform, fov, centerOffset });
+						result.solution.laserProjectors.emplace_back(Models::LaserProjector{ transform, fov, fov2 });
 					}
 				}
 

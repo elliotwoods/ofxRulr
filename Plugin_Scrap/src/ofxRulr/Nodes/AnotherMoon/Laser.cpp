@@ -16,7 +16,7 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				this->rigidBody->init();
 				this->parameters.intrinsics.fov.addListener(this, &Laser::callbackIntrinsicsChange);
-				this->parameters.intrinsics.centerOffset.addListener(this, &Laser::callbackIntrinsicsChange);
+				this->parameters.intrinsics.fov2.addListener(this, &Laser::callbackIntrinsicsChange);
 			}
 
 			//----------
@@ -37,7 +37,7 @@ namespace ofxRulr {
 				Laser::getDisplayString() const
 			{
 				stringstream ss;
-				ss << this->getLabelName() << " (" << this->rigidBody->getPosition() << ") [" << this->parameters.intrinsics.centerOffset << "]";
+				ss << this->getLabelName() << " (" << this->rigidBody->getPosition() << ")";
 				return ss.str();
 			}
 
@@ -231,16 +231,6 @@ namespace ofxRulr {
 
 						// Draw axis
 						ofDrawAxis(1.0f);
-
-						// Draw optical axis
-						if (args.opticalAxis) {
-							ofPushStyle();
-							{
-								ofSetColor(this->color);
-								ofDrawLine({ 0, 0, 0 }, { 0, 0, 100 });
-							}
-							ofPopStyle();
-						}
 
 						// Draw model preview
 						if (args.modelPreview) {
@@ -528,8 +518,6 @@ namespace ofxRulr {
 			std::future<void>
 				Laser::drawCircle(glm::vec2 center, float radius)
 			{
-				center -= this->parameters.intrinsics.centerOffset.get();
-
 				auto message = this->createOutgoingMessageRetry();
 				{
 					message->setAddress("/picture/circle");

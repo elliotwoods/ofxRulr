@@ -536,12 +536,12 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_WARNING;
 					}, ' ');
 
-				inspector->addButton("Offset beam captures", [this]() {
-					try {
-						this->offsetBeamCaptures();
-					}
-					RULR_CATCH_ALL_TO_ALERT;
-					})->addToolTip("Apply center offset (legacy)");
+				//inspector->addButton("Offset beam captures", [this]() {
+				//	try {
+				//		this->offsetBeamCaptures();
+				//	}
+				//	RULR_CATCH_ALL_TO_ALERT;
+				//	})->addToolTip("Apply center offset (legacy)");
 
 
 				inspector->addTitle("Calibrate", ofxCvGui::Widgets::Title::Level::H2);
@@ -987,64 +987,64 @@ goto_endCameraCapture:
 				}
 			}
 
-			//----------
-			void
-				Calibrate::offsetBeamCaptures()
-			{
-				// Perform for all data (ignore selection)
+			// Center offset doesn't exist any more so we can remove this
+			////----------
+			//void
+			//	Calibrate::offsetBeamCaptures()
+			//{
+			//	// Perform for all data (ignore selection)
 
-				this->throwIfMissingAConnection<Lasers>();
+			//	this->throwIfMissingAConnection<Lasers>();
 
-				auto lasers = this->getInput<Lasers>()->getLasersAll();
+			//	auto lasers = this->getInput<Lasers>()->getLasersAll();
 
-				auto cameraCaptures = this->cameraCaptures.getAllCaptures();
-				for(auto cameraCapture : cameraCaptures) {
-					auto laserCaptures = cameraCapture->laserCaptures.getAllCaptures();
-					for (auto laserCapture : laserCaptures) {
-						auto beamCaptures = laserCapture->beamCaptures.getAllCaptures();
+			//	auto cameraCaptures = this->cameraCaptures.getAllCaptures();
+			//	for(auto cameraCapture : cameraCaptures) {
+			//		auto laserCaptures = cameraCapture->laserCaptures.getAllCaptures();
+			//		for (auto laserCapture : laserCaptures) {
+			//			auto beamCaptures = laserCapture->beamCaptures.getAllCaptures();
 
-						// find laser
-						shared_ptr<Laser> laser;
-						for (auto it : lasers) {
-							if (it->parameters.serialNumber.get() == laserCapture->serialNumber) {
-								laser = it;
-								break;
-							}
-						}
-						if (!laser) {
-							// ignore laserCapture if we don't have any laser for it
-							continue;
-						}
+			//			// find laser
+			//			shared_ptr<Laser> laser;
+			//			for (auto it : lasers) {
+			//				if (it->parameters.serialNumber.get() == laserCapture->serialNumber) {
+			//					laser = it;
+			//					break;
+			//				}
+			//			}
+			//			if (!laser) {
+			//				// ignore laserCapture if we don't have any laser for it
+			//				continue;
+			//			}
 
-						// get center offset
-						const auto & centerOffset = laser->parameters.intrinsics.centerOffset.get();
+			//			const auto & centerOffset = laser->parameters.intrinsics.centerOffset.get();
 
-						// Correct the beam captures
-						size_t beamCaptureIndex = 0;
-						for (auto beamCapture : beamCaptures) {
-							if (beamCapture->isOffset) {
-								beamCapture->projectionPoint += centerOffset;
-								if (beamCapture->projectionPoint.x < -1
-									|| beamCapture->projectionPoint.x > 1
-									|| beamCapture->projectionPoint.y < -1
-									|| beamCapture->projectionPoint.y > 1) {
-									cout << cameraCapture->getTimeString()
-										<< "::" << laserCapture->serialNumber
-										<< "::" << beamCaptureIndex
-										<< " is outside range : " << beamCapture->projectionPoint
-										<< endl;
+			//			// Correct the beam captures
+			//			size_t beamCaptureIndex = 0;
+			//			for (auto beamCapture : beamCaptures) {
+			//				if (beamCapture->isOffset) {
+			//					beamCapture->projectionPoint += centerOffset;
+			//					if (beamCapture->projectionPoint.x < -1
+			//						|| beamCapture->projectionPoint.x > 1
+			//						|| beamCapture->projectionPoint.y < -1
+			//						|| beamCapture->projectionPoint.y > 1) {
+			//						cout << cameraCapture->getTimeString()
+			//							<< "::" << laserCapture->serialNumber
+			//							<< "::" << beamCaptureIndex
+			//							<< " is outside range : " << beamCapture->projectionPoint
+			//							<< endl;
 
-									beamCapture->projectionPoint.x = ofClamp(beamCapture->projectionPoint.x, -1, 1);
-									beamCapture->projectionPoint.y = ofClamp(beamCapture->projectionPoint.y, -1, 1);
-								}
+			//						beamCapture->projectionPoint.x = ofClamp(beamCapture->projectionPoint.x, -1, 1);
+			//						beamCapture->projectionPoint.y = ofClamp(beamCapture->projectionPoint.y, -1, 1);
+			//					}
 
-								beamCapture->isOffset = false;
-							}
-							beamCaptureIndex++;
-						}
-					}
-				}
-			}
+			//					beamCapture->isOffset = false;
+			//				}
+			//				beamCaptureIndex++;
+			//			}
+			//		}
+			//	}
+			//}
 
 			//----------
 			void

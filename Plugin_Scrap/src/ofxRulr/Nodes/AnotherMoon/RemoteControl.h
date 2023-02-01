@@ -15,7 +15,7 @@ namespace ofxRulr {
 				
 				ofxCvGui::PanelPtr getPanel() override;
 
-				void homeAll();
+				//void homeAll();
 				void setRGBAll(float, float, float);
 				void setTransformAll(float, float, float, float);
 			protected:

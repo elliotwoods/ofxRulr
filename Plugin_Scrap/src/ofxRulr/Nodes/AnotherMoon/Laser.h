@@ -42,7 +42,6 @@ namespace ofxRulr {
 					ofxRulr::DrawWorldAdvancedArgs& drawArgs;
 					bool rigidBody;
 					bool trussLine;
-					bool opticalAxis;
 					bool centerRay;
 					bool modelPreview;
 					float groundHeight;
@@ -159,8 +158,8 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<glm::vec2> fov{ "FOV", {30, 30} };
-						ofParameter<glm::vec2> centerOffset{ "Center offset", {0, 0} };
-						PARAM_DECLARE("Settings", fov, centerOffset);
+						ofParameter<glm::vec2> fov2{ "FOV 2nd order", {0, 0} };
+						PARAM_DECLARE("Settings", fov, fov2);
 					} intrinsics;
 
 					DeviceStateParameters deviceState;

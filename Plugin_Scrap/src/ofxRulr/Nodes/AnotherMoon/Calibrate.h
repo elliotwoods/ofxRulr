@@ -182,7 +182,7 @@ namespace ofxRulr {
 				void capture();
 
 				void deselectLasersWithNoData(size_t minimumCameraCaptureCount = 1);
-				void offsetBeamCaptures();
+				//void offsetBeamCaptures();
 
 				void calibrateLines(); // Note that process is in seperate Calibrate_Process.cpp
 				void calibrateInitialCameras();
@@ -301,8 +301,8 @@ namespace ofxRulr {
 								ofParameter<bool> position{ "Position", false };
 								ofParameter<bool> rotation{ "Rotation", false };
 								ofParameter<bool> fov{ "FOV", false };
-								ofParameter<bool> centerOffset{ "Center offset", true };
-								PARAM_DECLARE("Lasers", position, rotation, fov, centerOffset);
+								ofParameter<bool> fov2{ "FOV2", true };
+								PARAM_DECLARE("Lasers", position, rotation, fov, fov2);
 							} lasers;
 
 							ofParameter<bool> cameras{ "Cameras", false };

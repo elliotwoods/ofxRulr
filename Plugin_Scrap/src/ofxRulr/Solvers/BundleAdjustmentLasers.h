@@ -39,7 +39,7 @@ namespace ofxRulr {
 				, double* laserTranslationParameters
 				, double* laserRotationParameters
 				, double* laserFovParameters
-				, double* laserCenterOffsetParameters);
+				, double* laserFov2Parameters);
 
 			class Problem {
 			public:
@@ -63,8 +63,8 @@ namespace ofxRulr {
 				void setLaserFOVsFixed();
 				void setLaserFOVsVariable();
 
-				void setLaserCenterOffsetsFixed();
-				void setLaserCenterOffsetsVariable();
+				void setLaserFOV2sFixed();
+				void setLaserFOV2sVariable();
 
 				void setCamerasFixed();
 				void setCamerasVariable();
@@ -80,7 +80,7 @@ namespace ofxRulr {
 				vector<double*> allLaserTranslationParameters;
 				vector<double*> allLaserRotationParameters;
 				vector<double*> allLaserFovParameters;
-				vector<double*> allLaserCenterOffsetParameters;
+				vector<double*> allLaserFov2Parameters;
 
 				set<int> activeCameras;
 				set<int> activeLasers;
