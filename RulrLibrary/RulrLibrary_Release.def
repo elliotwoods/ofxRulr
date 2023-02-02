@@ -122,6 +122,7 @@ EXPORTS
 	?ofEnableLighting@@YAXXZ
 	?ofEnableSmoothing@@YAXXZ
 	?ofFill@@YAXXZ
+	?ofGetCurrentMatrix@@YA?AU?$mat@$03$03M$0A@@glm@@W4ofMatrixMode@@@Z
 	?ofGetCurrentRenderer@@YAAEAV?$shared_ptr@VofBaseRenderer@@@std@@XZ
 	?ofGetCurrentWindow@@YA?AV?$shared_ptr@VofAppBaseWindow@@@std@@XZ
 	?ofGetElapsedTimef@@YAMXZ
@@ -143,6 +144,7 @@ EXPORTS
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@E@@AEBVofBuffer@@AEBUofImageLoadSettings@@@Z
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@E@@AEBVpath@filesystem@std@@AEBUofImageLoadSettings@@@Z
 	?ofLoadImage@@YA_NAEAV?$ofPixels_@G@@AEBVofBuffer@@AEBUofImageLoadSettings@@@Z
+	?ofLoadMatrix@@YAXAEBU?$mat@$03$03M$0A@@glm@@@Z
 	?ofLoadURL@@YA?AVofHttpResponse@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?ofLogToConsole@@YAXXZ
 	?ofMap@@YAMMMMMM_N@Z
@@ -172,6 +174,7 @@ EXPORTS
 	?ofSetColor@@YAXH@Z
 	?ofSetColor@@YAXHHH@Z
 	?ofSetColor@@YAXHHHH@Z
+	?ofSetDepthTest@@YAX_N@Z
 	?ofSetDrawBitmapMode@@YAXW4ofDrawBitmapMode@@@Z
 	?ofSetEscapeQuitsApp@@YAX_N@Z
 	?ofSetLineWidth@@YAXM@Z

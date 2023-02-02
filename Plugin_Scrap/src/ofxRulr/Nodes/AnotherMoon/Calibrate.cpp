@@ -151,8 +151,9 @@ namespace ofxRulr {
 			string
 				Calibrate::LaserCapture::getDisplayString() const
 			{
+				auto selectedBeams = this->beamCaptures.getSelection();
 				stringstream ss;
-				ss << this->beamCaptures.size() << " beam captures";
+				ss << this->beamCaptures.size() << " beam captures (" << selectedBeams.size() << " selected)";
 				return ss.str();
 			}
 
@@ -823,8 +824,10 @@ namespace ofxRulr {
 												RULR_ERROR << e.what();
 												switch (this->parameters.capture.remoteCamera.ifCameraShootFails.get()) {
 												case IfCameraShootFails::NextBeam:
+													cout << "Skipping beam" << std::endl;
 													goto goto_nextBeam;
 												case IfCameraShootFails::NextLaser:
+													cout << "Skipping laser" << std::endl;
 													goto goto_nextLaser;
 												case IfCameraShootFails::End:
 													goto goto_endCameraCapture;
@@ -883,10 +886,10 @@ namespace ofxRulr {
 									}
 									});
 goto_nextBeam:
-								cout << "Skipping beam" << std::endl;
-							}
+								cout;
+ }
 goto_nextLaser:
-							cout << "Skipping laser" << std::endl;
+cout;
 						}
 
 						if (laserCapture->beamCaptures.size() > 0) {

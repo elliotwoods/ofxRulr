@@ -138,6 +138,7 @@ namespace ofxRulr {
 					args.centerRay = ofxRulr::isActive(this, this->parameters.draw.centerRay);
 					args.modelPreview = ofxRulr::isActive(this, this->parameters.draw.modelPreview);
 					args.picture = ofxRulr::isActive(this, this->parameters.draw.picturePreview);
+					args.pictureBrightness = this->parameters.draw.pictureBrightness.get();
 
 					// Ground height
 					{
@@ -145,7 +146,6 @@ namespace ofxRulr {
 						auto worldPanel = static_pointer_cast<ofxCvGui::Panels::WorldManaged>(worldPanelUntyped);
 						args.groundHeight = worldPanel->parameters.grid.roomMax.get().y;
 					}
-					
 				}
 
 				auto lasers = this->lasers.getSelection();

@@ -19,7 +19,8 @@ namespace ofxRulr {
 				struct : ofParameterGroup {
 					ofParameter<bool> enabled{ "Enabled", false };
 					ofParameter<int> port{ "Port", 5000 };
-					PARAM_DECLARE("Osc Receiver", enabled, port);
+					ofParameter<float> maxRxTimePerFrame{ "Max Rx time per frame [s]", 0.1 };
+					PARAM_DECLARE("Osc Receiver", enabled, port, maxRxTimePerFrame);
 				} parameters;
 
 				unique_ptr<ofxOscReceiver> oscReceiver;

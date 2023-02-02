@@ -97,7 +97,8 @@ namespace ofxRulr {
 						ofParameter<WhenActive> modelPreview{ "Model preview", WhenActive::Always };
 						ofParameter<WhenActive> frustum{ "Frustum", WhenActive::Selected };
 						ofParameter<WhenActive> picturePreview{ "Picture preview", WhenActive::Selected };
-						PARAM_DECLARE("Draw", rigidBody, trussLine, opticalAxis, centerRay, modelPreview, frustum, picturePreview);
+						ofParameter<float> pictureBrightness{ "Picture brightness", 20, 0, 255 };
+						PARAM_DECLARE("Draw", rigidBody, trussLine, opticalAxis, centerRay, modelPreview, frustum, picturePreview, pictureBrightness);
 					} draw;
 
 					PARAM_DECLARE("Lasers"

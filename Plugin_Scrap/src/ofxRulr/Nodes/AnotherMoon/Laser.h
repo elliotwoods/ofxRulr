@@ -47,6 +47,7 @@ namespace ofxRulr {
 					float groundHeight;
 					bool frustum;
 					bool picture;
+					float pictureBrightness;
 				};
 
 				Laser();

@@ -193,6 +193,7 @@ namespace ofxRulr {
 						ofPushStyle();
 						{
 							ofSetColor(200);
+							ofNoFill();
 							ofDrawRectangle(args.localBounds);
 						}
 						ofPopStyle();
@@ -242,37 +243,53 @@ namespace ofxRulr {
 							gridTexture.unbind();
 						}
 
+						auto modelViewMatrix = ofGetCurrentMatrix(ofMatrixMode::OF_MATRIX_MODELVIEW);
+
 						// Draw frustum
 						if (args.frustum) {
-							ofPushStyle();
-							{
-								auto color = this->color.get();
-								ofSetColor(color);
-								this->frustumPreview.drawWireframe();
-								color.a = 100;
-								ofSetColor(color);
-								this->frustumPreview.drawFaces();
-							}
-							ofPopStyle();
+							args.drawArgs.onDrawFinal += [this, modelViewMatrix]() {
+								ofPushMatrix();
+								{
+									ofLoadMatrix(modelViewMatrix);
+
+									ofPushStyle();
+									{
+										auto color = this->color.get();
+										ofSetColor(color);
+										this->frustumPreview.drawWireframe();
+										color.a = 100;
+										ofSetColor(color);
+										this->frustumPreview.drawFaces();
+									}
+									ofPopStyle();
+								}
+								ofPopMatrix();
+							};
 						}
 
 						// Draw picture
 						if (args.picture) {
 							this->updatePicturePreviewWorld();
 
-							args.drawArgs.onDrawFinal += [this]() {
-								ofPushStyle();
-								ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ADD);
+							args.drawArgs.onDrawFinal += [this, modelViewMatrix, args]() {
+								ofSetDepthTest(false);
+								ofPushMatrix();
 								{
-									ofColor color(255, 200);
-									ofSetColor(color);
-									this->lastPicturePreviewWorld.drawWireframe();
-									color.a = 100;
-									ofSetColor(color);
-									this->lastPicturePreviewWorld.drawFaces();
+									ofLoadMatrix(modelViewMatrix);
+									ofPushStyle();
+									ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ADD);
+									{
+										ofSetColor(255.0f * this->parameters.deviceState.projection.color.red.get()
+											, 255.0f * this->parameters.deviceState.projection.color.green.get()
+											, 255.0f * this->parameters.deviceState.projection.color.blue.get()
+											, args.pictureBrightness);
+										this->lastPicturePreviewWorld.drawFaces();
+									}
+									ofDisableBlendMode();
+									ofPopStyle();
 								}
-								ofDisableBlendMode();
-								ofPopStyle();
+								ofPopMatrix();
+								ofSetDepthTest(true);
 							};
 						}
 					}
@@ -868,14 +885,14 @@ namespace ofxRulr {
 						for (const auto& projectionPoint : lastPictureSent) {
 							auto ray = model.castRayObjectSpace(projectionPoint);
 							auto vertex = ray.t * 100.0f;
-							this->frustumPreview.addVertex(vertex);
+							this->lastPicturePreviewWorld.addVertex(vertex);
 						}
 
 						// close it with the first point again
 						const auto& projectionPoint = lastPictureSent.front();
 						auto ray = model.castRayObjectSpace(projectionPoint);
 						auto vertex = ray.t * 100.0f;
-						this->frustumPreview.addVertex(vertex);
+						this->lastPicturePreviewWorld.addVertex(vertex);
 					}
 
 					this->lastPicturePreviewWorldStale = false;

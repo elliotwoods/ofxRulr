@@ -73,10 +73,14 @@ namespace ofxRulr {
 						return lasers;
 					};
 
-					while (this->oscReceiver->getNextMessage(message)) {
-						this->oscFrameNew.notifyFrameNew = true;
+					auto rxBegin = std::chrono::system_clock::now();
+					auto rxMustEnd = rxBegin + std::chrono::milliseconds((long long) (this->parameters.maxRxTimePerFrame * 1000.0f));
 
+					size_t count = 0;
+					while (this->oscReceiver->getNextMessage(message)) {
 						try {
+							this->oscFrameNew.notifyFrameNew = true;
+
 							if (message.getAddress() == "/position" && message.getNumArgs() >= 3) {
 								glm::vec3 position{
 									message.getArgAsFloat(0)
@@ -129,7 +133,21 @@ namespace ofxRulr {
 							}
 						}
 						RULR_CATCH_ALL_TO_ERROR;
+
+						count++;
+
+						if (std::chrono::system_clock::now() > rxMustEnd) {
+							RULR_ERROR << "Timeout receiving messages (" << ofToString(count) << " messages received)";
+
+							// dump remaining messages
+							ofxOscMessage message;
+							while (this->oscReceiver->getNextMessage(message)) {};
+
+							// exit out
+							break;
+						}
 					}
+
 				}
 
 				{

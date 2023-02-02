@@ -34,17 +34,10 @@ namespace ofxRulr {
 						PARAM_DECLARE("Draw", resolution, filled);
 					} draw;
 
-					struct : ofParameterGroup {
-						ofParameter<bool> enabled{ "Enabled", false };
-						ofParameter<int> port{ "Port", 5000 };
-						PARAM_DECLARE("Osc Receiver", enabled, port);
-					} oscReceiver;
-
-					PARAM_DECLARE("Moon", diameter, draw, oscReceiver);
+					PARAM_DECLARE("Moon", diameter, draw);
 				} parameters;
 
 				ofEventListener listenerDiameter;
-				unique_ptr<ofxOscReceiver> oscReceiver;
 
 				void callbackDiameter(float&);
 

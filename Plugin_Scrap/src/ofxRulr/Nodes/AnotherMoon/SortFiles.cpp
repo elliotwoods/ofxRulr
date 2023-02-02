@@ -57,7 +57,6 @@ namespace ofxRulr {
 				const auto dryRun = this->parameters.dryRun.get();
 				const auto verbose = this->parameters.verbose.get();
 				const auto openFileFirst = this->parameters.openFileFirst.get();
-				const auto dontOverwrite = this->parameters.dontOverwrite.get();
 
 				auto cameraCaptures = onlySelected
 					? calibrate->getCameraCaptures().getSelection()
@@ -69,7 +68,7 @@ namespace ofxRulr {
 						auto laserCaptures = onlySelected
 							? cameraCapture->laserCaptures.getSelection()
 							: cameraCapture->laserCaptures.getAllCaptures();
-						Utils::ScopedProcess scopedProcessLaserCaptures("Laser captures", false, laserCaptures.size());
+						Utils::ScopedProcess scopedProcessLaserCaptures("Camera " + cameraCapture->getTimeString(), false, laserCaptures.size());
 
 						auto cleanTimeString = cameraCapture->getTimeString();
 						ofStringReplace(cleanTimeString, ":", ".");
@@ -82,7 +81,7 @@ namespace ofxRulr {
 
 							laserCapture->directory = cameraCapture->directory / ("Laser " + ofToString(laserCapture->serialNumber));
 
-							Utils::ScopedProcess scopedProcessBeamCaptures("Beam captures", false, beamCaptures.size());
+							Utils::ScopedProcess scopedProcessBeamCaptures("Laser " + ofToString(laserCapture->serialNumber), false, beamCaptures.size());
 
 							int beamCaptureIndex = 0;
 							for (auto beamCapture : beamCaptures) {
@@ -98,81 +97,108 @@ namespace ofxRulr {
 											/ ("Beam " + ofToString(beamCaptureIndex) + (on ? " (on)" : " (off)")
 												+ priorLocalPath.extension().string());
 
-										if (postLocalPath != priorLocalPath) {
-											if (!dryRun) {
+										if (postLocalPath == priorLocalPath) {
+											// No work to do
+											return;
+										}
 
-												// Ensure folders exist
-												{
-													const auto parentPath = postLocalPath.parent_path();
-													auto createdDirectories = filesystem::create_directories(parentPath);
+										// Check if target already exists
+										if (filesystem::exists(postLocalPath)) {
+											if (filesystem::exists(priorLocalPath)) {
+												// Both prior and post exist - Check file size matches
+												if (filesystem::file_size(priorLocalPath)
+													== filesystem::file_size(postLocalPath)) {
+													// the target file is already correct
+													return;
+												}
+												else {
+													// Delete the file
 													if (verbose) {
-														if (createdDirectories) {
-															cout << "Created directories for " << parentPath.string() << std::endl;
-														}
-														else {
-															cout << "Didn't create directories for " << parentPath.string() << std::endl;
-														}
+														cout << "Deleting target file because size isn't right" << postLocalPath.filename().string() << std::endl;
 													}
-												}
 
-												// Check if file exists and is correct size
-												if (dontOverwrite) {
-													// Check if target file exists
-													if (filesystem::exists(postLocalPath)) {
-														// Check file size matches
-														if (filesystem::file_size(priorLocalPath)
-															== filesystem::file_size(postLocalPath)) {
-															return;
-														}
-														else {
-															filesystem::remove(postLocalPath);
-														}
-													}
-												}
-
-												// Open the file first
-												if (openFileFirst) {
-													cv::imread(priorLocalPath.string());
-												}
-
-												// Perform the copy or move
-												{
-													try {
-														if (verbose) {
-															cout << moveOrCopy.toString() << " " << priorLocalPath.string() << " to " << postLocalPath.string();
-														}
-
-														switch (moveOrCopy.get()) {
-														case MoveOrCopy::Copy:
-															filesystem::copy(priorLocalPath
-																, postLocalPath);
-															break;
-														case MoveOrCopy::Move:
-															filesystem::rename(priorLocalPath
-																, postLocalPath);
-															break;
-														default:
-															break;
-														}
-
-														if (verbose) {
-															cout << " [OK]" << std::endl;
-														}
-														imagePath.localCopy = postLocalPath;
-													}
-													catch (filesystem::filesystem_error& error) {
-														throw(Exception("Move/Copy failed : " + std::string(error.what())));
+													if (!dryRun) {
+														filesystem::remove(postLocalPath);
 													}
 												}
 											}
 											else {
-												cout << this->parameters.moveOrCopy.get().toString() << " "
-													<< priorLocalPath
-													<< " to "
-													<< postLocalPath
-													<< std::endl;
+												// Only target exists
+												return;
 											}
 										}
+
+										// Error if source doesn't exist (e.g. filename might have been renamed by importer)
+										if (!filesystem::exists(priorLocalPath)) {
+											bool fileFound = false;
+											// Try adding " 1", " 2" etc to filename
+											for (int i = 0; i < 10; i++) {
+												auto altPath = priorLocalPath.parent_path() /
+													(priorLocalPath.filename().string() + " " + ofToString(i) + priorLocalPath.extension().string());
+												if (filesystem::exists(altPath)) {
+													priorLocalPath = altPath;
+													break;
+												}
+											}
+											if (!fileFound) {
+												throw(Exception("Prior file doesn't exist : " + priorLocalPath.filename().string()));
+											}
+										}
+
+										// Try to open the file first
+										if (openFileFirst) {
+											cv::imread(priorLocalPath.string());
+										}
+
+										// Print action
+										if (verbose) {
+											cout << moveOrCopy.toString() << " " << priorLocalPath.string() << " to " << postLocalPath.string();
+										}
+
+										if (!dryRun) {
+											// Ensure folders exist
+											{
+												const auto parentPath = postLocalPath.parent_path();
+												auto createdDirectories = filesystem::create_directories(parentPath);
+												if (verbose) {
+													if (createdDirectories) {
+														cout << "Created directories for " << parentPath.string() << std::endl;
+													}
+													else {
+														cout << "Didn't create directories for " << parentPath.string() << std::endl;
+													}
+												}
+											}
+
+											// Perform the copy or move
+											{
+												try {
+
+
+													switch (moveOrCopy.get()) {
+													case MoveOrCopy::Copy:
+														filesystem::copy(priorLocalPath
+															, postLocalPath);
+														break;
+													case MoveOrCopy::Move:
+														filesystem::rename(priorLocalPath
+															, postLocalPath);
+														break;
+													default:
+														break;
+													}
+
+													if (verbose) {
+														cout << " [OK]";
+													}
+													imagePath.localCopy = postLocalPath;
+												}
+												catch (filesystem::filesystem_error& error) {
+													throw(Exception("Move/Copy failed : " + std::string(error.what())));
+												}
+											}
+										}
+										cout << std::endl;
 								};
 
 								Utils::ScopedProcess scopedProcessBeamCapture(ofToString(beamCaptureIndex), false);
@@ -201,10 +227,11 @@ namespace ofxRulr {
 							}
 						}
 
+
 					}
 				}
-			}
 
+			}
 		}
 	}
 }

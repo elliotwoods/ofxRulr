@@ -30,7 +30,6 @@ namespace ofxRulr {
 					ofParameter<bool> dryRun{ "Dry run", false };
 					ofParameter<bool> verbose{ "Verbose", true };
 					ofParameter<bool> openFileFirst{ "Open file first", true };
-					ofParameter<bool> dontOverwrite{ "Don't overwrite", true };
 					
 					ofParameter<OnError> onError{ "On error", OnError::DisableBeam };
 
@@ -41,8 +40,7 @@ namespace ofxRulr {
 						, dryRun
 						, verbose
 						, onError
-						, openFileFirst
-						, dontOverwrite);
+						, openFileFirst);
 				} parameters;
 			};
 		}
