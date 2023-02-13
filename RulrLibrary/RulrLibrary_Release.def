@@ -565,6 +565,7 @@ EXPORTS
 	?isBeingInspected@IInspectable@ofxCvGui@@QEBA_NXZ
 	?clear@InspectController@ofxCvGui@@QEAAXXZ
 	?inspect@InspectController@ofxCvGui@@QEAAXV?$shared_ptr@VIInspectable@ofxCvGui@@@std@@@Z
+	?refresh@InspectController@ofxCvGui@@QEAAXPEAVIInspectable@2@@Z
 	?isDragging@MouseArguments@ofxCvGui@@QEBA_NPEAX@Z
 	?isDragging@MouseArguments@ofxCvGui@@QEBA_NV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z
 	?takeMousePress@MouseArguments@ofxCvGui@@QEAA_NPEAX@Z

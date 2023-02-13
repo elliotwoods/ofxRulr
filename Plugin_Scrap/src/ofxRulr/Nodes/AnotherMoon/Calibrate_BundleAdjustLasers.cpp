@@ -20,8 +20,13 @@ namespace ofxRulr {
 
 				auto cameraCaptures = this->cameraCaptures.getSelection();
 
-				// First deselect lasers seen in fewer than 2 cameras
-				this->deselectLasersWithNoData(2);
+				// First deselect lasers seen in fewer than 2 cameras if we are fitting lasers
+				if (!(this->parameters.bundleAdjustment.fixed.lasers.position.get()
+					&& this->parameters.bundleAdjustment.fixed.lasers.rotation.get()
+					&& this->parameters.bundleAdjustment.fixed.lasers.fov.get()
+					&& this->parameters.bundleAdjustment.fixed.lasers.fov2.get())) {
+					this->deselectLasersWithNoData(2);
+				}
 
 				auto selectedLasers = lasersNode->getLasersSelected();
 

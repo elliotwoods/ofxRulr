@@ -190,7 +190,7 @@ namespace ofxRulr {
 						for (auto point : picture) {
 							if (point.x < -1 || point.x > 1
 								|| point.y < -1 || point.y > 1) {
-								throw(ofxRulr::Exception("Picture is outisde range for Laser #" + ofToString(laser->parameters.positionIndex.get())));
+								throw(ofxRulr::Exception("Picture is outside range for Laser " + laser->getLabelName() + " (" + ofToString(moonPosition) + ")"));
 							}
 						}
 					}
