@@ -9,6 +9,10 @@ namespace ofxRulr {
 			namespace Calibrate {
 				class ViewToVertices : public Base {
 				public:
+					MAKE_ENUM(Action
+						, (CalibrateCamera, SolvePnp)
+						, ("CalibrateCamera", "SolvePnP"));
+
 					class ViewArea : public ofBaseDraws {
 					public:
 						ViewArea(ViewToVertices &);
@@ -32,16 +36,29 @@ namespace ofxRulr {
 
 					void calibrate(); // will throw on fail
 				protected:
+					void calibrateCalibrateCamera(const vector<shared_ptr<IReferenceVertices::Vertex>>& vertices);
+					void calibrateSolvePnP(const vector<shared_ptr<IReferenceVertices::Vertex>>& vertices);
 					void drawOnProjector();
+					void centerOnVertex();
 
 					ViewArea viewArea;
-					ofxCvGui::PanelPtr view;
+					shared_ptr<ofxCvGui::Panels::Draws> view;
+						
+					ofParameter<filesystem::path> projectorReferenceImageFilename{ "Projector reference image filename", "" };
 
-					ofParameter<filesystem::path> projectorReferenceImageFilename;
+					struct : ofParameterGroup {
+						ofParameter<bool> dragVerticesEnabled{ "Drag vertices enabled", true };
+						ofParameter<bool> calibrateOnVertexChange{ "Calibrate on vertex change", true };
+						ofParameter<bool> useExistingParametersAsInitial{ "Use existing data as initial", false };
+						ofParameter<Action> action{ "Action", Action::CalibrateCamera };
+						PARAM_DECLARE("ViewToVertices"
+							, dragVerticesEnabled
+							, calibrateOnVertexChange
+							, useExistingParametersAsInitial
+							, action);
+					} parameters;
+					
 					ofImage projectorReferenceImage;
-					ofParameter<bool> dragVerticesEnabled;
-					ofParameter<bool> calibrateOnVertexChange;
-					ofParameter<bool> useExistingParametersAsInitial;
 					bool success;
 					float reprojectionError;
 					weak_ptr<IReferenceVertices::Vertex> selection;

@@ -135,7 +135,10 @@ namespace ofxRulr {
 				inspector->addMemoryUsage();
 
 				auto saveAllButton = inspector->add(new Widgets::Button("Save all", [this]() {
-					this->saveAll();
+					try {
+						this->saveAll();
+					}
+					RULR_CATCH_ALL_TO_ERROR;
 				}));
 				saveAllButton->onDraw += [this](ofxCvGui::DrawArguments & args) {
 					//show time since last save if >1min
@@ -205,7 +208,23 @@ namespace ofxRulr {
 		//-----------
 		void World::saveAll() const {
 			for(auto node : * this) {
-				node->save(node->getDefaultFilename() + ".json");
+				auto filename = node->getDefaultFilename() + ".json";
+
+				// Check if file already exists (if overwriting)
+				if (ofFile::doesFileExist(filename)) {
+
+					// Find an available filename to copy the backup into
+					for (size_t backupIndex = 0; true; backupIndex++) {
+						auto backupFilename = node->getDefaultFilename() + "-" + ofToString(backupIndex) + ".json";
+						if (!ofFile::doesFileExist(backupFilename)) {
+							ofFile::copyFromTo(filename, backupFilename);
+							break;
+						}
+					}
+				}
+
+				// Save the file
+				node->save(filename);
 			}
 			const_cast<World*>(this)->lastSaveOrLoad = chrono::system_clock::now();
 		}

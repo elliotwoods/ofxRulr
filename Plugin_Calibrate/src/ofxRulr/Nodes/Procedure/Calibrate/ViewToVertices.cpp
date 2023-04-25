@@ -22,7 +22,7 @@ namespace ofxRulr {
 			namespace Calibrate {
 #pragma mark ViewArea
 				//---------
-				ViewToVertices::ViewArea::ViewArea(ViewToVertices & parent) : parent(parent) {
+				ViewToVertices::ViewArea::ViewArea(ViewToVertices& parent) : parent(parent) {
 
 				}
 
@@ -84,7 +84,7 @@ namespace ofxRulr {
 
 					auto view = make_shared<Panels::Draws>(this->viewArea);
 					auto viewWeak = weak_ptr<Panels::Draws>(view);
-					view->onDrawImage += [this](DrawImageArguments & args) {
+					view->onDrawImage += [this](DrawImageArguments& args) {
 						ofPushStyle();
 						{
 							ofNoFill();
@@ -157,8 +157,8 @@ namespace ofxRulr {
 						}
 						ofPopMatrix();
 					};
-					view->onMouse.addListener([this, viewWeak](ofxCvGui::MouseArguments & args) {
-						if (this->dragVerticesEnabled) {
+					view->onMouse.addListener([this, viewWeak](ofxCvGui::MouseArguments& args) {
+						if (this->parameters.dragVerticesEnabled) {
 							auto view = viewWeak.lock();
 							args.takeMousePress(view);
 
@@ -175,8 +175,12 @@ namespace ofxRulr {
 								}
 							}
 						}
-					}, this, -1);
-					view->onKeyboard += [this](ofxCvGui::KeyboardArguments & args) {
+						}, this, -1);
+					view->onKeyboard += [this](ofxCvGui::KeyboardArguments& args) {
+						if (!this->isBeingInspected()) {
+							return;
+						}
+
 						if (args.action == KeyboardArguments::Action::Pressed) {
 							auto referenceVertices = this->getInput<IReferenceVertices>();
 							if (!referenceVertices) {
@@ -215,18 +219,22 @@ namespace ofxRulr {
 							}
 						}
 					};
+					view->addToolBarElement("ofxRulr::Load", [this]() {
+						auto result = ofSystemLoadDialog("Select image");
+						if (result.bSuccess) {
+							this->projectorReferenceImageFilename.set(result.filePath);
+							this->projectorReferenceImage.load(result.filePath);
+						}
+						});
 
 					this->view = view;
 
-					this->dragVerticesEnabled.set("Drag vertices enabled", true);
-					this->useExistingParametersAsInitial.set("Use existing data as initial", false);
-					this->projectorReferenceImageFilename.set("Projector reference image filename", "");
-					this->calibrateOnVertexChange.set("Calibrate on vertex change", true);
+					this->manageParameters(this->parameters);
 
 					videoOutputPin->onNewConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
-						videoOutput->onDrawOutput.addListener([this](ofRectangle & outputRectangle) {
+						videoOutput->onDrawOutput.addListener([this](ofRectangle& outputRectangle) {
 							this->drawOnProjector();
-						}, this);
+							}, this);
 					};
 					videoOutputPin->onDeleteConnection += [this](shared_ptr<System::VideoOutput> videoOutput) {
 						if (videoOutput) {
@@ -237,7 +245,7 @@ namespace ofxRulr {
 					referenceVerticesPin->onNewConnection += [this](shared_ptr<IReferenceVertices> referenceVertices) {
 						auto referenceVerticesWeak = weak_ptr<IReferenceVertices>(referenceVertices);
 						referenceVertices->onChangeVertex.addListener([this, referenceVerticesWeak]() {
-							if (this->calibrateOnVertexChange) {
+							if (this->parameters.calibrateOnVertexChange) {
 								//auto-call calibrate when a vertex changes
 
 								auto referenceVertices = referenceVerticesWeak.lock();
@@ -248,7 +256,7 @@ namespace ofxRulr {
 									//ignore all errors
 								}
 							}
-						}, this);
+							}, this);
 					};
 					referenceVerticesPin->onDeleteConnection += [this](shared_ptr<IReferenceVertices> referenceVertices) {
 						referenceVertices->onChangeVertex.removeListeners(this);
@@ -288,38 +296,31 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void ViewToVertices::serialize(nlohmann::json & json) {
-					ofxRulr::Utils::serialize(json, this->projectorReferenceImageFilename);
-					ofxRulr::Utils::serialize(json, this->dragVerticesEnabled);
-					ofxRulr::Utils::serialize(json, this->calibrateOnVertexChange);
-					ofxRulr::Utils::serialize(json, this->useExistingParametersAsInitial);
+				void ViewToVertices::serialize(nlohmann::json& json) {
+					Utils::serialize(json, this->projectorReferenceImageFilename);
 				}
 
 				//---------
-				void ViewToVertices::deserialize(const nlohmann::json & json) {
-					ofxRulr::Utils::deserialize(json, this->projectorReferenceImageFilename);
+				void ViewToVertices::deserialize(const nlohmann::json& json) {
+					Utils::deserialize(json, this->projectorReferenceImageFilename);
 					if (this->projectorReferenceImageFilename.get().empty()) {
 						this->projectorReferenceImage.clear();
 					}
 					else {
 						this->projectorReferenceImage.load(this->projectorReferenceImageFilename.get());
 					}
-
-					ofxRulr::Utils::deserialize(json, this->dragVerticesEnabled);
-					ofxRulr::Utils::deserialize(json, this->calibrateOnVertexChange);
-					ofxRulr::Utils::deserialize(json, this->useExistingParametersAsInitial);
 				}
 
 				//---------
-				void ViewToVertices::populateInspector(ofxCvGui::InspectArguments & inspectArguments) {
+				void ViewToVertices::populateInspector(ofxCvGui::InspectArguments& inspectArguments) {
 					auto inspector = inspectArguments.inspector;
-					
-					inspector->add(new Widgets::Toggle(this->dragVerticesEnabled));
+
+					inspector->add(new Widgets::Toggle(this->parameters.dragVerticesEnabled));
 
 					inspector->add(new Widgets::Title("Reference image", Widgets::Title::Level::H3));
 					{
 						auto widget = new Widgets::SelectFile(this->projectorReferenceImageFilename);
-						widget->onValueChange += [this](const filesystem::path & path) {
+						widget->onValueChange += [this](const filesystem::path& path) {
 							this->projectorReferenceImage.load(path.string());
 						};
 
@@ -328,7 +329,13 @@ namespace ofxRulr {
 					inspector->add(new Widgets::Button("Clear image", [this]() {
 						this->projectorReferenceImage.clear();
 						this->projectorReferenceImageFilename.set("");
-					}));
+						}));
+
+					inspector->add(new Widgets::Spacer());
+
+					inspector->addButton("Center on vertex", [this]() {
+						this->centerOnVertex();
+						}, 'c');
 
 					inspector->add(new Widgets::Spacer());
 
@@ -339,18 +346,16 @@ namespace ofxRulr {
 							this->calibrate();
 						}
 						RULR_CATCH_ALL_TO_ALERT
-					}, OF_KEY_RETURN);
+						}, OF_KEY_RETURN);
 					calibrateButton->setHeight(100.0f);
 					inspector->add(calibrateButton);
 
-					inspector->add(new Widgets::Toggle(this->calibrateOnVertexChange));
-					inspector->add(new Widgets::Toggle(this->useExistingParametersAsInitial));
 					inspector->add(new Widgets::LiveValue<float>("Reprojection error", [this]() {
 						return this->reprojectionError;
-					}));
+						}));
 					inspector->add(new Widgets::Indicator("Calibration success", [this]() {
-						return (Widgets::Indicator::Status) this->success;
-					}));
+						return (Widgets::Indicator::Status)this->success;
+						}));
 				}
 
 				//---------
@@ -361,21 +366,72 @@ namespace ofxRulr {
 					this->throwIfMissingAConnection<Item::View>();
 
 					auto verticesNode = this->getInput<IReferenceVertices>();
-					auto viewNode = this->getInput<Item::View>();
 
-					const auto & vertices = verticesNode->getSelectedVertices();
+					const auto& vertices = verticesNode->getSelectedVertices();
+
+					switch (this->parameters.action.get()) {
+					case Action::CalibrateCamera:
+						this->calibrateCalibrateCamera(vertices);
+						break;
+					case Action::SolvePnp:
+						this->calibrateSolvePnP(vertices);
+						break;
+					default:
+						break;
+					}
+				}
+
+				//---------
+				void ViewToVertices::drawOnProjector() {
+					auto selection = this->selection.lock();
+					if (selection) {
+						ofxSpinCursor::draw(selection->viewPosition);
+					}
+				}
+
+				//---------
+				void ViewToVertices::centerOnVertex() {
+					auto selection = this->selection.lock();
+					if (selection) {
+						switch (this->view->getImageZoomState()) {
+						case ofxCvGui::ImageZoomState::ZoomX10:
+							this->view->setScroll(selection->viewPosition.get());
+							break;
+						default:
+							break;
+						}
+					}
+				}
+
+				//---------
+				void ViewToVertices::drawWorldStage() {
+					auto selection = this->selection.lock();
+					if (selection) {
+						//mark the point
+						auto color = isActive(this, WhenActive::WhenActive::Selected)
+							? ofxCvGui::Utils::getBeatingSelectionColor()
+							: selection->color;
+						ofxCvGui::Utils::drawTextAnnotation(ofToString(selection->viewPosition)
+							, selection->worldPosition.get()
+							, color);
+					}
+				}
+
+				//----------
+				void ViewToVertices::calibrateCalibrateCamera(const vector<shared_ptr<IReferenceVertices::Vertex>>& vertices) {
+					auto viewNode = this->getInput<Item::View>();
 
 					auto worldRows = vector<vector<glm::vec3>>(1);
 					auto viewRows = vector<vector<glm::vec2>>(1);
-					auto & world = worldRows[0];
-					auto & view = viewRows[0];
+					auto& world = worldRows[0];
+					auto& view = viewRows[0];
 					for (auto vertex : vertices) {
 						world.push_back(vertex->worldPosition);
 						view.push_back(vertex->viewPosition);
 					}
 
 					vector<cv::Mat> rotations, translations;
-					
+
 					auto videoOutputNode = this->getInput<System::VideoOutput>();
 					if (videoOutputNode && videoOutputNode->isWindowOpen()) {
 						viewNode->setWidth(videoOutputNode->getWidth());
@@ -391,13 +447,13 @@ namespace ofxRulr {
 					//--
 					//
 					cv::Mat cameraMatrix, distortionCoefficients;
-					if (this->useExistingParametersAsInitial) {
+					if (this->parameters.useExistingParametersAsInitial) {
 						cameraMatrix = viewNode->getCameraMatrix();
 						distortionCoefficients = viewNode->getDistortionCoefficients();
 
 						//clamp the initial intrinsics so that focal length is positive
-						auto & focalLengthX = cameraMatrix.at<double>(0, 0);
-						auto & focalLengthY = cameraMatrix.at<double>(1, 1);
+						auto& focalLengthX = cameraMatrix.at<double>(0, 0);
+						auto& focalLengthY = cameraMatrix.at<double>(1, 1);
 						if (focalLengthX <= 0) {
 							focalLengthX = viewSize.width;
 						}
@@ -409,8 +465,8 @@ namespace ofxRulr {
 						//this is generally true for cameras, and insisted by OpenCV before fitting,
 						//but often not true for projectors and the fit function will return principal
 						//points outside of this range.
-						auto & principalPointX = cameraMatrix.at<double>(0, 2);
-						auto & principalPointY = cameraMatrix.at<double>(1, 2);
+						auto& principalPointX = cameraMatrix.at<double>(0, 2);
+						auto& principalPointY = cameraMatrix.at<double>(1, 2);
 						if (principalPointX <= 1) {
 							principalPointX = 1;
 						}
@@ -469,7 +525,7 @@ namespace ofxRulr {
 					//setup flags
 					//--
 					//
-					auto flags = (int) cv::CALIB_USE_INTRINSIC_GUESS; // since we're using a single object
+					auto flags = (int)cv::CALIB_USE_INTRINSIC_GUESS; // since we're using a single object
 					if (viewNode->getHasDistortion()) {
 						flags |= RULR_VIEW_CALIBRATION_FLAGS;
 					}
@@ -505,39 +561,58 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void ViewToVertices::drawOnProjector() {
-					auto selection = this->selection.lock();
-					if (selection) {
-						ofxSpinCursor::draw(selection->viewPosition);
+				void ViewToVertices::calibrateSolvePnP(const vector < shared_ptr<IReferenceVertices::Vertex>>& vertices) {
+					auto viewNode = this->getInput<Item::View>();
+
+					auto worldRows = vector<vector<glm::vec3>>(1);
+					auto viewRows = vector<vector<glm::vec2>>(1);
+					auto& world = worldRows[0];
+					auto& view = viewRows[0];
+					for (auto vertex : vertices) {
+						world.push_back(vertex->worldPosition);
+						view.push_back(vertex->viewPosition);
 					}
-				}
 
-				//---------
-				void ViewToVertices::drawWorldStage() {
-					auto selection = this->selection.lock();
-					if (selection) {
-						//draw circle around point, facing towards camera
-						ofPushMatrix();
-						{
-							auto & camera = ofxRulr::Graph::World::X().getWorldStage()->getCamera();
-							auto transform = glm::lookAt(camera.getPosition()
-								, selection->worldPosition.get()
-								, glm::vec3(0, 1, 0));
+					cv::Mat rotationVector, translation;
+					viewNode->getExtrinsics(rotationVector, translation, true);
 
-							ofMultMatrix(transform);
+					// Pull calibration
+					auto cameraMatrix = viewNode->getCameraMatrix();
+					auto distortionCoefficients = viewNode->getDistortionCoefficients();
 
-							ofPushStyle();
-							{
-								ofNoFill();
-								ofSetColor(ofxCvGui::Utils::getBeatingSelectionColor());
-								ofDrawCircle(glm::vec3(), 0.1f);
-							}
-							ofPopStyle();
+					// Solve
+					cv::solvePnP(ofxCv::toCv(world)
+						, ofxCv::toCv(view)
+						, cameraMatrix
+						, distortionCoefficients
+						, rotationVector
+						, translation
+						, true);
+
+					// get reprojection error
+					{
+						// Undistort originals
+						auto undistortedPoints = ofxCv::undistortImagePoints(ofxCv::toCv(view), cameraMatrix, distortionCoefficients);
+						
+						// Project the points
+						vector<cv::Point2f> projectedPoints;
+						cv::projectPoints(ofxCv::toCv(world)
+							, rotationVector
+							, translation
+							, cameraMatrix
+							, distortionCoefficients
+							, projectedPoints);
+
+						// Total error
+						float accumulator = 0.0f;
+						for (int i = 0; i < undistortedPoints.size(); i++) {
+							accumulator += glm::distance2(ofxCv::toOf(undistortedPoints[i]), ofxCv::toOf(projectedPoints[i]));
 						}
-						ofPopMatrix();
+						this->reprojectionError = sqrt(accumulator / (float)undistortedPoints.size());
 					}
-				}
 
+					viewNode->setExtrinsics(rotationVector, translation, true);
+				}
 			}
 		}
 	}

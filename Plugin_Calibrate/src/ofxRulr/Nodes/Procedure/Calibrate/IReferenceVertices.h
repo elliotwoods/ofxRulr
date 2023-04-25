@@ -22,13 +22,14 @@ namespace ofxRulr {
 						ofParameter<glm::vec3> worldPosition{ "World", glm::vec3(0, 0, 0) };
 						ofParameter<glm::vec2> viewPosition{ "View", glm::vec2(0, 0) };
 						ofParameter<string> name{ "Name", "" };
-						void setOwner(shared_ptr<IReferenceVertices>);
+						void setOwner(IReferenceVertices *);
 					protected:
 						void drawObjectLines();
-						weak_ptr<IReferenceVertices> owner;
+						IReferenceVertices * owner = nullptr;
 					};
 
 					IReferenceVertices();
+					~IReferenceVertices();
 					string getTypeName() const override;
 					void init();
 					void drawWorldStage();

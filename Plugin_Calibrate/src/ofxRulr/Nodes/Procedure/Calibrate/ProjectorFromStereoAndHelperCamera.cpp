@@ -263,7 +263,7 @@ namespace ofxRulr {
 
 								//build up search area
 								for (const auto & pixel : dataSet) {
-									const auto distanceSquared = pixel.getCameraXY().squareDistance(ofxCv::toOf(helperCameraImagePoint));
+									const auto distanceSquared = glm::length2(pixel.getCameraXY() - ofxCv::toOf(helperCameraImagePoint));
 									if (distanceSquared < distanceThresholdSquared) {
 										cameraSpace.push_back(ofxCv::toCv(pixel.getCameraXY()));
 										projectorSpace.push_back(ofxCv::toCv(pixel.getProjectorXY()));

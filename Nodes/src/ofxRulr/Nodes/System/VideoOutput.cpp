@@ -156,6 +156,7 @@ namespace ofxRulr {
 				this->splitUseIndex.set("Selected portion", 0, 0, 8);
 				this->testPattern.set("Test Pattern", 1);
 				this->mute.set("Mute", false);
+				this->flipY.set("Flip Y", false);
 
 				this->splitHorizontal.addListener(this, &VideoOutput::callbackChangeSplit);
 				this->splitVertical.addListener(this, &VideoOutput::callbackChangeSplit);
@@ -188,6 +189,7 @@ namespace ofxRulr {
 				Utils::serialize(json, this->splitUseIndex);
 				Utils::serialize(json, this->testPattern);
 				Utils::serialize(json, this->mute);
+				Utils::serialize(json, this->flipY);
 			}
 
 			//----------
@@ -205,6 +207,7 @@ namespace ofxRulr {
 				Utils::deserialize(json, this->splitUseIndex);
 				Utils::deserialize(json, this->testPattern);
 				Utils::deserialize(json, this->mute);
+				Utils::deserialize(json, this->flipY);
 			}
 
 			//----------
@@ -274,6 +277,8 @@ namespace ofxRulr {
 					inspector->add(testPatternSelector);
 				}
 				
+				auto flipYToggle = inspector->addToggle(this->flipY);
+
 				auto muteToggle = inspector->addToggle(this->mute);
 				{
 					muteToggle->setHotKey(' ');
@@ -456,16 +461,17 @@ namespace ofxRulr {
 						//ofClear(0, 255);
 						ofSetupScreenOrtho();
 						
- 						ofDrawCircle(50, 50, 50);
- 						ofDrawBitmapStringHighlight("this is the client window", 20, 20);
- 						this->fbo.draw(20, 50);
-
 						//clear the entire video output
 						ofClear(0, 0);
 
 						//draw the fbo if mute is disabled
 						if (!this->mute) {
-							this->fbo.draw(0, 0);
+							if (this->flipY.get()) {
+								this->fbo.draw(0, this->height, this->width, -this->height);
+							}
+							else {
+								this->fbo.draw(0, 0);
+							}
 						}
 					}
 					ofPopView();

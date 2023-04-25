@@ -32,11 +32,34 @@ namespace ofxRulr {
 			}
 
 			if (filename != "") {
+				// We write to a temporary file first and then copy across
+				// This avoids emptying the output file and not saving anything (e.g. in case of exception whlilst serialising)
+
+				auto tempFilename = filename + "-temp";
+
 				nlohmann::json json;
 				this->serialize(json);
-				ofFile output;
-				output.open(filename, ofFile::WriteOnly, false);
-				output << json.dump(4);
+
+				{
+					ofFile output;
+					output.open(tempFilename, ofFile::WriteOnly, false);
+					output << json.dump(4);
+					output.close();
+				}
+
+				if (ofFile::doesFileExist(filename)) {
+					// delete the old file
+					ofFile::removeFile(filename);
+				}
+
+				// Copy the temp file to the correct file
+				if (ofFile::copyFromTo(tempFilename, filename, true)) {
+					ofFile::removeFile(tempFilename);
+				}
+
+				if (json.empty()) {
+					throw(ofxRulr::Exception("Serialization failed"));
+				}
 			}
 		}
 

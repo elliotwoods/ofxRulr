@@ -18,9 +18,8 @@ namespace ofxRulr {
 						this->onChange.notifyListeners();
 					};
 					this->onChange += [this]() {
-						auto owner = this->owner.lock();
-						if (owner) {
-							owner->onChangeVertex.notifyListeners();
+						if (this->owner) {
+							this->owner->onChangeVertex.notifyListeners();
 						}
 					};
 				}
@@ -61,7 +60,7 @@ namespace ofxRulr {
 				}
 
 				//----------
-				void IReferenceVertices::Vertex::setOwner(shared_ptr<IReferenceVertices> owner) {
+				void IReferenceVertices::Vertex::setOwner(IReferenceVertices * owner) {
 					this->owner = owner;
 				}
 
@@ -79,6 +78,14 @@ namespace ofxRulr {
 				}
 
 				//----------
+				IReferenceVertices::~IReferenceVertices() {
+					auto vertices = this->vertices.getAllCaptures();
+					for (auto vertex : vertices) {
+						vertex->setOwner(nullptr);
+					}
+				}
+
+				//----------
 				string IReferenceVertices::getTypeName() const {
 					return "Procedure::Calibrate::ISelectTargetVertex";
 				}
@@ -91,7 +98,9 @@ namespace ofxRulr {
 						this->vertices.serialize(json["vertices"]);
 					};
 					this->onDeserialize += [this](const nlohmann::json & json) {
-						this->vertices.deserialize(json["vertices"]);
+						if (json.contains("vertices")) {
+							this->vertices.deserialize(json["vertices"]);
+						}
 					};
 
 					this->panel = ofxCvGui::Panels::makeWidgets();
@@ -149,7 +158,7 @@ namespace ofxRulr {
 
 				//----------
 				void IReferenceVertices::addVertex(shared_ptr<Vertex> vertex) {
-					vertex->setOwner(static_pointer_cast<IReferenceVertices>(this->shared_from_this()));
+					vertex->setOwner(this);
 					this->vertices.add(vertex);
 				}
 

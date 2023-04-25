@@ -14,6 +14,7 @@
 #include "ofxAssets.h"
 
 #include <string>
+#include <memory>
 
 #define RULR_NODE_INIT_LISTENER \
 	this->onInit += [this]() { \
@@ -59,6 +60,8 @@ namespace ofxRulr {
 		public:
 			Base();
 			~Base();
+			weak_ptr<Base> getWeakPtr();
+
 			virtual string getTypeName() const override;
 			void init();
 

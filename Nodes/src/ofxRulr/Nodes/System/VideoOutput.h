@@ -88,10 +88,11 @@ namespace ofxRulr {
 				ofParameter<float> splitUseIndex;
 				ofParameter<int> testPattern; // 0 = none, 1 = grid, 2 = white
 				ofParameter<bool> mute;
+				ofParameter<bool> flipY;
 
 				ofFbo fbo;
-				float width, height;
-				bool scissorWasEnabled;
+				float width = 0, height = 0;
+				bool scissorWasEnabled = false;
 
 				ofxCvGui::PanelPtr fboPreview;
 			};

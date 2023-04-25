@@ -31,6 +31,11 @@ namespace ofxRulr {
 		}
 
 		//----------
+		weak_ptr<Base> Base::getWeakPtr() {
+			return this->shared_from_this();
+		}
+
+		//----------
 		string Base::getTypeName() const {
 			return "Node";
 		}

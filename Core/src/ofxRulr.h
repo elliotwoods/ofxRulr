@@ -19,6 +19,8 @@
 #include "ofxRulr/Utils/Set.h"
 #include "ofxRulr/Utils/SoundEngine.h"
 #include "ofxRulr/Utils/Utils.h"
+#include "ofxRulr/Utils/CaptureSet.h"
+
 #include "ofxRulr/Nodes/GraphicsManager.h"
 
 #include "ofxRulr/Utils/Serialization/oF.h"

@@ -132,7 +132,7 @@ namespace ofxRulr {
 				this->onDeserialize += [this](const nlohmann::json &) {
 					auto vertices = this->vertices.getAllCaptures();
 					for (auto vertex : vertices) {
-						vertex->setOwner(static_pointer_cast<IReferenceVertices>(this->shared_from_this()));
+						vertex->setOwner(this);
 					}
 				};
 
