@@ -875,7 +875,7 @@ EXPORTS
 	?getCursorWorld@WorldStage@Graph@ofxRulr@@QEBA?AU?$vec@$02M$0A@@glm@@_N@Z
 	??0Base@Nodes@ofxRulr@@QEAA@XZ
 	??0GraphicsManager@Nodes@ofxRulr@@QEAA@XZ
-	??1Base@Nodes@ofxRulr@@QEAA@XZ
+	??1Base@Nodes@ofxRulr@@UEAA@XZ
 	?loadCoreNodes@Nodes@ofxRulr@@YAXXZ
 	?loadPluginNodes@Nodes@ofxRulr@@YAXXZ
 	?addInput@Base@Nodes@ofxRulr@@IEAAXV?$shared_ptr@VAbstractPin@Graph@ofxRulr@@@std@@@Z
@@ -928,6 +928,7 @@ EXPORTS
 	?getFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getFreshFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getGrabber@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VSimple@Grabber@ofxMachineVision@@@std@@XZ
+	?getUndistortedPreview@Camera@Item@Nodes@ofxRulr@@QEBAAEBV?$ofImage_@E@@XZ
 	?isNewSingleShotFrame@Camera@Item@Nodes@ofxRulr@@QEBA_NXZ
 	?update@Camera@Item@Nodes@ofxRulr@@QEAAXXZ
 	?deserialize@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@@Z

@@ -38,6 +38,7 @@ namespace ofxRulr {
 
 				shared_ptr<ofxMachineVision::Frame> getFrame();
 				shared_ptr<ofxMachineVision::Frame> getFreshFrame();
+				const ofImage& getUndistortedPreview() const;
 
 				ofxLiquidEvent<shared_ptr<ofxMachineVision::Frame>> onNewFrame;
 			protected:
@@ -63,7 +64,7 @@ namespace ofxRulr {
 				ofParameter<bool> showFocusLine;
 
 				ofMesh focusLineGraph;
-				ofImage preview;
+				ofImage undistortedPreview;
 			};
 		}
 	}

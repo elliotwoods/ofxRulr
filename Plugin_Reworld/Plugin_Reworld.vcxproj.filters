@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{53695f24-0430-4196-b53c-3cce472d160b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{f8a6306b-29fd-4ca4-936e-6f0ee4df836c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{80eb14e2-a317-472d-baf0-7515e30797fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\Reworld">
+      <UniqueIdentifier>{b29a37d6-862b-42fb-b900-90be0773b1b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons">
+      <UniqueIdentifier>{6cdec120-e322-4625-900d-80e633386938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxHomography">
+      <UniqueIdentifier>{27844f2d-b474-4ff0-8acb-950cee08ea7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxHomography\src">
+      <UniqueIdentifier>{34835e21-96b3-4a55-ac91-9e966405d465}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch_Plugin_Reworld.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\CameraTest.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_Reworld.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\CameraTest.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

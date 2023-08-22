@@ -40,8 +40,8 @@ namespace ofxRulr {
 				this->rebuildPanel();
 
 				this->onDrawObject += [this]() {
-					if (this->preview.isAllocated()) {
-						this->getViewInObjectSpace().drawOnNearPlane(this->preview);
+					if (this->undistortedPreview.isAllocated()) {
+						this->getViewInObjectSpace().drawOnNearPlane(this->undistortedPreview);
 					}
 				};
 			}
@@ -75,14 +75,14 @@ namespace ofxRulr {
 				if (this->grabber && this->grabber->isFrameNew()) {
 					auto pixels = this->grabber->getPixels();
 					if (pixels.size() != 0) {
-						this->preview.allocate(pixels.getWidth()
+						this->undistortedPreview.allocate(pixels.getWidth()
 							, pixels.getHeight()
 							, pixels.getImageType());
 						cv::undistort(ofxCv::toCv(pixels)
-							, ofxCv::toCv(this->preview.getPixels())
+							, ofxCv::toCv(this->undistortedPreview.getPixels())
 							, this->getCameraMatrix()
 							, this->getDistortionCoefficients());
-						this->preview.update();
+						this->undistortedPreview.update();
 					}
 				}
 
@@ -280,6 +280,13 @@ namespace ofxRulr {
 				else {
 					return this->grabber->getFreshFrame();
 				}
+			}
+
+			//----------
+			const ofImage &
+				Camera::getUndistortedPreview() const
+			{
+				return this->undistortedPreview;
 			}
 
 			//----------
