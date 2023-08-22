@@ -504,6 +504,7 @@ EXPORTS
 	?growToInclude@ofRectangle@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	?inside@ofRectangle@@QEBA_NAEBU?$vec@$01M$0A@@glm@@@Z
 	?inside@ofRectangle@@QEBA_NAEBU?$vec@$02M$0A@@glm@@@Z
+	?inside@ofRectangle@@QEBA_NAEBV1@@Z
 	?set@ofRectangle@@QEAAXAEBU?$vec@$02M$0A@@glm@@MM@Z
 	?setFromCenter@ofRectangle@@QEAAXAEBU?$vec@$01M$0A@@glm@@MM@Z
 	?setFromCenter@ofRectangle@@QEAAXAEBU?$vec@$02M$0A@@glm@@MM@Z

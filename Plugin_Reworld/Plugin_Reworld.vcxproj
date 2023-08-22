@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\CameraTest.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\Router.cpp" />
     <ClCompile Include="src\pch_Plugin_Reworld.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -94,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\CameraTest.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Router.h" />
     <ClInclude Include="src\pch_Plugin_Reworld.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

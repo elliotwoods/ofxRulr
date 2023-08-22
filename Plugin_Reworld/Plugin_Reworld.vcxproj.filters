@@ -33,12 +33,18 @@
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\CameraTest.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\Router.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Reworld.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\CameraTest.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Router.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClInclude>
   </ItemGroup>
