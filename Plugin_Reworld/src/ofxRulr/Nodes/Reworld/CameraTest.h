@@ -23,6 +23,23 @@ namespace ofxRulr {
 					, (Ready, Poll, Running, Finish, Fail)
 					, ("Ready", "Poll", "Running", "Finish", "Fail"));
 
+				MAKE_ENUM(CaptureTarget
+					, (Direct, Image)
+					, ("Direct", "Image"));
+
+				struct Capture {
+					glm::vec2 prismPosition;
+					glm::vec2 scanAreaPosition;
+					cv::Mat image;
+					ofTexture preview;
+					void updatePreview() {
+						this->preview.loadData(this->image.data
+							, this->image.cols
+							, this->image.rows
+							, GL_RGB);
+					}
+				};
+
 				CameraTest();
 				string getTypeName() const override;
 
@@ -43,6 +60,8 @@ namespace ofxRulr {
 				static glm::vec2 axesToPolar(const glm::vec2&);
 
 				Router::Address getTargetAddress() const;
+
+				void clearCaptures();
 			protected:
 				void calculateIterations();
 				void calculateIterationsPolar();
@@ -79,7 +98,8 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<float> moveTimeout{ "Move timeout", 20.0f };
 							ofParameter<float> pollFrequency{ "Poll frequency", 0.5f };
-							PARAM_DECLARE("Movements", moveTimeout, pollFrequency);
+							ofParameter<float> epsilon{ "Epsilon", 0, 0, 1.0f };
+							PARAM_DECLARE("Movements", moveTimeout, pollFrequency, epsilon);
 						} movements;
 						
 						struct : ofParameterGroup {
@@ -105,14 +125,16 @@ namespace ofxRulr {
 							PARAM_DECLARE("Iterations", mode, polar, cartesian);
 						} iterations;
 
-						PARAM_DECLARE("Capture", movements, iterations);
+						ofParameter<CaptureTarget> captureTarget{ "Capture target", CaptureTarget::Image };
+
+						PARAM_DECLARE("Capture", movements, iterations, captureTarget);
 					} capture;
 
 					struct : ofParameterGroup {
 						ofParameter<int> resolution{ "Resolution", 2048 };
-						PARAM_DECLARE("Scan area", resolution);
+						ofParameter<float> stampSize{ "Stamp size", 64, 1, 512};
+						PARAM_DECLARE("Scan area", resolution, stampSize);
 					} scanArea;
-
 
 					PARAM_DECLARE("CameraTest", state, target, mask, capture, scanArea);
 				} parameters;
@@ -156,6 +178,8 @@ namespace ofxRulr {
 					glm::vec2 position;
 					glm::vec2 targetPosition;
 				} currentState;
+
+				vector<Capture> captures;
 			};
 		}
 	}

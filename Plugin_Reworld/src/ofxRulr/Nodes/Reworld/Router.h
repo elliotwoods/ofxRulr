@@ -29,6 +29,7 @@ namespace ofxRulr {
 				glm::vec2 getTargetPosition(const Address&);
 				bool isInPosition(const Address&);
 				void poll(const Address&);
+				void push(const Address&);
 
 			protected:
 

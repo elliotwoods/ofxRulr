@@ -131,6 +131,14 @@ namespace ofxRulr {
 				auto uri = this->getBaseURI(address) + "/poll";
 				this->loadURI(uri);
 			}
+
+			//----------
+			void
+				Router::push(const Address& address)
+			{
+				auto uri = this->getBaseURI(address) + "/push";
+				this->loadURI(uri);
+			}
 		}
 	}
 }

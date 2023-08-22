@@ -204,14 +204,37 @@ namespace ofxRulr {
 					}
 					{
 						auto panel = ofxCvGui::Panels::makeImage(this->captureRegion.preview);
+						panel->onDrawImage += [this](ofxCvGui::DrawImageArguments& args) {
+							ofPushStyle();
+							{
+								ofNoFill();
+								auto radius = this->captureRegion.preview.getWidth() / 2.0f;
+								ofDrawCircle(radius, radius, radius);
+							}
+							ofPopStyle();
+						};
 						horizontalStrip->add(panel);
 					}
 					verticalStrip->add(horizontalStrip);
 				}
 				{
+					// Scan area preview
 					auto panel = ofxCvGui::Panels::makeImage(this->scanArea.preview);
 					{
 						panel->onDrawImage += [this](ofxCvGui::DrawImageArguments& args) {
+							// Draw image captures
+							{
+								auto stampSize = this->parameters.scanArea.stampSize.get();
+								for (const auto& capture : this->captures) {
+									ofPushMatrix();
+									{
+										ofTranslate(capture.scanAreaPosition);
+										capture.preview.draw(-stampSize / 2, -stampSize / 2, stampSize, stampSize);
+									}
+									ofPopMatrix();
+								}
+							}
+
 							// Draw live data
 							ofPushStyle();
 							{
@@ -245,7 +268,6 @@ namespace ofxRulr {
 								for (const auto& position : this->scanArea.iterationPositionsScanArea) {
 									ofDrawCircle(position, 3);
 								}
-
 							}
 							ofPopStyle();
 						};
@@ -396,6 +418,24 @@ namespace ofxRulr {
 				CameraTest::serialize(nlohmann::json& json) const
 			{
 				Utils::serialize(json["targetCorners"], this->targetCorners);
+
+				// serialize captures
+				{
+					size_t fileIndex = 0;
+					for (const auto& capture : this->captures) {
+						nlohmann::json jsonCapture;
+						auto folder = this->getDefaultFilename();
+						if (!ofDirectory::doesDirectoryExist(folder)) {
+							ofDirectory::createDirectory(folder);
+						}
+						auto path = folder + "\"" + ofToString(fileIndex) + ".png";
+						Utils::serialize(jsonCapture["prismPosition"], capture.prismPosition);
+						Utils::serialize(jsonCapture["scanAreaPosition"], capture.scanAreaPosition);
+						Utils::serialize(jsonCapture["imagePath"], path);
+						cv::imwrite(path, capture.image);
+						json["captures"].push_back(jsonCapture);
+					}
+				}
 			}
 
 			//---------
@@ -404,6 +444,22 @@ namespace ofxRulr {
 			{
 				if (json.contains("targetCorners")) {
 					Utils::deserialize(json["targetCorners"], this->targetCorners);
+				}
+
+				{
+					this->captures.clear();
+					if (json.contains("captures")) {
+						for (const auto& jsonCapture : json["captures"]) {
+							Capture capture;
+							Utils::deserialize(jsonCapture["prismPosition"], capture.prismPosition);
+							Utils::deserialize(jsonCapture["scanAreaPosition"], capture.scanAreaPosition);
+							string path;
+							Utils::deserialize(jsonCapture["imagePath"], path);
+							capture.image = cv::imread(path);
+							capture.updatePreview();
+						}
+						
+					}
 				}
 			}
 
@@ -525,6 +581,13 @@ namespace ofxRulr {
 					this->parameters.target.column.get()
 					, (uint8_t)this->parameters.target.portal.get()
 				};
+			}
+
+			//---------
+			void
+				CameraTest::clearCaptures()
+			{
+				this->captures.clear();
 			}
 
 			//---------
@@ -709,6 +772,9 @@ namespace ofxRulr {
 					// check we cannot to router
 					router->test();
 
+					// clear existing captures
+					this->captures.clear();
+
 					// move to first position
 					this->scanRoutine.currentIndex = 0;
 					router->setPosition(this->getTargetAddress(), this->scanArea.iterationPositionsPrism[0]);
@@ -747,44 +813,71 @@ namespace ofxRulr {
 							|| this->parameters.state.get() == State::Poll) {
 							if (chrono::system_clock::now() > this->scanRoutine.lastPoll + std::chrono::milliseconds((int)(this->parameters.capture.movements.pollFrequency.get() * 1000.0f))) {
 								router->poll(targetAddress);
-
-								// Pull position
-								this->currentState.position = router->getPosition(targetAddress);
-								this->currentState.targetPosition = router->getTargetPosition(targetAddress);
-
 								isPollFrame = true;
 							}
 						}
+
+						// Pull position
+						this->currentState.position = router->getPosition(targetAddress);
+						this->currentState.targetPosition = router->getTargetPosition(targetAddress);
 
 						// Further functions are only for run mode
 						if (this->parameters.state.get() != State::Running) {
 							return;
 						}
 
+						auto targetPrismPosition = this->scanArea.iterationPositionsPrism[this->scanRoutine.currentIndex];
+
 						if (isPollFrame) {
 							// Push the position (we do this for redundancy to avoid missed messages on RS485 side)
-							router->setPosition(targetAddress, this->scanArea.iterationPositionsPrism[this->scanRoutine.currentIndex]);
+							router->push(targetAddress);
 						}
 
-						// Check if it's reached a target position
-						if (router->isInPosition(targetAddress)) {
+						// Check if it's reached a target position (within epsilon)
+						auto distanceToTarget = glm::distance(this->currentState.position, targetPrismPosition);
+						if (distanceToTarget <= this->parameters.capture.movements.epsilon.get()) {
 							// capture!
 							{
-								const auto& currentTargetPositon = this->scanArea.iterationPositionsScanArea[this->scanRoutine.currentIndex];
-								const auto captureResolution = this->captureRegion.squareImage.rows;
-								if (captureResolution > 0) {
-									auto targetRect = cv::Rect2i(currentTargetPositon.x - captureResolution / 2
-										, currentTargetPositon.y - captureResolution / 2
-										, captureResolution
-										, captureResolution);
+								auto scanAreaPosition = this->positionToScanArea(targetPrismPosition);
+								const auto stampSize = this->parameters.scanArea.stampSize.get();
 
-									const auto scanAreaRect = ofRectangle(0, 0, this->scanArea.image.cols, this->scanArea.image.rows);
+								const auto captureTarget = this->parameters.capture.captureTarget.get();
+								if (captureTarget == CaptureTarget::Direct) {
+									const auto captureResolution = this->captureRegion.squareImage.rows;
+									if (captureResolution > 0) {
 
-									// check if targetRect is inside scan area rectangle
-									if (scanAreaRect.inside(ofxCv::toOf(targetRect))) {
-										this->scanArea.image(targetRect) = this->captureRegion.squareImage;
-										this->scanArea.previewDirty = true;
+										auto targetRect = ofRectangle(scanAreaPosition.x - stampSize / 2
+											, scanAreaPosition.y - stampSize / 2
+											, stampSize
+											, stampSize);
+
+										const auto scanAreaRect = ofRectangle(0, 0, this->scanArea.image.cols, this->scanArea.image.rows);
+
+										// check if targetRect is inside scan area rectangle
+										if (targetRect.getLeft() >= scanAreaRect.getLeft()
+											&& targetRect.getRight() <= scanAreaRect.getRight()
+											&& targetRect.getTop() >= scanAreaRect.getTop()
+											&& targetRect.getBottom() <= scanAreaRect.getBottom()) {
+											cv::Mat stampImage;
+											cv::resize(this->captureRegion.squareImage
+												, stampImage
+												, cv::Size(stampSize, stampSize));
+											cv::copyTo(stampImage, this->scanArea.image((cv::Rect2i)ofxCv::toCv(targetRect)), cv::Mat());
+											this->scanArea.previewDirty = true;
+										}
 									}
+								}
+								else if (captureTarget == CaptureTarget::Image) {
+									Capture capture;
+									{
+										capture.prismPosition = targetPrismPosition;
+										capture.scanAreaPosition = scanAreaPosition;
+									}
+									cv::resize(this->captureRegion.squareImage
+										, capture.image
+										, cv::Size(stampSize, stampSize));
+									capture.updatePreview();
+									this->captures.push_back(capture);
 								}
 							}
 							// move to next

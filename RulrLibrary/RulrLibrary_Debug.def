@@ -497,7 +497,9 @@ EXPORTS
 	?getCenter@ofRectangle@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?getHeight@ofRectangle@@QEBAMXZ
 	?getIntersection@ofRectangle@@QEBA?AV1@AEBV1@@Z
+	?getLeft@ofRectangle@@QEBAMXZ
 	?getRight@ofRectangle@@QEBAMXZ
+	?getTop@ofRectangle@@QEBAMXZ
 	?getTopLeft@ofRectangle@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?getTopRight@ofRectangle@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?getWidth@ofRectangle@@QEBAMXZ
@@ -526,6 +528,7 @@ EXPORTS
 	?isAllocated@ofTexture@@QEBA_NXZ
 	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@E@@@Z
 	?loadData@ofTexture@@QEAAXAEBV?$ofPixels_@G@@@Z
+	?loadData@ofTexture@@QEAAXQEBEHHH@Z
 	?readToPixels@ofTexture@@QEBAXAEAV?$ofPixels_@M@@@Z
 	?setTextureMinMagFilter@ofTexture@@QEAAXHH@Z
 	?unbind@ofTexture@@QEBAXH@Z
