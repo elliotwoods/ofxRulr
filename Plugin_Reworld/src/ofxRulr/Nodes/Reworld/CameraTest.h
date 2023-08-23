@@ -66,8 +66,9 @@ namespace ofxRulr {
 				void calculateIterations();
 				void calculateIterationsPolar();
 				void calculateIterationsCartesian();
-				void calculateScanAreaPositions();
+				void removeIterationsCloseToCaptures();
 				void sortIterationsByDistance();
+				void calculateScanAreaPositions();
 				
 				void startScanRoutine();
 				void updateScanRoutine();
@@ -104,6 +105,8 @@ namespace ofxRulr {
 						
 						struct : ofParameterGroup {
 							ofParameter<IterationMode> mode{ "Iteration mode", IterationMode::Polar };
+							ofParameter<float> minDistanceToExisting{ "Min distance to existing", 0.03f };
+							ofParameter<bool> alwaysCalculate{ "Always calculate", true };
 
 							struct : ofParameterGroup {
 								ofParameter<float> minR{ "Min R", 0.01, 0, 1 };
@@ -122,7 +125,7 @@ namespace ofxRulr {
 								PARAM_DECLARE("Cartesian", maxR, steps);
 							} cartesian;
 
-							PARAM_DECLARE("Iterations", mode, polar, cartesian);
+							PARAM_DECLARE("Iterations", mode, minDistanceToExisting, alwaysCalculate, polar, cartesian);
 						} iterations;
 
 						ofParameter<CaptureTarget> captureTarget{ "Capture target", CaptureTarget::Image };

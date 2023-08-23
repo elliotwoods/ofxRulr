@@ -408,9 +408,12 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ALERT;
 					})->addToolTip("Find shortest route");
 
-					inspector->addButton("Scan", [this]() {
-						this->startScanRoutine();
-						}, OF_KEY_RETURN)->setHeight(100.0f);
+				inspector->addButton("Scan", [this]() {
+					this->startScanRoutine();
+					}, OF_KEY_RETURN)->setHeight(100.0f);
+				inspector->addButton("Clear captures", [this]() {
+					this->clearCaptures(); 
+					});
 			}
 
 			//---------
@@ -428,12 +431,15 @@ namespace ofxRulr {
 						if (!ofDirectory::doesDirectoryExist(folder)) {
 							ofDirectory::createDirectory(folder);
 						}
-						auto path = folder + "\"" + ofToString(fileIndex) + ".png";
+						auto path = folder + "\\" + ofToString(fileIndex) + ".png";
 						Utils::serialize(jsonCapture["prismPosition"], capture.prismPosition);
 						Utils::serialize(jsonCapture["scanAreaPosition"], capture.scanAreaPosition);
 						Utils::serialize(jsonCapture["imagePath"], path);
-						cv::imwrite(path, capture.image);
+						auto absPath = ofToDataPath(path, true);
+						cv::imwrite(absPath, capture.image);
 						json["captures"].push_back(jsonCapture);
+
+						fileIndex++;
 					}
 				}
 			}
@@ -455,10 +461,10 @@ namespace ofxRulr {
 							Utils::deserialize(jsonCapture["scanAreaPosition"], capture.scanAreaPosition);
 							string path;
 							Utils::deserialize(jsonCapture["imagePath"], path);
-							capture.image = cv::imread(path);
+							capture.image = cv::imread(ofToDataPath(path, true));
 							capture.updatePreview();
+							this->captures.push_back(capture);
 						}
-						
 					}
 				}
 			}
@@ -604,6 +610,10 @@ namespace ofxRulr {
 				default:
 					break;
 				}
+
+				this->removeIterationsCloseToCaptures();
+				this->sortIterationsByDistance();
+				this->calculateScanAreaPositions();
 			}
 
 
@@ -645,7 +655,6 @@ namespace ofxRulr {
 				}
 
 				this->scanArea.iterationPositionsPrism = prismPositions;
-				this->calculateScanAreaPositions();
 			}
 
 			//---------
@@ -677,29 +686,30 @@ namespace ofxRulr {
 				}
 
 				this->scanArea.iterationPositionsPrism = prismPositions;
-				this->calculateScanAreaPositions();
 			}
 
 			//---------
 			void
-				CameraTest::calculateScanAreaPositions()
+				CameraTest::removeIterationsCloseToCaptures()
 			{
-				vector<glm::vec2> scanAreaPositions;
+				const auto minDistanceAllowed = this->parameters.capture.iterations.minDistanceToExisting.get();
 
-				for (const auto& prismPosition : this->scanArea.iterationPositionsPrism) {
-					scanAreaPositions.push_back(this->positionToScanArea(prismPosition));
-				}
-				this->scanArea.iterationPositionsScanArea = scanAreaPositions;
+				for (auto it = this->scanArea.iterationPositionsPrism.begin()
+					; it != this->scanArea.iterationPositionsPrism.end()
+					; ) {
+					bool foundCapture = false;
+					for (const auto& capture : this->captures) {
+						if (glm::distance(capture.prismPosition, *it) < minDistanceAllowed) {
+							foundCapture = true;
+							break;
+						}
+					}
 
-				// update preview
-				{
-					this->scanArea.linePreview.clear();
-					for (const auto& point : this->scanArea.iterationPositionsScanArea) {
-						this->scanArea.linePreview.addVertex({
-							point.x
-							, point.y
-							, 0.0f
-							});
+					if (foundCapture) {
+						it = this->scanArea.iterationPositionsPrism.erase(it);
+					}
+					else {
+						it++;
 					}
 				}
 			}
@@ -757,7 +767,30 @@ namespace ofxRulr {
 					prismPositions.push_back(this->scanArea.iterationPositionsPrism[i]);
 				}
 				this->scanArea.iterationPositionsPrism = prismPositions;
-				this->calculateScanAreaPositions();
+			}
+
+			//---------
+			void
+				CameraTest::calculateScanAreaPositions()
+			{
+				vector<glm::vec2> scanAreaPositions;
+
+				for (const auto& prismPosition : this->scanArea.iterationPositionsPrism) {
+					scanAreaPositions.push_back(this->positionToScanArea(prismPosition));
+				}
+				this->scanArea.iterationPositionsScanArea = scanAreaPositions;
+
+				// update preview
+				{
+					this->scanArea.linePreview.clear();
+					for (const auto& point : this->scanArea.iterationPositionsScanArea) {
+						this->scanArea.linePreview.addVertex({
+							point.x
+							, point.y
+							, 0.0f
+							});
+					}
+				}
 			}
 
 			//---------
@@ -772,8 +805,14 @@ namespace ofxRulr {
 					// check we cannot to router
 					router->test();
 
-					// clear existing captures
-					this->captures.clear();
+					if (this->scanArea.iterationPositionsPrism.empty() || this->parameters.capture.iterations.alwaysCalculate) {
+						this->calculateIterations();
+						this->sortIterationsByDistance();
+					}
+
+					if (this->scanArea.iterationPositionsPrism.empty()) {
+						throw(ofxRulr::Exception("No iterations to work with"));
+					}
 
 					// move to first position
 					this->scanRoutine.currentIndex = 0;

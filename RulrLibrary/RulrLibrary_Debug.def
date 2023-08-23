@@ -406,6 +406,7 @@ EXPORTS
 	?worldToScreen@ofCamera@@QEBA?AU?$vec@$02M$0A@@glm@@U23@AEBVofRectangle@@@Z
 	?begin@ofDirectory@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@VofFile@@@std@@@std@@@std@@XZ
 	?createDirectory@ofDirectory@@SA_NAEBVpath@filesystem@std@@_N1@Z
+	?doesDirectoryExist@ofDirectory@@SA_NAEBVpath@filesystem@std@@_N@Z
 	?end@ofDirectory@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@VofFile@@@std@@@std@@@std@@XZ
 	?listDir@ofDirectory@@QEAA_KXZ
 	?size@ofDirectory@@QEBA_KXZ
