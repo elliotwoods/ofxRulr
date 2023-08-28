@@ -133,6 +133,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\GraphicsManager.h" />
     <ClInclude Include="src\ofxRulr\Utils\CaptureSet.h" />
     <ClInclude Include="src\ofxRulr\Utils\Constants.h" />
+    <ClInclude Include="src\ofxRulr\Utils\EditSelection.h" />
     <ClInclude Include="src\ofxRulr\Utils\Graphics.h" />
     <ClInclude Include="src\ofxRulr\Utils\Gui.h" />
     <ClInclude Include="src\ofxRulr\Utils\LambdaDrawable.h" />

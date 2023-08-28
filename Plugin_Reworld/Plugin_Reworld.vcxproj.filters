@@ -54,6 +54,15 @@
     <ClCompile Include="src\ofxRulr\Data\Reworld\Portal.cpp">
       <Filter>src\ofxRulr\Data\Reworld</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\ColumnView.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\PanelView.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\PortalView.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Reworld.h">
@@ -76,6 +85,15 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Data\Reworld\Portal.h">
       <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\ColumnView.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\PanelView.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\PortalView.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

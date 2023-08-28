@@ -14,7 +14,7 @@ namespace ofxRulr {
 			string
 				Installation::getTypeName() const
 			{
-				return "Installation";
+				return "Reworld::Installation";
 			}
 
 			//---------
@@ -24,9 +24,24 @@ namespace ofxRulr {
 				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
-				RULR_RIGIDBODY_DRAW_OBJECT_ADVANCED_LISTENER;
+				
+
+				this->rigidBody = make_shared<Nodes::Item::RigidBody>();
+				this->rigidBody->onDrawObjectAdvanced += [this](DrawWorldAdvancedArgs& args) {
+					this->drawObjectAdvanced(args);
+				};
+				this->onDrawWorldAdvanced += [this](DrawWorldAdvancedArgs& args) {
+					this->rigidBody->drawWorldAdvanced(args);
+				};
 
 				this->manageParameters(this->parameters);
+
+				{
+					auto panel = ofxCvGui::Panels::makeWidgets();
+					panel->addTitle("Camera positions:", ofxCvGui::Widgets::Title::Level::H3);
+					this->columns.populateWidgets(panel);
+					this->panel = panel;
+				}
 			}
 
 			//---------
@@ -51,7 +66,7 @@ namespace ofxRulr {
 				Installation::serialize(nlohmann::json& json)
 			{
 				this->columns.serialize(json["columns"]);
-
+				this->rigidBody->serialize(json["rigidBody"]);
 			}
 
 			//---------
@@ -61,6 +76,12 @@ namespace ofxRulr {
 				if (json.contains("columns")) {
 					this->columns.deserialize(json["columns"]);
 				}
+
+				if (json.contains("rigidBody")) {
+					this->rigidBody->deserialize(json["rigidBody"]);
+				}
+
+				this->initColumns();
 			}
 
 			//---------
@@ -72,6 +93,13 @@ namespace ofxRulr {
 				inspector->addButton("Build", [this]() {
 					this->build();
 					}, OF_KEY_RETURN);
+			}
+
+			//---------
+			ofxCvGui::PanelPtr
+				Installation::getPanel()
+			{
+				return this->panel;
 			}
 
 			//---------
@@ -94,12 +122,28 @@ namespace ofxRulr {
 				glm::mat4 currentTransform;
 				for (int i = 0; i < countX; i++) {
 					auto column = make_shared<Data::Reworld::Column>();
-					this->columns.add(column);
 					column->build(this->parameters.builder.column, this->parameters.builder.panel, i);
-					column->setTransform(currentTransform);
+					column->rigidBody->setTransform(currentTransform);
+					column->parentSelection = &this->ourSelection;
+					this->columns.add(column);
 
 					// add to the transform each step
 					currentTransform = currentTransform * transformBetweenColumns;
+				}
+
+				this->initColumns();
+			}
+
+			//---------
+			void
+				Installation::initColumns()
+			{
+				// Sub selections
+				{
+					auto columns = this->columns.getAllCaptures();
+					for (auto column : columns) {
+						column->parentSelection = &this->ourSelection;
+					}
 				}
 			}
 
@@ -108,7 +152,7 @@ namespace ofxRulr {
 				Installation::getVertices() const
 			{
 				vector<glm::vec3> allVertices;
-				auto transform = this->getTransform();
+				auto transform = this->rigidBody->getTransform();
 
 				// Gather from columns
 				auto columns = this->columns.getSelection();

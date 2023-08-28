@@ -2,11 +2,13 @@
 
 #include "ofxRulr/Nodes/IHasVertices.h"
 #include "ofxRulr/Data/Reworld/Column.h"
+#include "ofxRulr/Utils/EditSelection.h"
 
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
-			class Installation : public IHasVertices, public Item::RigidBody {
+			class Installation : public IHasVertices
+			{
 			public:
 				Installation();
 				string getTypeName() const override;
@@ -18,10 +20,14 @@ namespace ofxRulr {
 				void serialize(nlohmann::json&);
 				void deserialize(const nlohmann::json&);
 				void populateInspector(ofxCvGui::InspectArguments&);
+				ofxCvGui::PanelPtr getPanel() override;
 
 				void build();
+				void initColumns();
 
 				vector<glm::vec3> getVertices() const override;
+
+				Utils::EditSelection<Data::Reworld::Column> ourSelection;
 			protected:
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
@@ -39,6 +45,9 @@ namespace ofxRulr {
 					} builder;
 					PARAM_DECLARE("Installation", builder);
 				} parameters;
+
+				shared_ptr<ofxCvGui::Panels::Widgets> panel;
+				shared_ptr<Nodes::Item::RigidBody> rigidBody;
 
 				Utils::CaptureSet<Data::Reworld::Column> columns;
 			};

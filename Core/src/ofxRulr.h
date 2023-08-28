@@ -20,6 +20,7 @@
 #include "ofxRulr/Utils/SoundEngine.h"
 #include "ofxRulr/Utils/Utils.h"
 #include "ofxRulr/Utils/CaptureSet.h"
+#include "ofxRulr/Utils/EditSelection.h"
 
 #include "ofxRulr/Nodes/GraphicsManager.h"
 

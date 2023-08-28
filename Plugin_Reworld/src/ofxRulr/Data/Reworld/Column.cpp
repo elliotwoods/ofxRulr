@@ -7,8 +7,23 @@ namespace ofxRulr {
 			//----------
 			Column::Column()
 			{
-				RULR_RIGIDBODY_DRAW_OBJECT_ADVANCED_LISTENER;
-				this->manageParameters(this->parameters);
+				// Common init
+				{
+					this->onSerialize += [this](nlohmann::json& json) {
+						this->serialize(json);
+					};
+					this->onDeserialize += [this](const nlohmann::json& json) {
+						this->deserialize(json);
+					};
+					this->onPopulateInspector += [this](ofxCvGui::InspectArguments& args) {
+						args.inspector->addParameterGroup(this->parameters);
+					};
+
+					this->rigidBody = make_shared<Nodes::Item::RigidBody>();
+					this->rigidBody->onDrawObjectAdvanced += [this](DrawWorldAdvancedArgs& args) {
+						this->drawObjectAdvanced(args);
+					};
+				}
 			}
 
 			//----------
@@ -22,7 +37,14 @@ namespace ofxRulr {
 			string
 				Column::getDisplayString() const
 			{
-				return ofToString(Nodes::Base::getName());
+				return ofToString(this->rigidBody->getName());
+			}
+
+			//----------
+			void
+				Column::drawWorldAdvanced(DrawWorldAdvancedArgs& args)
+			{
+				this->rigidBody->drawWorldAdvanced(args);
 			}
 
 			//----------
@@ -40,7 +62,7 @@ namespace ofxRulr {
 				Column::getVertices() const
 			{
 				vector<glm::vec3> vertices;
-				auto transform = this->getTransform();
+				auto transform = this->rigidBody->getTransform();
 
 				auto panels = this->panels.getSelection();
 				for (auto panel : panels) {
@@ -53,6 +75,57 @@ namespace ofxRulr {
 				return vertices;
 			}
 
+			//----------
+			void
+				Column::init()
+			{
+				// Sub selections
+				{
+					auto panels = this->panels.getAllCaptures();
+					for (auto panel : panels) {
+						panel->parentSelection = &this->ourSelection;
+					}
+				}
+
+				// Color
+				{
+					auto color = Utils::AbstractCaptureSet::BaseCapture::color;
+					this->rigidBody->setColor(color);
+				}
+
+				// Name
+				{
+					auto name = "Column " + ofToString(this->parameters.index.get());
+					this->rigidBody->setName(name);
+				}
+			}
+
+			//----------
+			void
+				Column::serialize(nlohmann::json& json)
+			{
+				Utils::serialize(json, this->parameters);
+
+				this->panels.serialize(json["panels"]);
+				this->rigidBody->serialize(json["rigidBody"]);
+			}
+
+			//----------
+			void
+				Column::deserialize(const nlohmann::json& json)
+			{
+				Utils::deserialize(json, this->parameters);
+
+				if (json.contains("panels")) {
+					this->panels.deserialize(json["panels"]);
+				}
+
+				if (json.contains("rigidBody")) {
+					this->rigidBody->deserialize(json["rigidBody"]);
+				}
+
+				this->init();
+			}
 
 			//----------
 			void
@@ -74,9 +147,10 @@ namespace ofxRulr {
 
 				for (int i = 0; i < countY; i++) {
 					auto panel = make_shared<Panel>();
-					this->panels.add(panel);
+					panel->parentSelection = &this->ourSelection;
 					panel->build(panelBuildParameters, targetIndexOffset);
-					panel->setTransform(currentTransform);
+					panel->rigidBody->setTransform(currentTransform);
+					this->panels.add(panel);
 
 					// Increment transform
 					currentTransform *= glm::translate(glm::vec3(0, verticalStride, 0));
@@ -85,8 +159,64 @@ namespace ofxRulr {
 					targetIndexOffset += panel->portals.size();
 				}
 
-				Nodes::Base::setColor(Utils::AbstractCaptureSet::BaseCapture::color);
-				this->setName("Column " + ofToString(this->parameters.index.get()));
+				this->init();
+			}
+
+			//----------
+			ofxCvGui::ElementPtr
+				Column::getDataDisplay()
+			{
+				auto element = ofxCvGui::makeElement();
+
+				auto stack = make_shared<ofxCvGui::Widgets::HorizontalStack>();
+
+				stack->add(make_shared<ofxCvGui::Widgets::LiveValue<int>>("Column", [this]() {
+					return this->parameters.index.get();
+					}));
+
+				// Select column
+				{
+					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Select column"
+						, [this]() {
+							if (this->parentSelection) {
+								return this->parentSelection->isSelected(this);
+							}
+							else {
+								return false;
+							}
+						}
+						, [this](bool value) {
+							if (this->parentSelection) {
+								this->parentSelection->select(this);
+							}
+							else {
+								ofLogError() << "EditSelection not initialised";
+							}
+						});
+					button->setDrawGlyph(u8"\uf03a");
+					stack->add(button);
+				}
+
+				// Select the rigidBody
+				{
+					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Column transform"
+						, [this]() {
+							return this->isBeingInspected();
+						}
+						, [this](bool value) {
+							if (value) {
+								ofxCvGui::inspect(this->rigidBody);
+							}
+						});
+					button->setDrawable([this](ofxCvGui::DrawArguments& args) {
+						ofRectangle bounds;
+						bounds.setFromCenter(args.localBounds.getCenter(), 32, 32);
+						this->rigidBody->getIcon()->draw(bounds);
+						});
+					stack->add(button);
+				}
+
+				return stack;
 			}
 		}
 	}

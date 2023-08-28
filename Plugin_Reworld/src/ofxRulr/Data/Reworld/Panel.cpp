@@ -7,8 +7,23 @@ namespace ofxRulr {
 			//----------
 			Panel::Panel()
 			{
-				RULR_RIGIDBODY_DRAW_OBJECT_ADVANCED_LISTENER;
-				this->manageParameters(this->parameters);
+				// Common init
+				{
+					this->onSerialize += [this](nlohmann::json& json) {
+						this->serialize(json);
+					};
+					this->onDeserialize += [this](const nlohmann::json& json) {
+						this->deserialize(json);
+					};
+					this->onPopulateInspector += [this](ofxCvGui::InspectArguments& args) {
+						args.inspector->addParameterGroup(this->parameters);
+					};
+
+					this->rigidBody = make_shared<Nodes::Item::RigidBody>();
+					this->rigidBody->onDrawObjectAdvanced += [this](DrawWorldAdvancedArgs& args) {
+						this->drawObjectAdvanced(args);
+					};
+				}
 			}
 
 			//----------
@@ -22,7 +37,14 @@ namespace ofxRulr {
 			string
 				Panel::getDisplayString() const
 			{
-				return ofToString(Nodes::Base::getName());
+				return ofToString(this->rigidBody->getName());
+			}
+
+			//---------
+			void
+				Panel::drawWorldAdvanced(DrawWorldAdvancedArgs& args)
+			{
+				this->rigidBody->drawWorldAdvanced(args);
 			}
 
 			//----------
@@ -68,7 +90,7 @@ namespace ofxRulr {
 				Panel::getVertices() const
 			{
 				vector<glm::vec3> vertices;
-				auto transform = this->getTransform();
+				auto transform = this->rigidBody->getTransform();
 
 				auto portals = this->portals.getSelection();
 				for (auto portal : portals) {
@@ -79,6 +101,64 @@ namespace ofxRulr {
 				}
 
 				return vertices;
+			}
+
+			//----------
+			void
+				Panel::init()
+			{
+				// Sub selections
+				{
+					auto portals = this->portals.getAllCaptures();
+					for (auto portal : portals) {
+						portal->parentSelection = &this->ourSelection;
+					}
+				}
+
+				// Color
+				{
+					auto color = Utils::AbstractCaptureSet::BaseCapture::color;
+					this->rigidBody->setColor(color);
+				}
+
+				// Name
+				{
+					auto portals = this->portals.getSelection();
+					if (!portals.empty()) {
+						auto firstID = portals.front()->parameters.target.get();
+						auto lastID = portals.back()->parameters.target.get();
+						auto name = ofToString(firstID) + "..." + ofToString(lastID);
+
+						rigidBody->setName(name);
+					}
+				}
+			}
+
+			//----------
+			void
+				Panel::serialize(nlohmann::json& json)
+			{
+				Utils::serialize(json, this->parameters);
+
+				this->portals.serialize(json["portals"]);
+				this->rigidBody->serialize(json["rigidBody"]);
+			}
+
+			//----------
+			void
+				Panel::deserialize(const nlohmann::json& json)
+			{
+				Utils::deserialize(json, this->parameters);
+
+				if (json.contains("portals")) {
+					this->portals.deserialize(json["portals"]);
+				}
+
+				if (json.contains("rigidBody")) {
+					this->rigidBody->deserialize(json["rigidBody"]);
+				}
+
+				this->init();
 			}
 
 			//----------
@@ -99,25 +179,71 @@ namespace ofxRulr {
 						auto portalPosition = glm::vec3(i * pitch, -j * pitch, 0.0f) + offset;
 						auto portal = make_shared<Portal>();
 						portal->build(targetIndex);
-
-						portal->setPosition(portalPosition);
+						portal->rigidBody->setTransform(glm::translate(portalPosition));
 						this->portals.add(portal);
 						
 						targetIndex++;
 					}
 				}
 
-				Nodes::Base::setColor(Utils::AbstractCaptureSet::BaseCapture::color);
+				this->init();
+			}
 
-				// Set name from indices
+			//----------
+			ofxCvGui::ElementPtr
+				Panel::getDataDisplay()
+			{
+				auto element = ofxCvGui::makeElement();
+
+				auto stack = make_shared<ofxCvGui::Widgets::HorizontalStack>();
+
+				stack->add(make_shared<ofxCvGui::Widgets::LiveValue<string>>("Panel", [this]() {
+					return this->rigidBody->getName();
+					}));
+
+				// Select panel
 				{
-					auto portals = this->portals.getSelection();
-					if (!portals.empty()) {
-						auto firstID = portals.front()->parameters.target.get();
-						auto lastID= portals.back()->parameters.target.get();
-						this->setName(ofToString(firstID) + "..." + ofToString(lastID));
-					}
+					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Select panel"
+						, [this]() {
+							if (this->parentSelection) {
+								return this->parentSelection->isSelected(this);
+							}
+							else {
+								return false;
+							}
+						}
+						, [this](bool value) {
+							if (this->parentSelection) {
+								this->parentSelection->select(this);
+							}
+							else {
+								ofLogError() << "EditSelection not initialised";
+							}
+						});
+					button->setDrawGlyph(u8"\uf03a");
+					stack->add(button);
 				}
+
+				// Select the rigidBody
+				{
+					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Panel transform"
+						, [this]() {
+							return this->isBeingInspected();
+						}
+						, [this](bool value) {
+							if (value) {
+								ofxCvGui::inspect(this->rigidBody);
+							}
+						});
+					button->setDrawable([this](ofxCvGui::DrawArguments& args) {
+						ofRectangle bounds;
+						bounds.setFromCenter(args.localBounds.getCenter(), 32, 32);
+						this->rigidBody->getIcon()->draw(bounds);
+						});
+					stack->add(button);
+				}
+
+				return stack;
 			}
 		}
 	}

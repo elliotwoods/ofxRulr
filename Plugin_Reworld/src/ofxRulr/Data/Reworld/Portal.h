@@ -11,8 +11,7 @@ namespace ofxRulr {
 		namespace Reworld {
 			class Portal
 				: public Utils::AbstractCaptureSet::BaseCapture
-				, public Nodes::Item::RigidBody
-				, public Nodes::IHasVertices 
+				, ofxCvGui::IInspectable
 			{
 			public:
 				Portal();
@@ -22,8 +21,14 @@ namespace ofxRulr {
 
 				void build(int targetIndex);
 
+				void drawWorldAdvanced(DrawWorldAdvancedArgs&);
 				void drawObjectAdvanced(DrawWorldAdvancedArgs&);
-				vector<glm::vec3> getVertices() const override;
+
+				vector<glm::vec3> getVertices() const;
+
+				void init();
+				void serialize(nlohmann::json&);
+				void deserialize(const nlohmann::json&);
 
 				struct : ofParameterGroup {
 					ofParameter<int> target{ "Target", 1 };
@@ -31,6 +36,13 @@ namespace ofxRulr {
 				} parameters;
 
 				static shared_ptr<ofTexture> panelPreview;
+
+				shared_ptr<Nodes::Item::RigidBody> rigidBody;
+
+				Utils::EditSelection<Portal>* parentSelection = nullptr;
+
+			protected:
+				ofxCvGui::ElementPtr getDataDisplay() override;
 			};
 		}
 	}

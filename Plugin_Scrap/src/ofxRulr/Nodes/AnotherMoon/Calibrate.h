@@ -5,32 +5,9 @@
 #include "ofxRulr/Solvers/LineToImage.h"
 #include "ofxRulr/Solvers/LineMCToImage.h"
 #include "ofxRulr/Solvers/LinesWithCommonPoint.h"
+#include "ofxRulr/Utils/EditSelection.h"
 
 #include "Lasers.h"
-
-/// <summary>
-/// Class for handling the ">>" to drill down into this selection
-/// </summary>
-/// <typeparam name="T"></typeparam>
-template<typename T>
-struct EditSelection
-{
-	T* selection = nullptr;
-	ofxLiquidEvent<void> onSelectionChanged;
-
-	bool isSelected(const T* const item) {
-		return item == this->selection;
-	}
-	void select(T* const item) {
-		if (item != this->selection) {
-			this->selection = item;
-			this->onSelectionChanged.notifyListeners();
-		}
-	}
-	void deselect() {
-		this->select(nullptr);
-	}
-};
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -93,7 +70,7 @@ namespace ofxRulr {
 
 					Models::Line line;
 
-					EditSelection<BeamCapture>* parentSelection = nullptr;
+					Utils::EditSelection<BeamCapture>* parentSelection = nullptr;
 					float residual = 0.0f;
 
 					/// <summary>
@@ -121,8 +98,8 @@ namespace ofxRulr {
 
 					glm::vec2 imagePointInCamera;
 
-					EditSelection<BeamCapture> ourSelection;
-					EditSelection<LaserCapture>* parentSelection = nullptr;
+					Utils::EditSelection<BeamCapture> ourSelection;
+					Utils::EditSelection<LaserCapture>* parentSelection = nullptr;
 
 					cv::Mat preview;
 
@@ -157,8 +134,8 @@ namespace ofxRulr {
 					Utils::CaptureSet<LaserCapture> laserCaptures;
 					filesystem::path directory;
 
-					EditSelection<LaserCapture> ourSelection;
-					EditSelection<CameraCapture>* parentSelection = nullptr;
+					Utils::EditSelection<LaserCapture> ourSelection;
+					Utils::EditSelection<CameraCapture>* parentSelection = nullptr;
 
 					shared_ptr<Item::RigidBody> cameraTransform = make_shared<Item::RigidBody>();
 				protected:
@@ -191,7 +168,7 @@ namespace ofxRulr {
 
 				void pruneBeamCapturesByResidual(float);
 
-				EditSelection<CameraCapture> cameraEditSelection;
+				Utils::EditSelection<CameraCapture> cameraEditSelection;
 
 				const Utils::CaptureSet<CameraCapture> & getCameraCaptures();
 				filesystem::path getLocalCopyPath(const ImagePath& cameraPath) const;

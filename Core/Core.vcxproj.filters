@@ -347,5 +347,8 @@
     <ClInclude Include="src\pch_RulrCore.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\EditSelection.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

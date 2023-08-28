@@ -10,8 +10,7 @@ namespace ofxRulr {
 		namespace Reworld {
 			class Column
 				: public Utils::AbstractCaptureSet::BaseCapture
-				, public Nodes::Item::RigidBody
-				, public Nodes::IHasVertices
+				, ofxCvGui::IInspectable
 			{
 			public:
 				struct BuildParameters : ofParameterGroup {
@@ -25,8 +24,13 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				string getDisplayString() const override;
 
+				void drawWorldAdvanced(DrawWorldAdvancedArgs&);
 				void drawObjectAdvanced(DrawWorldAdvancedArgs&);
-				vector<glm::vec3> getVertices() const override;
+				vector<glm::vec3> getVertices() const;
+
+				void init();
+				void serialize(nlohmann::json&);
+				void deserialize(const nlohmann::json&);
 
 				void build(const BuildParameters&, const Panel::BuildParameters&, int columnIndex);
 
@@ -35,7 +39,15 @@ namespace ofxRulr {
 					PARAM_DECLARE("Column", index);
 				} parameters;
 
-				Utils::CaptureSet<Data::Reworld::Panel> panels;
+				shared_ptr<Nodes::Item::RigidBody> rigidBody;
+
+				Utils::CaptureSet<Panel> panels;
+
+				Utils::EditSelection<Panel> ourSelection;
+				Utils::EditSelection<Column>* parentSelection = nullptr;
+
+			protected:
+				ofxCvGui::ElementPtr getDataDisplay() override;
 			};
 		}
 	}
