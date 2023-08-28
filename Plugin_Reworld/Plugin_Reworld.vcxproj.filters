@@ -22,6 +22,12 @@
     <Filter Include="addons\ofxHomography\src">
       <UniqueIdentifier>{34835e21-96b3-4a55-ac91-9e966405d465}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Data">
+      <UniqueIdentifier>{7d15e71b-6f31-42b0-97a4-7d5a57c07d29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Data\Reworld">
+      <UniqueIdentifier>{ea6c9b75-8a19-4419-8833-85889a7a9d21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -36,6 +42,18 @@
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\Router.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\Installation.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Column.cpp">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Panel.cpp">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Portal.cpp">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Reworld.h">
@@ -46,6 +64,18 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\Router.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Installation.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Data\Reworld\Column.h">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Data\Reworld\Panel.h">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Data\Reworld\Portal.h">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

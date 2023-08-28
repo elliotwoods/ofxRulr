@@ -80,7 +80,11 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Column.cpp" />
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Panel.cpp" />
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Portal.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\CameraTest.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\Installation.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\Router.cpp" />
     <ClCompile Include="src\pch_Plugin_Reworld.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -94,7 +98,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Data\Reworld\Column.h" />
+    <ClInclude Include="src\ofxRulr\Data\Reworld\Panel.h" />
+    <ClInclude Include="src\ofxRulr\Data\Reworld\Portal.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\CameraTest.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Installation.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\Router.h" />
     <ClInclude Include="src\pch_Plugin_Reworld.h" />
   </ItemGroup>

@@ -90,7 +90,7 @@ namespace ofxRulr {
 						ofParameter<float> opacity{ "Opacity", 0.5f, 0.0f, 1.0f };
 						ofParameter<BlendMode> blendMode{ "Blend mode", BlendMode::Alpha };
 
-						ofParameter<float> radius{ "Radius", 200, 1, 256 };
+						ofParameter<float> radius{ "Radius", 128, 1, 256 };
 
 						PARAM_DECLARE("Mask", locked, opacity, blendMode, radius);
 					} mask;
@@ -99,12 +99,12 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<float> moveTimeout{ "Move timeout", 20.0f };
 							ofParameter<float> pollFrequency{ "Poll frequency", 0.5f };
-							ofParameter<float> epsilon{ "Epsilon", 0, 0, 1.0f };
+							ofParameter<float> epsilon{ "Epsilon", 0.0001, 0, 1.0f };
 							PARAM_DECLARE("Movements", moveTimeout, pollFrequency, epsilon);
 						} movements;
 						
 						struct : ofParameterGroup {
-							ofParameter<IterationMode> mode{ "Iteration mode", IterationMode::Polar };
+							ofParameter<IterationMode> mode{ "Iteration mode", IterationMode::Cartesian };
 							ofParameter<float> minDistanceToExisting{ "Min distance to existing", 0.03f };
 							ofParameter<bool> alwaysCalculate{ "Always calculate", true };
 
@@ -135,7 +135,7 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<int> resolution{ "Resolution", 2048 };
-						ofParameter<float> stampSize{ "Stamp size", 64, 1, 512};
+						ofParameter<float> stampSize{ "Stamp size", 128, 1, 512};
 						PARAM_DECLARE("Scan area", resolution, stampSize);
 					} scanArea;
 

@@ -3,8 +3,10 @@
 
 #include "ofxRulr/Nodes/Reworld/Router.h"
 #include "ofxRulr/Nodes/Reworld/CameraTest.h"
+#include "ofxRulr/Nodes/Reworld/Installation.h"
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::Router);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::CameraTest);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::Installation);
 OFXPLUGIN_PLUGIN_MODULES_END
