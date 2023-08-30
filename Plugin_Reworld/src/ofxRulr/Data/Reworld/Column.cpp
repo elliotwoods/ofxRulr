@@ -1,5 +1,6 @@
 #include "pch_Plugin_Reworld.h"
 #include "Column.h"
+#include "ofxRulr/Nodes/Reworld/Installation.h"
 
 namespace ofxRulr {
 	namespace Data {
@@ -51,9 +52,17 @@ namespace ofxRulr {
 			void
 				Column::drawObjectAdvanced(DrawWorldAdvancedArgs& args)
 			{
+				auto argsCustom = args;
 				auto panels = this->panels.getSelection();
+				auto labelDraws = static_cast<Nodes::Reworld::Installation::LabelDraws *>(argsCustom.custom);
+
 				for (auto panel : panels) {
-					panel->drawWorldAdvanced(args);
+					if (labelDraws) {
+						argsCustom.enableGui = isActive(this->ourSelection.selection == panel.get()
+							, labelDraws->panel);
+					}
+
+					panel->drawWorldAdvanced(argsCustom);
 				}
 			}
 

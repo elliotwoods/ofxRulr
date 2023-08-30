@@ -10,6 +10,13 @@ namespace ofxRulr {
 			class Installation : public IHasVertices
 			{
 			public:
+				struct LabelDraws : ofParameterGroup {
+					ofParameter<WhenActive> column{ "Column", WhenActive::Always };
+					ofParameter<WhenActive> panel{ "Panel", WhenActive::Selected };
+					ofParameter<WhenActive> portal{ "Portal", WhenActive::Selected };
+					PARAM_DECLARE("Labels", column, panel, portal);
+				};
+
 				Installation();
 				string getTypeName() const override;
 
@@ -43,7 +50,13 @@ namespace ofxRulr {
 
 						PARAM_DECLARE("Builder", panel, column, installation);
 					} builder;
-					PARAM_DECLARE("Installation", builder);
+
+					struct : ofParameterGroup {
+						LabelDraws labels;
+						PARAM_DECLARE("Draw", labels);
+					} draw;
+
+					PARAM_DECLARE("Installation", builder, draw);
 				} parameters;
 
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;

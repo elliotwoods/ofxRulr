@@ -1,5 +1,6 @@
 #include "pch_Plugin_Reworld.h"
 #include "Panel.h"
+#include "ofxRulr/Nodes/Reworld/Installation.h"
 
 namespace ofxRulr {
 	namespace Data {
@@ -75,12 +76,13 @@ namespace ofxRulr {
 
 				// Draw portals
 				{
-					auto portalDrawArgs = args;
-					portalDrawArgs.enableGui = false;
+					auto argsCustom = args;
 
 					auto portals = this->portals.getSelection();
 					for (auto portal : portals) {
-						portal->drawWorldAdvanced(portalDrawArgs);
+						argsCustom.enableGui = isActive(this->ourSelection.selection == portal.get()
+							, ((Nodes::Reworld::Installation::LabelDraws*)argsCustom.custom)->portal);
+						portal->drawWorldAdvanced(argsCustom);
 					}
 				}
 			}

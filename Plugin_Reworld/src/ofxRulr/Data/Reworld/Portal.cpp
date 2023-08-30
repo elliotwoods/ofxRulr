@@ -80,9 +80,9 @@ namespace ofxRulr {
 				Portal::drawObjectAdvanced(DrawWorldAdvancedArgs& args)
 			{
 				Portal::panelPreview->draw(-REWORLD_PORTAL_SHROUD_SIZE / 2.0f
-					, -REWORLD_PORTAL_SHROUD_SIZE / 2.0f
+					, REWORLD_PORTAL_SHROUD_SIZE / 2.0f
 					, REWORLD_PORTAL_SHROUD_SIZE
-					, REWORLD_PORTAL_SHROUD_SIZE);
+					, -REWORLD_PORTAL_SHROUD_SIZE);
 			}
 
 			//---------

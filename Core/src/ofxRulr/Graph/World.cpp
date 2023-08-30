@@ -34,7 +34,7 @@ namespace ofxRulr {
 		void World::init(Controller & controller, bool enableWorldStage) {
 			Utils::initialiser.checkInitialised();
 
-			ofSetWindowTitle("Rulr v" + RULR_VERSION_STRING);
+			ofSetWindowTitle("Rulr v" + RULR_VERSION_STRING + " by Kimchi and Chips");
 
 
 

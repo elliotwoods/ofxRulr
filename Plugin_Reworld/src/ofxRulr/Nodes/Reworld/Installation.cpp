@@ -55,9 +55,15 @@ namespace ofxRulr {
 			void
 				Installation::drawObjectAdvanced(DrawWorldAdvancedArgs& args)
 			{
+				auto argsCustom = args;
+				argsCustom.custom = &this->parameters.draw.labels;
 				auto columns = this->columns.getSelection();
+				auto labelDraws = ((Nodes::Reworld::Installation::LabelDraws*)argsCustom.custom);
+
 				for (auto column : columns) {
-					column->drawWorldAdvanced(args);
+					argsCustom.enableGui = isActive(this->ourSelection.selection == column.get()
+						, labelDraws->column);
+					column->drawWorldAdvanced(argsCustom);
 				}
 			}
 

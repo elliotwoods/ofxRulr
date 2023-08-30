@@ -48,6 +48,7 @@ namespace ofxRulr {
 		bool enableTextures = true;
 		bool enableNormals = true;
 		ofxLiquidEvent<void> onDrawFinal;
+		void* custom = nullptr;
 	};
 
 	namespace Graph {

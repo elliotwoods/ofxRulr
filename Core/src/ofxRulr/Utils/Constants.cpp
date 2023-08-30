@@ -15,4 +15,19 @@ namespace ofxRulr {
 			return false;
 		}
 	}
+
+	bool isActive(bool selected, const WhenActive& whenActive) {
+		switch (whenActive.get()) {
+		case WhenActive::Selected:
+			if (!selected) {
+				return false;
+			}
+		case WhenActive::Always:
+			return true;
+			break;
+		case WhenActive::Never:
+		default:
+			return false;
+		}
+	}
 }
