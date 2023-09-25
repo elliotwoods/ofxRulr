@@ -22,10 +22,10 @@ namespace ofxRulr {
 				void update();
 				ofxCvGui::PanelPtr getPanel() override;
 
-				void serialize(nlohmann::json &);
-				void deserialize(const nlohmann::json &);
+				void serialize(nlohmann::json&);
+				void deserialize(const nlohmann::json&);
 
-				void setDevice(const string & deviceTypeName);
+				void setDevice(const string& deviceTypeName);
 				void setDevice(ofxMachineVision::DevicePtr, shared_ptr<ofxMachineVision::Device::Base::InitialisationSettings> = nullptr);
 				void clearDevice();
 
@@ -38,11 +38,11 @@ namespace ofxRulr {
 
 				shared_ptr<ofxMachineVision::Frame> getFrame();
 				shared_ptr<ofxMachineVision::Frame> getFreshFrame();
-				const ofImage& getUndistortedPreview() const;
+				const ofImage& getPreview() const;
 
 				ofxLiquidEvent<shared_ptr<ofxMachineVision::Frame>> onNewFrame;
 			protected:
-				void populateInspector(ofxCvGui::InspectArguments &);
+				void populateInspector(ofxCvGui::InspectArguments&);
 
 				void rebuildPanel();
 				void buildGrabberPanel();
@@ -57,14 +57,23 @@ namespace ofxRulr {
 
 				shared_ptr<ofxMachineVision::Grabber::Simple> grabber; // this object should never be deallocated (otherwise other nodes will break)
 				shared_ptr<ofxMachineVision::Device::Base::InitialisationSettings> initialisationSettings;
-				
+
 				nlohmann::json cachedInitialisationSettings;
 
-				ofParameter<bool> showSpecification;
-				ofParameter<bool> showFocusLine;
-
 				ofMesh focusLineGraph;
-				ofImage undistortedPreview;
+
+				ofImage preview;
+
+				struct : ofParameterGroup {
+					struct : ofParameterGroup {
+						ofParameter<bool> specification{ "Specifification", false };
+						ofParameter<bool> focusLine{ "Focus line", true };
+						ofParameter<bool> undistort{ "Undistort", true };
+						PARAM_DECLARE("Preview", specification, focusLine, undistort);
+					} preview;
+
+					PARAM_DECLARE("Camera", preview);
+				} parameters;
 			};
 		}
 	}

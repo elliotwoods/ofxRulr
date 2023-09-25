@@ -711,7 +711,6 @@ EXPORTS
 	??0Title@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4Level@012@@Z
 	??0Toggle@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@_N@@D@Z
 	??0Toggle@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6A_NXZ@4@V?$function@$$A6AX_N@Z@4@D@Z
-	??0VerticalStack@Widgets@ofxCvGui@@QEAA@XZ
 	?addOption@MultipleChoice@Widgets@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?clearOptions@MultipleChoice@Widgets@ofxCvGui@@QEAAXXZ
 	?getSelection@MultipleChoice@Widgets@ofxCvGui@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -936,7 +935,6 @@ EXPORTS
 	?getFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getFreshFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getGrabber@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VSimple@Grabber@ofxMachineVision@@@std@@XZ
-	?getUndistortedPreview@Camera@Item@Nodes@ofxRulr@@QEBAAEBV?$ofImage_@E@@XZ
 	?isNewSingleShotFrame@Camera@Item@Nodes@ofxRulr@@QEBA_NXZ
 	?update@Camera@Item@Nodes@ofxRulr@@QEAAXXZ
 	?deserialize@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@@Z
@@ -1078,8 +1076,10 @@ EXPORTS
 	?fit@PolyFit@Utils@ofxRulr@@YA?AUModel@123@AEBV?$vector@U?$vec@$01M$0A@@glm@@V?$allocator@U?$vec@$01M$0A@@glm@@@std@@@std@@H@Z
 	?end@ScopedProcess@Utils@ofxRulr@@QEAAX_N@Z
 	?nextChildProcess@ScopedProcess@Utils@ofxRulr@@QEAAXXZ
+	?deserialize@Serializable@Utils@ofxRulr@@QEAAXAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@@Z
 	?getDefaultFilename@Serializable@Utils@ofxRulr@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getName@Serializable@Utils@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	?serialize@Serializable@Utils@ofxRulr@@QEAAXAEAV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@@Z
 	?getQueueSize@ThreadPool@Utils@ofxRulr@@QEBA_KXZ
 	?performAsync@ThreadPool@Utils@ofxRulr@@QEAA_NV?$function@$$A6AXXZ@std@@@Z
 	?hasMaster@BaseStore@ofxSingleton@@QEBA_NXZ
