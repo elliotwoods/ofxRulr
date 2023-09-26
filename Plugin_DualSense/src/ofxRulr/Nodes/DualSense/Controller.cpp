@@ -63,6 +63,11 @@ namespace ofxRulr {
 							if (glm::length(this->inputState.analogStickRight) > this->parameters.deadZone.get()) {
 								args.movement2 = this->inputState.analogStickRight * this->parameters.speed.get();
 							}
+
+							args.buttons[0] = this->inputState.buttons.cross && !this->priorInputState.buttons.cross;
+							args.buttons[1] = this->inputState.buttons.circle && !this->priorInputState.buttons.circle;
+							args.buttons[2] = this->inputState.buttons.triangle && !this->priorInputState.buttons.triangle;
+							args.buttons[3] = this->inputState.buttons.square && !this->priorInputState.buttons.square;
 						}
 
 						// Check if needs to send
