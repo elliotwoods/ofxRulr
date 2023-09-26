@@ -58,7 +58,9 @@ namespace ofxRulr {
 	struct RemoteControllerArgs {
 		bool next = false;
 		bool previous = false;
-		glm::vec2 movement{ 0, 0 };
+		glm::vec2 movement1{ 0, 0 };
+		glm::vec2 movement2{ 0, 0 };
+		bool buttons[4] = { false, false, false, false };
 	};
 
 	namespace Graph {

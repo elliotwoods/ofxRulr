@@ -28,6 +28,8 @@ namespace ofxRulr {
 				void deserialize(const nlohmann::json &);
 				void populateInspector(ofxCvGui::InspectArguments &);
 
+				void remoteControl(ofxRulr::RemoteControllerArgs&);
+
 				glm::mat4 getTransform() const;
 				glm::vec3 getPosition() const;
 				glm::quat getRotationQuat() const;

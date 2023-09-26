@@ -85,6 +85,7 @@ namespace ofxRulr {
 					RULR_NODE_SERIALIZATION_LISTENERS;
 					RULR_NODE_INSPECTOR_LISTENER;
 					RULR_NODE_DRAW_WORLD_LISTENER;
+					RULR_NODE_REMOTE_CONTROL_LISTENER;
 
 					this->addInput(MAKE(Pin<Item::Camera>));
 					this->addInput(MAKE(Pin<Item::AbstractBoard>));
@@ -209,6 +210,18 @@ namespace ofxRulr {
 					}
 					ofPopMatrix();
 
+				}
+
+				//----------
+				void CameraIntrinsics::remoteControl(RemoteControllerArgs& args) {
+					if (args.buttons[0]) {
+						try {
+							ofxRulr::Utils::ScopedProcess scopedProcess("Finding checkerboard");
+							this->addCapture(false);
+							scopedProcess.end();
+						}
+						RULR_CATCH_ALL_TO_ERROR;
+					}
 				}
 
 				//----------

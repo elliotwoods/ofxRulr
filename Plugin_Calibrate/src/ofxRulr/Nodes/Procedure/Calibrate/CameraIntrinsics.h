@@ -40,6 +40,8 @@ namespace ofxRulr {
 					void update();
 					void drawWorldStage();
 
+					void remoteControl(RemoteControllerArgs&);
+
 					void serialize(nlohmann::json &);
 					void deserialize(const nlohmann::json &);
 

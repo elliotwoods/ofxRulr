@@ -423,9 +423,10 @@ namespace ofxRulr {
 					auto selection = this->selection.lock();
 					if (selection) {
 						// perform movemnet
-						if (glm::length(args.movement) > 0.0f) {
+						auto movement = args.movement1 + args.movement2;
+						if (glm::length(movement) > 0.0f) {
 							auto viewPosition = selection->viewPosition.get();
-							auto movement = args.movement * args.movement * args.movement * args.movement * args.movement; // make small movements much smaller
+							movement = movement * movement * movement * movement * movement; // make small movements much smaller
 							viewPosition += movement * ofGetElapsedTimef() * glm::vec2(1, -1);
 							
 							selection->viewPosition.set(viewPosition);

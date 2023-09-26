@@ -57,11 +57,11 @@ namespace ofxRulr {
 								|| this->inputState.buttons.leftBumper && !this->priorInputState.buttons.leftBumper;
 
 							if (glm::length(this->inputState.analogStickLeft) > this->parameters.deadZone.get()) {
-								args.movement += this->inputState.analogStickLeft * this->parameters.speed.get();
+								args.movement1 = this->inputState.analogStickLeft * this->parameters.speed.get();
 							}
 
 							if (glm::length(this->inputState.analogStickRight) > this->parameters.deadZone.get()) {
-								args.movement += this->inputState.analogStickRight * this->parameters.speed.get();
+								args.movement2 = this->inputState.analogStickRight * this->parameters.speed.get();
 							}
 						}
 

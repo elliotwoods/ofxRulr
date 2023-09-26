@@ -35,6 +35,7 @@ namespace ofxRulr {
 				RULR_NODE_DRAW_WORLD_ADVANCED_LISTENER;
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
+				RULR_NODE_REMOTE_CONTROL_LISTENER;
 
 				this->translation[0].set("Translation X", 0, -200.0f, 200.0f);
 				this->translation[1].set("Translation Y", 0, -200.0f, 200.0f);
@@ -276,6 +277,23 @@ namespace ofxRulr {
 				}
 
 				inspector->add(make_shared<Widgets::Spacer>());
+			}
+
+			//---------
+			void RigidBody::remoteControl(ofxRulr::RemoteControllerArgs& args) {
+				auto position = this->getPosition();
+				
+				glm::vec3 movement = {
+						args.movement1.x + args.movement2.x
+						, args.movement1.y
+						, args.movement2.y
+				};
+				movement = movement * movement * movement * movement * movement * ofGetLastFrameTime();
+
+				if (glm::length(movement) > 0.0f) {
+					this->setPosition(position + movement);
+				}
+				
 			}
 
 			//---------
