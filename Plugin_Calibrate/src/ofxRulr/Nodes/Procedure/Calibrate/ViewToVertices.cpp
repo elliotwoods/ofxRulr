@@ -77,6 +77,7 @@ namespace ofxRulr {
 					RULR_NODE_SERIALIZATION_LISTENERS;
 					RULR_NODE_INSPECTOR_LISTENER;
 					RULR_NODE_DRAW_WORLD_LISTENER;
+					RULR_NODE_REMOTE_CONTROL_LISTENER;
 
 					this->addInput<Item::View>();
 					auto videoOutputPin = this->addInput<System::VideoOutput>();
@@ -414,6 +415,32 @@ namespace ofxRulr {
 						ofxCvGui::Utils::drawTextAnnotation(ofToString(selection->viewPosition)
 							, selection->worldPosition.get()
 							, color);
+					}
+				}
+
+				//---------
+				void ViewToVertices::remoteControl(RemoteControllerArgs& args) {
+					auto selection = this->selection.lock();
+					if (selection) {
+						// perform movemnet
+						if (glm::length(args.movement) > 0.0f) {
+							auto viewPosition = selection->viewPosition.get();
+							auto movement = args.movement * args.movement * args.movement * args.movement * args.movement; // make small movements much smaller
+							viewPosition += movement * ofGetElapsedTimef() * glm::vec2(1, -1);
+							
+							selection->viewPosition.set(viewPosition);
+						}
+
+						// Change selection
+						auto referenceVertices = this->getInput<IReferenceVertices>();
+						if (referenceVertices) {
+							if (args.next) {
+								this->selection = referenceVertices->getNextVertex(selection, 1);
+							}
+							if (args.previous) {
+								this->selection = referenceVertices->getNextVertex(selection, -1);
+							}
+						}
 					}
 				}
 

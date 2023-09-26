@@ -29,6 +29,7 @@ namespace ofxRulr {
 					ofxCvGui::PanelPtr getPanel() override;
 					void update();
 					void drawWorldStage();
+					void remoteControl(RemoteControllerArgs& args);
 
 					void serialize(nlohmann::json &);
 					void deserialize(const nlohmann::json &);

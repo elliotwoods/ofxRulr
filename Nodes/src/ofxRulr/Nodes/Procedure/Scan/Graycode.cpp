@@ -149,7 +149,7 @@ namespace ofxRulr {
 					Utils::deserialize(json, this->parameters);
 
 					//load dataset
-					{
+					if(json.contains("hasData")) {
 						auto hasData = json["hasData"].get<bool>();
 						if (hasData) {
 							{

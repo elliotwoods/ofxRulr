@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{53695f24-0430-4196-b53c-3cce472d160b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr">
+      <UniqueIdentifier>{f8a6306b-29fd-4ca4-936e-6f0ee4df836c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons">
+      <UniqueIdentifier>{6cdec120-e322-4625-900d-80e633386938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes">
+      <UniqueIdentifier>{3c5172f4-0d73-4b69-aa84-2f5c4a35ec22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Nodes\DualSense">
+      <UniqueIdentifier>{1a235c04-ee65-4708-b85e-e5dba7de4eb2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch_Plugin_DualSense.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\DualSense\Controller.cpp">
+      <Filter>src\ofxRulr\Nodes\DualSense</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_DualSense.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\DualSense\Controller.h">
+      <Filter>src\ofxRulr\Nodes\DualSense</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

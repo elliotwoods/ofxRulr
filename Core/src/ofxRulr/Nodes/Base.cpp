@@ -239,6 +239,11 @@ namespace ofxRulr {
 		}
 
 		//----------
+		void Base::remoteControl(RemoteControllerArgs& args) {
+			this->onRemoteControl.notifyListeners(args);
+		}
+
+		//----------
 		void Base::throwIfMissingAnyConnection() const {
 			const auto inputPins = this->getInputPins();
 			for(auto & inputPin : inputPins) {

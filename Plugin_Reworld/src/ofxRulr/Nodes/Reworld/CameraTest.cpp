@@ -298,7 +298,7 @@ namespace ofxRulr {
 						this->isFrameNew = grabber->isFrameNew();
 						if (this->isFrameNew) {
 							// copy the preview instead of undistorting again here
-							this->preview = camera->getUndistortedPreview();
+							this->preview = camera->getPreview();
 							this->image = ofxCv::toCv(this->preview.getPixels());
 						}
 					}

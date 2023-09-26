@@ -711,6 +711,7 @@ EXPORTS
 	??0Title@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@W4Level@012@@Z
 	??0Toggle@Widgets@ofxCvGui@@QEAA@AEAV?$ofParameter@_N@@D@Z
 	??0Toggle@Widgets@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$function@$$A6A_NXZ@4@V?$function@$$A6AX_N@Z@4@D@Z
+	??0VerticalStack@Widgets@ofxCvGui@@QEAA@AEBW4Layout@012@@Z
 	?addOption@MultipleChoice@Widgets@ofxCvGui@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?clearOptions@MultipleChoice@Widgets@ofxCvGui@@QEAAXXZ
 	?getSelection@MultipleChoice@Widgets@ofxCvGui@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
@@ -895,6 +896,7 @@ EXPORTS
 	?getTypeName@Base@Nodes@ofxRulr@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getWeakPtr@Base@Nodes@ofxRulr@@QEAA?AV?$weak_ptr@VBase@Nodes@ofxRulr@@@std@@XZ
 	?manageParameters@Base@Nodes@ofxRulr@@QEAAXAEAVofParameterGroup@@_N@Z
+	?remoteControl@Base@Nodes@ofxRulr@@QEAAXAEAURemoteControllerArgs@3@@Z
 	?setColor@Base@Nodes@ofxRulr@@QEAAXAEBV?$ofColor_@E@@@Z
 	?setIcon@Base@Nodes@ofxRulr@@QEAAXV?$shared_ptr@VImage@ofxAssets@@@std@@@Z
 	?setIconGlyph@Base@Nodes@ofxRulr@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
@@ -935,6 +937,7 @@ EXPORTS
 	?getFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getFreshFrame@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VFrame@ofxMachineVision@@@std@@XZ
 	?getGrabber@Camera@Item@Nodes@ofxRulr@@QEAA?AV?$shared_ptr@VSimple@Grabber@ofxMachineVision@@@std@@XZ
+	?getPreview@Camera@Item@Nodes@ofxRulr@@QEBAAEBV?$ofImage_@E@@XZ
 	?isNewSingleShotFrame@Camera@Item@Nodes@ofxRulr@@QEBA_NXZ
 	?update@Camera@Item@Nodes@ofxRulr@@QEAAXXZ
 	?deserialize@RigidBody@Item@Nodes@ofxRulr@@QEAAXAEBV?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@@nlohmann@@@Z
