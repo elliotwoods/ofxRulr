@@ -225,6 +225,7 @@ EXPORTS
 	?black@?$ofColor_@E@@2V1@B
 	?fromHex@?$ofColor_@E@@SA?AV1@HM@Z
 	?limit@?$ofColor_@E@@SAMXZ
+	?setBrightness@?$ofColor_@E@@QEAAXM@Z
 	?setHue@?$ofColor_@E@@QEAAXM@Z
 	?setHueAngle@?$ofColor_@E@@QEAAXM@Z
 	?white@?$ofColor_@E@@2V1@B

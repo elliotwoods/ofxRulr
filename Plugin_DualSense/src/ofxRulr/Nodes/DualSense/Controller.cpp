@@ -22,6 +22,7 @@ namespace ofxRulr {
 				Controller::init()
 			{
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_INSPECTOR_LISTENER;
 
 				this->panel = ofxCvGui::Panels::Groups::makeStrip();
 				this->refreshPanel();
@@ -29,6 +30,9 @@ namespace ofxRulr {
 				this->addInput<Nodes::Base>();
 
 				this->manageParameters(this->parameters);
+				this->onDeserialize += [this](const nlohmann::json&) {
+					this->setDeviceIndex(this->parameters.index);
+				};
 
 				if (this->parameters.index.get() >= 0 && !this->controller) {
 					this->setDeviceIndex(this->parameters.index.get());
@@ -46,41 +50,102 @@ namespace ofxRulr {
 					this->inputState = this->controller->getInputState();
 
 					auto input = this->getInput<Nodes::Base>();
-					if (input) {
-						// we have a target node
-						ofxRulr::RemoteControllerArgs args;
-						{
-							args.next = this->inputState.DPad.x > 0 && !this->priorInputState.DPad.x > 0
-								|| this->inputState.buttons.rightBumper && !this->priorInputState.buttons.rightBumper;
+					auto color = input
+						? input->getColor()
+						: ofColor(255, 0, 0);
 
-							args.previous = this->inputState.DPad.x < 0 && !this->priorInputState.DPad.x < 0
-								|| this->inputState.buttons.leftBumper && !this->priorInputState.buttons.leftBumper;
+					// Is active?
+					{
+						auto now = chrono::system_clock::now();
 
-							if (glm::length(this->inputState.analogStickLeft) > this->parameters.deadZone.get()) {
-								args.movement1 = this->inputState.analogStickLeft * this->parameters.speed.get();
+						// check if left trigger is pressed (this activates the controller for a while)
+						if (this->inputState.leftTrigger > 0.2f) {
+							this->lastActivated = now;
+							if (!this->isActive) {
+								this->lastActivatedBegin = now;
 							}
-
-							if (glm::length(this->inputState.analogStickRight) > this->parameters.deadZone.get()) {
-								args.movement2 = this->inputState.analogStickRight * this->parameters.speed.get();
-							}
-
-							args.buttons[0] = this->inputState.buttons.cross && !this->priorInputState.buttons.cross;
-							args.buttons[1] = this->inputState.buttons.circle && !this->priorInputState.buttons.circle;
-							args.buttons[2] = this->inputState.buttons.triangle && !this->priorInputState.buttons.triangle;
-							args.buttons[3] = this->inputState.buttons.square && !this->priorInputState.buttons.square;
 						}
 
-						// Check if needs to send
-						auto defaultArgs = ofxRulr::RemoteControllerArgs();
-						bool needsSend = memcmp(&args
-							, &defaultArgs
-							, sizeof(ofxRulr::RemoteControllerArgs));
+						auto timeSinceLastActivated = (float)chrono::duration_cast<chrono::milliseconds>(now - this->lastActivated).count() / 1000.0f;
+						auto timeSinceLastActivatedBegin = (float) chrono::duration_cast<chrono::milliseconds>(now - this->lastActivatedBegin).count() / 1000.0f;
 
-						if (needsSend) {
-							input->remoteControl(args);
+						this->isActive = timeSinceLastActivated <= this->parameters.activeTime.get();
+
+						auto ratioWithinActiveTime = 1.0f - ofClamp(timeSinceLastActivated / this->parameters.activeTime.get(), 0, 1.0f);
+
+						ofxDualSense::OutputState outputState;
+						{
+							outputState.softRumble = timeSinceLastActivatedBegin < 0.5f;
+							
+							outputState.playerLEDs.bitmask = DS5W_OSTATE_PLAYER_LED_LEFT & (ratioWithinActiveTime > 0)
+								| DS5W_OSTATE_PLAYER_LED_MIDDLE_LEFT & (ratioWithinActiveTime > 0.2)
+								| DS5W_OSTATE_PLAYER_LED_MIDDLE & (ratioWithinActiveTime > 0.4)
+								| DS5W_OSTATE_PLAYER_LED_MIDDLE_RIGHT & (ratioWithinActiveTime > 0.6)
+								| DS5W_OSTATE_PLAYER_LED_RIGHT & (ratioWithinActiveTime > 0.8);
+							outputState.playerLEDs.brightness = DS5W::LedBrightness::MEDIUM;
+
+							color.setBrightness(ratioWithinActiveTime * 255.0f);
+
+							outputState.lightbar = this->isActive
+								? color
+								: ofColor(ofMap(sin(ofGetElapsedTimef()), -1, 1, 0, 100), 0, 0);
+						}
+						this->controller->setOutputState(outputState);
+					}
+
+					if (this->isActive) {
+						if (input) {
+							bool needsSend = false;
+
+							// we have a target node
+							ofxRulr::RemoteControllerArgs args;
+							{
+								needsSend |= args.next = this->inputState.DPad.x > 0 && !(this->priorInputState.DPad.x > 0)
+									|| this->inputState.buttons.rightBumper && !this->priorInputState.buttons.rightBumper;
+
+								needsSend |= args.previous = this->inputState.DPad.x < 0 && !(this->priorInputState.DPad.x < 0)
+									|| this->inputState.buttons.leftBumper && !this->priorInputState.buttons.leftBumper;
+
+								bool hasMovement = false;
+								if (glm::length(this->inputState.analogStickLeft) > this->parameters.deadZone.get()) {
+									args.analog1 = this->inputState.analogStickLeft;
+									hasMovement = true;
+								}
+
+								if (glm::length(this->inputState.analogStickRight) > this->parameters.deadZone.get()) {
+									args.analog2 = this->inputState.analogStickRight;
+									hasMovement = true;
+								}
+
+								if (hasMovement) {
+									args.combinedMovement = args.analog1 * this->parameters.coarseSpeed.get()
+										+ args.analog2 * this->parameters.fineSpeed.get();
+									needsSend = true;
+								}
+
+								needsSend |= args.buttons[0] = this->inputState.buttons.cross && !this->priorInputState.buttons.cross;
+								needsSend |= args.buttons[1] = this->inputState.buttons.circle && !this->priorInputState.buttons.circle;
+								needsSend |= args.buttons[2] = this->inputState.buttons.triangle && !this->priorInputState.buttons.triangle;
+								needsSend |= args.buttons[3] = this->inputState.buttons.square && !this->priorInputState.buttons.square;
+							}
+
+							if (needsSend) {
+								input->remoteControl(args);
+							}
 						}
 					}
 				}
+			}
+
+			//----------
+			void
+				Controller::populateInspector(ofxCvGui::InspectArguments& args)
+			{
+				auto inspector = args.inspector;
+				inspector->addTitle("Hold right shoulder to activate");
+				inspector->addIndicatorBool("Active", [this]() {
+					return this->isActive;
+					});
 			}
 
 			//----------

@@ -284,9 +284,9 @@ namespace ofxRulr {
 				auto position = this->getPosition();
 				
 				glm::vec3 movement = {
-						args.movement1.x + args.movement2.x
-						, args.movement1.y
-						, args.movement2.y
+						args.analog1.x + args.analog2.x
+						, args.analog1.y
+						, args.analog2.y
 				};
 				movement = movement * movement * movement * movement * movement * ofGetLastFrameTime();
 

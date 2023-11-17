@@ -422,14 +422,16 @@ namespace ofxRulr {
 				void ViewToVertices::remoteControl(RemoteControllerArgs& args) {
 					auto selection = this->selection.lock();
 					if (selection) {
-						// perform movemnet
-						auto movement = args.movement1 + args.movement2;
+						// perform movement
+						auto movement = args.combinedMovement * 0.1f;
+
 						if (glm::length(movement) > 0.0f) {
 							auto viewPosition = selection->viewPosition.get();
-							movement = movement * movement * movement * movement * movement; // make small movements much smaller
+							movement = movement; // make small movements much smaller
 							viewPosition += movement * ofGetElapsedTimef() * glm::vec2(1, -1);
 							
 							selection->viewPosition.set(viewPosition);
+							selection->onChange.notifyListeners();
 						}
 
 						// Change selection
