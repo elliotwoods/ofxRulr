@@ -6,12 +6,15 @@ namespace ofxRulr {
 		namespace MarkerMap {
 #pragma mark Capture
 			//----------
-			Calibrate::Capture::Capture() {
+			Calibrate::Capture::Capture()
+			{
 				RULR_SERIALIZE_LISTENERS;
 			}
 
 			//----------
-			string Calibrate::Capture::getDisplayString() const {
+			string
+				Calibrate::Capture::getDisplayString() const
+			{
 				stringstream ss;
 				if (!this->name.get().empty()) {
 					ss << this->name.get() << " : ";
@@ -27,6 +30,88 @@ namespace ofxRulr {
 				}
 				return ss.str();
 			}
+			//---------
+			ofxCvGui::ElementPtr
+				Calibrate::Capture::getDataDisplay()
+			{
+				// ID
+				// Select / inspect
+				// Position
+				auto elementGroup = ofxCvGui::makeElementGroup();
+				auto y = 0;
+
+				vector<shared_ptr<ofxCvGui::Element>> widgets;
+
+				// Top row group
+				{
+					auto group = ofxCvGui::makeElementGroup();
+					vector<shared_ptr<ofxCvGui::Element>> groupWidgets;
+
+					// Initialised
+					{
+						auto widget = make_shared<ofxCvGui::Widgets::Toggle>("Initialised"
+							, [this]() {
+								return this->initialised;
+							}
+							, [this](bool value) {
+								this->initialised = value;
+							});
+						widget->setDrawGlyph(u8"\uf00c");
+						group->add(widget);
+						groupWidgets.push_back(widget);
+					}
+
+					// Markers
+					for (auto ID : this->IDs) {
+						{
+							auto widget = ofxCvGui::makeElement();
+							widget->onDraw += [this, ID](ofxCvGui::DrawArguments& args) {
+								if (this->parent) {
+									auto markersNode = this->parent->getInput<Markers>();
+									if (markersNode) {
+										auto detector = markersNode->getInput<ArUco::Detector>();
+										if (detector) {
+											auto size = min(args.localBounds.getHeight(), args.localBounds.getWidth());
+											const auto& markerImage = detector->getMarkerImage(ID);
+											markerImage.draw(args.localBounds.getCenter() - glm::vec2(size, size) / 2.0f
+												, size
+												, size);
+										}
+									}
+									
+								}
+							};
+							widget->addToolTip(ofToString(ID));
+							group->add(widget);
+							groupWidgets.push_back(widget);
+						}
+					}
+					
+					group->setHeight(50);
+					group->onBoundsChange += [groupWidgets](ofxCvGui::BoundsChangeArguments& args) {
+						auto itemWidth = args.localBounds.width / groupWidgets.size();
+						auto height = args.localBounds.height;
+						auto x = 0;
+						for (auto widget : groupWidgets) {
+							widget->setBounds(ofRectangle(x, 0, itemWidth - 5, height));
+							x += itemWidth;
+						}
+					};
+
+					y += group->getHeight();
+					elementGroup->add(group);
+					widgets.push_back(group);
+				}
+
+				elementGroup->setHeight(y + 5);
+				elementGroup->onBoundsChange += [widgets](ofxCvGui::BoundsChangeArguments& args) {
+					for (auto widget : widgets) {
+						widget->setWidth(args.localBounds.width);
+					}
+				};
+				return elementGroup;
+			}
+
 
 			//----------
 			void Calibrate::Capture::drawWorld() {
@@ -192,6 +277,14 @@ namespace ofxRulr {
 			void Calibrate::deserialize(const nlohmann::json& json) {
 				if (json.contains("captures")) {
 					this->captures.deserialize(json["captures"]);
+
+					// Set the parent to this
+					{
+						auto allCaptures = this->captures.getAllCaptures();
+						for (auto capture : allCaptures) {
+							capture->parent = this;
+						}
+					}
 				}
 			}
 
@@ -1047,6 +1140,7 @@ namespace ofxRulr {
 				}
 
 				auto capture = make_shared<Capture>();
+				capture->parent = this;
 				capture->name.set(name);
 				for (const auto& foundMarker : foundMarkers) {
 					capture->IDs.push_back(foundMarker.id);

@@ -16,6 +16,7 @@ namespace ofxRulr {
 				public:
 					Capture();
 					string getDisplayString() const override;
+					ofxCvGui::ElementPtr getDataDisplay() override;
 
 					void drawWorld();
 
@@ -32,6 +33,8 @@ namespace ofxRulr {
 
 					ofxRay::Camera cameraView;
 					vector<ofxRay::Ray> cameraRays;
+
+					Calibrate* parent;
 				};
 
 				Calibrate();
