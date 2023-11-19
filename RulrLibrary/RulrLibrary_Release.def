@@ -117,6 +117,7 @@ EXPORTS
 	?ofDisableLighting@@YAXXZ
 	?ofDrawArrow@@YAXAEBU?$vec@$02M$0A@@glm@@0M@Z
 	?ofDrawAxis@@YAXM@Z
+	?ofDrawBitmapStringHighlight@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBU?$vec@$01M$0A@@glm@@AEBV?$ofColor_@E@@2@Z
 	?ofDrawBitmapStringHighlight@@YAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBU?$vec@$02M$0A@@glm@@AEBV?$ofColor_@E@@2@Z
 	?ofDrawBox@@YAXAEBU?$vec@$02M$0A@@glm@@MMM@Z
 	?ofDrawCircle@@YAXAEBU?$vec@$01M$0A@@glm@@M@Z
@@ -460,9 +461,11 @@ EXPORTS
 	?customDraw@ofNode@@UEBAXPEBVofBaseRenderer@@@Z
 	?getGlobalTransformMatrix@ofNode@@QEBA?AU?$mat@$03$03M$0A@@glm@@XZ
 	?getLocalTransformMatrix@ofNode@@QEBAAEBU?$mat@$03$03M$0A@@glm@@XZ
+	?getOrientationQuat@ofNode@@QEBA?AU?$qua@M$0A@@glm@@XZ
 	?getPosition@ofNode@@QEBA?AU?$vec@$02M$0A@@glm@@XZ
 	?lookAt@ofNode@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	?lookAt@ofNode@@QEAAXAEBU?$vec@$02M$0A@@glm@@U23@@Z
+	?resetTransform@ofNode@@QEAAXXZ
 	?setOrientation@ofNode@@QEAAXAEBU?$qua@M$0A@@glm@@@Z
 	?setPosition@ofNode@@QEAAXAEBU?$vec@$02M$0A@@glm@@@Z
 	?add@ofParameterGroup@@QEAAXAEAVofAbstractParameter@@@Z
@@ -882,6 +885,7 @@ EXPORTS
 	?loadAll@World@Graph@ofxRulr@@QEAAX_N@Z
 	?getCamera@WorldStage@Graph@ofxRulr@@QEAAAEAVofxGrabCam@@XZ
 	?getCursorWorld@WorldStage@Graph@ofxRulr@@QEBA?AU?$vec@$02M$0A@@glm@@_N@Z
+	?getPanelTyped@WorldStage@Graph@ofxRulr@@QEAA?AV?$shared_ptr@VWorldManaged@Panels@ofxCvGui@@@std@@XZ
 	??0Base@Nodes@ofxRulr@@QEAA@XZ
 	??0GraphicsManager@Nodes@ofxRulr@@QEAA@XZ
 	??1Base@Nodes@ofxRulr@@UEAA@XZ

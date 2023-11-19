@@ -63,6 +63,11 @@ namespace ofxRulr {
 		}
 
 		//----------
+		shared_ptr<ofxCvGui::Panels::WorldManaged> WorldStage::getPanelTyped() {
+			return this->view;
+		}
+
+		//----------
 		void WorldStage::serialize(nlohmann::json & json) {
 			Utils::serialize(json, "view", this->view->parameters);
 

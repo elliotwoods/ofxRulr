@@ -18,6 +18,7 @@ namespace ofxRulr {
 			ofxCvGui::PanelPtr getPanel() override;
 			glm::vec3 getCursorWorld(bool forceUpdate = false) const;
 			ofxGrabCam & getCamera();
+			shared_ptr<ofxCvGui::Panels::WorldManaged> getPanelTyped();
 
 		protected:
 			void serialize(nlohmann::json &);

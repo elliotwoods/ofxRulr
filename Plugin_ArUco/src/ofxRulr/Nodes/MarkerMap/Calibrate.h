@@ -12,17 +12,29 @@ namespace ofxRulr {
 		namespace MarkerMap {
 			class PLUGIN_ARUCO_EXPORTS Calibrate : public Nodes::Base {
 			public:
-				class Capture : public Utils::AbstractCaptureSet::BaseCapture {
+				class Capture
+					: public Utils::AbstractCaptureSet::BaseCapture
+					, public ofxCvGui::IInspectable
+					, public std::enable_shared_from_this<Capture>
+				{
 				public:
+					struct UpdateArgs {
+						float maxResidual;
+						glm::vec3 roomMin;
+						glm::vec3 roomMax;
+					};
+
 					Capture();
 					string getDisplayString() const override;
 					ofxCvGui::ElementPtr getDataDisplay() override;
 
+					void update(const UpdateArgs&);
 					void drawWorld();
 
 					virtual string getName() const override;
 					void serialize(nlohmann::json&) const;
 					void deserialize(const nlohmann::json&);
+					void populateInspector(ofxCvGui::InspectArguments&);
 
 					ofParameter<string> name{ "Name", "" };
 					vector<int> IDs;
@@ -35,6 +47,11 @@ namespace ofxRulr {
 					vector<ofxRay::Ray> cameraRays;
 
 					Calibrate* parent;
+
+				protected:
+					weak_ptr<ofxCvGui::Element> dataDisplay;
+					bool hasIssue = false;
+					float maxResidual = 0.01f;
 				};
 
 				Calibrate();
@@ -47,6 +64,8 @@ namespace ofxRulr {
 				void serialize(nlohmann::json&);
 				void deserialize(const nlohmann::json&);
 
+				void exportReport();
+
 				ofxCvGui::PanelPtr getPanel() override;
 
 				void capture();
@@ -54,6 +73,7 @@ namespace ofxRulr {
 				void calibrateSelected();
 				void calibrateProgressiveMarkers();
 				void calibrateProgressiveMarkersContinuously();
+
 
 			protected:
 				void add(const cv::Mat& image, const string& name);
@@ -67,8 +87,15 @@ namespace ofxRulr {
 				void initialiseCaptureViewWithSeenMarkers(shared_ptr<Capture>);
 				void initialiseUnseenMarkersInView(shared_ptr<Capture>);
 
+				void updateCapturePreviews();
+
 				Utils::CaptureSet<Capture> captures;
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
+
+				// If previews need updating
+				struct {
+					bool capturePreviews = true;
+				} dirty;
 
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {

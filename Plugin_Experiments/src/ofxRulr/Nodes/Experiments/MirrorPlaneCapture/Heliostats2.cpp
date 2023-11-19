@@ -260,6 +260,7 @@ namespace ofxRulr {
 				}
 
 				//----------
+				// https://paper.dropbox.com/doc/KC81-Heliostat-CSV-format--CECtlPII1sunrWKrts2rUb6~Ag-a7eEMn7EiS2rfMG324gBY
 				void Heliostats2::importCSV() {
 					auto result = ofSystemLoadDialog("Load CSV file", false);
 					if (!result.bSuccess) {
