@@ -30,6 +30,8 @@
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Halo.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/NavigateToHalo.h"
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/PruneData.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/FindLightInMirror.h"
+#include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/DroneLightInMirror.h"
 
 #include "ofxRulr/Nodes/Experiments/PhotoScan/BundlerCamera.h"
 #include "ofxRulr/Nodes/Experiments/PhotoScan/CalibrateProjector.h"

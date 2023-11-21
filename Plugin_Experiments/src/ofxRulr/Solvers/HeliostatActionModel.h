@@ -154,14 +154,16 @@ namespace ofxRulr {
 			}
 
 			template<typename T>
-			static T positionToAngle(const T& position, const glm::tvec3<T>& polynomial)
+			static T positionToAngle(const T& position
+				, const glm::tvec3<T>& polynomial
+				, const T& angleOffset)
 			{
 				auto correctedPosition =
 					polynomial[0]
 					+ position * polynomial[1]
 					+ position * position * polynomial[2];
 				auto angle = (correctedPosition - (T)2048.0) / (T)4096.0 * (T)360.0;
-				return angle;
+				return angle - angleOffset;
 			}
 
 			static void drawMirror(const glm::vec3& mirrorCenter
@@ -215,6 +217,7 @@ namespace ofxRulr {
 				static ofxCeres::SolverSettings defaultSolverSettings();
 
 				static Result solvePosition(const float& angle
+					, const float& angleOffset
 					, const glm::vec3& polynomial
 					, const Nodes::Experiments::MirrorPlaneCapture::Dispatcher::RegisterValue& priorPosition
 					, const ofxCeres::SolverSettings& solverSettings = defaultSolverSettings());
@@ -239,6 +242,8 @@ namespace ofxRulr {
 					, const vector<glm::vec3>& worldPoints
 					, const vector<int>& axis1ServoPosition
 					, const vector<int>& axis2ServoPosition
+					, const vector<float>& axis1AngleOffset
+					, const vector<float>& axis2AngleOffset
 					, const Parameters<float>& priorParameters
 					, const Options &
 					, const ofxCeres::SolverSettings & = Calibrator::defaultSolverSettings());
@@ -247,6 +252,8 @@ namespace ofxRulr {
 					, const glm::vec3 & worldPoint
 					, int axis1ServoPosition
 					, int axis2ServoPosition
+					, float axis1AngleOffset
+					, float axis2AngleOffset
 					, const Parameters<float>& hamParameters
 					, float mirrorDiameter);
 			};

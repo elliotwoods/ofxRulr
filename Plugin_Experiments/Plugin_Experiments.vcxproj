@@ -96,6 +96,8 @@
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Dispatcher.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\DroneLightInMirror.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\FindLightInMirror.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Halo.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.cpp" />
@@ -136,6 +138,8 @@
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardInMirror2.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\BoardOnMirror.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Dispatcher.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\DroneLightInMirror.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\FindLightInMirror.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Halo.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\HaloBoard.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Experiments\MirrorPlaneCapture\Heliostats.h" />

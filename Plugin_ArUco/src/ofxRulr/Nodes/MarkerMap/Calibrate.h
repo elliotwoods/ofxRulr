@@ -22,6 +22,7 @@ namespace ofxRulr {
 						float maxResidual;
 						glm::vec3 roomMin;
 						glm::vec3 roomMax;
+						bool refreshDataDisplay = false;
 					};
 
 					Capture();
@@ -29,6 +30,7 @@ namespace ofxRulr {
 					ofxCvGui::ElementPtr getDataDisplay() override;
 
 					void update(const UpdateArgs&);
+					void refreshDataDisplay();
 					void drawWorld();
 
 					virtual string getName() const override;
@@ -49,7 +51,7 @@ namespace ofxRulr {
 					Calibrate* parent;
 
 				protected:
-					weak_ptr<ofxCvGui::Element> dataDisplay;
+					weak_ptr<ofxCvGui::ElementGroup> dataDisplay;
 					bool hasIssue = false;
 					float maxResidual = 0.01f;
 				};

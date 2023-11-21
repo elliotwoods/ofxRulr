@@ -86,7 +86,10 @@ namespace ofxRulr {
 						this->dispatcherThread.actionsLock.unlock();
 
 						if (!havePushStale) {
-							this->pushStale(false, false);
+							try {
+								this->pushStale(false, false);
+							}
+							RULR_CATCH_ALL_TO_ERROR;
 						}
 					}
 
@@ -271,6 +274,8 @@ namespace ofxRulr {
 
 					// Ignore first line (headers)
 					for (size_t i = 1; i < fileLines.size(); i++) {
+						bool rightTangent = i % 2 == 1;
+
 						auto cols = ofSplitString(fileLines[i], ",");
 						if (cols.size() < 7) {
 							continue;
@@ -310,6 +315,8 @@ namespace ofxRulr {
 
 						heliostat->parameters.servo1.ID.set(ofToInt(cols[5]));
 						heliostat->parameters.servo2.ID.set(ofToInt(cols[6]));
+
+						heliostat->parameters.rightTangent.set(rightTangent);
 
 						if (isNew) {
 							this->add(heliostat);
@@ -1017,15 +1024,18 @@ namespace ofxRulr {
 					this->setName(name);
 					this->add(this->ID);
 					this->add(this->angle);
+					this->add(this->angleOffset);
 					this->add(this->goalPosition);
 				}
 
 				//----------
 				void Heliostats2::ServoParameters::update() {
 					this->clampAngleToLimits();
-					if (this->cachedAngle != this->angle.get()) {
+					if (this->cachedAngle != this->angle.get()
+						|| this->cachedAngleOffset != this->angleOffset.get()) {
 						this->calculateGoalPosition();
 						this->cachedAngle = this->angle.get();
+						this->cachedAngleOffset = this->angleOffset.get();
 					}
 					if (this->cachedGoalPosition != this->goalPosition.get()) {
 						this->goalPositionNeedsPush = true;
@@ -1052,8 +1062,9 @@ namespace ofxRulr {
 				//----------
 				int Heliostats2::ServoParameters::angleToGoalPosition(float angle) {
 					const auto& polynomial = this->axisParameters.polynomial.get();
-
+					const auto& angleOffset = this->angleOffset.get();
 					auto result = Solvers::HeliostatActionModel::SolvePosition::solvePosition(angle
+						, angleOffset
 						, polynomial
 						, this->goalPosition.get());
 					if (!result.isConverged()) {
@@ -1073,20 +1084,23 @@ namespace ofxRulr {
 				//----------
 				void Heliostats2::ServoParameters::setPresentPosition(const Dispatcher::RegisterValue& registerValue) {
 					auto result = Solvers::HeliostatActionModel::positionToAngle<float>((float) registerValue
-						, this->axisParameters.polynomial.get());
+						, this->axisParameters.polynomial.get()
+						, this->angleOffset.get());
 				}
 
 				//----------
 				void Heliostats2::ServoParameters::setMinPosition(const Dispatcher::RegisterValue& registerValue) {
 					auto result = Solvers::HeliostatActionModel::positionToAngle<float>((float)registerValue
-						, this->axisParameters.polynomial.get());
+						, this->axisParameters.polynomial.get()
+						, this->angleOffset.get());
 					this->angle.setMin(result);
 				}
 
 				//----------
 				void Heliostats2::ServoParameters::setMaxPosition(const Dispatcher::RegisterValue& registerValue) {
 					auto result = Solvers::HeliostatActionModel::positionToAngle<float>((float)registerValue
-						, this->axisParameters.polynomial.get());
+						, this->axisParameters.polynomial.get()
+						, this->angleOffset.get());
 					this->angle.setMax(result);
 				}
 

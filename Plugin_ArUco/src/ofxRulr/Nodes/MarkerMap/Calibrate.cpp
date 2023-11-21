@@ -39,6 +39,50 @@ namespace ofxRulr {
 				// Select / inspect
 				// Position
 				auto elementGroup = ofxCvGui::makeElementGroup();
+				this->dataDisplay = elementGroup;
+				
+				this->refreshDataDisplay();
+
+				return elementGroup;
+			}
+
+			//----------
+			void
+				Calibrate::Capture::update(const UpdateArgs& args)
+			{
+				bool hasIssue = false;
+
+				// Check if camera position is within room bounds
+				{
+					auto position = this->cameraView.getPosition();
+					hasIssue |= position.x < args.roomMin.x;
+					hasIssue |= position.y < args.roomMin.y;
+					hasIssue |= position.z < args.roomMin.z;
+					hasIssue |= position.x > args.roomMax.x;
+					hasIssue |= position.y > args.roomMax.y;
+					hasIssue |= position.z > args.roomMax.z;
+					this->hasIssue = hasIssue;
+				}
+
+				// Store residuals to use in previews
+				{
+					this->maxResidual = args.maxResidual;
+				}
+
+				if (args.refreshDataDisplay) {
+					this->refreshDataDisplay();
+				}
+			}
+
+			//----------
+			void
+				Calibrate::Capture::refreshDataDisplay()
+			{
+				auto elementGroup = this->dataDisplay.lock();
+				if (!elementGroup) {
+					return;
+				}
+
 				auto y = 0;
 
 				vector<shared_ptr<ofxCvGui::Element>> widgets;
@@ -85,7 +129,7 @@ namespace ofxRulr {
 							auto widget = ofxCvGui::makeElement();
 							widget->onDraw += [this, i](ofxCvGui::DrawArguments& args) {
 								auto ID = this->IDs[i];
-
+								auto hasResidual = this->residuals.size() > i;
 								// Draw the marker preview
 								if (this->parent) {
 									auto markersNode = this->parent->getInput<Markers>();
@@ -102,31 +146,39 @@ namespace ofxRulr {
 								}
 
 								// Draw the reprojection bar
-								ofPushStyle();
-								{
-									ofSetColor(255, 0, 0);
-									
-									auto residual = this->residuals[i];
-									auto residualNorm = residual / this->maxResidual;
-									auto y = args.localBounds.height * (1.0f - residualNorm);
-									ofDrawRectangle(0
-										, y
-										, 5
-										, args.localBounds.height - y);
+								if (hasResidual) {
+									ofPushStyle();
+									{
+										ofSetColor(255, 0, 0);
+
+										auto residual = this->residuals[i];
+										auto residualNorm = residual / this->maxResidual;
+										auto y = args.localBounds.height * (1.0f - residualNorm);
+										ofDrawRectangle(0
+											, y
+											, 5
+											, args.localBounds.height - y);
+									}
+									ofPopStyle();
 								}
-								ofPopStyle();
 							};
 
 							{
 								auto ID = this->IDs[i];
-								auto residual = this->residuals[i];
-								widget->addToolTip(ofToString(ID) + " (" + ofToString(residual) + ")");
+								auto hasResidual = this->residuals.size() > i;
+								if (hasResidual) {
+									auto residual = this->residuals[i];
+									widget->addToolTip(ofToString(ID) + " (" + ofToString(residual) + ")");
+								}
+								else {
+									widget->addToolTip(ofToString(ID));
+								}
 							}
 							group->add(widget);
 							groupWidgets.push_back(widget);
 						}
 					}
-					
+
 					group->setHeight(50);
 					group->onBoundsChange += [groupWidgets](ofxCvGui::BoundsChangeArguments& args) {
 						auto itemWidth = args.localBounds.width / groupWidgets.size();
@@ -162,33 +214,6 @@ namespace ofxRulr {
 						ofPopStyle();
 					}
 				};
-
-				this->dataDisplay = elementGroup;
-				return elementGroup;
-			}
-
-			//----------
-			void
-				Calibrate::Capture::update(const UpdateArgs& args)
-			{
-				bool hasIssue = false;
-
-				// Check if camera position is within room bounds
-				{
-					auto position = this->cameraView.getPosition();
-					hasIssue |= position.x < args.roomMin.x;
-					hasIssue |= position.y < args.roomMin.y;
-					hasIssue |= position.z < args.roomMin.z;
-					hasIssue |= position.x > args.roomMax.x;
-					hasIssue |= position.y > args.roomMax.y;
-					hasIssue |= position.z > args.roomMax.z;
-					this->hasIssue = hasIssue;
-				}
-
-				// Store residuals to use in previews
-				{
-					this->maxResidual = args.maxResidual;
-				}
 			}
 
 			//----------
@@ -1613,6 +1638,7 @@ namespace ofxRulr {
 					maxResidual
 					, roomMin
 					, roomMax
+					, true
 				};
 				for (auto capture : captures) {
 					capture->update(args);

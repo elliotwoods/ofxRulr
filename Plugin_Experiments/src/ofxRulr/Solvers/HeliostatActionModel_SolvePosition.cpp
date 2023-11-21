@@ -6,9 +6,11 @@ using namespace ofxCeres::VectorMath;
 struct HeliostatActionModel_PositionCost
 {
 	HeliostatActionModel_PositionCost(const float& angle
-		, const glm::vec3& polynomial)
+		, const glm::vec3& polynomial
+		, const float& angleOffset)
 		: angle(angle)
 		, polynomial(polynomial)
+		, angleOffset(angleOffset)
 	{
 
 	}
@@ -20,7 +22,9 @@ struct HeliostatActionModel_PositionCost
 	{
 		const auto & position = parameters[0];
 		const auto polynomial = (glm::tvec3<T>) this->polynomial;
-		auto angle = ofxRulr::Solvers::HeliostatActionModel::positionToAngle<T>(position, polynomial);
+		auto angle = ofxRulr::Solvers::HeliostatActionModel::positionToAngle<T>(position
+			, polynomial
+			, (T) angleOffset);
 
 		auto delta = angle - (T)this->angle;
 		residuals[0] = delta * delta;
@@ -30,15 +34,17 @@ struct HeliostatActionModel_PositionCost
 
 	static ceres::CostFunction*
 		Create(const float& angle
-			, const glm::vec3& polynomial)
+			, const glm::vec3& polynomial
+			, const float& angleOffset)
 	{
 		return new ceres::AutoDiffCostFunction<HeliostatActionModel_PositionCost, 1, 1>(
-			new HeliostatActionModel_PositionCost(angle, polynomial)
+			new HeliostatActionModel_PositionCost(angle, polynomial, angleOffset)
 			);
 	}
 
 	const float& angle;
 	const glm::vec3& polynomial;
+	const float& angleOffset;
 };
 
 namespace ofxRulr {
@@ -58,6 +64,7 @@ namespace ofxRulr {
 		//----------
 		HeliostatActionModel::SolvePosition::Result
 			HeliostatActionModel::SolvePosition::solvePosition(const float& angle
+				, const float& angleOffset
 				, const glm::vec3& polynomial
 				, const Nodes::Experiments::MirrorPlaneCapture::Dispatcher::RegisterValue& priorPosition
 				, const ofxCeres::SolverSettings& solverSettings)
@@ -71,7 +78,7 @@ namespace ofxRulr {
 			// Construct the problem
 			ceres::Problem problem;
 			{
-				auto costFunction = HeliostatActionModel_PositionCost::Create(angle, polynomial);
+				auto costFunction = HeliostatActionModel_PositionCost::Create(angle, polynomial, angleOffset);
 				problem.AddResidualBlock(costFunction
 					, NULL
 					, parameters);

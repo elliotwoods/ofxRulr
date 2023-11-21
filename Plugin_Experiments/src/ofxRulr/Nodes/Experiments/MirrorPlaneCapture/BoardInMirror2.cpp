@@ -742,6 +742,10 @@ namespace ofxRulr {
 							vector<glm::vec3> worldPoints;
 							vector<int> axis1ServoPosition;
 							vector<int> axis2ServoPosition;
+
+							vector<float> axis1AngleOffset;
+							vector<float> axis2AngleOffset;
+
 							auto allCaptures = this->captures.getSelection();
 							vector<shared_ptr<Capture>> capturesForThisHeliostat;
 
@@ -763,6 +767,8 @@ namespace ofxRulr {
 									for (size_t i = 0; i < size; i++) {
 										axis1ServoPosition.push_back(capture->axis1ServoPosition);
 										axis2ServoPosition.push_back(capture->axis2ServoPosition);
+										axis1AngleOffset.push_back(heliostat->parameters.servo1.angleOffset.get());
+										axis2AngleOffset.push_back(heliostat->parameters.servo2.angleOffset.get());
 									}
 								}
 							}
@@ -808,6 +814,8 @@ namespace ofxRulr {
 									, worldPoints
 									, axis1ServoPosition
 									, axis2ServoPosition
+									, axis1AngleOffset
+									, axis2AngleOffset
 									, heliostat->getHeliostatActionModelParameters()
 									, options
 									, solverSettings);
@@ -827,9 +835,11 @@ namespace ofxRulr {
 										// Create the board plane
 										Solvers::HeliostatActionModel::AxisAngles<float> axisAngles{
 											Solvers::HeliostatActionModel::positionToAngle<float>(capture->axis1ServoPosition
-											, heliostat->parameters.hamParameters.axis1.polynomial.get())
+												, heliostat->parameters.hamParameters.axis1.polynomial.get()
+												, heliostat->parameters.servo1.angleOffset.get())
 											, Solvers::HeliostatActionModel::positionToAngle<float>(capture->axis2ServoPosition
-												, heliostat->parameters.hamParameters.axis2.polynomial.get())
+												, heliostat->parameters.hamParameters.axis2.polynomial.get()
+												, heliostat->parameters.servo2.angleOffset.get())
 										};
 
 										// Get mirror plane
@@ -1017,6 +1027,8 @@ namespace ofxRulr {
 								, ofxCv::toOf(capture->worldPoints[i])
 								, capture->axis1ServoPosition
 								, capture->axis2ServoPosition
+								, heliostat->parameters.servo1.angleOffset.get()
+								, heliostat->parameters.servo2.angleOffset.get()
 								, heliostat->getHeliostatActionModelParameters()
 								, heliostat->parameters.diameter.get());
 							totalResidual += rayResidual;

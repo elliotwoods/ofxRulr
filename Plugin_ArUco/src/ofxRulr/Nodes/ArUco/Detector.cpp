@@ -375,7 +375,7 @@ namespace ofxRulr {
 				}
 
 				// refine corners 2 (same code, different settings)
-				{
+				if(this->parameters.cornerRefinement.zone2Enabled.get()) {
 					auto findRatio = this->parameters.cornerRefinement.zone2.get();
 					if (findRatio > 0.0f) {
 						for (auto& marker : foundMarkers) {

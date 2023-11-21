@@ -58,8 +58,8 @@ namespace ofxRulr {
 					{
 						auto now = chrono::system_clock::now();
 
-						// check if left trigger is pressed (this activates the controller for a while)
-						if (this->inputState.leftTrigger > 0.2f) {
+						// check if right trigger is pressed (this activates the controller for a while)
+						if (this->inputState.rightTrigger > 0.2f) {
 							this->lastActivated = now;
 							if (!this->isActive) {
 								this->lastActivatedBegin = now;
@@ -107,14 +107,18 @@ namespace ofxRulr {
 									|| this->inputState.buttons.leftBumper && !this->priorInputState.buttons.leftBumper;
 
 								bool hasMovement = false;
-								if (glm::length(this->inputState.analogStickLeft) > this->parameters.deadZone.get()) {
-									args.analog1 = this->inputState.analogStickLeft;
-									hasMovement = true;
+								for (int i = 0; i < 2; i++) {
+									if (abs(this->inputState.analogStickLeft[i]) > this->parameters.deadZone.get()) {
+										args.analog1[i] = this->inputState.analogStickLeft[i];
+										hasMovement = true;
+									}
 								}
 
-								if (glm::length(this->inputState.analogStickRight) > this->parameters.deadZone.get()) {
-									args.analog2 = this->inputState.analogStickRight;
-									hasMovement = true;
+								for (int i = 0; i < 2; i++) {
+									if (abs(this->inputState.analogStickRight[i]) > this->parameters.deadZone.get()) {
+										args.analog2[i] = this->inputState.analogStickRight[i];
+										hasMovement = true;
+									}
 								}
 
 								if (hasMovement) {

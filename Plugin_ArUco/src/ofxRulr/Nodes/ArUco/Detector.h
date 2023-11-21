@@ -94,9 +94,11 @@ namespace ofxRulr {
 					
 
 					struct : ofParameterGroup {
-						ofParameter<float> zone1{ "Zone 1 %", 0.075, 0, 1 }; // This value works well with our halo markers
-						ofParameter<float> zone2{ "Zone 2 %", 0.02, 0, 1 }; // This value works well with our halo markers
-						PARAM_DECLARE("Corner refinement", zone1, zone2);
+						// These were tuned in Halo test space in Macau with enclosed halo markers
+						ofParameter<float> zone1{ "Zone 1 %", 0.04, 0, 1 };
+						ofParameter<float> zone2{ "Zone 2 %", 0.02, 0, 1 };
+						ofParameter<bool> zone2Enabled{ "Zone 2 enabled", false };
+						PARAM_DECLARE("Corner refinement", zone1, zone2, zone2Enabled);
 					} cornerRefinement;
 					
 					struct : ofParameterGroup {

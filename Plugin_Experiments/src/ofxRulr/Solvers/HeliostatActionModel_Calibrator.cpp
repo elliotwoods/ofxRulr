@@ -10,12 +10,17 @@ struct HeliostatActionModel_CalibratorRayCost
 		, const glm::vec3 & worldPoint
 		, const float axis1ServoPosition
 		, const float axis2ServoPosition
-		, const float mirrorDiameter)
+		, const float mirrorDiameter
+		, const float axis1AngleOffset
+		, const float axis2AngleOffset)
+
 		: cameraRay(cameraRay)
 		, worldPoint(worldPoint)
 		, axis1ServoPosition(axis1ServoPosition)
 		, axis2ServoPosition(axis2ServoPosition)
 		, mirrorDiameter(mirrorDiameter)
+		, axis1AngleOffset(axis1AngleOffset)
+		, axis2AngleOffset(axis2AngleOffset)
 	{
 
 	}
@@ -44,9 +49,11 @@ struct HeliostatActionModel_CalibratorRayCost
 		// Calculate axis angles (apply polynomial)
 		HeliostatActionModel::AxisAngles<T> axisAngles{
 			axisAngles.axis1 = HeliostatActionModel::positionToAngle<T>((T)this->axis1ServoPosition
-				, hamParameters.axis1.polynomial)
+				, hamParameters.axis1.polynomial
+				, (T)this->axis1AngleOffset)
 			, axisAngles.axis2 = HeliostatActionModel::positionToAngle<T>((T)this->axis2ServoPosition
-				, hamParameters.axis2.polynomial)
+				, hamParameters.axis2.polynomial
+				, (T)this->axis2AngleOffset)
 		};
 
 		// Calculate mirror center and normal
@@ -111,10 +118,18 @@ struct HeliostatActionModel_CalibratorRayCost
 			, const glm::vec3& worldPoint
 			, const float axis1ServoPosition
 			, const float axis2ServoPosition
-			, const float mirrorDiameter)
+			, const float mirrorDiameter
+			, const float axis1AngleOffset
+			, const float axis2AngleOffset)
 	{
 		return new ceres::AutoDiffCostFunction<HeliostatActionModel_CalibratorRayCost, 3, 3, 1, 4, 6, 1>(
-			new HeliostatActionModel_CalibratorRayCost(cameraRay, worldPoint, axis1ServoPosition, axis2ServoPosition, mirrorDiameter)
+			new HeliostatActionModel_CalibratorRayCost(cameraRay
+				, worldPoint
+				, axis1ServoPosition
+				, axis2ServoPosition
+				, mirrorDiameter
+				, axis1AngleOffset
+				, axis2AngleOffset)
 			);
 	}
 
@@ -123,6 +138,8 @@ struct HeliostatActionModel_CalibratorRayCost
 	const float axis1ServoPosition;
 	const float axis2ServoPosition;
 	const float mirrorDiameter;
+	const float axis1AngleOffset;
+	const float axis2AngleOffset;
 };
 
 namespace ofxRulr {
@@ -146,6 +163,8 @@ namespace ofxRulr {
 				, const vector<glm::vec3>& worldPoints
 				, const vector<int>& axis1ServoPosition
 				, const vector<int>& axis2ServoPosition
+				, const vector<float>& axis1AngleOffset
+				, const vector<float>& axis2AngleOffset
 				, const HeliostatActionModel::Parameters<float>& priorParameters
 				, const Options& options
 				, const ofxCeres::SolverSettings& solverSettings)
@@ -181,7 +200,9 @@ namespace ofxRulr {
 							, worldPoints[i]
 							, (float)axis1ServoPosition[i]
 							, (float)axis2ServoPosition[i]
-							, options.mirrorDiameter);
+							, options.mirrorDiameter
+							, axis1AngleOffset[i]
+							, axis2AngleOffset[i]);
 						problem.AddResidualBlock(costFunction
 							, NULL
 							, positionParameters
@@ -266,6 +287,8 @@ namespace ofxRulr {
 			, const glm::vec3& worldPoint
 			, int axis1ServoPosition
 			, int axis2ServoPosition
+			, float axis1AngleOffset
+			, float axis2AngleOffset
 			, const Parameters<float>& hamParameters
 			, float mirrorDiameter) {
 
@@ -274,6 +297,8 @@ namespace ofxRulr {
 				, worldPoint
 				, axis1ServoPosition
 				, axis2ServoPosition
+				, axis1AngleOffset
+				, axis2AngleOffset
 				, mirrorDiameter);
 
 			// Initialise parameters

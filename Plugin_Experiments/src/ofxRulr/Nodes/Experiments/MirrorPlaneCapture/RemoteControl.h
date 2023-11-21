@@ -16,7 +16,7 @@ namespace ofxRulr {
 					void init();
 					void update();
 					void populateInspector(ofxCvGui::InspectArguments&);
-
+					void remoteControl(const RemoteControllerArgs&);
 					void moveSingle(const glm::vec2& movement);
 					void moveSelection(const glm::vec2& movement);
 					void homeSingle();
@@ -30,8 +30,9 @@ namespace ofxRulr {
 				protected:
 					struct : ofParameterGroup {
 						ofParameter<string> singleName{ "Single name", "70" };
-						ofParameter<float> speed{ "Speed", 1, 0, 10};
-						PARAM_DECLARE("Remote control", singleName, speed);
+						ofParameter<float> speedKeyboard{ "Speed keyboard", 1, 0, 10 };
+						ofParameter<float> speedGameController { "Speed game controller", 1, 0, 10};
+						PARAM_DECLARE("Remote control", singleName, speedKeyboard, speedGameController);
 					} parameters;
 				};
 			}

@@ -45,6 +45,7 @@ namespace ofxRulr {
 					struct ServoParameters : ofParameterGroup {
 						ofParameter<int> ID{ "ID", 1 };
 						ofParameter<float> angle{ "Angle", 0, -180, 180 };
+						ofParameter<float> angleOffset{ "Angle offset", 0, -30, 30 };
 						ofParameter<int> goalPosition{ "GoalPosition", 4096 / 2 };
 
 						ServoParameters(const string& name, HAMParameters::AxisParameters&);
@@ -65,6 +66,7 @@ namespace ofxRulr {
 					protected:
 						HAMParameters::AxisParameters& axisParameters;
 						float cachedAngle = 0.0f;
+						float cachedAngleOffset = 0.0f;
 						int cachedGoalPosition = 0;
 
 						bool goalPositionNeedsPush = true;

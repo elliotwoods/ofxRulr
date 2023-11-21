@@ -18,6 +18,8 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::NavigateBodyToBody);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::TrackCursor);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::RemoteControl);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::FindLightInMirror);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::DroneLightInMirror);
 
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::Halo);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::MirrorPlaneCapture::SunTracker);
@@ -30,5 +32,6 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::PhotoScan::CalibrateProjector);
 
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Experiments::ProCamSolve::SolveProjector);
+
 }
 OFXPLUGIN_PLUGIN_MODULES_END

@@ -128,6 +128,7 @@ EXPORTS
 	?ofDrawLine@@YAXAEBU?$vec@$01M$0A@@glm@@0@Z
 	?ofDrawLine@@YAXAEBU?$vec@$02M$0A@@glm@@0@Z
 	?ofDrawLine@@YAXMMMM@Z
+	?ofDrawLine@@YAXMMMMMM@Z
 	?ofDrawRectangle@@YAXAEBVofRectangle@@@Z
 	?ofDrawRectangle@@YAXMMMM@Z
 	?ofDrawRectRounded@@YAXAEBVofRectangle@@MMMM@Z

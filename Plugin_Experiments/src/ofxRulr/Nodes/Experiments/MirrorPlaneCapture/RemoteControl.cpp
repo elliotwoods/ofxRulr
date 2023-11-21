@@ -18,6 +18,7 @@ namespace ofxRulr {
 				void RemoteControl::init() {
 					RULR_NODE_INSPECTOR_LISTENER;
 					RULR_NODE_UPDATE_LISTENER;
+					RULR_NODE_REMOTE_CONTROL_LISTENER;
 
 					this->manageParameters(this->parameters);
 
@@ -95,7 +96,7 @@ namespace ofxRulr {
 							ofPopStyle();
 						};
 						element->onKeyboard += [this, enabledButton, movementEnabled](ofxCvGui::KeyboardArguments& args) {
-							auto speed = this->parameters.speed.get();
+							auto speed = this->parameters.speedKeyboard.get();
 
 							if (movementEnabled && args.action == ofxCvGui::KeyboardArguments::Action::Pressed) {
 								int axes = -1;
@@ -212,6 +213,97 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						}, 'f');
+				}
+				//---------
+				void RemoteControl::remoteControl(const RemoteControllerArgs& args) {
+					auto speed = this->parameters.speedGameController.get() * ofGetElapsedTimef() / 100.0f;
+					glm::vec2 directionality(1.0f, -1.0f);
+					float power = 2.0f;
+
+					auto getMovement = [&](glm::vec2 stick) {
+						auto value = stick;
+						value.x = pow(value.x, power) * (value.x < 0 ? -1 : 1);
+						value.y = pow(value.y, power) * (value.y < 0 ? -1 : 1);
+						value *= speed;
+						value *= directionality;
+						return value;
+					};
+
+					try {
+						// Analog 1 = Move single
+						if (glm::length(args.analog1) > 0) {
+							auto movement = getMovement(args.analog1);
+							this->moveSingle(movement);
+						}
+
+						// Analog 2 = Move selection
+						if (glm::length(args.analog2) > 0) {
+							auto movement = getMovement(args.analog2);
+							this->moveSelection(movement);
+						}
+
+						// Button 0 = Home single
+						if (args.buttons[0]) {
+							this->homeSingle();
+						}
+
+						// Button 1 = Home selection
+						if (args.buttons[0]) {
+							this->homeSelection();
+						}
+
+						// Change heliostat selection
+						if(args.next || args.previous) {
+							// Get Heliostats2
+							this->throwIfMissingAConnection<Heliostats2>();
+							auto heliostatsNode = this->getInput<Heliostats2>();
+
+							// Gather heliostats from node
+							vector<string> heliostatNames;
+							auto selectedHeliostats = heliostatsNode->getHeliostats();
+							for (auto heliostat : selectedHeliostats) {
+								heliostatNames.push_back(heliostat->getName());
+							}
+
+							auto currentSelectionIt = std::find(heliostatNames.begin(), heliostatNames.end(), this->parameters.singleName.get());
+							if (currentSelectionIt == heliostatNames.end()) {
+								// Couldn't find current selection
+								if (!heliostatNames.empty()) {
+									// Just select the first one in the names list
+									this->parameters.singleName.set(heliostatNames.front());
+								}
+								else {
+									throw(ofxRulr::Exception("No heliostats to select"));
+								}
+							}
+							else {
+								// There are heliostats
+
+								if (args.next) {
+									// Go to next
+									currentSelectionIt++;
+
+									// If end then wrap around
+									if (currentSelectionIt == heliostatNames.end()) {
+										currentSelectionIt = heliostatNames.begin();
+									}
+								}
+								else if (args.previous) {
+									// If at start then wrap around
+									if (currentSelectionIt == heliostatNames.begin()) {
+										currentSelectionIt = heliostatNames.end();
+									}
+
+									// Go to previous
+									currentSelectionIt--;
+								}
+
+								this->parameters.singleName.set(*currentSelectionIt);
+							}
+						}
+
+					}
+					RULR_CATCH_ALL_TO_ERROR;
 				}
 
 				//---------
