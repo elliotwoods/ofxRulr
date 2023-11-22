@@ -46,12 +46,20 @@ namespace ofxRulr {
 			{
 				auto navigateCamera = this->getInput<MarkerMap::NavigateCamera>();
 
-				bool shouldPerform = isActive(this, this->parameters.autoUpdate);
-				
-				shouldPerform &= this->photo.isAllocated();
+				if (this->needsLoadImage) {
+					try {
+						this->loadPhoto();
+					}
+					RULR_CATCH_ALL_TO_ERROR;
+				}
 
-				if (shouldPerform) {
-					this->updatePreview();
+				this->needsUpdatePreview |= isActive(this, this->parameters.autoUpdate);
+				
+				if (this->needsUpdatePreview & this->photo.isAllocated()) {
+					try {
+						this->updatePreview();
+					}
+					RULR_CATCH_ALL_TO_ERROR;
 				}
 			}
 
@@ -82,13 +90,22 @@ namespace ofxRulr {
 				Transform::populateInspector(ofxCvGui::InspectArguments& inspectArgs)
 			{
 				auto inspector = inspectArgs.inspector;
+				{
+					auto instructions =
+						"This node uses a reference image to allow you to \n"
+						"see the overlap of the camera's view with the 3D world.\n"
+						"You then can adjust the transform to see that it matches\n"
+						"and then apply the transform";
+					inspector->add(make_shared<ofxCvGui::Panels::Text>(instructions));
+				}
+
 				inspector->addButton("Load image...", [this]() {
 					try {
 						auto result = ofSystemLoadDialog("Select photo");
 
 						if (result.bSuccess) {
 							this->parameters.filename.set(result.filePath);
-							this->loadPhoto();
+							this->needsLoadImage = true;
 						}
 					}
 					RULR_CATCH_ALL_TO_ALERT
@@ -105,7 +122,7 @@ namespace ofxRulr {
 
 				inspector->addButton("Update preview", [this]() {
 					try {
-						this->updatePreview();
+						this->needsUpdatePreview = true;
 					}
 					RULR_CATCH_ALL_TO_ALERT
 					});
@@ -141,12 +158,32 @@ namespace ofxRulr {
 			void
 				Transform::loadPhoto()
 			{
-				auto image = cv::imread(this->parameters.filename);
-				if (image.type() == CV_16U) {
-					image.convertTo(image, CV_8U, 1 / 256.0f);
+				this->throwIfMissingAConnection<MarkerMap::NavigateCamera>();
+				auto navigateCamera = this->getInput<MarkerMap::NavigateCamera>();
+
+				auto camera = navigateCamera->getInput<Item::Camera>();
+				if (!camera) {
+					throw(ofxRulr::Exception("There must be a camera attached to the NavigateCamera node"));
 				}
+
+				auto imageDistorted = cv::imread(this->parameters.filename);
+				if (imageDistorted.empty()) {
+					return;
+				}
+
+				if (imageDistorted.type() == CV_16U) {
+					imageDistorted.convertTo(imageDistorted, CV_8U, 1 / 256.0f);
+				}
+				cv::Mat image;
+				cv::undistort(imageDistorted
+					, image
+					, camera->getCameraMatrix()
+					, camera->getDistortionCoefficients());
 				ofxCv::copy(image, this->photo.getPixels());
 				this->photo.update();
+
+				this->needsLoadImage = false;
+				this->needsUpdatePreview = true;
 			}
 
 			//----------
@@ -270,6 +307,8 @@ namespace ofxRulr {
 
 					this->preview.update();
 				}
+
+				this->needsUpdatePreview = false;
 			}
 
 			//----------

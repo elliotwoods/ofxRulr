@@ -55,8 +55,9 @@ namespace ofxRulr {
 					void multiSetRequest(const MultiSetRequest&);
 				protected:
 					struct : ofParameterGroup {
-						ofParameter<string> address{ "http://localhost:8000" };
-						PARAM_DECLARE("Dispatcher", address);
+						ofParameter<string> address{ "Address", "http://localhost:8000" };
+						ofParameter<bool> enabled{ "Enabled", true };
+						PARAM_DECLARE("Dispatcher", address, enabled);
 					} parameters;
 				};
 			}

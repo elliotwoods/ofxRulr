@@ -316,6 +316,10 @@ namespace ofxRulr {
 						heliostat->parameters.servo1.ID.set(ofToInt(cols[5]));
 						heliostat->parameters.servo2.ID.set(ofToInt(cols[6]));
 
+						if (cols.size() >= 12) {
+							auto axis2AngleOffset = ofToFloat(cols[11]);
+							heliostat->parameters.servo2.angleOffset.set(axis2AngleOffset);
+						}
 						heliostat->parameters.rightTangent.set(rightTangent);
 
 						if (isNew) {

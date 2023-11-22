@@ -646,6 +646,7 @@ EXPORTS
 	??0Draws@Panels@ofxCvGui@@QEAA@XZ
 	??0Image@Panels@ofxCvGui@@QEAA@AEAVofAbstractImage@@@Z
 	??0Scroll@Panels@ofxCvGui@@QEAA@XZ
+	??0Text@Panels@ofxCvGui@@QEAA@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??0Texture@Panels@ofxCvGui@@QEAA@AEBVofTexture@@@Z
 	??0World@Panels@ofxCvGui@@QEAA@XZ
 	?makeBaseDraws@Panels@ofxCvGui@@YA?AV?$shared_ptr@VDraws@Panels@ofxCvGui@@@std@@AEAVofBaseDraws@@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z

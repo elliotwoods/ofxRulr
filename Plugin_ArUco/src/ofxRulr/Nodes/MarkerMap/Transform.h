@@ -66,6 +66,9 @@ namespace ofxRulr {
 				ofImage photo;
 				ofImage preview;
 				ofxCvGui::PanelPtr panel;
+
+				bool needsLoadImage = true;
+				bool needsUpdatePreview = false;
 			};
 		}
 	}

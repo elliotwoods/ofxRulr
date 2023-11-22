@@ -61,6 +61,10 @@ namespace ofxRulr {
 
 				//----------
 				nlohmann::json Dispatcher::request(const ofHttpRequest & request) {
+					if (!this->parameters.enabled.get()) {
+						return nlohmann::json();
+					}
+
 					ofURLFileLoader urlLoader;
 					auto response = urlLoader.handleRequest(request);
 

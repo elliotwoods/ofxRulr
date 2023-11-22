@@ -142,7 +142,7 @@ namespace ofxRulr {
 											const auto& markerImage = detector->getMarkerImage(ID);
 											ofPushStyle();
 											{
-												ofSetColor(150);
+												ofSetColor(100); // Dim the marker view (so we can see text)
 												markerImage.draw(args.localBounds.getCenter() - glm::vec2(size, size) / 2.0f
 													, size
 													, size);
@@ -151,14 +151,19 @@ namespace ofxRulr {
 										}
 
 										// Draw an indicator if this marker is already seen elsewhere
-										if (markersNode->getMarkerByID(ID)) {
-											// Marker already exists in set
-											ofPushStyle();
-											{
-												ofSetColor(100, 255, 100);
-												ofDrawCircle(args.localBounds.getBottomRight() + glm::vec2(-8, -8), 5);
+										try {
+											if (markersNode->getMarkerByID(ID)) {
+												// Marker already exists in set
+												ofPushStyle();
+												{
+													ofSetColor(100, 255, 100);
+													ofDrawCircle(args.localBounds.getBottomRight() + glm::vec2(-4, -4), 3);
+												}
+												ofPopStyle();
 											}
-											ofPopStyle();
+										}
+										catch (...) {
+
 										}
 									}
 								}
