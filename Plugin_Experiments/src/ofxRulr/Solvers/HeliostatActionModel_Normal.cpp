@@ -24,14 +24,11 @@ struct HeliostatActionModel_NormalCost
 			, parameters[1]
 		};
 
-		glm::tvec3<T> mirrorCenter, mirrorNormal;
-		ofxRulr::Solvers::HeliostatActionModel::getMirrorCenterAndNormal(axisAngles
-			, hamParameters
-			, mirrorCenter
-			, mirrorNormal);
+		auto mirrorPlane = ofxRulr::Solvers::HeliostatActionModel::getMirrorPlane(axisAngles
+			, hamParameters);
 
 		auto targetNormal = (glm::tvec3<T>)this->normal;
-		auto dotProduct = ofxCeres::VectorMath::dot(mirrorNormal, targetNormal);
+		auto dotProduct = ofxCeres::VectorMath::dot(mirrorPlane.normal, targetNormal);
 		residuals[0] = acos(dotProduct);
 		return true;
 	}

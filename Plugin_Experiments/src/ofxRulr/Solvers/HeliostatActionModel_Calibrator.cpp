@@ -10,17 +10,17 @@ struct HeliostatActionModel_CalibratorRayCost
 		, const glm::vec3 & worldPoint
 		, const float axis1ServoPosition
 		, const float axis2ServoPosition
-		, const float mirrorDiameter
 		, const float axis1AngleOffset
-		, const float axis2AngleOffset)
+		, const float axis2AngleOffset
+		, const float mirrorDiameter)
 
 		: cameraRay(cameraRay)
 		, worldPoint(worldPoint)
 		, axis1ServoPosition(axis1ServoPosition)
 		, axis2ServoPosition(axis2ServoPosition)
-		, mirrorDiameter(mirrorDiameter)
 		, axis1AngleOffset(axis1AngleOffset)
 		, axis2AngleOffset(axis2AngleOffset)
+		, mirrorDiameter(mirrorDiameter)
 	{
 
 	}
@@ -43,8 +43,9 @@ struct HeliostatActionModel_CalibratorRayCost
 			, mirrorOffsetParameters);
 
 		// Construct the camera ray
-		const auto cameraRayS = glm::tvec3<T>(this->cameraRay.s);
-		const auto cameraRayT = glm::tvec3<T>(this->cameraRay.t);
+		ofxCeres::Models::Ray<T> cameraRay;
+		cameraRay.s = glm::tvec3<T>(this->cameraRay.s);
+		cameraRay.t = glm::tvec3<T>(this->cameraRay.t);
 
 		// Calculate axis angles (apply polynomial)
 		HeliostatActionModel::AxisAngles<T> axisAngles{
@@ -56,43 +57,23 @@ struct HeliostatActionModel_CalibratorRayCost
 				, (T)this->axis2AngleOffset)
 		};
 
-		// Calculate mirror center and normal
-		glm::tvec3<T> mirrorCenter, mirrorNormal;
-		HeliostatActionModel::getMirrorCenterAndNormal<T>(axisAngles
-			, hamParameters
-			, mirrorCenter
-			, mirrorNormal);
-		T mirrorPlaneD = -dot(mirrorNormal, mirrorCenter); // reference : ReMarkable May 2021 p38
+		// Get the mirror plane
+		auto mirrorPlane = HeliostatActionModel::getMirrorPlane<T>(axisAngles, hamParameters);
+		auto reflectedRay = mirrorPlane.reflect(cameraRay);
 
-		// Intersect the camera ray and the estimated mirror plane
-		// reference : MirrorPlaneFromRays / page 20 of ReMarkable notes May 2021
-		const T u = -(mirrorPlaneD + dot(cameraRayS, mirrorNormal))
-			/ dot(cameraRayT, mirrorNormal);
-		auto intersection = cameraRayS + u * cameraRayT;
-
-		// Reflect the camera ray off the mirror plane
-		// reflected ray starts with intersection between cameraRay and mirror plane
-		const auto& reflectedRayS = intersection;
-		// reflected ray transmission is calculated by reflecting a point one step through the mirror
-		auto reflectedRayT = reflect(cameraRayT + reflectedRayS, mirrorNormal, mirrorPlaneD) - reflectedRayS;
-
-		// Calculate the distance between the reflected ray and the world point
-		// reference : MirrorPlaneFromRays.cpp
-		// also https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+		// First residual is world distance between reflected ray and target point
 		{
-			const auto& x0 = (glm::tvec3<T>) worldPoint;
-			const auto& x1 = reflectedRayS;
-			const auto& x2 = reflectedRayS + reflectedRayT;
-			residuals[0] = length(cross(x0 - x1, x0 - x2))
-				/ length(x2 - x1);
+			auto distance = reflectedRay.distanceTo(worldPoint);
+			residuals[0] = distance * distance;
 		}
 
 		// Calculate the distance off the mirror face
 		{
-			auto intersectionRadius = distance(mirrorCenter, intersection);
+			auto intersection = mirrorPlane.intersect(cameraRay);
+			auto intersectionRadius = distance(mirrorPlane.center, intersection);
 			auto mirrorRadius = (T)this->mirrorDiameter / (T)2.0;
 			if (intersectionRadius > mirrorRadius) {
-				residuals[1] = intersectionRadius - mirrorRadius;
+				residuals[1] = (intersectionRadius - mirrorRadius) * (T) 1000.0;
 			}
 			else {
 				residuals[1] = (T)0.0;
@@ -101,7 +82,7 @@ struct HeliostatActionModel_CalibratorRayCost
 
 		// Add a residual if reflected ray is facing away from the mirror normal
 		{
-			auto alignment = dot(normalize(reflectedRayT), mirrorNormal);
+			auto alignment = dot(normalize(reflectedRay.t), mirrorPlane.normal);
 			if (alignment < (T) 0) {
 				residuals[2] = -alignment * (T) 1000.0;
 			}
@@ -118,18 +99,18 @@ struct HeliostatActionModel_CalibratorRayCost
 			, const glm::vec3& worldPoint
 			, const float axis1ServoPosition
 			, const float axis2ServoPosition
-			, const float mirrorDiameter
 			, const float axis1AngleOffset
-			, const float axis2AngleOffset)
+			, const float axis2AngleOffset
+			, const float mirrorDiameter)
 	{
 		return new ceres::AutoDiffCostFunction<HeliostatActionModel_CalibratorRayCost, 3, 3, 1, 4, 6, 1>(
 			new HeliostatActionModel_CalibratorRayCost(cameraRay
 				, worldPoint
 				, axis1ServoPosition
 				, axis2ServoPosition
-				, mirrorDiameter
 				, axis1AngleOffset
-				, axis2AngleOffset)
+				, axis2AngleOffset
+				, mirrorDiameter)
 			);
 	}
 
@@ -200,9 +181,9 @@ namespace ofxRulr {
 							, worldPoints[i]
 							, (float)axis1ServoPosition[i]
 							, (float)axis2ServoPosition[i]
-							, options.mirrorDiameter
 							, axis1AngleOffset[i]
-							, axis2AngleOffset[i]);
+							, axis2AngleOffset[i]
+							, options.mirrorDiameter);
 						problem.AddResidualBlock(costFunction
 							, NULL
 							, positionParameters
@@ -313,16 +294,16 @@ namespace ofxRulr {
 				, polynomialParameters
 				, mirrorOffsetParameters);
 
-			double residual;
+			double residuals[3];
 
 			costFunction(positionParameters
 				, rotationYParameters
 				, rotationAxisParameters
 				, polynomialParameters
 				, mirrorOffsetParameters
-				, &residual);
+				, residuals);
 
-			return (float)residual;
+			return (float)residuals[0];
 		}
 	}
 }

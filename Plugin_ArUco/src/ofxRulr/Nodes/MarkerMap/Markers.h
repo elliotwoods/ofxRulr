@@ -11,7 +11,7 @@ namespace ofxRulr {
 		namespace MarkerMap {
 			class PLUGIN_ARUCO_EXPORTS Markers : public Nodes::Base {
 			public:
-				class Marker : public Utils::AbstractCaptureSet::BaseCapture {
+				class Marker : public Utils::AbstractCaptureSet::BaseCapture, public ofxCvGui::IInspectable, public enable_shared_from_this<Marker> {
 				public:
 					Marker();
 					string getDisplayString() const override;
@@ -22,6 +22,7 @@ namespace ofxRulr {
 
 					void serialize(nlohmann::json&);
 					void deserialize(const nlohmann::json&);
+					void populateInspector(ofxCvGui::InspectArguments&);
 
 					vector<glm::vec3> getObjectVertices() const;
 					vector<glm::vec3> getWorldVertices() const;

@@ -130,17 +130,35 @@ namespace ofxRulr {
 							widget->onDraw += [this, i](ofxCvGui::DrawArguments& args) {
 								auto ID = this->IDs[i];
 								auto hasResidual = this->residuals.size() > i;
-								// Draw the marker preview
+
+								// Data that needs other nodes
 								if (this->parent) {
 									auto markersNode = this->parent->getInput<Markers>();
 									if (markersNode) {
+										// Draw the marker preview
 										auto detector = markersNode->getInput<ArUco::Detector>();
 										if (detector) {
 											auto size = min(args.localBounds.getHeight(), args.localBounds.getWidth());
 											const auto& markerImage = detector->getMarkerImage(ID);
-											markerImage.draw(args.localBounds.getCenter() - glm::vec2(size, size) / 2.0f
-												, size
-												, size);
+											ofPushStyle();
+											{
+												ofSetColor(150);
+												markerImage.draw(args.localBounds.getCenter() - glm::vec2(size, size) / 2.0f
+													, size
+													, size);
+											}
+											ofPopStyle();
+										}
+
+										// Draw an indicator if this marker is already seen elsewhere
+										if (markersNode->getMarkerByID(ID)) {
+											// Marker already exists in set
+											ofPushStyle();
+											{
+												ofSetColor(100, 255, 100);
+												ofDrawCircle(args.localBounds.getBottomRight() + glm::vec2(-8, -8), 5);
+											}
+											ofPopStyle();
 										}
 									}
 								}
@@ -160,6 +178,11 @@ namespace ofxRulr {
 											, args.localBounds.height - y);
 									}
 									ofPopStyle();
+								}
+
+								// Draw the marker index
+								{
+									ofxCvGui::Utils::drawText(ofToString(ID), args.localBounds, false);
 								}
 							};
 
@@ -549,6 +572,8 @@ namespace ofxRulr {
 				this->throwIfMissingAnyConnection();
 				auto camera = this->getInput<Item::Camera>();
 				auto markersNode = this->getInput<Markers>();
+				markersNode->throwIfMissingAnyConnection();
+				auto detectorNode = markersNode->getInput<ArUco::Detector>();
 
 				auto initialisationMarkers = markersNode->getMarkers();
 				auto activeCaptures = this->captures.getSelection();
@@ -630,6 +655,7 @@ namespace ofxRulr {
 					if (create) {
 						auto marker = make_shared<Markers::Marker>();
 						marker->parameters.ID.set(ID);
+						marker->parameters.length.set(detectorNode->getMarkerLength());
 
 						// Note that this function sets length and parent
 						markersNode->add(marker);
@@ -934,9 +960,9 @@ namespace ofxRulr {
 							// Unproject camera rays for image points
 							for (auto capture : activeCaptures) {
 								capture->cameraRays.clear();
-								for (const auto& imagePoints : capture->imagePoints) {
+								for (const auto& imagePointsUndistorted : capture->imagePointsUndistorted) {
 									vector<ofxRay::Ray> cameraRays;
-									capture->cameraView.castPixels(imagePoints, cameraRays, false);
+									capture->cameraView.castPixels(imagePointsUndistorted, cameraRays, false);
 									for (auto& ray : cameraRays) {
 										ray.color = capture->color;
 										ray.t = glm::normalize(ray.t) * this->parameters.debug.cameraRayLength.get();
@@ -1462,9 +1488,9 @@ namespace ofxRulr {
 					// Unproject camera rays for image points
 					for (auto capture : captures) {
 						capture->cameraRays.clear();
-						for (const auto& imagePoints : capture->imagePoints) {
+						for (const auto& imagePointsUndistorted : capture->imagePointsUndistorted) {
 							vector<ofxRay::Ray> cameraRays;
-							capture->cameraView.castPixels(imagePoints, cameraRays, false);
+							capture->cameraView.castPixels(imagePointsUndistorted, cameraRays, false);
 							for (auto& ray : cameraRays) {
 								ray.color = capture->color;
 								ray.t = glm::normalize(ray.t) * this->parameters.debug.cameraRayLength.get();
@@ -1512,7 +1538,7 @@ namespace ofxRulr {
 								continue;
 							}
 
-							const auto& markerImagePoints = ofxCv::toCv(capture->imagePointsUndistorted[i]);
+							const auto& markerImagePoints = ofxCv::toCv(capture->imagePoints[i]);
 							imagePoints.insert(imagePoints.end(), markerImagePoints.begin(), markerImagePoints.end());
 
 							const auto markerWorldPoints = ofxCv::toCv(marker->getWorldVertices());
@@ -1570,6 +1596,10 @@ namespace ofxRulr {
 				this->throwIfMissingAConnection<Item::Camera>();
 
 				auto markersNode = this->getInput<Markers>();
+				markersNode->throwIfMissingAnyConnection();
+				auto detector = markersNode->getInput<ArUco::Detector>();
+				auto markerLength = detector->getMarkerLength();
+
 				auto camera = this->getInput<Item::Camera>();
 
 				for (int i = 0; i < capture->IDs.size(); i++) {
@@ -1585,6 +1615,7 @@ namespace ofxRulr {
 
 					auto marker = make_shared<Markers::Marker>();
 					marker->parameters.ID.set(markerID); 
+					marker->parameters.length.set(markerLength);
 
 					// Note that this function sets length and parent
 					markersNode->add(marker);

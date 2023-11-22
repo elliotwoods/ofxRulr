@@ -705,13 +705,12 @@ namespace ofxRulr {
 					{
 						// Get the plane for the mirror
 						glm::vec3 mirrorCenter, mirrorNormal;
-						Solvers::HeliostatActionModel::getMirrorCenterAndNormal<float>({
+						auto mirrorPlane = Solvers::HeliostatActionModel::getMirrorPlane<float>({
 							heliostat->parameters.servo1.angle.get()
 							, heliostat->parameters.servo2.angle.get()
-							}, heliostat->getHeliostatActionModelParameters()
-							, mirrorCenter
-							, mirrorNormal);
-						ofxRay::Plane plane(mirrorCenter, mirrorNormal);
+							}, heliostat->getHeliostatActionModelParameters());
+						ofxRay::Plane plane(mirrorPlane.center, mirrorPlane.normal);
+						plane.setInfinite(true);
 
 						// Individually crop the rays
 						for (auto& cameraRay : capture->cameraRays) {
@@ -843,11 +842,10 @@ namespace ofxRulr {
 										};
 
 										// Get mirror plane
-										Solvers::HeliostatActionModel::getMirrorCenterAndNormal(axisAngles
-											, heliostat->getHeliostatActionModelParameters()
-											, capture->mirrorCenter
-											, capture->mirrorNormal);
-										ofxRay::Plane mirrorPlane(capture->mirrorCenter, capture->mirrorNormal);
+										auto mirrorPlane_ = Solvers::HeliostatActionModel::getMirrorPlane(axisAngles
+											, heliostat->getHeliostatActionModelParameters());
+										ofxRay::Plane mirrorPlane(mirrorPlane_.center, mirrorPlane_.normal);
+										mirrorPlane.setInfinite(true);
 
 										// Calculate the reflections
 										for (const auto& cameraRay : capture->cameraRays) {

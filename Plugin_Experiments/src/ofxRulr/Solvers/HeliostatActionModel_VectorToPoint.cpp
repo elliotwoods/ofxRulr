@@ -26,28 +26,25 @@ struct HeliostatActionModel_VectorToPointCost
 			, parameters[1]
 		};
 
-		glm::tvec3<T> mirrorCenter, mirrorNormal;
-		ofxRulr::Solvers::HeliostatActionModel::getMirrorCenterAndNormal(axisAngles
-			, hamParameters
-			, mirrorCenter
-			, mirrorNormal);
+		auto mirrorPlane = ofxRulr::Solvers::HeliostatActionModel::getMirrorPlane(axisAngles
+			, hamParameters);
 
 		auto incidentVectorNormalised = (glm::tvec3<T>) glm::normalize(this->incidentVector);
-		auto incidentTransmissionNormal = dot(incidentVectorNormalised, mirrorNormal) * mirrorNormal;
+		auto incidentTransmissionNormal = dot(incidentVectorNormalised, mirrorPlane.normal) * mirrorPlane.normal;
 		auto incidentTransmissionInPlane = incidentVectorNormalised - incidentTransmissionNormal;
 
 		auto reflectedTransmission = incidentTransmissionInPlane - incidentTransmissionNormal;
 
-		residuals[0] = distanceRayToPoint(mirrorCenter
+		residuals[0] = distanceRayToPoint(mirrorPlane.center
 			, reflectedTransmission
 			, (glm::tvec3<T>) this->point);
 
 
 		// Residual for pointing wrong direction
 		{
-			auto intendedDirection = (glm::tvec3<T>) this->point - mirrorCenter;
+			auto intendedDirection = (glm::tvec3<T>) this->point - mirrorPlane.center;
 
-			auto angleBetween = dot(normalize(intendedDirection), mirrorNormal);
+			auto angleBetween = dot(normalize(intendedDirection), mirrorPlane.normal);
 			if (angleBetween < (T)0) {
 				residuals[1] = -angleBetween * (T)1000.0;
 			}

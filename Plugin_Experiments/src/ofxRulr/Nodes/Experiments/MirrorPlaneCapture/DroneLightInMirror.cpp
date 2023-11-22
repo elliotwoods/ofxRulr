@@ -16,38 +16,47 @@ namespace ofxRulr {
 				void
 					DroneLightInMirror::Capture::drawWorld(const DrawOptions& args)
 				{
-					if (args.camera) {
-						this->camera.draw();
-					}
+					ofPushStyle();
+					{
+						ofSetColor(this->color);
+						if (args.camera) {
+							this->camera.draw();
+						}
 
-					if (args.lightPositions) {
-						ofPushStyle();
-						{
-							ofSetColor(this->color);
+						if (args.lightPositions) {
+
 							ofDrawSphere(this->lightPosition, args.worldPointsSize);
 						}
-						ofPopStyle();
-					}
 
-					if (args.labelWorldPoints) {
-						ofxCvGui::Utils::drawTextAnnotation(this->getDateString()
-							, this->camera.getPosition()
-							, this->color);
-					}
+						if (args.labelWorldPoints) {
+							ofxCvGui::Utils::drawTextAnnotation(this->getDateString()
+								, this->camera.getPosition()
+								, this->color);
+						}
 
-					for (const auto& heliostatCapture : this->heliostatCaptures) {
-						if (args.cameraRays) {
-							heliostatCapture.cameraRay.draw();
+						for (const auto& heliostatCapture : this->heliostatCaptures) {
+							if (args.cameraRays) {
+								heliostatCapture.cameraRay.draw();
+							}
+
+							if (args.mirrorFace) {
+								// Not implemented
+							}
+
+							if (args.reflectedRays) {
+								heliostatCapture.reflectedRayEstimated.draw();
+							}
 						}
 
 						if (args.mirrorFace) {
-							// Not implemented
-						}
-
-						if (args.reflectedRays) {
-							heliostatCapture.reflectedRayEstimated.draw();
+							for (const auto& heliostatCapture : heliostatCaptures) {
+								ofDrawArrow(heliostatCapture.mirrorCenterEstimated
+									, heliostatCapture.mirrorNormalEstimated * 0.1 + heliostatCapture.mirrorCenterEstimated
+									, 0.01f);
+							}
 						}
 					}
+					ofPopStyle();
 				}
 
 				//-----------
@@ -55,8 +64,8 @@ namespace ofxRulr {
 					DroneLightInMirror::Capture::getDisplayString() const
 				{
 					stringstream ss;
-					for(const auto& heliostatCapture : this->heliostatCaptures) {
-						ss << heliostatCapture.heliostatName << ", ";
+					for (const auto& heliostatCapture : this->heliostatCaptures) {
+						ss << heliostatCapture.heliostatName << "(" << heliostatCapture.residual << "), ";
 					}
 					return ss.str();
 				}
@@ -82,6 +91,8 @@ namespace ofxRulr {
 							Utils::serialize(jsonHeliostatCapture, "reflectedRayEstimated", heliostatCapture.reflectedRayEstimated);
 							Utils::serialize(jsonHeliostatCapture, "axis1ServoPosition", heliostatCapture.axis1ServoPosition);
 							Utils::serialize(jsonHeliostatCapture, "axis2ServoPosition", heliostatCapture.axis2ServoPosition);
+							Utils::serialize(jsonHeliostatCapture, "axis1AngleOffest", heliostatCapture.axis1AngleOffest);
+							Utils::serialize(jsonHeliostatCapture, "axis2AngleOffest", heliostatCapture.axis2AngleOffest);
 							Utils::serialize(jsonHeliostatCapture, "residual", heliostatCapture.residual);
 							jsonHeliostatCaptures.push_back(jsonHeliostatCapture);
 						}
@@ -98,7 +109,7 @@ namespace ofxRulr {
 					Utils::deserialize(json, "camera", this->camera);
 
 					this->heliostatCaptures.clear();
-					if(json.contains("heliostatCaptures")) {
+					if (json.contains("heliostatCaptures")) {
 						const auto& jsonHeliostatCaptures = json["heliostatCaptures"];
 
 						for (auto& jsonHeliostatCapture : jsonHeliostatCaptures) {
@@ -111,6 +122,8 @@ namespace ofxRulr {
 							Utils::deserialize(jsonHeliostatCapture, "reflectedRayEstimated", heliostatCapture.reflectedRayEstimated);
 							Utils::deserialize(jsonHeliostatCapture, "axis1ServoPosition", heliostatCapture.axis1ServoPosition);
 							Utils::deserialize(jsonHeliostatCapture, "axis2ServoPosition", heliostatCapture.axis2ServoPosition);
+							Utils::deserialize(jsonHeliostatCapture, "axis1AngleOffest", heliostatCapture.axis1AngleOffest);
+							Utils::deserialize(jsonHeliostatCapture, "axis2AngleOffest", heliostatCapture.axis2AngleOffest);
 							Utils::deserialize(jsonHeliostatCapture, "residual", heliostatCapture.residual);
 							this->heliostatCaptures.push_back(heliostatCapture);
 						}
@@ -183,15 +196,37 @@ namespace ofxRulr {
 							this->navigateToSeeLight();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
-						}, ' ');
+						}, 'n');
 
 					inspector->addButton("Capture", [this]() {
 						try {
 							this->capture();
 						}
 						RULR_CATCH_ALL_TO_ALERT;
-						}, OF_KEY_RETURN);
+						}, ' ');
 
+					inspector->addButton("Calibrate", [this]() {
+						try {
+							this->calibrate();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						}, OF_KEY_RETURN)->setHeight(100.0f);
+
+					inspector->addButton("Calculate residuals", [this]() {
+						try {
+							this->calculateResiduals();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						}, 'r');
+
+					inspector->addLiveValue<float>("Total residual", [this]() {
+						auto captures = this->captures.getSelection();
+						float totalResidual = 0.0f;
+						for (auto capture : captures) {
+							totalResidual += capture->meanResidual;
+						}
+						return totalResidual;
+						});
 				}
 
 				//-----------
@@ -266,7 +301,7 @@ namespace ofxRulr {
 
 					this->throwIfMissingAConnection<Item::Camera>();
 					this->throwIfMissingAConnection<Heliostats2>();
-					
+
 					auto cameraNode = this->getInput<Item::Camera>();
 
 					if (this->parameters.cameraNavigation.whenSeeLight.get()) {
@@ -334,7 +369,7 @@ namespace ofxRulr {
 					DroneLightInMirror::capture()
 				{
 					Utils::ScopedProcess scopedProcess("Capture");
-					
+
 					this->lastFrameWasCapture = true;
 
 					this->throwIfMissingAnyConnection();
@@ -427,7 +462,7 @@ namespace ofxRulr {
 							, heliostatsInView
 							, heliostatsNode
 							, findSettings);
-						
+
 						scopedProcessFindLights.end();
 					}
 
@@ -454,7 +489,7 @@ namespace ofxRulr {
 
 						capture->cameraPosition = cameraView.getPosition();
 						capture->lightPosition = this->getLightPosition(cameraNode->getTransform());
-						
+
 						{
 							capture->camera = cameraView;
 							capture->camera.setFarClip(0.2f);
@@ -486,22 +521,21 @@ namespace ofxRulr {
 
 								heliostatCapture.axis1ServoPosition = findServoValue(heliostat->parameters.servo1.ID.get());
 								heliostatCapture.axis2ServoPosition = findServoValue(heliostat->parameters.servo2.ID.get());
+								heliostatCapture.axis1AngleOffest = heliostat->parameters.servo1.angleOffset.get();
+								heliostatCapture.axis2AngleOffest = heliostat->parameters.servo2.angleOffset.get();
 
 								heliostatCapture.heliostatName = heliostat->parameters.name.get();
 								heliostatCapture.imagePoint = findLightResult.imagePoint;
-								
+
 								auto cameraRay = cameraView.castPixel(findLightResult.imagePoint, true);
 								cameraRay.color = capture->color;
 
 								// Create the approx results based on current esimated
-								glm::vec3 mirrorCenter, mirrorNormal;
-								Solvers::HeliostatActionModel::getMirrorCenterAndNormal<float>({
+								auto mirrorPlane = Solvers::HeliostatActionModel::getMirrorPlane<float>({
 									heliostat->parameters.servo1.angle.get()
 									, heliostat->parameters.servo2.angle.get()
-									}, heliostat->getHeliostatActionModelParameters()
-									, mirrorCenter
-									, mirrorNormal);
-								ofxRay::Plane plane(mirrorCenter, mirrorNormal);
+									}, heliostat->getHeliostatActionModelParameters());
+								ofxRay::Plane plane(mirrorPlane.center, mirrorPlane.normal);
 
 								// Crop the cameraRay to hit the current mirror estimation
 								{
@@ -514,8 +548,8 @@ namespace ofxRulr {
 
 								heliostatCapture.cameraRay = cameraRay;
 
-								heliostatCapture.mirrorCenterEstimated = mirrorCenter;
-								heliostatCapture.mirrorNormalEstimated = mirrorNormal;
+								heliostatCapture.mirrorCenterEstimated = mirrorPlane.center;
+								heliostatCapture.mirrorNormalEstimated = mirrorPlane.normal;
 							}
 							capture->heliostatCaptures.push_back(heliostatCapture);
 						}
@@ -527,166 +561,121 @@ namespace ofxRulr {
 					scopedProcess.end();
 				}
 
-				////-----------
-				//void
-				//	DroneLightInMirror::calibrate()
-				//{
-				//	this->throwIfMissingAConnection<Heliostats2>();
-				//	auto heliostatsNode = this->getInput<Heliostats2>();
-				//	auto heliostats = heliostatsNode->getHeliostats();
+				//-----------
+				void
+					DroneLightInMirror::calibrate()
+				{
+					this->throwIfMissingAConnection<Heliostats2>();
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					auto heliostats = heliostatsNode->getHeliostats();
 
-				//	Utils::ScopedProcess calibrateScopedProcess("Calibrate", false, heliostats.size());
-				//	
-				//	const auto allCaptures = this->captures.getSelection();
+					Utils::ScopedProcess calibrateScopedProcess("Calibrate", false, heliostats.size());
 
-				//	for (auto heliostat : heliostats) {
-				//		try {
-				//			Utils::ScopedProcess heliostatScopedProcess(heliostat->getName(), true);
+					const auto allCaptures = this->captures.getSelection();
 
-				//			// Gather data
-				//			vector<ofxRay::Ray> cameraRays;
-				//			vector<glm::vec3> worldPoints;
-				//			vector<int> axis1ServoPosition;
-				//			vector<int> axis2ServoPosition;
+					for (auto heliostat : heliostats) {
+						try {
+							Utils::ScopedProcess heliostatScopedProcess(heliostat->getName(), true);
 
-				//			vector<float> axis1AngleOffset;
-				//			vector<float> axis2AngleOffset;
+							// Gather data
+							vector<ofxRay::Ray> cameraRays;
+							vector<glm::vec3> worldPoints;
+							vector<int> axis1ServoPosition;
+							vector<int> axis2ServoPosition;
 
-				//			vector<shared_ptr<Capture>> capturesForThisHeliostat;
+							vector<float> axis1AngleOffset;
+							vector<float> axis2AngleOffset;
 
-				//			for (const auto& capture : allCaptures) {
-				//				for (const auto& helostatCapture : capture->heliostatCaptures) {
-				//					if (helostatCapture->heliostatName == heliostat->getName()) {
-				//						capturesForThisHeliostat.push_back(capture);
+							vector<shared_ptr<Capture>> capturesForThisHeliostat;
 
-				//						//Check sizes
-				//						auto size = capture->cameraRays.size();
-				//						if (size != capture->worldPoints.size()) {
-				//							throw(ofxRulr::Exception("Gathering data size mismatch"));
-				//						}
+							for (const auto& capture : allCaptures) {
+								for (const auto& heliostatCapture : capture->heliostatCaptures) {
+									if (heliostatCapture.heliostatName == heliostat->getName()) {
+										capturesForThisHeliostat.push_back(capture);
 
-				//						cameraRays.insert(cameraRays.end(), capture->cameraRays.begin(), capture->cameraRays.end());
+										cameraRays.push_back(heliostatCapture.cameraRay);
+										worldPoints.push_back(capture->lightPosition);
 
-				//						const auto& worldPointsToAdd = ofxCv::toOf(capture->worldPoints);
-				//						worldPoints.insert(worldPoints.end(), worldPointsToAdd.begin(), worldPointsToAdd.end());
+										axis1ServoPosition.push_back(heliostatCapture.axis1ServoPosition);
+										axis2ServoPosition.push_back(heliostatCapture.axis2ServoPosition);
+										axis1AngleOffset.push_back(heliostatCapture.axis1AngleOffest);
+										axis2AngleOffset.push_back(heliostatCapture.axis2AngleOffest);
+									}
+								}
 
-				//						for (size_t i = 0; i < size; i++) {
-				//							axis1ServoPosition.push_back(capture->axis1ServoPosition);
-				//							axis2ServoPosition.push_back(capture->axis2ServoPosition);
-				//							axis1AngleOffset.push_back(heliostat->parameters.servo1.angleOffset.get());
-				//							axis2AngleOffset.push_back(heliostat->parameters.servo2.angleOffset.get());
-				//						}
-				//					}
-				//				}
-				//				
-				//			}
+							}
 
-				//			// Check that we got some data
-				//			if (cameraRays.empty()) {
-				//				throw(ofxRulr::Exception("No data available"));
-				//			}
+							// Check that we got some data
+							if (cameraRays.empty()) {
+								throw(ofxRulr::Exception("No data available"));
+							}
 
-				//			// Check that we have enough data
-				//			if (cameraRays.size() < this->parameters.calibrate.minimumDataPoints.get()) {
-				//				throw(ofxRulr::Exception("[" + ofToString(cameraRays.size()) + "] data points found. Minimum [" + ofToString(this->parameters.calibrate.minimumDataPoints.get()) + "] data points required."));
-				//			}
+							// Check that we have enough data
+							if (cameraRays.size() < this->parameters.calibrate.minimumDataPoints.get()) {
+								throw(ofxRulr::Exception("[" + ofToString(cameraRays.size()) + "] data points found. Minimum [" + ofToString(this->parameters.calibrate.minimumDataPoints.get()) + "] data points required."));
+							}
 
-				//			// Normalise rays
-				//			{
-				//				for (auto& cameraRay : cameraRays) {
-				//					cameraRay.t = glm::normalize(cameraRay.t);
-				//				}
-				//			}
+							// Normalise rays
+							{
+								for (auto& cameraRay : cameraRays) {
+									cameraRay.t = glm::normalize(cameraRay.t);
+								}
+							}
 
-				//			// Collate options
-				//			Solvers::HeliostatActionModel::Calibrator::Options options;
-				//			{
-				//				options.fixPosition = this->parameters.calibrate.fixPosition.get();
-				//				options.fixRotationY = this->parameters.calibrate.fixRotationY.get();
-				//				options.fixMirrorOffset = this->parameters.calibrate.fixMirrorOffset.get();
-				//				options.fixPolynomial = this->parameters.calibrate.fixPolynomial.get();
-				//				options.fixRotationAxis = this->parameters.calibrate.fixRotationAxis.get();
-				//				options.mirrorDiameter = heliostat->parameters.diameter.get();
-				//			}
+							// Collate options
+							Solvers::HeliostatActionModel::Calibrator::Options options;
+							{
+								options.fixPosition = this->parameters.calibrate.fixPosition.get();
+								options.fixRotationY = this->parameters.calibrate.fixRotationY.get();
+								options.fixMirrorOffset = this->parameters.calibrate.fixMirrorOffset.get();
+								options.fixPolynomial = this->parameters.calibrate.fixPolynomial.get();
+								options.fixRotationAxis = this->parameters.calibrate.fixRotationAxis.get();
+								options.mirrorDiameter = heliostat->parameters.diameter.get();
+							}
 
-				//			// Run solve
-				//			{
-				//				auto solverSettings = this->getCalibrateSolverSettings();
-				//				{
-				//					solverSettings.options.max_num_iterations = this->parameters.calibrate.maxIterations.get();
-				//					solverSettings.options.function_tolerance = this->parameters.calibrate.functionTolerance.get();
-				//					solverSettings.options.parameter_tolerance = this->parameters.calibrate.parameterTolerance.get();
-				//				}
+							// Run solve
+							{
+								auto solverSettings = this->getCalibrateSolverSettings();
+								{
+									solverSettings.options.max_num_iterations = this->parameters.calibrate.maxIterations.get();
+									solverSettings.options.function_tolerance = this->parameters.calibrate.functionTolerance.get();
+									solverSettings.options.parameter_tolerance = this->parameters.calibrate.parameterTolerance.get();
+								}
 
-				//				auto result = Solvers::HeliostatActionModel::Calibrator::solveCalibration(cameraRays
-				//					, worldPoints
-				//					, axis1ServoPosition
-				//					, axis2ServoPosition
-				//					, axis1AngleOffset
-				//					, axis2AngleOffset
-				//					, heliostat->getHeliostatActionModelParameters()
-				//					, options
-				//					, solverSettings);
+								auto result = Solvers::HeliostatActionModel::Calibrator::solveCalibration(cameraRays
+									, worldPoints
+									, axis1ServoPosition
+									, axis2ServoPosition
+									, axis1AngleOffset
+									, axis2AngleOffset
+									, heliostat->getHeliostatActionModelParameters()
+									, options
+									, solverSettings);
 
-				//				if (result.isConverged()) {
-				//					// Update the 
-				//					heliostat->setHeliostatActionModelParameters(result.solution);
+								if (result.isConverged()) {
+									// Update the 
+									heliostat->setHeliostatActionModelParameters(result.solution);
+								}
+							}
 
-				//					// Update the residuals
-				//					this->calculateResiduals();
+							{
+								Utils::ScopedProcess scopedProcessCalculateResiduals("Calculate residuals");
+								// Update the residuals
+								this->calculateResiduals();
+								scopedProcessCalculateResiduals.end();
+							}
 
-				//					// Calculate the reflections
-				//					for (auto& capture : capturesForThisHeliostat) {
-				//						// Clear prior reflections
-				//						capture->reflectedRays.clear();
+							heliostatScopedProcess.end();
+						}
+						RULR_CATCH_ALL_TO_ERROR;
+					}
 
-				//						// Create the board plane
-				//						Solvers::HeliostatActionModel::AxisAngles<float> axisAngles{
-				//							Solvers::HeliostatActionModel::positionToAngle<float>(capture->axis1ServoPosition
-				//								, heliostat->parameters.hamParameters.axis1.polynomial.get()
-				//								, heliostat->parameters.servo1.angleOffset.get())
-				//							, Solvers::HeliostatActionModel::positionToAngle<float>(capture->axis2ServoPosition
-				//								, heliostat->parameters.hamParameters.axis2.polynomial.get()
-				//								, heliostat->parameters.servo2.angleOffset.get())
-				//						};
-
-				//						// Get mirror plane
-				//						Solvers::HeliostatActionModel::getMirrorCenterAndNormal(axisAngles
-				//							, heliostat->getHeliostatActionModelParameters()
-				//							, capture->mirrorCenter
-				//							, capture->mirrorNormal);
-				//						ofxRay::Plane mirrorPlane(capture->mirrorCenter, capture->mirrorNormal);
-
-				//						// Calculate the reflections
-				//						for (const auto& cameraRay : capture->cameraRays) {
-				//							glm::vec3 intersection;
-				//							auto transmission = glm::normalize(cameraRay.t);
-				//							if (mirrorPlane.intersect(cameraRay, intersection) || true) {
-				//								auto transmissionReflected = mirrorPlane.reflect(intersection + transmission) - intersection;
-
-				//								// Start with a copy of the cameraRay and edit
-				//								capture->reflectedRays.push_back(cameraRay);
-				//								auto& ray = capture->reflectedRays.back();
-				//								ray.s = intersection;
-				//								ray.t = transmissionReflected;
-				//							}
-				//						}
-
-				//					}
-				//				}
-				//			}
-
-				//			heliostatScopedProcess.end();
-				//		}
-				//		RULR_CATCH_ALL_TO_ERROR;
-				//	}
-
-				//	{
-				//		Utils::ScopedProcess scopedProcessPullLimits("Pull all limits (using new calibration)");
-				//		heliostatsNode->pullAllLimits();
-				//		scopedProcessPullLimits.end();
-				//	}
-				//}
+					{
+						Utils::ScopedProcess scopedProcessPullLimits("Pull all limits (using new calibration)");
+						heliostatsNode->pullAllLimits();
+						scopedProcessPullLimits.end();
+					}
+				}
 
 				//-----------
 				vector<shared_ptr<Heliostats2::Heliostat>>
@@ -729,6 +718,89 @@ namespace ofxRulr {
 					return cameraPosition + cameraToLight;
 				}
 
+				//--------
+				void
+					DroneLightInMirror::calculateResiduals()
+				{
+					this->throwIfMissingAConnection<Heliostats2>();
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					auto activeHeliostats = heliostatsNode->getHeliostats();
+
+					auto captures = this->captures.getSelection();
+
+					for (auto& capture : captures) {
+						float totalResidual = 0.0f;
+
+						for (auto& heliostatCapture : capture->heliostatCaptures) {
+							shared_ptr<Heliostats2::Heliostat> heliostat;
+							for (auto activeHeliostat : activeHeliostats) {
+								if (activeHeliostat->parameters.name.get() == heliostatCapture.heliostatName) {
+									heliostat = activeHeliostat;
+									break;
+								}
+							}
+							if (!heliostat) {
+								// couldn't find the heliostat
+								continue;
+							}
+
+							auto rayResidual = Solvers::HeliostatActionModel::Calibrator::getResidual(heliostatCapture.cameraRay
+								, capture->lightPosition
+								, heliostatCapture.axis1ServoPosition
+								, heliostatCapture.axis2ServoPosition
+								, heliostat->parameters.servo1.angleOffset.get()
+								, heliostat->parameters.servo2.angleOffset.get()
+								, heliostat->getHeliostatActionModelParameters()
+								, heliostat->parameters.diameter.get());
+							
+							rayResidual = sqrt(rayResidual);
+
+							totalResidual += rayResidual;
+							heliostatCapture.residual = rayResidual;
+
+							// Create the board plane
+							Solvers::HeliostatActionModel::AxisAngles<float> axisAngles{
+								Solvers::HeliostatActionModel::positionToAngle<float>(heliostatCapture.axis1ServoPosition
+									, heliostat->parameters.hamParameters.axis1.polynomial.get()
+									, heliostatCapture.axis1AngleOffest)
+								, Solvers::HeliostatActionModel::positionToAngle<float>(heliostatCapture.axis2ServoPosition
+									, heliostat->parameters.hamParameters.axis2.polynomial.get()
+									, heliostatCapture.axis2AngleOffest)
+							};
+
+							// Get mirror plane
+							auto mirrorPlane = Solvers::HeliostatActionModel::getMirrorPlane(axisAngles
+								, heliostat->getHeliostatActionModelParameters());
+							heliostatCapture.mirrorCenterEstimated = mirrorPlane.center;
+							heliostatCapture.mirrorNormalEstimated = mirrorPlane.normal;
+
+							// Crop the camera ray to intersect mirror
+							auto & cameraRay = heliostatCapture.cameraRay;
+							ofxCeres::Models::Ray<float> cameraRay_;
+							{
+								cameraRay_.s = cameraRay.s;
+								cameraRay_.t = cameraRay.t;
+							}
+							{
+								auto positionHitsMirror = mirrorPlane.intersect(cameraRay_);
+								cameraRay.setEnd(positionHitsMirror);
+							}
+
+							// Calculate the reflections
+							{
+								auto reflectedRay_ = mirrorPlane.reflect(cameraRay_);
+								heliostatCapture.reflectedRayEstimated = heliostatCapture.cameraRay; // for color, etc
+								heliostatCapture.reflectedRayEstimated.s = reflectedRay_.s;
+								heliostatCapture.reflectedRayEstimated.t = reflectedRay_.t;
+
+								auto length = glm::length(capture->lightPosition - heliostatCapture.reflectedRayEstimated.s);
+								heliostatCapture.reflectedRayEstimated.t *= length / glm::length(heliostatCapture.reflectedRayEstimated.t);
+							}
+						}
+
+						capture->meanResidual = totalResidual / (float)capture->heliostatCaptures.size();
+					}
+				}
 
 				//----------
 				ofxCeres::SolverSettings
@@ -739,6 +811,19 @@ namespace ofxRulr {
 					solverSettings.options.max_num_iterations = this->parameters.navigate.maxIterations.get();
 					solverSettings.printReport = this->parameters.navigate.printReport.get();
 					solverSettings.options.minimizer_progress_to_stdout = this->parameters.navigate.printReport.get();
+
+					return solverSettings;
+				}
+
+				//----------
+				ofxCeres::SolverSettings
+					DroneLightInMirror::getCalibrateSolverSettings() const
+				{
+					auto solverSettings = ofxRulr::Solvers::HeliostatActionModel::Calibrator::defaultSolverSettings();
+
+					solverSettings.options.max_num_iterations = this->parameters.calibrate.maxIterations.get();
+					solverSettings.printReport = this->parameters.calibrate.printReport.get();
+					solverSettings.options.minimizer_progress_to_stdout = this->parameters.calibrate.printReport.get();
 
 					return solverSettings;
 				}

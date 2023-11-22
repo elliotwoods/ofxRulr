@@ -752,16 +752,13 @@ namespace ofxRulr {
 
 					// Mirror face
 					if (isBeingInspected) {
-						glm::vec3 mirrorCenter, mirrorNormal;
-						Solvers::HeliostatActionModel::getMirrorCenterAndNormal({
+						auto mirrorPlane = Solvers::HeliostatActionModel::getMirrorPlane({
 							this->parameters.servo1.angle.get()
 							, this->parameters.servo2.angle.get()
 							}
-							, this->getHeliostatActionModelParameters()
-							, mirrorCenter
-							, mirrorNormal);
+							, this->getHeliostatActionModelParameters());
 
-						ofDrawArrow(mirrorCenter, mirrorCenter + 0.2f * mirrorNormal, 0.01f);
+						ofDrawArrow(mirrorPlane.center, mirrorPlane.center + 0.2f * mirrorPlane.normal, 0.01f);
 
 						ofPushStyle();
 						{
@@ -774,17 +771,14 @@ namespace ofxRulr {
 
 				//----------
 				void Heliostats2::Heliostat::drawMirrorFace(float mirrorScale) {
-					glm::vec3 mirrorCenter, mirrorNormal;
-					Solvers::HeliostatActionModel::getMirrorCenterAndNormal({
+					auto mirrorPlane = Solvers::HeliostatActionModel::getMirrorPlane({
 						this->parameters.servo1.angle.get()
 						, this->parameters.servo2.angle.get()
 						}
-						, this->getHeliostatActionModelParameters()
-						, mirrorCenter
-						, mirrorNormal);
+						, this->getHeliostatActionModelParameters());
 
-					Solvers::HeliostatActionModel::drawMirror(mirrorCenter
-						, mirrorNormal
+					Solvers::HeliostatActionModel::drawMirror(mirrorPlane.center
+						, mirrorPlane.normal
 						, this->parameters.diameter.get() * mirrorScale);
 				}
 
@@ -869,6 +863,8 @@ namespace ofxRulr {
 				//----------
 				void Heliostats2::Heliostat::setHeliostatActionModelParameters(const Solvers::HeliostatActionModel::Parameters<float> & parameters) {
 					this->parameters.hamParameters.position.set(parameters.position);
+
+					this->parameters.hamParameters.rotationY.set(parameters.rotationY);
 
 					this->parameters.hamParameters.axis1.polynomial.set(parameters.axis1.polynomial);
 					this->parameters.hamParameters.axis1.rotationAxis.set(parameters.axis1.rotationAxis);

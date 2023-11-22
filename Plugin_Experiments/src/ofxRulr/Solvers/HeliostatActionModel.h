@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "ofxRulr/Nodes/Experiments/MirrorPlaneCapture/Dispatcher.h"
+#include "ofxCeres/Models/Plane.h"
 
 namespace ofxRulr {
 	namespace Solvers {
@@ -134,10 +135,10 @@ namespace ofxRulr {
 			};
 
 			template<typename T>
-			static void getMirrorCenterAndNormal(const AxisAngles<T>& axisAngles
-				, const Parameters<T>& parameters
-				, glm::tvec3<T>& center
-				, glm::tvec3<T>& normal) {
+			static
+				ofxCeres::Models::Plane<T>
+				getMirrorPlane(const AxisAngles<T>& axisAngles
+				, const Parameters<T>& parameters) {
 
 				auto mirrorTransform = glm::translate<T>(parameters.position)
 					* glm::rotate<T>(parameters.rotationY * DEG_TO_RAD
@@ -148,9 +149,16 @@ namespace ofxRulr {
 						, glm::normalize(parameters.axis2.rotationAxis))
 					* glm::translate<T>(glm::tvec3<T>(0, -parameters.mirrorOffset, 0));
 
-				center = ofxCeres::VectorMath::applyTransform<T>(mirrorTransform, { 0, 0, 0 });
+				auto center = ofxCeres::VectorMath::applyTransform<T>(mirrorTransform, { 0, 0, 0 });
 				auto centerPlusNormal = ofxCeres::VectorMath::applyTransform<T>(mirrorTransform, { 0, -1, 0 });
-				normal = ofxCeres::VectorMath::normalize(centerPlusNormal - center);
+				auto normal = ofxCeres::VectorMath::normalize(centerPlusNormal - center);
+
+				ofxCeres::Models::Plane<T> plane;
+				{
+					plane.center = center;
+					plane.normal = normal;
+				}
+				return plane;
 			}
 
 			template<typename T>

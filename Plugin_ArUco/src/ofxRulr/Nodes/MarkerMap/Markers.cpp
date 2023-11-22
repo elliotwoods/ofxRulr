@@ -13,6 +13,8 @@ namespace ofxRulr {
 					this->serialize(json);
 				};
 
+				RULR_NODE_INSPECTOR_LISTENER;
+
 				this->rigidBody = make_shared<Item::RigidBody>();
 				this->rigidBody->init();
 				this->rigidBody->setName("Marker");
@@ -52,6 +54,12 @@ namespace ofxRulr {
 				if (json.contains("rigidBody")) {
 					this->rigidBody->deserialize(json["rigidBody"]);
 				}
+			}
+
+			//---------
+			void Markers::Marker::populateInspector(ofxCvGui::InspectArguments& args) {
+				auto inspector = args.inspector;
+				inspector->addParameterGroup(this->parameters);
 			}
 
 			//---------
@@ -145,6 +153,25 @@ namespace ofxRulr {
 							auto icon = this->rigidBody->getIcon();
 							icon->draw(ofRectangle(args.localBounds.getCenter() - glm::vec2(size / 2, size / 2), size, size));
 						};
+						group->add(widget);
+						groupWidgets.push_back(widget);
+					}
+
+					// Inspect
+					{
+						auto widget = make_shared<ofxCvGui::Widgets::Toggle>("Inspect", [this]() {
+							return this->isBeingInspected();
+							}
+							, [this](bool select) {
+								if (select) {
+									ofxCvGui::InspectController::X().inspect(this->shared_from_this());
+								}
+								else {
+									ofxCvGui::InspectController::X().clear();
+								}
+							});
+						widget->setDrawGlyph(u8"\uf002");
+
 						group->add(widget);
 						groupWidgets.push_back(widget);
 					}

@@ -46,7 +46,10 @@ namespace ofxRulr {
 							int axis1ServoPosition;
 							int axis2ServoPosition;
 
-							float residual;
+							float axis1AngleOffest = 0.0f;
+							float axis2AngleOffest = 0.0f;
+
+							float residual = 0.0f;
 						};
 
 						Capture();
@@ -62,7 +65,7 @@ namespace ofxRulr {
 						ofxRay::Camera camera;
 						
 						vector<HeliostatCapture> heliostatCaptures;
-						float meanResidual;
+						float meanResidual = 0.0f;
 					};
 
 					DroneLightInMirror();
@@ -101,7 +104,7 @@ namespace ofxRulr {
 						struct : ofParameterGroup {
 							ofParameter<float> x{ "X", 0, -1, 1 };
 							ofParameter<float> y{ "Y", 0.02, -1, 1 };
-							ofParameter<float> z{ "Z", -0.12, -1, 1 };
+							ofParameter<float> z{ "Z", -0.125, -1, 1 };
 							PARAM_DECLARE("Light position", x, y, z);
 						} lightPosition;
 
@@ -126,7 +129,7 @@ namespace ofxRulr {
 						} capture;
 
 						struct : ofParameterGroup {
-							ofParameter<int> minimumDataPoints{ "Minimum data points", 100 };
+							ofParameter<int> minimumDataPoints{ "Minimum data points", 8 };
 							ofParameter<bool> fixPosition{ "Fix position", false };
 							ofParameter<bool> fixRotationY{ "Fix rotation Y", true };
 							ofParameter<bool> fixPolynomial{ "Fix polynomial", true };
