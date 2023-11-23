@@ -611,6 +611,7 @@ EXPORTS
 	?inspect@ofxCvGui@@YAXV?$shared_ptr@VIInspectable@ofxCvGui@@@std@@@Z
 	?makeElement@ofxCvGui@@YA?AV?$shared_ptr@VElement@ofxCvGui@@@std@@XZ
 	?makeElementGroup@ofxCvGui@@YA?AV?$shared_ptr@VElementGroup@ofxCvGui@@@std@@XZ
+	?refreshInspector@ofxCvGui@@YAXPEAVIInspectable@1@@Z
 	?init@Builder@ofxCvGui@@QEAAXXZ
 	?drawDelayed@Controller@ofxCvGui@@QEAAX$$QEAV?$function@$$A6AXXZ@std@@@Z
 	?addChild@Element@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z

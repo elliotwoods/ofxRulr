@@ -5,20 +5,26 @@ namespace ofxRulr {
 		namespace Experiments {
 			namespace MirrorPlaneCapture {
 				//---------
-				RemoteControl::RemoteControl() {
+				RemoteControl::RemoteControl()
+				{
 					RULR_NODE_INIT_LISTENER;
 				}
 
 				//---------
-				string RemoteControl::getTypeName() const {
+				string
+					RemoteControl::getTypeName() const
+				{
 					return "Halo::RemoteControl";
 				}
 
 				//---------
-				void RemoteControl::init() {
+				void
+					RemoteControl::init()
+				{
 					RULR_NODE_INSPECTOR_LISTENER;
 					RULR_NODE_UPDATE_LISTENER;
 					RULR_NODE_REMOTE_CONTROL_LISTENER;
+					RULR_NODE_DRAW_WORLD_LISTENER;
 
 					this->manageParameters(this->parameters);
 
@@ -26,12 +32,51 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void RemoteControl::update() {
+				void
+					RemoteControl::update()
+				{
 
+				}
+				
+				//---------
+				void
+					RemoteControl::drawWorldStage()
+				{
+					auto single = this->getSingle();
+					if (single) {
+						const auto & position = single->getHeliostatActionModelParameters().position;
+						ofPushMatrix();
+						{
+							ofTranslate(position);
+							// Draw diamond
+							{
+								// Bottom
+								ofDrawLine({ 0, -0.3, 0 }, { 0.1, -0.5, 0 });
+								ofDrawLine({ 0, -0.3, 0 }, { -0.1, -0.5, 0 });
+								ofDrawLine({ 0, -0.3, 0 }, { 0, -0.5, 0.1 });
+								ofDrawLine({ 0, -0.3, 0 }, { 0, -0.5, -0.1 });
+
+								// Waist
+								ofDrawLine({ -0.1, -0.5, 0 }, { 0, -0.5, 0.1 });
+								ofDrawLine({ 0, -0.5, 0.1 }, { 0.1, -0.5, 0 });
+								ofDrawLine({ 0.1, -0.5, 0 }, { 0, -0.5, -0.1 });
+								ofDrawLine({ 0, -0.5, -0.1 }, { -0.1, -0.5, 0 });
+
+								// Top
+								ofDrawLine({ 0, -0.7, 0 }, { 0.1, -0.5, 0 });
+								ofDrawLine({ 0, -0.7, 0 }, { -0.1, -0.5, 0 });
+								ofDrawLine({ 0, -0.7, 0 }, { 0, -0.5, 0.1 });
+								ofDrawLine({ 0, -0.7, 0 }, { 0, -0.5, -0.1 });
+							}
+						}
+						ofPopMatrix();
+					}
 				}
 
 				//---------
-				void RemoteControl::populateInspector(ofxCvGui::InspectArguments& inspectArgs) {
+				void
+					RemoteControl::populateInspector(ofxCvGui::InspectArguments& inspectArgs)
+				{
 					auto inspector = inspectArgs.inspector;
 
 						//Key controls
@@ -215,7 +260,9 @@ namespace ofxRulr {
 						}, 'f');
 				}
 				//---------
-				void RemoteControl::remoteControl(const RemoteControllerArgs& args) {
+				void
+					RemoteControl::remoteControl(const RemoteControllerArgs& args)
+				{
 					auto speed = this->parameters.speedGameController.get() * ofGetElapsedTimef() / 100.0f;
 					glm::vec2 directionality(1.0f, -1.0f);
 					float power = 2.0f;
@@ -242,14 +289,22 @@ namespace ofxRulr {
 							this->moveSelection(movement);
 						}
 
-						// Button 0 = Home single
+						// Button 0 = Home selection
 						if (args.buttons[0]) {
+							this->homeSelection();
+						}
+
+						// Button 1 = Home single
+						if (args.buttons[1]) {
 							this->homeSingle();
 						}
 
-						// Button 1 = Home selection
-						if (args.buttons[0]) {
-							this->homeSelection();
+						// Button 2 = Inspect single
+						if (args.buttons[2]) {
+							auto single = this->getSingle();
+							if (single) {
+								ofxCvGui::inspect(single);
+							}
 						}
 
 						// Change heliostat selection
@@ -307,46 +362,66 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void RemoteControl::moveSingle(const glm::vec2& movement) {
-					this->throwIfMissingAnyConnection();
+				shared_ptr<Heliostats2::Heliostat>
+					RemoteControl::getSingle()
+				{
+					shared_ptr<Heliostats2::Heliostat> single;
 					auto heliostatsNode = this->getInput<Heliostats2>();
-					auto heliostats = heliostatsNode->getHeliostats();
-					for (auto heliostat : heliostats) {
-						if (heliostat->parameters.name.get() == this->parameters.singleName.get()) {
+					if (heliostatsNode) {
+						auto heliostats = heliostatsNode->getHeliostats();
+						for (auto heliostat : heliostats) {
+							if (heliostat->parameters.name.get() == this->parameters.singleName.get()) {
+								return heliostat;
+							}
+						}
+					}
+					return single;
+				}
+					
+				//---------
+				void
+					RemoteControl::moveSingle(const glm::vec2& movement)
+				{
+					auto single = this->getSingle();
+					if (single) {
+						this->move(single, movement);
+					}
+				}
+
+				//---------
+				void
+					RemoteControl::moveSelection(const glm::vec2& movement)
+				{
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					if (heliostatsNode) {
+						auto heliostats = heliostatsNode->getHeliostats();
+						for (auto heliostat : heliostats) {
 							this->move(heliostat, movement);
 						}
 					}
 				}
 
 				//---------
-				void RemoteControl::moveSelection(const glm::vec2& movement) {
-					this->throwIfMissingAnyConnection();
-					auto heliostatsNode = this->getInput<Heliostats2>();
-					auto heliostats = heliostatsNode->getHeliostats();
-					for (auto heliostat : heliostats) {
-						this->move(heliostat, movement);
-					}
-				}
-
-				//---------
-				void RemoteControl::move(shared_ptr<Heliostats2::Heliostat> heliostat, const glm::vec2& movement) {
+				void
+					RemoteControl::move(shared_ptr<Heliostats2::Heliostat> heliostat, const glm::vec2& movement)
+				{
 					heliostat->parameters.servo1.angle.set(heliostat->parameters.servo1.angle.get() + movement.x);
 					heliostat->parameters.servo2.angle.set(heliostat->parameters.servo2.angle.get() + movement.y);
 				}
 
 				//---------
-				void RemoteControl::homeSingle() {
-					this->throwIfMissingAnyConnection();
-					auto heliostatsNode = this->getInput<Heliostats2>();
-					auto heliostats = heliostatsNode->getHeliostats();
-					for (auto heliostat : heliostats) {
-						if (heliostat->parameters.name.get() == this->parameters.singleName.get()) {
-							this->home(heliostat);
-						}
+				void
+					RemoteControl::homeSingle()
+				{
+					auto single = this->getSingle();
+					if (single) {
+						this->home(single);
 					}
 				}
 				//---------
-				void RemoteControl::homeSelection() {
+				void
+					RemoteControl::homeSelection()
+				{
 					this->throwIfMissingAnyConnection();
 					auto heliostatsNode = this->getInput<Heliostats2>();
 					auto heliostats = heliostatsNode->getHeliostats();
@@ -356,7 +431,9 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void RemoteControl::flipSingle() {
+				void
+					RemoteControl::flipSingle()
+				{
 					this->throwIfMissingAnyConnection();
 					auto heliostatsNode = this->getInput<Heliostats2>();
 					auto heliostats = heliostatsNode->getHeliostats();
@@ -368,7 +445,9 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void RemoteControl::flipSelection() {
+				void
+					RemoteControl::flipSelection()
+				{
 					this->throwIfMissingAnyConnection();
 					auto heliostatsNode = this->getInput<Heliostats2>();
 					auto heliostats = heliostatsNode->getHeliostats();
@@ -384,7 +463,9 @@ namespace ofxRulr {
 				}
 
 				//---------
-				void RemoteControl::home(shared_ptr<Heliostats2::Heliostat> heliostat) {
+				void
+					RemoteControl::home(shared_ptr<Heliostats2::Heliostat> heliostat)
+				{
 					heliostat->parameters.servo1.angle.set(0.0f);
 					heliostat->parameters.servo2.angle.set(0.0f);
 				}

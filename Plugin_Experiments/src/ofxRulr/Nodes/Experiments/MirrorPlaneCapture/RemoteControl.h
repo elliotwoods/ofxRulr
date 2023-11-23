@@ -15,8 +15,13 @@ namespace ofxRulr {
 
 					void init();
 					void update();
+					void drawWorldStage();
+
 					void populateInspector(ofxCvGui::InspectArguments&);
+
 					void remoteControl(const RemoteControllerArgs&);
+
+					shared_ptr<Heliostats2::Heliostat> getSingle();
 					void moveSingle(const glm::vec2& movement);
 					void moveSelection(const glm::vec2& movement);
 					void homeSingle();

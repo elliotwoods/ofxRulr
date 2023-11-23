@@ -146,10 +146,16 @@ namespace ofxRulr {
 				Controller::populateInspector(ofxCvGui::InspectArguments& args)
 			{
 				auto inspector = args.inspector;
-				inspector->addTitle("Hold right shoulder to activate");
 				inspector->addIndicatorBool("Active", [this]() {
 					return this->isActive;
 					});
+
+				if (this->controller) {
+					inspector->addButton("Close device", [this]() {
+						this->closeDevice();
+						});
+				}
+				
 			}
 
 			//----------
@@ -167,6 +173,15 @@ namespace ofxRulr {
 					this->controller = controllers[index];
 					this->parameters.index.set(index);
 				}
+				this->refreshPanel();
+			}
+
+			//----------
+			void
+				Controller::closeDevice()
+			{
+				this->controller.reset();
+				this->parameters.index.set(-1);
 				this->refreshPanel();
 			}
 
@@ -205,10 +220,41 @@ namespace ofxRulr {
 					// Show the current controller
 					auto panel = ofxCvGui::Panels::makeBlank();
 					panel->onDraw += [this](ofxCvGui::DrawArguments& args) {
-						this->inputState.draw(args.localBounds);
+						auto activeStateRegionHeight = 30;
+
+						// Draw active state
+						{
+							auto activeStateBounds = args.localBounds;
+							activeStateBounds.height = activeStateRegionHeight;
+							if (this->isActive) {
+								ofPushStyle();
+								{
+									ofSetColor(100, 200, 100);
+									ofDrawRectangle(activeStateBounds);
+								}
+								ofPopStyle();
+
+								ofxCvGui::Utils::drawText("Active", activeStateBounds, false);
+							}
+							else {
+								ofxCvGui::Utils::drawText("Press R2 to activate", activeStateBounds, false);
+							}
+						}
+						// Draw input state
+						{
+							auto inputStateBounds = args.localBounds;
+							{
+								inputStateBounds.y += activeStateRegionHeight;
+								inputStateBounds.height -= activeStateRegionHeight;
+							}
+							this->inputState.draw(inputStateBounds);
+						}
 					};
 					this->panel->add(panel);
 				}
+
+				// Refresh inspector if we're selected
+				ofxCvGui::refreshInspector(this);
 			}
 		}
 	}
