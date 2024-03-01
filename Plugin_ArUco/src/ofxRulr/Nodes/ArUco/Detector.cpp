@@ -171,6 +171,10 @@ namespace ofxRulr {
 			std::vector<aruco::Marker>Detector::findMarkers(const cv::Mat & image, bool fromAnotherThread) {
 				Frame frame;
 
+				if (image.empty()) {
+					throw(ofxRulr::Exception("Can't find markers in empty image"));
+				}
+
 				frame.rawImage = image.clone();
 
 				if (frame.rawImage.channels() == 3) {

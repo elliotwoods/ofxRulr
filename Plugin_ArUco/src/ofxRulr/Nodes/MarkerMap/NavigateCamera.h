@@ -26,7 +26,7 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", true };
 						ofParameter<float> searchRange{ "Search range", 2.0f, 1.0f, 10.0f };
-						PARAM_DECLARE("Enabled", enabled, searchRange);
+						PARAM_DECLARE("FindMissingMarkers", enabled, searchRange);
 					} findMissingMarkers;
 
 					struct : ofParameterGroup {

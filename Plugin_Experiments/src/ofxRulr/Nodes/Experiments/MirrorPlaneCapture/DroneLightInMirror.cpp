@@ -16,15 +16,30 @@ namespace ofxRulr {
 				void
 					DroneLightInMirror::Capture::drawWorld(const DrawOptions& args)
 				{
+					vector<HeliostatCapture> selectedHeliostatCapture;
+					if (args.selectedHeliostatsOnly) {
+						for (auto heliostatCapture : this->heliostatCaptures) {
+							if (args.selectedHelisotats.find(heliostatCapture.heliostatName) != args.selectedHelisotats.end()) {
+								// in selection
+								selectedHeliostatCapture.push_back(heliostatCapture);
+							}
+						}
+					}
+
+					// If selectedHeliostatsOnly and we don't have any, don't draw
+					if (args.selectedHeliostatsOnly && selectedHeliostatCapture.empty()) {
+						return;
+					}
+
 					ofPushStyle();
 					{
 						ofSetColor(this->color);
+
 						if (args.camera) {
 							this->camera.draw();
 						}
 
 						if (args.lightPositions) {
-
 							ofDrawSphere(this->lightPosition, args.worldPointsSize);
 						}
 
@@ -35,8 +50,31 @@ namespace ofxRulr {
 						}
 
 						for (const auto& heliostatCapture : this->heliostatCaptures) {
+							if (args.selectedHelisotats.find(heliostatCapture.heliostatName) == args.selectedHelisotats.end()) {
+								// not selected
+								continue;
+							}
+
 							if (args.cameraRays) {
 								heliostatCapture.cameraRay.draw();
+							}
+
+							if (args.cameraRaysShort) {
+								// Get the ray
+								auto ray = heliostatCapture.cameraRay;
+								auto totalCameraRayEnd = ray.getEnd();
+
+								// Draw the ray close to the camera
+								{
+									ray.t *= 0.1f / glm::length(ray.t);
+									ray.draw();
+								}
+
+								// Dray the ray close to the mirror
+								{
+									ray.s = totalCameraRayEnd - ray.t;
+									ray.draw();
+								}
 							}
 
 							if (args.mirrorFace) {
@@ -240,6 +278,7 @@ namespace ofxRulr {
 				void
 					DroneLightInMirror::drawWorldStage()
 				{
+					// Draw the current light
 					if (this->parameters.debug.draw.light) {
 						auto cameraNode = this->getInput<Item::Camera>();
 						if (cameraNode) {
@@ -261,18 +300,94 @@ namespace ofxRulr {
 					{
 						Capture::DrawOptions drawOptions;
 						{
+							// selected heliostats
+							{
+								auto heliostatsNode = this->getInput<Heliostats2>();
+								if (heliostatsNode) {
+									auto heliostats = heliostatsNode->getHeliostats();
+									for (auto heliostat : heliostats) {
+										drawOptions.selectedHelisotats.insert(heliostat->parameters.name.get());
+									}
+								}
+							}
+							
 							drawOptions.camera = this->parameters.debug.draw.cameras.get();
 							drawOptions.cameraRays = this->parameters.debug.draw.cameraRays.get();
+							drawOptions.cameraRaysShort = this->parameters.debug.draw.cameraRaysShort.get();
 							drawOptions.lightPositions = this->parameters.debug.draw.lightPositions.get();
 							drawOptions.worldPointsSize = this->parameters.debug.draw.worldPointsSize.get();
 							drawOptions.labelWorldPoints = this->parameters.debug.draw.labelWorldPoints.get();
 							drawOptions.reflectedRays = this->parameters.debug.draw.reflectedRays.get();
 							drawOptions.mirrorFace = this->parameters.debug.draw.mirrorFace.get();
-							drawOptions.report = this->parameters.debug.draw.report.get();
 						}
 						auto captures = this->captures.getSelection();
 						for (auto capture : captures) {
 							capture->drawWorld(drawOptions);
+						}
+					}
+
+					// Draw report
+					if (this->parameters.debug.draw.report) {
+						// Build the report
+						map<string, int> countPerHeliostat;
+						map<string, shared_ptr<Heliostats2::Heliostat>> heliostatsPerName;
+						{
+							// Get heliostats
+							auto heliostatsNode = this->getInput<Heliostats2>();
+							if (heliostatsNode) {
+								auto heliostats = heliostatsNode->getHeliostats();
+								for (auto heliostat : heliostats) {
+									const auto& name = heliostat->parameters.name.get();
+									heliostatsPerName.emplace(name, heliostat);
+								}
+							}
+
+							// Count captures
+							auto captures = this->captures.getSelection();
+							for (auto capture : captures) {
+								for (auto heliostatCapture : capture->heliostatCaptures) {
+									const auto& heliostatName = heliostatCapture.heliostatName;
+									// See if already exists
+									if (countPerHeliostat.find(heliostatName) == countPerHeliostat.end()) {
+										// doesn't exit
+										countPerHeliostat[heliostatName] = 0;
+									}
+									else {
+										// does exist
+										countPerHeliostat[heliostatName]++;
+									}
+								}
+							}
+						}
+
+						// Draw the report
+						for (auto it : countPerHeliostat) {
+							auto name = it.first;
+							if (heliostatsPerName.find(name) == heliostatsPerName.end()) {
+								// this heliostat is not currently in selection
+								continue;
+							}
+							auto heliostat = heliostatsPerName[name];
+							auto position = heliostat->parameters.hamParameters.position.get();
+							auto count = it.second;
+							// make color
+							ofColor color;
+							if (count < 8) {
+								color = ofColor(255, 50, 50);
+							}
+							else if (count < 12) {
+								color = ofColor(200, 100, 200);
+							}
+							else if (count < 16) {
+								color = ofColor(150, 150, 255);
+							}
+							else if (count < 20) {
+								color = ofColor(100, 255, 100);
+							}
+							else {
+								color = ofColor(255);
+							}
+							ofxCvGui::Utils::drawTextAnnotation("H" + it.first + " : n=" + ofToString(count), position, color);
 						}
 					}
 				}
@@ -416,6 +531,10 @@ namespace ofxRulr {
 					auto heliostatsInView = DroneLightInMirror::getHeliostatsInView(heliostatsNode->getHeliostats()
 						, priorCameraView);
 					auto count = heliostatsInView.size();
+
+					if (heliostatsInView.empty()) {
+						throw(ofxRulr::Exception("No heliostats in view"));
+					}
 
 					// Get servo values for our heliostats
 					map<Dispatcher::ServoID, Dispatcher::RegisterValue> servoValues;

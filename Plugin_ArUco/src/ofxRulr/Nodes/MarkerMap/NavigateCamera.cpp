@@ -60,7 +60,7 @@ namespace ofxRulr {
 
 				auto markers = markersNode->getMarkers();
 				if (markers.empty()) {
-					throw(ofxRulr::Exception("No markers available"));
+					throw(ofxRulr::Exception("No markers selected in Markers node"));
 				}
 
 				auto navigateToFoundMarkers = [this, camera, &markers](const std::vector<aruco::Marker>& foundMarkers) {

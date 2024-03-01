@@ -122,6 +122,7 @@ namespace ofxRulr {
 						void setHeliostatActionModelParameters(const Solvers::HeliostatActionModel::Parameters<float> &);
 
 						void flip();
+						void takeAnglesIntoOffset();
 
 						void navigateToNormal(const glm::vec3&, const ofxCeres::SolverSettings&, bool throwIfOutsideRange);
 						void navigateToReflectPointToPoint(const glm::vec3&, const glm::vec3&, const ofxCeres::SolverSettings&, bool throwIfOutsideRange);

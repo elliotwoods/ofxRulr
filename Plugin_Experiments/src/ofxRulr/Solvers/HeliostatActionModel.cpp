@@ -27,15 +27,18 @@ namespace ofxRulr {
 		}
 
 		//----------
-		bool
+		HeliostatActionModel::AxisAngles<float>
 			HeliostatActionModel::Navigator::constrainAngles(const Parameters<float>& hamParameters
-				, AxisAngles<float>& axisAngles
-				, const AxisAngles<float>& initialAngles)
+				, const AxisAngles<float>& initialAngles
+				, bool& changed)
 		{
-			bool changed = false;
+			changed = false;
 			
 			// keep a copy in case the validation fails at the end
-			auto unchangedVersion = axisAngles;
+			auto unchangedVersion = initialAngles;
+
+			// make a copy that we will edit
+			auto axisAngles = initialAngles;
 
 			if (hamParameters.axis1.angleRange.maximum - hamParameters.axis1.angleRange.minimum < 180.0f) {
 				throw(ofxRulr::Exception("Axis 1 angle range is < 180 degrees"));
@@ -79,18 +82,14 @@ namespace ofxRulr {
 				}
 			}
 
-			// Return the changed values if they are valid
-			if (changed) {
-				if (validate(hamParameters, axisAngles)) {
-					return true;
-				}
-				else {
-					axisAngles = unchangedVersion;
-					return false;
-				}
+			// Validate the values
+			if (validate(hamParameters, axisAngles)) {
+				return axisAngles;
 			}
 			else {
-				return false;
+				// Failed : return to initial solution
+				changed = false;
+				return initialAngles;
 			}
 		}
 
@@ -104,21 +103,23 @@ namespace ofxRulr {
 			auto result = solveFunction(initialAngles);
 
 			// Constrain the angles to our range
-			auto anglesNeededConstrain = Navigator::constrainAngles(hamParameters
+			bool changedByConstrain;
+			result.solution.axisAngles = Navigator::constrainAngles(hamParameters
 				, result.solution.axisAngles
-				, initialAngles);
+				, changedByConstrain);
 
 			// If the angles were altered by constraints, then re-solve
-			if (anglesNeededConstrain) {
-				// Then solve again
+			if (changedByConstrain) {
+				// Then solve again for tighter accuracy
 				result = solveFunction(result.solution.axisAngles);
 			}
 
 			// Final check if we need to constrain angles
-			anglesNeededConstrain = Navigator::constrainAngles(hamParameters
+			result.solution.axisAngles = Navigator::constrainAngles(hamParameters
 				, result.solution.axisAngles
-				, initialAngles);
-			if (anglesNeededConstrain) {
+				, changedByConstrain);
+
+			if (!validate(hamParameters, result.solution.axisAngles)) {
 				result.isError = true;
 				result.errorMessage = "Could not solve within constraints";
 			}

@@ -208,9 +208,9 @@ namespace ofxRulr {
 					, const AxisAngles<float>& axisAngles);
 
 				// returns true if angles were altered
-				static bool constrainAngles(const Parameters<float>&
-					, AxisAngles<float>& axisAngles
-					, const AxisAngles<float>& initialAngles);
+				static AxisAngles<float> constrainAngles(const Parameters<float>&
+					, const AxisAngles<float>& initialAngles
+					, bool& changed);
 
 				static Result solveConstrained(const Parameters<float>&
 					, std::function<Result(const AxisAngles<float>&)>

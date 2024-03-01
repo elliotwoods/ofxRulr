@@ -18,17 +18,33 @@ namespace ofxRulr {
 					void populateInspector(ofxCvGui::InspectArguments&);
 
 					void navigate();
+					void navigateToSun();
 
 					void setAlternateTangents();
+
+					bool getShouldShutdown() const;
+					void shutdown();
 
 				protected:
 					struct : ofParameterGroup {
 						ofParameter<bool> onHaloChange{ "On halo change", true };
 
 						struct : ofParameterGroup {
-							ofParameter<bool> enabled{"Enabled", false};
-							ofParameter<float> period{ "Period (s)", 10.0f, 1, 360 };
-							PARAM_DECLARE("Schedule", enabled, period);
+							struct : ofParameterGroup {
+								ofParameter<bool> enabled{ "Enabled", false };
+								ofParameter<float> period{ "Period (s)", 10.0f, 1, 360 };
+
+								PARAM_DECLARE("Update", enabled, period);
+							} update;
+
+							struct : ofParameterGroup {
+								ofParameter<bool> enabled{ "Enabled", false };
+								ofParameter<float> hour{ "Hour", 3.5 };
+								ofParameter<int> shutdownDelay{ "Shutdown delay", 120 };
+								PARAM_DECLARE("Shutdown", enabled, hour, shutdownDelay);
+							} shutdown;
+
+							PARAM_DECLARE("Schedule", update, shutdown);
 						} schedule;
 
 						struct : ofParameterGroup {
@@ -56,6 +72,8 @@ namespace ofxRulr {
 						glm::vec3 solarIncidentVector;
 					};
 					map<string, CachedTarget> targetsCache;
+
+					chrono::system_clock::time_point lastShutdownRequest;
 				};
 			}
 		}

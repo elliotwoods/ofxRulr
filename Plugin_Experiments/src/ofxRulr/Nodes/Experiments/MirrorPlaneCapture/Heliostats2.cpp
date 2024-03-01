@@ -842,6 +842,12 @@ namespace ofxRulr {
 						}
 						RULR_CATCH_ALL_TO_ALERT;
 						});
+					inspector->addButton("Take angles into offset", [this]() {
+						try {
+							this->takeAnglesIntoOffset();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
 				}
 
 				//----------
@@ -903,6 +909,22 @@ namespace ofxRulr {
 				}
 
 				//----------
+				void
+					Heliostats2::Heliostat::takeAnglesIntoOffset()
+				{
+					auto applyOffset = [] (ServoParameters & servo){
+						auto angle = servo.angle.get();
+						auto priorOffset = servo.angleOffset.get();
+						auto offset = angle + priorOffset;
+
+						servo.angleOffset.set(offset);
+						servo.angle.set(0.0f);
+					};
+					applyOffset(this->parameters.servo1);
+					applyOffset(this->parameters.servo2);
+				}
+
+				//----------
 				void Heliostats2::Heliostat::navigateToNormal(const glm::vec3& normal, const ofxCeres::SolverSettings& solverSettings, bool throwIfOutsideRange) {
 					Solvers::HeliostatActionModel::AxisAngles<float> priorAngles{
 						this->parameters.servo1.angle
@@ -919,8 +941,13 @@ namespace ofxRulr {
 						}, priorAngles
 						, throwIfOutsideRange);
 
-					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
-					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+					if (!result.isError) {
+						this->parameters.servo1.angle = result.solution.axisAngles.axis1;
+						this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+					}
+					else {
+						ofLogError("H : " + this->parameters.name.get() + " navigate") << result.errorMessage;
+					}
 
 					this->update();
 				}
@@ -943,8 +970,13 @@ namespace ofxRulr {
 						}, priorAngles
 						, throwIfOutsideRange);
 
-					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
-					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+					if (!result.isError) {
+						this->parameters.servo1.angle = result.solution.axisAngles.axis1;
+						this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+					}
+					else {
+						ofLogError("H : " + this->parameters.name.get() + " navigate") << result.errorMessage;
+					}
 
 					this->update();
 				}
@@ -970,8 +1002,13 @@ namespace ofxRulr {
 						}, priorAngles
 						, throwIfOutsideRange);
 
-					this->parameters.servo1.angle = result.solution.axisAngles.axis1;
-					this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+					if (!result.isError) {
+						this->parameters.servo1.angle = result.solution.axisAngles.axis1;
+						this->parameters.servo2.angle = result.solution.axisAngles.axis2;
+					}
+					else {
+						ofLogError("H : " + this->parameters.name.get() + " navigate") << result.errorMessage;
+					}
 
 					this->update();
 				}

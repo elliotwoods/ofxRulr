@@ -175,6 +175,9 @@ namespace ofxRulr {
 					requestJson["registerType"] = multiGetRequest.registerName;
 
 					auto result = this->requestPOST("/Servo/MultiGet", requestJson);
+					if (result.empty()) {
+						throw(ofxRulr::Exception("Empty response to multiGetRequest"));
+					}
 					auto values = result.get<vector<Dispatcher::RegisterValue>>();
 					return values;
 				}

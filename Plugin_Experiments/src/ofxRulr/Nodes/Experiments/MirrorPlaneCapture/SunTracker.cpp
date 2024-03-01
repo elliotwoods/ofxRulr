@@ -65,7 +65,7 @@ namespace ofxRulr {
 							Utils::Graphics::glDisable(GL_CULL_FACE);
 
 							ofDrawArrow({ 0, 0, 0 }
-								, this->solarVectorObjectSpaceNow * this->parameters.draw.sphereRadius.get()
+								, this->solarVectorObjectSpaceNow * this->parameters.draw.arrowLength.get()
 								, 0.1f);
 						}
 						else {

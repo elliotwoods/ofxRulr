@@ -48,35 +48,52 @@ namespace ofxRulr {
 
 				//---------
 				void NavigateToHalo::update() {
-					bool autoNavigate = false;
-
-					// Check update time
-					if (this->parameters.schedule.enabled.get()) {
-						auto timeSinceLastUpdate = chrono::system_clock::now() - this->lastUpdateTime;
-						auto secondsSinceLastUpdate = chrono::duration_cast<chrono::seconds>(timeSinceLastUpdate).count();
-
-						if (secondsSinceLastUpdate >= this->parameters.schedule.period.get()) {
-							autoNavigate = true;
-						}
-					}
-
-					// On halo change
+					// Auto navigate
 					{
-						if (this->parameters.onHaloChange.get()) {
-							auto halo = this->getInput<Halo>();
-							if (halo) {
-								if (halo->isSettingsNew()) {
-									autoNavigate = true;
+						bool autoNavigate = false;
+
+						// Check update time
+						if (this->parameters.schedule.update.enabled.get()) {
+							auto timeSinceLastUpdate = chrono::system_clock::now() - this->lastUpdateTime;
+							auto secondsSinceLastUpdate = chrono::duration_cast<chrono::seconds>(timeSinceLastUpdate).count();
+
+							if (secondsSinceLastUpdate >= this->parameters.schedule.update.period.get()) {
+								autoNavigate = true;
+							}
+						}
+
+						// On halo change
+						{
+							if (this->parameters.onHaloChange.get()) {
+								auto halo = this->getInput<Halo>();
+								if (halo) {
+									if (halo->isSettingsNew()) {
+										autoNavigate = true;
+									}
 								}
 							}
 						}
+
+						if (autoNavigate) {
+							try {
+								this->navigate();
+							}
+							RULR_CATCH_ALL_TO_ERROR;
+						}
 					}
 
-					if (autoNavigate) {
-						try {
-							this->navigate();
+					// Shutdown
+					if (this->parameters.schedule.shutdown.enabled.get()) {
+						// check if it's been over 5s since we last called this command
+						if (chrono::system_clock::now() - this->lastShutdownRequest > chrono::milliseconds(1000 * this->parameters.schedule.shutdown.shutdownDelay.get())) {
+							// check if we should shutdown
+							if (this->getShouldShutdown()) {
+								try {
+									this->shutdown();
+								}
+								RULR_CATCH_ALL_TO_ERROR;
+							}
 						}
-						RULR_CATCH_ALL_TO_ERROR;
 					}
 				}
 
@@ -132,6 +149,21 @@ namespace ofxRulr {
 					inspector->addLiveValue<float>("Seconds since last update", [this]() {
 						auto timeSinceLastUpdate = chrono::system_clock::now() - this->lastUpdateTime;
 						return (float)chrono::duration_cast<chrono::seconds>(timeSinceLastUpdate).count();
+						});
+
+					inspector->addButton("Navigate to sun", [this]() {
+						try {
+							this->navigateToSun();
+						}
+						RULR_CATCH_ALL_TO_ALERT
+						});
+
+					inspector->addIndicatorBool("Should shutdown", [this]() {
+						return this->getShouldShutdown();
+						});
+
+					inspector->addButton("Shutdown", [this]() {
+						this->shutdown();
 						});
 				}
 
@@ -220,6 +252,31 @@ namespace ofxRulr {
 				}
 
 				//---------
+				void NavigateToHalo::navigateToSun() {
+					this->throwIfMissingAnyConnection();
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					auto heliostats = heliostatsNode->getHeliostats();
+
+					auto sunTracker = this->getInput<SunTracker>();
+					auto solarIncidentVector = -sunTracker->getSolarVectorWorldSpace(chrono::system_clock::now());
+
+					auto solverSettings = Solvers::HeliostatActionModel::Navigator::defaultSolverSettings();
+					{
+						solverSettings.printReport = this->parameters.solver.printReport.get();
+						solverSettings.options.minimizer_progress_to_stdout = this->parameters.solver.printReport.get();
+						solverSettings.options.max_num_iterations = this->parameters.solver.maxIterations.get();
+						solverSettings.options.function_tolerance = this->parameters.solver.functionTolerance.get();
+					}
+
+					for (auto heliostat : heliostats) {
+						auto heliostatPosition = heliostat->parameters.hamParameters.position.get();
+						heliostat->navigateToNormal(-solarIncidentVector, solverSettings, true);
+					}
+
+					this->lastUpdateTime = chrono::system_clock::now();
+				}
+
+				//---------
 				void NavigateToHalo::setAlternateTangents() {
 					this->throwIfMissingAConnection<Heliostats2>();
 					auto helisotatsNode = this->getInput<Heliostats2>();
@@ -230,6 +287,50 @@ namespace ofxRulr {
 						heliostat->parameters.rightTangent.set(right);
 						right ^= true;
 					}
+				}
+
+				//---------
+				bool
+					NavigateToHalo::getShouldShutdown() const
+				{
+					// Get the current time
+					std::time_t currentTime = std::time(nullptr);
+
+					// Convert to a tm struct
+					std::tm* localTime = std::localtime(&currentTime);
+
+					// Calculate hour as a float
+					float hourAsFloat = localTime->tm_hour + (localTime->tm_min / 60.0f);
+
+					return hourAsFloat > this->parameters.schedule.shutdown.hour.get();
+				}
+
+				//---------
+				void
+					NavigateToHalo::shutdown()
+				{
+					// Disable navigate scheduler
+					this->parameters.schedule.update.enabled.set(false);
+
+					// Home everything
+					auto heliostatsNode = this->getInput<Heliostats2>();
+					if (heliostatsNode) {
+						auto heliostats = heliostatsNode->getHeliostats();
+						for (auto heliostat : heliostats) {
+							heliostat->parameters.servo1.angle.set(0.0f);
+							heliostat->parameters.servo2.angle.set(0.0f);
+						}
+						try {
+							heliostatsNode->pushAll(true);
+						}
+						RULR_CATCH_ALL_TO_ERROR;
+					}
+										
+					// Perform the shutdown in 120s time
+					auto command = "shutdown /f /s /t " + ofToString(this->parameters.schedule.shutdown.shutdownDelay.get());
+					system(command.c_str());
+
+					this->lastShutdownRequest = chrono::system_clock::now();
 				}
 			}
 		}

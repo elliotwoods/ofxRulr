@@ -24,14 +24,17 @@ namespace ofxRulr {
 					class Capture : public Utils::AbstractCaptureSet::BaseCapture {
 					public:
 						struct DrawOptions {
+							set<string> selectedHelisotats;
+
+							bool selectedHeliostatsOnly;
 							bool camera;
 							bool cameraRays;
+							bool cameraRaysShort;
 							bool lightPositions;
 							float worldPointsSize;
 							bool labelWorldPoints;
 							bool reflectedRays;
 							bool mirrorFace;
-							bool report;
 						};
 
 						struct HeliostatCapture {
@@ -83,7 +86,7 @@ namespace ofxRulr {
 					void navigateToSeeLight(vector<shared_ptr<Heliostats2::Heliostat>> heliostats
 						, shared_ptr<Heliostats2> heliostatsNode
 						, const ofxCeres::SolverSettings& navigateSolverSettings);
-
+					
 					void capture();
 					void calibrate();
 
@@ -155,16 +158,18 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							struct : ofParameterGroup {
+								ofParameter<bool> selectedHeliostatsOnly { "Selected heliostats only", true };
 								ofParameter<bool> light{ "Light", true };
 								ofParameter<bool> cameras{ "Cameras", true };
-								ofParameter<bool> cameraRays{ "Camera rays", true };
+								ofParameter<bool> cameraRays{ "Camera rays", false };
+								ofParameter<bool> cameraRaysShort{ "Camera rays short", true };
 								ofParameter<bool> lightPositions{ "Light positions", true };
 								ofParameter<float> worldPointsSize{ "World points size", 0.01, 1e-3, 1e3 };
 								ofParameter<bool> labelWorldPoints{ "Label world points", false };
 								ofParameter<bool> reflectedRays{ "Reflected rays", true };
 								ofParameter<bool> mirrorFace{ "Mirror face", true };
 								ofParameter<bool> report{ "Report", true };
-								PARAM_DECLARE("Draw", light, cameras, cameraRays, lightPositions, labelWorldPoints, worldPointsSize, reflectedRays, mirrorFace, report);
+								PARAM_DECLARE("Draw", selectedHeliostatsOnly, light, cameras, cameraRays, cameraRaysShort, lightPositions, labelWorldPoints, worldPointsSize, reflectedRays, mirrorFace, report);
 							} draw;
 							PARAM_DECLARE("Debug", draw);
 						} debug;

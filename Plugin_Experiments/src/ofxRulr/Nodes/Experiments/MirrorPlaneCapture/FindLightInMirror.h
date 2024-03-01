@@ -89,7 +89,7 @@ namespace ofxRulr {
 							ofParameter<float> blur{ "Blur [mirror]", 0.2f, 0.01f, 1.0f };
 							ofParameter<bool> blurIterative{ "Blur iterative", false};
 							ofParameter<float> threshold{ "Threshold", 127, 0, 255 };
-							ofParameter<int> removeNoise{ "Remove noice [steps]", 3 };
+							ofParameter<int> removeNoise{ "Remove noise [steps]", 1 };
 							ofParameter<float> maxArea{ "Max area [mirror]", 1, 0, 1 }; // 1 = ignore
 							ofParameter<int> dilateForMoments{ "Dilate for moments", 3 };
 							PARAM_DECLARE("Detection", blur, blurIterative, threshold, removeNoise, maxArea, dilateForMoments)
