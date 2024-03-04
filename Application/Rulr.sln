@@ -223,6 +223,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxDualSense", "..\..\ofxDu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_DualSense", "..\Plugin_DualSense\Plugin_DualSense.vcxproj", "{4AFA01CE-C378-451B-AD27-4ECF78EB2F0E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_Dosirak", "..\Plugin_Dosirak\Plugin_Dosirak.vcxproj", "{706739DB-4915-4A67-B45D-C3D225F82865}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -551,6 +553,12 @@ Global
 		{4AFA01CE-C378-451B-AD27-4ECF78EB2F0E}.Release|x64.ActiveCfg = Release|x64
 		{4AFA01CE-C378-451B-AD27-4ECF78EB2F0E}.Release|x64.Build.0 = Release|x64
 		{4AFA01CE-C378-451B-AD27-4ECF78EB2F0E}.Release|x86.ActiveCfg = Release|x64
+		{706739DB-4915-4A67-B45D-C3D225F82865}.Debug|x64.ActiveCfg = Debug|x64
+		{706739DB-4915-4A67-B45D-C3D225F82865}.Debug|x64.Build.0 = Debug|x64
+		{706739DB-4915-4A67-B45D-C3D225F82865}.Debug|x86.ActiveCfg = Debug|x64
+		{706739DB-4915-4A67-B45D-C3D225F82865}.Release|x64.ActiveCfg = Release|x64
+		{706739DB-4915-4A67-B45D-C3D225F82865}.Release|x64.Build.0 = Release|x64
+		{706739DB-4915-4A67-B45D-C3D225F82865}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\pch_Plugin_Dosirak.cpp" />
+    <ClCompile Include="src\plugin.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Dosirak\OSCReceive.cpp">
+      <Filter>ofxRulr\Nodes\Dosirak</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\Dosirak\Curve.cpp">
+      <Filter>ofxRulr\Data\Dosirak</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch_Plugin_Dosirak.h" />
+    <ClInclude Include="src\ofxRulr\Data\Dosirak\Curve.h">
+      <Filter>ofxRulr\Data\Dosirak</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Dosirak\OSCReceive.h">
+      <Filter>ofxRulr\Nodes\Dosirak</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ofxRulr">
+      <UniqueIdentifier>{71608a41-3e9e-445d-a02d-cb758d04de20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes">
+      <UniqueIdentifier>{c18e8236-942c-453f-b41c-f461c9655755}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Nodes\Dosirak">
+      <UniqueIdentifier>{0a8a8393-deb6-4d1e-a19d-931c75f5850f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Data">
+      <UniqueIdentifier>{490e4571-dbfd-40fa-ad10-669f1a2fe304}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ofxRulr\Data\Dosirak">
+      <UniqueIdentifier>{d190c583-c557-43eb-92ed-f64828da0831}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

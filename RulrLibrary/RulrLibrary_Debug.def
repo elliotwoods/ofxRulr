@@ -808,13 +808,16 @@ EXPORTS
 	?getAddress@ofxOscMessage@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getArgAsFloat@ofxOscMessage@@QEBAM_K@Z
 	?getArgAsInt64@ofxOscMessage@@QEBA_J_K@Z
+	?getArgAsString@ofxOscMessage@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_K@Z
 	?getArgType@ofxOscMessage@@QEBA?AW4_ofxOscArgType@@_K@Z
 	?getNumArgs@ofxOscMessage@@QEBA_KXZ
 	?getRemoteHost@ofxOscMessage@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?setAddress@ofxOscMessage@@QEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?getNextMessage@ofxOscReceiver@@QEAA_NAEAVofxOscMessage@@@Z
 	?getPort@ofxOscReceiver@@QEBAHXZ
+	?isListening@ofxOscReceiver@@QEBA_NXZ
 	?ProcessMessage@ofxOscReceiver@@MEAAXAEBVReceivedMessage@osc@@AEBVIpEndpointName@3@@Z
+	?setup@ofxOscReceiver@@QEAA_NAEBUofxOscReceiverSettings@@@Z
 	?setup@ofxOscReceiver@@QEAA_NH@Z
 	?getHost@ofxOscSender@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?getPort@ofxOscSender@@QEBAHXZ
