@@ -48,7 +48,7 @@ namespace ofxRulr {
 								auto beamCaptures = laserCapture->beamCaptures.getSelection();
 								Utils::ScopedProcess scopedProcessLasers("Laser #" + ofToString(laserCapture->serialNumber), false);
 
-								// Gather solveData and parameters
+								// Check if we have enough captures
 								if (beamCaptures.size() < minBeamCapture) {
 									throw(ofxRulr::Exception("Too few beam captures (" + ofToString(beamCaptures.size()) + ") for laser s#" + ofToString(laserCapture->serialNumber)));
 								}
@@ -62,6 +62,12 @@ namespace ofxRulr {
 									solveData.distanceThreshold = this->parameters.lineFinder.distanceThreshold.get();
 									solveData.minMeanPixelValueOnLine = this->parameters.lineFinder.minMeanPixelValueOnLine.get();
 									solveData.useAlternativeSolve = laserCapture->parameters.useAlternativeSolve.get();
+
+									solveData.ignoreAroundBrightSpots.enabled = this->parameters.lineFinder.ignoreAroundBrightSpots.enabled.get();
+									solveData.ignoreAroundBrightSpots.threshold = this->parameters.lineFinder.ignoreAroundBrightSpots.threshold.get();
+									solveData.ignoreAroundBrightSpots.erosionSteps = this->parameters.lineFinder.ignoreAroundBrightSpots.erosionSteps.get();
+									solveData.ignoreAroundBrightSpots.dilationSteps = this->parameters.lineFinder.ignoreAroundBrightSpots.dilationSteps.get();
+									solveData.ignoreAroundBrightSpots.dilationSize = this->parameters.lineFinder.ignoreAroundBrightSpots.dilationSize.get();
 
 									solveData.debug.previewEnabled = this->parameters.lineFinder.preview.enabled.get();
 									solveData.debug.previewPopup = this->parameters.lineFinder.preview.popup.get();

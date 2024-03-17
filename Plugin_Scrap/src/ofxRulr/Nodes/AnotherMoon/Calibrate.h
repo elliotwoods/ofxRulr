@@ -238,6 +238,15 @@ namespace ofxRulr {
 						SolverSettings solverSettings;
 
 						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", false };
+							ofParameter<int> threshold{ "Threshold", 254, 0, 254 };
+							ofParameter<int> erosionSteps{ "Erosion steps", 3 };
+							ofParameter<int> dilationSteps{ "Dilation steps", 128 };
+							ofParameter<int> dilationSize{ "Dilation size", 7 };
+							PARAM_DECLARE("Ignore around bright spots", enabled, threshold, erosionSteps, dilationSteps, dilationSize);
+						} ignoreAroundBrightSpots;
+
+						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true};
 							ofParameter<bool> popup{ "Popup", false };
 							ofParameter<bool> save{ "Save", true };
@@ -253,6 +262,7 @@ namespace ofxRulr {
 							, distanceThreshold
 							, minMeanPixelValueOnLine
 							, solverSettings
+							, ignoreAroundBrightSpots
 							, preview);
 					} lineFinder;
 

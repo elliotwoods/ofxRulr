@@ -104,6 +104,38 @@ namespace ofxRulr {
 				cv::Mat differenceRaw;
 				cv::subtract(onImageRaw, background, differenceRaw);
 
+				// Ignore pixels close to bright spots (e.g. if the laser hits something and makes a blotch)
+				if (solveData.ignoreAroundBrightSpots.enabled) {
+					// Find bright pixels
+					cv::Mat mask;
+					cv::threshold(onImageRaw
+						, mask
+						, solveData.ignoreAroundBrightSpots.threshold
+						, 255
+						, cv::THRESH_BINARY);
+
+					// Erode (so only large features come through)
+					{
+						auto kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
+						cv::erode(mask, mask, kernel, cv::Point(-1, -1), solveData.ignoreAroundBrightSpots.erosionSteps);
+					}
+
+					// Only continue to apply the mask if there's anything left in the mask (to save time)
+					if (cv::countNonZero(mask) > 0) {
+						// Dilate (so we create a large mask around this feature
+						{
+							int size = solveData.ignoreAroundBrightSpots.dilationSize;
+							size = (size / 2) * 2 + 1; // round to nearest odd value
+
+							auto kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(size, size));
+							cv::dilate(mask, mask, kernel, cv::Point(-1, -1), solveData.ignoreAroundBrightSpots.dilationSteps);
+						}
+
+						// Remove these pixels from the difference image
+						cv::subtract(differenceRaw, mask, differenceRaw);
+					}
+				}
+
 				// Get the camera image points for this image
 				images.push_back(Solvers::LinesWithCommonPoint::getCameraImagePoints(differenceRaw, solveData));
 
@@ -119,7 +151,7 @@ namespace ofxRulr {
 
 					// Add it into channel 1 (green channel)
 					cv::addWeighted(previewPlanes[1], 1.0
-						, differenceUndistorted, 128 / solveData.differenceThreshold
+						, differenceUndistorted, 16 / solveData.differenceThreshold
 						, 1.0
 						, previewPlanes[1]);
 				}
