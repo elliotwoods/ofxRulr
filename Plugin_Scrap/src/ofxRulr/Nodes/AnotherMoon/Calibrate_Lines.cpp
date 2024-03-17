@@ -104,7 +104,12 @@ namespace ofxRulr {
 
 									// Save the preview as report
 									if (this->parameters.lineFinder.preview.enabled && this->parameters.lineFinder.preview.save) {
-										cv::imwrite((laserCapture->directory / "Report - LinesWithCommonPoint.png").string(), result.solution.preview);
+										auto reportFilepath = laserCapture->directory / "Report - LinesWithCommonPoint.png";
+										cv::imwrite(reportFilepath.string(), result.solution.preview);
+
+										// Also copy the file into the parent director
+										auto fileCopyPath = laserCapture->directory.parent_path() / ("calibrateLines s" + ofToString(laserCapture->serialNumber) + ".png");
+										filesystem::copy(reportFilepath, fileCopyPath);
 									}
 
 									// Pull data back from solve
