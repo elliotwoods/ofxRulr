@@ -57,6 +57,11 @@ namespace ofxRulr {
 				} ignoreAroundBrightSpots;
 
 				struct {
+					bool enabled;
+					int diameter;
+				} maxFeatureDiameter;
+
+				struct {
 					bool previewEnabled = false;
 					bool previewPopup = false;
 

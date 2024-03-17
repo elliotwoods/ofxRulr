@@ -69,6 +69,9 @@ namespace ofxRulr {
 									solveData.ignoreAroundBrightSpots.dilationSteps = this->parameters.lineFinder.ignoreAroundBrightSpots.dilationSteps.get();
 									solveData.ignoreAroundBrightSpots.dilationSize = this->parameters.lineFinder.ignoreAroundBrightSpots.dilationSize.get();
 
+									solveData.maxFeatureDiameter.enabled = this->parameters.lineFinder.maxFeatureDiameter.enabled.get();
+									solveData.maxFeatureDiameter.diameter = this->parameters.lineFinder.maxFeatureDiameter.diameter.get();
+
 									solveData.debug.previewEnabled = this->parameters.lineFinder.preview.enabled.get();
 									solveData.debug.previewPopup = this->parameters.lineFinder.preview.popup.get();
 									solveData.debug.previewSize = cv::Size(cameraNode->getWidth(), cameraNode->getHeight());

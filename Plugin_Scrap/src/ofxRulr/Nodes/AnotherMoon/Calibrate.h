@@ -247,6 +247,12 @@ namespace ofxRulr {
 						} ignoreAroundBrightSpots;
 
 						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", true };
+							ofParameter<int> diameter{ "Diameter [pixels]", 64 };
+							PARAM_DECLARE("Max feature diameter", enabled, diameter);
+						} maxFeatureDiameter;
+
+						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true};
 							ofParameter<bool> popup{ "Popup", false };
 							ofParameter<bool> save{ "Save", true };
@@ -263,6 +269,7 @@ namespace ofxRulr {
 							, minMeanPixelValueOnLine
 							, solverSettings
 							, ignoreAroundBrightSpots
+							, maxFeatureDiameter
 							, preview);
 					} lineFinder;
 

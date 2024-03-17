@@ -136,6 +136,20 @@ namespace ofxRulr {
 					}
 				}
 
+				// Only allow thin features
+				if (solveData.maxFeatureDiameter.enabled) {
+					cv::Mat imageWithLinesRemoved;
+					const auto iterations = solveData.maxFeatureDiameter.diameter;
+
+					auto kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
+					cv::erode(differenceRaw, imageWithLinesRemoved, kernel, cv::Point(-1, -1), iterations);
+					cv::dilate(imageWithLinesRemoved, imageWithLinesRemoved, kernel, cv::Point(-1, -1), iterations);
+
+					// Subtract twice in case there's some background remaining
+					cv::subtract(differenceRaw, imageWithLinesRemoved, differenceRaw);
+					cv::subtract(differenceRaw, imageWithLinesRemoved, differenceRaw);
+				}
+
 				// Get the camera image points for this image
 				images.push_back(Solvers::LinesWithCommonPoint::getCameraImagePoints(differenceRaw, solveData));
 
