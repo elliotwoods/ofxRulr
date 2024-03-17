@@ -112,7 +112,7 @@ namespace ofxRulr {
 
 										// Also copy the file into the parent director
 										auto fileCopyPath = laserCapture->directory.parent_path() / ("calibrateLines s" + ofToString(laserCapture->serialNumber) + ".png");
-										filesystem::copy(reportFilepath, fileCopyPath);
+										filesystem::copy(reportFilepath, fileCopyPath, std::filesystem::copy_options::overwrite_existing);
 									}
 
 									// Pull data back from solve

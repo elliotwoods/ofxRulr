@@ -239,7 +239,7 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", false };
-							ofParameter<int> threshold{ "Threshold", 254, 0, 254 };
+							ofParameter<int> threshold{ "Threshold", 250, 0, 254 };
 							ofParameter<int> erosionSteps{ "Erosion steps", 3 };
 							ofParameter<int> dilationSteps{ "Dilation steps", 128 };
 							ofParameter<int> dilationSize{ "Dilation size", 7 };
@@ -248,7 +248,7 @@ namespace ofxRulr {
 
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true };
-							ofParameter<int> diameter{ "Diameter [pixels]", 64 };
+							ofParameter<int> diameter{ "Diameter [pixels]", 32 };
 							PARAM_DECLARE("Max feature diameter", enabled, diameter);
 						} maxFeatureDiameter;
 
