@@ -9,6 +9,9 @@
     <ClCompile Include="src\ofxRulr\Data\Dosirak\Curve.cpp">
       <Filter>ofxRulr\Data\Dosirak</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Dosirak\Curves.cpp">
+      <Filter>ofxRulr\Nodes\Dosirak</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Dosirak.h" />
@@ -16,6 +19,9 @@
       <Filter>ofxRulr\Data\Dosirak</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Dosirak\OSCReceive.h">
+      <Filter>ofxRulr\Nodes\Dosirak</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Dosirak\Curves.h">
       <Filter>ofxRulr\Nodes\Dosirak</Filter>
     </ClInclude>
   </ItemGroup>

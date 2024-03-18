@@ -12,11 +12,17 @@ namespace ofxRulr {
 
 				void updatePreview();
 				void drawPreview() const;
+
+				void serialize(nlohmann::json&) const;
+				void deserialize(const nlohmann::json&);
 			protected:
 				ofPolyline preview;
 			};
 
-			typedef map<string, Data::Dosirak::Curve> Curves;
+			struct Curves : map<string, Data::Dosirak::Curve> {
+				void serialize(nlohmann::json&) const;
+				void deserialize(const nlohmann::json&);
+			};
 		}
 	}
 }

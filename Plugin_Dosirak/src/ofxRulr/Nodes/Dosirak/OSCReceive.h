@@ -13,7 +13,6 @@ namespace ofxRulr {
 				string getTypeName() const override;
 				void init();
 				void update();
-				void drawWorldStage();
 
 				ofxCvGui::PanelPtr getPanel() override;
 				void populateInspector(ofxCvGui::InspectArguments &);
@@ -31,8 +30,6 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr panel;
 
 				unique_ptr<ofxOscReceiver> oscReceiver;
-
-				Data::Dosirak::Curves curves;
 
 				bool hasNewMessage = false;
 			};

@@ -1,5 +1,6 @@
 #include "pch_Plugin_Dosirak.h"
 #include "OSCReceive.h"
+#include "Curves.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -23,10 +24,12 @@ namespace ofxRulr {
 			{
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_UPDATE_LISTENER;
-				RULR_NODE_DRAW_WORLD_LISTENER;
+
+				this->addInput<Curves>();
 
 				this->manageParameters(this->parameters);
 
+				// Setup the panel
 				{
 					auto panel = ofxCvGui::Panels::makeWidgets();
 					panel->addIndicatorBool("Server running", [this]() {
@@ -35,34 +38,6 @@ namespace ofxRulr {
 					panel->addIndicatorBool("Message incoming", [this]() {
 						return (bool)this->hasNewMessage;
 						});
-					panel->addLiveValue<size_t>("Curve count", [this]() {
-						return (bool)this->curves.size();
-						});
-
-					// Curve list
-					{
-						auto widget = ofxCvGui::makeElement();
-						widget->setHeight(300);
-						widget->onDraw += [this](ofxCvGui::DrawArguments& args) {
-							ofPushMatrix();
-							{
-								for (const auto& curve : this->curves) {
-									ofTranslate(0, 25, 0);
-									ofPushStyle();
-									{
-										ofSetColor(curve.second.color);
-										ofDrawRectangle(3, 3, 17, 17);
-									}
-									ofPopStyle();
-
-									string previewString = curve.first + " : " + ofToString(curve.second.points.size());
-									ofxCvGui::Utils::drawText(previewString, 20, 20, false);
-								}
-							}
-							ofPopMatrix();
-						};
-						panel->add(widget);
-					}
 					this->panel = panel;
 				}
 			}
@@ -79,7 +54,6 @@ namespace ofxRulr {
 				if (this->oscReceiver) {
 					ofxOscMessage message;
 					while (this->oscReceiver->getNextMessage(message)) {
-						cout << "m";
 						if (message.getAddress() == this->parameters.address.get()) {
 							this->hasNewMessage = true;
 
@@ -148,22 +122,12 @@ namespace ofxRulr {
 							}
 
 							// Store the curves
-							this->curves = curves;
-							for (auto& curve : this->curves) {
-								curve.second.updatePreview();
+							auto curvesNode = this->getInput<Curves>();
+							if (curvesNode) {
+								curvesNode->setCurves(curves);
 							}
 						}
 					}
-				}
-			}
-
-
-			//----------
-			void
-				OSCReceive::drawWorldStage()
-			{
-				for (const auto& curve : this->curves) {
-					curve.second.drawPreview();
 				}
 			}
 

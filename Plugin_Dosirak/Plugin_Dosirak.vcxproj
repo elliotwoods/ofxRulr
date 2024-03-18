@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Data\Dosirak\Curve.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Dosirak\Curves.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Dosirak\OSCReceive.cpp" />
     <ClCompile Include="src\pch_Plugin_Dosirak.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -90,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Data\Dosirak\Curve.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Dosirak\Curves.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Dosirak\OSCReceive.h" />
     <ClInclude Include="src\pch_Plugin_Dosirak.h" />
   </ItemGroup>
