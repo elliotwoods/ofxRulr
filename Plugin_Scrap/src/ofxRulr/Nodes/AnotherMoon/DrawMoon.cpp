@@ -182,7 +182,17 @@ namespace ofxRulr {
 					}
 
 					// Project image points for 3D points
-					laser->drawWorldPoints(points);
+					try {
+						laser->drawWorldPoints(points);
+					}
+					catch (const exception& e) {
+						if (throwIfPictureOutsideLimits) {
+							throw(e);
+						}
+						else {
+							ofLogError("AnotherMoon::DrawMoon") << laser->getLabelName() << " : " << e.what();
+						}
+					}
 					
 					// Check if image is outisde of limits
 					if (throwIfPictureOutsideLimits) {

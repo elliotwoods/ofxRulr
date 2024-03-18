@@ -1,5 +1,7 @@
 #pragma once
 
+#include "api_Plugin_Scrap.h"
+
 #include "ofxRulr.h"
 #include "ofxRulr/Utils/CaptureSet.h"
 #include "ofxOsc.h"
@@ -10,7 +12,7 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace AnotherMoon {
-			struct IsFrameNew {
+			struct PLUGIN_SCRAP_API_ENTRY IsFrameNew {
 				void notify() {
 					this->notifyFrameNew = true;
 				}
@@ -24,7 +26,7 @@ namespace ofxRulr {
 
 			class Lasers;
 
-			class Laser
+			class PLUGIN_SCRAP_API_ENTRY Laser
 				: public Utils::AbstractCaptureSet::BaseCapture
 				, public ofxCvGui::IInspectable
 				, public enable_shared_from_this<Laser>

@@ -96,7 +96,6 @@
     <ClCompile Include="src\ofxRulr\Solvers\PointFromLines.cpp">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClCompile>
-    <ClCompile Include="src\pch_Plugin_Scrap.cpp" />
     <ClCompile Include="src\plugin.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -137,6 +136,12 @@
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\OSCReceiver.cpp">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch_Plugin_Scrap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Shutdown.cpp">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClCompile>
   </ItemGroup>
@@ -201,7 +206,6 @@
     <ClInclude Include="src\ofxRulr\Solvers\PointFromLines.h">
       <Filter>src\ofxRulr\Solvers</Filter>
     </ClInclude>
-    <ClInclude Include="src\pch_Plugin_Scrap.h" />
     <ClInclude Include="src\polyfit\polyfit.h">
       <Filter>src\polyfit</Filter>
     </ClInclude>
@@ -239,6 +243,15 @@
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\OSCReceiver.h">
+      <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api_Plugin_Scrap.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch_Plugin_Scrap.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Shutdown.h">
       <Filter>src\ofxRulr\Nodes\AnotherMoon</Filter>
     </ClInclude>
   </ItemGroup>

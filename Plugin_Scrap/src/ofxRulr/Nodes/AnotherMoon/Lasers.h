@@ -1,5 +1,6 @@
 #pragma once
 
+#include "api_Plugin_Scrap.h"
 #include "ofxRulr.h"
 #include "ofxRulr/Utils/CaptureSet.h"
 #include "ofxRulr/Data/AnotherMoon/MessageRouter.h"
@@ -15,7 +16,7 @@ namespace ofxRulr {
 			/// A set of lasers stored locally. Each laser is a BaseCapture.
 			/// Calibration data is stored externally in Calibrate node
 			/// </summary>
-			class Lasers : public Nodes::Base {
+			class PLUGIN_SCRAP_API_ENTRY Lasers : public Nodes::Base {
 			public:
 				Lasers();
 				string getTypeName() const override;
@@ -43,6 +44,8 @@ namespace ofxRulr {
 
 				bool sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage>);
 				bool isCommunicationEnabled() const;
+
+				void shutdownAll();
 			protected:
 				friend Laser;
 

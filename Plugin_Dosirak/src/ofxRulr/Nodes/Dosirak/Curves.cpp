@@ -27,12 +27,14 @@ namespace ofxRulr {
 				RULR_NODE_DRAW_WORLD_LISTENER;
 
 				this->rigidBody = make_shared<Item::RigidBody>();
+				this->rigidBody->init();
 
 				this->manageParameters(this->parameters);
 
 				// Setup the panel
 				{
 					auto panel = ofxCvGui::Panels::makeWidgets();
+
 					panel->addLiveValue<size_t>("Curve count", [this]() {
 						return (bool)this->curves.size();
 						});
@@ -61,12 +63,17 @@ namespace ofxRulr {
 						};
 						panel->add(widget);
 					}
+
 					this->panel = panel;
 				}
 
 				// Draw object function
 				{
 					this->rigidBody->onDrawObject += [this]() {
+						if (this->previewStale) {
+							this->updatePreview();
+						}
+
 						ofPushMatrix();
 						{
 							auto scale = this->parameters.scale.get();
@@ -78,6 +85,10 @@ namespace ofxRulr {
 						ofPopMatrix();
 					};
 				}
+
+				this->rigidBody->onTransformChange.addListener([this]() {
+					this->newCurves.incoming = true;
+					}, this);
 			}
 
 			//----------
@@ -126,7 +137,6 @@ namespace ofxRulr {
 				auto inspector = inspectArgs.inspector;
 				{
 					auto widget = inspector->addSubMenu("Rigid Body", this->rigidBody);
-					widget->setDrawGlyph(u8"\ue4f6");
 					widget->setHeight(100.0f);
 				}
 			}
@@ -159,6 +169,7 @@ namespace ofxRulr {
 			{
 				this->curves = curves;
 				this->newCurves.incoming = true;
+				this->previewStale = true; // we might not get to update before next draw to screen
 			}
 
 			//----------
@@ -173,8 +184,7 @@ namespace ofxRulr {
 				Curves::getCurvesTransformed() const
 			{
 				const auto scale = this->parameters.scale.get();
-				auto transform = glm::scale(glm::vec3(scale, scale, scale));
-				transform *= this->rigidBody->getTransform();
+				auto transform = this->rigidBody->getTransform() * glm::scale(glm::vec3(scale, scale, scale));
 				return this->curves.getTransformed(transform);
 			}
 			

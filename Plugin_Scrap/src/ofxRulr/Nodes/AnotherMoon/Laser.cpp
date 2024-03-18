@@ -566,6 +566,14 @@ namespace ofxRulr {
 			std::future<void>
 				Laser::drawPicture(const vector<glm::vec2>& projectionPoints)
 			{
+				// check if any projectionPoints are invalid
+				for (const auto& projectionPoint : projectionPoints) {
+					if (abs(projectionPoint.x) > 1.0f || abs(projectionPoint.y) > 1.0f) {
+						throw(ofxRulr::Exception("Picture is outside of limits"));
+					}
+				}
+
+				// Create the message
 				auto message = this->createOutgoingMessageRetry();
 				{
 					message->setAddress("/picture/picture");
@@ -574,6 +582,8 @@ namespace ofxRulr {
 						message->addFloatArg(projectionPoint.y);
 					}
 				}
+
+				// Route the message
 				auto future = message->onSent.get_future();
 				this->sendMessage(message);
 				this->lastPictureSent = projectionPoints;

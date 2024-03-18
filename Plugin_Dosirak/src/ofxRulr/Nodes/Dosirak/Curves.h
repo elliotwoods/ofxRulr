@@ -30,7 +30,7 @@ namespace ofxRulr {
 				void updatePreview();
 
 				struct Parameters : ofParameterGroup {
-					ofParameter<float> scale{ "Scale", 1, 0.001, 100 };
+					ofParameter<float> scale{ "Scale", 1, 0.01, 10 };
 					PARAM_DECLARE("Curves", scale);
 				} parameters;
 

@@ -314,6 +314,18 @@ namespace ofxRulr {
 
 			//----------
 			void
+				Lasers::shutdownAll()
+			{
+				auto lasers = this->getLasersAll();
+				for (auto laser : lasers) {
+					laser->shutdown();
+				}
+				this->parameters.setStateBySelected.selectedState.set(Laser::State::Shutdown);
+				this->parameters.setStateBySelected.deselectedState.set(Laser::State::Shutdown);
+			}
+
+			//----------
+			void
 				Lasers::importJson()
 			{
 				// Load json (from our RunDeck format created by make_nodes.py)

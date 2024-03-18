@@ -56,6 +56,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch_Plugin_Scrap.h</PrecompiledHeaderFile>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PreprocessorDefinitions>PLUGIN_SCRAP_EXPORT_ENABLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -71,6 +72,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch_Plugin_Scrap.h</PrecompiledHeaderFile>
+      <PreprocessorDefinitions>PLUGIN_SCRAP_EXPORT_ENABLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -99,6 +101,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Laser.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Moon.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\OSCReceiver.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Shutdown.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\Calibrate_Lines.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\AnotherMoon\LaserCaptures.cpp" />
@@ -128,6 +131,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\api_Plugin_Scrap.h" />
     <ClInclude Include="src\ofxRulr\Data\AnotherMoon\MessageRouter.h" />
     <ClInclude Include="src\ofxRulr\Data\AnotherMoon\Message.h" />
     <ClInclude Include="src\ofxRulr\Models\Intrinsics.h" />
@@ -146,6 +150,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Moon.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\OSCReceiver.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\RemoteControl.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Shutdown.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\SortFiles.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\SynthesiseCaptures.h" />
     <ClInclude Include="src\ofxRulr\Nodes\AnotherMoon\Target.h" />

@@ -26,13 +26,16 @@ namespace ofxRulr {
 				this->manageParameters(this->parameters);
 
 				RULR_NODE_INSPECTOR_LISTENER;
+				RULR_NODE_UPDATE_LISTENER;
 
 				this->addInput<AnotherMoon::Lasers>();
 				auto curvesInput = this->addInput<Curves>();
 
 				curvesInput->onNewConnection += [this](shared_ptr<Curves> curvesNode) {
 					curvesNode->onNewCurves.addListener([this]() {
-						this->needsDrawCurves = true;
+						if (this->parameters.onNewFrame.get()) {
+							this->needsDrawCurves = true;
+						}
 						}, this);
 				};
 
@@ -48,7 +51,10 @@ namespace ofxRulr {
 				DrawCurves::update()
 			{
 				if (this->needsDrawCurves) {
-					this->drawCurves();
+					try {
+						this->drawCurves();
+					}
+					RULR_CATCH_ALL_TO_ERROR;
 				}
 			}
 
@@ -58,8 +64,11 @@ namespace ofxRulr {
 			{
 				auto inspector = args.inspector;
 				inspector->addButton("Draw curves", [this]() {
-					this->drawCurves();
-					});
+					try {
+						this->drawCurves();
+					}
+					RULR_CATCH_ALL_TO_ERROR;
+					}, OF_KEY_RETURN)->setHeight(100.0f);
 			}
 
 			//----------

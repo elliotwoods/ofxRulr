@@ -18,6 +18,7 @@
 #include "ofxRulr/Nodes/AnotherMoon/DrawMoon.h"
 #include "ofxRulr/Nodes/AnotherMoon/ExportPictures.h"
 #include "ofxRulr/Nodes/AnotherMoon/OSCReceiver.h"
+#include "ofxRulr/Nodes/AnotherMoon/Shutdown.h"
 
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
@@ -39,4 +40,5 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::Moon);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::ExportPictures);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::OSCReceiver);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::AnotherMoon::Shutdown);
 OFXPLUGIN_PLUGIN_MODULES_END
