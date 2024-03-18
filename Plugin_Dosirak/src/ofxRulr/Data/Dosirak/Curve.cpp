@@ -89,6 +89,26 @@ namespace ofxRulr {
 				}
 			}
 
+			//----------
+			Curve
+				Curve::getTransformed(const glm::mat4& transform) const
+			{
+				Curve transformedCurve;
+				{
+					transformedCurve.color = this->color;
+					transformedCurve.closed = this->closed;
+				}
+
+				transformedCurve.points.reserve(this->points.size());
+
+				for (const auto& it : this->points) {
+					auto transformedPoint = ofxCeres::VectorMath::applyTransform(transform, it);
+					transformedCurve.points.push_back(transformedPoint);
+				}
+
+				return transformedCurve;
+			}
+
 #pragma mark Curves
 			//----------
 			void
@@ -119,6 +139,17 @@ namespace ofxRulr {
 					auto it2 = this->emplace(it.key(), Curve());
 					this->at(it.key()).deserialize(jsonCurve);
 				}
+			}
+
+			//----------
+			Curves
+				Curves::getTransformed(const glm::mat4& transform) const
+			{
+				Curves transformedCurves;
+				for (const auto& it : *this) {
+					transformedCurves.emplace(it.first, it.second.getTransformed(transform));
+				}
+				return transformedCurves;
 			}
 		}
 	}

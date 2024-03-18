@@ -21,9 +21,10 @@ namespace ofxRulr {
 				void deserialize(const nlohmann::json&);
 
 				void setCurves(const Data::Dosirak::Curves&);
-				const Data::Dosirak::Curves& getCurves() const;
+				const Data::Dosirak::Curves& getCurvesRaw() const;
+				Data::Dosirak::Curves getCurvesTransformed() const;
 
-				ofxLiquidEvent<Data::Dosirak::Curves> onNewCurves;
+				ofxLiquidEvent<void> onNewCurves;
 
 			protected:
 				void updatePreview();

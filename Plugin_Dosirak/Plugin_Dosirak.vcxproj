@@ -56,6 +56,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch_Plugin_Dosirak.h</PrecompiledHeaderFile>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\Plugin_Scrap\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -71,6 +72,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch_Plugin_Dosirak.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\Plugin_Scrap\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -82,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="src\ofxRulr\Data\Dosirak\Curve.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Dosirak\Curves.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Dosirak\DrawCurves.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Dosirak\OSCReceive.cpp" />
     <ClCompile Include="src\pch_Plugin_Dosirak.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -92,12 +95,16 @@
   <ItemGroup>
     <ClInclude Include="src\ofxRulr\Data\Dosirak\Curve.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Dosirak\Curves.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Dosirak\DrawCurves.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Dosirak\OSCReceive.h" />
     <ClInclude Include="src\pch_Plugin_Dosirak.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ofxCeres\ofxCeresLib\ofxCeresLib.vcxproj">
       <Project>{c42c2af8-bb13-4fe4-81a5-41cd314f4fde}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugin_Scrap\Plugin_Scrap.vcxproj">
+      <Project>{056ce582-26c0-4041-8b4a-ee2b53e77208}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

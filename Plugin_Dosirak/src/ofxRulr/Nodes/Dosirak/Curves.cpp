@@ -67,9 +67,15 @@ namespace ofxRulr {
 				// Draw object function
 				{
 					this->rigidBody->onDrawObject += [this]() {
-						for (const auto& curve : this->curves) {
-							curve.second.drawPreview();
+						ofPushMatrix();
+						{
+							auto scale = this->parameters.scale.get();
+							ofScale(scale, scale, scale);
+							for (const auto& curve : this->curves) {
+								curve.second.drawPreview();
+							}
 						}
+						ofPopMatrix();
 					};
 				}
 			}
@@ -90,7 +96,7 @@ namespace ofxRulr {
 				// What to do isFrameNew
 				if (this->newCurves.thisFrame) {
 					this->previewStale = true;
-					this->onNewCurves.notifyListeners(curves);
+					this->onNewCurves.notifyListeners();
 				}
 
 				// Update preview if stale
@@ -153,6 +159,23 @@ namespace ofxRulr {
 			{
 				this->curves = curves;
 				this->newCurves.incoming = true;
+			}
+
+			//----------
+			const Data::Dosirak::Curves&
+				Curves::getCurvesRaw() const
+			{
+				return this->curves;
+			}
+
+			//----------
+			Data::Dosirak::Curves
+				Curves::getCurvesTransformed() const
+			{
+				const auto scale = this->parameters.scale.get();
+				auto transform = glm::scale(glm::vec3(scale, scale, scale));
+				transform *= this->rigidBody->getTransform();
+				return this->curves.getTransformed(transform);
 			}
 			
 			//----------

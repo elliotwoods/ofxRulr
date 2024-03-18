@@ -15,6 +15,8 @@ namespace ofxRulr {
 
 				void serialize(nlohmann::json&) const;
 				void deserialize(const nlohmann::json&);
+
+				Curve getTransformed(const glm::mat4&) const;
 			protected:
 				ofPolyline preview;
 			};
@@ -22,6 +24,8 @@ namespace ofxRulr {
 			struct Curves : map<string, Data::Dosirak::Curve> {
 				void serialize(nlohmann::json&) const;
 				void deserialize(const nlohmann::json&);
+
+				Curves getTransformed(const glm::mat4&) const;
 			};
 		}
 	}
