@@ -48,7 +48,7 @@ namespace ofxRulr {
 								auto beamCaptures = laserCapture->beamCaptures.getSelection();
 								Utils::ScopedProcess scopedProcessLasers("Laser #" + ofToString(laserCapture->serialNumber), false);
 
-								// Gather solveData and parameters
+								// Check if we have enough captures
 								if (beamCaptures.size() < minBeamCapture) {
 									throw(ofxRulr::Exception("Too few beam captures (" + ofToString(beamCaptures.size()) + ") for laser s#" + ofToString(laserCapture->serialNumber)));
 								}
@@ -62,6 +62,15 @@ namespace ofxRulr {
 									solveData.distanceThreshold = this->parameters.lineFinder.distanceThreshold.get();
 									solveData.minMeanPixelValueOnLine = this->parameters.lineFinder.minMeanPixelValueOnLine.get();
 									solveData.useAlternativeSolve = laserCapture->parameters.useAlternativeSolve.get();
+
+									solveData.ignoreAroundBrightSpots.enabled = this->parameters.lineFinder.ignoreAroundBrightSpots.enabled.get();
+									solveData.ignoreAroundBrightSpots.threshold = this->parameters.lineFinder.ignoreAroundBrightSpots.threshold.get();
+									solveData.ignoreAroundBrightSpots.erosionSteps = this->parameters.lineFinder.ignoreAroundBrightSpots.erosionSteps.get();
+									solveData.ignoreAroundBrightSpots.dilationSteps = this->parameters.lineFinder.ignoreAroundBrightSpots.dilationSteps.get();
+									solveData.ignoreAroundBrightSpots.dilationSize = this->parameters.lineFinder.ignoreAroundBrightSpots.dilationSize.get();
+
+									solveData.maxFeatureDiameter.enabled = this->parameters.lineFinder.maxFeatureDiameter.enabled.get();
+									solveData.maxFeatureDiameter.diameter = this->parameters.lineFinder.maxFeatureDiameter.diameter.get();
 
 									solveData.debug.previewEnabled = this->parameters.lineFinder.preview.enabled.get();
 									solveData.debug.previewPopup = this->parameters.lineFinder.preview.popup.get();
@@ -98,7 +107,12 @@ namespace ofxRulr {
 
 									// Save the preview as report
 									if (this->parameters.lineFinder.preview.enabled && this->parameters.lineFinder.preview.save) {
-										cv::imwrite((laserCapture->directory / "Report - LinesWithCommonPoint.png").string(), result.solution.preview);
+										auto reportFilepath = laserCapture->directory / "Report - LinesWithCommonPoint.png";
+										cv::imwrite(reportFilepath.string(), result.solution.preview);
+
+										// Also copy the file into the parent director
+										auto fileCopyPath = laserCapture->directory.parent_path() / ("calibrateLines s" + ofToString(laserCapture->serialNumber) + ".png");
+										filesystem::copy(reportFilepath, fileCopyPath, std::filesystem::copy_options::overwrite_existing);
 									}
 
 									// Pull data back from solve

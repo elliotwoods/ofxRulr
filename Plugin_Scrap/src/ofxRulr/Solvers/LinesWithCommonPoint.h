@@ -49,6 +49,19 @@ namespace ofxRulr {
 				bool useAlternativeSolve;
 
 				struct {
+					bool enabled;
+					int threshold;
+					int erosionSteps;
+					int dilationSteps;
+					int dilationSize;
+				} ignoreAroundBrightSpots;
+
+				struct {
+					bool enabled;
+					int diameter;
+				} maxFeatureDiameter;
+
+				struct {
 					bool previewEnabled = false;
 					bool previewPopup = false;
 
