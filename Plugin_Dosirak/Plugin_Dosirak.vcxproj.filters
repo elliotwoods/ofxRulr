@@ -15,6 +15,9 @@
     <ClCompile Include="src\ofxRulr\Nodes\Dosirak\DrawCurves.cpp">
       <Filter>ofxRulr\Nodes\Dosirak</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Dosirak\RecordAndRender.cpp">
+      <Filter>ofxRulr\Nodes\Dosirak</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Dosirak.h" />
@@ -28,6 +31,9 @@
       <Filter>ofxRulr\Nodes\Dosirak</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Dosirak\DrawCurves.h">
+      <Filter>ofxRulr\Nodes\Dosirak</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Dosirak\RecordAndRender.h">
       <Filter>ofxRulr\Nodes\Dosirak</Filter>
     </ClInclude>
   </ItemGroup>

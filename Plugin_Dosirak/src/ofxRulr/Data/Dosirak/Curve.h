@@ -17,6 +17,8 @@ namespace ofxRulr {
 				void deserialize(const nlohmann::json&);
 
 				Curve getTransformed(const glm::mat4&) const;
+
+				bool operator!=(const Curve&) const;
 			protected:
 				ofPolyline preview;
 			};
@@ -26,6 +28,7 @@ namespace ofxRulr {
 				void deserialize(const nlohmann::json&);
 
 				Curves getTransformed(const glm::mat4&) const;
+				bool operator!=(const Curves&) const;
 			};
 		}
 	}

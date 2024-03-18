@@ -22,7 +22,8 @@ namespace ofxRulr {
 
 				void setCurves(const Data::Dosirak::Curves&);
 				const Data::Dosirak::Curves& getCurvesRaw() const;
-				Data::Dosirak::Curves getCurvesTransformed() const;
+				Data::Dosirak::Curves getCurvesTransformed(const Data::Dosirak::Curves&) const;
+				vector<glm::vec3> getWorldPoints(const Data::Dosirak::Curves&);
 
 				ofxLiquidEvent<void> onNewCurves;
 

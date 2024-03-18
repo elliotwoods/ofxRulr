@@ -592,10 +592,10 @@ namespace ofxRulr {
 			}
 
 			//----------
-			std::future<void>
-				Laser::drawWorldPoints(const vector<glm::vec3>& worldPoints)
+			vector<glm::vec2>
+				Laser::renderWorldPoints(const vector<glm::vec3>& worldPoints, const vector<glm::vec2>& priorPicture) const
 			{
-				bool usePriors = this->lastPictureSent.size() == worldPoints.size();
+				bool usePriors = priorPicture.size() == worldPoints.size();
 
 				const auto& solverSettings = ofxRulr::Solvers::NavigateToWorldPoint::defaultSolverSettings();
 				const auto& laserProjectorModel = this->getModel();
@@ -637,8 +637,16 @@ namespace ofxRulr {
 						results.push_back(result.solution.point);
 					}
 				}
-				
-				return this->drawPicture(results);
+
+				return results;
+			}
+
+			//----------
+			std::future<void>
+				Laser::drawWorldPoints(const vector<glm::vec3>& worldPoints)
+			{
+				auto picture = this->renderWorldPoints(worldPoints, this->getLastPicture());
+				return this->drawPicture(picture);
 			}
 
 			//----------

@@ -88,6 +88,7 @@ namespace ofxRulr {
 				std::future<void> drawCalibrationBeam(const glm::vec2 & projectionPoint);
 				std::future<void> drawPicture(const vector<glm::vec2>&);
 
+				vector<glm::vec2> renderWorldPoints(const vector<glm::vec3>&, const vector<glm::vec2>& priorPicture = vector<glm::vec2>()) const;
 				std::future<void> drawWorldPoints(const vector<glm::vec3>&);
 
 				void sendMessage(shared_ptr<Data::AnotherMoon::OutgoingMessage>);

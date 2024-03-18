@@ -181,11 +181,25 @@ namespace ofxRulr {
 
 			//----------
 			Data::Dosirak::Curves
-				Curves::getCurvesTransformed() const
+				Curves::getCurvesTransformed(const Data::Dosirak::Curves& curves) const
 			{
 				const auto scale = this->parameters.scale.get();
 				auto transform = this->rigidBody->getTransform() * glm::scale(glm::vec3(scale, scale, scale));
-				return this->curves.getTransformed(transform);
+				return curves.getTransformed(transform);
+			}
+
+			//----------
+			vector<glm::vec3>
+				Curves::getWorldPoints(const Data::Dosirak::Curves& curves)
+			{
+				vector<glm::vec3> worldPoints;
+				{
+					auto curvesTransformed = this->getCurvesTransformed(curves);
+					for (const auto& curve : curvesTransformed) {
+						worldPoints.insert(worldPoints.begin(), curve.second.points.begin(), curve.second.points.end());
+					}
+				}
+				return worldPoints;
 			}
 			
 			//----------

@@ -81,13 +81,7 @@ namespace ofxRulr {
 				if (curvesNode && lasersNode) {
 
 					// gather world points
-					vector<glm::vec3> worldPoints;
-					{
-						auto curves = curvesNode->getCurvesTransformed();
-						for (const auto& curve : curves) {
-							worldPoints.insert(worldPoints.begin(), curve.second.points.begin(), curve.second.points.end());
-						}
-					}
+					auto worldPoints = curvesNode->getWorldPoints(curvesNode->getCurvesRaw());
 
 					// send world points to all laser projectors
 					auto lasers = lasersNode->getLasersSelected();

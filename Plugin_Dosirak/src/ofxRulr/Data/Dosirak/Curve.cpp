@@ -109,6 +109,28 @@ namespace ofxRulr {
 				return transformedCurve;
 			}
 
+			//----------
+			bool
+				Curve::operator!=(const Curve & other) const
+			{
+				// being lazy to install vvvv for missing symbol so writing code here
+				for (int i = 0; i < 4; i++) {
+					if (other.color[i] != this->color[i]) {
+						return true;
+					}
+				}
+
+				if (other.points.size() != this->points.size()) {
+					return true;
+				}
+				for (int i = 0; i < other.points.size(); i++) {
+					if (other.points[i] != this->points[i]) {
+						return true;
+					}
+				}
+				return false;
+			}
+
 #pragma mark Curves
 			//----------
 			void
@@ -151,6 +173,31 @@ namespace ofxRulr {
 				}
 				return transformedCurves;
 			}
+
+			//----------
+			bool
+				Curves::operator!=(const Curves& other) const
+			{
+				if (other.size() != this->size()) {
+					return true;
+				}
+
+				for (const auto & it : other) {
+					// check we have a curve with matching name
+					auto findCurve = this->find(it.first);
+					if (findCurve == this->end()) {
+						return true;
+					}
+
+					// Check the curves match
+					if (findCurve->second != it.second) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
 		}
 	}
 }
