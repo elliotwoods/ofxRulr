@@ -6,6 +6,113 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Dosirak {
+#pragma mark Frame
+			//----------
+			void
+				RecordAndRender::Frame::serialize(nlohmann::json& json) const
+			{
+				this->curves.serialize(json["curves"]);
+
+				{
+					auto& jsonPictures = json["pictures"];
+					for (const auto& it : this->renderedPictures) {
+						ofxRulr::Utils::serialize(jsonPictures[ofToString(it.first)], it.second);
+					}
+				}
+			}
+
+			//----------
+			void
+				RecordAndRender::Frame::deserialize(const nlohmann::json& json)
+			{
+				if (json.contains("curves")) {
+					this->curves.deserialize(json["curves"]);
+				}
+
+				if (json.contains("pictures")) {
+					this->renderedPictures.clear();
+
+					const auto& jsonPictures = json["pictures"];
+					for (auto it = jsonPictures.begin(); it != jsonPictures.end(); it++) {
+						auto key = ofToInt(it.key());
+						this->renderedPictures.emplace(key, Picture());
+
+						auto& jsonPicture = it.value();
+						auto& picture = this->renderedPictures[key];
+						ofxRulr::Utils::deserialize(jsonPicture, picture);
+					}
+				}
+			}
+
+			//----------
+			shared_ptr<RecordAndRender::Frame>
+				RecordAndRender::Frame::clone()
+			{
+				// this'll work since nothing inside Frames uses pointers for now
+				auto frame = make_shared<RecordAndRender::Frame>(*this);
+				return frame;
+			}
+
+#pragma mark Frames
+			//----------
+			void
+				RecordAndRender::Frames::serialize(nlohmann::json& json) const
+			{
+				json = nlohmann::json::array();
+
+				for (const auto& frame : *this) {
+					nlohmann::json jsonFrame;
+					frame->serialize(jsonFrame);
+					json.push_back(jsonFrame);
+				}
+			}
+
+			//----------
+			void
+				RecordAndRender::Frames::deserialize(const nlohmann::json& json)
+			{
+				this->clear();
+				for (const auto& jsonFrame : json) {
+					auto frame = make_shared<Frame>();
+					frame->deserialize(jsonFrame);
+					this->push_back(frame);
+				}
+			}
+
+			//----------
+			RecordAndRender::Frames
+				RecordAndRender::Frames::clone()
+			{
+				Frames frames;
+				for (auto& frame : *this) {
+					frames.push_back(frame->clone());
+				}
+				return frames;
+			}
+
+#pragma mark FrameSets
+			//----------
+			void
+				RecordAndRender::FrameSets::serialize(nlohmann::json& json) const
+			{
+				for (const auto& it : *this) {
+					it.second->serialize(json[it.first]);
+				}
+			}
+
+			//----------
+			void
+				RecordAndRender::FrameSets::deserialize(const nlohmann::json& json)
+			{
+				this->clear();
+				for (auto it = json.begin(); it != json.end(); it++) {
+					auto frames = make_shared<Frames>();
+					frames->deserialize(it.value());
+					this->emplace(it.key(), frames);
+				}
+			}
+
+#pragma mark RecordAndRender
 			//----------
 			RecordAndRender::RecordAndRender()
 			{
@@ -52,80 +159,8 @@ namespace ofxRulr {
 
 				{
 					auto panel = ofxCvGui::Panels::makeWidgets();
-
-					// Record button
-					{
-						auto toggle = panel->addToggle("Record", [this]() {
-							return this->state.get() == State::Record;
-							}
-							, [this](bool value) {
-								if (value) {
-									this->state.set(State::Record);
-								}
-								else {
-									this->state.set(State::Pause);
-								}
-							});
-						toggle->setDrawGlyph(u8"\uf111");
-					}
-
-					// Play button
-					{
-						auto toggle = panel->addToggle("Play", [this]() {
-							return this->state.get() == State::Play;
-							}
-							, [this](bool value) {
-								if (value) {
-									this->state.set(State::Play);
-								}
-								else {
-									this->state.set(State::Pause);
-								}
-							});
-						toggle->setDrawGlyph(u8"\uf04b");
-					}
-
-					// Pause button
-					{
-						auto toggle = panel->addToggle("Pause", [this]() {
-							return this->state.get() == State::Pause;
-							}
-							, [this](bool value) {
-								if (value) {
-									this->state.set(State::Pause);
-								}
-								else {
-									this->state.set(State::Pause);
-								}
-							});
-						toggle->setDrawGlyph(u8"\uf04c");
-					}
-
-					// Clear button
-					{
-						auto button = panel->addButton("Clear", [this]() {
-							this->clear();
-							});
-						button->setDrawGlyph(u8"\uf1f8");
-					}
-
-					panel->addLiveValue<size_t>("Frame count", [this]() {
-						return this->frames.size();
-						});
-					panel->addEditableValue<int>(this->playPosition);
-
-					// Render button
-					{
-						auto button = panel->addButton("Render", [this]() {
-							try {
-								this->render();
-							}
-							RULR_CATCH_ALL_TO_ERROR;
-							});
-						button->setHeight(100.0f);
-					}
-
 					this->panel = panel;
+					this->refreshPanel();
 				}
 			}
 
@@ -160,14 +195,17 @@ namespace ofxRulr {
 			void
 				RecordAndRender::serialize(nlohmann::json& json) const
 			{
-
+				this->frameSets.serialize(json["frameSets"]);
 			}
 
 			//----------
 			void
 				RecordAndRender::deserialize(const nlohmann::json& json)
 			{
-
+				if (json.contains("frameSets")) {
+					this->frameSets.deserialize(json["frameSets"]);
+				}
+				this->refreshPanel();
 			}
 
 			//----------
@@ -208,6 +246,9 @@ namespace ofxRulr {
 				auto curvesNode = this->getInput<Curves>();
 
 				Utils::ScopedProcess scopedProcess("Render frames", true, this->frames.size());
+				
+				map<int, vector<glm::vec2>> priorPictures; // for speeding up rendering
+
 				for (auto frame : this->frames) {
 					Utils::ScopedProcess scopedProcessFrame("Frame", true);
 
@@ -222,7 +263,36 @@ namespace ofxRulr {
 						}
 
 						auto worldPoints = curvesNode->getWorldPoints(frame->curves);
-						auto projectorPoints = laser->renderWorldPoints(worldPoints);
+						
+						vector<glm::vec2>* priorPicture = nullptr;
+						{
+							auto findPriorPicture = priorPictures.find(serialNumber);
+							if (findPriorPicture != priorPictures.end()) {
+								priorPicture = &findPriorPicture->second;
+							}
+						}
+
+						auto projectorPoints = priorPicture
+							? laser->renderWorldPoints(worldPoints, *priorPicture)
+							: laser->renderWorldPoints(worldPoints);
+						
+						// Prune projector points outside range
+						if (this->parameters.rendering.prunePointsOutsideRange.get()) {
+							Picture prunedPicture;
+							ofRectangle limits(-1, -1, 2, 2);
+							
+							for (auto& projectorPoint : projectorPoints) {
+								if (limits.inside(projectorPoint)) {
+									prunedPicture.push_back(projectorPoint);
+								}
+							}
+							projectorPoints = prunedPicture;
+						}
+						
+						try {
+							laser->drawPicture(projectorPoints);
+						}
+						RULR_CATCH_ALL_TO_ERROR;
 
 						frame->renderedPictures.emplace(serialNumber, projectorPoints);
 					}
@@ -239,6 +309,10 @@ namespace ofxRulr {
 					scopedProcessFrame.end();
 				}
 				scopedProcess.end();
+
+				if (this->parameters.rendering.playAfterRender) {
+					this->state.set(State::Play);
+				}
 			}
 
 			//----------
@@ -255,8 +329,112 @@ namespace ofxRulr {
 
 				this->playPosition++;
 
-				// Double check
-				if (this->playPosition >= this->frames.size()) {
+				presentCurrentFrame();
+			}
+
+			//----------
+			void
+				RecordAndRender::clear()
+			{
+				this->frames.clear();
+			}
+
+			//----------
+			void
+				RecordAndRender::clearRenders()
+			{
+				for (auto frame : this->frames) {
+					frame->renderedPictures.clear();
+				}
+			}
+
+			//----------
+			void
+				RecordAndRender::store(string name)
+			{
+				if (name == "") {
+					name = ofSystemTextBoxDialog("Recording name");
+				}
+
+				this->frameSets[name] = make_shared<Frames>(this->frames.clone());
+				this->refreshPanel();
+			}
+
+			//----------
+			void
+				RecordAndRender::recall(string name)
+			{
+				if (name == "") {
+					name = ofSystemTextBoxDialog("Recording name");
+				}
+
+				auto it = this->frameSets.find(name);
+				if (it == this->frameSets.end()) {
+					throw(ofxRulr::Exception("Can't find frameSet " + name));
+				}
+
+				// Deep copy the frames (in case we edit and store as different copy)
+				this->frames = it->second->clone();
+				presentCurrentFrame();
+			}
+
+			//----------
+			void
+				RecordAndRender::clearFrameSets()
+			{
+				this->frameSets.clear();
+				this->refreshPanel();
+			}
+
+			//----------
+			void
+				RecordAndRender::transportGotoFirst()
+			{
+				this->playPosition.set(0);
+				presentCurrentFrame();
+			}
+
+			//----------
+			void
+				RecordAndRender::transportGotoLast()
+			{
+				this->playPosition.set(this->frames.size() - 1);
+				presentCurrentFrame();
+			}
+
+			//----------
+			void
+				RecordAndRender::transportGotoNext()
+			{
+				auto position = this->playPosition.get();
+				position++;
+				if (position < this->frames.size()) {
+					this->playPosition.set(position);
+				}
+
+				presentCurrentFrame();
+			}
+
+			//----------
+			void
+				RecordAndRender::transportGotoPrevious()
+			{
+				auto position = this->playPosition.get();
+				position--;
+				if (position >= 0) {
+					this->playPosition.set(position);
+				}
+
+				presentCurrentFrame();
+			}
+
+			//----------
+			void
+				RecordAndRender::presentCurrentFrame()
+			{
+				// Double check frame index is OK
+				if (this->playPosition >= this->frames.size()
+					|| this->playPosition < 0) {
 					return;
 				}
 
@@ -273,7 +451,12 @@ namespace ofxRulr {
 							// find the rendered frame
 							auto it = frame->renderedPictures.find(serialNumber);
 							if (it != frame->renderedPictures.end()) {
-								laser->drawPicture(it->second);
+								auto& projectorPoints = it->second;
+
+								try {
+									laser->drawPicture(projectorPoints);
+								}
+								RULR_CATCH_ALL_TO_ERROR;
 							}
 						}
 					}
@@ -287,10 +470,164 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void
-				RecordAndRender::clear()
+			vector<string>
+				RecordAndRender::getStoredRecordingNames() const
 			{
-				this->frames.clear();
+				vector<string> frameSetNames;
+				frameSetNames.reserve(this->frameSets.size());
+				for (const auto& it : this->frameSets) {
+					frameSetNames.push_back(it.first);
+				}
+				return frameSetNames;
+			}
+
+			//----------
+			void
+				RecordAndRender::refreshPanel()
+			{
+				this->panel->clear();
+
+				// Record controls
+				{
+					auto strip = panel->addHorizontalStack();
+
+					// Record button
+					{
+						auto toggle = make_shared<ofxCvGui::Widgets::Toggle>("Record", [this]() {
+							return this->state.get() == State::Record;
+							}
+							, [this](bool value) {
+								if (value) {
+									this->state.set(State::Record);
+								}
+								else {
+									this->state.set(State::Pause);
+								}
+							});
+						toggle->setDrawGlyph(u8"\uf111");
+						strip->add(toggle);
+					}
+
+					// Play button
+					{
+						auto toggle = make_shared<ofxCvGui::Widgets::Toggle>("Play", [this]() {
+							return this->state.get() == State::Play;
+							}
+							, [this](bool value) {
+								if (value) {
+									this->state.set(State::Play);
+								}
+								else {
+									this->state.set(State::Pause);
+								}
+							});
+						toggle->setDrawGlyph(u8"\uf04b");
+						strip->add(toggle);
+					}
+
+					// Pause button
+					{
+						auto toggle = make_shared<ofxCvGui::Widgets::Toggle>("Pause", [this]() {
+							return this->state.get() == State::Pause;
+							}
+							, [this](bool value) {
+								if (value) {
+									this->state.set(State::Pause);
+								}
+								else {
+									this->state.set(State::Pause);
+								}
+							});
+						toggle->setDrawGlyph(u8"\uf04c");
+						strip->add(toggle);
+					}
+
+					// Clear renders button
+					{
+						auto button = make_shared<ofxCvGui::Widgets::Button>("Clear renders", [this]() {
+							this->clearRenders();
+							});
+						button->setDrawGlyph(u8"\uf12d"); // Eraser
+						strip->add(button);
+					}
+
+					// Clear button
+					{
+						auto button = make_shared<ofxCvGui::Widgets::Button>("Delete frames", [this]() {
+							this->clear();
+							});
+						button->setDrawGlyph(u8"\uf1f8"); // Trash
+						strip->add(button);
+					}
+				}
+
+				// Play position
+				{
+					// Numbers
+					{
+						auto strip = panel->addHorizontalStack();
+						strip->add(make_shared<ofxCvGui::Widgets::LiveValue<size_t>>("Frame count", [this]() {
+							return this->frames.size();
+							}));
+						strip->add(make_shared<ofxCvGui::Widgets::EditableValue<int>>(this->playPosition));
+					}
+
+					// Transport controls
+					{
+						auto strip = panel->addHorizontalStack();
+						strip->addButton("First", [this]() { this->transportGotoFirst(); })->setDrawGlyph(u8"\uf049");
+						strip->addButton("Previous", [this]() { this->transportGotoPrevious(); })->setDrawGlyph(u8"\uf048");
+						strip->addButton("Next", [this]() { this->transportGotoNext(); })->setDrawGlyph(u8"\uf051");
+						strip->addButton("Last", [this]() { this->transportGotoLast(); })->setDrawGlyph(u8"\uf050");
+					}
+				}
+
+				// Render button
+				{
+					auto button = panel->addButton("Render", [this]() {
+						try {
+							this->render();
+						}
+						RULR_CATCH_ALL_TO_ERROR;
+						});
+				}
+
+				panel->addSpacer();
+
+				// Recordings
+				{
+					{
+						auto strip = panel->addHorizontalStack();
+						strip->addButton("Store", [this]() {
+							try {
+								this->store();
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+							})->setDrawGlyph(u8"\uf019");
+						strip->addButton("Load", [this]() {
+							try {
+								this->recall();
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+							})->setDrawGlyph(u8"\uf093");
+						strip->addButton("Clear", [this]() {
+							try {
+								this->clearFrameSets();
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+							})->setDrawGlyph(u8"\uf1f8");
+					}
+
+					auto recordingNames = this->getStoredRecordingNames();
+					for (const auto& recordingName : recordingNames) {
+						auto button = panel->addButton(recordingName, [this, recordingName]() {
+							try {
+								this->recall(recordingName);
+							}
+							RULR_CATCH_ALL_TO_ALERT;
+							});
+					}
+				}
 			}
 
 			//----------

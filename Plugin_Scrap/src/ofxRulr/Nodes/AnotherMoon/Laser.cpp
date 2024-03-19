@@ -573,6 +573,10 @@ namespace ofxRulr {
 					}
 				}
 
+				if (projectionPoints.size() < 256) {
+					throw(ofxRulr::Exception("Insufficient points for a projector picture"));
+				}
+
 				// Create the message
 				auto message = this->createOutgoingMessageRetry();
 				{

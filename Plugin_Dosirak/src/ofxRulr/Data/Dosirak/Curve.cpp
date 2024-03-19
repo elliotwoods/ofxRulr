@@ -116,7 +116,7 @@ namespace ofxRulr {
 				// being lazy to install vvvv for missing symbol so writing code here
 				for (int i = 0; i < 4; i++) {
 					if (other.color[i] != this->color[i]) {
-						return true;
+						//return true; // <-- we ignore color changes for now because lissajous track colour is always changing HACK
 					}
 				}
 

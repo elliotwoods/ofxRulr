@@ -18,6 +18,22 @@ namespace ofxRulr {
 				struct Frame {
 					Data::Dosirak::Curves curves;
 					map<int, Picture> renderedPictures;
+
+					void serialize(nlohmann::json&) const;
+					void deserialize(const nlohmann::json&);
+
+					shared_ptr<Frame> clone();
+				};
+
+				struct Frames : vector<shared_ptr<Frame>> {
+					void serialize(nlohmann::json&) const;
+					void deserialize(const nlohmann::json&);
+					Frames clone();
+				};
+
+				struct FrameSets : map<string, shared_ptr<Frames>> {
+					void serialize(nlohmann::json&) const;
+					void deserialize(const nlohmann::json&);
 				};
 
 				RecordAndRender();
@@ -35,10 +51,24 @@ namespace ofxRulr {
 
 				void play();
 				void clear();
+				void clearRenders();
+
+				void store(string name = "");
+				void recall(string name = "");
+				vector<string> getStoredRecordingNames() const;
+				void clearFrameSets();
+
+				void transportGotoFirst();
+				void transportGotoLast();
+				void transportGotoNext();
+				void transportGotoPrevious();
+
+				void presentCurrentFrame();
 
 				ofxLiquidEvent<void> onNewCurves;
 
 			protected:
+				void refreshPanel();
 				void callbackNewCurves(const Data::Dosirak::Curves&);
 
 				ofParameter<State> state{ "State", State::Pause };
@@ -51,15 +81,18 @@ namespace ofxRulr {
 					} recording;
 
 					struct : ofParameterGroup {
+						ofParameter<bool> prunePointsOutsideRange{ "Prune points outside of range", true };
 						ofParameter<bool> drawPictures{ "Draw pictures", true };
-						PARAM_DECLARE("Rendering", drawPictures);
+						ofParameter<bool> playAfterRender{ "Play after render", true };
+						PARAM_DECLARE("Rendering", drawPictures, prunePointsOutsideRange, playAfterRender);
 					} rendering;
 
 					PARAM_DECLARE("RecordAndRender", recording, rendering);
 				} parameters;
 
-				ofxCvGui::PanelPtr panel;
-				vector<shared_ptr<Frame>> frames;
+				shared_ptr<ofxCvGui::Panels::Widgets> panel;
+				Frames frames;
+				FrameSets frameSets;
 			};
 		}
 	}

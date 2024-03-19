@@ -23,7 +23,7 @@ namespace ofxRulr {
 					ofParameter<WhenActive> onMoonChange { "On Moon change", WhenActive::Never };
 					ofParameter<bool> errorIfOutsideRange{ "Error if outside range", true };
 
-					ofParameter<float> resolution{ "Resolution", 100, 10, 1000 };
+					ofParameter<float> resolution{ "Resolution", 256, 10, 1024 };
 
 					struct : ofParameterGroup {
 						ofParameter<bool> enabled{ "Enabled", true };
