@@ -646,6 +646,30 @@ namespace ofxRulr {
 			}
 
 			//----------
+			vector<glm::vec2>
+				Laser::renderWorldPointsFast(const vector<glm::vec3>& worldPoints) const
+			{
+				// Perhaps this could be cached
+				auto viewTransform = glm::inverse(this->rigidBody->getTransform());
+
+				const auto halfFov = this->parameters.intrinsics.fov.get() / 2.0f * DEG_TO_RAD;
+
+				vector<glm::vec2> picture;
+
+				for (const auto& worldPoint : worldPoints) {
+					auto point_view = ofxCeres::VectorMath::applyTransform(viewTransform, worldPoint);
+					auto point_projected = glm::vec2(point_view.x, point_view.y) / point_view.z;
+					
+					auto tilt = atan(point_projected.y);
+					auto pan = atan(point_projected.x * cos(tilt));
+
+					picture.push_back({ pan / halfFov.x, tilt / halfFov.y });
+				}
+
+				return picture;
+			}
+
+			//----------
 			std::future<void>
 				Laser::drawWorldPoints(const vector<glm::vec3>& worldPoints)
 			{
@@ -683,6 +707,7 @@ namespace ofxRulr {
 				return Models::LaserProjector{
 					this->rigidBody->getTransform()
 					, this->parameters.intrinsics.fov.get()
+					, this->parameters.intrinsics.fov2.get()
 				};
 			}
 

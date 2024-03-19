@@ -78,6 +78,8 @@ namespace ofxRulr {
 				auto curvesNode = this->getInput<Curves>();
 				auto lasersNode = this->getInput<AnotherMoon::Lasers>();
 
+				const auto useFastMethod = this->parameters.useFastMethod.get();
+
 				if (curvesNode && lasersNode) {
 
 					// gather world points
@@ -86,7 +88,10 @@ namespace ofxRulr {
 					// send world points to all laser projectors
 					auto lasers = lasersNode->getLasersSelected();
 					for (auto laser : lasers) {
-						laser->drawWorldPoints(worldPoints);
+						auto picture = useFastMethod
+							? laser->renderWorldPointsFast(worldPoints)
+							: laser->renderWorldPoints(worldPoints);
+						laser->drawPicture(picture);
 					}
 				}
 

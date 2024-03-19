@@ -81,10 +81,11 @@ namespace ofxRulr {
 					} recording;
 
 					struct : ofParameterGroup {
+						ofParameter<bool> useFastMethod{ "Use fast method", true };
 						ofParameter<bool> prunePointsOutsideRange{ "Prune points outside of range", true };
 						ofParameter<bool> drawPictures{ "Draw pictures", true };
 						ofParameter<bool> playAfterRender{ "Play after render", true };
-						PARAM_DECLARE("Rendering", drawPictures, prunePointsOutsideRange, playAfterRender);
+						PARAM_DECLARE("Rendering", useFastMethod, drawPictures, prunePointsOutsideRange, playAfterRender);
 					} rendering;
 
 					PARAM_DECLARE("RecordAndRender", recording, rendering);

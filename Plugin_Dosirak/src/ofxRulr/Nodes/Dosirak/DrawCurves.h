@@ -21,7 +21,8 @@ namespace ofxRulr {
 
 				struct Parameters : ofParameterGroup {
 					ofParameter<bool> onNewFrame{ "onNewFrame", true };
-					PARAM_DECLARE("DrawCurves", onNewFrame);
+					ofParameter<bool> useFastMethod{ "Use fast method", true };
+					PARAM_DECLARE("DrawCurves", onNewFrame, useFastMethod);
 				} parameters;
 
 				bool needsDrawCurves = false;

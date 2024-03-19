@@ -244,6 +244,8 @@ namespace ofxRulr {
 				auto lasers = lasersNode->getLasersSelected();
 
 				auto curvesNode = this->getInput<Curves>();
+				
+				const auto useFastMethod = this->parameters.rendering.useFastMethod.get();
 
 				Utils::ScopedProcess scopedProcess("Render frames", true, this->frames.size());
 				
@@ -264,17 +266,18 @@ namespace ofxRulr {
 
 						auto worldPoints = curvesNode->getWorldPoints(frame->curves);
 						
-						vector<glm::vec2>* priorPicture = nullptr;
+						vector<glm::vec2> priorPicture;
 						{
 							auto findPriorPicture = priorPictures.find(serialNumber);
 							if (findPriorPicture != priorPictures.end()) {
-								priorPicture = &findPriorPicture->second;
+								priorPicture = findPriorPicture->second;
 							}
 						}
 
-						auto projectorPoints = priorPicture
-							? laser->renderWorldPoints(worldPoints, *priorPicture)
-							: laser->renderWorldPoints(worldPoints);
+						
+						auto projectorPoints = useFastMethod
+							? laser->renderWorldPointsFast(worldPoints)
+							: laser->renderWorldPoints(worldPoints, priorPicture);
 						
 						// Prune projector points outside range
 						if (this->parameters.rendering.prunePointsOutsideRange.get()) {
