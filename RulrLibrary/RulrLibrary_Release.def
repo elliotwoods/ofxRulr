@@ -398,14 +398,20 @@ EXPORTS
 	?setHeight@ofBoxPrimitive@@QEAAXM@Z
 	?setResolution@ofBoxPrimitive@@QEAAXH@Z
 	?setWidth@ofBoxPrimitive@@QEAAXM@Z
+	??9Line@ofBuffer@@QEBA_NAEBU01@@Z
+	??DLine@ofBuffer@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
+	??ELine@ofBuffer@@QEAAAEAU01@XZ
 	?append@ofBuffer@@QEAAXPEBD_K@Z
 	?begin@ofBuffer@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@D@std@@@std@@@std@@XZ
 	?end@ofBuffer@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@D@std@@@std@@@std@@XZ
 	?getData@ofBuffer@@QEAAPEADXZ
 	?getData@ofBuffer@@QEBAPEBDXZ
+	?getLines@ofBuffer@@QEAA?AULines@1@XZ
 	?getText@ofBuffer@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ
 	?set@ofBuffer@@QEAAXPEBD_K@Z
 	?size@ofBuffer@@QEBA_KXZ
+	?begin@Lines@ofBuffer@@QEAA?AULine@2@XZ
+	?end@Lines@ofBuffer@@QEAA?AULine@2@XZ
 	?worldToScreen@ofCamera@@QEBA?AU?$vec@$02M$0A@@glm@@U23@AEBVofRectangle@@@Z
 	?begin@ofDirectory@@QEBA?AV?$_Vector_const_iterator@V?$_Vector_val@U?$_Simple_types@VofFile@@@std@@@std@@@std@@XZ
 	?createDirectory@ofDirectory@@SA_NAEBVpath@filesystem@std@@_N1@Z

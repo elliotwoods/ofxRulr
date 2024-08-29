@@ -479,6 +479,14 @@ namespace ofxRulr {
 									laser->getRigidBody()->setPosition(worldPosition);
 								}
 
+								// Incline angle
+								if (values.size() >= 7) {
+									auto rotationVector = laser->getRigidBody()->getRotationEuler();
+									cout << rotationVector << endl;
+									rotationVector.x = ofToFloat(values[6]) * DEG_TO_RAD;
+									laser->getRigidBody()->setRotationEuler(rotationVector);
+								}
+
 							}
 						}
 					}
