@@ -50,6 +50,7 @@ namespace ofxRulr {
 				friend Laser;
 
 				void importJson();
+				void importCSV();
 
 				Utils::CaptureSet<Laser> lasers;
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;

@@ -189,6 +189,13 @@ namespace ofxRulr {
 					RULR_CATCH_ALL_TO_ALERT;
 					})->addToolTip("RunDeck make_nodes.py");
 
+				inspector->addButton("Import CSV", [this]() {
+					try {
+						this->importCSV();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					})->addToolTip("Position, Serial, IP, x, y, z");
+
 				inspector->addButton("Set state by selection", [this]() {
 					this->setStateBySelection();
 					});
@@ -394,6 +401,89 @@ namespace ofxRulr {
 							worldPosition.z = jsonModule["data"]["worldPosition"]["z"];
 							laser->getRigidBody()->setPosition(worldPosition);
 						}
+					}
+				}
+			}
+
+			//----------
+			void
+				Lasers::importCSV()
+			{
+				auto result = ofSystemLoadDialog("Select CSV file");
+				if (result.bSuccess) {
+					// Load the file into a string
+					auto file = ofFile(result.filePath, ofFile::Mode::ReadOnly, false);
+					if (file.is_open()) {
+						auto priorLasers = this->lasers.getAllCaptures();
+
+						// Get previous selection
+						set<size_t> previousPositionSelections;
+						{
+							for (auto priorLaser : priorLasers) {
+								if (priorLaser->isSelected()) {
+									previousPositionSelections.insert(priorLaser->parameters.positionIndex.get());
+								}
+							}
+						}
+						this->lasers.clear();
+
+						// Read the file
+						auto buffer = file.readToBuffer();
+
+						// Iterate over lines
+						for (auto line : buffer.getLines()) {
+							// Get the values for one line
+							auto values = ofSplitString(line, ",");
+							if (values.size() >= 6) {
+								// It's a valid line
+								auto positionIndex = ofToInt(values[0]);
+								auto serialNumber = ofToInt(values[1]);
+								auto hostname = values[2];
+
+								shared_ptr<Laser> laser;
+
+								// check if we should be using an existing laser
+								{
+									bool foundInPriors = false;
+									for (auto priorLaser : priorLasers) {
+										if (priorLaser->parameters.positionIndex.get() == positionIndex) {
+											// It's in priors, use that
+											laser = priorLaser;
+											foundInPriors = true;
+											break;
+										}
+									}
+
+									if (!foundInPriors) {
+										// It's not in priors, set this up as a new one
+										laser = make_shared<Laser>();
+										laser->setParent(this);
+										laser->parameters.positionIndex.set(positionIndex);
+									}
+								}
+
+								// we always remove to start with, even if it's a prior
+								this->lasers.add(laser);
+								if (previousPositionSelections.find(laser->parameters.positionIndex.get()) != previousPositionSelections.end()) {
+									laser->setSelected(true);
+								}
+
+								laser->parameters.serialNumber.set(serialNumber);
+								laser->parameters.communications.hostname.set(hostname);
+
+								{
+									glm::vec3 worldPosition;
+									worldPosition.x = ofToFloat(values[3]);
+									worldPosition.y = ofToFloat(values[4]);
+									worldPosition.z = ofToFloat(values[5]);
+									laser->getRigidBody()->setPosition(worldPosition);
+								}
+
+							}
+						}
+					}
+					else {
+						throw(ofxRulr::Exception("Failed to open CSV"));
 					}
 				}
 			}
