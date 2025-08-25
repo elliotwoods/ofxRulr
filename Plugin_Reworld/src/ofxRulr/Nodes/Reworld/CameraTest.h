@@ -111,7 +111,7 @@ namespace ofxRulr {
 							struct : ofParameterGroup {
 								ofParameter<float> minR{ "Min R", 0.01, 0, 1 };
 								ofParameter<float> maxR{ "Max R", 1, 0, 1 };
-								ofParameter<int> rSteps{ "Theta steps", 64 };
+								ofParameter<int> rSteps{ "R steps", 64 };
 								ofParameter<float> minTheta{ "Min theta", 0, 0, TWO_PI };
 								ofParameter<float> maxTheta{ "Max theta", TWO_PI, 0, TWO_PI };
 								ofParameter<int> thetaSteps{ "Theta steps", 64 };
