@@ -1,6 +1,7 @@
 #include "pch_Plugin_Reworld.h"
 #include "Column.h"
 #include "ofxRulr/Nodes/Reworld/Installation.h"
+#include "ofxRulr/Nodes/Reworld/ModuleView.h"
 
 namespace ofxRulr {
 	namespace Data {
@@ -12,18 +13,20 @@ namespace ofxRulr {
 				{
 					this->onSerialize += [this](nlohmann::json& json) {
 						this->serialize(json);
-					};
+						};
 					this->onDeserialize += [this](const nlohmann::json& json) {
 						this->deserialize(json);
-					};
+						};
 					this->onPopulateInspector += [this](ofxCvGui::InspectArguments& args) {
 						args.inspector->addParameterGroup(this->parameters);
-					};
+						};
 
 					this->rigidBody = make_shared<Nodes::Item::RigidBody>();
+					this->rigidBody->init();
+
 					this->rigidBody->onDrawObjectAdvanced += [this](DrawWorldAdvancedArgs& args) {
 						this->drawObjectAdvanced(args);
-					};
+						};
 				}
 			}
 
@@ -53,46 +56,34 @@ namespace ofxRulr {
 				Column::drawObjectAdvanced(DrawWorldAdvancedArgs& args)
 			{
 				auto argsCustom = args;
-				auto panels = this->panels.getSelection();
-				auto labelDraws = static_cast<Nodes::Reworld::Installation::LabelDraws *>(argsCustom.custom);
+				auto selectedModules = this->modules.getSelection();
+				auto labelDraws = static_cast<Nodes::Reworld::Installation::LabelDraws*>(argsCustom.custom);
 
-				for (auto panel : panels) {
-					if (labelDraws) {
-						argsCustom.enableGui = isActive(this->ourSelection.selection == panel.get()
-							, labelDraws->panel);
-					}
-
-					panel->drawWorldAdvanced(argsCustom);
+				for (auto module : selectedModules) {
+					// Enable and disable the caption for the RigidBody
+					argsCustom.enableGui = ofxRulr::isActive(Nodes::Reworld::ModuleView::isSelected(module.get()), labelDraws->module.get());
+					module->drawWorldAdvanced(argsCustom);
 				}
 			}
 
 			//----------
-			vector<glm::vec3>
-				Column::getVertices() const
+			void
+				Column::setParent(Nodes::Reworld::Installation* parent)
 			{
-				vector<glm::vec3> vertices;
-				auto transform = this->rigidBody->getTransform();
-
-				auto panels = this->panels.getSelection();
-				for (auto panel : panels) {
-					auto panelVertices = panel->getVertices();
-					for (const auto & panelVertex : panelVertices) {
-						vertices.push_back(ofxCeres::VectorMath::applyTransform(transform, panelVertex));
-					}
-				}
-
-				return vertices;
+				this->parent = parent;
 			}
 
 			//----------
 			void
 				Column::init()
 			{
-				// Sub selections
+				// Init modules
 				{
-					auto panels = this->panels.getAllCaptures();
-					for (auto panel : panels) {
-						panel->parentSelection = &this->ourSelection;
+					auto modules = this->modules.getAllCaptures();
+					for (auto module : modules) {
+						module->parentSelection = &this->ourSelection;
+						module->setParent(this);
+						module->init();
 					}
 				}
 
@@ -115,7 +106,7 @@ namespace ofxRulr {
 			{
 				Utils::serialize(json, this->parameters);
 
-				this->panels.serialize(json["panels"]);
+				this->modules.serialize(json["modules"]);
 				this->rigidBody->serialize(json["rigidBody"]);
 			}
 
@@ -125,8 +116,8 @@ namespace ofxRulr {
 			{
 				Utils::deserialize(json, this->parameters);
 
-				if (json.contains("panels")) {
-					this->panels.deserialize(json["panels"]);
+				if (json.contains("modules")) {
+					this->modules.deserialize(json["modules"]);
 				}
 
 				if (json.contains("rigidBody")) {
@@ -138,37 +129,35 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Column::build(const BuildParameters& buildParameters, const Panel::BuildParameters& panelBuildParameters, int columnIndex)
+				Column::build(int columnIndex, int countY, float pitch)
 			{
-				this->panels.clear();
-
-				// pull the parameters
-				const auto countY = buildParameters.countY.get();
-				const auto yStart = buildParameters.yStart.get();
-				const auto verticalStride = buildParameters.verticalStride.get();
-
 				this->parameters.index.set(columnIndex);
 
-				// incremental transform
-				glm::mat4 currentTransform = glm::translate(glm::vec3(0, yStart, 0));
-				
-				int targetIndexOffset = 1;
+				this->modules.resize(countY, []() { return make_shared<Module>(); });
 
+				// incremental transform
+				glm::mat4 runningTransform = glm::translate(glm::vec3(0, -pitch / 2.0f, 0));
+
+				auto allModules = this->modules.getAllCaptures();
 				for (int i = 0; i < countY; i++) {
-					auto panel = make_shared<Panel>();
-					panel->parentSelection = &this->ourSelection;
-					panel->build(panelBuildParameters, targetIndexOffset);
-					panel->rigidBody->setTransform(currentTransform);
-					this->panels.add(panel);
+					auto module = allModules[i];
+					module->parentSelection = &this->ourSelection;
+					module->positionInColumn->setTransform(runningTransform);
+					module->parameters.ID.set(i + 1);
 
 					// Increment transform
-					currentTransform *= glm::translate(glm::vec3(0, verticalStride, 0));
-
-					// Increment targetIndex
-					targetIndexOffset += panel->portals.size();
+					runningTransform = glm::translate(glm::vec3(0, -pitch, 0)) * runningTransform;
 				}
 
 				this->init();
+			}
+
+			//----------
+			glm::mat4
+				Column::getAbsoluteTransform() const
+			{
+				return this->parent->getTransform()
+					* this->rigidBody->getTransform();
 			}
 
 			//----------
@@ -201,7 +190,7 @@ namespace ofxRulr {
 							else {
 								ofLogError() << "EditSelection not initialised";
 							}
-						});
+							});
 					button->setDrawGlyph(u8"\uf03a");
 					stack->add(button);
 				}
@@ -216,7 +205,7 @@ namespace ofxRulr {
 							if (value) {
 								ofxCvGui::inspect(this->rigidBody);
 							}
-						});
+							});
 					button->setDrawable([this](ofxCvGui::DrawArguments& args) {
 						ofRectangle bounds;
 						bounds.setFromCenter(args.localBounds.getCenter(), 32, 32);

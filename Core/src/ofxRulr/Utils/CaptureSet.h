@@ -48,6 +48,7 @@ namespace ofxRulr {
 			void add(shared_ptr<BaseCapture>);
 			void remove(shared_ptr<BaseCapture>);
 			void clear();
+			void resize(size_t count, std::function<shared_ptr<BaseCapture>()> createFunction);
 
 			void select(shared_ptr<BaseCapture>);
 			void selectAll();

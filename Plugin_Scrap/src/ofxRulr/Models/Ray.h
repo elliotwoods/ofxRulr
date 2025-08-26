@@ -24,14 +24,14 @@ namespace ofxRulr {
 			{
 				return Ray_<T2>{
 					(glm::tvec3<T2>) this->s
-					, (glm::tvec3<T2>) this->t
+						, (glm::tvec3<T2>) this->t
 				};
 			}
 
 			ofxRay::Ray getRay() const
 			{
-				return ofxRay::Ray((glm::vec3) this->s
-					, (glm::vec3) this->t
+				return ofxRay::Ray((glm::vec3)this->s
+					, (glm::vec3)this->t
 					, false);
 			}
 		};

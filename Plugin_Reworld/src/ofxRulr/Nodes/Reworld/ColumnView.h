@@ -13,6 +13,7 @@ namespace ofxRulr {
 			{
 			public:
 				ColumnView();
+				~ColumnView();
 				string getTypeName() const override;
 
 				void init();
@@ -20,8 +21,11 @@ namespace ofxRulr {
 
 				ofxCvGui::PanelPtr getPanel() override;
 				Data::Reworld::Column * selection = nullptr;
+
+				static bool isSelected(Data::Reworld::Column *);
 			protected:
 				void rebuildView();
+				static set<ColumnView*> instances;
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
 			};
 		}

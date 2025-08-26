@@ -300,6 +300,21 @@ namespace ofxRulr {
 		}
 
 		//----------
+		void AbstractCaptureSet::resize(size_t count, std::function<shared_ptr<BaseCapture>()> createFunction) {
+			if (count == 0) {
+				this->clear();
+			}
+
+			while (this->captures.size() > count) {
+				this->remove(* this->getAllCapturesUntyped().rbegin());
+			}
+
+			while (this->captures.size() < count) {
+				this->add(createFunction());
+			}
+		}
+
+		//----------
 		void AbstractCaptureSet::select(shared_ptr<BaseCapture> capture) {
 			capture->setSelected(true);
 		}

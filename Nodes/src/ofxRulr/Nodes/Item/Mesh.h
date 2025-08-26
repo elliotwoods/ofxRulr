@@ -16,6 +16,10 @@ namespace ofxRulr {
 					, (NegX, PosX, NegY, PosY, NegZ, PosZ)
 					, ("-X", "+X", "-Y", "+Y", "-Z", "+Z"));
 
+				MAKE_ENUM(Cull
+					, (None, CW, CCW)
+					, ("None", "CW", "CCW"));
+
 				Mesh();
 				string getTypeName() const override;
 				void init();
@@ -48,9 +52,10 @@ namespace ofxRulr {
 					struct : ofParameterGroup {
 						ofParameter<bool> vertices{ "Vertices", false };
 						ofParameter<bool> wireframe{ "Wireframe", false };
-						ofParameter<bool> faces{ "Faces", false };
+						ofParameter<bool> faces{ "Faces", true };
+						ofParameter<Cull> cull{ "Cull", Cull::None };
 						ofParameter<ofFloatColor> color{ "Color", ofColor(1.0f) };
-						PARAM_DECLARE("Draw style", vertices, wireframe, faces, color);
+						PARAM_DECLARE("Draw style", vertices, wireframe, faces, cull, color);
 					} drawStyle;
 
 					struct : ofParameterGroup {

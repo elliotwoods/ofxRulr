@@ -1,5 +1,6 @@
 #include "pch_Plugin_Reworld.h"
 #include "Installation.h"
+#include "ColumnView.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -24,21 +25,21 @@ namespace ofxRulr {
 				RULR_NODE_UPDATE_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_INSPECTOR_LISTENER;
-				
 
-				this->rigidBody = make_shared<Nodes::Item::RigidBody>();
-				this->rigidBody->onDrawObjectAdvanced += [this](DrawWorldAdvancedArgs& args) {
+
+				this->onDrawObjectAdvanced += [this](DrawWorldAdvancedArgs& args) {
 					this->drawObjectAdvanced(args);
-				};
-				this->onDrawWorldAdvanced += [this](DrawWorldAdvancedArgs& args) {
-					this->rigidBody->drawWorldAdvanced(args);
-				};
+					};
+
+				this->stepOffset = make_shared<Nodes::Item::RigidBody>();
+				this->stepOffset->init();
+
 
 				this->manageParameters(this->parameters);
 
 				{
 					auto panel = ofxCvGui::Panels::makeWidgets();
-					panel->addTitle("Camera positions:", ofxCvGui::Widgets::Title::Level::H3);
+					panel->addTitle("Columns:", ofxCvGui::Widgets::Title::Level::H3);
 					this->columns.populateWidgets(panel);
 					this->panel = panel;
 				}
@@ -58,11 +59,10 @@ namespace ofxRulr {
 				auto argsCustom = args;
 				argsCustom.custom = &this->parameters.draw.labels;
 				auto columns = this->columns.getSelection();
-				auto labelDraws = ((Nodes::Reworld::Installation::LabelDraws*)argsCustom.custom);
 
 				for (auto column : columns) {
-					argsCustom.enableGui = isActive(this->ourSelection.selection == column.get()
-						, labelDraws->column);
+					// Enable and disable the caption for the RigidBody
+					argsCustom.enableGui = ofxRulr::isActive(Nodes::Reworld::ColumnView::isSelected(column.get()), this->parameters.draw.labels.column.get());
 					column->drawWorldAdvanced(argsCustom);
 				}
 			}
@@ -72,7 +72,7 @@ namespace ofxRulr {
 				Installation::serialize(nlohmann::json& json)
 			{
 				this->columns.serialize(json["columns"]);
-				this->rigidBody->serialize(json["rigidBody"]);
+				this->stepOffset->serialize(json["stepOffset"]);
 			}
 
 			//---------
@@ -83,8 +83,8 @@ namespace ofxRulr {
 					this->columns.deserialize(json["columns"]);
 				}
 
-				if (json.contains("rigidBody")) {
-					this->rigidBody->deserialize(json["rigidBody"]);
+				if (json.contains("stepOffset")) {
+					this->stepOffset->deserialize(json["stepOffset"]);
 				}
 
 				this->initColumns();
@@ -99,6 +99,8 @@ namespace ofxRulr {
 				inspector->addButton("Build", [this]() {
 					this->build();
 					}, OF_KEY_RETURN);
+
+				inspector->addSubMenu("Step offset", this->stepOffset);
 			}
 
 			//---------
@@ -109,35 +111,55 @@ namespace ofxRulr {
 			}
 
 			//---------
+			const
+				Installation::PhysicalParameters&
+				Installation::getPhysicalParameters() const
+			{
+				return this->parameters.physicalParameters;
+			}
+
+			//---------
 			void
 				Installation::build()
 			{
 				this->columns.clear();
 
-				// pull the parameters
-				const auto horizontalStride = this->parameters.builder.installation.horizontalStride.get();
-				const auto angleBetweenPanels = this->parameters.builder.installation.angleBetweenColumns.get() * DEG_TO_RAD;
-				const auto countX = this->parameters.builder.installation.countX.get();
+				// Get the section step parameters
+				auto sectionStepEnabled = this->parameters.builder.sectionStep.enabled.get();
+				auto sectionSize = this->parameters.builder.sectionStep.sectionSize.get();
 
-				// Create the relative transform between columns
-				auto transformBetweenColumns = glm::translate(glm::vec3(horizontalStride / 2.0f, 0.0f, 0.0f))
-					* glm::rotate((float)angleBetweenPanels, glm::vec3(0, 1, 0))
-					* glm::translate(glm::vec3(horizontalStride / 2.0f, 0.0f, 0.0f));
-				
-				// Build the columns sequentially
-				glm::mat4 currentTransform;
+				// Get the main parameters
+				auto countX = this->parameters.builder.basic.countX.get();
+				auto countY = this->parameters.builder.basic.countY.get();
+				auto pitch = this->parameters.builder.basic.pitch.get();
+
+				auto transformEveryColumn = glm::translate(glm::vec3(pitch, 0, 0));
+				auto transformEverySection = this->stepOffset->getTransform();
+
+				// Create the columns to start with (reuse existing if already existing)
+				this->columns.resize(countX, []() {return make_shared<Data::Reworld::Column>();  });
+				auto allColumns = this->columns.getAllCaptures();;
+
+				auto runningTransform = glm::translate(glm::vec3(pitch / 2.0f, 0.0f, 0.0f));
+
 				for (int i = 0; i < countX; i++) {
-					auto column = make_shared<Data::Reworld::Column>();
-					column->build(this->parameters.builder.column, this->parameters.builder.panel, i);
-					column->rigidBody->setTransform(currentTransform);
-					column->parentSelection = &this->ourSelection;
-					this->columns.add(column);
+					auto column = allColumns[i];
 
-					// add to the transform each step
-					currentTransform = currentTransform * transformBetweenColumns;
+					// Column transform
+					{
+						// Section jumps (but not for first one)
+						if (i != 0 && (i % sectionSize) == 0) {
+							runningTransform = transformEverySection * runningTransform;
+						}
+
+						column->rigidBody->setTransform(runningTransform);
+
+						// Apply running transform
+						runningTransform = transformEveryColumn * runningTransform;
+					}
+
+					column->build(i, countY, pitch);
 				}
-
-				this->initColumns();
 			}
 
 			//---------
@@ -149,29 +171,25 @@ namespace ofxRulr {
 					auto columns = this->columns.getAllCaptures();
 					for (auto column : columns) {
 						column->parentSelection = &this->ourSelection;
+						column->setParent(this);
+						column->init();
 					}
 				}
 			}
 
 			//---------
-			vector<glm::vec3>
-				Installation::getVertices() const
+			vector<shared_ptr<Data::Reworld::Module>>
+				Installation::getModules() const
 			{
-				vector<glm::vec3> allVertices;
-				auto transform = this->rigidBody->getTransform();
+				vector<shared_ptr<Data::Reworld::Module>> modules;
 
-				// Gather from columns
-				auto columns = this->columns.getSelection();
-				for(auto column : columns) {
-					auto columnVertices = column->getVertices();
-					
-					// transform vertices into world space as we add them
-					for (auto vertex : columnVertices) {
-						allVertices.push_back(ofxCeres::VectorMath::applyTransform(transform, vertex));
-					}
+				auto selectedColumns = this->columns.getSelection();
+				for (auto column : selectedColumns) {
+					const auto selectedModules = column->modules.getSelection();
+					modules.insert(modules.end(), selectedModules.begin(), selectedModules.end());
 				}
 
-				return allVertices;
+				return modules;
 			}
 		}
 	}

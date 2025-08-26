@@ -28,6 +28,12 @@
     <Filter Include="src\ofxRulr\Data\Reworld">
       <UniqueIdentifier>{ea6c9b75-8a19-4419-8833-85889a7a9d21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Models">
+      <UniqueIdentifier>{61a254f1-ff90-4a13-b496-d56e2d149e8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Models\Reworld">
+      <UniqueIdentifier>{72297e47-58a8-4949-ba5a-44e6b8b71837}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -36,31 +42,31 @@
     <ClCompile Include="src\pch_Plugin_Reworld.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Reworld\CameraTest.cpp">
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Column.cpp">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Module.cpp">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\Installation.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\ModulelView.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\Router.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Reworld\Installation.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\CameraTest.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Data\Reworld\Column.cpp">
-      <Filter>src\ofxRulr\Data\Reworld</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Data\Reworld\Panel.cpp">
-      <Filter>src\ofxRulr\Data\Reworld</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofxRulr\Data\Reworld\Portal.cpp">
-      <Filter>src\ofxRulr\Data\Reworld</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\ColumnView.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Reworld\PanelView.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\LookAtPointToPoint.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Reworld\PortalView.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\SimulateLightBeams.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,31 +74,34 @@
     <ClInclude Include="src\pch_Plugin_Reworld.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Reworld\CameraTest.h">
-      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Router.h">
-      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Installation.h">
-      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofxRulr\Data\Reworld\Column.h">
       <Filter>src\ofxRulr\Data\Reworld</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Data\Reworld\Panel.h">
-      <Filter>src\ofxRulr\Data\Reworld</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofxRulr\Data\Reworld\Portal.h">
+    <ClInclude Include="src\ofxRulr\Data\Reworld\Module.h">
       <Filter>src\ofxRulr\Data\Reworld</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\ColumnView.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Reworld\PanelView.h">
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Installation.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Reworld\PortalView.h">
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\ModuleView.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Router.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\CameraTest.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\LookAtPointToPoint.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\Reworld\Module.h">
+      <Filter>src\ofxRulr\Models\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\SimulateLightBeams.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClInclude>
   </ItemGroup>

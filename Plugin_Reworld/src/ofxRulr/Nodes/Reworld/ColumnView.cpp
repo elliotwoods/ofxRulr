@@ -5,9 +5,20 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
 			//----------
+			set<ColumnView*> ColumnView::instances;
+
+			//----------
 			ColumnView::ColumnView()
 			{
+				ColumnView::instances.insert(this);
+
 				RULR_NODE_INIT_LISTENER;
+			}
+
+			//----------
+			ColumnView::~ColumnView()
+			{
+				ColumnView::instances.erase(this);
 			}
 
 			//----------
@@ -59,6 +70,18 @@ namespace ofxRulr {
 			}
 
 			//----------
+			bool
+				ColumnView::isSelected(Data::Reworld::Column* column)
+			{
+				for (auto instance : ColumnView::instances) {
+					if (instance->selection == column) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			//----------
 			void
 				ColumnView::rebuildView()
 			{
@@ -67,8 +90,8 @@ namespace ofxRulr {
 					this->panel->addTitle("Select column first");
 				}
 				else {
-					panel->addTitle("Panels:", ofxCvGui::Widgets::Title::Level::H3);
-					this->selection->panels.populateWidgets(this->panel);
+					panel->addTitle("Modules:", ofxCvGui::Widgets::Title::Level::H3);
+					this->selection->modules.populateWidgets(this->panel);
 				}
 			}
 		}

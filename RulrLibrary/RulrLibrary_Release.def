@@ -1077,6 +1077,7 @@ EXPORTS
 	?getSelectionUntyped@AbstractCaptureSet@Utils@ofxRulr@@QEBA?AV?$vector@V?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@V?$allocator@V?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@@2@@std@@XZ
 	?populateWidgets@AbstractCaptureSet@Utils@ofxRulr@@QEAAXV?$shared_ptr@VWidgets@Panels@ofxCvGui@@@std@@@Z
 	?remove@AbstractCaptureSet@Utils@ofxRulr@@QEAAXV?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@@Z
+	?resize@AbstractCaptureSet@Utils@ofxRulr@@QEAAX_KV?$function@$$A6A?AV?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@XZ@std@@@Z
 	?select@AbstractCaptureSet@Utils@ofxRulr@@QEAAXV?$shared_ptr@VBaseCapture@AbstractCaptureSet@Utils@ofxRulr@@@std@@@Z
 	?selectAll@AbstractCaptureSet@Utils@ofxRulr@@QEAAXXZ
 	?selectNone@AbstractCaptureSet@Utils@ofxRulr@@QEAAXXZ

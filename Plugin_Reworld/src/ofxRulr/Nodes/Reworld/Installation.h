@@ -7,14 +7,20 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
-			class Installation : public IHasVertices
+			class Installation : public Item::RigidBody
 			{
 			public:
 				struct LabelDraws : ofParameterGroup {
 					ofParameter<WhenActive> column{ "Column", WhenActive::Always };
-					ofParameter<WhenActive> panel{ "Panel", WhenActive::Selected };
-					ofParameter<WhenActive> portal{ "Portal", WhenActive::Selected };
-					PARAM_DECLARE("Labels", column, panel, portal);
+					ofParameter<WhenActive> module{ "Module", WhenActive::Selected };
+					PARAM_DECLARE("Labels", column, module);
+				};
+
+				struct PhysicalParameters : ofParameterGroup {
+					ofParameter<float> interPrismDistanceMM{ "Inter prism distance [mm]", 18.8, 0, 100};
+					ofParameter<float> prismAngle{ "Prism angle degrees", 30, 0, 90 };
+					ofParameter<float> ior{ "IOR", 1.491, 1, 3 }; // 1.491 = acrylic
+					PARAM_DECLARE("Physical parameters", interPrismDistanceMM, prismAngle, ior);
 				};
 
 				Installation();
@@ -29,38 +35,46 @@ namespace ofxRulr {
 				void populateInspector(ofxCvGui::InspectArguments&);
 				ofxCvGui::PanelPtr getPanel() override;
 
+				const PhysicalParameters& getPhysicalParameters() const;
+
 				void build();
 				void initColumns();
 
-				vector<glm::vec3> getVertices() const override;
-
 				Utils::EditSelection<Data::Reworld::Column> ourSelection;
+
+				vector<shared_ptr<Data::Reworld::Module>> getModules() const;
 			protected:
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
-						Data::Reworld::Panel::BuildParameters panel;
-						Data::Reworld::Column::BuildParameters column;
-
 						struct : ofParameterGroup {
-							ofParameter<int> countX{ "Count X", 22 };
-							ofParameter<float> horizontalStride{ "Horizontal stride", 0.48, 0, 1 };
-							ofParameter<float> angleBetweenColumns{ "Angle between columns [deg]", 3.913043478, 0, 20 };
-							PARAM_DECLARE("Installation", countX, horizontalStride, angleBetweenColumns);
-						} installation;
+							ofParameter<int> countX{ "Count X", 4*2*3 };
+							ofParameter<int> countY{ "Count Y", 6*3 };
+							ofParameter<float> pitch{ "Pitch", 0.14, 0, 1 };
+							PARAM_DECLARE("Basic", countX, countY, pitch);
+						} basic;
 
-						PARAM_DECLARE("Builder", panel, column, installation);
+						// Special step every section (e.g. every panel/window/etc)
+						struct : ofParameterGroup {
+							ofParameter<bool> enabled{ "Enabled", true };
+							ofParameter<size_t> sectionSize{ "Section size", 8 };
+							PARAM_DECLARE("Section step", enabled, sectionSize);
+						} sectionStep;
+
+						PARAM_DECLARE("Builder", basic, sectionStep);
 					} builder;
+
+					PhysicalParameters physicalParameters;
 
 					struct : ofParameterGroup {
 						LabelDraws labels;
 						PARAM_DECLARE("Draw", labels);
 					} draw;
 
-					PARAM_DECLARE("Installation", builder, draw);
+					PARAM_DECLARE("Installation", builder, physicalParameters, draw);
 				} parameters;
 
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
-				shared_ptr<Nodes::Item::RigidBody> rigidBody;
+				shared_ptr<Nodes::Item::RigidBody> stepOffset;
 
 				Utils::CaptureSet<Data::Reworld::Column> columns;
 			};

@@ -21,7 +21,13 @@ namespace ofxRulr {
 				this->onInit += [this]() {
 					this->init();
 				};
-				//RULR_NODE_INIT_LISTENER;
+				
+				this->translation[0].set("Translation X", 0, -200.0f, 200.0f);
+				this->translation[1].set("Translation Y", 0, -200.0f, 200.0f);
+				this->translation[2].set("Translation Z", 0, -200.0f, 200.0f);
+				this->rotationEuler[0].set("Rotation X", 0, -180.0f, 180.0f);
+				this->rotationEuler[1].set("Rotation Y", 0, -180.0f, 180.0f);
+				this->rotationEuler[2].set("Rotation Z", 0, -180.0f, 180.0f);
 			}
 
 			//---------
@@ -36,13 +42,6 @@ namespace ofxRulr {
 				RULR_NODE_INSPECTOR_LISTENER;
 				RULR_NODE_SERIALIZATION_LISTENERS;
 				RULR_NODE_REMOTE_CONTROL_LISTENER;
-
-				this->translation[0].set("Translation X", 0, -200.0f, 200.0f);
-				this->translation[1].set("Translation Y", 0, -200.0f, 200.0f);
-				this->translation[2].set("Translation Z", 0, -200.0f, 200.0f);
-				this->rotationEuler[0].set("Rotation X", 0, -180.0f, 180.0f);
-				this->rotationEuler[1].set("Rotation Y", 0, -180.0f, 180.0f);
-				this->rotationEuler[2].set("Rotation Z", 0, -180.0f, 180.0f);
 			}
 
 			//---------

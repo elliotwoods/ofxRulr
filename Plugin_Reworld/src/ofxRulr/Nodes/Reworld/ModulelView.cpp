@@ -1,30 +1,41 @@
 #include "pch_Plugin_Reworld.h"
-#include "PortalView.h"
-#include "PanelView.h"
+#include "ModuleView.h"
+#include "ColumnView.h"
 
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
 			//----------
-			PortalView::PortalView()
+			set<ModuleView*> ModuleView::instances;
+
+			//----------
+			ModuleView::ModuleView()
 			{
+				ModuleView::instances.insert(this);
+
 				RULR_NODE_INIT_LISTENER;
 			}
 
 			//----------
-			string
-				PortalView::getTypeName() const
+			ModuleView::~ModuleView()
 			{
-				return "Reworld::PortalView";
+				ModuleView::instances.erase(this);
+			}
+
+			//----------
+			string
+				ModuleView::getTypeName() const
+			{
+				return "Reworld::ModuleView";
 			}
 
 			//----------
 			void
-				PortalView::init()
+				ModuleView::init()
 			{
 				RULR_NODE_UPDATE_LISTENER;
 
-				auto input = this->addInput<PanelView>();
+				auto input = this->addInput<ColumnView>();
 				this->panel = ofxCvGui::Panels::makeWidgets();
 
 				this->rebuildView();
@@ -32,14 +43,14 @@ namespace ofxRulr {
 
 			//----------
 			void
-				PortalView::update()
+				ModuleView::update()
 			{
 				auto priorSelection = this->selection;
 
 				// Update current selection
 				{
 					this->selection = nullptr;
-					auto inputNode = this->getInput<PanelView>();
+					auto inputNode = this->getInput<ColumnView>();
 					if (inputNode) {
 						if (inputNode->selection) {
 							this->selection = inputNode->selection->ourSelection.selection;
@@ -54,21 +65,33 @@ namespace ofxRulr {
 
 			//----------
 			ofxCvGui::PanelPtr
-				PortalView::getPanel()
+				ModuleView::getPanel()
 			{
 				return this->panel;
 			}
 
 			//----------
+			bool
+				ModuleView::isSelected(Data::Reworld::Module* module)
+			{
+				for (auto instance : ModuleView::instances) {
+					if (instance->selection == module) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			//----------
 			void
-				PortalView::rebuildView()
+				ModuleView::rebuildView()
 			{
 				this->panel->clear();
 				if (!this->selection) {
-					this->panel->addTitle("Select portal first");
+					this->panel->addTitle("Select module first");
 				}
 				else {
-					
+					this->panel->addParameterGroup(this->selection->parameters);
 				}
 			}
 		}

@@ -53,6 +53,19 @@ namespace ofxRulr {
 				if (this->textureDirty) {
 					this->loadTexture();
 				}
+				if (this->modelLoader) {
+					switch (this->parameters.drawStyle.cull.get().get()) {
+					case Cull::None:
+						this->modelLoader->disableCulling();
+						break;
+					case Cull::CW:
+						this->modelLoader->enableCulling(GL_CW);
+						break;
+					case Cull::CCW:
+						this->modelLoader->enableCulling(GL_CCW);
+						break;
+					}
+				}
 			}
 
 			//----------
@@ -384,7 +397,7 @@ namespace ofxRulr {
 					this->texture.clear();
 				}
 				else {
-					this->texture.load(this->textureFilename.get());
+					this->texture.load(this->textureFilename.get(), ofxAssimpModelLoader::OPTIMIZE_NONE);
 				}
 				this->textureDirty = false;
 			}
