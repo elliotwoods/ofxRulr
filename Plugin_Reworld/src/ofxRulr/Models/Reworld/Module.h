@@ -6,7 +6,7 @@ namespace ofxRulr{
 	namespace Models {
 		namespace Reworld {
 			template<typename T>
-			struct Module_ {
+			struct Module {
 				// --
 				// PARAMETERS BEGIN
 				// --
@@ -18,7 +18,7 @@ namespace ofxRulr{
 				// The calibrated transform offset
 				struct {
 					glm::tvec3<T> translation{ (T) 0, (T) 0, (T) 0 };
-					glm::tvec3<T> rotation{ (T)0, (T)0, (T)0 };
+					glm::tvec3<T> rotationVector{ (T)0, (T)0, (T)0 };
 				} transformOffset;
 				
 				struct {
@@ -37,11 +37,39 @@ namespace ofxRulr{
 				// --
 				// PARAMETERS END
 				// --
+
+				template<typename T2>
+				Module<T2>
+					castTo() const
+				{
+					Module<T2> castModule;
+					castModule.bulkTransform = (glm::tmat4x4<T2>) this->bulkTransform;
+					{
+						castModule.transformOffset.translation = (glm::tvec3<T2>) this->transformOffset.translation;
+						castModule.transformOffset.rotationVector = (glm::tvec3<T2>) this->transformOffset.rotationVector;
+					}
+					{
+						castModule.axisAngleOffsets.A = (T2)this->axisAngleOffsets.A;
+						castModule.axisAngleOffsets.B = (T2)this->axisAngleOffsets.B;
+					}
+					{
+						castModule.installationParameters.interPrismDistance = (T2)this->installationParameters.interPrismDistance;
+						castModule.installationParameters.prismAngleRadians = (T2)this->installationParameters.prismAngleRadians;
+						castModule.installationParameters.ior = (T2)this->installationParameters.ior;
+					}
+					return castModule;
+				}
 				
 				// The total transform (to the center of the Risley pair)
 				glm::tmat4x4<T> getTransform() const {
 					return this->bulkTransform
-						* ofxCeres::VectorMath::createTransform(this->transformOffset.translation, this->transformOffset.rotation);
+						* ofxCeres::VectorMath::createTransform(this->transformOffset.translation, this->transformOffset.rotationVector);
+				}
+
+				glm::tvec3<T> getPosition() const {
+					return ofxCeres::VectorMath::applyTransform(this->getTransform(), glm::tvec3<T>(
+						(T)0, (T)0, (T)0)
+					);
 				}
 
 				// Note these are normalised values as per interface
@@ -69,7 +97,7 @@ namespace ofxRulr{
 					// Create the planes
 					ofxCeres::Models::Plane<T> fresnelPlane1, fresnelPlane2;
 					{
-						const auto prismZOffset = this->installationParameters.interPrismDistance / 2.0f;
+						const auto prismZOffset = this->installationParameters.interPrismDistance / (T) 2.0f;
 
 						// The normals represent the flat planes (entrance for 1, exit for 2)
 						fresnelPlane1.center = { (T)0, (T)0, (T)prismZOffset };
@@ -94,7 +122,7 @@ namespace ofxRulr{
 						, (T)-cos(this->installationParameters.prismAngleRadians)
 						};
 						normalEnterPlane2 = {
-							(T)-sin(this->installationParameters.prismAngleRadians)
+							(T)sin(this->installationParameters.prismAngleRadians)
 							, (T)0.0
 							, (T)-cos(this->installationParameters.prismAngleRadians)
 						};
@@ -118,7 +146,7 @@ namespace ofxRulr{
 
 					auto transmissionExitPlane1 = ofxCeres::VectorMath::refract(transmissionInsidePlane1
 						, normalExitPlane1
-						, this->installationParameters.ior);
+						, (T) 1.0 / this->installationParameters.ior);
 
 					// The ray passing between the planes
 					refractionResult.intermediateRay.s = intersectionAtPlane1;
@@ -132,19 +160,17 @@ namespace ofxRulr{
 
 					auto transmissionExitPlane2 = ofxCeres::VectorMath::refract(transmissionInsidePlane2
 						, normalExitPlane2
-						, this->installationParameters.ior);
+						, (T) 1.0 / this->installationParameters.ior);
 
 					refractionResult.outputRay.s = intersectionAtPlane2;
 					refractionResult.outputRay.t = transmissionExitPlane2;
 
 					// Truncate the intermediate ray so it intersects plane 2
-					//refractionResult.intermediateRay.setEnd(intersectionAtPlane2);
+					refractionResult.intermediateRay.setEnd(intersectionAtPlane2);
 
 					return refractionResult;
 				}
 			};
-
-			typedef Module_<float> Module;
 		}
 	}
 }

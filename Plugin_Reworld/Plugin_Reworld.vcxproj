@@ -85,10 +85,12 @@
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\CameraTest.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\ColumnView.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\Installation.cpp" />
-    <ClCompile Include="src\ofxRulr\Nodes\Reworld\LookAtPointToPoint.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\NavigatePointToPoint.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\ModulelView.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\Router.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\SimulateLightBeams.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\Reworld\Navigate\InVectorToPoint.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\Reworld\Navigate\PointToPoint.cpp" />
     <ClCompile Include="src\pch_Plugin_Reworld.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -107,10 +109,13 @@
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\CameraTest.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\ColumnView.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\Installation.h" />
-    <ClInclude Include="src\ofxRulr\Nodes\Reworld\LookAtPointToPoint.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\NavigatePointToPoint.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\ModuleView.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\Router.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\SimulateLightBeams.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\InVectorToPoint.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\PointToPoint.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\Result.h" />
     <ClInclude Include="src\pch_Plugin_Reworld.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,14 +1,15 @@
 #pragma once
 
 #include "ofxRulr.h"
+#include "ofxRulr/Solvers/Reworld/Navigate/PointToPoint.h"
 
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
-			class LookAtPointToPoint : public Base
+			class NavigatePointToPoint : public Base
 			{
 			public:
-				LookAtPointToPoint();
+				NavigatePointToPoint();
 				string getTypeName() const override;
 				void init();
 				void update();
@@ -18,8 +19,13 @@ namespace ofxRulr {
 			protected:
 				struct : ofParameterGroup {
 					ofParameter<WhenActive> performAutomatically{ "Perform automatically", WhenActive::Never };
-					PARAM_DECLARE("LookAtPointToPoint", performAutomatically);
+					ofParameter<bool> performOnTargetChange{ "Perform on target change", false };
+					ofxCeres::ParameterisedSolverSettings solverSettings{ Solvers::Reworld::Navigate::PointToPoint::defaultSolverSettings() };
+
+					PARAM_DECLARE("LookAtPointToPoint", performAutomatically, solverSettings);
 				} parameters;
+
+				bool needsPerform = false;
 			};
 		}
 	}

@@ -378,7 +378,7 @@ namespace ofxRulr {
 				}
 				else {
 					this->modelLoader = make_unique<ofxAssimpModelLoader>();
-					if (!this->modelLoader->load(this->meshFilename.get())) {
+					if (!this->modelLoader->load(this->meshFilename.get(), ofxAssimpModelLoader::OPTIMIZE_NONE)) {
 						this->modelLoader.reset();
 					}
 				}	
@@ -397,7 +397,7 @@ namespace ofxRulr {
 					this->texture.clear();
 				}
 				else {
-					this->texture.load(this->textureFilename.get(), ofxAssimpModelLoader::OPTIMIZE_NONE);
+					this->texture.load(this->textureFilename.get());
 				}
 				this->textureDirty = false;
 			}

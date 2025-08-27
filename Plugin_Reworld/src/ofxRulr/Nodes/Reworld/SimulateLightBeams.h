@@ -35,7 +35,7 @@ namespace ofxRulr {
 
 				struct Result {
 					ofxCeres::Models::Ray<float> incomingRay;
-					Models::Reworld::Module::RefractionResult refractionResult;
+					Models::Reworld::Module<float>::RefractionResult refractionResult;
 					weak_ptr<Data::Reworld::Module> module;
 				};
 

@@ -34,6 +34,15 @@
     <Filter Include="src\ofxRulr\Models\Reworld">
       <UniqueIdentifier>{72297e47-58a8-4949-ba5a-44e6b8b71837}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Solvers">
+      <UniqueIdentifier>{683b0146-0762-4caa-8095-6577f3ed35e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Solvers\Reworld">
+      <UniqueIdentifier>{0890f490-c6ec-45b7-b430-eb479b650c08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxRulr\Solvers\Reworld\Navigate">
+      <UniqueIdentifier>{ee1b426a-056e-46f9-b0b8-145cbf372710}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -63,11 +72,17 @@
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\ColumnView.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofxRulr\Nodes\Reworld\LookAtPointToPoint.cpp">
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\NavigatePointToPoint.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\SimulateLightBeams.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\Reworld\Navigate\PointToPoint.cpp">
+      <Filter>src\ofxRulr\Solvers\Reworld\Navigate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\Reworld\Navigate\InVectorToPoint.cpp">
+      <Filter>src\ofxRulr\Solvers\Reworld\Navigate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,7 +110,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\CameraTest.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofxRulr\Nodes\Reworld\LookAtPointToPoint.h">
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\NavigatePointToPoint.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Models\Reworld\Module.h">
@@ -103,6 +118,15 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\SimulateLightBeams.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\PointToPoint.h">
+      <Filter>src\ofxRulr\Solvers\Reworld\Navigate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\Result.h">
+      <Filter>src\ofxRulr\Solvers\Reworld\Navigate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\InVectorToPoint.h">
+      <Filter>src\ofxRulr\Solvers\Reworld\Navigate</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

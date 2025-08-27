@@ -155,10 +155,10 @@ namespace ofxRulr {
 			}
 
 			//----------
-			Models::Reworld::Module
+			Models::Reworld::Module<float>
 				Module::getModel() const
 			{
-				Models::Reworld::Module model;
+				Models::Reworld::Module<float> model;
 
 				// Calibration
 				{
@@ -178,7 +178,7 @@ namespace ofxRulr {
 							, this->parameters.calibrationParameters.transformOffset.rotationVector.z.get()
 						};
 						model.transformOffset.translation = translation;
-						model.transformOffset.rotation = rotationVector;
+						model.transformOffset.rotationVector = rotationVector;
 					}
 
 					// Axis angle offets
@@ -197,6 +197,26 @@ namespace ofxRulr {
 				}
 
 				return model;
+			}
+
+			//----------
+			Models::Reworld::Module<float>::AxisAngles
+				Module::getCurrentAxisAngles() const
+			{
+				Models::Reworld::Module<float>::AxisAngles axisAngles;
+				{
+					axisAngles.A = this->parameters.axisAngles.A.get();
+					axisAngles.B = this->parameters.axisAngles.B.get();
+				}
+				return axisAngles;
+			}
+
+			//----------
+			void
+				Module::setTargetAxisAngles(const Models::Reworld::Module<float>::AxisAngles& axisAngles)
+			{
+				this->parameters.axisAngles.A.set(axisAngles.A);
+				this->parameters.axisAngles.B.set(axisAngles.B);
 			}
 
 			//----------

@@ -7,6 +7,7 @@
 #include "ofxRulr/Nodes/Reworld/ColumnView.h"
 #include "ofxRulr/Nodes/Reworld/ModuleView.h"
 #include "ofxRulr/Nodes/Reworld/SimulateLightBeams.h"
+#include "ofxRulr/Nodes/Reworld/NavigatePointToPoint.h"
 
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
@@ -16,4 +17,5 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::ColumnView);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::ModuleView);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::SimulateLightBeams);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::NavigatePointToPoint);
 OFXPLUGIN_PLUGIN_MODULES_END

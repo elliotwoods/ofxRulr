@@ -40,10 +40,18 @@ namespace ofxRulr {
 				glm::mat4 getBulkTransform() const; // major position from arrangement
 				glm::mat4 getTransformOffset() const; // minor adjustment from calibration
 				glm::mat4 getAbsoluteTransform() const;
-				Models::Reworld::Module getModel() const;
+				Models::Reworld::Module<float> getModel() const;
+				Models::Reworld::Module<float>::AxisAngles getCurrentAxisAngles() const;
+				void setTargetAxisAngles(const Models::Reworld::Module<float>::AxisAngles&);
 
 				struct : ofParameterGroup {
 					ofParameter<int> ID{ "ID", 1 };
+
+					struct : ofParameterGroup {
+						ofParameter<float> A{ "A", 0, -1, 1 };
+						ofParameter<float> B{ "A", 0, -1, 1 };
+						PARAM_DECLARE("Axis angles", A, B);
+					} axisAngles;
 
 					struct : ofParameterGroup {
 						struct : ofParameterGroup {
@@ -72,15 +80,9 @@ namespace ofxRulr {
 
 						PARAM_DECLARE("Calibration parameters", transformOffset, axisAngleOffsets);
 					} calibrationParameters;
-					
+			
 
-					struct : ofParameterGroup {
-						ofParameter<float> A{ "A", 0, -1, 1 };
-						ofParameter<float> B{ "A", 0, -1, 1 };
-						PARAM_DECLARE("Axis angles", A, B);
-					} axisAngles;
-
-					PARAM_DECLARE("Module", ID, calibrationParameters, axisAngles);
+					PARAM_DECLARE("Module", ID, axisAngles, calibrationParameters);
 				} parameters;
 
 				shared_ptr<Nodes::Item::RigidBody> positionInColumn;
