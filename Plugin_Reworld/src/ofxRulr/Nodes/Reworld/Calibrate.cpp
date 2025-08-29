@@ -47,6 +47,8 @@ namespace ofxRulr {
 				this->ourSelection.onSelectionChanged += [this]() {
 					this->needsLoadCaptureData = true;
 					};
+
+				this->manageParameters(this->parameters);
 			}
 
 			//----------
@@ -61,6 +63,19 @@ namespace ofxRulr {
 						RULR_CATCH_ALL_TO_ERROR;
 					}
 					this->needsLoadCaptureData = false;
+				}
+
+				{
+					this->calibrateControllerSelections.clear();
+					for (auto it : this->calibrateControllerSessions) {
+						Router::Address address;
+						{
+							address.column = it.second->columnIndex;
+							address.portal = it.second->moduleIndex;
+						}
+						this->calibrateControllerSelections.emplace(address);
+					}
+
 				}
 			}
 
@@ -152,6 +167,14 @@ namespace ofxRulr {
 			}
 
 			//----------
+			const set<Router::Address>& 
+				Calibrate::getCalibrateControllerSelections() const
+			{
+				return this->calibrateControllerSelections;
+			}
+
+
+			//----------
 			void
 				Calibrate::initCaptures()
 			{
@@ -185,7 +208,7 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Calibrate::estimateModuleData(shared_ptr<Data::Reworld::Capture> capture)
+				Calibrate::estimateModuleData(Data::Reworld::Capture * capture)
 			{
 				this->throwIfMissingAnyConnection();
 				auto installation = this->getInput<Installation>();
@@ -210,6 +233,8 @@ namespace ofxRulr {
 						capture->initialiseModuleDataWithEstimate(i, j, result.solution.axisAngles);
 					}
 				}
+
+				this->moveToCapturePositions(capture);
 			}
 
 			//----------
@@ -263,6 +288,26 @@ namespace ofxRulr {
 				if (capture) {
 					capture->setManualModuleData(calibrateControllerSession->columnIndex, calibrateControllerSession->moduleIndex, newAxisAngles);
 				}
+			}
+
+			//----------
+			void
+				Calibrate::markDataPointGood(shared_ptr<CalibrateControllerSession> calibrateControllerSession)
+			{
+				this->throwIfMissingAConnection<Installation>();
+				auto installation = this->getInput<Installation>();
+
+				auto module = installation->getModuleByIndices(calibrateControllerSession->columnIndex, calibrateControllerSession->moduleIndex, true);
+				if (!module) {
+					throw(Exception("moveDataPoint - module is not available (e.g. not selected)"));
+				}
+
+				// Save it to the current capture
+				auto capture = ourSelection.selection;
+				if (!capture) {
+					throw(Exception("No capture selected"));
+				}
+				capture->markDataPointGood(calibrateControllerSession->columnIndex, calibrateControllerSession->moduleIndex);
 			}
 		}
 	}

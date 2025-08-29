@@ -38,15 +38,16 @@ namespace ofxRulr {
 
 				shared_ptr<CalibrateControllerSession> registerCalibrateController(CalibrateController *);
 				void unregisterCalibrateController(CalibrateController*);
+				const set<Router::Address> & getCalibrateControllerSelections() const;
 
 				void initCaptures();
 				void initCapture(shared_ptr<Data::Reworld::Capture>);
 				shared_ptr<Data::Reworld::Capture> newCapture();
 
-				void estimateModuleData(shared_ptr<Data::Reworld::Capture>);
+				void estimateModuleData(Data::Reworld::Capture*);
 				void moveToCapturePositions(Data::Reworld::Capture*);
 				void moveDataPoint(shared_ptr<CalibrateControllerSession>, const glm::vec2&);
-
+				void markDataPointGood(shared_ptr<CalibrateControllerSession>);
 				Utils::EditSelection<Data::Reworld::Capture> ourSelection;
 			protected:
 				struct : ofParameterGroup {
@@ -68,6 +69,8 @@ namespace ofxRulr {
 				} parameters;
 
 				map<CalibrateController*, shared_ptr<CalibrateControllerSession>> calibrateControllerSessions;
+				set<Router::Address> calibrateControllerSelections;
+
 				Utils::CaptureSet<Data::Reworld::Capture> captures;
 
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;

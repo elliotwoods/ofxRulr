@@ -401,6 +401,75 @@ namespace ofxRulr {
 				}
 				this->textureDirty = false;
 			}
+
+			//----------
+
+			static bool copyFileIntoDataAndRetarget(const std::string& srcPath, std::string& targetParamToSet)
+			{
+				if (srcPath.empty()) {
+					return false;
+				}
+
+				ofFile src(srcPath);
+				if (!src.exists() || src.isDirectory()) {
+					ofLogWarning("Mesh") << "Source path does not exist or is a directory: " << srcPath;
+					return false;
+				}
+
+				// Ensure data directory exists
+				const std::string dataDirAbs = ofToDataPath("", /*absolute=*/true);
+				ofDirectory dataDir(dataDirAbs);
+				if (!dataDir.exists()) {
+					dataDir.create(true);
+				}
+
+				// Destination will be data/<filename.ext>
+				const std::string fileName = ofFilePath::getFileName(srcPath);
+				const std::string dstAbs = ofFilePath::join(dataDirAbs, fileName);
+
+				try {
+					// If already the same absolute file, no need to copy
+					if (!ofFile::doesFileExist(dstAbs, true)) {
+						// Copy to absolute path (bRelativeToData=false), overwrite=true
+						src.copyTo(dstAbs, /*bRelativeToData=*/false, /*overwrite=*/true);
+					}
+					// Retarget param to the relative filename (portable inside data/)
+					targetParamToSet = fileName;
+					return true;
+				}
+				catch (const std::exception& e) {
+					ofLogError("Mesh") << "Failed to copy '" << srcPath << "' to data folder: " << e.what();
+					return false;
+				}
+			}
+
+			//----------
+			void Mesh::copyFilesToLocal()
+			{
+				// Copy mesh file (if any) into data/ and retarget parameter to relative name
+				{
+					std::string path = this->meshFilename.get();
+					if (!path.empty()) {
+						string meshFilename = this->meshFilename.get();
+						if (copyFileIntoDataAndRetarget(path, meshFilename)) {
+							this->meshDirty = true; // reload from new local path
+							this->meshFilename.set(meshFilename);
+						}
+					}
+				}
+
+				// Copy texture file (if any) into data/ and retarget parameter to relative name
+				{
+					std::string path = this->textureFilename.get();
+					if (!path.empty()) {
+						auto textureFilename = this->textureFilename.get();
+						if (copyFileIntoDataAndRetarget(path, textureFilename)) {
+							this->textureDirty = true; // reload from new local path
+							this->textureFilename.set(textureFilename);
+						}
+					}
+				}
+			}
 		}
 	}
 }

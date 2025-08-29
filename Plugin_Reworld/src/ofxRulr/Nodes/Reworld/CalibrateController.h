@@ -24,19 +24,13 @@ namespace ofxRulr {
 				void left();
 				void right();
 
+				void x();
+
 				void moveAxes(const glm::vec2 &);
 
 				void selectClosestModuleToMouseCursor();
 			protected:
 				void rebuildPanel();
-
-				struct ButtonState {
-					bool up = false;
-					bool down = false;
-					bool left = false;
-					bool right = false;
-				};
-				ButtonState priorButtonState;
 
 				struct : ofParameterGroup {
 					ofParameter<float> movementSpeed{ "Movement speed", -0.3, -1, 1 };

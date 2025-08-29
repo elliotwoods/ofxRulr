@@ -23,9 +23,7 @@ namespace ofxRulr {
 				// state
 				if (json.contains("state") && json["state"].is_number_integer()) {
 					int stateInt = json["state"].get<int>();
-					if (stateInt >= Unset && stateInt <= Set) {
-						this->state = static_cast<State>(stateInt);
-					}
+					this->state = static_cast<State>(stateInt);
 				}
 
 				// axisAngles
@@ -206,6 +204,17 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void
+				Capture::markDataPointGood(ColumnIndex columnIndex, ModuleIndex moduleIndex)
+			{
+				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
+				if (moduleData->state == ModuleDataPoint::Unset) {
+					throw(Exception("Cannot mark a data point as good if it is not set or estimated yet"));
+				}
+				moduleData->state = ModuleDataPoint::Good;
+			}
+
+			//----------
 			shared_ptr<Capture::ModuleDataPoint>
 				Capture::getModuleDataPoint(ColumnIndex columnIndex, ModuleIndex moduleIndex)
 			{
@@ -252,6 +261,12 @@ namespace ofxRulr {
 							});
 					widgetsPanel->addIndicatorBool("Target is set", [this]() {
 						return this->targetIsSet;
+						});
+					widgetsPanel->addButton("Estimate values", [this]() {
+						try {
+							this->parent->estimateModuleData(this);
+						}
+						RULR_CATCH_ALL_TO_ERROR;
 						});
 					panel->add(widgetsPanel);
 				}
@@ -306,6 +321,8 @@ namespace ofxRulr {
 							}
 
 							const auto& data = findModule->second;
+
+							// Draw background based on state
 							switch (data->state) {
 							case ModuleDataPoint::State::Estimated:
 								ofPushStyle();
@@ -319,6 +336,15 @@ namespace ofxRulr {
 							case ModuleDataPoint::State::Set:
 								ofPushStyle();
 								{
+									ofSetColor(200, 100, 100);
+									ofFill();
+									ofDrawRectangle(args.localBounds);
+								}
+								ofPopStyle();
+								break;
+							case ModuleDataPoint::State::Good:
+								ofPushStyle();
+								{
 									ofSetColor(100, 200, 100);
 									ofFill();
 									ofDrawRectangle(args.localBounds);
@@ -329,6 +355,24 @@ namespace ofxRulr {
 								break;
 							}
 
+							// Draw outline for controller sessions
+							{
+								Nodes::Reworld::Router::Address address;
+								{
+									address.column = columnIndex;
+									address.portal = moduleIndex;
+								}
+								const auto& selections = parent->getCalibrateControllerSelections();
+								if (selections.find(address) != selections.end()) {
+									ofPushStyle();
+									{
+										ofNoFill();
+										ofDrawRectangle(args.localBounds);
+									}
+									ofPopStyle();
+								}
+							}
+							// Draw data
 							Models::Reworld::drawAxisAngles(data->axisAngles, args.localBounds);
 							};
 						panel->setScissorEnabled(false); // optimisation

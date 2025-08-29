@@ -9,6 +9,8 @@
 # Ignore bin folder
 **/bin/*
 
+**/enc_temp_folder/*
+
 # Keep useful libs
 !libs/**/Debug
 !libs/**/Release

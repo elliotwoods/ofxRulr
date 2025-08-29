@@ -131,15 +131,53 @@ namespace ofxRulr {
 									needsSend = true;
 								}
 
-								// Digital stick
-								args.digital = this->inputState.DPad;
-								needsSend |= this->inputState.DPad != this->priorInputState.DPad;
-
 								// Square, circle, etc
-								needsSend |= args.buttons[0] = this->inputState.buttons.cross && !this->priorInputState.buttons.cross;
-								needsSend |= args.buttons[1] = this->inputState.buttons.circle && !this->priorInputState.buttons.circle;
-								needsSend |= args.buttons[2] = this->inputState.buttons.triangle && !this->priorInputState.buttons.triangle;
-								needsSend |= args.buttons[3] = this->inputState.buttons.square && !this->priorInputState.buttons.square;
+								{
+									{
+										args.buttonDown.cross = this->inputState.buttons.cross && !this->priorInputState.buttons.cross;
+										args.buttonDown.circle = this->inputState.buttons.circle && !this->priorInputState.buttons.circle;
+										args.buttonDown.triangle = this->inputState.buttons.triangle && !this->priorInputState.buttons.triangle;
+										args.buttonDown.square = this->inputState.buttons.square && !this->priorInputState.buttons.square;
+										args.buttonDown.left = this->inputState.DPad.x < 0 && !(this->priorInputState.DPad.x < 0);
+										args.buttonDown.right = this->inputState.DPad.x > 0 && !(this->priorInputState.DPad.x > 0);
+										args.buttonDown.up = this->inputState.DPad.y > 0 && !(this->priorInputState.DPad.y > 0);
+										args.buttonDown.down = this->inputState.DPad.y < 0 && !(this->priorInputState.DPad.y < 0);
+									}
+
+									{
+										args.buttonPress.cross = this->inputState.buttons.cross;
+										args.buttonPress.circle = this->inputState.buttons.circle;
+										args.buttonPress.triangle = this->inputState.buttons.triangle;
+										args.buttonPress.square = this->inputState.buttons.square;
+										args.buttonPress.left = this->inputState.DPad.x < 0;
+										args.buttonPress.right = this->inputState.DPad.x > 0;
+										args.buttonPress.up = this->inputState.DPad.y > 0;
+										args.buttonPress.down = this->inputState.DPad.y < 0;
+									}
+
+									{
+										args.buttonUp.cross = !this->inputState.buttons.cross && this->priorInputState.buttons.cross;
+										args.buttonUp.circle = !this->inputState.buttons.circle && this->priorInputState.buttons.circle;
+										args.buttonUp.triangle = !this->inputState.buttons.triangle && this->priorInputState.buttons.triangle;
+										args.buttonUp.square = !this->inputState.buttons.square && this->priorInputState.buttons.square;
+										args.buttonUp.left = !(this->inputState.DPad.x < 0) && this->priorInputState.DPad.x < 0;
+										args.buttonUp.right = !(this->inputState.DPad.x > 0) && this->priorInputState.DPad.x > 0;
+										args.buttonUp.up = !(this->inputState.DPad.y > 0) && this->priorInputState.DPad.y > 0;
+										args.buttonUp.down = !(this->inputState.DPad.y < 0) && this->priorInputState.DPad.y < 0;
+									}
+								}
+
+								if (args.buttonDown.up || args.buttonDown.down || args.buttonDown.left || args.buttonDown.right ||
+									args.buttonDown.cross || args.buttonDown.circle || args.buttonDown.triangle || args.buttonDown.square ||
+
+									args.buttonPress.up || args.buttonPress.down || args.buttonPress.left || args.buttonPress.right ||
+									args.buttonPress.cross || args.buttonPress.circle || args.buttonPress.triangle || args.buttonPress.square ||
+
+									args.buttonUp.up || args.buttonUp.down || args.buttonUp.left || args.buttonUp.right ||
+									args.buttonUp.cross || args.buttonUp.circle || args.buttonUp.triangle || args.buttonUp.square)
+								{
+									needsSend = true;
+								}
 							}
 
 							if (needsSend) {

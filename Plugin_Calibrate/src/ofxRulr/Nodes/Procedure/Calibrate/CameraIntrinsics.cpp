@@ -214,7 +214,7 @@ namespace ofxRulr {
 
 				//----------
 				void CameraIntrinsics::remoteControl(RemoteControllerArgs& args) {
-					if (args.buttons[0]) {
+					if (args.buttonDown.cross) {
 						try {
 							ofxRulr::Utils::ScopedProcess scopedProcess("Finding checkerboard");
 							this->addCapture(false);

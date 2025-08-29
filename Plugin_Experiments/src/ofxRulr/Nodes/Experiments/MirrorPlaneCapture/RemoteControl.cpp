@@ -290,17 +290,17 @@ namespace ofxRulr {
 						}
 
 						// Button 0 = Home selection
-						if (args.buttons[0]) {
+						if (args.buttonDown.cross) {
 							this->homeSelection();
 						}
 
 						// Button 1 = Home single
-						if (args.buttons[1]) {
+						if (args.buttonDown.circle) {
 							this->homeSingle();
 						}
 
 						// Button 2 = Inspect single
-						if (args.buttons[2]) {
+						if (args.buttonDown.triangle) {
 							auto single = this->getSingle();
 							if (single) {
 								ofxCvGui::inspect(single);

@@ -21,6 +21,7 @@ namespace ofxRulr {
 						Unset = 0
 						, Estimated = 1
 						, Set = 2
+						, Good = 3
 					};
 
 					State state = State::Unset;
@@ -49,6 +50,7 @@ namespace ofxRulr {
 
 				void initialiseModuleDataWithEstimate(ColumnIndex, ModuleIndex, const Module::AxisAngles&);
 				void setManualModuleData(ColumnIndex, ModuleIndex, const Module::AxisAngles&);
+				void markDataPointGood(ColumnIndex, ModuleIndex);
 
 				shared_ptr<ModuleDataPoint> getModuleDataPoint(ColumnIndex, ModuleIndex);
 

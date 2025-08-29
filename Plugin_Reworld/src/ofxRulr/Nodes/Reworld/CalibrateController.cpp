@@ -77,30 +77,23 @@ namespace ofxRulr {
 					return;
 				}
 
-				ButtonState buttonState;
-				{
-					buttonState.up = remoteControlArgs.digital.y > 0;
-					buttonState.down = remoteControlArgs.digital.y < 0;
-					buttonState.left = remoteControlArgs.digital.x < 0;
-					buttonState.right = remoteControlArgs.digital.x > 0;
-				}
 
 				try {
-
-					if (buttonState.up && !this->priorButtonState.up) {
+					if (remoteControlArgs.buttonDown.up) {
 						this->up();
 					}
-
-					if (buttonState.down && !this->priorButtonState.down) {
+					if (remoteControlArgs.buttonDown.down) {
 						this->down();
 					}
-
-					if (buttonState.left && !this->priorButtonState.left) {
+					if (remoteControlArgs.buttonDown.left) {
 						this->left();
 					}
-
-					if (buttonState.right && !this->priorButtonState.right) {
+					if (remoteControlArgs.buttonDown.right) {
 						this->right();
+					}
+
+					if (remoteControlArgs.buttonDown.cross) {
+						this->x();
 					}
 
 					{
@@ -114,8 +107,6 @@ namespace ofxRulr {
 					}
 				}
 				RULR_CATCH_ALL_TO_ERROR;
-
-				this->priorButtonState = buttonState;
 			}
 
 			//----------
@@ -213,6 +204,21 @@ namespace ofxRulr {
 				if (calibrateControllerSession->columnIndex >= columns.size()) {
 					calibrateControllerSession->columnIndex = 0;
 				}
+			}
+
+			//----------
+			void
+				CalibrateController::x()
+			{
+				auto calibrateControllerSession = this->calibrateControllerSession.lock();
+				if (!calibrateControllerSession) {
+					return;
+				}
+
+				this->throwIfMissingAConnection<Calibrate>();
+				auto calibrateNode = this->getInput<Calibrate>();
+
+				calibrateNode->markDataPointGood(calibrateControllerSession);
 			}
 
 			//----------

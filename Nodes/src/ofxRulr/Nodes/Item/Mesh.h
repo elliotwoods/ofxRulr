@@ -34,6 +34,7 @@ namespace ofxRulr {
 
 				virtual vector<glm::vec3> getVertices() const override;
 
+				void copyFilesToLocal();
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
 				void loadMesh();

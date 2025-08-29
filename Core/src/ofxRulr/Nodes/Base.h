@@ -56,13 +56,21 @@ namespace ofxRulr {
 	};
 
 	struct RemoteControllerArgs {
+		struct Button {
+			bool up, down, left, right;
+			bool cross, circle, triangle, square;
+		};
+
 		bool next = false;
 		bool previous = false;
+
 		glm::vec2 analog1{ 0, 0 };
 		glm::vec2 analog2{ 0, 0 };
 		glm::vec2 combinedMovement{ 0, 0 };
-		glm::vec2 digital{ 0, 0 };
-		bool buttons[4] = { false, false, false, false };
+		
+		Button buttonDown; // down for one frame on press
+		Button buttonPress; // stays down
+		Button buttonUp; // down for one frame on release
 	};
 
 	namespace Graph {
