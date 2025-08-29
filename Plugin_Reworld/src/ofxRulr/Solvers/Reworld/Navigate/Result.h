@@ -7,7 +7,7 @@ namespace ofxRulr {
 		namespace Reworld {
 			namespace Navigate {
 				struct Solution {
-					Models::Reworld::Module<float>::AxisAngles axisAngles;
+					Models::Reworld::AxisAngles<float> axisAngles;
 				};
 				typedef ofxCeres::Result<Solution> Result;
 			}

@@ -84,6 +84,21 @@
     <ClCompile Include="src\ofxRulr\Solvers\Reworld\Navigate\InVectorToPoint.cpp">
       <Filter>src\ofxRulr\Solvers\Reworld\Navigate</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Capture.cpp">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\CalibrateController.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\Calibrate.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\CaptureView.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Models\Reworld\AxisAngles.cpp">
+      <Filter>src\ofxRulr\Models\Reworld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Reworld.h">
@@ -127,6 +142,21 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\InVectorToPoint.h">
       <Filter>src\ofxRulr\Solvers\Reworld\Navigate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Calibrate.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Data\Reworld\Capture.h">
+      <Filter>src\ofxRulr\Data\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\CalibrateController.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Models\Reworld\AxisAngles.h">
+      <Filter>src\ofxRulr\Models\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\CaptureView.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

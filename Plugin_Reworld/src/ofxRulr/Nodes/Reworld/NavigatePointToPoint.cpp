@@ -29,7 +29,7 @@ namespace ofxRulr {
 				this->addInput<Installation>();
 				
 				{
-					for (int i = 0; i < 2; i++) {
+					for (int i = 1; i <= 2; i++) {
 						auto input = this->addInput<Item::RigidBody>("Point " + ofToString(i));
 						input->onNewConnection += [this](shared_ptr<Item::RigidBody> rigidBody) {
 							rigidBody->onTransformChange.addListener([this]() {
@@ -90,7 +90,7 @@ namespace ofxRulr {
 				auto point1 = point1Node->getPosition();
 				auto point2 = point2Node->getPosition();
 
-				auto modules = installationNode->getModules();
+				auto modules = installationNode->getSelectedModules();
 				for(auto module : modules) {
 					auto result = Solvers::Reworld::Navigate::PointToPoint::solve(module->getModel()
 						, module->getCurrentAxisAngles()
@@ -101,6 +101,8 @@ namespace ofxRulr {
 					module->setTargetAxisAngles(result.solution.axisAngles);
 					cout << result.residual << endl;
 				}
+
+				this->needsPerform = false;
 			}
 		}
 	}

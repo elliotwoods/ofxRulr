@@ -20,7 +20,7 @@ struct NavigateInVectorToPointCost
 			, T* residuals) const
 	{
 		// Construct the axis angles
-		ofxRulr::Models::Reworld::Module<T>::AxisAngles axisAngles;
+		ofxRulr::Models::Reworld::AxisAngles<T> axisAngles;
 		{
 			axisAngles.A = axisAngleParameters[0];
 			axisAngles.B = axisAngleParameters[1];
@@ -76,7 +76,7 @@ namespace ofxRulr {
 				//---------
 				Result
 					InVectorToPoint::solve(const Models::Reworld::Module<float>& module
-						, const Models::Reworld::Module<float>::AxisAngles& initialAxisAngles
+						, const Models::Reworld::AxisAngles<float> &initialAxisAngles
 						, const glm::vec3& inVector
 						, const glm::vec3& point
 						, const ofxCeres::SolverSettings& solverSettings)
@@ -108,8 +108,19 @@ namespace ofxRulr {
 
 					{
 						Result result(summary);
-						result.solution.axisAngles.A = (float)parameters[0];
-						result.solution.axisAngles.B = (float)parameters[1];
+
+						// Get the values into the result but find the closest cyclic values to 0,0
+						Models::Reworld::AxisAngles<float> zeroAngles;
+						{
+							zeroAngles.A = 0;
+							zeroAngles.B = 0;
+						}
+						auto closestCycleToZero = Models::Reworld::findClosestCycleValue(zeroAngles, {
+							(float)parameters[0]
+							, (float)parameters[1]
+							});
+						result.solution.axisAngles = closestCycleToZero;
+
 						return result;
 					}
 

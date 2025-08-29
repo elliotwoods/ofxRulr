@@ -61,6 +61,7 @@ namespace ofxRulr {
 		glm::vec2 analog1{ 0, 0 };
 		glm::vec2 analog2{ 0, 0 };
 		glm::vec2 combinedMovement{ 0, 0 };
+		glm::vec2 digital{ 0, 0 };
 		bool buttons[4] = { false, false, false, false };
 	};
 

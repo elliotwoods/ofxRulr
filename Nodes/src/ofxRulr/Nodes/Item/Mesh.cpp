@@ -66,6 +66,50 @@ namespace ofxRulr {
 						break;
 					}
 				}
+
+				if (this->meshAnalysisCache.needsRecalculate) {
+					if (this->modelLoader) {
+						// vertex count
+						{
+							auto meshCount = this->modelLoader->getNumMeshes();
+							vector<size_t> vertexCounts;
+							for (uint32_t i = 0; i < meshCount; i++) {
+								vertexCounts.push_back(this->modelLoader->getMesh(i).getNumVertices());
+							}
+							size_t totalCount = 0;
+							for (const auto& vertexCount : vertexCounts) {
+								totalCount += vertexCount;
+							}
+
+							stringstream message;
+							message << totalCount << " [";
+							bool first = true;
+							for (const auto& vertexCount : vertexCounts) {
+								if (!first) {
+									message << ", ";
+								}
+								else {
+									first = false;
+								}
+								message << vertexCount;
+							}
+							message << "]";
+							this->meshAnalysisCache.vertexCount = message.str();
+						}
+
+						this->meshAnalysisCache.numMeshes = this->modelLoader->getNumMeshes();
+						this->meshAnalysisCache.sceneMin = this->modelLoader->getSceneMin();
+						this->meshAnalysisCache.sceneMax = this->modelLoader->getSceneMax();
+					}
+					else {
+						this->meshAnalysisCache.vertexCount = "";
+						this->meshAnalysisCache.sceneMin = { 0, 0, 0 };
+						this->meshAnalysisCache.sceneMax = { 0, 0, 0 };
+						this->meshAnalysisCache.numMeshes = 0;
+					}
+
+					this->meshAnalysisCache.needsRecalculate = false;
+				}
 			}
 
 			//----------
@@ -311,61 +355,17 @@ namespace ofxRulr {
 					inspector->add(clearButton);
 				}
 				
-
 				inspector->addLiveValue<uint32_t>("Mesh count", [this]() {
-					if (this->modelLoader) {
-						return this->modelLoader->getNumMeshes();
-					}
-					else {
-						return 0U;
-					}
+					return this->meshAnalysisCache.numMeshes;
 				});
 				inspector->addLiveValue<string>("Vertex count", [this]() {
-					if (this->modelLoader) {
-						auto meshCount = this->modelLoader->getNumMeshes();
-						vector<size_t> vertexCounts;
-						for (uint32_t i = 0; i < meshCount; i++) {
-							vertexCounts.push_back(this->modelLoader->getMesh(i).getNumVertices());
-						}
-						size_t totalCount = 0;
-						for (const auto & vertexCount : vertexCounts) {
-							totalCount += vertexCount;
-						}
-
-						stringstream message;
-						message << totalCount << " [";
-						bool first = true;
-						for (const auto & vertexCount : vertexCounts) {
-							if (!first) {
-								message << ", ";
-							}
-							else {
-								first = false;
-							}
-							message << vertexCount;
-						}
-						message << "]";
-						return message.str();
-					}
-					else {
-						return string();
-					}
+					return this->meshAnalysisCache.vertexCount;
 				});
 				inspector->addLiveValue<glm::vec3>("Bounds min", [this]() {
-					if (this->modelLoader) {
-						return this->modelLoader->getSceneMin();
-					}
-					else {
-						return glm::vec3();
-					}
+					return this->meshAnalysisCache.sceneMin;
 				});
 				inspector->addLiveValue<glm::vec3>("Bounds max", [this]() {
-					if (this->modelLoader) {
-						return this->modelLoader->getSceneMax();
-					}
-					else {
-						return glm::vec3();
-					}
+					return this->meshAnalysisCache.sceneMax;
 				});
 
 				inspector->addParameterGroup(this->parameters);
@@ -381,7 +381,7 @@ namespace ofxRulr {
 					if (!this->modelLoader->load(this->meshFilename.get(), ofxAssimpModelLoader::OPTIMIZE_NONE)) {
 						this->modelLoader.reset();
 					}
-				}	
+				}
 
 				if (this->modelLoader) {
 					this->modelLoader->calculateDimensions();

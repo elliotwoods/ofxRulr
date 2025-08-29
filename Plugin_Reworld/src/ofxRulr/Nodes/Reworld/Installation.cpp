@@ -1,6 +1,7 @@
 #include "pch_Plugin_Reworld.h"
 #include "Installation.h"
 #include "ColumnView.h"
+#include "Router.h"
 
 namespace ofxRulr {
 	namespace Nodes {
@@ -43,13 +44,76 @@ namespace ofxRulr {
 					this->columns.populateWidgets(panel);
 					this->panel = panel;
 				}
+
+				this->addInput<Router>();
 			}
 
 			//---------
 			void
 				Installation::update()
 			{
+				auto columns = this->getAllColumns();
 
+				// update all columns
+				{
+
+					for (auto column : columns) {
+						column->update();
+					}
+				}
+
+				// gather fresh frames to send (either on period or on change)
+				{
+					auto router = this->getInput<Router>();
+					if (router) {
+						bool sendAllValues = false;
+						if(this->parameters.transmit.periodEnabled.get()) {
+							auto period = this->parameters.transmit.onPeriod.get();
+							auto currentTime = ofGetElapsedTimef();
+							if (currentTime - this->transmit.lastSendTime > period) {
+								this->transmit.lastSendTime = currentTime;
+								sendAllValues = true;
+							}
+						}
+
+						bool sendOnChange = this->parameters.transmit.onChange.get();
+
+						if (sendAllValues || sendOnChange) {
+							map<Router::Address, Models::Reworld::AxisAngles<float>> dataToSend;
+							for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+								auto column = columns[columnIndex];
+
+								if (!column->isSelected()) {
+									continue;
+								}
+
+								auto modules = column->getAllModules();
+								for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
+									auto module = modules[moduleIndex];
+
+									if (!module->isSelected()) {
+										continue;
+									}
+
+									bool sendThisValue = sendAllValues;
+									sendThisValue |= sendOnChange && module->needsSendAxisAngles();
+
+									if (sendThisValue) {
+										auto axisValues = module->getAxisAnglesForSend();
+										Router::Address address;
+										address.column = columnIndex;
+										address.portal = moduleIndex;
+										dataToSend.emplace(address, axisValues);
+									}
+								}
+							}
+
+							if (!dataToSend.empty()) {
+								router->sendAxisValues(dataToSend);
+							}
+						}
+					}
+				}
 			}
 
 			//---------
@@ -179,7 +243,7 @@ namespace ofxRulr {
 
 			//---------
 			vector<shared_ptr<Data::Reworld::Module>>
-				Installation::getModules() const
+				Installation::getSelectedModules() const
 			{
 				vector<shared_ptr<Data::Reworld::Module>> modules;
 
@@ -190,6 +254,74 @@ namespace ofxRulr {
 				}
 
 				return modules;
+			}
+
+			//---------
+			vector<shared_ptr<Data::Reworld::Column>>
+				Installation::getAllColumns() const
+			{
+				return this->columns.getAllCaptures();
+			}
+
+			//---------
+			shared_ptr<Data::Reworld::Column>
+				Installation::getColumnByIndex(Data::Reworld::ColumnIndex columnIndex, bool selectedOnly) const
+			{
+				auto columns = this->getAllColumns();
+
+				if (columnIndex >= columns.size() || columnIndex < 0) {
+					throw(ofxRulr::Exception("Index " + ofToString(columnIndex) + " column out of bounds"));
+				}
+
+				auto column = columns[columnIndex];
+
+				if (selectedOnly && !column->isSelected()) {
+					return shared_ptr<Data::Reworld::Column>();
+				}
+
+				return column;
+			}
+
+			//---------
+			shared_ptr<Data::Reworld::Module>
+				Installation::getModuleByIndices(Data::Reworld::ColumnIndex columnIndex, Data::Reworld::ModuleIndex moduleIndex, bool selectedOnly) const
+			{
+				auto column = this->getColumnByIndex(columnIndex, selectedOnly);
+				if (!column) {
+					return shared_ptr<Data::Reworld::Module>();
+				}
+				return column->getModuleByIndex(moduleIndex, selectedOnly);
+			}
+
+			//---------
+			map<Data::Reworld::ColumnIndex, shared_ptr<Data::Reworld::Column>>
+				Installation::getSelectedColumnByIndex() const
+			{
+				map<Data::Reworld::ColumnIndex, shared_ptr<Data::Reworld::Column>> columnsByIndex;
+
+				auto columns = this->getAllColumns();
+				for (Data::Reworld::ColumnIndex columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+					auto column = columns[columnIndex];
+					if (column->isSelected()) {
+						columnsByIndex.emplace(columnIndex, column);
+					}
+				}
+
+				return columnsByIndex;
+			}
+
+			//---------
+			map<Data::Reworld::ColumnIndex, map<Data::Reworld::ModuleIndex, shared_ptr<Data::Reworld::Module>>>
+				Installation::getSelectedModulesByIndex() const
+			{
+				map<Data::Reworld::ColumnIndex, map<Data::Reworld::ModuleIndex, shared_ptr<Data::Reworld::Module>>> modulesByIndex;
+
+				auto columnsByIndex = this->getSelectedColumnByIndex();
+				for (auto columnIt : columnsByIndex) {
+					modulesByIndex.emplace(columnIt.first, columnIt.second->getSelectedModulesByIndex());
+				}
+
+				return modulesByIndex;
 			}
 		}
 	}

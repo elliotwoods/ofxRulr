@@ -74,6 +74,14 @@ namespace ofxRulr {
 
 					PARAM_DECLARE("Model", drawStyle, transform);
 				} parameters;
+
+				struct {
+					size_t numMeshes = 0;
+					string vertexCount;
+					glm::vec3 sceneMin;
+					glm::vec3 sceneMax;
+					bool needsRecalculate = true;
+				} meshAnalysisCache;
 			};
 		}
 	}

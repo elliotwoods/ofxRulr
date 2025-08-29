@@ -80,7 +80,7 @@ namespace ofxRulr {
 				auto installationNode = this->getInput<Installation>();
 				auto lightSourceNode = this->getInput<Item::RigidBody>("Light source");
 
-				auto modules = installationNode->getModules();
+				auto modules = installationNode->getSelectedModules();
 
 				auto lightSourcePosition = lightSourceNode->getPosition();
 

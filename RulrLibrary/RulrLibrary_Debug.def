@@ -677,6 +677,7 @@ EXPORTS
 	??0Strip@Groups@Panels@ofxCvGui@@QEAA@W4Direction@0123@@Z
 	?makeGrid@Groups@Panels@ofxCvGui@@YA?AV?$shared_ptr@VGrid@Groups@Panels@ofxCvGui@@@std@@XZ
 	?makeStrip@Groups@Panels@ofxCvGui@@YA?AV?$shared_ptr@VStrip@Groups@Panels@ofxCvGui@@@std@@W4Direction@Strip@123@@Z
+	?setCellSizes@Strip@Groups@Panels@ofxCvGui@@QEAAXAEBV?$vector@HV?$allocator@H@std@@@std@@@Z
 	?setDirection@Strip@Groups@Panels@ofxCvGui@@QEAAXW4Direction@1234@@Z
 	?setImage@Image@Panels@ofxCvGui@@QEAAXAEAVofAbstractImage@@@Z
 	?add@Scroll@Panels@ofxCvGui@@QEAAXV?$shared_ptr@VElement@ofxCvGui@@@std@@@Z

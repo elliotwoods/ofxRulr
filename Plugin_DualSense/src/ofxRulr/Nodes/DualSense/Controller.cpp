@@ -107,6 +107,8 @@ namespace ofxRulr {
 									|| this->inputState.buttons.leftBumper && !this->priorInputState.buttons.leftBumper;
 
 								bool hasMovement = false;
+
+								// Analog stick 1
 								for (int i = 0; i < 2; i++) {
 									if (abs(this->inputState.analogStickLeft[i]) > this->parameters.deadZone.get()) {
 										args.analog1[i] = this->inputState.analogStickLeft[i];
@@ -114,6 +116,7 @@ namespace ofxRulr {
 									}
 								}
 
+								// Analog stick 2
 								for (int i = 0; i < 2; i++) {
 									if (abs(this->inputState.analogStickRight[i]) > this->parameters.deadZone.get()) {
 										args.analog2[i] = this->inputState.analogStickRight[i];
@@ -121,12 +124,18 @@ namespace ofxRulr {
 									}
 								}
 
+								// Combined movement
 								if (hasMovement) {
 									args.combinedMovement = args.analog1 * this->parameters.coarseSpeed.get()
 										+ args.analog2 * this->parameters.fineSpeed.get();
 									needsSend = true;
 								}
 
+								// Digital stick
+								args.digital = this->inputState.DPad;
+								needsSend |= this->inputState.DPad != this->priorInputState.DPad;
+
+								// Square, circle, etc
 								needsSend |= args.buttons[0] = this->inputState.buttons.cross && !this->priorInputState.buttons.cross;
 								needsSend |= args.buttons[1] = this->inputState.buttons.circle && !this->priorInputState.buttons.circle;
 								needsSend |= args.buttons[2] = this->inputState.buttons.triangle && !this->priorInputState.buttons.triangle;

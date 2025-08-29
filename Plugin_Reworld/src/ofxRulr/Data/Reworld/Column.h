@@ -13,6 +13,8 @@ namespace ofxRulr {
 
 	namespace Data {
 		namespace Reworld {
+			typedef int ColumnIndex;
+
 			class Column
 				: public Utils::AbstractCaptureSet::BaseCapture
 				, ofxCvGui::IInspectable
@@ -27,11 +29,16 @@ namespace ofxRulr {
 
 				void setParent(Nodes::Reworld::Installation*);
 				void init();
+				void update();
 				void serialize(nlohmann::json&);
 				void deserialize(const nlohmann::json&);
 				void build(int columnIndex, int countY, float pitch);
 
 				glm::mat4 getAbsoluteTransform() const;
+
+				vector<shared_ptr<Module>> getAllModules() const;
+				shared_ptr<Module> getModuleByIndex(ModuleIndex, bool selectedOnly) const;
+				map<ModuleIndex, shared_ptr<Module>> getSelectedModulesByIndex() const;
 
 				struct : ofParameterGroup {
 					ofParameter<int> index{ "Index", 0 };

@@ -60,7 +60,7 @@ namespace ofxRulr {
 
 					struct : ofParameterGroup {
 						ofParameter<float> A{ "A", 0, -1, 1 };
-						ofParameter<float> B{ "B", 0.5, -1, 1 };
+						ofParameter<float> B{ "B", 0, -1, 1 };
 						PARAM_DECLARE("Axis angles", A, B);
 					} axisAngles;
 

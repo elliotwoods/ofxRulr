@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxCeres.h"
+#include "AxisAngles.h"
 
 namespace ofxRulr{
 	namespace Models {
@@ -72,19 +73,13 @@ namespace ofxRulr{
 					);
 				}
 
-				// Note these are normalised values as per interface
-				struct AxisAngles {
-					T A;
-					T B;
-				};
-
 				struct RefractionResult {
 					ofxCeres::Models::Ray<T> intermediateRay;
 					ofxCeres::Models::Ray<T> outputRay;
 				};
 
 				RefractionResult refract(const ofxCeres::Models::Ray<T>& incomingRay
-					, const AxisAngles& axisAngles) const
+					, const AxisAngles<T>& axisAngles) const
 				{
 					// This presumes the setup from Shilla Reworld
 					// (light from behind the lenses towards the room interior +z to -z)

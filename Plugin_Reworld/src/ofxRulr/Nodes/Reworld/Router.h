@@ -3,6 +3,8 @@
 #include "ofxRulr.h"
 #include "ofxOsc.h"
 
+#include "ofxRulr/Models/Reworld/AxisAngles.h"
+
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
@@ -11,12 +13,14 @@ namespace ofxRulr {
 				struct Address {
 					int column;
 					uint8_t portal;
+					bool operator<(const Address&) const;
 				};
 
 				Router();
 				string getTypeName() const override;
 
 				void init();
+				void update();
 
 				string getBaseURI() const;
 				string getBaseURI(const Address&) const;
@@ -31,13 +35,25 @@ namespace ofxRulr {
 				void poll(const Address&);
 				void push(const Address&);
 
+				void sendAxisValues(const map<Address, Models::Reworld::AxisAngles<float>>&);
 			protected:
 
 				struct : ofParameterGroup {
 					ofParameter<string> hostname{ "Hostname", "localhost" };
-					ofParameter<int> port{ "Port", 8080};
-					PARAM_DECLARE("Router", hostname, port);
+					struct : ofParameterGroup {
+						ofParameter<int> port{ "Port", 8080 };
+						PARAM_DECLARE("REST", port);
+					} rest;
+
+					struct : ofParameterGroup {
+						ofParameter<int> port{ "Port", 4000 };
+						ofParameter<int> maxPortalsPerMessage{ "Max portals per message", 64 };
+						PARAM_DECLARE("OSC", port, maxPortalsPerMessage);
+					} osc;
+					PARAM_DECLARE("Router", hostname, rest, osc);
 				} parameters;
+
+				shared_ptr<ofxOscSender> oscSender;
 			};
 		}
 	}

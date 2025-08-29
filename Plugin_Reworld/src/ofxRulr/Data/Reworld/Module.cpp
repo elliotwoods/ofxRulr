@@ -60,6 +60,7 @@ namespace ofxRulr {
 				ofPushStyle();
 				{
 					ofNoFill();
+					ofSetColor(this->color);
 					ofDrawCircle({ 0, 0 }, 0.05f);
 				}
 				ofPopStyle();
@@ -93,6 +94,16 @@ namespace ofxRulr {
 				{
 					auto name = "Module " + ofToString(this->parameters.ID.get());
 					positionInColumn->setName(name);
+				}
+			}
+
+			//---------
+			void
+				Module::update()
+			{
+				if (this->transmission.lastSentValues.A != this->parameters.axisAngles.A
+					|| this->transmission.lastSentValues.B != this->parameters.axisAngles.B) {
+					this->transmission.needsSend = true;
 				}
 			}
 
@@ -154,6 +165,14 @@ namespace ofxRulr {
 					* this->getTransformOffset();
 			}
 
+			//---------
+			glm::vec3
+				Module::getPosition() const
+			{
+				auto transform = this->getAbsoluteTransform();
+				return ofxCeres::VectorMath::applyTransform(transform, { 0, 0, 0 });
+			}
+
 			//----------
 			Models::Reworld::Module<float>
 				Module::getModel() const
@@ -200,10 +219,10 @@ namespace ofxRulr {
 			}
 
 			//----------
-			Models::Reworld::Module<float>::AxisAngles
+			Models::Reworld::AxisAngles<float>
 				Module::getCurrentAxisAngles() const
 			{
-				Models::Reworld::Module<float>::AxisAngles axisAngles;
+				Models::Reworld::AxisAngles<float> axisAngles;
 				{
 					axisAngles.A = this->parameters.axisAngles.A.get();
 					axisAngles.B = this->parameters.axisAngles.B.get();
@@ -213,10 +232,27 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Module::setTargetAxisAngles(const Models::Reworld::Module<float>::AxisAngles& axisAngles)
+				Module::setTargetAxisAngles(const Models::Reworld::AxisAngles<float>& axisAngles)
 			{
 				this->parameters.axisAngles.A.set(axisAngles.A);
 				this->parameters.axisAngles.B.set(axisAngles.B);
+			}
+
+			//----------
+			bool
+				Module::needsSendAxisAngles() const
+			{
+				return this->transmission.needsSend;
+			}
+
+			//----------
+			const Module::AxisAngles &
+				Module::getAxisAnglesForSend()
+			{
+				this->transmission.lastSentValues.A = this->parameters.axisAngles.A.get();
+				this->transmission.lastSentValues.B = this->parameters.axisAngles.B.get();
+				this->transmission.needsSend = false;
+				return this->transmission.lastSentValues;
 			}
 
 			//----------

@@ -102,6 +102,16 @@ namespace ofxRulr {
 
 			//----------
 			void
+				Column::update()
+			{
+				auto modules = this->getAllModules();
+				for (auto module : modules) {
+					module->update();
+				}
+			}
+
+			//----------
+			void
 				Column::serialize(nlohmann::json& json)
 			{
 				Utils::serialize(json, this->parameters);
@@ -158,6 +168,47 @@ namespace ofxRulr {
 			{
 				return this->parent->getTransform()
 					* this->rigidBody->getTransform();
+			}
+
+			//----------
+			vector<shared_ptr<Module>>
+				Column::getAllModules() const
+			{
+				return this->modules.getAllCaptures();
+			}
+
+			//----------
+			shared_ptr<Module>
+				Column::getModuleByIndex(ModuleIndex moduleIndex, bool selectedOnly) const
+			{
+				auto modules = this->getAllModules();
+				if (moduleIndex >= modules.size() || moduleIndex < 0) {
+					throw(ofxRulr::Exception("Index " + ofToString(moduleIndex) + " module out of bounds"));
+				}
+
+				auto module = modules[moduleIndex];
+				if (selectedOnly && !module->isSelected()) {
+					return shared_ptr<Module>();
+				}
+
+				return module;
+			}
+
+			//---------
+			map<Data::Reworld::ModuleIndex, shared_ptr<Data::Reworld::Module>>
+				Column::getSelectedModulesByIndex() const
+			{
+				map<Data::Reworld::ModuleIndex, shared_ptr<Data::Reworld::Module>> modulesByIndex;
+
+				auto modules = this->getAllModules();
+				for (Data::Reworld::ModuleIndex moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
+					auto module = modules[moduleIndex];
+					if (module->isSelected()) {
+						modulesByIndex.emplace(moduleIndex, module);
+					}
+				}
+
+				return modulesByIndex;
 			}
 
 			//----------

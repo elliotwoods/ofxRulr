@@ -80,9 +80,14 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Data\Reworld\Capture.cpp" />
     <ClCompile Include="src\ofxRulr\Data\Reworld\Column.cpp" />
     <ClCompile Include="src\ofxRulr\Data\Reworld\Module.cpp" />
+    <ClCompile Include="src\ofxRulr\Models\Reworld\AxisAngles.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\Calibrate.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\CalibrateController.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\CameraTest.cpp" />
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\CaptureView.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\ColumnView.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\Installation.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\NavigatePointToPoint.cpp" />
@@ -103,11 +108,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Data\Reworld\Capture.h" />
     <ClInclude Include="src\ofxRulr\Data\Reworld\Column.h" />
     <ClInclude Include="src\ofxRulr\Data\Reworld\Module.h" />
+    <ClInclude Include="src\ofxRulr\Models\Reworld\AxisAngles.h" />
     <ClInclude Include="src\ofxRulr\Models\Reworld\Module.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\CalibrateController.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\CameraTest.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\CaptureView.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\ColumnView.h" />
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\Calibrate.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\Installation.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\NavigatePointToPoint.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\ModuleView.h" />

@@ -22,7 +22,7 @@ namespace ofxRulr {
 					ofParameter<bool> performOnTargetChange{ "Perform on target change", false };
 					ofxCeres::ParameterisedSolverSettings solverSettings{ Solvers::Reworld::Navigate::PointToPoint::defaultSolverSettings() };
 
-					PARAM_DECLARE("LookAtPointToPoint", performAutomatically, solverSettings);
+					PARAM_DECLARE("LookAtPointToPoint", performAutomatically, performOnTargetChange, solverSettings);
 				} parameters;
 
 				bool needsPerform = false;

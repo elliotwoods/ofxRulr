@@ -16,7 +16,7 @@ namespace ofxRulr {
 				//---------
 				Result
 					PointToPoint::solve(const Models::Reworld::Module<float> &module
-						, const Models::Reworld::Module<float>::AxisAngles& initialAxisAngles
+						, const Models::Reworld::AxisAngles<float>& initialAxisAngles
 						, const glm::vec3& point1
 						, const glm::vec3& point2
 						, const ofxCeres::SolverSettings & solverSettings)

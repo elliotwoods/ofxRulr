@@ -42,7 +42,13 @@ namespace ofxRulr {
 
 				Utils::EditSelection<Data::Reworld::Column> ourSelection;
 
-				vector<shared_ptr<Data::Reworld::Module>> getModules() const;
+				vector<shared_ptr<Data::Reworld::Module>> getSelectedModules() const;
+
+				vector<shared_ptr<Data::Reworld::Column>> getAllColumns() const;
+				shared_ptr<Data::Reworld::Column> getColumnByIndex(Data::Reworld::ColumnIndex, bool selectedOnly) const;
+				shared_ptr<Data::Reworld::Module> getModuleByIndices(Data::Reworld::ColumnIndex, Data::Reworld::ModuleIndex, bool selectedOnly) const;
+				map<Data::Reworld::ColumnIndex, shared_ptr<Data::Reworld::Column>> getSelectedColumnByIndex() const;
+				map<Data::Reworld::ColumnIndex, map<Data::Reworld::ModuleIndex, shared_ptr<Data::Reworld::Module>>> getSelectedModulesByIndex() const;
 			protected:
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
@@ -66,17 +72,28 @@ namespace ofxRulr {
 					PhysicalParameters physicalParameters;
 
 					struct : ofParameterGroup {
+						ofParameter<bool> onChange{ "On change", true };
+						ofParameter<float> onPeriod{ "On period [s]", 1, 0, 120 };
+						ofParameter<bool> periodEnabled{ "Period enabled", true };
+						PARAM_DECLARE("Transmit", onChange, onPeriod, periodEnabled);
+					} transmit;
+
+					struct : ofParameterGroup {
 						LabelDraws labels;
 						PARAM_DECLARE("Draw", labels);
 					} draw;
 
-					PARAM_DECLARE("Installation", builder, physicalParameters, draw);
+					PARAM_DECLARE("Installation", builder, physicalParameters, transmit, draw);
 				} parameters;
 
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
 				shared_ptr<Nodes::Item::RigidBody> stepOffset;
 
 				Utils::CaptureSet<Data::Reworld::Column> columns;
+
+				struct {
+					float lastSendTime = 0.0f;
+				} transmit;
 			};
 		}
 	}
