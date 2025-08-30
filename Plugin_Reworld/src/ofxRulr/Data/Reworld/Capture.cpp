@@ -136,6 +136,23 @@ namespace ofxRulr {
 
 			//----------
 			void
+				Capture::populateInspector(ofxCvGui::InspectArguments args)
+			{
+				auto inspector = args.inspector;
+				inspector->addButton("Clear all module data", [this]() {
+					this->clearAllModuleData();
+					});
+				inspector->addLiveValue<size_t>("Module data count", [this]() {
+					size_t count = 0;
+					for (auto it : this->moduleDataPoints) {
+						count += it.second.size();
+					}
+					return count;
+					});
+			}
+
+			//----------
+			void
 				Capture::drawWorldStage()
 			{
 				if (this->getTargetIsSet()) {
@@ -192,6 +209,7 @@ namespace ofxRulr {
 				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
 				moduleData->axisAngles = data;
 				moduleData->state = ModuleDataPoint::State::Estimated;
+				this->onModuleDataPointsChange.notifyListeners();
 			}
 
 			//----------
@@ -201,6 +219,7 @@ namespace ofxRulr {
 				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
 				moduleData->axisAngles = data;
 				moduleData->state = ModuleDataPoint::State::Set;
+				this->onModuleDataPointsChange.notifyListeners();
 			}
 
 			//----------
@@ -212,6 +231,15 @@ namespace ofxRulr {
 					throw(Exception("Cannot mark a data point as good if it is not set or estimated yet"));
 				}
 				moduleData->state = ModuleDataPoint::Good;
+				this->onModuleDataPointsChange.notifyListeners();
+			}
+
+			//----------
+			void
+				Capture::clearAllModuleData()
+			{
+				this->moduleDataPoints.clear();
+				this->onModuleDataPointsChange.notifyListeners();
 			}
 
 			//----------

@@ -18,6 +18,7 @@ namespace ofxRulr {
 
 				void init();
 				void update();
+				void populateInspector(ofxCvGui::InspectArguments&);
 
 				ofxCvGui::PanelPtr getPanel() override;
 				Data::Reworld::Capture* selection = nullptr;

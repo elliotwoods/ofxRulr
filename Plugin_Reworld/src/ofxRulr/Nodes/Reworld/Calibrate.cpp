@@ -7,6 +7,52 @@ namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
 			//----------
+			Calibrate::CalibrateControllerSession::CalibrateControllerSession()
+			{
+				static int controllerIndex = 0;
+				ofColor color(255, 150, 150);
+				color.setHueAngle(40 * controllerIndex++);
+				this->color = color;
+			}
+
+			//----------
+			Data::Reworld::ColumnIndex
+				Calibrate::CalibrateControllerSession::getColumnIndex() const
+			{
+				return this->columnIndex;
+			}
+
+			//----------
+			Data::Reworld::ModuleIndex
+				Calibrate::CalibrateControllerSession::getModuleIndex() const
+			{
+				return this->moduleIndex;
+			}
+
+			//----------
+			void
+				Calibrate::CalibrateControllerSession::setColumnIndex(Data::Reworld::ColumnIndex columnIndex)
+			{
+				this->columnIndex = columnIndex;
+				this->onSelectedModuleChange.notifyListeners();
+			}
+
+			//----------
+			void
+				Calibrate::CalibrateControllerSession::setModuleIndex(Data::Reworld::ModuleIndex moduleIndex)
+			{
+				this->moduleIndex = moduleIndex;
+				this->onSelectedModuleChange.notifyListeners();
+			}
+
+			//----------
+			ofColor
+				Calibrate::CalibrateControllerSession::getColor() const
+			{
+				return this->color;
+			}
+
+			//----------
 			Calibrate::Calibrate()
 			{
 				RULR_NODE_INIT_LISTENER;
@@ -46,6 +92,7 @@ namespace ofxRulr {
 
 				this->ourSelection.onSelectionChanged += [this]() {
 					this->needsLoadCaptureData = true;
+					this->needsCalculateParking = true;
 					};
 
 				this->manageParameters(this->parameters);
@@ -65,17 +112,28 @@ namespace ofxRulr {
 					this->needsLoadCaptureData = false;
 				}
 
-				{
-					this->calibrateControllerSelections.clear();
-					for (auto it : this->calibrateControllerSessions) {
-						Router::Address address;
-						{
-							address.column = it.second->columnIndex;
-							address.portal = it.second->moduleIndex;
+				if (this->calibrateControllerSessionDataChanged) {
+					// Create a cached list of sessions
+					{
+						// we create a cached list because we sometimes need to check this many times per frame (e.g. drawing the capture panel)
+						this->calibrateControllerSelections.clear();
+						for (auto it : this->calibrateControllerSessions) {
+							Router::Address address;
+							{
+								address.column = it.second->getColumnIndex();
+								address.portal = it.second->getModuleIndex();
+							}
+							this->calibrateControllerSelections.emplace(address);
 						}
-						this->calibrateControllerSelections.emplace(address);
 					}
 
+					this->needsCalculateParking = true;
+					this->calibrateControllerSessionDataChanged = false;
+				}
+
+				// Parking
+				if (this->needsCalculateParking) {
+					this->calculateParking();
 				}
 			}
 
@@ -91,8 +149,8 @@ namespace ofxRulr {
 					for (auto it : this->calibrateControllerSessions) {
 						auto name = it.first->getName();
 						try {
-							auto module = installation->getModuleByIndices(it.second->columnIndex, it.second->moduleIndex, false);
-							ofxCvGui::Utils::drawTextAnnotation(name, module->getPosition(), it.second->debugColor);
+							auto module = installation->getModuleByIndices(it.second->getColumnIndex(), it.second->getModuleIndex(), false);
+							ofxCvGui::Utils::drawTextAnnotation(name, module->getPosition(), it.second->getColor());
 						}
 						catch (...) {
 
@@ -139,7 +197,10 @@ namespace ofxRulr {
 			void
 				Calibrate::populateInspector(ofxCvGui::InspectArguments args)
 			{
-
+				auto inspector = args.inspector;
+				inspector->addButton("Calculate parking", [this]() {
+					this->calculateParking();
+					});
 			}
 
 			//----------
@@ -150,6 +211,9 @@ namespace ofxRulr {
 				this->unregisterCalibrateController(calibrateController);
 
 				auto calibrateControllerSession = make_shared<CalibrateControllerSession>();
+				calibrateControllerSession->onSelectedModuleChange += [this]() {
+					this->calibrateControllerSessionDataChanged = true;
+					};
 				this->calibrateControllerSessions.emplace(calibrateController, calibrateControllerSession);
 
 				return calibrateControllerSession;
@@ -194,6 +258,11 @@ namespace ofxRulr {
 				capture->parentSelection = &this->ourSelection;
 				capture->setParent(this);
 				capture->init();
+				
+				capture->onModuleDataPointsChange.clear();
+				capture->onModuleDataPointsChange += [this]() {
+					this->needsCalculateParking = true;
+					};
 			}
 
 			//----------
@@ -261,7 +330,7 @@ namespace ofxRulr {
 				this->throwIfMissingAConnection<Installation>();
 				auto installation = this->getInput<Installation>();
 
-				auto module = installation->getModuleByIndices(calibrateControllerSession->columnIndex, calibrateControllerSession->moduleIndex, true);
+				auto module = installation->getModuleByIndices(calibrateControllerSession->getColumnIndex(), calibrateControllerSession->getModuleIndex(), true);
 				if (!module) {
 					throw(Exception("moveDataPoint - module is not available (e.g. not selected)"));
 				}
@@ -286,7 +355,7 @@ namespace ofxRulr {
 				// Save it to the current capture
 				auto capture = ourSelection.selection;
 				if (capture) {
-					capture->setManualModuleData(calibrateControllerSession->columnIndex, calibrateControllerSession->moduleIndex, newAxisAngles);
+					capture->setManualModuleData(calibrateControllerSession->getColumnIndex(), calibrateControllerSession->getModuleIndex(), newAxisAngles);
 				}
 			}
 
@@ -297,7 +366,7 @@ namespace ofxRulr {
 				this->throwIfMissingAConnection<Installation>();
 				auto installation = this->getInput<Installation>();
 
-				auto module = installation->getModuleByIndices(calibrateControllerSession->columnIndex, calibrateControllerSession->moduleIndex, true);
+				auto module = installation->getModuleByIndices(calibrateControllerSession->getColumnIndex(), calibrateControllerSession->getModuleIndex(), true);
 				if (!module) {
 					throw(Exception("moveDataPoint - module is not available (e.g. not selected)"));
 				}
@@ -307,7 +376,72 @@ namespace ofxRulr {
 				if (!capture) {
 					throw(Exception("No capture selected"));
 				}
-				capture->markDataPointGood(calibrateControllerSession->columnIndex, calibrateControllerSession->moduleIndex);
+				capture->markDataPointGood(calibrateControllerSession->getColumnIndex(), calibrateControllerSession->getModuleIndex());
+			}
+
+			//----------
+			void
+				Calibrate::calculateParking()
+			{
+				auto selectedCapture = this->ourSelection.selection;
+				if (!selectedCapture) {
+					return;
+				}
+
+				auto installation = this->getInput<Installation>();
+				if (!installation) {
+					return;
+				}
+
+				bool parkingEnabled = this->parameters.control.parkNonSelected.enabled.get();
+
+				// Perform parking
+				for (const auto& columnDataPointsIt : selectedCapture->moduleDataPoints) {
+					for (const auto& moduleDataPointIt : columnDataPointsIt.second) {
+						auto axisAngles = moduleDataPointIt.second->axisAngles;
+						auto module = installation->getModuleByIndices(columnDataPointsIt.first, moduleDataPointIt.first, false);
+						auto& moduleDataPoint = moduleDataPointIt.second;
+
+						if (moduleDataPoint->state == Data::Reworld::Capture::ModuleDataPoint::Unset) {
+							// Don't do anything if there's no data at all
+							continue;
+						}
+
+
+						Router::Address address;
+						{
+							address.portal = moduleDataPointIt.first;
+							address.column = columnDataPointsIt.first;
+						}
+
+						auto isSelectedByAController = this->calibrateControllerSelections.find(address) != this->calibrateControllerSelections.end();
+
+						if (parkingEnabled && !isSelectedByAController) {
+							// calculate an offset for the position (a parked position)
+							float offset = 0.0f;
+							if (!module->isSelected()) {
+								// unselected
+								offset = this->parameters.control.parkNonSelected.parkingSpots.unselected.get();
+							}
+							else if (moduleDataPoint->state == Data::Reworld::Capture::ModuleDataPoint::Estimated) {
+								offset = this->parameters.control.parkNonSelected.parkingSpots.estimated.get();
+							}
+							else if (moduleDataPoint->state == Data::Reworld::Capture::ModuleDataPoint::Set) {
+								offset = this->parameters.control.parkNonSelected.parkingSpots.set.get();
+							}
+							else if (moduleDataPoint->state == Data::Reworld::Capture::ModuleDataPoint::Good) {
+								offset = this->parameters.control.parkNonSelected.parkingSpots.good.get();
+							}
+
+							axisAngles.A += offset;
+							axisAngles.B += offset;
+						}
+
+						module->setTargetAxisAngles(axisAngles);
+					}
+				}
+
+				needsCalculateParking = false;
 			}
 		}
 	}

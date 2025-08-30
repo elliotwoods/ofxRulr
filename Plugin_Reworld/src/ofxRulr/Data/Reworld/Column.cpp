@@ -151,7 +151,6 @@ namespace ofxRulr {
 				auto allModules = this->modules.getAllCaptures();
 				for (int i = 0; i < countY; i++) {
 					auto module = allModules[i];
-					module->parentSelection = &this->ourSelection;
 					module->positionInColumn->setTransform(runningTransform);
 					module->parameters.ID.set(i + 1);
 

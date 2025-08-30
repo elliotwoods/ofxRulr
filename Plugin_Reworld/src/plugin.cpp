@@ -11,6 +11,7 @@
 #include "ofxRulr/Nodes/Reworld/Calibrate.h"
 #include "ofxRulr/Nodes/Reworld/CalibrateController.h"
 #include "ofxRulr/Nodes/Reworld/CaptureView.h"
+#include "ofxRulr/Nodes/Reworld/OSCReceiver.h"
 
 
 OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
@@ -24,4 +25,5 @@ OFXPLUGIN_PLUGIN_MODULES_BEGIN(ofxRulr::Nodes::Base)
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::Calibrate);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::CalibrateController);
 	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::CaptureView);
+	OFXPLUGIN_PLUGIN_REGISTER_MODULE(ofxRulr::Nodes::Reworld::OSCReceiver);
 OFXPLUGIN_PLUGIN_MODULES_END

@@ -39,6 +39,7 @@ namespace ofxRulr {
 				void init();
 				void serialize(nlohmann::json&);
 				void deserialize(const nlohmann::json&);
+				void populateInspector(ofxCvGui::InspectArguments);
 				void drawWorldStage();
 
 				// Called if we're viewing this capture
@@ -51,8 +52,11 @@ namespace ofxRulr {
 				void initialiseModuleDataWithEstimate(ColumnIndex, ModuleIndex, const Module::AxisAngles&);
 				void setManualModuleData(ColumnIndex, ModuleIndex, const Module::AxisAngles&);
 				void markDataPointGood(ColumnIndex, ModuleIndex);
+				void clearAllModuleData();
 
 				shared_ptr<ModuleDataPoint> getModuleDataPoint(ColumnIndex, ModuleIndex);
+
+				ofxLiquidEvent<void> onModuleDataPointsChange;
 
 				void populatePanel(shared_ptr<ofxCvGui::Panels::Groups::Strip>);
 

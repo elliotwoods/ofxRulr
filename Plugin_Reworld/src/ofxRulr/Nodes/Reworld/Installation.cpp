@@ -202,6 +202,7 @@ namespace ofxRulr {
 
 				// Create the columns to start with (reuse existing if already existing)
 				this->columns.resize(countX, []() {return make_shared<Data::Reworld::Column>();  });
+				this->initColumns();
 				auto allColumns = this->columns.getAllCaptures();;
 
 				auto runningTransform = glm::translate(glm::vec3(pitch / 2.0f, 0.0f, 0.0f));
