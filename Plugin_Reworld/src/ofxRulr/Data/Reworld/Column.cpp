@@ -209,6 +209,15 @@ namespace ofxRulr {
 
 				return modulesByIndex;
 			}
+			
+			//---------
+			vector<string>
+				Column::getAndClearOSCOutbox()
+			{
+				auto result = this->oscOutbox;
+				this->oscOutbox.clear();
+				return result;
+			}
 
 			//----------
 			ofxCvGui::ElementPtr

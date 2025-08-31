@@ -22,7 +22,7 @@ namespace ofxRulr {
 
 			class Module
 				: public Utils::AbstractCaptureSet::BaseCapture
-				, ofxCvGui::IInspectable
+				, public ofxCvGui::IInspectable
 			{
 			public:
 				typedef Models::Reworld::AxisAngles<float> AxisAngles;
@@ -52,8 +52,12 @@ namespace ofxRulr {
 				Models::Reworld::AxisAngles<float> getCurrentAxisAngles() const;
 				void setTargetAxisAngles(const AxisAngles&);
 
+				void homeRoutine();
+
 				bool needsSendAxisAngles() const;
 				const AxisAngles& getAxisAnglesForSend(); // also means we will presume that these values have been sent
+
+				vector<string> getAndClearOSCOutbox();
 
 				struct : ofParameterGroup {
 					ofParameter<int> ID{ "ID", 1 };
@@ -104,9 +108,11 @@ namespace ofxRulr {
 					bool needsSend = true;
 					AxisAngles lastSentValues;
 				} transmission;
+
 			protected:
 				ofxCvGui::ElementPtr getDataDisplay() override;
 				Column * parent = nullptr;
+				vector<string> oscOutbox;
 			};
 		}
 	}

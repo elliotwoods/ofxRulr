@@ -27,6 +27,9 @@ namespace ofxRulr {
 					State state = State::Unset;
 					Models::Reworld::AxisAngles<float> axisAngles;
 
+					bool hasEstimate = false;
+					Models::Reworld::AxisAngles<float> estimatedAxisAngles;
+
 					void serialize(nlohmann::json&);
 					void deserialize(const nlohmann::json&);
 				};
@@ -49,9 +52,10 @@ namespace ofxRulr {
 				const glm::vec3& getTarget() const;
 				bool getTargetIsSet() const;
 
-				void initialiseModuleDataWithEstimate(ColumnIndex, ModuleIndex, const Module::AxisAngles&);
+				void setModuleDataEstimate(ColumnIndex, ModuleIndex, const Module::AxisAngles&);
 				void setManualModuleData(ColumnIndex, ModuleIndex, const Module::AxisAngles&);
 				void markDataPointGood(ColumnIndex, ModuleIndex);
+				void clearModuleDataSetValues(ColumnIndex, ModuleIndex); // revert to estimate
 				void clearAllModuleData();
 
 				shared_ptr<ModuleDataPoint> getModuleDataPoint(ColumnIndex, ModuleIndex);
@@ -61,6 +65,8 @@ namespace ofxRulr {
 				void populatePanel(shared_ptr<ofxCvGui::Panels::Groups::Strip>);
 
 				string getText() const;
+
+				void setSelectedControllerSessions(const map<string, pair<int,int>>&);
 
 				map<ColumnIndex, map<ModuleIndex, shared_ptr<ModuleDataPoint>>> moduleDataPoints;
 				ofParameter<glm::vec3> target{ "Target", {0, 0, 0} };
@@ -76,6 +82,7 @@ namespace ofxRulr {
 				void rebuildColumnsPanel();
 				ofxCvGui::ElementPtr getDataDisplay() override;
 
+				map<string, pair<int, int>> selectedControllerSessions;
 			};
 		}
 	}

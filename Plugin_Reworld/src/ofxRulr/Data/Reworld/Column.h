@@ -40,6 +40,8 @@ namespace ofxRulr {
 				shared_ptr<Module> getModuleByIndex(ModuleIndex, bool selectedOnly) const;
 				map<ModuleIndex, shared_ptr<Module>> getSelectedModulesByIndex() const;
 
+				vector<string> getAndClearOSCOutbox();
+
 				struct : ofParameterGroup {
 					ofParameter<int> index{ "Index", 0 };
 					PARAM_DECLARE("Column", index);
@@ -55,6 +57,7 @@ namespace ofxRulr {
 
 			protected:
 				ofxCvGui::ElementPtr getDataDisplay() override;
+				vector<string> oscOutbox;
 			};
 		}
 	}

@@ -57,6 +57,7 @@ namespace ofxRulr {
 				void moveToCapturePositions(Data::Reworld::Capture*);
 				void moveDataPoint(shared_ptr<CalibrateControllerSession>, const glm::vec2&);
 				void markDataPointGood(shared_ptr<CalibrateControllerSession>);
+				void clearModuleDataSetValues(shared_ptr<CalibrateControllerSession>);
 				Utils::EditSelection<Data::Reworld::Capture> ourSelection;
 
 				void calculateParking();
@@ -69,7 +70,6 @@ namespace ofxRulr {
 					} initialisation;
 
 					struct : ofParameterGroup {
-
 						// Parking is for moving other spots out of the way whilst calibrating and for showing status
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true };
@@ -99,6 +99,8 @@ namespace ofxRulr {
 				bool needsLoadCaptureData = false;
 				bool calibrateControllerSessionDataChanged = true;
 				bool needsCalculateParking = true;
+
+				vector<string> oscOutbox;
 			};
 		}
 	}

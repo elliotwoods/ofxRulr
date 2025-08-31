@@ -135,6 +135,20 @@ namespace ofxRulr {
 				if (this->needsCalculateParking) {
 					this->calculateParking();
 				}
+
+				// Labels for captures
+				if (this->ourSelection.selection) {
+					// gather the titles and addresses
+					map<string, pair<int, int>> gatheredAddresses;
+					for (auto controllerSession : this->calibrateControllerSessions) {
+						gatheredAddresses.emplace(controllerSession.first->getName()
+							, pair<int, int> {
+								controllerSession.second->getColumnIndex()
+								, controllerSession.second->getModuleIndex()
+							});
+					}
+					this->ourSelection.selection->setSelectedControllerSessions(gatheredAddresses);
+				}
 			}
 
 			//----------
@@ -299,7 +313,7 @@ namespace ofxRulr {
 							, module->getCurrentAxisAngles()
 							, lightPosition
 							, capture->getTarget());
-						capture->initialiseModuleDataWithEstimate(i, j, result.solution.axisAngles);
+						capture->setModuleDataEstimate(i, j, result.solution.axisAngles);
 					}
 				}
 
@@ -355,7 +369,8 @@ namespace ofxRulr {
 				// Save it to the current capture
 				auto capture = ourSelection.selection;
 				if (capture) {
-					capture->setManualModuleData(calibrateControllerSession->getColumnIndex(), calibrateControllerSession->getModuleIndex(), newAxisAngles);
+					capture->setManualModuleData(calibrateControllerSession->getColumnIndex()
+						, calibrateControllerSession->getModuleIndex(), newAxisAngles);
 				}
 			}
 
@@ -376,7 +391,20 @@ namespace ofxRulr {
 				if (!capture) {
 					throw(Exception("No capture selected"));
 				}
-				capture->markDataPointGood(calibrateControllerSession->getColumnIndex(), calibrateControllerSession->getModuleIndex());
+				capture->markDataPointGood(calibrateControllerSession->getColumnIndex()
+					, calibrateControllerSession->getModuleIndex());
+			}
+
+			//----------
+			void
+				Calibrate::clearModuleDataSetValues(shared_ptr<CalibrateControllerSession> calibrateControllerSession)
+			{
+				auto capture = ourSelection.selection;
+				if (!capture) {
+					throw(Exception("No capture selected"));
+				}
+				capture->clearModuleDataSetValues(calibrateControllerSession->getColumnIndex()
+					, calibrateControllerSession->getModuleIndex());
 			}
 
 			//----------
