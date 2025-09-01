@@ -54,6 +54,8 @@ namespace ofxRulr {
 
 				shared_ptr<ModuleDataPoint> getModuleDataPoint(ColumnIndex, ModuleIndex);
 
+				ofxLiquidEvent<void> onModuleDataPointsChange;
+
 				void populatePanel(shared_ptr<ofxCvGui::Panels::Groups::Strip>);
 
 				string getText() const;

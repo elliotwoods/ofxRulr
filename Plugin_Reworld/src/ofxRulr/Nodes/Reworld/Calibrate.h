@@ -19,9 +19,18 @@ namespace ofxRulr {
 			{
 			public:
 				struct CalibrateControllerSession {
+				public:
+					CalibrateControllerSession();
+					Data::Reworld::ColumnIndex getColumnIndex() const;
+					Data::Reworld::ModuleIndex getModuleIndex() const;
+					void setColumnIndex(Data::Reworld::ColumnIndex);
+					void setModuleIndex(Data::Reworld::ModuleIndex);
+					ofColor getColor() const;
+					ofxLiquidEvent<void> onSelectedModuleChange;
+				protected:
 					Data::Reworld::ColumnIndex columnIndex = 0;
 					Data::Reworld::ModuleIndex moduleIndex = 0;
-					ofColor debugColor{ 255, 0, 0 };
+					ofColor color;
 				};
 
 				Calibrate();
@@ -50,6 +59,8 @@ namespace ofxRulr {
 				void markDataPointGood(shared_ptr<CalibrateControllerSession>);
 				Utils::EditSelection<Data::Reworld::Capture> ourSelection;
 			protected:
+				void calculateParking();
+
 				struct : ofParameterGroup {
 					struct : ofParameterGroup {
 						ofxCeres::ParameterisedSolverSettings solverSettings{ Solvers::Reworld::Navigate::PointToPoint::defaultSolverSettings() };
@@ -57,11 +68,20 @@ namespace ofxRulr {
 					} initialisation;
 
 					struct : ofParameterGroup {
+
+						// Parking is for moving other spots out of the way whilst calibrating and for showing status
 						struct : ofParameterGroup {
 							ofParameter<bool> enabled{ "Enabled", true };
-							ofParameter<float> axisOffset{ "Axis offset", 0.1, -1, 1 };
-							PARAM_DECLARE("Park non-selected", enabled);
+							struct : ofParameterGroup {
+								ofParameter<float> unselected{ "Unselected", 0.5, -1, 1 };
+								ofParameter<float> estimated{ "Estimated", -0.2, -1, 1 };
+								ofParameter<float> set{ "Set", -0.1, -1, 1 };
+								ofParameter<float> good{ "Good", 0.1, -1, 1 };
+								PARAM_DECLARE("Parking spots", unselected, estimated, set, good);
+							} parkingSpots;
+							PARAM_DECLARE("Park non-selected", enabled, parkingSpots);
 						} parkNonSelected;
+
 						PARAM_DECLARE("Control", parkNonSelected)
 					} control;
 
@@ -76,6 +96,8 @@ namespace ofxRulr {
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
 
 				bool needsLoadCaptureData = false;
+				bool calibrateControllerSessionDataChanged = true;
+				bool needsCalculateParking = true;
 			};
 		}
 	}

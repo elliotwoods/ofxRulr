@@ -99,6 +99,9 @@
     <ClCompile Include="src\ofxRulr\Models\Reworld\AxisAngles.cpp">
       <Filter>src\ofxRulr\Models\Reworld</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofxRulr\Nodes\Reworld\OSCReceiver.cpp">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch_Plugin_Reworld.h">
@@ -156,6 +159,9 @@
       <Filter>src\ofxRulr\Models\Reworld</Filter>
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\CaptureView.h">
+      <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Nodes\Reworld\OSCReceiver.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
     </ClInclude>
   </ItemGroup>

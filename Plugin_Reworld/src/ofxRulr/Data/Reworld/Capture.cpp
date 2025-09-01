@@ -192,6 +192,7 @@ namespace ofxRulr {
 				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
 				moduleData->axisAngles = data;
 				moduleData->state = ModuleDataPoint::State::Estimated;
+				this->onModuleDataPointsChange.notifyListeners();
 			}
 
 			//----------
@@ -201,6 +202,7 @@ namespace ofxRulr {
 				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
 				moduleData->axisAngles = data;
 				moduleData->state = ModuleDataPoint::State::Set;
+				this->onModuleDataPointsChange.notifyListeners();
 			}
 
 			//----------
@@ -212,6 +214,7 @@ namespace ofxRulr {
 					throw(Exception("Cannot mark a data point as good if it is not set or estimated yet"));
 				}
 				moduleData->state = ModuleDataPoint::Good;
+				this->onModuleDataPointsChange.notifyListeners();
 			}
 
 			//----------

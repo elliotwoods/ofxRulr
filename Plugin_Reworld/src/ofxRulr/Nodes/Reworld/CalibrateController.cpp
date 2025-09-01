@@ -130,14 +130,18 @@ namespace ofxRulr {
 				calibrateNode->throwIfMissingAConnection<Installation>();
 				auto installation = calibrateNode->getInput<Installation>();
 				
-				auto column = installation->getColumnByIndex(calibrateControllerSession->columnIndex, false);
+				auto column = installation->getColumnByIndex(calibrateControllerSession->getColumnIndex(), false);
 				
-				calibrateControllerSession->moduleIndex++;
+				auto moduleIndex = calibrateControllerSession->getModuleIndex();
+
+				moduleIndex++;
 
 				auto modules = column->getAllModules();
-				if (calibrateControllerSession->moduleIndex >= modules.size()) {
-					calibrateControllerSession->moduleIndex = 0;
+				if (moduleIndex >= modules.size()) {
+					moduleIndex = 0;
 				}
+
+				calibrateControllerSession->setModuleIndex(moduleIndex);
 			}
 
 			//----------
@@ -154,14 +158,19 @@ namespace ofxRulr {
 				calibrateNode->throwIfMissingAConnection<Installation>();
 				auto installation = calibrateNode->getInput<Installation>();
 
-				auto column = installation->getColumnByIndex(calibrateControllerSession->columnIndex, false);
+				auto column = installation->getColumnByIndex(calibrateControllerSession->getColumnIndex(), false);
 
-				calibrateControllerSession->moduleIndex--;
+				auto moduleIndex = calibrateControllerSession->getModuleIndex();
+
+				moduleIndex--;
 
 				auto modules = column->getAllModules();
-				if (calibrateControllerSession->moduleIndex < 0) {
-					calibrateControllerSession->moduleIndex = modules.size() - 1;
+				
+				if (moduleIndex < 0) {
+					moduleIndex = modules.size() - 1;
 				}
+
+				calibrateControllerSession->setModuleIndex(moduleIndex);
 			}
 
 			//----------
@@ -178,11 +187,16 @@ namespace ofxRulr {
 				calibrateNode->throwIfMissingAConnection<Installation>();
 				auto installation = calibrateNode->getInput<Installation>();
 
-				calibrateControllerSession->columnIndex--;
-				if (calibrateControllerSession->columnIndex < 0) {
+				auto columnIndex = calibrateControllerSession->getColumnIndex();
+
+				columnIndex--;
+
+				if (columnIndex < 0) {
 					auto columns = installation->getAllColumns();
-					calibrateControllerSession->columnIndex = columns.size() - 1;
+					columnIndex = columns.size() - 1;
 				}
+
+				calibrateControllerSession->setColumnIndex(columnIndex);
 			}
 
 			//----------
@@ -199,11 +213,16 @@ namespace ofxRulr {
 				calibrateNode->throwIfMissingAConnection<Installation>();
 				auto installation = calibrateNode->getInput<Installation>();
 
-				calibrateControllerSession->columnIndex++;
+				auto columnIndex = calibrateControllerSession->getColumnIndex();
+
+				columnIndex++;
+
 				auto columns = installation->getAllColumns();
-				if (calibrateControllerSession->columnIndex >= columns.size()) {
-					calibrateControllerSession->columnIndex = 0;
+				if (columnIndex >= columns.size()) {
+					columnIndex = 0;
 				}
+
+				calibrateControllerSession->setColumnIndex(columnIndex);
 			}
 
 			//----------
@@ -274,8 +293,8 @@ namespace ofxRulr {
 				}
 
 				if (foundAny) {
-					calibrateControllerSession->columnIndex = closestColumnIndex;
-					calibrateControllerSession->moduleIndex = closestModuleIndex;
+					calibrateControllerSession->setColumnIndex(closestColumnIndex);
+					calibrateControllerSession->setModuleIndex(closestModuleIndex);
 				}
 			}
 
@@ -290,18 +309,18 @@ namespace ofxRulr {
 				auto calibrateControllerSession = this->calibrateControllerSession.lock();
 				if (calibrateControllerSession) {
 					panel->addEditableValue<Data::Reworld::ColumnIndex>("Column", [calibrateControllerSession]() {
-						return calibrateControllerSession->columnIndex;
+						return calibrateControllerSession->getColumnIndex();
 						}, [calibrateControllerSession](string valueString) {
 							if (!valueString.empty()) {
-								calibrateControllerSession->columnIndex = (Data::Reworld::ColumnIndex) ofToInt(valueString);
+								calibrateControllerSession->setColumnIndex((Data::Reworld::ColumnIndex)ofToInt(valueString));
 							}
 							});
 
 					panel->addEditableValue<Data::Reworld::ModuleIndex>("Module", [calibrateControllerSession]() {
-						return calibrateControllerSession->moduleIndex;
+						return calibrateControllerSession->getModuleIndex();
 						}, [calibrateControllerSession](string valueString) {
 							if (!valueString.empty()) {
-								calibrateControllerSession->moduleIndex = (Data::Reworld::ModuleIndex)ofToInt(valueString);
+								calibrateControllerSession->setModuleIndex((Data::Reworld::ModuleIndex)ofToInt(valueString));
 							}
 							});
 				}
