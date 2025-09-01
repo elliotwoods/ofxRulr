@@ -51,7 +51,10 @@ namespace ofxRulr {
 			void
 				CalibrateController::update()
 			{
-
+				auto calibrateControllerSession = this->calibrateControllerSession.lock();
+				if (calibrateControllerSession) {
+					calibrateControllerSession->setName(this->getName());
+				}
 			}
 
 			//----------

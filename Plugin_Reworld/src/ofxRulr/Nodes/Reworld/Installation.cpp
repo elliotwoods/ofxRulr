@@ -42,6 +42,9 @@ namespace ofxRulr {
 					auto panel = ofxCvGui::Panels::makeWidgets();
 					panel->addTitle("Columns:", ofxCvGui::Widgets::Title::Level::H3);
 					this->columns.populateWidgets(panel);
+					panel->addButton("Select all modules", [this]() {
+						this->selectAllModules();
+						});
 					this->panel = panel;
 				}
 
@@ -62,82 +65,20 @@ namespace ofxRulr {
 					}
 				}
 
-				// gather fresh frames to send (either on period or on change)
-				{
-					auto router = this->getInput<Router>();
-					if (router) {
-						bool sendAllValues = false;
-						if(this->parameters.transmit.periodEnabled.get()) {
-							auto period = this->parameters.transmit.onPeriod.get();
-							auto currentTime = ofGetElapsedTimef();
-							if (currentTime - this->transmit.lastSendTime > period) {
-								this->transmit.lastSendTime = currentTime;
-								sendAllValues = true;
-							}
-						}
+				// Send fresh data (either on period or change)
+				if(this->getInput<Router>()) {
+					bool sendAllValues = false;
 
-						bool sendOnChange = this->parameters.transmit.onChange.get();
-
-						if (sendAllValues || sendOnChange) {
-							map<Router::Address, Models::Reworld::AxisAngles<float>> dataToSend;
-							for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-								auto column = columns[columnIndex];
-
-								if (!column->isSelected()) {
-									continue;
-								}
-
-								auto modules = column->getAllModules();
-								for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
-									auto module = modules[moduleIndex];
-
-									if (!module->isSelected()) {
-										continue;
-									}
-
-									// send value if needed
-									bool sendThisValue = sendAllValues;
-									sendThisValue |= sendOnChange && module->needsSendAxisAngles();
-									if (sendThisValue) {
-										Router::Address addressZeroIndexed;
-										{
-											addressZeroIndexed.column = columnIndex;
-											addressZeroIndexed.portal = moduleIndex;
-										}
-
-										auto axisValues = module->getAxisAnglesForSend();
-										dataToSend.emplace(addressZeroIndexed, axisValues);
-									}
-
-									// check if there's anything in the outbox
-									auto moduleOutbox = module->getAndClearOSCOutbox();
-									if (!moduleOutbox.empty()) {
-										Router::Address addressTargetIndexed;
-										{
-											addressTargetIndexed.column = columnIndex;
-											addressTargetIndexed.portal = module->parameters.ID.get();
-										}
-
-										for (auto item : moduleOutbox) {
-											router->sendOSCMessageToModule(addressTargetIndexed, item);
-										}
-									}
-								}
-
-								// check if there's anything in the outbox
-								auto columnOutbox = column->getAndClearOSCOutbox();
-								if (!columnOutbox.empty()) {
-									for (auto item : columnOutbox) {
-										router->sendOSCMessageToColumn(columnIndex, item);
-									}
-								}
-							}
-
-							if (!dataToSend.empty()) {
-								router->sendAxisValues(dataToSend);
-							}
+					if (this->parameters.transmit.periodEnabled.get()) {
+						auto period = this->parameters.transmit.onPeriod.get();
+						auto currentTime = ofGetElapsedTimef();
+						if (currentTime - this->transmit.lastSendTime > period) {
+							this->transmit.lastSendTime = currentTime;
+							sendAllValues = true;
 						}
 					}
+
+					this->pushAllValues(sendAllValues, true);
 				}
 			}
 
@@ -190,6 +131,13 @@ namespace ofxRulr {
 					}, OF_KEY_RETURN);
 
 				inspector->addSubMenu("Step offset", this->stepOffset);
+
+				inspector->addButton("Export postiions CSV", [this]() {
+					try {
+						this->exportPositionsCSV();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					});
 			}
 
 			//---------
@@ -205,6 +153,15 @@ namespace ofxRulr {
 				Installation::getPhysicalParameters() const
 			{
 				return this->parameters.physicalParameters;
+			}
+
+			//---------
+			void
+				Installation::setPhysicalParameters(const Installation::PhysicalParameters& newParameters)
+			{
+				this->parameters.physicalParameters.interPrismDistanceMM.set(newParameters.interPrismDistanceMM.get());
+				this->parameters.physicalParameters.prismAngle.set(newParameters.prismAngle.get());
+				this->parameters.physicalParameters.ior.set(newParameters.ior.get());
 			}
 
 			//---------
@@ -265,6 +222,130 @@ namespace ofxRulr {
 						column->init();
 					}
 				}
+			}
+
+			//---------
+			void
+				Installation::selectAllModules()
+			{
+				auto columns = this->getAllColumns();
+				for (auto column : columns) {
+					column->setSelected(true);
+
+					auto modules = column->getAllModules();
+					for (auto module : modules) {
+						module->setSelected(true);
+					}
+				}
+			}
+
+			//---------
+			void
+				Installation::pushAllValues(bool forceSend, bool selectedOnly)
+			{
+				auto columns = this->getAllColumns();
+
+				this->throwIfMissingAConnection<Router>();
+				auto router = this->getInput<Router>();
+
+				bool sendOnChange = this->parameters.transmit.onChange.get();
+
+				if (sendOnChange) {
+					map<Router::Address, Models::Reworld::AxisAngles<float>> dataToSend;
+					for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+						auto column = columns[columnIndex];
+
+						if (!column->isSelected() && selectedOnly) {
+							continue;
+						}
+
+						auto modules = column->getAllModules();
+						for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
+							auto module = modules[moduleIndex];
+
+							if (!module->isSelected() && selectedOnly) {
+								continue;
+							}
+
+							// send value if needed
+							bool sendThisValue = forceSend;
+							sendThisValue |= sendOnChange && module->needsSendAxisAngles();
+
+							if (sendThisValue) {
+								Router::Address addressZeroIndexed;
+								{
+									addressZeroIndexed.column = columnIndex;
+									addressZeroIndexed.portal = moduleIndex;
+								}
+
+								auto axisValues = module->getAxisAnglesForSend();
+								dataToSend.emplace(addressZeroIndexed, axisValues);
+							}
+
+							// check if there's anything in the outbox
+							auto moduleOutbox = module->getAndClearOSCOutbox();
+							if (!moduleOutbox.empty()) {
+								Router::Address addressTargetIndexed;
+								{
+									addressTargetIndexed.column = columnIndex;
+									addressTargetIndexed.portal = module->parameters.ID.get();
+								}
+
+								for (auto item : moduleOutbox) {
+									router->sendOSCMessageToModule(addressTargetIndexed, item);
+								}
+							}
+						}
+
+						// check if there's anything in the outbox
+						auto columnOutbox = column->getAndClearOSCOutbox();
+						if (!columnOutbox.empty()) {
+							for (auto item : columnOutbox) {
+								router->sendOSCMessageToColumn(columnIndex, item);
+							}
+						}
+					}
+
+					if (!dataToSend.empty()) {
+						router->sendAxisValues(dataToSend);
+					}
+				}
+			}
+
+			//---------
+			void
+				Installation::exportPositionsCSV() const
+			{
+				auto result = ofSystemSaveDialog("module_positions.csv", "Save module positions");
+				if (!result.bSuccess || result.getPath().empty()) {
+					return;
+				}
+
+				std::ofstream ofs(result.getPath(), std::ios::out | std::ios::trunc);
+				if (!ofs.is_open()) {
+					ofLogError("Installation") << "Failed to open file for writing: " << result.getPath();
+					return;
+				}
+
+				// Optional: write header
+				// ofs << "columnIndex,moduleIndex,x,y,z\n";
+
+				auto columns = this->getAllColumns();
+				for (int columnIndex = 0; columnIndex < static_cast<int>(columns.size()); columnIndex++) {
+					auto modules = columns[columnIndex]->getAllModules();
+					for (int moduleIndex = 0; moduleIndex < static_cast<int>(modules.size()); moduleIndex++) {
+						const auto& module = modules[moduleIndex];
+						const auto position = module->getPosition();
+						ofs << columnIndex << ","
+							<< moduleIndex << ","
+							<< std::setprecision(9) << std::fixed
+							<< position.x << ","
+							<< position.y << ","
+							<< position.z << "\n";
+					}
+				}
+
+				ofs.close();
 			}
 
 			//---------

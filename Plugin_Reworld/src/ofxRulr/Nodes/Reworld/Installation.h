@@ -36,9 +36,16 @@ namespace ofxRulr {
 				ofxCvGui::PanelPtr getPanel() override;
 
 				const PhysicalParameters& getPhysicalParameters() const;
+				void setPhysicalParameters(const PhysicalParameters&);
 
 				void build();
 				void initColumns();
+
+				void selectAllModules();
+
+				void pushAllValues(bool forceSend, bool selectedOnly);
+
+				void exportPositionsCSV() const;
 
 				Utils::EditSelection<Data::Reworld::Column> ourSelection;
 

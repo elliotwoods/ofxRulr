@@ -59,6 +59,8 @@ namespace ofxRulr {
 
 				vector<string> getAndClearOSCOutbox();
 
+				void clearCalibration();
+
 				struct : ofParameterGroup {
 					ofParameter<int> ID{ "ID", 1 };
 

@@ -95,6 +95,7 @@
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\OSCReceiver.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\Router.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\SimulateLightBeams.cpp" />
+    <ClCompile Include="src\ofxRulr\Solvers\Reworld\Calibrate\ModulesFromProjections.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\Reworld\Navigate\InVectorToPoint.cpp" />
     <ClCompile Include="src\ofxRulr\Solvers\Reworld\Navigate\PointToPoint.cpp" />
     <ClCompile Include="src\pch_Plugin_Reworld.cpp">
@@ -125,6 +126,7 @@
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\OSCReceiver.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\Router.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\SimulateLightBeams.h" />
+    <ClInclude Include="src\ofxRulr\Solvers\Reworld\Calibrate\ModulesFromProjections.h" />
     <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\InVectorToPoint.h" />
     <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\PointToPoint.h" />
     <ClInclude Include="src\ofxRulr\Solvers\Reworld\Navigate\Result.h" />

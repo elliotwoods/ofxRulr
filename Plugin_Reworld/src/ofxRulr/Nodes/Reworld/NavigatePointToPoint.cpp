@@ -33,7 +33,9 @@ namespace ofxRulr {
 						auto input = this->addInput<Item::RigidBody>("Point " + ofToString(i));
 						input->onNewConnection += [this](shared_ptr<Item::RigidBody> rigidBody) {
 							rigidBody->onTransformChange.addListener([this]() {
-								this->needsPerform = true;
+								if (this->parameters.performOnTargetChange.get()) {
+									this->needsPerform = true;
+								}
 								}, this);
 								};
 						input->onDeleteConnection += [this](shared_ptr<Item::RigidBody> rigidBody) {

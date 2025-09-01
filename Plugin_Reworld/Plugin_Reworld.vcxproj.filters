@@ -43,6 +43,9 @@
     <Filter Include="src\ofxRulr\Solvers\Reworld\Navigate">
       <UniqueIdentifier>{ee1b426a-056e-46f9-b0b8-145cbf372710}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ofxRulr\Solvers\Reworld\Calibrate">
+      <UniqueIdentifier>{9f9adf5e-51a8-44ca-8a46-fa879fa7779d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\plugin.cpp">
@@ -101,6 +104,9 @@
     </ClCompile>
     <ClCompile Include="src\ofxRulr\Nodes\Reworld\OSCReceiver.cpp">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxRulr\Solvers\Reworld\Calibrate\ModulesFromProjections.cpp">
+      <Filter>src\ofxRulr\Solvers\Reworld\Calibrate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="src\ofxRulr\Nodes\Reworld\OSCReceiver.h">
       <Filter>src\ofxRulr\Nodes\Reworld</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Solvers\Reworld\Calibrate\ModulesFromProjections.h">
+      <Filter>src\ofxRulr\Solvers\Reworld\Calibrate</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

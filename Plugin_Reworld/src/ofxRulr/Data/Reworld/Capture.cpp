@@ -18,6 +18,9 @@ namespace ofxRulr {
 				// store estimated values
 				json["estimatedAxisAngles"] = { this->estimatedAxisAngles.A, this->estimatedAxisAngles.B };
 				
+				// store residual
+				json["residual"] = residual;
+
 				// store estimated has
 				Utils::serialize(json["hasEstimate"], this->hasEstimate);
 			}
@@ -42,6 +45,11 @@ namespace ofxRulr {
 				if (json.contains("estimatedAxisAngles") && json["estimatedAxisAngles"].is_array() && json["estimatedAxisAngles"].size() == 2) {
 					this->estimatedAxisAngles.A = json["estimatedAxisAngles"][0].get<float>();
 					this->estimatedAxisAngles.B = json["estimatedAxisAngles"][1].get<float>();
+				}
+
+				// resisual
+				if (json.contains("residual")) {
+					this->residual = json["residual"].get<float>();
 				}
 
 				Utils::deserialize(json, "hasEstimate", this->hasEstimate);
@@ -86,8 +94,8 @@ namespace ofxRulr {
 				Capture::serialize(nlohmann::json& json)
 			{
 				Utils::serialize(json["target"], this->target);
-				Utils::serialize(json["comment"], this->comment);
 				Utils::serialize(json["targetIsSet"], this->targetIsSet);
+				Utils::serialize(json["comment"], this->comment);
 
 				{
 					auto& jsonColumns = json["columns"];
@@ -111,8 +119,8 @@ namespace ofxRulr {
 				Capture::deserialize(const nlohmann::json& json)
 			{
 				Utils::deserialize(json, "target", this->target);
-				Utils::deserialize(json, "comment", this->comment);
 				Utils::deserialize(json, "targetIsSet", this->targetIsSet);
+				Utils::deserialize(json, "comment", this->comment);
 
 				this->moduleDataPoints.clear();
 
@@ -220,7 +228,7 @@ namespace ofxRulr {
 			void
 				Capture::setModuleDataEstimate(ColumnIndex columnIndex, ModuleIndex moduleIndex, const Module::AxisAngles& data)
 			{
-				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
+				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex, true);
 				moduleData->estimatedAxisAngles = data;
 				moduleData->hasEstimate = true;
 
@@ -236,7 +244,7 @@ namespace ofxRulr {
 			void
 				Capture::setManualModuleData(ColumnIndex columnIndex, ModuleIndex moduleIndex, const Module::AxisAngles& data)
 			{
-				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
+				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex, true);
 				moduleData->axisAngles = data;
 				moduleData->state = ModuleDataPoint::State::Set;
 				this->onModuleDataPointsChange.notifyListeners();
@@ -246,7 +254,7 @@ namespace ofxRulr {
 			void
 				Capture::markDataPointGood(ColumnIndex columnIndex, ModuleIndex moduleIndex)
 			{
-				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
+				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex, true);
 				if (moduleData->state == ModuleDataPoint::Unset) {
 					throw(Exception("Cannot mark a data point as good if it is not set or estimated yet"));
 				}
@@ -258,12 +266,11 @@ namespace ofxRulr {
 			void
 				Capture::clearModuleDataSetValues(ColumnIndex columnIndex, ModuleIndex moduleIndex)
 			{
-				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
+				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex, true);
 				if (moduleData->hasEstimate) {
 					moduleData->axisAngles = moduleData->estimatedAxisAngles;
 					moduleData->state = ModuleDataPoint::Estimated;
 				}
-				cout << "here";
 			}
 
 			//----------
@@ -276,12 +283,16 @@ namespace ofxRulr {
 
 			//----------
 			shared_ptr<Capture::ModuleDataPoint>
-				Capture::getModuleDataPoint(ColumnIndex columnIndex, ModuleIndex moduleIndex)
+				Capture::getModuleDataPoint(ColumnIndex columnIndex, ModuleIndex moduleIndex, bool createIfNeeded)
 			{
 				bool newDataPoint = false;
 
 				auto findColumn = this->moduleDataPoints.find(columnIndex);
 				if (findColumn == this->moduleDataPoints.end()) {
+					if (!createIfNeeded) {
+						return nullptr;
+					}
+
 					newDataPoint = true;
 					this->moduleDataPoints.emplace(columnIndex, map<ModuleIndex, shared_ptr<ModuleDataPoint>>());
 				}
@@ -289,6 +300,10 @@ namespace ofxRulr {
 				auto& columnData = this->moduleDataPoints[columnIndex];
 				auto findModule = columnData.find(moduleIndex);
 				if (findModule == columnData.end()) {
+					if (!createIfNeeded) {
+						return nullptr;
+					}
+
 					newDataPoint = true;
 					columnData.emplace(moduleIndex, make_shared<ModuleDataPoint>());
 				}
@@ -353,13 +368,6 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Capture::setSelectedControllerSessions(const map<string, pair<int, int>>& selectedControllerSessions)
-			{
-				this->selectedControllerSessions = selectedControllerSessions;
-			}
-
-			//----------
-			void
 				Capture::rebuildColumnsPanel()
 			{
 				this->columnsPanel->clear();
@@ -387,72 +395,74 @@ namespace ofxRulr {
 								return;
 							}
 
-							const auto& data = findModule->second;
+							Nodes::Reworld::Router::Address address;
+							{
+								address.column = columnIndex;
+								address.portal = moduleIndex;
+							}
 
-							// Draw background based on state
-							switch (data->state) {
-							case ModuleDataPoint::State::Estimated:
-								ofPushStyle();
-								{
-									ofSetColor(100);
-									ofFill();
-									ofDrawRectangle(args.localBounds);
+							// skip drawing if this isn't selected
+							const auto& activeModuleIndices = parent->getSelectedModuleIndicesCache();
+							if (activeModuleIndices.find(address) != activeModuleIndices.end()) {
+								const auto& data = findModule->second;
+
+								// Draw background based on state
+								switch (data->state) {
+								case ModuleDataPoint::State::Estimated:
+									ofPushStyle();
+									{
+										ofSetColor(100);
+										ofFill();
+										ofDrawRectangle(args.localBounds);
+									}
+									ofPopStyle();
+									break;
+								case ModuleDataPoint::State::Set:
+									ofPushStyle();
+									{
+										ofSetColor(200, 100, 100);
+										ofFill();
+										ofDrawRectangle(args.localBounds);
+									}
+									ofPopStyle();
+									break;
+								case ModuleDataPoint::State::Good:
+									ofPushStyle();
+									{
+										ofSetColor(100, 200, 100);
+										ofFill();
+										ofDrawRectangle(args.localBounds);
+									}
+									ofPopStyle();
+									break;
+								default:
+									break;
 								}
-								ofPopStyle();
-								break;
-							case ModuleDataPoint::State::Set:
-								ofPushStyle();
-								{
-									ofSetColor(200, 100, 100);
-									ofFill();
-									ofDrawRectangle(args.localBounds);
-								}
-								ofPopStyle();
-								break;
-							case ModuleDataPoint::State::Good:
-								ofPushStyle();
-								{
-									ofSetColor(100, 200, 100);
-									ofFill();
-									ofDrawRectangle(args.localBounds);
-								}
-								ofPopStyle();
-								break;
-							default:
-								break;
+
+
+								// Draw data
+								Models::Reworld::drawAxisAngles(data->axisAngles, args.localBounds);
 							}
 
 							// Draw outline for controller sessions
 							{
-								Nodes::Reworld::Router::Address address;
-								{
-									address.column = columnIndex;
-									address.portal = moduleIndex;
-								}
-								const auto& selections = parent->getCalibrateControllerSelections();
-								if (selections.find(address) != selections.end()) {
+								const auto& nameCache = parent->getCalibrateControllerSessionsNameCache();
+								
+								auto findNameCache = nameCache.find(address);
+								if (findNameCache != nameCache.end()) {
 									ofPushStyle();
 									{
 										ofNoFill();
+										// draw outline
 										ofDrawRectangle(args.localBounds);
+
+										// draw names
+										const auto& names = findNameCache->second;
+										for (int i = 0; i < names.size(); i++) {
+											ofDrawBitmapString(names[i], 10, 15 + 15 * i);
+										}
 									}
 									ofPopStyle();
-								}
-							}
-
-
-							// Draw data
-							Models::Reworld::drawAxisAngles(data->axisAngles, args.localBounds);
-
-							// Draw who is controlling
-							if (!this->selectedControllerSessions.empty()) {
-								auto y = 10;
-								for (auto session : this->selectedControllerSessions) {
-									if (session.second.first == columnIndex
-										&& session.second.second == moduleIndex) {
-										ofDrawBitmapString(session.first, 5, y);
-										y += 10;
-									}
 								}
 							}
 							};
@@ -463,6 +473,7 @@ namespace ofxRulr {
 
 					this->columnsPanel->add(columnPanel);
 				}
+				this->columnsPanelDirty = false;
 			}
 
 			//----------

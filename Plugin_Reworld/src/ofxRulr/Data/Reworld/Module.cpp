@@ -277,6 +277,20 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void
+				Module::clearCalibration()
+			{
+				this->parameters.calibrationParameters.transformOffset.translation.x.set(0);
+				this->parameters.calibrationParameters.transformOffset.translation.y.set(0);
+				this->parameters.calibrationParameters.transformOffset.translation.z.set(0);
+				this->parameters.calibrationParameters.transformOffset.rotationVector.x.set(0);
+				this->parameters.calibrationParameters.transformOffset.rotationVector.y.set(0);
+				this->parameters.calibrationParameters.transformOffset.rotationVector.z.set(0);
+				this->parameters.calibrationParameters.axisAngleOffsets.A.set(0);
+				this->parameters.calibrationParameters.axisAngleOffsets.B.set(0);
+			}
+
+			//----------
 			ofxCvGui::ElementPtr
 				Module::getDataDisplay()
 			{

@@ -30,6 +30,8 @@ namespace ofxRulr {
 					bool hasEstimate = false;
 					Models::Reworld::AxisAngles<float> estimatedAxisAngles;
 
+					float residual = 0.0f;
+
 					void serialize(nlohmann::json&);
 					void deserialize(const nlohmann::json&);
 				};
@@ -58,15 +60,13 @@ namespace ofxRulr {
 				void clearModuleDataSetValues(ColumnIndex, ModuleIndex); // revert to estimate
 				void clearAllModuleData();
 
-				shared_ptr<ModuleDataPoint> getModuleDataPoint(ColumnIndex, ModuleIndex);
+				shared_ptr<ModuleDataPoint> getModuleDataPoint(ColumnIndex, ModuleIndex, bool createIfNeeded);
 
 				ofxLiquidEvent<void> onModuleDataPointsChange;
 
 				void populatePanel(shared_ptr<ofxCvGui::Panels::Groups::Strip>);
 
 				string getText() const;
-
-				void setSelectedControllerSessions(const map<string, pair<int,int>>&);
 
 				map<ColumnIndex, map<ModuleIndex, shared_ptr<ModuleDataPoint>>> moduleDataPoints;
 				ofParameter<glm::vec3> target{ "Target", {0, 0, 0} };
@@ -81,8 +81,6 @@ namespace ofxRulr {
 			protected:
 				void rebuildColumnsPanel();
 				ofxCvGui::ElementPtr getDataDisplay() override;
-
-				map<string, pair<int, int>> selectedControllerSessions;
 			};
 		}
 	}
