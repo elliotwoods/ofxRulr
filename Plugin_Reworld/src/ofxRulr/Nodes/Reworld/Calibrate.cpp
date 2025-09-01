@@ -132,7 +132,23 @@ namespace ofxRulr {
 				}
 
 				// Parking
-				this->calculateParking();
+				if (this->needsCalculateParking) {
+					this->calculateParking();
+				}
+
+				// Labels for captures
+				if (this->ourSelection.selection) {
+					// gather the titles and addresses
+					map<string, pair<int, int>> gatheredAddresses;
+					for (auto controllerSession : this->calibrateControllerSessions) {
+						gatheredAddresses.emplace(controllerSession.first->getName()
+							, pair<int, int> {
+								controllerSession.second->getColumnIndex()
+								, controllerSession.second->getModuleIndex()
+							});
+					}
+					this->ourSelection.selection->setSelectedControllerSessions(gatheredAddresses);
+				}
 			}
 
 			//----------
@@ -195,7 +211,10 @@ namespace ofxRulr {
 			void
 				Calibrate::populateInspector(ofxCvGui::InspectArguments args)
 			{
-
+				auto inspector = args.inspector;
+				inspector->addButton("Calculate parking", [this]() {
+					this->calculateParking();
+					});
 			}
 
 			//----------
@@ -256,7 +275,7 @@ namespace ofxRulr {
 				
 				capture->onModuleDataPointsChange.clear();
 				capture->onModuleDataPointsChange += [this]() {
-
+					this->needsCalculateParking = true;
 					};
 			}
 
@@ -294,7 +313,7 @@ namespace ofxRulr {
 							, module->getCurrentAxisAngles()
 							, lightPosition
 							, capture->getTarget());
-						capture->initialiseModuleDataWithEstimate(i, j, result.solution.axisAngles);
+						capture->setModuleDataEstimate(i, j, result.solution.axisAngles);
 					}
 				}
 
@@ -350,7 +369,8 @@ namespace ofxRulr {
 				// Save it to the current capture
 				auto capture = ourSelection.selection;
 				if (capture) {
-					capture->setManualModuleData(calibrateControllerSession->getColumnIndex(), calibrateControllerSession->getModuleIndex(), newAxisAngles);
+					capture->setManualModuleData(calibrateControllerSession->getColumnIndex()
+						, calibrateControllerSession->getModuleIndex(), newAxisAngles);
 				}
 			}
 
@@ -371,17 +391,26 @@ namespace ofxRulr {
 				if (!capture) {
 					throw(Exception("No capture selected"));
 				}
-				capture->markDataPointGood(calibrateControllerSession->getColumnIndex(), calibrateControllerSession->getModuleIndex());
+				capture->markDataPointGood(calibrateControllerSession->getColumnIndex()
+					, calibrateControllerSession->getModuleIndex());
+			}
+
+			//----------
+			void
+				Calibrate::clearModuleDataSetValues(shared_ptr<CalibrateControllerSession> calibrateControllerSession)
+			{
+				auto capture = ourSelection.selection;
+				if (!capture) {
+					throw(Exception("No capture selected"));
+				}
+				capture->clearModuleDataSetValues(calibrateControllerSession->getColumnIndex()
+					, calibrateControllerSession->getModuleIndex());
 			}
 
 			//----------
 			void
 				Calibrate::calculateParking()
 			{
-				if (!needsCalculateParking) {
-					return;
-				}
-
 				auto selectedCapture = this->ourSelection.selection;
 				if (!selectedCapture) {
 					return;
@@ -413,7 +442,7 @@ namespace ofxRulr {
 							address.column = columnDataPointsIt.first;
 						}
 
-						auto isSelectedByAController = this->calibrateControllerSelections.find(address) == this->calibrateControllerSelections.end();
+						auto isSelectedByAController = this->calibrateControllerSelections.find(address) != this->calibrateControllerSelections.end();
 
 						if (parkingEnabled && !isSelectedByAController) {
 							// calculate an offset for the position (a parked position)

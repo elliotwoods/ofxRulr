@@ -33,6 +33,7 @@ namespace ofxRulr {
 				CaptureView::init()
 			{
 				RULR_NODE_UPDATE_LISTENER;
+				RULR_NODE_INSPECTOR_LISTENER;
 
 				this->addInput<Calibrate>();
 				this->panel = ofxCvGui::Panels::Groups::makeStrip();
@@ -59,10 +60,20 @@ namespace ofxRulr {
 
 				if (this->selection != priorSelection) {
 					this->rebuildView();
+					ofxCvGui::refreshInspector(this);
 				}
 
 				if (this->selection) {
 					this->selection->updatePanel();
+				}
+			}
+
+			//----------
+			void
+				CaptureView::populateInspector(ofxCvGui::InspectArguments& args)
+			{
+				if (this->selection) {
+					this->selection->populateInspector(args);
 				}
 			}
 

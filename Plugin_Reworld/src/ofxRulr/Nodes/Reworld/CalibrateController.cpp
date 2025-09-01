@@ -95,6 +95,12 @@ namespace ofxRulr {
 					if (remoteControlArgs.buttonDown.cross) {
 						this->x();
 					}
+					if (remoteControlArgs.buttonDown.circle) {
+						this->circle();
+					}
+					if (remoteControlArgs.buttonDown.square) {
+						this->square();
+					}
 
 					{
 						auto movementMagnitude = glm::length(remoteControlArgs.analog2);
@@ -118,7 +124,7 @@ namespace ofxRulr {
 
 			//----------
 			void
-				CalibrateController::up()
+				CalibrateController::performAction(function<void(shared_ptr<Calibrate>, shared_ptr<Calibrate::CalibrateControllerSession>)> action)
 			{
 				auto calibrateControllerSession = this->calibrateControllerSession.lock();
 				if (!calibrateControllerSession) {
@@ -127,117 +133,147 @@ namespace ofxRulr {
 
 				this->throwIfMissingAConnection<Calibrate>();
 				auto calibrateNode = this->getInput<Calibrate>();
-				calibrateNode->throwIfMissingAConnection<Installation>();
-				auto installation = calibrateNode->getInput<Installation>();
-				
-				auto column = installation->getColumnByIndex(calibrateControllerSession->getColumnIndex(), false);
-				
-				auto moduleIndex = calibrateControllerSession->getModuleIndex();
 
-				moduleIndex++;
+				action(calibrateNode, calibrateControllerSession);
+			}
 
-				auto modules = column->getAllModules();
-				if (moduleIndex >= modules.size()) {
-					moduleIndex = 0;
-				}
+			//----------
+			void
+				CalibrateController::up()
+			{
+				this->performAction([this](shared_ptr<Calibrate> calibrateNode
+					, shared_ptr<Calibrate::CalibrateControllerSession> calibrateControllerSession)
+					{
+						calibrateNode->throwIfMissingAConnection<Installation>();
+						auto installation = calibrateNode->getInput<Installation>();
 
-				calibrateControllerSession->setModuleIndex(moduleIndex);
+						auto column = installation->getColumnByIndex(calibrateControllerSession->getColumnIndex(), false);
+
+						auto moduleIndex = calibrateControllerSession->getModuleIndex();
+
+						moduleIndex++;
+
+						auto modules = column->getAllModules();
+						if (moduleIndex >= modules.size()) {
+							moduleIndex = 0;
+						}
+
+						calibrateControllerSession->setModuleIndex(moduleIndex);
+					});
 			}
 
 			//----------
 			void
 				CalibrateController::down()
 			{
-				auto calibrateControllerSession = this->calibrateControllerSession.lock();
-				if (!calibrateControllerSession) {
-					return;
-				}
+				this->performAction([this](shared_ptr<Calibrate> calibrateNode
+					, shared_ptr<Calibrate::CalibrateControllerSession> calibrateControllerSession)
+					{
+						calibrateNode->throwIfMissingAConnection<Installation>();
+						auto installation = calibrateNode->getInput<Installation>();
 
-				this->throwIfMissingAConnection<Calibrate>();
-				auto calibrateNode = this->getInput<Calibrate>();
-				calibrateNode->throwIfMissingAConnection<Installation>();
-				auto installation = calibrateNode->getInput<Installation>();
+						auto column = installation->getColumnByIndex(calibrateControllerSession->getColumnIndex(), false);
 
-				auto column = installation->getColumnByIndex(calibrateControllerSession->getColumnIndex(), false);
+						auto moduleIndex = calibrateControllerSession->getModuleIndex();
 
-				auto moduleIndex = calibrateControllerSession->getModuleIndex();
+						moduleIndex--;
 
-				moduleIndex--;
+						auto modules = column->getAllModules();
 
-				auto modules = column->getAllModules();
-				
-				if (moduleIndex < 0) {
-					moduleIndex = modules.size() - 1;
-				}
+						if (moduleIndex < 0) {
+							moduleIndex = modules.size() - 1;
+						}
 
-				calibrateControllerSession->setModuleIndex(moduleIndex);
+						calibrateControllerSession->setModuleIndex(moduleIndex);
+					});
 			}
 
 			//----------
 			void
 				CalibrateController::left()
 			{
-				auto calibrateControllerSession = this->calibrateControllerSession.lock();
-				if (!calibrateControllerSession) {
-					return;
-				}
+				this->performAction([this](shared_ptr<Calibrate> calibrateNode
+					, shared_ptr<Calibrate::CalibrateControllerSession> calibrateControllerSession)
+					{
+						calibrateNode->throwIfMissingAConnection<Installation>();
+						auto installation = calibrateNode->getInput<Installation>();
 
-				this->throwIfMissingAConnection<Calibrate>();
-				auto calibrateNode = this->getInput<Calibrate>();
-				calibrateNode->throwIfMissingAConnection<Installation>();
-				auto installation = calibrateNode->getInput<Installation>();
+						auto columnIndex = calibrateControllerSession->getColumnIndex();
 
-				auto columnIndex = calibrateControllerSession->getColumnIndex();
+						columnIndex--;
 
-				columnIndex--;
+						if (columnIndex < 0) {
+							auto columns = installation->getAllColumns();
+							columnIndex = columns.size() - 1;
+						}
 
-				if (columnIndex < 0) {
-					auto columns = installation->getAllColumns();
-					columnIndex = columns.size() - 1;
-				}
-
-				calibrateControllerSession->setColumnIndex(columnIndex);
+						calibrateControllerSession->setColumnIndex(columnIndex);
+					});
 			}
 
 			//----------
 			void
 				CalibrateController::right()
 			{
-				auto calibrateControllerSession = this->calibrateControllerSession.lock();
-				if (!calibrateControllerSession) {
-					return;
-				}
+				this->performAction([this](shared_ptr<Calibrate> calibrateNode
+					, shared_ptr<Calibrate::CalibrateControllerSession> calibrateControllerSession)
+					{
+						calibrateNode->throwIfMissingAConnection<Installation>();
+						auto installation = calibrateNode->getInput<Installation>();
 
-				this->throwIfMissingAConnection<Calibrate>();
-				auto calibrateNode = this->getInput<Calibrate>();
-				calibrateNode->throwIfMissingAConnection<Installation>();
-				auto installation = calibrateNode->getInput<Installation>();
 
-				auto columnIndex = calibrateControllerSession->getColumnIndex();
+						auto columnIndex = calibrateControllerSession->getColumnIndex();
 
-				columnIndex++;
+						columnIndex++;
 
-				auto columns = installation->getAllColumns();
-				if (columnIndex >= columns.size()) {
-					columnIndex = 0;
-				}
+						auto columns = installation->getAllColumns();
+						if (columnIndex >= columns.size()) {
+							columnIndex = 0;
+						}
 
-				calibrateControllerSession->setColumnIndex(columnIndex);
+						calibrateControllerSession->setColumnIndex(columnIndex);
+					});
 			}
 
 			//----------
 			void
 				CalibrateController::x()
 			{
-				auto calibrateControllerSession = this->calibrateControllerSession.lock();
-				if (!calibrateControllerSession) {
-					return;
-				}
+				this->performAction([this](shared_ptr<Calibrate> calibrateNode
+					, shared_ptr<Calibrate::CalibrateControllerSession> calibrateControllerSession)
+					{
+						calibrateNode->markDataPointGood(calibrateControllerSession);
+					});
+			}
 
-				this->throwIfMissingAConnection<Calibrate>();
-				auto calibrateNode = this->getInput<Calibrate>();
+			//----------
+			void
+				CalibrateController::circle()
+			{
+				this->performAction([this](shared_ptr<Calibrate> calibrateNode
+					, shared_ptr<Calibrate::CalibrateControllerSession> calibrateControllerSession)
+					{
+						calibrateNode->clearModuleDataSetValues(calibrateControllerSession);
+					});
+			}
 
-				calibrateNode->markDataPointGood(calibrateControllerSession);
+			//----------
+			void
+				CalibrateController::square()
+			{
+				this->performAction([this](shared_ptr<Calibrate> calibrateNode
+					, shared_ptr<Calibrate::CalibrateControllerSession> calibrateControllerSession)
+					{
+						auto installation = calibrateNode->getInput<Installation>();
+						if (installation) {
+							auto module = installation->getModuleByIndices(calibrateControllerSession->getColumnIndex()
+								, calibrateControllerSession->getModuleIndex()
+								, true);
+							if (module) {
+								module->homeRoutine();
+							}
+						}
+					});
 			}
 
 			//----------

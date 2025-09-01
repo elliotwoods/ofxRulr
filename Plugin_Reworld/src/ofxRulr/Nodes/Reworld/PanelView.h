@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofxRulr/Nodes/IHasVertices.h"
-#include "ofxRulr/Data/Reworld/Column.h"
+#include "ofxRulr/Data/Reworld/Panel.h"
 #include "ofxRulr/Utils/EditSelection.h"
 
 #include "Installation.h"
@@ -9,26 +9,20 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
-			class ModuleView : public Base
+			class PanelView : public Base
 			{
 			public:
-				ModuleView();
-				~ModuleView();
-
+				PanelView();
 				string getTypeName() const override;
 
 				void init();
 				void update();
-				void populateInspector(ofxCvGui::InspectArguments&);
 
 				ofxCvGui::PanelPtr getPanel() override;
-				Data::Reworld::Module* selection = nullptr;
-
-				static bool isSelected(Data::Reworld::Module*);
+				Data::Reworld::Panel* selection = nullptr;
 			protected:
 				void rebuildView();
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
-				static set<ModuleView*> instances;
 			};
 		}
 	}

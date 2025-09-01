@@ -95,15 +95,40 @@ namespace ofxRulr {
 										continue;
 									}
 
+									// send value if needed
 									bool sendThisValue = sendAllValues;
 									sendThisValue |= sendOnChange && module->needsSendAxisAngles();
-
 									if (sendThisValue) {
+										Router::Address addressZeroIndexed;
+										{
+											addressZeroIndexed.column = columnIndex;
+											addressZeroIndexed.portal = moduleIndex;
+										}
+
 										auto axisValues = module->getAxisAnglesForSend();
-										Router::Address address;
-										address.column = columnIndex;
-										address.portal = moduleIndex;
-										dataToSend.emplace(address, axisValues);
+										dataToSend.emplace(addressZeroIndexed, axisValues);
+									}
+
+									// check if there's anything in the outbox
+									auto moduleOutbox = module->getAndClearOSCOutbox();
+									if (!moduleOutbox.empty()) {
+										Router::Address addressTargetIndexed;
+										{
+											addressTargetIndexed.column = columnIndex;
+											addressTargetIndexed.portal = module->parameters.ID.get();
+										}
+
+										for (auto item : moduleOutbox) {
+											router->sendOSCMessageToModule(addressTargetIndexed, item);
+										}
+									}
+								}
+
+								// check if there's anything in the outbox
+								auto columnOutbox = column->getAndClearOSCOutbox();
+								if (!columnOutbox.empty()) {
+									for (auto item : columnOutbox) {
+										router->sendOSCMessageToColumn(columnIndex, item);
 									}
 								}
 							}
@@ -202,6 +227,7 @@ namespace ofxRulr {
 
 				// Create the columns to start with (reuse existing if already existing)
 				this->columns.resize(countX, []() {return make_shared<Data::Reworld::Column>();  });
+				this->initColumns();
 				auto allColumns = this->columns.getAllCaptures();;
 
 				auto runningTransform = glm::translate(glm::vec3(pitch / 2.0f, 0.0f, 0.0f));

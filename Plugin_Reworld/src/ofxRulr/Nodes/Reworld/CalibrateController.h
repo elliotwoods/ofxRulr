@@ -18,6 +18,8 @@ namespace ofxRulr {
 				void remoteControl(RemoteControllerArgs);
 
 				ofxCvGui::PanelPtr getPanel() override;
+				
+				void performAction(function<void(shared_ptr<Calibrate>, shared_ptr<Calibrate::CalibrateControllerSession>)>);
 
 				void up();
 				void down();
@@ -25,8 +27,10 @@ namespace ofxRulr {
 				void right();
 
 				void x();
+				void circle();
+				void square();
 
-				void moveAxes(const glm::vec2 &);
+				void moveAxes(const glm::vec2&);
 
 				void selectClosestModuleToMouseCursor();
 			protected:

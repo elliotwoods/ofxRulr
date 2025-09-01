@@ -1,40 +1,28 @@
 #include "pch_Plugin_Reworld.h"
-#include "ModuleView.h"
+#include "PanelView.h"
 #include "ColumnView.h"
 
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
 			//----------
-			set<ModuleView*> ModuleView::instances;
-
-			//----------
-			ModuleView::ModuleView()
+			PanelView::PanelView()
 			{
-				ModuleView::instances.insert(this);
-
 				RULR_NODE_INIT_LISTENER;
 			}
 
 			//----------
-			ModuleView::~ModuleView()
-			{
-				ModuleView::instances.erase(this);
-			}
-
-			//----------
 			string
-				ModuleView::getTypeName() const
+				PanelView::getTypeName() const
 			{
-				return "Reworld::ModuleView";
+				return "Reworld::PanelView";
 			}
 
 			//----------
 			void
-				ModuleView::init()
+				PanelView::init()
 			{
 				RULR_NODE_UPDATE_LISTENER;
-				RULR_NODE_INSPECTOR_LISTENER;
 
 				auto input = this->addInput<ColumnView>();
 				this->panel = ofxCvGui::Panels::makeWidgets();
@@ -44,7 +32,7 @@ namespace ofxRulr {
 
 			//----------
 			void
-				ModuleView::update()
+				PanelView::update()
 			{
 				auto priorSelection = this->selection;
 
@@ -61,49 +49,27 @@ namespace ofxRulr {
 
 				if (this->selection != priorSelection) {
 					this->rebuildView();
-					ofxCvGui::refreshInspector(this);
-				}
-			}
-
-
-			//----------
-			void
-				ModuleView::populateInspector(ofxCvGui::InspectArguments& args)
-			{
-				if (this->selection) {
-					this->selection->onPopulateInspector(args);
 				}
 			}
 
 			//----------
 			ofxCvGui::PanelPtr
-				ModuleView::getPanel()
+				PanelView::getPanel()
 			{
 				return this->panel;
 			}
 
 			//----------
-			bool
-				ModuleView::isSelected(Data::Reworld::Module* module)
-			{
-				for (auto instance : ModuleView::instances) {
-					if (instance->selection == module) {
-						return true;
-					}
-				}
-				return false;
-			}
-
-			//----------
 			void
-				ModuleView::rebuildView()
+				PanelView::rebuildView()
 			{
 				this->panel->clear();
 				if (!this->selection) {
-					this->panel->addTitle("Select module first");
+					this->panel->addTitle("Select panel first");
 				}
 				else {
-					this->panel->addParameterGroup(this->selection->parameters);
+					this->panel->addTitle("Portals:", ofxCvGui::Widgets::Title::Level::H3);
+					this->selection->portals.populateWidgets(this->panel);
 				}
 			}
 		}

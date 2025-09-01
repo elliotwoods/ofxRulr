@@ -9,26 +9,20 @@
 namespace ofxRulr {
 	namespace Nodes {
 		namespace Reworld {
-			class ModuleView : public Base
+			class PortalView : public Base
 			{
 			public:
-				ModuleView();
-				~ModuleView();
-
+				PortalView();
 				string getTypeName() const override;
 
 				void init();
 				void update();
-				void populateInspector(ofxCvGui::InspectArguments&);
 
 				ofxCvGui::PanelPtr getPanel() override;
-				Data::Reworld::Module* selection = nullptr;
-
-				static bool isSelected(Data::Reworld::Module*);
+				Data::Reworld::Portal* selection = nullptr;
 			protected:
 				void rebuildView();
 				shared_ptr<ofxCvGui::Panels::Widgets> panel;
-				static set<ModuleView*> instances;
 			};
 		}
 	}

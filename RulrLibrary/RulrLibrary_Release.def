@@ -1135,3 +1135,4 @@ EXPORTS
 	?fend@Delaunay@tpp@@QEAA?AVfIterator@12@XZ
 	?Org@Delaunay@tpp@@QEAAHAEBVfIterator@12@@Z
 	?Triangulate@Delaunay@tpp@@AEAAXAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?getArgAsInt@ofxOscMessage@@QEBAH_K@Z

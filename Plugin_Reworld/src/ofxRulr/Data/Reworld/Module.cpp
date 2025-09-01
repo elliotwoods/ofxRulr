@@ -18,6 +18,9 @@ namespace ofxRulr {
 						this->deserialize(json);
 						};
 					this->onPopulateInspector += [this](ofxCvGui::InspectArguments& args) {
+						args.inspector->addButton("Home", [this]() {
+							this->homeRoutine();
+							});
 						args.inspector->addParameterGroup(this->parameters);
 						};
 
@@ -239,6 +242,15 @@ namespace ofxRulr {
 			}
 
 			//----------
+			void
+				Module::homeRoutine()
+			{
+				this->parameters.axisAngles.A.set(0);
+				this->parameters.axisAngles.B.set(0);
+				this->oscOutbox.push_back("home");
+			}
+
+			//----------
 			bool
 				Module::needsSendAxisAngles() const
 			{
@@ -253,6 +265,15 @@ namespace ofxRulr {
 				this->transmission.lastSentValues.B = this->parameters.axisAngles.B.get();
 				this->transmission.needsSend = false;
 				return this->transmission.lastSentValues;
+			}
+
+			//---------
+			vector<string>
+				Module::getAndClearOSCOutbox()
+			{
+				auto result = this->oscOutbox;
+				this->oscOutbox.clear();
+				return result;
 			}
 
 			//----------
@@ -292,7 +313,7 @@ namespace ofxRulr {
 				{
 					auto button = make_shared<ofxCvGui::Widgets::Toggle>("Position in Column"
 						, [this]() {
-							return this->isBeingInspected();
+							return this->positionInColumn->isBeingInspected();
 						}
 						, [this](bool value) {
 							if (value) {

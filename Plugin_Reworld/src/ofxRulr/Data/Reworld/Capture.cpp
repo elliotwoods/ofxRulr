@@ -14,6 +14,12 @@ namespace ofxRulr {
 
 				// store axisAngles as array [A, B]
 				json["axisAngles"] = { this->axisAngles.A, this->axisAngles.B };
+
+				// store estimated values
+				json["estimatedAxisAngles"] = { this->estimatedAxisAngles.A, this->estimatedAxisAngles.B };
+				
+				// store estimated has
+				Utils::serialize(json["hasEstimate"], this->hasEstimate);
 			}
 
 			//----------
@@ -31,6 +37,14 @@ namespace ofxRulr {
 					this->axisAngles.A = json["axisAngles"][0].get<float>();
 					this->axisAngles.B = json["axisAngles"][1].get<float>();
 				}
+
+				// estimatedAxisAngles
+				if (json.contains("estimatedAxisAngles") && json["estimatedAxisAngles"].is_array() && json["estimatedAxisAngles"].size() == 2) {
+					this->estimatedAxisAngles.A = json["estimatedAxisAngles"][0].get<float>();
+					this->estimatedAxisAngles.B = json["estimatedAxisAngles"][1].get<float>();
+				}
+
+				Utils::deserialize(json, "hasEstimate", this->hasEstimate);
 			}
 
 			//----------
@@ -136,6 +150,23 @@ namespace ofxRulr {
 
 			//----------
 			void
+				Capture::populateInspector(ofxCvGui::InspectArguments args)
+			{
+				auto inspector = args.inspector;
+				inspector->addButton("Clear all module data", [this]() {
+					this->clearAllModuleData();
+					});
+				inspector->addLiveValue<size_t>("Module data count", [this]() {
+					size_t count = 0;
+					for (auto it : this->moduleDataPoints) {
+						count += it.second.size();
+					}
+					return count;
+					});
+			}
+
+			//----------
+			void
 				Capture::drawWorldStage()
 			{
 				if (this->getTargetIsSet()) {
@@ -187,11 +218,17 @@ namespace ofxRulr {
 
 			//----------
 			void
-				Capture::initialiseModuleDataWithEstimate(ColumnIndex columnIndex, ModuleIndex moduleIndex, const Module::AxisAngles& data)
+				Capture::setModuleDataEstimate(ColumnIndex columnIndex, ModuleIndex moduleIndex, const Module::AxisAngles& data)
 			{
 				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
-				moduleData->axisAngles = data;
-				moduleData->state = ModuleDataPoint::State::Estimated;
+				moduleData->estimatedAxisAngles = data;
+				moduleData->hasEstimate = true;
+
+				if (moduleData->state < ModuleDataPoint::Set) {
+					// If the data hasn't yet been set then we will take this value now
+					moduleData->axisAngles = data;
+					moduleData->state = ModuleDataPoint::State::Estimated;
+				}
 				this->onModuleDataPointsChange.notifyListeners();
 			}
 
@@ -214,6 +251,26 @@ namespace ofxRulr {
 					throw(Exception("Cannot mark a data point as good if it is not set or estimated yet"));
 				}
 				moduleData->state = ModuleDataPoint::Good;
+				this->onModuleDataPointsChange.notifyListeners();
+			}
+
+			//----------
+			void
+				Capture::clearModuleDataSetValues(ColumnIndex columnIndex, ModuleIndex moduleIndex)
+			{
+				auto moduleData = this->getModuleDataPoint(columnIndex, moduleIndex);
+				if (moduleData->hasEstimate) {
+					moduleData->axisAngles = moduleData->estimatedAxisAngles;
+					moduleData->state = ModuleDataPoint::Estimated;
+				}
+				cout << "here";
+			}
+
+			//----------
+			void
+				Capture::clearAllModuleData()
+			{
+				this->moduleDataPoints.clear();
 				this->onModuleDataPointsChange.notifyListeners();
 			}
 
@@ -292,6 +349,13 @@ namespace ofxRulr {
 				else {
 					return comment;
 				}
+			}
+
+			//----------
+			void
+				Capture::setSelectedControllerSessions(const map<string, pair<int, int>>& selectedControllerSessions)
+			{
+				this->selectedControllerSessions = selectedControllerSessions;
 			}
 
 			//----------
@@ -375,9 +439,24 @@ namespace ofxRulr {
 									ofPopStyle();
 								}
 							}
+
+
 							// Draw data
 							Models::Reworld::drawAxisAngles(data->axisAngles, args.localBounds);
+
+							// Draw who is controlling
+							if (!this->selectedControllerSessions.empty()) {
+								auto y = 10;
+								for (auto session : this->selectedControllerSessions) {
+									if (session.second.first == columnIndex
+										&& session.second.second == moduleIndex) {
+										ofDrawBitmapString(session.first, 5, y);
+										y += 10;
+									}
+								}
+							}
 							};
+
 						panel->setScissorEnabled(false); // optimisation
 						columnPanel->add(panel);
 					}
