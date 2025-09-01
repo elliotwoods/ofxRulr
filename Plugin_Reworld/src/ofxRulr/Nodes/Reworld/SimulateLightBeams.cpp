@@ -133,10 +133,15 @@ namespace ofxRulr {
 				this->refractionResultsPreview.setMode(ofPrimitiveMode::OF_PRIMITIVE_LINES);
 
 				const auto& extendExitRay = this->parameters.preview.extendExitRay.get();
+				const auto colorEnabled = this->parameters.preview.color.get();
+				const auto alpha = this->parameters.preview.alpha.get();
 
 				for (const auto& result : this->refractionResults) {
 					auto module = result.module.lock();
-					auto color = (ofFloatColor) ((bool)(module) ? module->color.get() : ofColor(255, 255, 255));
+					auto color = colorEnabled
+						? (ofFloatColor) ((bool)(module) ? module->color.get() : ofColor(255, 255, 255))
+						: ofFloatColor(1);
+					color.a = alpha;
 
 					refractionResultsPreview.addColor(color);
 					refractionResultsPreview.addVertex(result.incomingRay.getStart());

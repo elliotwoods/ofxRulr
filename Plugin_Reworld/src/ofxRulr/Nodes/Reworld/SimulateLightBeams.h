@@ -27,7 +27,9 @@ namespace ofxRulr {
 					
 					struct : ofParameterGroup {
 						ofParameter<float> extendExitRay{ "Extend exit ray", 10, 1, 100 };
-						PARAM_DECLARE("Preview", extendExitRay);
+						ofParameter<bool> color{ "Color", true };
+						ofParameter<float> alpha{ "Alpha", 1, 0, 1 };
+						PARAM_DECLARE("Preview", extendExitRay, color, alpha);
 					} preview;
 
 					PARAM_DECLARE("SimulateLightBeans", autoPerform, preview);

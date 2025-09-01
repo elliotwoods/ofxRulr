@@ -36,6 +36,7 @@ namespace ofxRulr {
 				void push(const Address&);
 
 				void sendAxisValues(const map<Address, Models::Reworld::AxisAngles<float>>&);
+				void sendOSCMessageToAll(string oscAddress);
 				void sendOSCMessageToColumn(int columnIndex, string oscAddress);
 				void sendOSCMessageToModule(Address moduleAddress, string oscAddress);
 			protected:

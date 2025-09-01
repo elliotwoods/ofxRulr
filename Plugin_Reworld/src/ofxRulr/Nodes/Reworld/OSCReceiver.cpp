@@ -68,7 +68,11 @@ namespace ofxRulr {
 							this->oscFrameNew.notifyFrameNew = true;
 							this->oscFrameNew.rxCount++;
 
-							if (message.getAddress() == "/targetWorld") {
+							if (message.getAddress() == "/homeAndSeeThrough") {
+								installation->homeAndZero();
+								installation->gotoSeeThrogh();
+							}
+							else if (message.getAddress() == "/targetWorld") {
 								// Format is:
 								// [optional column offset integer], [float]*3, [float*3], [float*3]....
 								// e.g.:

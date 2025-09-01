@@ -45,6 +45,9 @@ namespace ofxRulr {
 
 				void pushAllValues(bool forceSend, bool selectedOnly);
 
+				void homeAndZero();
+				void gotoSeeThrogh();
+
 				void exportPositionsCSV() const;
 
 				Utils::EditSelection<Data::Reworld::Column> ourSelection;

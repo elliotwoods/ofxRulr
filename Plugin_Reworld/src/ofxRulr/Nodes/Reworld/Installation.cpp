@@ -45,6 +45,18 @@ namespace ofxRulr {
 					panel->addButton("Select all modules", [this]() {
 						this->selectAllModules();
 						});
+					panel->addButton("Home and zero", [this]() {
+						try {
+							this->homeAndZero();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
+					panel->addButton("Goto see through", [this]() {
+						try {
+							this->gotoSeeThrogh();
+						}
+						RULR_CATCH_ALL_TO_ALERT;
+						});
 					this->panel = panel;
 				}
 
@@ -131,6 +143,19 @@ namespace ofxRulr {
 					}, OF_KEY_RETURN);
 
 				inspector->addSubMenu("Step offset", this->stepOffset);
+
+				inspector->addButton("Home and zero", [this]() {
+					try {
+						this->homeAndZero();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					});
+				inspector->addButton("Goto see through", [this]() {
+					try {
+						this->gotoSeeThrogh();
+					}
+					RULR_CATCH_ALL_TO_ALERT;
+					});
 
 				inspector->addButton("Export postiions CSV", [this]() {
 					try {
@@ -310,6 +335,38 @@ namespace ofxRulr {
 						router->sendAxisValues(dataToSend);
 					}
 				}
+			}
+
+			//---------
+			void
+				Installation::homeAndZero()
+			{
+				auto columns = this->getAllColumns();
+				for (auto column : columns) {
+					auto modules = column->getAllModules();
+					for (auto module : modules) {
+						module->setTargetAxisAngles({ 0, 0.0 });
+					}
+				}
+				
+				auto router = this->getInput<Router>();
+				router->sendOSCMessageToAll("home");
+			}
+
+			//---------
+			void
+				Installation::gotoSeeThrogh()
+			{
+				auto columns = this->getAllColumns();
+				for (auto column : columns) {
+					auto modules = column->getAllModules();
+					for (auto module : modules) {
+						module->setTargetAxisAngles({ 0.5, 0.0 });
+					}
+				}
+
+				auto router = this->getInput<Router>();
+				router->sendOSCMessageToAll("seeThrough");
 			}
 
 			//---------

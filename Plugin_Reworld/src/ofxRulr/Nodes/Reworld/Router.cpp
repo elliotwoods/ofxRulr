@@ -214,6 +214,20 @@ namespace ofxRulr {
 
 			//----------
 			void
+				Router::sendOSCMessageToAll(string oscAddress)
+			{
+				if (!this->oscSender) {
+					return;
+				}
+				auto address = "/" + oscAddress;
+
+				ofxOscMessage message;
+				message.setAddress(address);
+				this->oscSender->sendMessage(message);
+			}
+
+			//----------
+			void
 				Router::sendOSCMessageToColumn(int columnIndex, string oscAddress)
 			{
 				if (!this->oscSender) {
