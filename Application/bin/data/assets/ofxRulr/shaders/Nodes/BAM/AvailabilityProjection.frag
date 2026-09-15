@@ -1,4 +1,4 @@
-#version 430
+#version 400
 
 #pragma include "ProjectorSimulation.fragh"
 

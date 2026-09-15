@@ -28,7 +28,7 @@ namespace ofxRulr {
 
 				this->grabber = make_shared<ofxMachineVision::Grabber::Simple>();
 				this->grabber->onNewFrameReceived += [this](shared_ptr<Frame> frame) {
-					this->onNewFrame.notifyListeners(move(frame));
+					this->onNewFrame.notifyListeners(frame);
 				};
 				this->placeholderPanel = make_shared<Panels::Groups::Strip>();
 				this->cameraOpenPanel = make_shared<ofxCvGui::Panels::Widgets>();

@@ -1,4 +1,4 @@
-#version 430
+#version 400
 
 uniform sampler2DRect AvailabilitySelf;
 uniform sampler2DRect AvailabilityAll;

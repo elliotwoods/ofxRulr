@@ -1,4 +1,4 @@
-#version 430
+#version 400
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
@@ -10,7 +10,7 @@ out vec2 gTexCoord;
 
 void main() 
 {
-	const float maxDisparity = uMaxDisparity;
+	float maxDisparity = uMaxDisparity;
 	vec4 A = gl_in[0].gl_Position;
 	vec4 B = gl_in[1].gl_Position;
 	vec4 C = gl_in[2].gl_Position;

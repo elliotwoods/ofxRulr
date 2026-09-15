@@ -116,24 +116,24 @@ namespace ofxRulr {
 				for (auto inputPin : node->getInputPins()) {
 					this->inputPins->add(inputPin);
 					weak_ptr<AbstractPin> inputPinWeak = inputPin;
-					inputPin->onBeginMakeConnection += [this, inputPinWeak](ofEventArgs &) {
+					inputPin->onBeginMakeConnection.addListener([this, inputPinWeak](ofEventArgs &) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
 							this->onBeginMakeConnection(inputPin);
 						}
-					};
-					inputPin->onReleaseMakeConnection += [this, inputPinWeak](ofxCvGui::MouseArguments & args) {
+					}, this);
+					inputPin->onReleaseMakeConnection.addListener([this, inputPinWeak](ofxCvGui::MouseArguments & args) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
 							this->onReleaseMakeConnection(args);
 						}
-					};
-					inputPin->onDeleteConnectionUntyped += [this, inputPinWeak](shared_ptr<Nodes::Base> &) {
+					}, this);
+					inputPin->onDeleteConnectionUntyped.addListener([this, inputPinWeak](shared_ptr<Nodes::Base> &) {
 						auto inputPin = inputPinWeak.lock();
 						if (inputPin) {
 							this->onDropInputConnection(inputPin);
 						}
-					};
+					}, this);
 				};
 				this->inputPins->onBoundsChange += [this](ofxCvGui::BoundsChangeArguments & args) {
 					this->inputPins->layoutGridVertical();
@@ -254,6 +254,16 @@ namespace ofxRulr {
 				this->inputPins->addListenersToParent(this);
 
 				this->setBounds(ofRectangle(200, 200, 200, 200));
+			}
+
+			//----------
+			NodeHost::~NodeHost() {
+				for (auto pin : this->node->getInputPins()) {
+					pin->onBeginMakeConnection.removeListeners(this);
+					pin->onReleaseMakeConnection.removeListeners(this);
+					pin->onDeleteConnectionUntyped.removeListeners(this);
+					pin->resetConnection();
+				}
 			}
 
 			//----------

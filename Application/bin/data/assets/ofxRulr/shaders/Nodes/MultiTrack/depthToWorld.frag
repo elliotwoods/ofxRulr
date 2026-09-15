@@ -1,4 +1,4 @@
-#version 430
+#version 400
 
 //OF built-in
 uniform vec4 globalColor;

@@ -60,6 +60,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ofxRulr\Utils\Base64.cpp">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\ofxClipboard\src\ofxClipboard.cpp">
       <Filter>addons\ofxClipboard\src</Filter>
     </ClCompile>
@@ -191,6 +194,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ofxRulr\Utils\Serialization\Containers.h">
+      <Filter>src\ofxRulr\Utils\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxRulr\Utils\Base64.h">
+      <Filter>src\ofxRulr\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\ofxClipboard\src\ofxClipboard.h">
       <Filter>addons\ofxClipboard\src</Filter>
     </ClInclude>

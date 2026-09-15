@@ -68,7 +68,7 @@ namespace ofxRulr {
 
 				inspector->addEditableValue<ushort>("Log level", [this]() {
 					return (ushort) ofGetLogLevel();
-					}, [this](string& valueString) {
+					}, [this](const string& valueString) {
 						if (!valueString.empty()) {
 							auto logLevel = (ushort)ofToInt(valueString);
 							ofSetLogLevel((ofLogLevel)logLevel);

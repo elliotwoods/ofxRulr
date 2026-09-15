@@ -1,4 +1,4 @@
-#version 430
+#version 400
 
 uniform float usingTexture;
 uniform float usingColors;

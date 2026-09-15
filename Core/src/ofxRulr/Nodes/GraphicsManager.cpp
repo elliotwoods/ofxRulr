@@ -80,10 +80,11 @@ namespace ofxRulr {
 				{
 					auto& texture = imageAsset->get().getTexture();
 					if (!texture.hasMipmap()) {
+						texture.clear();
 						texture.enableMipmap();
+						texture.loadData(imageAsset->get().getPixels());
 						texture.setTextureWrap(GL_REPEAT, GL_REPEAT);
 						texture.setTextureMinMagFilter(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST);
-						texture.loadData(imageAsset->get().getPixels());
 					}
 				}
 				if (wasUsingArb) {

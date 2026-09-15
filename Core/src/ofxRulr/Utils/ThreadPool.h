@@ -5,6 +5,8 @@
 #include <thread>
 #include <set>
 #include <future>
+#include <atomic>
+#include "ofxRulr/Exception.h"
 
 using namespace std;
 
@@ -19,24 +21,25 @@ namespace ofxRulr {
 
 			//consider using std::async(std::launch::async, ...) instead
 			template<typename ReturnType>
-			future<exception_ptr> performAsyncWithExceptionHandling(function<void()>) {
-				promise<ReturnType> promise;
-				auto future = promise.get_future();
-				auto wrappedFunction = [function, &promise]() {
+			future<ReturnType> performAsyncWithExceptionHandling(function<ReturnType()> action) {
+				auto promise = make_shared<std::promise<ReturnType>>();
+				auto future = promise->get_future();
+				auto wrappedFunction = [action, promise]() {
 					try {
-						promise.set_value(function());
+						if constexpr (std::is_void_v<ReturnType>) {
+							action();
+							promise->set_value();
+						}
+						else {
+							promise->set_value(action());
+						}
 					}
 					catch (...) {
-						promise.set_exception(std::current_exception());
+						promise->set_exception(std::current_exception());
 					}
 				};
-				if (!this->performAsync(function)) {
-					try {
-						throw(ofxRulr::Exception("Thread pool action queue is full"));
-					}
-					catch (...) {
-						promise.set_exception(std::current_exception());
-					}
+				if (!this->performAsync(wrappedFunction)) {
+					promise->set_exception(make_exception_ptr(ofxRulr::Exception("Thread pool action queue is full")));
 				}
 				return future;
 			}
@@ -47,7 +50,7 @@ namespace ofxRulr {
 			ofThreadChannel<std::function<void()>> actionQueue;
 			size_t maxQueueSize;
 
-			bool joining = false;
+			atomic<bool> joining{ false };
 		};
 	}
 }

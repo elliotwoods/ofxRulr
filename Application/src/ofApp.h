@@ -4,8 +4,9 @@
 #include "ofxCvGui.h"
 #include "ofxMachineVision.h"
 #include "ofxRulr.h"
+#ifdef TARGET_WIN32
 #include "ofxSplashScreen.h"
-
+#endif
 using namespace ofxMachineVision;
 using namespace ofxRulr;
 using namespace ofxCvGui;
@@ -28,5 +29,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		ofxCvGui::Builder gui;
+#ifdef TARGET_WIN32
 		ofxSplashScreen splashScreen;
+#endif
 };

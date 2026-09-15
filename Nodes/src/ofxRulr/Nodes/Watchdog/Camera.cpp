@@ -61,7 +61,7 @@ namespace ofxRulr {
 					if (timeSinceLastFrame > timeout) {
 #ifdef TARGET_WIN32
 						system("shutdown /r /t 5");
-#elif TARGET_OSX
+#elif defined(TARGET_OSX)
 						system("sudo reboot");
 #endif
 					}

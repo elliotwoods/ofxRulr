@@ -5,6 +5,7 @@
 #include "ofxCvGui/Panels/World.h"
 
 #include "ofLight.h"
+#include "ofxGrabCam.h"
 
 namespace ofxRulr {
 	namespace Graph {

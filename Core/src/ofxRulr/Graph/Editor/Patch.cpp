@@ -199,7 +199,7 @@ namespace ofxRulr {
 
 			//----------
 			Patch::~Patch() {
-
+				this->clearNodes();
 			}
 
 			//----------
@@ -264,8 +264,33 @@ namespace ofxRulr {
 			}
 
 			//----------
-			void Patch::deserialize(const nlohmann::json & json) {
+			void Patch::removeNodeHostListeners(const shared_ptr<NodeHost> & nodeHost) {
+				nodeHost->onBeginMakeConnection.removeListeners(this);
+				nodeHost->onReleaseMakeConnection.removeListeners(this);
+				nodeHost->onDropInputConnection.removeListeners(this);
+				nodeHost->getNodeInstance()->onAnyInputConnectionChanged.removeListeners(this);
+			}
+
+			//----------
+			void Patch::clearNodes() {
+				// Disconnect callbacks before nodes can notify during destruction.
+				for (const auto & entry : this->nodeHosts) {
+					this->removeNodeHostListeners(entry.second);
+				}
+				// Notify connection owners while their derived nodes are still alive.
+				for (const auto & entry : this->nodeHosts) {
+					for (auto pin : entry.second->getNodeInstance()->getInputPins()) {
+						pin->resetConnection();
+					}
+				}
+				this->linkHosts.clear();
 				this->nodeHosts.clear();
+				if (this->view) { this->view->markDirty(); }
+			}
+
+			//----------
+			void Patch::deserialize(const nlohmann::json & json) {
+				this->clearNodes();
 				
 				this->insertPatchlet(json, false);
 
@@ -464,21 +489,21 @@ namespace ofxRulr {
 			void Patch::addNodeHost(shared_ptr<ofxRulr::Graph::Editor::NodeHost> nodeHost, int index) {
 				this->nodeHosts.insert(pair<NodeHost::Index, shared_ptr<NodeHost>>(index, nodeHost));
 				weak_ptr<NodeHost> nodeHostWeak = nodeHost;
-				nodeHost->onBeginMakeConnection += [this, nodeHostWeak](const shared_ptr<AbstractPin> & inputPin) {
+				nodeHost->onBeginMakeConnection.addListener([this, nodeHostWeak](const shared_ptr<AbstractPin> & inputPin) {
 					auto nodeHost = nodeHostWeak.lock();
 					if (nodeHost) {
 						this->callbackBeginMakeConnection(nodeHost, inputPin);
 					}
-				};
-				nodeHost->onReleaseMakeConnection += [this](ofxCvGui::MouseArguments & args) {
+				}, this);
+				nodeHost->onReleaseMakeConnection.addListener([this](ofxCvGui::MouseArguments & args) {
 					this->callbackReleaseMakeConnection(args);
-				};
-				nodeHost->onDropInputConnection += [this](const shared_ptr<AbstractPin> &) {
+				}, this);
+				nodeHost->onDropInputConnection.addListener([this](const shared_ptr<AbstractPin> &) {
 					this->view->markDirty();
-				};
-				nodeHost->getNodeInstance()->onAnyInputConnectionChanged += [this]() {
+				}, this);
+				nodeHost->getNodeInstance()->onAnyInputConnectionChanged.addListener([this]() {
 					this->rebuildLinkHosts();
-				};
+				}, this);
 				this->view->markDirty();
 			}
 			
@@ -492,6 +517,7 @@ namespace ofxRulr {
 				auto selection = this->selection.lock();
 				for (auto nodeHost : this->nodeHosts) {
 					if (nodeHost.second == selection) {
+						this->removeNodeHostListeners(nodeHost.second);
 						this->nodeHosts.erase(nodeHost.first);
 
 						//this shouldn't be entirely necessary since the node should become outdated and disappear
@@ -580,7 +606,7 @@ namespace ofxRulr {
 				auto inspector = inspectArguments.inspector;
 				
 				inspector->addButton("Clear patch", [this]() {
-					this->nodeHosts.clear();
+					this->clearNodes();
 					this->rebuildLinkHosts();
 					this->view->markDirty();
 				});

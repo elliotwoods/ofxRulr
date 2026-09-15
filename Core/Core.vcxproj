@@ -75,6 +75,7 @@
     <ClCompile Include="src\ofxRulr\Graph\World.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Base.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\GraphicsManager.cpp" />
+    <ClCompile Include="src\ofxRulr\Utils\Base64.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\CaptureSet.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Constants.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Graphics.cpp" />
@@ -132,6 +133,8 @@
     <ClInclude Include="src\ofxRulr\Graph\World.h" />
     <ClInclude Include="src\ofxRulr\Nodes\Base.h" />
     <ClInclude Include="src\ofxRulr\Nodes\GraphicsManager.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Base64.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Serialization\Containers.h" />
     <ClInclude Include="src\ofxRulr\Utils\CaptureSet.h" />
     <ClInclude Include="src\ofxRulr\Utils\Constants.h" />
     <ClInclude Include="src\ofxRulr\Utils\EditSelection.h" />

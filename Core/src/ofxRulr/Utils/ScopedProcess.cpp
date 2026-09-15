@@ -19,9 +19,9 @@ namespace ofxRulr {
 
 				while (true) {
 					//if empty then wait
-					if (!this->isSounding) {
+					{
 						unique_lock<std::mutex> lock(this->mutex);
-						this->waitVariable.wait(lock);
+						this->waitVariable.wait(lock, [this]() { return this->destructing || this->isSounding; });
 					}
 					
 					if (this->destructing) {
@@ -42,7 +42,10 @@ namespace ofxRulr {
 
 		//----------
 		ScopedProcess::ActiveProcesses::~ActiveProcesses() {
-			this->destructing = true;
+			{
+				lock_guard<std::mutex> lock(this->mutex);
+				this->destructing = true;
+			}
 			this->waitVariable.notify_one();
 			this->idlingThread.join();
 		}
@@ -54,8 +57,11 @@ namespace ofxRulr {
 			//start sounding
 			if (!isSounding && process->getHasSuccessOrFail()) {
 				SoundEngine::X().play("ofxRulr::start", true);
-				this->waitForStartSound = true;
-				this->isSounding = true;
+				{
+					lock_guard<std::mutex> lock(this->mutex);
+					this->waitForStartSound = true;
+					this->isSounding = true;
+				}
 				this->waitVariable.notify_one();
 			}
 

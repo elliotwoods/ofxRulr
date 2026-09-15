@@ -73,6 +73,8 @@ namespace ofxRulr {
 				shared_ptr<NodeHost> getNodeHost(NodeHost::Index) const;
 			protected:
 				void populateInspector(ofxCvGui::InspectArguments &);
+				void clearNodes();
+				void removeNodeHostListeners(const shared_ptr<NodeHost> &);
 
 				NodeHost::Index getNextFreeNodeHostIndex() const;
 				LinkHost::Index getNextFreeLinkHostIndex() const;

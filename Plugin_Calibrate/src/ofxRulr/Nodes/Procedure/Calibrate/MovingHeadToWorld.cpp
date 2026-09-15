@@ -364,7 +364,7 @@ namespace ofxRulr {
 				void MovingHeadToWorld::drawWorldStage() {
 					ofMesh lines;
 					auto movingHead = this->getInput<DMX::MovingHead>();
-					auto movingHeadRotation = movingHead ? movingHead->getRotationQuat() : ofQuaternion();
+					auto movingHeadRotation = movingHead ? movingHead->getRotationQuat() : glm::quat();
 
 					for (const auto & dataPoint : this->dataPoints) {
 						lines.addVertex(dataPoint.world);

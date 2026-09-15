@@ -1,15 +1,19 @@
 #include "ofxRulr/Nodes/DeclareNodes.h"
 #include "ofApp.h"
 
+#if defined(TARGET_WIN32) || defined(RULR_WITH_CANON)
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/Canon.h"
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/CanonLiveView.h"
 #include "../../../ofxCanon/pairs/ofxMachineVision/Device/CanonRemote.h"
 #include "../../../ofxCanon/pairs/ofxRulr/Nodes/Canon/Control.h"
 #include "../../../ofxCanon/pairs/ofxRulr/Nodes/Canon/LiveView.h"
+#endif
 
-#ifdef TARGET_OSX
-#include "../Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h"
-#include "../../../addons/ofxBlackmagic2/pairs/ofxMachineVision/Device/DeckLink.h"
+#ifdef RULR_WITH_KINECT_V2_OSX
+#include "../../Plugin_KinectV2OSX/src/ofxRulr/Nodes/Item/KinectV2OSX.h"
+#endif
+#ifdef RULR_WITH_BLACKMAGIC
+#include "../../../ofxBlackmagic2/pairs/ofxMachineVision/Device/DeckLink.h"
 #endif
 
 using namespace ofxAssets;
@@ -30,12 +34,14 @@ void ofApp::setup2(){
 	//
 	//--
 
-#ifdef TARGET_OSX
+#ifdef RULR_WITH_KINECT_V2_OSX
     //--
     //Setup OSX nodes
     //--
     //
     RULR_DECLARE_NODE(Nodes::Item::KinectV2OSX);
+#endif
+#ifdef RULR_WITH_BLACKMAGIC
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::DeckLink>();
     //
     //--
@@ -45,11 +51,13 @@ void ofApp::setup2(){
 	//Setup EDSDK nodes and ofxMachineVision devices
 	//--
 	//
+#if defined(TARGET_WIN32) || defined(RULR_WITH_CANON)
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::Canon>();
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonLiveView>();
 	ofxMachineVision::Device::FactoryRegister::X().add<ofxMachineVision::Device::CanonRemote>();
 	RULR_DECLARE_NODE(ofxRulr::Nodes::Canon::Control);
 	RULR_DECLARE_NODE(ofxRulr::Nodes::Canon::LiveView);
+#endif
 	//
 	//--
     
@@ -58,9 +66,7 @@ void ofApp::setup2(){
 	//--
 	//
 	ofxRulr::Nodes::loadCoreNodes();
-#ifdef TARGET_WIN32
 	ofxRulr::Nodes::loadPluginNodes();
-#endif
 	//
 	//--
 

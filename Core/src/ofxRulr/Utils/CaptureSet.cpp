@@ -232,7 +232,12 @@ namespace ofxRulr {
 
 		//----------
 		AbstractCaptureSet::~AbstractCaptureSet() {
-			this->clear();
+			// Derived capture sets and their selection callbacks have already been destroyed.
+			for (auto capture : this->captures) {
+				capture->onDeletePressed.removeListeners(this);
+				capture->onChange.removeListeners(this);
+				capture->onSelectionChanged.removeListeners(this);
+			}
 		}
 
 		//----------

@@ -83,7 +83,7 @@ namespace ofxRulr {
 				SoundEngine::X().play("ofxRulr::failure", true);
 			}
 			else if (count <= 20) {
-				auto& soundName = "ofxRulr::" + ofToString(count);
+				auto soundName = "ofxRulr::" + ofToString(count);
 				SoundEngine::X().play(soundName, true);
 			}
 			else {

@@ -1,4 +1,5 @@
 #pragma once
+#include "ofxRulr/Utils/Base64.h"
 
 #include "ofxRulr/Utils/Serializable.h"
 #include "ofxRulr/Nodes/Base.h"
@@ -124,8 +125,8 @@ namespace ofxRulr {
 							json["data64"] = this->encodedData;
 						};
 						this->onDeserialize += [this](const nlohmann::json & json) {
-							if (json["data64"].isString()) {
-								this->encodedData = json["data64"].asString();
+							if (json["data64"].is_string()) {
+								this->encodedData = json["data64"].get<std::string>();
 							}
 						};
 					}
@@ -140,7 +141,6 @@ namespace ofxRulr {
 					string getTypeName() const override {
 						return string(typeid(DataType).name()) + "Frame";
 					}
-					/*
 					//----------
 					void setInstance(const DataType & instance) {
 						this->encodedData = Utils::Base64::encode(instance);
@@ -150,7 +150,6 @@ namespace ofxRulr {
 					bool getInstance(DataType & instance) {
 						return Utils::Base64::decode(this->encodedData, instance);
 					}
-					*/
 				protected:
 					string encodedData;
 				};

@@ -1,4 +1,4 @@
-#version 430
+#version 400
 
 in vec4 worldVarying;
 in vec4 projectedVarying;

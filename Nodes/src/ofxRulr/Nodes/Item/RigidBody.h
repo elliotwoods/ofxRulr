@@ -2,7 +2,7 @@
 
 #include "ofxRulr/Utils/Constants.h"
 #include "ofxRulr/Nodes/Base.h"
-#include "ofxCvMin/src/ofxCvMin.h"
+#include "ofxCvMin.h"
 
 #define RULR_RIGIDBODY_DRAW_OBJECT_LISTENER \
 	this->onDrawObject += [this]() { \

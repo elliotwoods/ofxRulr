@@ -411,7 +411,7 @@ namespace ofxRulr {
 						//mark the point
 						auto color = isActive(this, WhenActive::WhenActive::Selected)
 							? ofxCvGui::Utils::getBeatingSelectionColor()
-							: selection->color;
+							: selection->color.get();
 						ofxCvGui::Utils::drawTextAnnotation(ofToString(selection->viewPosition)
 							, selection->worldPosition.get()
 							, color);

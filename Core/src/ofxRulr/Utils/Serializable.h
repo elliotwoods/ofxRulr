@@ -13,6 +13,7 @@
 #include "Serialization/Native.h"
 #include "Serialization/oF.h"
 #include "Serialization/Parameters.h"
+#include "Serialization/Containers.h"
 
 #define RULR_SERIALIZE_LISTENERS \
 	this->onSerialize += [this](nlohmann::json & json) { \

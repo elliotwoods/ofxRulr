@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 
 #include "SoundEngine.h"
 
@@ -19,9 +20,9 @@ namespace ofxRulr {
 				vector<ScopedProcess *> activeProcesses;
 				bool active;
 				thread idlingThread;
-				bool waitForStartSound;
-				bool destructing = false;
-				bool isSounding = false;
+				atomic<bool> waitForStartSound{ false };
+				atomic<bool> destructing{ false };
+				atomic<bool> isSounding{ false };
 				std::condition_variable waitVariable;
 				std::mutex mutex;
 			};
