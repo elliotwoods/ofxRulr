@@ -25,7 +25,6 @@ namespace ofxRulr {
 				glm::vec2 cachedStart;
 				glm::vec2 cachedEnd;
 				ofPolyline polyline;
-				ofVbo vbo;
 			};
 
 			class TemporaryLinkHost : public LinkHost {

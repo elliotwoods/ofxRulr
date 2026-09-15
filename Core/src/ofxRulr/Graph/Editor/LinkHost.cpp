@@ -71,12 +71,6 @@ namespace ofxRulr {
 					this->polyline.bezierTo(v3(start + wireRigidity), v3(end - wireRigidity), v3(end), 30);
 				}
 
-				// Upload to vbo mesh
-				{
-					this->vbo.clear();
-					this->vbo.setVertexData(this->polyline.getVertices().data(), this->polyline.size(), GL_DYNAMIC_DRAW);
-				}
-
 				this->cachedStart = start;
 				this->cachedEnd = end;
 				this->needsRebuild = false;
@@ -99,7 +93,7 @@ namespace ofxRulr {
 								ofTranslate(5.0f, 5.0f);
 								ofSetLineWidth(2.0f);
 								ofSetColor(0, 100);
-								this->vbo.draw(GL_LINE_STRIP, 0, this->polyline.size());
+								this->polyline.draw();
 							}
 							ofPopMatrix();
 
@@ -111,7 +105,7 @@ namespace ofxRulr {
 							//line
 							ofSetLineWidth(2.0f);
 							ofSetColor(this->getColor());
-							this->vbo.draw(GL_LINE_STRIP, 0, this->polyline.size());
+							this->polyline.draw();
 						}
 						ofPopStyle();
 					}
