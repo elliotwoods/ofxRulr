@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Native.h"
+#include "NativeTypes.h"
+
+#include <opencv2/core/types.hpp>
 
 #include "ofMesh.h"
 #include "ofRectangle.h"

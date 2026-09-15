@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ofxRulr/Utils/Serialization/Native.h"
+#include "ofxRulr/Utils/Serialization/NativeTypes.h"
 
 #include "ofxRay.h"
 

@@ -1,7 +1,7 @@
-#include "pch_RulrCore.h"
+#define OFXRULR_BASE64_EXPORTS
 #include "Base64.h"
 
-#include <iostream>
+#include <cctype>
 
 //modified from http://www.adp-gmbh.ch/cpp/common/base64.html
 //original copyright notice:
@@ -89,7 +89,7 @@ namespace ofxRulr {
 
 			}
 
-			std::string Base64::decode(std::string const& encoded_string) {
+			std::string decode(std::string const& encoded_string) {
 				int in_len = encoded_string.size();
 				int i = 0;
 				int j = 0;

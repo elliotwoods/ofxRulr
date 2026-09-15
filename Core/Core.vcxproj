@@ -75,7 +75,6 @@
     <ClCompile Include="src\ofxRulr\Graph\World.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\Base.cpp" />
     <ClCompile Include="src\ofxRulr\Nodes\GraphicsManager.cpp" />
-    <ClCompile Include="src\ofxRulr\Utils\Base64.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\CaptureSet.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Constants.cpp" />
     <ClCompile Include="src\ofxRulr\Utils\Graphics.cpp" />
@@ -148,6 +147,7 @@
     <ClInclude Include="src\ofxRulr\Utils\Serializable.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serialization\Addons.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serialization\Native.h" />
+    <ClInclude Include="src\ofxRulr\Utils\Serialization\NativeTypes.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serialization\oF.h" />
     <ClInclude Include="src\ofxRulr\Utils\Serialization\Parameters.h" />
     <ClInclude Include="src\ofxRulr\Utils\Set.h" />

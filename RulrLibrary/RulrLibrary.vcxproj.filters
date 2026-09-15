@@ -10,6 +10,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Core\src\ofxRulr\Utils\Base64.cpp" />
     <ClCompile Include="src\exports.cpp">
       <Filter>src</Filter>
     </ClCompile>

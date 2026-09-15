@@ -1,0 +1,34 @@
+name: Windows Base64 DLL
+on:
+  push:
+    paths:
+      - 'Core/src/ofxRulr/Utils/Base64.*'
+      - 'tests/Base64.cpp'
+      - '.github/workflows/windows-base64.yml'
+  pull_request:
+    paths:
+      - 'Core/src/ofxRulr/Utils/Base64.*'
+      - 'tests/Base64.cpp'
+      - '.github/workflows/windows-base64.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dll-round-trip:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        architecture: [x64, x86]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile DLL and consumer with Visual C++
+        shell: cmd
+        run: |
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALL=%%i"
+          call "%VSINSTALL%\Common7\Tools\VsDevCmd.bat" -arch=${{ matrix.architecture }}
+          if errorlevel 1 exit /b 1
+          cl /nologo /EHsc /std:c++17 /MD /LD Core\src\ofxRulr\Utils\Base64.cpp /Fe:Base64.dll
+          if errorlevel 1 exit /b 1
+          cl /nologo /EHsc /std:c++17 /MD /ICore\src tests\Base64.cpp Base64.lib /Fe:Base64Test.exe
+          if errorlevel 1 exit /b 1
+          Base64Test.exe

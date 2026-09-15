@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Native.h"
+#include "NativeTypes.h"
 #include "oF.h"
 #include "ofParameter.h"
 
