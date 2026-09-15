@@ -24,7 +24,7 @@ namespace ofxRulr {
 
 			this->view = MAKE(ofxCvGui::Panels::WorldManaged);
 			this->view->onDraw.addListener([this](ofxCvGui::DrawArguments &) {
-				ofBackgroundGradient(40, 0);
+				ofBackgroundGradient(ofColor(40), ofColor(0));
 			}, this, -1);
 			this->view->onDrawWorld += [this](ofCamera &) {
 				static auto& world = Graph::World::X();
